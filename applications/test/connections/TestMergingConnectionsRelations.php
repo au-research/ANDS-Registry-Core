@@ -5,13 +5,17 @@ namespace ANDS\Test;
 
 use ANDS\Registry\Connections;
 use ANDS\Registry\Relation;
-use ANDS\Repository\CIActiveRecordConnectionsRepository as Repository;
+use ANDS\Repository\EloquentConnectionsRepository as Repository;
 
+/**
+ * Class TestMergingConnectionsRelations
+ * @package ANDS\Test
+ */
 class TestMergingConnectionsRelations extends UnitTest
 {
     public function test_merging_multiple_relation_type()
     {
-        $conn = new Connections(new Repository($this->ci->db));
+        $conn = new Connections(new Repository);
         $links = $conn
             ->setFlag(['from_key', 'to_key', 'relation_type'])
             ->setFilter('from_key', 'eAtlas/a289dc20-85b9-11dc-8e98-00008a07204e')

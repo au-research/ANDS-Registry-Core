@@ -5,7 +5,7 @@ namespace ANDS\Repository;
 class CIActiveRecordConnectionsRepository
 {
 
-    public function run($filters, $flags, $limit = 20000, $offset = 0)
+    public function run($filters, $flags = [], $limit = 20000, $offset = 0)
     {
         $this->db->select('*');
         foreach ($filters as $key => $value) {
@@ -32,8 +32,12 @@ class CIActiveRecordConnectionsRepository
         return [];
     }
 
-    public function __construct($db)
+    public function __construct($db = false)
     {
+        if ($db === false) {
+            $ci =& get_instance();
+            $db = $ci->db;
+        }
         $this->db = $db;
     }
 

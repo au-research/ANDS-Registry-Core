@@ -3,6 +3,10 @@
 namespace ANDS\Test;
 use ANDS\Registry\Relation;
 
+/**
+ * Class TestRelationDisplayMapping
+ * @package ANDS\Test
+ */
 class TestRelationDisplayMapping extends UnitTest
 {
 

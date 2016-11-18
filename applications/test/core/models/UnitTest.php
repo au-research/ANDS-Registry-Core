@@ -124,7 +124,11 @@ class UnitTest
     public function assertTrue($input)
     {
         $this->getReflectorInfo();
-        $this->ci->unit->run($input, true, $this->getName(), $this->getNote());
+        $this->ci->unit->run(
+            $input,
+            true,
+            $this->getName() . " Assert $input is true",
+            $this->getNote());
         $this->reset();
         return $this;
     }
@@ -182,7 +186,22 @@ class UnitTest
     public function assertNotEquals($left, $right)
     {
         $this->getReflectorInfo();
-        $this->ci->unit->run($left != $right, 'is_true', $this->getName(), $this->getNote());
+
+        $name = $this->getName();
+        if (!is_array($left) && !is_array($right)) {
+            $name .= " : $left equals $right";
+        }
+
+        if (is_array($left) && is_array($right)) {
+            $name .= "Array(".count($left).") equals Array(".count($right).")";
+        }
+
+        $this->ci->unit->run(
+            $left != $right,
+            'is_true',
+            $name,
+            $this->getNote()
+        );
         $this->reset();
         return $this;
     }
@@ -213,7 +232,12 @@ class UnitTest
     public function assertGreaterThan($left, $right)
     {
         $this->getReflectorInfo();
-        $this->ci->unit->run($left > $right, 'is_true', $this->getName(), $this->getNote());
+        $this->ci->unit->run(
+            $left > $right,
+            'is_true',
+            $this->getName(). " $left is greater than $right",
+            $this->getNote()
+        );
         $this->reset();
         return $this;
     }

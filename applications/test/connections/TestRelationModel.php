@@ -6,6 +6,10 @@ namespace ANDS\Test;
 use ANDS\Registry\Connections;
 use ANDS\Registry\Relation;
 
+/**
+ * Class TestRelationModel
+ * @package ANDS\Test
+ */
 class TestRelationModel extends UnitTest
 {
     public function test_mergeWith()

@@ -6,8 +6,13 @@ namespace ANDS\Test;
 use ANDS\Registry\Connections;
 use ANDS\Registry\Providers\NestedConnectionsProvider;
 use ANDS\Registry\Relation;
-use ANDS\Repository\CIActiveRecordConnectionsRepository as Repository;
+//use ANDS\Repository\CIActiveRecordConnectionsRepository as Repository;
+use ANDS\Repository\EloquentConnectionsRepository as Repository;
 
+/**
+ * Class TestNestedCollections
+ * @package ANDS\Test
+ */
 class TestNestedCollections extends UnitTest
 {
 
@@ -17,7 +22,7 @@ class TestNestedCollections extends UnitTest
      */
     public function get_nested_collections_multiple_layer()
     {
-        $conn = new NestedConnectionsProvider(new Repository($this->ci->db));
+        $conn = new NestedConnectionsProvider(new Repository);
         $conn->setFlag(['to_title', 'to_class', 'to_slug', 'to_id', 'to_key']);
         $links = $conn->getNestedCollections('UrbanWater:Collection');
 
@@ -57,7 +62,7 @@ class TestNestedCollections extends UnitTest
      */
     public function test_it_should_give_me_the_same_as_the_parent()
     {
-        $conn = new NestedConnectionsProvider(new Repository($this->ci->db));
+        $conn = new NestedConnectionsProvider(new Repository);
         $links = $conn->init()->getNestedCollectionsFromChild('AWRA_Murray_Darling_Basin');
         $parentLinks = $conn->init()->getNestedCollections("UrbanWater:Collection");
         $this->assertTrue(sizeof($links) == sizeof($parentLinks));
@@ -70,7 +75,7 @@ class TestNestedCollections extends UnitTest
      */
     public function test_it_should_give_me_2_parent()
     {
-        $conn = new NestedConnectionsProvider(new Repository($this->ci->db));
+        $conn = new NestedConnectionsProvider(new Repository);
         $conn->setFlag(['from_title', 'from_class', 'from_slug', 'from_id', 'from_key']);
         $links = $conn->getParentNestedCollections('AWRA_Murray_Darling_Basin');
         $this->assertTrue(sizeof($links) === 2);
@@ -78,7 +83,7 @@ class TestNestedCollections extends UnitTest
 
     public function test_it_should_give_me_the_right_formatting()
     {
-        $conn = new NestedConnectionsProvider(new Repository($this->ci->db));
+        $conn = new NestedConnectionsProvider(new Repository);
 
         $connectionTree = $conn
             ->init()
