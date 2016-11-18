@@ -54,6 +54,12 @@ class HandleRefreshHarvest extends ImportSubTask
 
     public function handleRefreshHarvest()
     {
+        // not a real harvest
+        if($this->parent()->getHarvestID() == null){
+            return;
+        }
+
+
         $dataSource = $this->getDataSource();
 
         $advanced_harvest_mode = $dataSource->getDataSourceAttribute("advanced_harvest_mode");
