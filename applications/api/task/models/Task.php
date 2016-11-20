@@ -76,7 +76,12 @@ class Task
             ->log("Task run at " . date($this->dateFormat, $start))
             ->save();
 
-        ini_set('memory_limit', $this->getMemoryLimit());
+        // high memory limit and execution time prep for big tasks
+        // web server can still reclaim worker thread and terminate PHP script execution
+        ini_set('memory_limit', '1024M');
+        ini_set('max_execution_time', 2 * ONE_HOUR);
+        set_time_limit(0);
+        ignore_user_abort(true);
 
         //overwrite this method
         try {

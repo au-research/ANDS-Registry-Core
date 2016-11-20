@@ -31,7 +31,9 @@ class ObjectHandler extends Handler{
      */
     public function handle()
     {
-        ini_set('memory_limit', 256000000);
+        if ((int) ini_get("memory_limit") < 384000000) {
+            ini_set('memory_limit', 384000000);
+        }
         if ($this->params['identifier']) {
             // registry/object/(:id)
             return array(
