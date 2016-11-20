@@ -524,7 +524,7 @@ class Registry_object extends MX_Controller
         $r = array();
         foreach($related as $key=>$relation){
             foreach($relation['relation']as $relationship) {
-                if($relationship == 'hasPrincipalInvestigator') {
+                if($relationship == 'isPrincipalInvestigatorOf'||$relationship == 'hasPrincipalInvestigator') {
                     array_push($r, $relation);
                     unset($related[$key]);
                 }
