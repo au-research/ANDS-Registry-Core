@@ -26,10 +26,16 @@ class RelationshipProvider
      */
     public static function process(RegistryObject $record)
     {
+        deleteAllRelationshipsFromId($record->registry_object_id);
+
+
         // TODO: translate $ro->addRelationship() to here
     }
 
-
+    public static function deleteAllRelationshipsFromId($registry_object_id){
+        RegistryObjectsRepository::deleteIdentifierRelationships($registry_object_id);
+        RegistryObjectsRepository::deleteIdentifierRelationships($registry_object_id);
+    }
     /**
      * Save/cache the grants relationship
      * going upward from the tree of grants network

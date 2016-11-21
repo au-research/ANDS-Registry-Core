@@ -8,6 +8,7 @@ use ANDS\RegistryObjectAttribute;
 use ANDS\RegistryObject\Metadata;
 use ANDS\RegistryObject\Identifier;
 use ANDS\RegistryObject\Relationship;
+use ANDS\RegistryObject\IdentifierRelationship;
 use ANDS\RecordData;
 
 class RegistryObjectsRepository
@@ -260,5 +261,9 @@ class RegistryObjectsRepository
     public static function deleteRelationships($registry_object_id){
         Relationship::where('registry_object_id', $registry_object_id)->delete();
     }
-    
+
+
+    public static function deleteIdentifierRelationships($registry_object_id){
+        IdentifierRelationship::where('registry_object_id', $registry_object_id)->delete();
+    }
 }
