@@ -149,6 +149,9 @@ class Relation
      */
     public function from()
     {
+        if (!$this->from) {
+            $this->from = $this->to = RegistryObjectsRepository::getRecordByID($this->getProperty('from_id'));
+        }
         return $this->from;
     }
 
@@ -157,6 +160,9 @@ class Relation
      */
     public function to()
     {
+        if (!$this->to) {
+            $this->to = RegistryObjectsRepository::getRecordByID($this->getProperty('to_id'));
+        }
         return $this->to;
     }
 }

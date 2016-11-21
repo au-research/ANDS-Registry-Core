@@ -4,6 +4,7 @@
 namespace ANDS\Registry\Providers;
 
 
+use ANDS\Registry\Connections;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 
@@ -59,13 +60,25 @@ class RelationshipProvider
     /**
      * Returns a list of directly related relationships
      * from this record
+     * includes Primary Relationships
      *
+     * @param RegistryObject $record
      * @return array
      */
-    public static function getDirectRelationship()
+    public static function getDirectRelationship(RegistryObject $record)
     {
         // TODO: use Connections Provider to get these data
-        return [];
+        $provider = Connections::getStandardProvider();
+
+        // directly related
+        $relations = $provider->setFilter('from_key', $record->key)->get();
+
+        $relatedObjects = [];
+        foreach ($relations as $relation) {
+            $relatedObjects[] = $relation->to();
+        }
+
+        return $relatedObjects;
     }
 
     /**
