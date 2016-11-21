@@ -35,13 +35,25 @@ class RelationshipProvider
      */
     public static function processGrantsRelationship(RegistryObject $record)
     {
-        $funder = GrantsConnectionsProvider::create()->getFunder($record);
+        $provider = GrantsConnectionsProvider::create();
+
+        // find funder and saved it, getFunder is recursive by default
+        $funder = $provider->getFunder($record);
         $record->setRegistryObjectMetadata('funder_id', $funder->registry_object_id);
 
-        // TODO: save metadata parents_activity_ids
-        // find directly related parents activity and all directly related parents activities of them until none are found
+        // find all parents activities
+        $activities = $provider->getParentsActivities($record);
+        $record->setRegistryObjectMetadata(
+            'parents_activity_ids',
+            implode(',', collect($activities)->pluck('registry_object_id')->toArray())
+        );
 
-        // TODO: save metadata parents_collection_ids
+        // find all parents collections
+        $collections = $provider->getParentsCollections($record);
+        $record->setRegistryObjectMetadata(
+            'parents_collection_ids',
+            implode(',', collect($collections)->pluck('registry_object_id')->toArray())
+        );
     }
 
     /**
@@ -68,10 +80,18 @@ class RelationshipProvider
         $funderID = $record->getRegistryObjectMetadata('funder_id')->value;
         $funder = RegistryObjectsRepository::getRecordByID($funderID);
 
+        // parents_activities
+        $parentsActivityIDs = $record->getRegistryObjectMetadata('parents_activity_ids')->value;
+        $parentsActivities = RegistryObject::whereIn('registry_object_id', explode(',', $parentsActivityIDs))->get()->toArray();
+
+        // parents_activities
+        $parentsCollectionIDs = $record->getRegistryObjectMetadata('parents_collection_ids')->value;
+        $parentsCollections = RegistryObject::whereIn('registry_object_id', explode(',', $parentsCollectionIDs))->get()->toArray();
+
         return [
             'funder' => $funder,
-            'parents_activities' => null,
-            'parents_collections' => null
+            'parents_activities' => $parentsActivities,
+            'parents_collections' => $parentsCollections
         ];
     }
 }

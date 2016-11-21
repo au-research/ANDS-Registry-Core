@@ -79,4 +79,5 @@ class TestGrantsConnectionsProvider extends UnitTest
         $this->assertEquals($funder->key, 'http://dx.doi.org/10.13039/501100003531');
     }
 
+
 }

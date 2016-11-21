@@ -35,4 +35,39 @@ class TestRelationshipProvider extends UnitTest
 
         $this->assertEquals($funder, $generatedFunder);
     }
+
+    /** @test **/
+    public function test_it_should_find_and_save_the_parent_activities_nested()
+    {
+        $activityKey = 'http://purl.org/au-research/grants/doe/nesp/caul/air';
+        $record = RegistryObjectsRepository::getPublishedByKey($activityKey);
+
+        // process
+        RelationshipProvider::processGrantsRelationship($record);
+
+        // get it
+        $metadata = $record->getRegistryObjectMetadata('parents_activity_ids');
+        $this->assertTrue($metadata);
+
+        // there are at least 2
+        $this->assertGreaterThanOrEqual(count(explode(',', $metadata)), 2);
+    }
+
+    /** @test **/
+    public function test_it_should_find_and_save_parent_collections()
+    {
+        $collectionkey = 'abctb.org.au 11';
+        $record = RegistryObjectsRepository::getPublishedByKey($collectionkey);
+
+        // process
+        RelationshipProvider::processGrantsRelationship($record);
+
+        // get it
+        $metadata = $record->getRegistryObjectMetadata('parents_collection_ids');
+        $this->assertTrue($metadata);
+
+        // there are at least 2
+        $this->assertGreaterThanOrEqual(count(explode(',', $metadata)), 2);
+
+    }
 }

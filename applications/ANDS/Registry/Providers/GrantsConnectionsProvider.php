@@ -74,6 +74,14 @@ class GrantsConnectionsProvider extends Connections
     }
 
 
+    /**
+     * Get parent activity
+     * for collection node
+     * relatedObject[class=activity][relation_type=isOutputOf]
+     *
+     * @param $record
+     * @return array
+     */
     public function getDirectActivityProducer($record)
     {
         $activities = [];
@@ -120,6 +128,14 @@ class GrantsConnectionsProvider extends Connections
         return $activities;
     }
 
+    /**
+     * Get parent collection
+     * for collection node
+     * relatedObject[class=collection][relation_type=isPartOf]
+     *
+     * @param $record
+     * @return array
+     */
     public function getDirectGrantCollections($record)
     {
         $collections = [];
@@ -153,6 +169,14 @@ class GrantsConnectionsProvider extends Connections
         return $collections;
     }
 
+    /**
+     * get parent activities
+     * for activity
+     * relatedObject[class=activity][relation_type=isPartOf]
+     *
+     * @param $record
+     * @return array
+     */
     public function getDirectGrantActivities($record)
     {
 
@@ -189,6 +213,7 @@ class GrantsConnectionsProvider extends Connections
 
     /**
      * Returns the Funder Object
+     * that is directly related to given object
      *
      * @param RegistryObject $record
      * @return RegistryObject | null
@@ -231,6 +256,85 @@ class GrantsConnectionsProvider extends Connections
 
         // no direct funder
         return null;
+    }
+
+    /**
+     * Get all parents activities from a given node
+     * @param RegistryObject $record
+     * @param array $processed
+     * @return array
+     */
+    public function getParentsActivities(RegistryObject $record, $processed = [])
+    {
+        // check saved
+        $saved = $record->getRegistryObjectMetadata('parents_activity_ids');
+        if ($saved) {
+            return RegistryObject::whereIn(
+                'registry_object_id', explode(',', $saved->value)
+            )->get()->toArray();
+        }
+
+        // activity
+        $activities = $this->getDirectGrantActivities($record);
+
+        if (count($processed) == 0) {
+            $processed = collect($activities)->pluck('registry_object_id')->toArray();
+        }
+
+        foreach ($activities as $parentActivity) {
+            $grandParents = $this->getParentsActivities($parentActivity, $processed);
+
+            // make sure to only include grandParents who have not already been processed
+            $grandParents = collect($grandParents)->filter(function($item) use ($processed){
+               return !in_array($item->registry_object_id, $processed);
+            })->toArray();
+
+            if (count($grandParents) > 0) {
+                $activities = array_merge($activities, $grandParents);
+            }
+        }
+
+        return $activities;
+    }
+
+    /**
+     * Get all parents collections from a given node
+     *
+     * @param RegistryObject $record
+     * @param array $processed
+     * @return array
+     */
+    public function getParentsCollections(RegistryObject $record, $processed = [])
+    {
+        // check saved
+        $saved = $record->getRegistryObjectMetadata('parents_collection_ids');
+        if ($saved) {
+            return RegistryObject::whereIn(
+                'registry_object_id', explode(',', $saved->value)
+            )->get()->toArray();
+        }
+
+        // activity
+        $collections = $this->getDirectGrantCollections($record);
+
+        if (count($processed) == 0) {
+            $processed = collect($collections)->pluck('registry_object_id')->toArray();
+        }
+
+        foreach ($collections as $parent) {
+            $grandParents = $this->getParentsCollections($parent, $processed);
+
+            // make sure to only include grandParents who have not already been processed
+            $grandParents = collect($grandParents)->filter(function($item) use ($processed){
+                return !in_array($item->registry_object_id, $processed);
+            })->toArray();
+
+            if (count($grandParents) > 0) {
+                $collections = array_merge($collections, $grandParents);
+            }
+        }
+
+        return $collections;
     }
 
 }
