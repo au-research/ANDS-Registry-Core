@@ -7,6 +7,8 @@ namespace ANDS\Registry\Providers;
 use ANDS\Registry\Connections;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
+use ANDS\RegistryObject\Relationship;
+
 
 /**
  * Class RelationshipProvider

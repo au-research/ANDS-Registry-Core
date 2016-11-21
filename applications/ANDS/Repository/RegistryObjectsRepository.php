@@ -255,5 +255,10 @@ class RegistryObjectsRepository
     {
         return [];
     }
+
+
+    public static function deleteRelationships($registry_object_id){
+        Relationship::where('registry_object_id', $registry_object_id)->delete();
+    }
     
 }
