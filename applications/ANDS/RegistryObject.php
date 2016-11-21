@@ -102,6 +102,29 @@ class RegistryObject extends Model
     }
 
     /**
+     * set RegistryObjectMetadata value
+     *
+     * @param $key
+     * @param $value
+     * @return Metadata
+     */
+    public function setRegistryObjectMetadata($key, $value)
+    {
+        if ($existingMetadata = Metadata::where('registry_object_id', $this->registry_object_id)
+            ->where('attribute', $key)->first()
+        ) {
+            $existingMetadata->value = $value;
+            return $existingMetadata->save();
+        } else {
+            return Metadata::create([
+                'registry_object_id' => $this->registry_object_id,
+                'attribute' => $key,
+                'value' => $value
+            ]);
+        }
+    }
+
+    /**
      * is this of published status
      * @return bool
      */

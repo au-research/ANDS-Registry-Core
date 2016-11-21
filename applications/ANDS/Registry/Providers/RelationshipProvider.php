@@ -5,6 +5,7 @@ namespace ANDS\Registry\Providers;
 
 
 use ANDS\RegistryObject;
+use ANDS\Repository\RegistryObjectsRepository;
 
 /**
  * Class RelationshipProvider
@@ -34,8 +35,13 @@ class RelationshipProvider
      */
     public static function processGrantsRelationship(RegistryObject $record)
     {
-        // TODO: save metadata funder_id
+        $funder = GrantsConnectionsProvider::create()->getFunder($record);
+        $record->setRegistryObjectMetadata('funder_id', $funder->registry_object_id);
+
         // TODO: save metadata parents_activity_ids
+        // find directly related parents activity and all directly related parents activities of them until none are found
+
+
         // TODO: save metadata parents_collection_ids
     }
 
@@ -54,13 +60,17 @@ class RelationshipProvider
     /**
      * Returns a list of grants network related relationships
      *
+     * @param RegistryObject $record
      * @return array
      */
-    public static function getGrantsRelationship()
+    public static function getGrantsRelationship(RegistryObject $record)
     {
-        // TODO: read from saved metadata and generate RegistryObject records
+        // funder
+        $funderID = $record->getRegistryObjectMetadata('funder_id')->value;
+        $funder = RegistryObjectsRepository::getRecordByID($funderID);
+
         return [
-            'funder' => null,
+            'funder' => $funder,
             'parents_activities' => null,
             'parents_collections' => null
         ];
