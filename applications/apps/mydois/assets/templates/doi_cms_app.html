@@ -57,7 +57,7 @@
                         <td>
                             <div class="btn-group">
                                 <a href="" class="btn btn-small" ng-click="vm.view(doi.doi_id)"><i class="icon-search"></i> View</a>
-                                <a href="" class="btn btn-small" ng-click="vm.update(doi.doi_id)" ng-if="!doi.status=='RESERVED'"><i class="icon-edit" ></i> Update</a>
+                                <a href="" class="btn btn-small" ng-click="vm.update(doi.doi_id)"  ng-if="doi.status!='RESERVED'"><i class="icon-edit"></i> Update</a>
                                 <a href="" class="btn btn-small" ng-click="vm.dodeactivate(doi.doi_id)" ng-if="doi.status=='ACTIVE'">Deactivate</a>
                                 <a href="" class="btn btn-small" ng-click="vm.doactivate(doi.doi_id)" ng-if="doi.status=='INACTIVE'">Activate</a>
                             </div>
