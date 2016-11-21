@@ -361,6 +361,7 @@ class Registry_object extends MX_Controller
                 $doc['display_relationship'] = implode(', ', $doc['display_relationship']);
                 $doc['display_description'] = '';
             }
+
         }
 
         // search class for constructing search queries
@@ -409,10 +410,10 @@ class Registry_object extends MX_Controller
             if (!array_key_exists('docs', $related[$rr])) {
                 $related[$rr]['docs'] = [];
             }
-        }
 
-        if ($rr == "researchers") {
-            $related[$rr]['docs'] = $this->researcherSort($related[$rr]['docs']);
+            if ($rr == "researchers" || $rr == "organisations") {
+                $related[$rr]['docs'] = $this->researcherSort($related[$rr]['docs']);
+            }
         }
 
         return $related;
