@@ -41,7 +41,6 @@ class RelationshipProvider
         // TODO: save metadata parents_activity_ids
         // find directly related parents activity and all directly related parents activities of them until none are found
 
-
         // TODO: save metadata parents_collection_ids
     }
 

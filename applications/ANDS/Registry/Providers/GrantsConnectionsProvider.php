@@ -8,6 +8,10 @@ use ANDS\Registry\Connections;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 
+/**
+ * Class GrantsConnectionsProvider
+ * @package ANDS\Registry\Providers
+ */
 class GrantsConnectionsProvider extends Connections
 {
 
@@ -191,6 +195,11 @@ class GrantsConnectionsProvider extends Connections
      */
     public function getDirectFunder(RegistryObject $record)
     {
+        // see if it's saved in the metadata
+        $saved = $record->getRegistryObjectMetadata('funder_id');
+        if ($saved) {
+            return RegistryObjectsRepository::getRecordByID($saved->value);
+        }
 
         // find a direct relation
         $direct = $this->init()
