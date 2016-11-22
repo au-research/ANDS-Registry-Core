@@ -82,3 +82,27 @@ VIEW `dbs_registry`.`identifier_relationships` AS
 	WHERE
 		`ros`.`status` = 'PUBLISHED' AND (`rot`.`status` IS NULL OR `rot`.`status` = 'PUBLISHED')
 
+create view dbs_registry.`implicit_relationships` as
+  select
+         ros.key as `from_key`,
+         ros.group as `from_group` ,
+         ros.title as `from_title` ,
+         ros.class as `from_class`,
+         ros.type as `from_type`,
+         ros.slug as `from_slug`,
+         ros.data_source_id as `from_data_source_id`,
+         ros.status as `from_status`,
+    roir.*,
+         rot.key as `to_key`,
+         rot.group as `to_group` ,
+         rot.title as `to_title`,
+         rot.class as `to_class`,
+         rot.type as `to_type`,
+         rot.slug as `to_slug`,
+         rot.data_source_id as `to_data_source_id`,
+         rot.status as `to_status`
+  from dbs_registry.registry_object_implicit_relationships roir
+    left join dbs_registry.registry_objects ros on roir.from_id = ros.registry_object_id
+    left outer join dbs_registry.registry_objects rot on roir.to_id = rot.registry_object_id
+  WHERE
+    ros.status = 'PUBLISHED' AND rot.status = 'PUBLISHED';
