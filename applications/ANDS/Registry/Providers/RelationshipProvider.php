@@ -45,24 +45,37 @@ class RelationshipProvider
     public static function processGrantsRelationship(RegistryObject $record)
     {
         $provider = GrantsConnectionsProvider::create();
+        $record->setRegistryObjectMetadata('funder_id', null);
+        $record->setRegistryObjectMetadata('parents_collection_ids', null);
+        $record->setRegistryObjectMetadata('parents_activity_ids', null);
 
         // find funder and saved it, getFunder is recursive by default
-        $funder = $provider->getFunder($record);
-        $record->setRegistryObjectMetadata('funder_id', $funder->registry_object_id);
-
-        // find all parents activities
-        $activities = $provider->getParentsActivities($record);
-        $record->setRegistryObjectMetadata(
-            'parents_activity_ids',
-            implode(',', collect($activities)->pluck('registry_object_id')->toArray())
-        );
+        if ($funder = $provider->getFunder($record)) {
+            $record->setRegistryObjectMetadata('funder_id', $funder->registry_object_id);
+        }
 
         // find all parents collections
-        $collections = $provider->getParentsCollections($record);
-        $record->setRegistryObjectMetadata(
-            'parents_collection_ids',
-            implode(',', collect($collections)->pluck('registry_object_id')->toArray())
-        );
+        if ($collections = $provider->getParentsCollections($record)) {
+            $record->setRegistryObjectMetadata(
+                'parents_collection_ids',
+                implode(',', collect($collections)
+                    ->pluck('registry_object_id')
+                    ->unique()
+                    ->toArray()
+                )
+            );
+        }
+
+        // find all parents activities
+        if ($activities = $provider->getParentsActivities($record)) {
+            $record->setRegistryObjectMetadata(
+                'parents_activity_ids',
+                implode(',', collect($activities)->pluck('registry_object_id')->unique()->toArray())
+            );
+        }
+
+
+
     }
 
     /**
@@ -79,14 +92,12 @@ class RelationshipProvider
         $provider = Connections::getStandardProvider();
 
         // directly related
-        $relations = $provider->setFilter('from_key', $record->key)->get();
+        $relations = $provider
+            ->setFilter('from_key', $record->key)
+            ->get();
 
-        $relatedObjects = [];
-        foreach ($relations as $relation) {
-            $relatedObjects[] = $relation->to();
-        }
 
-        return $relatedObjects;
+        return $relations;
     }
 
     /**
@@ -98,21 +109,27 @@ class RelationshipProvider
     public static function getGrantsRelationship(RegistryObject $record)
     {
         // funder
-        $funderID = $record->getRegistryObjectMetadata('funder_id')->value;
-        $funder = RegistryObjectsRepository::getRecordByID($funderID);
+        if ($funderMetadata = $record->getRegistryObjectMetadata('funder_id')) {
+            $funderID = $funderMetadata->value;
+            $funder = RegistryObjectsRepository::getRecordByID($funderID);
+        }
 
         // parents_activities
-        $parentsActivityIDs = $record->getRegistryObjectMetadata('parents_activity_ids')->value;
-        $parentsActivities = RegistryObject::whereIn('registry_object_id', explode(',', $parentsActivityIDs))->get()->toArray();
+        if ($parentsActivityMetadata = $record->getRegistryObjectMetadata('parents_activity_ids')) {
+            $parentsActivityIDs = $parentsActivityMetadata->value;
+            $parentsActivities = RegistryObject::whereIn('registry_object_id', explode(',', $parentsActivityIDs))->get()->toArray();
+        }
 
-        // parents_activities
-        $parentsCollectionIDs = $record->getRegistryObjectMetadata('parents_collection_ids')->value;
-        $parentsCollections = RegistryObject::whereIn('registry_object_id', explode(',', $parentsCollectionIDs))->get()->toArray();
+        // parents_collection_id
+        if ($parentsCollectionIDs = $record->getRegistryObjectMetadata('parents_collection_ids')) {
+            $parentsCollectionIDs = $parentsCollectionIDs->value;
+            $parentsCollections = RegistryObject::whereIn('registry_object_id', explode(',', $parentsCollectionIDs))->get()->toArray();
+        }
 
         return [
-            'funder' => $funder,
-            'parents_activities' => $parentsActivities,
-            'parents_collections' => $parentsCollections
+            'funder' => isset($funder) ? $funder : null,
+            'parents_activities' => isset($parentsActivities) ? $parentsActivities : [],
+            'parents_collections' => isset($parentsCollections) ? $parentsCollections : []
         ];
     }
 }

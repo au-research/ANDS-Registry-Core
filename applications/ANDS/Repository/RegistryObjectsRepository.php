@@ -134,7 +134,10 @@ class RegistryObjectsRepository
 
     public static function getRecordsByDataSourceIDAndStatus($dataSourceId, $status, $offset=0, $limit=10)
     {
-        return  RegistryObject::where('data_source_id', $dataSourceId)->where('status', $status)->limit($limit)->offset($offset)->get();
+        return RegistryObject::where('data_source_id', $dataSourceId)
+            ->where('status', $status)
+            ->limit($limit)
+            ->offset($offset)->get();
     }
 
     public static function getRecordByID($id)

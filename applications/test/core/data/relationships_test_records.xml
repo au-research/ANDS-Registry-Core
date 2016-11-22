@@ -155,8 +155,7 @@ DEV team
       DEV team
     </originatingSource>
     <collection type="collection">
-      <identifier type="uri">
-        GrantsTestCollection1_identifier</identifier>
+      <identifier type="uri">GrantsTestCollection1_identifier</identifier>
       <name type="primary">
         <namePart>Collection One</namePart>
       </name>

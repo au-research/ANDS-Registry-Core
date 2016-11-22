@@ -3,7 +3,9 @@
 
 namespace ANDS\API\Task\ImportSubTask;
 
+use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\RegistryObject\Relationship;
+use ANDS\Repository\RegistryObjectsRepository;
 
 class ProcessRelationships extends ImportSubTask
 {
@@ -19,6 +21,10 @@ class ProcessRelationships extends ImportSubTask
         foreach ($importedRecords as $index => $roID) {
             $ro = $this->parent()->getCI()->ro->getByID($roID);
             $ro->addRelationships();
+
+            $record = RegistryObjectsRepository::getRecordByID($roID);
+            RelationshipProvider::processGrantsRelationship($record);
+
             $this->updateProgress($index, $total, "Processed ($index/$total) $ro->title($roID)");
         }
 

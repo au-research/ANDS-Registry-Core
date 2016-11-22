@@ -5,6 +5,7 @@ namespace ANDS\API\Task\ImportSubTask;
 
 use ANDS\Repository\RegistryObjectsRepository as Repo;
 use ANDS\Repository\DataSourceRepository;
+use ANDS\Repository\RegistryObjectsRepository;
 
 class IndexPortal extends ImportSubTask
 {
@@ -21,20 +22,21 @@ class IndexPortal extends ImportSubTask
 
         $this->parent()->getCI()->load->model('registry/registry_object/registry_objects', 'ro');
         $this->parent()->getCI()->load->library('solr');
-        $this->parent()->updateHarvest(["importer_message" => "Indexing ".count($this->parent()->getTaskData("importedRecords"))." records"]);
+
         $importedRecords = $this->parent()->getTaskData("importedRecords");
         $total = count($importedRecords);
+
+        $this->parent()->updateHarvest(
+            ["importer_message" => "Indexing $total importedRecords"]
+        );
 
         // TODO: MAJORLY REFACTOR THIS
         foreach ($importedRecords as $index=>$roID) {
 
             $ro = $this->parent()->getCI()->ro->getByID($roID);
 
-            // $ro->setMetadata('solr_doc', json_encode($index));
-
-            $this->log("Indexing ".$roID);
-
-            $portalIndex = $ro->indexable_json();
+            // index without relationship data
+            $portalIndex = $ro->indexable_json(null, []);
             if (count($portalIndex) > 0) {
                 // TODO: Check response
                 $this->parent()->getCI()->solr->init()->setCore('portal');
@@ -44,18 +46,9 @@ class IndexPortal extends ImportSubTask
                     ->addJSONDoc(json_encode($portalIndex));
             }
 
-            $relationIndex = $ro->getRelationshipIndex();
-            if (count($relationIndex) > 0) {
-                // TODO: Check response
-                $this->parent()->getCI()->solr->init()
-                    ->setCore('relations')
-                    ->add_json(json_encode($relationIndex));
-            }
-
             $this->updateProgress($index, $total, "Processed ($index/$total) $ro->title($roID)");
         }
 
          $this->parent()->getCI()->solr->init()->setCore('portal')->commit();
-         $this->parent()->getCI()->solr->init()->setCore('relations')->commit();
     }
 }

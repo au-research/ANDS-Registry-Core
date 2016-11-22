@@ -356,7 +356,12 @@ class UnitTest
     public function assertContains($needle, $haystack)
     {
         $this->getReflectorInfo();
-        $this->ci->unit->run(in_array($needle, $haystack), 'is_true', $this->getName(), $this->getNote());
+        $this->ci->unit->run(
+            in_array($needle, $haystack),
+            'is_true',
+            $this->getName() . " assert $needle contains in ". implode(',', $haystack),
+            $this->getNote()
+        );
         $this->reset();
         return $this;
     }

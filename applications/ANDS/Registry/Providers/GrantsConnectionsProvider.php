@@ -5,8 +5,10 @@ namespace ANDS\Registry\Providers;
 
 
 use ANDS\Registry\Connections;
+use ANDS\Registry\IdentifierRelationshipView;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
+use Illuminate\Support\Collection;
 
 /**
  * Class GrantsConnectionsProvider
@@ -73,6 +75,21 @@ class GrantsConnectionsProvider extends Connections
         return null;
     }
 
+    /**
+     * A cacheable version of getFunder
+     *
+     * @param RegistryObject $record
+     * @return RegistryObject|null
+     */
+    public function getCacheableFunder(RegistryObject $record)
+    {
+        // see if it's saved in the metadata
+        $saved = $record->getRegistryObjectMetadata('funder_id');
+        if ($saved) {
+            return RegistryObjectsRepository::getRecordByID($saved->value);
+        }
+        return $this->getFunder($record);
+    }
 
     /**
      * Get parent activity
@@ -103,24 +120,27 @@ class GrantsConnectionsProvider extends Connections
         // reverse
         $reverse = $this->init()
             ->setFilter('to_key', $record->key)
-            ->setFilter('relation_type', ['hasOutput', 'outputs'])
+            ->setFilter('relation_type', ['hasOutput', 'outputs', 'produces'])
             ->setFilter('from_class', 'activity')
             ->setLimit(300)
             ->get();
 
+
         if (count($reverse) > 0) {
             foreach ($reverse as $relation) {
-                $activities[] = $relation->getObjects()->from();
+                $activities[] = $relation->from();
             }
         }
 
+
         // identifier
-        $directIdentifierRelationship = RegistryObject\IdentifierRelationship::where('from_key', $record->key)->where('relation_type', 'isOutputOf')->get();
+
+        $directIdentifierRelationship = IdentifierRelationshipView::where('from_key', $record->key)->where('relation_type', 'isOutputOf')->get();
         foreach ($directIdentifierRelationship as $relation) {
             $activities[] = RegistryObjectsRepository::getPublishedByKey($relation->to_key);
         }
 
-        $reverseIdentifierRelationship = RegistryObject\IdentifierRelationship::where('to_key', $record->key)->where('relation_type', ['hasOutput', 'outputs'])->get();
+        $reverseIdentifierRelationship = IdentifierRelationshipView::where('to_key', $record->key)->where('relation_type', ['hasOutput', 'outputs', 'produces'])->get();
         foreach ($reverseIdentifierRelationship as $relation) {
             $activities[] = RegistryObjectsRepository::getPublishedByKey($relation->from_key);
         }
@@ -149,7 +169,7 @@ class GrantsConnectionsProvider extends Connections
 
         if (count($direct) > 0) {
             foreach ($direct as $relation) {
-                $collections[] = $relation->getObjects()->to();
+                $collections[] = $relation->to();
             }
         }
 
@@ -162,8 +182,18 @@ class GrantsConnectionsProvider extends Connections
 
         if (count($reverse) > 0) {
             foreach ($reverse as $relation) {
-                $collections[] = $relation->getObjects()->from();
+                $collections[] = $relation->from();
             }
+        }
+
+        $directIdentifierRelationship = IdentifierRelationshipView::where('from_key', $record->key)->where('relation_type', 'isPartOf')->get();
+        foreach ($directIdentifierRelationship as $relation) {
+            $collections[] = RegistryObjectsRepository::getPublishedByKey($relation->to_key);
+        }
+
+        $reverseIdentifierRelationship = IdentifierRelationshipView::where('to_key', $record->key)->where('relation_type', 'hasPart')->get();
+        foreach ($reverseIdentifierRelationship as $relation) {
+            $collections[] = RegistryObjectsRepository::getPublishedByKey($relation->from_key);
         }
 
         return $collections;
@@ -191,7 +221,7 @@ class GrantsConnectionsProvider extends Connections
 
         if (count($direct) > 0) {
             foreach ($direct as $relation) {
-                $activities[] = $relation->getObjects()->to();
+                $activities[] = $relation->to();
             }
         }
 
@@ -204,7 +234,7 @@ class GrantsConnectionsProvider extends Connections
 
         if (count($reverse) > 0) {
             foreach ($reverse as $relation) {
-                $activities[] = $relation->getObjects()->from();
+                $activities[] = $relation->from();
             }
         }
 
@@ -220,12 +250,6 @@ class GrantsConnectionsProvider extends Connections
      */
     public function getDirectFunder(RegistryObject $record)
     {
-        // see if it's saved in the metadata
-        $saved = $record->getRegistryObjectMetadata('funder_id');
-        if ($saved) {
-            return RegistryObjectsRepository::getRecordByID($saved->value);
-        }
-
         // find a direct relation
         $direct = $this->init()
             ->setFilter('from_key', $record->key)
@@ -267,18 +291,43 @@ class GrantsConnectionsProvider extends Connections
     public function getParentsActivities(RegistryObject $record, $processed = [])
     {
         // check saved
-        $saved = $record->getRegistryObjectMetadata('parents_activity_ids');
-        if ($saved) {
-            return RegistryObject::whereIn(
-                'registry_object_id', explode(',', $saved->value)
-            )->get()->toArray();
+//        $saved = $record->getRegistryObjectMetadata('parents_activity_ids');
+//        if ($saved) {
+//            return RegistryObject::whereIn(
+//                'registry_object_id', explode(',', $saved->value)
+//            )->get()->toArray();
+//        }
+
+        $activities = new Collection();
+
+        if ($record->class == "activity") {
+             $activities = $this->getDirectGrantActivities($record);
         }
 
-        // activity
-        $activities = $this->getDirectGrantActivities($record);
+        if ($record->class == "collection") {
+            $activities = $this->getDirectActivityProducer($record);
+        }
 
         if (count($processed) == 0) {
-            $processed = collect($activities)->pluck('registry_object_id')->toArray();
+            $processed = collect($activities)->pluck('registry_object_id')->unique()->toArray();
+        }
+
+        if (count($activities) == 0) {
+            $parentCollections = $this->getDirectGrantCollections($record);
+            if (count($parentCollections) > 0) {
+                foreach ($parentCollections as $parentCollection) {
+                    $grandParents = $this->getParentsActivities($parentCollection, $processed);
+                    // make sure to only include grandParents who have not already been processed
+                    $grandParents = collect($grandParents)
+                        ->filter(function($item) use ($processed){
+                        return !in_array($item->registry_object_id, $processed);
+                    });
+
+                    if (count($grandParents) > 0) {
+                        $activities = collect($activities)->merge($grandParents);
+                    }
+                }
+            }
         }
 
         foreach ($activities as $parentActivity) {
@@ -287,10 +336,10 @@ class GrantsConnectionsProvider extends Connections
             // make sure to only include grandParents who have not already been processed
             $grandParents = collect($grandParents)->filter(function($item) use ($processed){
                return !in_array($item->registry_object_id, $processed);
-            })->toArray();
+            });
 
-            if (count($grandParents) > 0) {
-                $activities = array_merge($activities, $grandParents);
+            if ($grandParents->count() > 0) {
+                $activities = collect($activities)->merge($grandParents);
             }
         }
 
@@ -307,14 +356,13 @@ class GrantsConnectionsProvider extends Connections
     public function getParentsCollections(RegistryObject $record, $processed = [])
     {
         // check saved
-        $saved = $record->getRegistryObjectMetadata('parents_collection_ids');
-        if ($saved) {
-            return RegistryObject::whereIn(
-                'registry_object_id', explode(',', $saved->value)
-            )->get()->toArray();
-        }
+//        $saved = $record->getRegistryObjectMetadata('parents_collection_ids');
+//        if ($saved) {
+//            return RegistryObject::whereIn(
+//                'registry_object_id', explode(',', $saved->value)
+//            )->get()->toArray();
+//        }
 
-        // activity
         $collections = $this->getDirectGrantCollections($record);
 
         if (count($processed) == 0) {
@@ -327,10 +375,10 @@ class GrantsConnectionsProvider extends Connections
             // make sure to only include grandParents who have not already been processed
             $grandParents = collect($grandParents)->filter(function($item) use ($processed){
                 return !in_array($item->registry_object_id, $processed);
-            })->toArray();
+            });
 
             if (count($grandParents) > 0) {
-                $collections = array_merge($collections, $grandParents);
+                $collections = collect($collections)->merge($grandParents);
             }
         }
 

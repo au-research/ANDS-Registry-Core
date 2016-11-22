@@ -302,6 +302,7 @@ class ImportTask extends Task
                     "ProcessRelationships",
                     "ProcessQualityMetadata",
                     "IndexPortal",
+                    "IndexRelationship",
                     "OptimizeRelationship",
                     //"HandleIncrementalHarvest",
                     //"ScheduleHarvest",
