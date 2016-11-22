@@ -164,8 +164,7 @@ class TestIndexRelationshipTask extends UnitTest
         $a5funder = GrantsConnectionsProvider::create()->getFunder($a5);
         $this->assertEquals($a5funder->key, "GrantsTestFunder1_key");
 
-
-//        $this->deleteRecords();
+        $this->deleteRecords();
     }
 
     /**

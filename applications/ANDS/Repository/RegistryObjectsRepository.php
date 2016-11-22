@@ -74,6 +74,22 @@ class RegistryObjectsRepository
         }
     }
 
+    /**
+     * @param $id
+     */
+    public static function completelyEraseMetadataByID($id)
+    {
+        static::deleteRelationships($id);
+
+        // delete identifiers
+        Identifier::where('registry_object_id', $id)->delete();
+
+        // delete metadata
+        Metadata::where('registry_object_id', $id)->delete();
+
+        static::deleteIdentifierRelationships($id);
+    }
+
 
     /**
      * Completely erase the existence of a record by key

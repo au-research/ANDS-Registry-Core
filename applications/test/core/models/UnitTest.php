@@ -90,13 +90,13 @@ class UnitTest
                         $this->benchmark[$function] = $this->ci->benchmark->elapsed_time('start', 'end', 5);
                         $this->tearDown();
                     } catch (\Exception $e) {
-                        $this->ci->unit->run(false, true, $function, $e->getMessage());
+                        $this->ci->unit->run(false, true, $function, "Excetion: ". $e->getMessage());
                     }
                 }
             }
             $this->tearDownAfterClass();
         } catch (\Exception $e) {
-            $this->ci->unit->run(false, true, $this->getName(), $e->getMessage());
+            $this->ci->unit->run(false, true, $this->getName(), "Exception: ". $e->getMessage());
         }
 
         // returns the correct time value for the function executed
@@ -279,8 +279,14 @@ class UnitTest
      */
     public function assertNull($input)
     {
+        $type = gettype($input);
         $this->getReflectorInfo();
-        $this->ci->unit->run(is_null($input), 'is_true', $this->getName(), $this->getNote());
+        $this->ci->unit->run(
+            is_null($input),
+            'is_true',
+            $this->getName() . " asserting $type is null",
+            $this->getNote()
+        );
         $this->reset();
         return $this;
     }
