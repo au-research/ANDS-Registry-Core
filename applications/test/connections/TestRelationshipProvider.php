@@ -70,4 +70,11 @@ class TestRelationshipProvider extends UnitTest
         $this->assertGreaterThanOrEqual(count(explode(',', $metadata)), 2);
 
     }
+
+    public function test_it_sould_delete_all_relationships(){
+        $collectionkey = 'AUTestingRecords2ExampleActivityForLargeNumberRelations29';
+        $record = RegistryObjectsRepository::getPublishedByKey($collectionkey);
+
+        RelationshipProvider::process($record);
+    }
 }
