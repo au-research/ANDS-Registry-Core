@@ -365,7 +365,7 @@ class UnitTest
         $this->ci->unit->run(
             in_array($needle, $haystack),
             'is_true',
-            $this->getName() . " assert $needle contains in ". implode(',', $haystack),
+            $this->getName() . " assert $needle contains in [". implode(',', $haystack)."]",
             $this->getNote()
         );
         $this->reset();

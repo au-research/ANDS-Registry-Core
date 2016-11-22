@@ -32,7 +32,6 @@ class IndexPortal extends ImportSubTask
 
         // TODO: MAJORLY REFACTOR THIS
         foreach ($importedRecords as $index=>$roID) {
-
             $ro = $this->parent()->getCI()->ro->getByID($roID);
 
             // index without relationship data
@@ -40,10 +39,9 @@ class IndexPortal extends ImportSubTask
             if (count($portalIndex) > 0) {
                 // TODO: Check response
                 $this->parent()->getCI()->solr->init()->setCore('portal');
-                $this->parent()->getCI()->solr
-                    ->deleteByID($roID);
-                $this->parent()->getCI()->solr
-                    ->addJSONDoc(json_encode($portalIndex));
+                $this->parent()->getCI()->solr->deleteByID($roID);
+                $this->parent()->getCI()->solr->commit();
+                $this->parent()->getCI()->solr->addJSONDoc(json_encode($portalIndex));
             }
 
             $this->updateProgress($index, $total, "Processed ($index/$total) $ro->title($roID)");

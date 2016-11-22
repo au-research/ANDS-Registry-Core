@@ -37,6 +37,15 @@ class Relation
     }
 
     /**
+     * @param $key
+     * @param $value
+     */
+    public function replaceProperty($key, $value)
+    {
+        $this->properties[$key] = $value;
+    }
+
+    /**
      * Relation constructor.
      */
     function __construct()
@@ -115,8 +124,7 @@ class Relation
     public function flip()
     {
         $relation = new static;
-        foreach ($this->getProperties() as $key=>$value) {
-
+        foreach ($this->getProperties() as $key => $value) {
             // if it starts with from
             if (strpos($key, 'from_') === 0) {
                 $replace = str_replace("from_", "to_", $key);
@@ -127,8 +135,13 @@ class Relation
             } else {
                 $relation->setProperty($key, $value);
             }
+        }
 
-            // @todo flip relation_type as well
+        // flip relation_origin
+        if ($this->getProperty('to_data_source_id') == $relation->getProperty('from_data_source_id')) {
+            $relation->replaceProperty("relation_origin", "REVERSE_INT");
+        } else {
+            $relation->replaceProperty("relation_origin", "REVERSE_EXT");
         }
 
         return $relation;

@@ -18,6 +18,10 @@ class ProcessRelationships extends ImportSubTask
         $this->parent()->getCI()->load->model('registry/registry_object/registry_objects', 'ro');
         $importedRecords = $this->parent()->getTaskData("importedRecords");
         $total = count($importedRecords);
+
+        // TODO: Order importedRecords by class
+
+
         foreach ($importedRecords as $index => $roID) {
             $ro = $this->parent()->getCI()->ro->getByID($roID);
             $ro->addRelationships();

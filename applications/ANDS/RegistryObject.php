@@ -102,6 +102,17 @@ class RegistryObject extends Model
     }
 
     /**
+     * Delete Registry Object Metadata
+     * @param $key
+     * @return mixed
+     */
+    public function deleteRegistryObjectMetadata($key)
+    {
+        return Metadata::where('registry_object_id', $this->registry_object_id)
+            ->where('attribute', $key)->delete();
+    }
+
+    /**
      * set RegistryObjectMetadata value
      *
      * @param $key

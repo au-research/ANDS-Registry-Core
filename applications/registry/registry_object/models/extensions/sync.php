@@ -278,7 +278,6 @@ class Sync_extension extends ExtensionBase{
             $json['related_info_search'] .= htmlspecialchars(trim($node->nodeValue));
         }
 
-
 		//citation metadata text
 		$json['citation_info_search'] = '';
 		foreach($gXPath->query('//ro:citationInfo') as $node) {
@@ -533,41 +532,6 @@ class Sync_extension extends ExtensionBase{
             $principalInvestigators = $this->ro->getPrincipalInvestigator($gXPath, $relatedObjects);
             if (sizeof($principalInvestigators) > 0) {
                 $json['principal_investigator'] = $principalInvestigators;
-            }
-        }
-
-        //Grants Structure Recursive
-        $grantStructureParents = $this->ro->getParentsGrants(false, array(),true);
-        if ($grantStructureParents && sizeof($grantStructureParents) > 0) {
-            $json['relation_grants_isFundedBy'] = '';
-            $json['relation_grants_isPartOf'] = '';
-            $json['relation_grants_isOutputOf'] = '';
-            foreach ($grantStructureParents as $parent) {
-                if ($parent['relation_type'] == 'isFundedBy' || $parent['relation_type'] == 'isFunderOf') {
-                    $json['relation_grants_isFundedBy'][] = $parent['registry_object_id'];
-                }  elseif ($parent['relation_type'] == 'isPartOf' || $parent['relation_type'] == 'hasPart') {
-                    $json['relation_grants_isPartOf'][] = $parent['registry_object_id'];
-                } elseif ($parent['relation_type'] == 'isOutputOf' || $parent['relation_type'] == 'hasOutput') {
-                    $json['relation_grants_isOutputOf'][] = $parent['registry_object_id'];
-                }
-            }
-        }
-
-
-        //Grants Structure Direct (helps with tree generation)
-        $grantStructureParents = $this->ro->getParentsGrants(false, array(),false);
-        if ($grantStructureParents && sizeof($grantStructureParents) > 0) {
-            $json['relation_grants_isFundedBy_direct'] = '';
-            $json['relation_grants_isPartOf_direct'] = '';
-            $json['relation_grants_isOutputOf_direct'] = '';
-            foreach ($grantStructureParents as $parent) {
-                if ($parent['relation_type'] == 'isFundedBy' || $parent['relation_type'] == 'isFunderOf') {
-                    $json['relation_grants_isFundedBy_direct'][] = $parent['registry_object_id'];
-                }  elseif ($parent['relation_type'] == 'isPartOf' || $parent['relation_type'] == 'hasPart') {
-                    $json['relation_grants_isPartOf_direct'][] = $parent['registry_object_id'];
-                } elseif ($parent['relation_type'] == 'isOutputOf' || $parent['relation_type'] == 'hasOutput') {
-                    $json['relation_grants_isOutputOf_direct'][] = $parent['registry_object_id'];
-                }
             }
         }
 

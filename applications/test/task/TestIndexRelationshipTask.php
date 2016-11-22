@@ -167,6 +167,34 @@ class TestIndexRelationshipTask extends UnitTest
         $this->deleteRecords();
     }
 
+    /** @test **/
+    public function test_it_should_contain_the_needed_relationship_index()
+    {
+        // $this->importRecords("clean_grants_test_records.xml");
+        $c2 = RegistryObjectsRepository::getPublishedByKey("GrantsTestCollection2_key");
+
+        $dataSource = DataSourceRepository::getByKey("AUTEST1");
+        $importTask = new ImportTask;
+        $importTask->init([
+            'params' => http_build_query([
+                'ds_id' => $dataSource->data_source_id,
+                'targetStatus' => 'PUBLISHED'
+            ])
+        ])->skipLoadingPayload()->enableRunAllSubTask()->initialiseTask();
+        $importTask->setTaskData("importedRecords", [$c2->registry_object_id]);
+
+        $processRelationshipTask = $importTask->getTaskByName("ProcessRelationships");
+        $processRelationshipTask->run();
+
+        $indexPortalTask = $importTask->getTaskByName("IndexPortal");
+        $indexPortalTask->run();
+
+        $indexRelationTask = $importTask->getTaskByName("IndexRelationship");
+        $indexRelationTask->run();
+
+//        $this->deleteRecords();
+    }
+
     /**
      * @param $file
      */

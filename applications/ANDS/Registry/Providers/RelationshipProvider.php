@@ -191,16 +191,15 @@ class RelationshipProvider
     public static function processGrantsRelationship(RegistryObject $record)
     {
         $provider = GrantsConnectionsProvider::create();
-        $record->setRegistryObjectMetadata('funder_id', null);
-        $record->setRegistryObjectMetadata('parents_collection_ids', null);
-        $record->setRegistryObjectMetadata('parents_activity_ids', null);
 
         // find funder and saved it, getFunder is recursive by default
+        $record->deleteRegistryObjectMetadata('funder_id');
         if ($funder = $provider->getFunder($record)) {
             $record->setRegistryObjectMetadata('funder_id', $funder->registry_object_id);
         }
 
         // find all parents collections
+        $record->deleteRegistryObjectMetadata('parents_collection_ids');
         if ($collections = $provider->getParentsCollections($record)) {
             $record->setRegistryObjectMetadata(
                 'parents_collection_ids',
@@ -213,6 +212,7 @@ class RelationshipProvider
         }
 
         // find all parents activities
+        $record->deleteRegistryObjectMetadata('parents_activity_ids');
         if ($activities = $provider->getParentsActivities($record)) {
             $record->setRegistryObjectMetadata(
                 'parents_activity_ids',
@@ -241,7 +241,18 @@ class RelationshipProvider
         $relations = $provider
             ->setFilter('from_key', $record->key)
             ->get();
+        return $relations;
+    }
 
+    public static function getReverseRelationship(RegistryObject $record)
+    {
+        $provider = Connections::getStandardProvider();
+
+        // reverse related
+        $relations = $provider
+            ->setFilter('to_key', $record->key)
+            ->setReverse(true)
+            ->get();
 
         return $relations;
     }

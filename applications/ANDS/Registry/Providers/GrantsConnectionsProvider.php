@@ -19,12 +19,19 @@ class GrantsConnectionsProvider extends Connections
 
     /**
      * Get a funder of a particular record
+     * TODO: when traversing a node that has a cached funder, return that
      *
      * @param RegistryObject $record
      * @return RegistryObject|null
      */
     public function getFunder(RegistryObject $record)
     {
+        // see if it's saved in the metadata
+        $saved = $record->getRegistryObjectMetadata('funder_id');
+        if ($saved) {
+            return RegistryObjectsRepository::getRecordByID($saved->value);
+        }
+
         // if there's a direct funder, get that one
         $funder = $this->getDirectFunder($record);
         if ($funder !== null) {
@@ -73,22 +80,6 @@ class GrantsConnectionsProvider extends Connections
         }
 
         return null;
-    }
-
-    /**
-     * A cacheable version of getFunder
-     *
-     * @param RegistryObject $record
-     * @return RegistryObject|null
-     */
-    public function getCacheableFunder(RegistryObject $record)
-    {
-        // see if it's saved in the metadata
-        $saved = $record->getRegistryObjectMetadata('funder_id');
-        if ($saved) {
-            return RegistryObjectsRepository::getRecordByID($saved->value);
-        }
-        return $this->getFunder($record);
     }
 
     /**
@@ -284,6 +275,8 @@ class GrantsConnectionsProvider extends Connections
 
     /**
      * Get all parents activities from a given node
+     * TODO: cache
+     *
      * @param RegistryObject $record
      * @param array $processed
      * @return array
@@ -291,12 +284,12 @@ class GrantsConnectionsProvider extends Connections
     public function getParentsActivities(RegistryObject $record, $processed = [])
     {
         // check saved
-//        $saved = $record->getRegistryObjectMetadata('parents_activity_ids');
-//        if ($saved) {
-//            return RegistryObject::whereIn(
-//                'registry_object_id', explode(',', $saved->value)
-//            )->get()->toArray();
-//        }
+        $saved = $record->getRegistryObjectMetadata('parents_activity_ids');
+        if ($saved) {
+            return RegistryObject::whereIn(
+                'registry_object_id', explode(',', $saved->value)
+            )->get();
+        }
 
         $activities = new Collection();
 
@@ -348,7 +341,7 @@ class GrantsConnectionsProvider extends Connections
 
     /**
      * Get all parents collections from a given node
-     *
+     * TODO: cache
      * @param RegistryObject $record
      * @param array $processed
      * @return array
@@ -356,12 +349,12 @@ class GrantsConnectionsProvider extends Connections
     public function getParentsCollections(RegistryObject $record, $processed = [])
     {
         // check saved
-//        $saved = $record->getRegistryObjectMetadata('parents_collection_ids');
-//        if ($saved) {
-//            return RegistryObject::whereIn(
-//                'registry_object_id', explode(',', $saved->value)
-//            )->get()->toArray();
-//        }
+        $saved = $record->getRegistryObjectMetadata('parents_collection_ids');
+        if ($saved) {
+            return RegistryObject::whereIn(
+                'registry_object_id', explode(',', $saved->value)
+            )->get();
+        }
 
         $collections = $this->getDirectGrantCollections($record);
 
