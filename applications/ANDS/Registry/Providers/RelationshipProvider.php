@@ -62,8 +62,10 @@ class RelationshipProvider
             !in_array($primary_key_1, $explicit_keys)
         ) {
             $explicit_keys[] = $primary_key_1;
-            $relationType = $dataSource->getDataSourceAttributeValue($record->class . 'rel_1');;
+
+            $relationType = $dataSource->getDataSourceAttributeValue($record->class . '_rel_1');
             $this_relationship = format_relationship($record->class, $relationType, PRIMARY_RELATIONSHIP, $primaryRecord->class);
+            dd($this_relationship);
             Relationship::create([
                 "registry_object_id" => $record->registry_object_id,
                 "related_object_key" => $primary_key_1,
@@ -81,7 +83,7 @@ class RelationshipProvider
             $primary_key_2 != $record->key &&
             !in_array($primary_key_2, $explicit_keys)
         ) {
-            $relationType = $dataSource->getDataSourceAttributeValue($record->class . 'rel_2');;
+            $relationType = $dataSource->getDataSourceAttributeValue($record->class . '_rel_2');;
             $this_relationship = format_relationship($record->class, $relationType, PRIMARY_RELATIONSHIP, $primaryRecord->class);
             Relationship::create([
                 "registry_object_id" => $record->registry_object_id,

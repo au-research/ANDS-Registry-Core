@@ -72,7 +72,7 @@ class TestRelationshipProvider extends UnitTest
     }
 
     public function test_it_sould_delete_all_relationships(){
-        $collectionkey = 'AUTestingRecords2ExampleActivityForLargeNumberRelations29';
+        $collectionkey = 'IMOS/3ece0a18-0809-3fed-932a-021069ee911b';
         $record = RegistryObjectsRepository::getPublishedByKey($collectionkey);
 
         RelationshipProvider::process($record);
