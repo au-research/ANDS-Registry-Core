@@ -35,28 +35,17 @@ class IndexRelationship extends ImportSubTask
             ["importer_message" => "Indexing $total importedRecords"]
         );
 
-        return;
-
         // TODO: MAJORLY REFACTOR THIS
         foreach ($importedRecords as $index => $roID) {
             $record = RegistryObjectsRepository::getRecordByID($roID);
 
-            $directRelationship = RelationshipProvider::getDirectRelationship($record);
-            $reverseRelationship = RelationshipProvider::getReverseRelationship($record);
-            $grantRelationship = RelationshipProvider::getGrantsRelationship($record);
+            $allRelationships = RelationshipProvider::getMergedRelationships($record);
 
             // update portal index
-            $this->updatePortalIndex($record, [
-                'directRelationship' => $directRelationship,
-                'grantRelationship' => $grantRelationship
-            ]);
+            $this->updatePortalIndex($record, $allRelationships);
 
             // update relation index
-            $this->updateRelationIndex($record, [
-                'directRelationship' => $directRelationship,
-                'grantRelationship' => $grantRelationship,
-                'reverseRelationship' => $reverseRelationship
-            ]);
+            $this->updateRelationIndex($record, $allRelationships);
 
             $this->updateProgress(
                 $index, $total, "Processed ($index/$total) $record->title($roID)"
@@ -73,15 +62,13 @@ class IndexRelationship extends ImportSubTask
      */
     public function updatePortalIndex($record, $relationships)
     {
-        $directRelationship = $relationships['directRelationship'];
-        $grantRelationship = $relationships['grantRelationship'];
-
+        $this->parent()->getCI()->solr->init()->setCore('portal');
         // update portal index
         $updateDoc = [
             'id' => $record->registry_object_id
         ];
 
-        foreach ($directRelationship as $relation) {
+        foreach ($relationships as $relation) {
             $rel = $relation->format();
             $class = $rel['to_class'];
             if ($rel['to_class'] == 'party') {
@@ -91,42 +78,18 @@ class IndexRelationship extends ImportSubTask
                     $class = "party_one";
                 }
             }
-            $relationType = $rel['relation_type'];
+
+            $relationType = is_array($rel['relation_type']) ? $rel['relation_type'] : [$rel['relation_type']];
             $updateDoc["related_".$class."_id"][] = $rel['to_id'];
             $updateDoc["related_".$class."_title"][] = $rel['to_title'];
-            $updateDoc["relationType_".$relationType."_id"][] = $rel['to_id'];
-        }
-
-        // funder
-        $funder = $grantRelationship['funder'];
-        if ($funder) {
-            $updateDoc["related_party_multi_id"][] = $funder->registry_object_id;
-            $updateDoc["relation_grants_isFundedBy"][] = $funder->registry_object_id;
-            $updateDoc["related_party_multi_title"][] = $funder->title;
-            $updateDoc["relationType_isFundedBy_id"][] = $funder->registry_object_id;
-        }
-
-        //parents_activities
-        $isOutputOf = $grantRelationship['parents_activities'];
-        if (count($isOutputOf) > 0) {
-            foreach ($isOutputOf as $grant) {
-                $updateDoc["related_activity_id"][] = $grant['registry_object_id'];
-                $updateDoc["relation_grants_isOutputOf"][] = $grant['registry_object_id'];
-                $updateDoc["relationType_isOutputOf_id"][] = $grant['registry_object_id'];
-                $updateDoc["related_activity_title"][] = $grant['title'];
+            foreach ($relationType as $type) {
+                $updateDoc["relationType_".$type."_id"][] = $rel['to_id'];
             }
         }
 
-        //parents collection
-        $isPartof = $grantRelationship['parents_collections'];
-        if (count($isPartof) > 0) {
-            foreach ($isPartof as $parent) {
-                $updateDoc["related_collection_id"][] = $parent['registry_object_id'];
-                $updateDoc["relation_grants_isPartOf"][] = $parent['registry_object_id'];
-                $updateDoc["relationType_isPartOf_id"][] = $parent['registry_object_id'];
-                $updateDoc["related_collection_title"][] = $parent['title'];
-            }
-        }
+        // relation_grants_isFundedBy
+        // relation_grants_isOutputOf
+        // relation_grants_isPartOf
 
         foreach ($updateDoc as $key => &$value) {
             if (is_array($value)) {
@@ -146,10 +109,34 @@ class IndexRelationship extends ImportSubTask
      */
     public function updateRelationIndex($record, $relationships)
     {
-        $directRelationship = $relationships['directRelationship'];
-        $reverseRelationship = $relationships['reverseRelationship'];
-        $grantRelationship = $relationships['grantRelationship'];
+        // delete all from_id
+        $this->parent()->getCI()->solr->init()->setCore('relations');
+        $this->parent()->getCI()->solr->deleteByQueryCondition('from_id:'.$record->registry_object_id);
 
+        // add
+        $docs = [];
+        foreach ($relationships as $relation) {
+            $doc = $relation->format();
+            $doc['id'] = $doc['from_id'].$doc['to_key'];
+            unset($doc['from_data_source_id']);
+            unset($doc['to_data_source_id']);
+            $doc['relation'] = [$doc['relation_type']];
+            unset($doc['relation_type']);
+            if (!is_array($doc['relation'])) {
+                $doc['relation'] = [$doc['relation']];
+                $doc['relation'] = [$doc['relation_origin']];
+            }
 
+            // to_finder is the title
+            if ((in_array('funds', $doc['relation']) ||
+                in_array('isFundedBy', $doc['relation']))
+                && in_array($doc['to_class'], ['activity', 'collection'])
+            ) {
+                $doc['to_funder'] = $doc['from_title'];
+            }
+
+            $docs[] = $doc;
+        }
+        $this->parent()->getCI()->solr->add_json(json_encode($docs));
     }
 }

@@ -165,6 +165,8 @@ class TestIndexRelationshipTask extends UnitTest
         $a5funder = GrantsConnectionsProvider::create()->getFunder($a5);
         $this->assertEquals($a5funder->key, "GrantsTestFunder1_key");
 
+        // TODO: Test SOLR relationship
+
 //        $this->deleteRecords();
     }
 
@@ -186,12 +188,15 @@ class TestIndexRelationshipTask extends UnitTest
 
         $processRelationshipTask = $importTask->getTaskByName("ProcessRelationships");
         $processRelationshipTask->run();
+        var_dump($processRelationshipTask->getTaskData('benchmark'));
 
         $indexPortalTask = $importTask->getTaskByName("IndexPortal");
         $indexPortalTask->run();
+        var_dump($indexPortalTask->getTaskData('benchmark'));
 
         $indexRelationTask = $importTask->getTaskByName("IndexRelationship");
         $indexRelationTask->run();
+        var_dump($indexRelationTask->getTaskData('benchmark'));
 
 //        $deleteTask = $this->deleteRecords();
     }
@@ -229,14 +234,22 @@ class TestIndexRelationshipTask extends UnitTest
             ])
         ])->skipLoadingPayload();
 
-        $ids = RegistryObject::where('data_source_id', 213)->get()->pluck('registry_object_id')->toArray();
+        $ids = RegistryObject::where('data_source_id', 213)
+            ->where('status', 'PUBLISHED')
+            ->get()->pluck('registry_object_id')
+            ->toArray();
+
         $importTask->setTaskData('importedRecords', $ids);
 
         $importTask->initialiseTask();
         $processRelationship = $importTask->getTaskByName("ProcessRelationships");
-        $processRelationship->run_task();
+        $processRelationship->run();
 
-        dd($processRelationship->getMessage());
+        $indexPortal = $importTask->getTaskByName("IndexPortal");
+        $indexPortal->run();
+
+        $indexRelation = $importTask->getTaskByName("IndexRelationship");
+        $indexRelation->run();
 
     }
 

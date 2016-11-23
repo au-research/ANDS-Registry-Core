@@ -71,6 +71,17 @@ class Relation
     }
 
     /**
+     * Alias for getProperty
+     *
+     * @param $prop
+     * @return null
+     */
+    public function prop($prop)
+    {
+        return $this->getProperty($prop);
+    }
+
+    /**
      * @param $prop
      * @return bool
      */

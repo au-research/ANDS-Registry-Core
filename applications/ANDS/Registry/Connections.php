@@ -132,6 +132,23 @@ class Connections {
         return new static(new EloquentConnectionsRepository());
     }
 
+    public static function getIdentifierProvider()
+    {
+        $repository = new EloquentConnectionsRepository();
+        $repository->setViewSource(IdentifierRelationshipView::class);
+        return new static($repository);
+    }
+
+    /**
+     * @return static
+     */
+    public static function getImplicitProvider()
+    {
+        $repository = new EloquentConnectionsRepository();
+        $repository->setViewSource(ImplicitRelationshipView::class);
+        return new static($repository);
+    }
+
     public function __construct($repository) {
         $this->repo = $repository;
         $this->init();

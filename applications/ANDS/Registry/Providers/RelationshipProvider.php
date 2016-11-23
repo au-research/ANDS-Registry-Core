@@ -48,6 +48,43 @@ class RelationshipProvider
     }
 
     /**
+     * Get All Relationships
+     *
+     * @param RegistryObject $record
+     * @return array
+     */
+    public static function get(RegistryObject $record)
+    {
+        $allRelationships = [
+            'explicit' => static::getDirectRelationship($record),
+            'implicit' => static::getImplicitRelationship($record),
+            'identifier' => static::getIdentifierRelationship($record)
+        ];
+
+        return $allRelationships;
+    }
+
+    /**
+     * @param RegistryObject $record
+     * @return array
+     */
+    public static function getMergedRelationships(RegistryObject $record)
+    {
+        $allRelationships = static::get($record);
+        $allRelationships = collect($allRelationships)->flatten(1)->values()->all();
+        $result = [];
+        foreach ($allRelationships as $relation) {
+            $key = md5($relation->prop('to_key'), $relation->prop('from_key'));
+            if (array_key_exists($key, $result)) {
+                $result[$key]->mergeWith($relation->getProperties());
+            } else {
+                $result[$key] = $relation;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * Delete Relationship and IdentifierRelationships
      * Clean up before a processing
      *
@@ -245,6 +282,14 @@ class RelationshipProvider
                 'relation_type' => 'isFundedBy',
                 'relation_origin' => 'GRANTS'
             ]);
+
+            ImplicitRelationship::firstOrCreate([
+                'from_id' => $funder->registry_object_id,
+                'to_id' => $record->registry_object_id,
+                'relation_type' => 'funds',
+                'relation_origin' => 'GRANTS'
+            ]);
+
         }
 
         // find all parents collections
@@ -257,6 +302,14 @@ class RelationshipProvider
                     'relation_type' => 'isPartOf',
                     'relation_origin' => 'GRANTS'
                 ]);
+
+                ImplicitRelationship::firstOrCreate([
+                    'from_id' => $collection->registry_object_id,
+                    'to_id' => $record->registry_object_id,
+                    'relation_type' => 'hasPart',
+                    'relation_origin' => 'GRANTS'
+                ]);
+
             }
         }
 
@@ -268,6 +321,13 @@ class RelationshipProvider
                     'from_id' => $record->registry_object_id,
                     'to_id' => $activity->registry_object_id,
                     'relation_type' => 'isOutputOf',
+                    'relation_origin' => 'GRANTS'
+                ]);
+
+                ImplicitRelationship::firstOrCreate([
+                    'from_id' => $activity->registry_object_id,
+                    'to_id' => $record->registry_object_id,
+                    'relation_type' => 'outputs',
                     'relation_origin' => 'GRANTS'
                 ]);
             }
@@ -290,6 +350,39 @@ class RelationshipProvider
         // directly related
         $relations = $provider
             ->setFilter('from_key', $record->key)
+            ->setLimit(0)
+            ->get();
+        return $relations;
+    }
+
+    /**
+     * @param RegistryObject $record
+     * @return array
+     */
+    public static function getImplicitRelationship(RegistryObject $record)
+    {
+        $provider = Connections::getImplicitProvider();
+
+        // directly related
+        $relations = $provider
+            ->setFilter('from_key', $record->key)
+            ->setLimit(0)
+            ->get();
+        return $relations;
+    }
+
+    /**
+     * @param RegistryObject $record
+     * @return array
+     */
+    public static function getIdentifierRelationship(RegistryObject $record)
+    {
+        $provider = Connections::getIdentifierProvider();
+
+        // directly related
+        $relations = $provider
+            ->setFilter('from_key', $record->key)
+            ->setLimit(0)
             ->get();
         return $relations;
     }

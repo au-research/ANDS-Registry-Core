@@ -3,7 +3,9 @@
 
 namespace ANDS\Repository;
 
+use ANDS\Registry\ImplicitRelationshipView;
 use ANDS\Registry\RelationshipView;
+use ANDS\RegistryObject\ImplicitRelationship;
 
 /**
  * Class EloquentConnectionsRepository
@@ -11,6 +13,7 @@ use ANDS\Registry\RelationshipView;
  */
 class EloquentConnectionsRepository
 {
+    private $viewSource = RelationshipView::class;
     /**
      * EloquentConnectionsRepository constructor.
      */
@@ -48,6 +51,9 @@ class EloquentConnectionsRepository
 
         // deal with single valued filters
         $relationship = RelationshipView::where($singleFilters);
+        if ($this->getViewSource() == ImplicitRelationshipView::class) {
+            $relationship = ImplicitRelationshipView::where($singleFilters);
+        }
 
         // where_in filters
         foreach ($arrayFilters as $key=>$value) {
@@ -59,12 +65,32 @@ class EloquentConnectionsRepository
             $relationship = $relationship->whereRaw($filter);
         }
 
+        if ($limit > 0) {
+            $relationship = $relationship->limit($limit)->offset($offset);
+        }
+
         $relationship = $relationship
-            ->limit($limit)
-            ->offset($offset)
             ->get();
 
         return $relationship->toArray();
+    }
+
+    /**
+     * @param mixed $viewSource
+     * @return EloquentConnectionsRepository
+     */
+    public function setViewSource($viewSource)
+    {
+        $this->viewSource = $viewSource;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getViewSource()
+    {
+        return $this->viewSource;
     }
 
 }
