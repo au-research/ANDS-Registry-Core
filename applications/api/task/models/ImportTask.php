@@ -250,7 +250,7 @@ class ImportTask extends Task
                     "ProcessRelationships",
                     "ProcessQualityMetadata",
                     "IndexPortal",
-                    "OptimizeRelationship",
+                    "IndexRelationship",
                     "FinishImport",
                 ];
                 break;
@@ -267,14 +267,14 @@ class ImportTask extends Task
                     "ProcessRelationships",
                     "ProcessQualityMetadata",
                     "IndexPortal",
-                    "OptimizeRelationship",
+                    "IndexRelationship",
                     "FinishImport",
                 ];
                 break;
             case "UpdateRelationshipWorkflow":
                 $tasks = [
                     "ProcessRelationships",
-                    "OptimizeRelationship"
+                    "IndexRelationship"
                 ];
                 break;
             case "ErrorWorkflow":
@@ -303,9 +303,8 @@ class ImportTask extends Task
                     "ProcessQualityMetadata",
                     "IndexPortal",
                     "IndexRelationship",
-                    "OptimizeRelationship",
+                    //"OptimizeRelationship",
                     //"HandleIncrementalHarvest",
-                    //"ScheduleHarvest",
                     "FinishImport",
                     "ScheduleHarvest"
                     //"Report"

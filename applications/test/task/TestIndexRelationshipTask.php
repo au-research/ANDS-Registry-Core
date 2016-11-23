@@ -21,52 +21,12 @@ class TestIndexRelationshipTask extends UnitTest
 {
 
     /** @test **/
-    public function test_it_should_import_grant_network()
-    {
-        $this->importRecords("relationships_test_records.xml");
-
-        // test collection 1
-        $collection1 = RegistryObjectsRepository::getPublishedByKey("GrantsTestCollection1_key");
-        $grantRelationship = RelationshipProvider::getGrantsRelationship($collection1);
-
-        // funder one has the same identifier as funder two, so funder two takes precedent
-        // collection 1 should be funded by funder two
-        $funder = $grantRelationship['funder'];
-        $this->assertEquals($funder->key, "GrantsTestFunder2_key");
-
-        // collection 2 should be part of collection 1
-        $parentCollection = $grantRelationship['parents_collections'];
-        $this->assertContains(
-            "GrantsTestCollection2_key",
-            collect($parentCollection)->pluck('key')->toArray()
-        );
-
-        // collection 1 should be outputOf activity 3
-        $parentActivities = $grantRelationship['parents_activities'];
-        $this->assertContains(
-            "GrantsTestActivity3_key",
-            collect($parentActivities)->pluck('key')->toArray()
-        );
-
-        // activity 3 is part of activity 4, so collection 1 should be outputOf activity 4
-        $this->assertContains(
-            "GrantsTestActivity4_key",
-            collect($parentActivities)->pluck('key')->toArray()
-        );
-
-        // activity 2 is the same as activity 1, so collection 1 should be outputOf activity 2
-        $this->assertContains(
-            "GrantsTestActivity2_key",
-            collect($parentActivities)->pluck('key')->toArray()
-        );
-
-        $this->deleteRecords();
-    }
-
-    /** @test **/
     public function test_it_should_import_clean_grants_network()
     {
+        $deleteTask = $this->deleteRecords();
+//        var_dump($deleteTask->getBenchmarkData());
         $importTask = $this->importRecords("clean_grants_test_records.xml");
+//        var_dump($importTask->getBenchmarkData());
 
         // funder of a1 is f1
         $a1 = RegistryObjectsRepository::getPublishedByKey("GrantsTestActivity1_key");
@@ -122,7 +82,7 @@ class TestIndexRelationshipTask extends UnitTest
         $this->assertEquals($a4funder->key, "GrantsTestFunder1_key");
 
         // import the second part
-        $this->importRecords("clean_grants_test_records_part2.xml");
+        $importTask = $this->importRecords("clean_grants_test_records_part2.xml");
 
         // c7 does not have a funder
         $c7 = RegistryObjectsRepository::getPublishedByKey("GrantsTestCollection7_key");
@@ -167,15 +127,13 @@ class TestIndexRelationshipTask extends UnitTest
 
         // TODO: Test SOLR relationship
 
-//        $this->deleteRecords();
+//        $task = $this->deleteRecords();
     }
 
     /** @test **/
     public function test_it_should_contain_the_needed_relationship_index()
     {
         // $this->importRecords("clean_grants_test_records.xml");
-        $c2 = RegistryObjectsRepository::getPublishedByKey("GrantsTestCollection2_key");
-
         $dataSource = DataSourceRepository::getByKey("AUTEST1");
         $importTask = new ImportTask;
         $importTask->init([
@@ -184,19 +142,20 @@ class TestIndexRelationshipTask extends UnitTest
                 'targetStatus' => 'PUBLISHED'
             ])
         ])->skipLoadingPayload()->enableRunAllSubTask()->initialiseTask();
-        $importTask->setTaskData("importedRecords", [$c2->registry_object_id]);
+        $importTask->setTaskData("importedRecords", [574582]);
 
         $processRelationshipTask = $importTask->getTaskByName("ProcessRelationships");
         $processRelationshipTask->run();
-        var_dump($processRelationshipTask->getTaskData('benchmark'));
+        var_dump($processRelationshipTask->getMessage());
+//        var_dump($processRelationshipTask->getTaskData('benchmark'));
 
         $indexPortalTask = $importTask->getTaskByName("IndexPortal");
         $indexPortalTask->run();
-        var_dump($indexPortalTask->getTaskData('benchmark'));
+//        var_dump($indexPortalTask->getTaskData('benchmark'));
 
         $indexRelationTask = $importTask->getTaskByName("IndexRelationship");
         $indexRelationTask->run();
-        var_dump($indexRelationTask->getTaskData('benchmark'));
+//        var_dump($indexRelationTask->getTaskData('benchmark'));
 
 //        $deleteTask = $this->deleteRecords();
     }

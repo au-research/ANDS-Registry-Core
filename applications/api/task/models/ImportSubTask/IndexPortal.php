@@ -6,10 +6,10 @@ namespace ANDS\API\Task\ImportSubTask;
 use ANDS\Repository\RegistryObjectsRepository as Repo;
 use ANDS\Repository\DataSourceRepository;
 use ANDS\Repository\RegistryObjectsRepository;
+use Illuminate\Support\Collection;
 
 class IndexPortal extends ImportSubTask
 {
-    protected $requireImportedRecords = true;
     protected $title = "INDEXING PORTAL";
 
     public function run_task()
@@ -23,8 +23,16 @@ class IndexPortal extends ImportSubTask
         $this->parent()->getCI()->load->model('registry/registry_object/registry_objects', 'ro');
         $this->parent()->getCI()->load->library('solr');
 
-        $importedRecords = $this->parent()->getTaskData("importedRecords");
+        $importedRecords = $this->parent()->getTaskData("importedRecords") ? $this->parent()->getTaskData("importedRecords") : [];
+
         $total = count($importedRecords);
+
+        if ($total == 0) {
+            $this->log("No records needed to be reindexed");
+            return;
+        }
+
+        $this->log("Indexing $total records");
 
         $this->parent()->updateHarvest(
             ["importer_message" => "Indexing $total importedRecords"]

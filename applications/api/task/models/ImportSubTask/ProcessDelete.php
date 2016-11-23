@@ -6,6 +6,7 @@ namespace ANDS\API\Task\ImportSubTask;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Registry\Providers\RelationshipProvider;
+use Illuminate\Support\Collection;
 
 /**
  * Class ProcessDelete
@@ -78,12 +79,15 @@ class ProcessDelete extends ImportSubTask
         $fromRelationQuery = "";
         $toRelationQuery = "";
 
+        $affectedRecordIDs = new Collection();
+
         // TODO: refactor to reduce SQL queries
         foreach ($records as $record) {
             $record->status = "DELETED";
             $record->save();
+            $affectedRecordIDs->merge(collect(RelationshipProvider::getAffectedIDs($record)));
             RelationshipProvider::deleteAllRelationshipsFromId($record->registry_object_id);
-            $this->log("Record $record->registry_object_id ($record->status) is set to DELETED");
+            // $this->log("Record $record->registry_object_id ($record->status) is set to DELETED");
 
             $portalQuery .= " id:$record->registry_object_id";
             $fromRelationQuery .= " from_id:$record->registry_object_id";
@@ -92,38 +96,22 @@ class ProcessDelete extends ImportSubTask
             $this->parent()->incrementTaskData("recordsDeletedCount");
         }
 
-        $this->parent()->getCI()->load->library('solr');
+        // exclude deleted from affected
+        $affectedRecordIDs = $affectedRecordIDs->unique()->filter(function($item) use ($deletedRecords){
+            return !in_array($item, $deletedRecords);
+        });
 
-        // Find all affected records and put the affected records to importedRecords list
-        // to be ran OptimizeRelationships on
-        $affectedRecordIDs = $this->getRelatedObjectsIDs($deletedRecords);
-
-        $affectedRecordIDs = array_values($affectedRecordIDs);
         $this->log("Size of affected records: ".count($affectedRecordIDs));
 
-        // TODO: Find a way to use OptimizeRelationship subtask instead
-        // Probably put the affectedRecordIDs to the importedRecords array instead
-        if (count($affectedRecordIDs) > 0) {
-            // index Portal this record
-            $this->parent()->getCI()->load->model('registry/registry_object/registry_objects', 'ro');
-            foreach ($affectedRecordIDs as $index=>$roID) {
-                $ro = $this->parent()->getCI()->ro->getByID($roID);
-                if ($ro) {
-                    $portalIndex = $ro->indexable_json();
-                    if (count($portalIndex) > 0) {
-                        // TODO: Check response
-                        $this->parent()->getCI()->solr->init()->setCore('portal');
-                        $this->parent()->getCI()->solr
-                            ->deleteByID($roID);
-                        $this->parent()->getCI()->solr
-                            ->addJSONDoc(json_encode($portalIndex));
-                        // $this->log("Indexed Affected Record Portal Index for $roID");
-                    }
-                } else {
-                    $this->log("Unable to find record $roID");
-                }
+        // get currently affected records, if set, merge
+        $currentAffectedRecords = $this->parent()->getTaskData('affectedRecords');
+        if ($currentAffectedRecords) {
+            $affectedRecordIDs = array_merge($currentAffectedRecords, $affectedRecordIDs);
+        }
 
-            }
+        // only set if affected is greater than 0
+        if (sizeof($affectedRecordIDs) > 0) {
+            $this->parent()->setTaskData('affectedRecords', $affectedRecordIDs);
         }
 
         // delete from the solr index

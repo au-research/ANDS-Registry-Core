@@ -6,6 +6,7 @@ namespace ANDS\Registry\Providers;
 
 use ANDS\RecordData;
 use ANDS\Registry\Connections;
+use ANDS\Registry\ImplicitRelationshipView;
 use ANDS\RegistryObject;
 use ANDS\RegistryObject\ImplicitRelationship;
 use ANDS\Repository\DataSourceRepository;
@@ -57,7 +58,9 @@ class RelationshipProvider
     {
         $allRelationships = [
             'explicit' => static::getDirectRelationship($record),
+            'reverse' => static::getReverseRelationship($record),
             'implicit' => static::getImplicitRelationship($record),
+            'reverse_implicit' => static::getReverseImplicitRelationship($record),
             'identifier' => static::getIdentifierRelationship($record)
         ];
 
@@ -282,14 +285,6 @@ class RelationshipProvider
                 'relation_type' => 'isFundedBy',
                 'relation_origin' => 'GRANTS'
             ]);
-
-            ImplicitRelationship::firstOrCreate([
-                'from_id' => $funder->registry_object_id,
-                'to_id' => $record->registry_object_id,
-                'relation_type' => 'funds',
-                'relation_origin' => 'GRANTS'
-            ]);
-
         }
 
         // find all parents collections
@@ -302,14 +297,6 @@ class RelationshipProvider
                     'relation_type' => 'isPartOf',
                     'relation_origin' => 'GRANTS'
                 ]);
-
-                ImplicitRelationship::firstOrCreate([
-                    'from_id' => $collection->registry_object_id,
-                    'to_id' => $record->registry_object_id,
-                    'relation_type' => 'hasPart',
-                    'relation_origin' => 'GRANTS'
-                ]);
-
             }
         }
 
@@ -321,13 +308,6 @@ class RelationshipProvider
                     'from_id' => $record->registry_object_id,
                     'to_id' => $activity->registry_object_id,
                     'relation_type' => 'isOutputOf',
-                    'relation_origin' => 'GRANTS'
-                ]);
-
-                ImplicitRelationship::firstOrCreate([
-                    'from_id' => $activity->registry_object_id,
-                    'to_id' => $record->registry_object_id,
-                    'relation_type' => 'outputs',
                     'relation_origin' => 'GRANTS'
                 ]);
             }
@@ -371,6 +351,19 @@ class RelationshipProvider
         return $relations;
     }
 
+    public static function getReverseImplicitRelationship(RegistryObject $record
+    ) {
+        $provider = Connections::getImplicitProvider();
+
+        // directly related
+        $relations = $provider
+            ->setFilter('to_key', $record->key)
+            ->setLimit(0)
+            ->setReverse(true)
+            ->get();
+        return $relations;
+    }
+
     /**
      * @param RegistryObject $record
      * @return array
@@ -409,35 +402,68 @@ class RelationshipProvider
     }
 
     /**
-     * Returns a list of grants network related relationships
+     * Get a list of affectedIDS for a given RegistryObject
+     * Directly and reverse related
+     *
      *
      * @param RegistryObject $record
      * @return array
      */
-    public static function getGrantsRelationship(RegistryObject $record)
+    public static function getAffectedIDs(RegistryObject $record)
     {
-        // funder
-        if ($funderMetadata = $record->getRegistryObjectMetadata('funder_id')) {
-            $funderID = $funderMetadata->value;
-            $funder = RegistryObjectsRepository::getRecordByID($funderID);
+        $affectedIDs = [];
+
+        // find directly affected
+        $direct = static::getDirectRelationship($record);
+        foreach ($direct as $relation) {
+            $affectedIDs[] = $relation->prop('to_id');
         }
 
-        // parents_activities
-        if ($parentsActivityMetadata = $record->getRegistryObjectMetadata('parents_activity_ids')) {
-            $parentsActivityIDs = $parentsActivityMetadata->value;
-            $parentsActivities = RegistryObject::whereIn('registry_object_id', explode(',', $parentsActivityIDs))->get()->toArray();
+        // find direct reverse affected
+        $reverse = static::getReverseRelationship($record);
+        foreach ($reverse as $relation) {
+            $affectedIDs[] = $relation->prop('to_id');
         }
 
-        // parents_collection_id
-        if ($parentsCollectionIDs = $record->getRegistryObjectMetadata('parents_collection_ids')) {
-            $parentsCollectionIDs = $parentsCollectionIDs->value;
-            $parentsCollections = RegistryObject::whereIn('registry_object_id', explode(',', $parentsCollectionIDs))->get()->toArray();
+        $grantsProvider = GrantsConnectionsProvider::create();
+
+        // find funder
+        $funder = $grantsProvider->getFunder($record);
+        if ($funder) {
+            $affectedIDs[] = $funder->registry_object_id;
         }
 
-        return [
-            'funder' => isset($funder) ? $funder : null,
-            'parents_activities' => isset($parentsActivities) ? $parentsActivities : [],
-            'parents_collections' => isset($parentsCollections) ? $parentsCollections : []
-        ];
+        // find parent collections
+        if ($collections = $grantsProvider->getParentsCollections($record)) {
+            foreach ($collections as $collection) {
+                $affectedIDs[] = $collection->registry_object_id;
+            }
+        }
+
+        // find all child collections
+        if ($collections = $grantsProvider->getChildCollections($record)) {
+            foreach ($collections as $collection) {
+                $affectedIDs[] = $collection->from_id;
+            }
+        }
+
+        // find all parents activities
+        if ($activities = $grantsProvider->getParentsActivities($record)) {
+            foreach ($activities as $activity) {
+                $affectedIDs[] = $activity->registry_object_id;
+            }
+        }
+
+        // find all child activities
+        if ($collections = $grantsProvider->getChildActivities($record)) {
+            foreach ($collections as $collection) {
+                $affectedIDs[] = $collection->from_id;
+            }
+        }
+
+        $affectedIDs = array_values(array_unique($affectedIDs));
+
+        return $affectedIDs;
     }
+
 }

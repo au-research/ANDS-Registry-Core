@@ -15,7 +15,6 @@ use ANDS\Repository\RegistryObjectsRepository;
  */
 class IndexRelationship extends ImportSubTask
 {
-    protected $requireImportedRecords = true;
     protected $title = "INDEXING RELATIONSHIP";
 
     public function run_task()
@@ -28,15 +27,28 @@ class IndexRelationship extends ImportSubTask
 
         $this->parent()->getCI()->load->library('solr');
 
-        $importedRecords = $this->parent()->getTaskData("importedRecords");
+        $importedRecords = $this->parent()->getTaskData("importedRecords") ? $this->parent()->getTaskData("importedRecords") : [];
+
+        $affectedRecords = $this->parent()->getTaskData("affectedRecords") ? $this->parent()->getTaskData("affectedRecords") : [];
+
+        // should already be unique
+        $totalRecords = array_merge($importedRecords, $affectedRecords);
+
         $total = count($importedRecords);
+
+        if ($total == 0) {
+            $this->log("No records needed to be reindexed");
+            return;
+        }
 
         $this->parent()->updateHarvest(
             ["importer_message" => "Indexing $total importedRecords"]
         );
 
+        $this->log("Indexing $total records");
+
         // TODO: MAJORLY REFACTOR THIS
-        foreach ($importedRecords as $index => $roID) {
+        foreach ($totalRecords as $index => $roID) {
             $record = RegistryObjectsRepository::getRecordByID($roID);
 
             $allRelationships = RelationshipProvider::getMergedRelationships($record);
