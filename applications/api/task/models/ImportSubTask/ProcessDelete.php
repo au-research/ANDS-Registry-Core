@@ -115,6 +115,7 @@ class ProcessDelete extends ImportSubTask
         }
 
         // delete from the solr index
+        $this->parent()->getCI()->load->library('solr');
         $this->parent()->getCI()->solr->init()
             ->setCore('portal')
             ->deleteByQueryCondition($portalQuery);
@@ -125,58 +126,4 @@ class ProcessDelete extends ImportSubTask
             ->deleteByQueryCondition($fromRelationQuery.$toRelationQuery);
         $this->parent()->getCI()->solr->commit();
     }
-
-
-    /**
-     * Returns a list of related ids given a list of ids
-     * Useful to get affected ids
-     * Using SOLR relations core
-     *
-     * @param $ids
-     * @return array
-     */
-    public function getRelatedObjectsIDs($ids)
-    {
-        $chunkSize = 300;
-        $this->parent()->getCI()->load->library('solr');
-
-        // chunk the ids
-        $ids = collect($ids);
-        $chunks = $ids->chunk($chunkSize);
-
-        // foreach chunk, run the query, append the result
-        $allAffectedIDs = [];
-        foreach ($chunks as $chunk) {
-            $fromRelationQuery = ' from_id:'.$chunk->implode(' from_id:');
-            $toRelationQuery = ' to_id:'.$chunk->implode(' to_id:');
-
-            $affectedRecordIDs = [];
-            $tos = $this->parent()->getCI()->solr->init()
-                ->setCore('relations')
-                ->setOpt('fl', 'to_id, from_id')
-                ->setOpt('rows', 10000)
-                ->setOpt('q', $fromRelationQuery . $toRelationQuery)
-                ->executeSearch(true);
-
-            if ($tos['response']['numFound'] > 0) {
-                foreach ($tos['response']['docs'] as $doc) {
-                    $affectedRecordIDs[] = $doc['from_id'];
-                    $affectedRecordIDs[] = $doc['to_id'];
-                }
-            }
-            $affectedRecordIDs = array_unique($affectedRecordIDs);
-            $allAffectedIDs = array_merge($allAffectedIDs, $affectedRecordIDs);
-        }
-
-        $deletedIDs = $ids->toArray();
-        $allAffectedIDs = collect($allAffectedIDs)->filter(function($item) use ($deletedIDs){
-            return !in_array($item, $deletedIDs) && $item != "false" && $item !== false;
-        })->toArray();
-
-        $allAffectedIDs = array_unique($allAffectedIDs);
-
-        return $allAffectedIDs;
-    }
-
-
 }
