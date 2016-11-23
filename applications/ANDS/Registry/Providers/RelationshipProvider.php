@@ -7,6 +7,7 @@ namespace ANDS\Registry\Providers;
 use ANDS\RecordData;
 use ANDS\Registry\Connections;
 use ANDS\RegistryObject;
+use ANDS\RegistryObject\ImplicitRelationship;
 use ANDS\Repository\DataSourceRepository;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\RegistryObject\Relationship;
@@ -28,24 +29,44 @@ class RelationshipProvider
      *
      * @param RegistryObject $record
      */
-
     public static function process(RegistryObject $record)
     {
         static::deleteAllRelationshipsFromId($record->registry_object_id);
 
         $recordData = $record->getCurrentData();
 
-        $explicit_keys = static::processRelatedObjects($record, $recordData->data);
-        static::processRelatedInfos($record, $recordData->data);
-        static::createPrimaryLinks($record, $explicit_keys);
+        // process explicit relationship from RIFCS
+        // create Primary links based on those Explicit Keys
+        $explicitKeys = static::processRelatedObjects($record, $recordData->data);
+        static::createPrimaryLinks($record, $explicitKeys);
 
+        // relatedInfo relationships
+        static::processRelatedInfos($record, $recordData->data);
+
+        // process implicit relationships for the grants network
+        static::processGrantsRelationship($record);
     }
 
-    public static function deleteAllRelationshipsFromId($registry_object_id){
+    /**
+     * Delete Relationship and IdentifierRelationships
+     * Clean up before a processing
+     *
+     * @param $registry_object_id
+     */
+    public static function deleteAllRelationshipsFromId($registry_object_id)
+    {
         RegistryObjectsRepository::deleteIdentifierRelationships($registry_object_id);
         RegistryObjectsRepository::deleteRelationships($registry_object_id);
     }
 
+    /**
+     * Generate (Explicit) Relationship for Data Source primary link
+     *
+     * TODO: generate tests and refactor
+     *
+     * @param $record
+     * @param $explicit_keys
+     */
     public static function createPrimaryLinks($record, $explicit_keys){
 
         $dataSource = DataSourceRepository::getByID($record->data_source_id);
@@ -65,7 +86,6 @@ class RelationshipProvider
 
             $relationType = $dataSource->getDataSourceAttributeValue($record->class . '_rel_1');
             $this_relationship = format_relationship($record->class, $relationType, PRIMARY_RELATIONSHIP, $primaryRecord->class);
-            dd($this_relationship);
             Relationship::create([
                 "registry_object_id" => $record->registry_object_id,
                 "related_object_key" => $primary_key_1,
@@ -96,24 +116,50 @@ class RelationshipProvider
         }
     }
 
-    public static function processRelatedObjects($record, $xml){
-        foreach (XMLUtil::getElementsByName($xml, 'relatedObject') AS $related_object) {
+    /**
+     * Process Explicit RelatedObjects
+     *
+     * @param $record
+     * @param bool $xml
+     * @return array
+     */
+    public static function processRelatedObjects($record, $xml = false){
+
+        if (!$xml) {
+            $xml = $record->getCurrentData();
+        }
+
+        $explicitKeys = [];
+        foreach (XMLUtil::getElementsByName($xml,
+            'relatedObject') AS $related_object) {
             foreach ($related_object->relation as $arelation) {
-                $explicit_keys[] = trim((string)$related_object->key);
-                $relationShip = Relationship::create([
-                    "registry_object_id" => (string) $record->registry_object_id,
-                    "related_object_key" => trim((string) $related_object->key),
-                    "relation_type" => (string) $arelation['type'],
-                    "relation_description" => (string) $arelation->description,
-                    "relation_url" => (string) $arelation->url,
+                $explicitKeys[] = trim((string)$related_object->key);
+                Relationship::create([
+                    "registry_object_id" => (string)$record->registry_object_id,
+                    "related_object_key" => trim((string)$related_object->key),
+                    "relation_type" => (string)$arelation['type'],
+                    "relation_description" => (string)$arelation->description,
+                    "relation_url" => (string)$arelation->url,
                     "origin" => 'EXPLICIT'
                 ]);
             }
         }
-        return $explicit_keys;
+        return $explicitKeys;
     }
 
-    public static function processRelatedInfos($record, $xml){
+    /**
+     * Create IdentifierRelationship based on relatedInfo in the RIFCS
+     *
+     * TODO: Generate tests and refactor
+     *
+     * @param $record
+     * @param bool $xml
+     */
+    public static function processRelatedInfos($record, $xml = false){
+
+        if (!$xml) {
+            $xml = $record->getCurrentData();
+        }
 
         $processedTypesArray = array('collection', 'party', 'service', 'activity', 'publication', 'website');
 
@@ -177,9 +223,7 @@ class RelationshipProvider
                 }
             }
         }
-
     }
-
 
 
     /**
@@ -195,33 +239,39 @@ class RelationshipProvider
         // find funder and saved it, getFunder is recursive by default
         $record->deleteRegistryObjectMetadata('funder_id');
         if ($funder = $provider->getFunder($record)) {
-            $record->setRegistryObjectMetadata('funder_id', $funder->registry_object_id);
+            ImplicitRelationship::firstOrCreate([
+                'from_id' => $record->registry_object_id,
+                'to_id' => $funder->registry_object_id,
+                'relation_type' => 'isFundedBy',
+                'relation_origin' => 'GRANTS'
+            ]);
         }
 
         // find all parents collections
         $record->deleteRegistryObjectMetadata('parents_collection_ids');
         if ($collections = $provider->getParentsCollections($record)) {
-            $record->setRegistryObjectMetadata(
-                'parents_collection_ids',
-                implode(',', collect($collections)
-                    ->pluck('registry_object_id')
-                    ->unique()
-                    ->toArray()
-                )
-            );
+            foreach ($collections as $collection) {
+                ImplicitRelationship::firstOrCreate([
+                    'from_id' => $record->registry_object_id,
+                    'to_id' => $collection->registry_object_id,
+                    'relation_type' => 'isPartOf',
+                    'relation_origin' => 'GRANTS'
+                ]);
+            }
         }
 
         // find all parents activities
         $record->deleteRegistryObjectMetadata('parents_activity_ids');
         if ($activities = $provider->getParentsActivities($record)) {
-            $record->setRegistryObjectMetadata(
-                'parents_activity_ids',
-                implode(',', collect($activities)->pluck('registry_object_id')->unique()->toArray())
-            );
+            foreach ($activities as $activity) {
+                ImplicitRelationship::firstOrCreate([
+                    'from_id' => $record->registry_object_id,
+                    'to_id' => $activity->registry_object_id,
+                    'relation_type' => 'isOutputOf',
+                    'relation_origin' => 'GRANTS'
+                ]);
+            }
         }
-
-
-
     }
 
     /**
@@ -244,6 +294,14 @@ class RelationshipProvider
         return $relations;
     }
 
+    /**
+     * Returns a list of directly related reverse relationships
+     * from this record
+     * includes reverse primary relationships
+     *
+     * @param RegistryObject $record
+     * @return array
+     */
     public static function getReverseRelationship(RegistryObject $record)
     {
         $provider = Connections::getStandardProvider();

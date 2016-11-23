@@ -9,6 +9,7 @@ use ANDS\Registry\IdentifierRelationshipView;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 use Illuminate\Support\Collection;
+use ANDS\Registry\ImplicitRelationshipView;
 
 /**
  * Class GrantsConnectionsProvider
@@ -16,7 +17,6 @@ use Illuminate\Support\Collection;
  */
 class GrantsConnectionsProvider extends Connections
 {
-
     /**
      * Get a funder of a particular record
      * TODO: when traversing a node that has a cached funder, return that
@@ -26,10 +26,14 @@ class GrantsConnectionsProvider extends Connections
      */
     public function getFunder(RegistryObject $record)
     {
-        // see if it's saved in the metadata
-        $saved = $record->getRegistryObjectMetadata('funder_id');
-        if ($saved) {
-            return RegistryObjectsRepository::getRecordByID($saved->value);
+        // check in the view for existing funder
+        $implicitRelation = ImplicitRelationshipView::where('relation_type', 'isFundedBy')
+            ->where('relation_origin', 'GRANTS')
+            ->where('from_id', $record->id)
+            ->first();
+        if ($implicitRelation) {
+            $funder = RegistryObjectsRepository::getRecordByID($implicitRelation->to_id);
+            return $funder;
         }
 
         // if there's a direct funder, get that one
@@ -283,12 +287,13 @@ class GrantsConnectionsProvider extends Connections
      */
     public function getParentsActivities(RegistryObject $record, $processed = [])
     {
-        // check saved
-        $saved = $record->getRegistryObjectMetadata('parents_activity_ids');
-        if ($saved) {
-            return RegistryObject::whereIn(
-                'registry_object_id', explode(',', $saved->value)
-            )->get();
+        $implicitRelation = ImplicitRelationshipView::where('relation_type', 'isPartOf')
+            ->where('relation_origin', 'GRANTS')
+            ->where('from_id', $record->id)
+            ->where('to_class', 'activity')
+            ->get();
+        if ($implicitRelation->count() > 0) {
+            return $implicitRelation;
         }
 
         $activities = new Collection();
@@ -348,12 +353,14 @@ class GrantsConnectionsProvider extends Connections
      */
     public function getParentsCollections(RegistryObject $record, $processed = [])
     {
-        // check saved
-        $saved = $record->getRegistryObjectMetadata('parents_collection_ids');
-        if ($saved) {
-            return RegistryObject::whereIn(
-                'registry_object_id', explode(',', $saved->value)
-            )->get();
+        $implicitRelation = ImplicitRelationshipView::where('relation_type', 'isPartOf')
+            ->where('relation_origin', 'GRANTS')
+            ->where('from_id', $record->id)
+            ->where('to_class', 'collection')
+            ->get();
+
+        if ($implicitRelation->count() > 0) {
+            return $implicitRelation;
         }
 
         $collections = $this->getDirectGrantCollections($record);

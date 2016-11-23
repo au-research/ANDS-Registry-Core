@@ -3,9 +3,9 @@
 
 namespace ANDS\API\Task\ImportSubTask;
 
-use ANDS\API\Task\FixRelationshipTask;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
+use ANDS\Registry\Providers\RelationshipProvider;
 
 /**
  * Class ProcessDelete
@@ -42,6 +42,12 @@ class ProcessDelete extends ImportSubTask
         }
     }
 
+    /**
+     * deleting DRAFT RegistryObject
+     * will delete every instance of this records
+     *
+     * @param $records
+     */
     public function deleteDraftRecords($records)
     {
         $count = count($records);
@@ -54,6 +60,12 @@ class ProcessDelete extends ImportSubTask
         }
     }
 
+    /**
+     * A mini workflow to delete published RegistryObject
+     * soft-delete implementation
+     *
+     * @param $records
+     */
     public function deletePublishedRecords($records)
     {
         $deletedRecords = $this->parent()->getTaskData('deletedRecords');
@@ -70,6 +82,7 @@ class ProcessDelete extends ImportSubTask
         foreach ($records as $record) {
             $record->status = "DELETED";
             $record->save();
+            RelationshipProvider::deleteAllRelationshipsFromId($record->registry_object_id);
             $this->log("Record $record->registry_object_id ($record->status) is set to DELETED");
 
             $portalQuery .= " id:$record->registry_object_id";

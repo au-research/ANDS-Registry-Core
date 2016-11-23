@@ -9,6 +9,7 @@ use ANDS\DataSource;
 use ANDS\Payload;
 use ANDS\Registry\Providers\GrantsConnectionsProvider;
 use ANDS\Registry\Providers\RelationshipProvider;
+use ANDS\RegistryObject;
 use ANDS\Repository\DataSourceRepository;
 use ANDS\Repository\RegistryObjectsRepository;
 
@@ -65,7 +66,7 @@ class TestIndexRelationshipTask extends UnitTest
     /** @test **/
     public function test_it_should_import_clean_grants_network()
     {
-        $this->importRecords("clean_grants_test_records.xml");
+        $importTask = $this->importRecords("clean_grants_test_records.xml");
 
         // funder of a1 is f1
         $a1 = RegistryObjectsRepository::getPublishedByKey("GrantsTestActivity1_key");
@@ -164,7 +165,7 @@ class TestIndexRelationshipTask extends UnitTest
         $a5funder = GrantsConnectionsProvider::create()->getFunder($a5);
         $this->assertEquals($a5funder->key, "GrantsTestFunder1_key");
 
-        $this->deleteRecords();
+//        $this->deleteRecords();
     }
 
     /** @test **/
@@ -192,7 +193,7 @@ class TestIndexRelationshipTask extends UnitTest
         $indexRelationTask = $importTask->getTaskByName("IndexRelationship");
         $indexRelationTask->run();
 
-//        $this->deleteRecords();
+//        $deleteTask = $this->deleteRecords();
     }
 
     /**
@@ -213,6 +214,30 @@ class TestIndexRelationshipTask extends UnitTest
         $importTask->initialiseTask();
         $importTask->enableRunAllSubTask();
         $importTask->run();
+
+        return $importTask;
+    }
+
+    /** @test **/
+    public function test_it_should_update_relationship_of_a_record()
+    {
+        $importTask = new ImportTask();
+        $importTask->init([
+            'params' => http_build_query([
+                'ds_id' => 213,
+                'targetStatus' => 'PUBLISHED'
+            ])
+        ])->skipLoadingPayload();
+
+        $ids = RegistryObject::where('data_source_id', 213)->get()->pluck('registry_object_id')->toArray();
+        $importTask->setTaskData('importedRecords', $ids);
+
+        $importTask->initialiseTask();
+        $processRelationship = $importTask->getTaskByName("ProcessRelationships");
+        $processRelationship->run_task();
+
+        dd($processRelationship->getMessage());
+
     }
 
     private function deleteRecords()
@@ -229,27 +254,8 @@ class TestIndexRelationshipTask extends UnitTest
         ])->skipLoadingPayload()->enableRunAllSubTask()->initialiseTask();
         $importTask->setTaskData("deletedRecords", $ids);
         $importTask->run();
-    }
 
-    /** @test **/
-    public function test_it_should_update_relationship_of_a_record()
-    {
-        $importTask = new ImportTask();
-        $importTask->init([
-            'params' => http_build_query([
-                'ds_id' => '209',
-                'targetStatus' => 'PUBLISHED'
-            ])
-        ])->skipLoadingPayload();
-
-        $importTask->setTaskData('importedRecords', [574514]);
-
-        $importTask->initialiseTask();
-
-        $indexRelationTask = $importTask->getTaskByName("ProcessRelationships");
-
-        $indexRelationTask->run_task();
-
+        return $importTask;
     }
 
 

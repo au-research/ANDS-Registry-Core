@@ -106,3 +106,12 @@ create view dbs_registry.`implicit_relationships` as
     left outer join dbs_registry.registry_objects rot on roir.to_id = rot.registry_object_id
   WHERE
     ros.status = 'PUBLISHED' AND rot.status = 'PUBLISHED';
+
+CREATE TABLE `dbs_registry`.`registry_object_implicit_relationships` (
+  `from_id` MEDIUMINT(8) NOT NULL,
+  `to_id` MEDIUMINT(8) NOT NULL,
+  `relation_type` VARCHAR(512) NULL,
+  `relation_origin` VARCHAR(32) NULL);
+
+ALTER TABLE `dbs_registry`.`registry_object_implicit_relationships`
+ADD INDEX `FROM_TO_RELATION` (`from_id` ASC, `to_id` ASC, `relation_type` ASC);

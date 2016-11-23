@@ -35,6 +35,8 @@ class IndexRelationship extends ImportSubTask
             ["importer_message" => "Indexing $total importedRecords"]
         );
 
+        return;
+
         // TODO: MAJORLY REFACTOR THIS
         foreach ($importedRecords as $index => $roID) {
             $record = RegistryObjectsRepository::getRecordByID($roID);
