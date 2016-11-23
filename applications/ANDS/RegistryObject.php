@@ -208,7 +208,9 @@ class RegistryObject extends Model
             return $item != $this->registry_object_id;
         });
 
-        return RegistryObject::whereIn('registry_object_id', $recordIDs)->get();
+        return RegistryObject::whereIn('registry_object_id', $recordIDs)
+            ->where('status', 'PUBLISHED')
+            ->get();
     }
 
 }

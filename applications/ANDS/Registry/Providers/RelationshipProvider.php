@@ -428,40 +428,44 @@ class RelationshipProvider
         $grantsProvider = GrantsConnectionsProvider::create();
 
         // find funder
-        $funder = $grantsProvider->getFunder($record);
+        $funder = $grantsProvider->init()->getFunder($record);
         if ($funder) {
             $affectedIDs[] = $funder->registry_object_id;
         }
 
         // find parent collections
-        if ($collections = $grantsProvider->getParentsCollections($record)) {
+        if ($collections = $grantsProvider->init()->getParentsCollections($record)) {
             foreach ($collections as $collection) {
                 $affectedIDs[] = $collection->registry_object_id;
             }
         }
 
         // find all child collections
-        if ($collections = $grantsProvider->getChildCollections($record)) {
+        if ($collections = $grantsProvider->init()->getChildCollectionsFromIDs($affectedIDs)) {
             foreach ($collections as $collection) {
-                $affectedIDs[] = $collection->from_id;
+                $affectedIDs[] = $collection->registry_object_id;
             }
         }
 
         // find all parents activities
-        if ($activities = $grantsProvider->getParentsActivities($record)) {
+        if ($activities = $grantsProvider->init()->getParentsActivities($record)) {
             foreach ($activities as $activity) {
                 $affectedIDs[] = $activity->registry_object_id;
             }
         }
 
         // find all child activities
-        if ($collections = $grantsProvider->getChildActivities($record)) {
-            foreach ($collections as $collection) {
-                $affectedIDs[] = $collection->from_id;
+        if ($record->class == 'activity') {
+            if ($activities = $grantsProvider->init()->getChildActivitiesFromIDs($affectedIDs)) {
+                foreach ($activities as $activity) {
+                    $affectedIDs[] = $activity->registry_object_id;
+                }
             }
         }
 
-        $affectedIDs = array_values(array_unique($affectedIDs));
+        $affectedIDs = collect($affectedIDs)->unique()->filter(function($item){
+            return $item !== null;
+        })->toArray();
 
         return $affectedIDs;
     }

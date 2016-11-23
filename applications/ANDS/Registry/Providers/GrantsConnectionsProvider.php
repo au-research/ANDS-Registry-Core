@@ -211,7 +211,7 @@ class GrantsConnectionsProvider extends Connections
             ->setFilter('from_key', $record->key)
             ->setFilter('relation_type', 'isPartOf')
             ->setFilter('to_class', 'activity')
-            ->setLimit(300)
+            ->setLimit(0)
             ->get();
 
         if (count($direct) > 0) {
@@ -224,7 +224,7 @@ class GrantsConnectionsProvider extends Connections
             ->setFilter('to_key', $record->key)
             ->setFilter('relation_type', 'hasPart')
             ->setFilter('from_class', 'activity')
-            ->setLimit(300)
+            ->setLimit(0)
             ->get();
 
         if (count($reverse) > 0) {
@@ -294,7 +294,8 @@ class GrantsConnectionsProvider extends Connections
             ->get();
 
         if ($implicitRelation->count() > 0) {
-            return $implicitRelation;
+            $ids = $implicitRelation->pluck('to_id')->toArray();
+            return RegistryObject::whereIn('registry_object_id', $ids)->get();
         }
 
         $activities = new Collection();
@@ -361,7 +362,8 @@ class GrantsConnectionsProvider extends Connections
             ->get();
 
         if ($implicitRelation->count() > 0) {
-            return $implicitRelation;
+            $ids = $implicitRelation->pluck('to_id')->toArray();
+            return RegistryObject::whereIn('registry_object_id', $ids)->get();
         }
 
         $collections = $this->getDirectGrantCollections($record);
@@ -400,10 +402,27 @@ class GrantsConnectionsProvider extends Connections
             ->get();
 
         if ($implicitRelation->count() > 0) {
-            return $implicitRelation;
+            $ids = $implicitRelation->pluck('from_id')->toArray();
+            return RegistryObject::whereIn('registry_object_id', $ids)->get();
         }
 
         // TODO: Manual search when implicitRelationship are not generated yet
+
+        return [];
+    }
+
+    public function getChildCollectionsFromIDs($ids)
+    {
+        $implicitRelation = ImplicitRelationshipView::where('relation_type', 'isPartOf')
+            ->where('relation_origin', 'GRANTS')
+            ->whereIn('to_id', $ids)
+            ->where('from_class', 'collection')
+            ->get();
+
+        if ($implicitRelation->count() > 0) {
+            $childs = $implicitRelation->pluck('from_id')->toArray();
+            return RegistryObject::whereIn('registry_object_id', $childs)->get();
+        }
 
         return [];
     }
@@ -421,10 +440,27 @@ class GrantsConnectionsProvider extends Connections
             ->get();
 
         if ($implicitRelation->count() > 0) {
-            return $implicitRelation;
+            $ids = $implicitRelation->pluck('from_id')->toArray();
+            return RegistryObject::whereIn('registry_object_id', $ids)->get();
         }
 
         // TODO: Manual search when implicitRelationship are not generated yet
+
+        return [];
+    }
+
+    public function getChildActivitiesFromIDs($ids)
+    {
+        $implicitRelation = ImplicitRelationshipView::where('relation_type', 'isPartOf')
+            ->where('relation_origin', 'GRANTS')
+            ->whereIn('to_id', $ids)
+            ->where('from_class', 'activity')
+            ->get();
+
+        if ($implicitRelation->count() > 0) {
+            $childs = $implicitRelation->pluck('from_id')->toArray();
+            return RegistryObject::whereIn('registry_object_id', $childs)->get();
+        }
 
         return [];
     }

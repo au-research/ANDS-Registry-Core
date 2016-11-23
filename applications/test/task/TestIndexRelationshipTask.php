@@ -21,6 +21,19 @@ class TestIndexRelationshipTask extends UnitTest
 {
 
     /** @test **/
+    public function test_it_should_sample()
+    {
+        $record = RegistryObjectsRepository::getRecordByID(574582);
+        $affected = RelationshipProvider::getAffectedIDs($record);
+        dd($affected);
+
+        $record = RegistryObjectsRepository::getRecordByID(574580);
+        RelationshipProvider::process($record);
+        $parents = GrantsConnectionsProvider::create()->init()->getParentsCollections($record);
+        dd($parents->pluck('title'));
+    }
+
+    /** @test **/
     public function test_it_should_import_clean_grants_network()
     {
         $deleteTask = $this->deleteRecords();

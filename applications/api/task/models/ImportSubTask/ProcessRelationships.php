@@ -85,7 +85,7 @@ class ProcessRelationships extends ImportSubTask
 
         foreach ($affectedRecords as $index => $roID) {
             $record = RegistryObjectsRepository::getRecordByID($roID);
-            RelationshipProvider::processGrantsRelationship($record);
+            RelationshipProvider::process($record);
             $this->updateProgress($index, $total, "Processed affected ($index/$total) $record->title($record->registry_object_id)");
         }
 
