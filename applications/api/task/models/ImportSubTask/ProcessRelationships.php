@@ -18,6 +18,7 @@ class ProcessRelationships extends ImportSubTask
         // addRelationships to all importedRecords
         $importedRecords = $this->parent()->getTaskData("importedRecords");
         $total = count($importedRecords);
+        debug("Processing Relationship for $total records");
 
         // order records by
         $orderedRecords = [
@@ -49,6 +50,7 @@ class ProcessRelationships extends ImportSubTask
                 RelationshipProvider::getAffectedIDs($record)
             );
             $this->updateProgress($index, $total, "Processed ($index/$total) $record->title($record->registry_object_id)");
+            tearDownEloquent();
         }
 
         // exclude affected from importedRecords
@@ -63,6 +65,8 @@ class ProcessRelationships extends ImportSubTask
         if ($currentAffectedRecords) {
             $affectedRecordIDs = array_merge($currentAffectedRecords, $affectedRecordIDs);
         }
+
+        $affectedRecords = array_values(array_unique($affectedRecordIDs));
 
         // only set if affected is greater than 0
         if (sizeof($affectedRecordIDs) > 0) {
@@ -82,6 +86,7 @@ class ProcessRelationships extends ImportSubTask
         $total = count($affectedRecords);
 
         $this->log("Processing relationships of $total affected records");
+        debug("Processing $total affected records");
 
         foreach ($affectedRecords as $index => $roID) {
             $record = RegistryObjectsRepository::getRecordByID($roID);

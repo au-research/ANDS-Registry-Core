@@ -10,7 +10,8 @@ namespace ANDS\API;
 use ANDS\API\Task\ImportTask;
 use ANDS\RegistryObject;
 use \Exception as Exception;
-
+use ANDS\Registry\Providers\RelationshipProvider;
+use Illuminate\Database\Capsule\Manager as Capsule;
 
 class Task_api
 {
@@ -142,19 +143,11 @@ class Task_api
         }
     }
 
-    private function test(){
-        $this->ci->load->model('registry/registry_object/registry_objects', 'ro');
+    private function test() {
         initEloquent();
-        $IDs = RegistryObject::where('slug', '')->orWhere('slug', '=', null)->get()->pluck('registry_object_id');
-
-        foreach($IDs as $id) {
-            $ro = $this->ci->ro->getByID($id);
-            if ($ro) {
-                $ro->generateSlug();
-            } else {
-                return "Cannot find record $id";
-            }
-        }
+        // $record = RegistryObject::find(570703);
+        $record = RegistryObject::find(568190);
+        RelationshipProvider::process($record);
     }
 
     /**

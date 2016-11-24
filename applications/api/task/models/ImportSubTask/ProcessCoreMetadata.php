@@ -31,6 +31,7 @@ class ProcessCoreMetadata extends ImportSubTask
         }
 
         $total = count($importedRecords);
+        debug("Processing Core Metadata for $total records");
         foreach ($importedRecords as $index => $roID) {
             $this->log('Processing (updated) record: ' . $roID);
 
@@ -71,7 +72,7 @@ class ProcessCoreMetadata extends ImportSubTask
             $ro = $this->parent()->getCI()->ro->getByID($roID);
             $ro->updateTitles();
             $ro->generateSlug();
-            
+
             $ro->save();
 
             // TODO manually_assessed
@@ -79,6 +80,7 @@ class ProcessCoreMetadata extends ImportSubTask
             $this->updateProgress($index, $total, "Processed ($index/$total) $ro->title($roID)");
             unset($ro);
         }
+        debug("Finished Processing Core Metadata for $total records");
     }
 
 

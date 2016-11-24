@@ -371,6 +371,9 @@ class ImportTask extends Task
                 'charset' => 'utf8',
                 'collation' => 'utf8_unicode_ci',
                 'prefix' => '',
+                'options'   => array(
+                    \PDO::ATTR_PERSISTENT => true,
+                )
             ], 'default'
         );
         $capsule->setAsGlobal();

@@ -329,7 +329,7 @@ class RelationshipProvider
 
         // directly related
         $relations = $provider
-            ->setFilter('from_key', $record->key)
+            ->setFilter('from_id', $record->registry_object_id)
             ->setLimit(0)
             ->get();
         return $relations;
@@ -345,7 +345,7 @@ class RelationshipProvider
 
         // directly related
         $relations = $provider
-            ->setFilter('from_key', $record->key)
+            ->setFilter('from_id', $record->registry_object_id)
             ->setLimit(0)
             ->get();
         return $relations;
@@ -374,7 +374,7 @@ class RelationshipProvider
 
         // directly related
         $relations = $provider
-            ->setFilter('from_key', $record->key)
+            ->setFilter('from_id', $record->registry_object_id)
             ->setLimit(0)
             ->get();
         return $relations;
