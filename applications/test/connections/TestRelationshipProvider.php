@@ -4,6 +4,7 @@
 namespace ANDS\Test;
 
 use ANDS\Registry\Providers\RelationshipProvider;
+use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Registry\Providers\GrantsConnectionsProvider;
 
@@ -28,6 +29,18 @@ class TestRelationshipProvider extends UnitTest
         initEloquent();
         $record = RegistryObjectsRepository::getRecordByID(574582);
         $affectedIDs = RelationshipProvider::getAffectedIDs($record);
+        dd($affectedIDs);
+    }
+
+    /** @test **/
+    public function test_it_should_find_affected_records_by_ids()
+    {
+        initEloquent();
+        $ids = RegistryObject::where('data_source_id', 205)->where('status', 'PUBLISHED')->pluck('registry_object_id')->toArray();
+
+        $affectedIDs = RelationshipProvider::getAffectedIDsFromIDs($ids);
+
+        dd(count($affectedIDs));
         dd($affectedIDs);
     }
 }

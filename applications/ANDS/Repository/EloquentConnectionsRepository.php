@@ -34,9 +34,10 @@ class EloquentConnectionsRepository
      */
     public function run($filters, $flags = [], $limit = 2000, $offset = 0)
     {
+
         // [key => value]
         $singleFilters = collect($filters)->filter(function($item, $key){
-            return !is_array($item) && strpos($key, "!=") === false;
+            return !is_array($item) && strpos($key, "!=") === false && $item != null;
         })->toArray();
 
         // [key => [value1, value2]
@@ -46,7 +47,7 @@ class EloquentConnectionsRepository
 
         // [key]
         $rawFilters = collect($filters)->filter(function($item, $key){
-            return strpos($key, "!=") > 0;
+            return strpos($key, "!=") > 0 || $item === null;
         })->keys()->toArray();
 
         // deal with single valued filters

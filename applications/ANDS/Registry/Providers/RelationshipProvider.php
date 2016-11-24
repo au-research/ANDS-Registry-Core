@@ -329,9 +329,10 @@ class RelationshipProvider
 
         // directly related
         $relations = $provider
-            ->setFilter('from_id', $record->registry_object_id)
+            ->setFilter('from_key', $record->key)
             ->setLimit(0)
             ->get();
+
         return $relations;
     }
 
@@ -345,7 +346,7 @@ class RelationshipProvider
 
         // directly related
         $relations = $provider
-            ->setFilter('from_id', $record->registry_object_id)
+            ->setFilter('from_key', $record->key)
             ->setLimit(0)
             ->get();
         return $relations;
@@ -374,7 +375,7 @@ class RelationshipProvider
 
         // directly related
         $relations = $provider
-            ->setFilter('from_id', $record->registry_object_id)
+            ->setFilter('from_key', $record->key)
             ->setLimit(0)
             ->get();
         return $relations;
@@ -466,6 +467,109 @@ class RelationshipProvider
         $affectedIDs = collect($affectedIDs)->unique()->filter(function($item){
             return $item !== null;
         })->toArray();
+
+        return $affectedIDs;
+    }
+
+    /**
+     * A quick way to get affected IDs from a list of IDs
+     * aim to replace getAffectedIDs function
+     *
+     * @param $ids
+     * @return array
+     */
+    public static function getAffectedIDsFromIDs($ids)
+    {
+        $affectedIDs = [];
+
+        // find directly affected
+        $stdProvider = Connections::getStandardProvider();
+
+        // directly related
+        $direct = $stdProvider->init()
+            ->setFilter('from_id', $ids)
+            ->setFilter("to_id NOT IN (".implode(', ', $ids).")")
+            ->setLimit(0)
+            ->get();
+
+        foreach ($direct as $relation) {
+            $affectedIDs[] = $relation->prop('to_id');
+        }
+
+        // reverse
+        $reverse = $stdProvider->init()
+            ->setFilter('to_id', $ids)
+            ->setLimit(0)
+            ->get();
+
+        foreach ($reverse as $relation) {
+            $affectedIDs[] = $relation->prop('from_id');
+        }
+
+        // funder
+        $impProvider = Connections::getImplicitProvider();
+        $funders = $impProvider->init()
+            ->setFilter('from_id', $ids)
+            ->setFilter('relation_type', 'isFundedBy')
+            ->setLimit(0)
+            ->get();
+
+        foreach ($funders as $relation) {
+            $affectedIDs[] = $relation->prop('from_id');
+        }
+
+        // parent collections
+        $parentCollections = $impProvider->init()
+            ->setFilter('from_id', $ids)
+            ->setFilter('relation_type', 'isPartOf')
+            ->setFilter('to_class', 'collection')
+            ->setLimit(0)
+            ->get();
+
+        foreach ($parentCollections as $relation) {
+            $affectedIDs[] = $relation->prop('to_id');
+        }
+
+        // child collections
+        $childCollections = $impProvider->init()
+            ->setFilter('to_id', $ids)
+            ->setFilter('relation_type', 'isPartOf')
+            ->setFilter('from_class', 'collection')
+            ->setLimit(0)
+            ->get();
+
+        foreach ($childCollections as $relation) {
+            $affectedIDs[] = $relation->prop('from_id');
+        }
+
+        //parent activities
+        $parentActivities = $impProvider->init()
+            ->setFilter('from_id', $ids)
+            ->setFilter('relation_type', 'isPartOf')
+            ->setFilter('to_class', 'activity')
+            ->setLimit(0)
+            ->get();
+
+        foreach ($parentActivities as $relation) {
+            $affectedIDs[] = $relation->prop('to_id');
+        }
+
+        // child activities
+        $parentActivities = $impProvider->init()
+            ->setFilter('to_id', $ids)
+            ->setFilter('relation_type', 'isPartOf')
+            ->setFilter('from_class', 'activity')
+            ->setLimit(0)
+            ->get();
+
+        foreach ($parentActivities as $relation) {
+            $affectedIDs[] = $relation->prop('from_id');
+        }
+
+        $affectedIDs = array_values(array_unique($affectedIDs));
+        $affectedIDs = array_filter($affectedIDs, function($item) use ($ids){
+            return !in_array($item, $ids);
+        });
 
         return $affectedIDs;
     }
