@@ -85,7 +85,6 @@ class ProcessDelete extends ImportSubTask
         foreach ($records as $record) {
             $record->status = "DELETED";
             $record->save();
-            $affectedRecordIDs->merge(collect(RelationshipProvider::getAffectedIDs($record)));
             RelationshipProvider::deleteAllRelationshipsFromId($record->registry_object_id);
             // $this->log("Record $record->registry_object_id ($record->status) is set to DELETED");
 
@@ -96,10 +95,9 @@ class ProcessDelete extends ImportSubTask
             $this->parent()->incrementTaskData("recordsDeletedCount");
         }
 
-        // exclude deleted from affected
-        $affectedRecordIDs = $affectedRecordIDs->unique()->filter(function($item) use ($deletedRecords){
-            return !in_array($item, $deletedRecords);
-        });
+        $ids = collect($records)->pluck('registry_object_id')->toArray();
+
+        $affectedRecords = RelationshipProvider::getAffectedIDsFromIDs($ids);
 
         $this->log("Size of affected records: ".count($affectedRecordIDs));
 

@@ -42,21 +42,13 @@ class ProcessRelationships extends ImportSubTask
 
         $this->log("Processing relationship of $total records");
 
-        $affectedRecordIDs = [];
         foreach ($orderedRecords as $index => $record) {
             RelationshipProvider::process($record);
-            $affectedRecordIDs = array_merge(
-                $affectedRecordIDs,
-                RelationshipProvider::getAffectedIDs($record)
-            );
             $this->updateProgress($index, $total, "Processed ($index/$total) $record->title($record->registry_object_id)");
             tearDownEloquent();
         }
 
-        // exclude affected from importedRecords
-        $affectedRecordIDs = collect($affectedRecordIDs)->unique()->filter(function($item) use ($importedRecords){
-            return !in_array($item, $importedRecords);
-        })->toArray();
+        $affectedRecordIDs = RelationshipProvider::getAffectedIDsFromIDs($importedRecords);
 
         $this->log("Size of affected records: ".count($affectedRecordIDs));
 
