@@ -419,7 +419,7 @@ class Doi_api
                 }
                 $requestBody = $this->getPostedXML();
                 $docall = true;
-            } elseif ($this->getPostedXML() && $doiObject->status == 'ACTIVE') {
+            } elseif ($this->getPostedXML() && ($doiObject->status == 'ACTIVE' || $doiObject->status == 'RESERVED')) {
                 if (!$validXml){
                     $responselog['responsecode'] = 'MT007';
                 }else {
