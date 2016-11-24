@@ -62,6 +62,11 @@ class RegistryObject extends Model
         }
     }
 
+    public function deleteRegistryObjectAttribute($key){
+        RegistryObjectAttribute::where('attribute', $key)
+            ->where('registry_object_id', $this->registry_object_id)->delete();
+    }
+    
     /**
      * Get a RegistryObjectAttribute of this by key
      *
@@ -135,6 +140,11 @@ class RegistryObject extends Model
         }
     }
 
+    public function deleteRegistryObjectMetadata($key){
+        Metadata::where('attribute', $key)
+            ->where('registry_object_id', $this->registry_object_id)->delete();
+    }
+    
     /**
      * is this of published status
      * @return bool
@@ -213,4 +223,8 @@ class RegistryObject extends Model
             ->get();
     }
 
+    public function hasRelatedClass($class){
+        return true;
+    }
+    
 }
