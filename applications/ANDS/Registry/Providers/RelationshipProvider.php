@@ -97,6 +97,8 @@ class RelationshipProvider
      */
     public static function hasRelatedClass(RegistryObject $record, $class, $processed = [])
     {
+        debug("Getting related class for $record->title($record->registry_object_id)");
+
         if (in_array($record->registry_object_id, $processed)) {
             return false;
         }
@@ -147,13 +149,13 @@ class RelationshipProvider
         }
 
         // duplicate
-        $duplicates = $record->getDuplicateRecords();
-        foreach ($duplicates as $duplicate) {
-            if (static::hasRelatedClass($duplicate, $class, $processed)) {
-                return true;
-            }
-            $processed[] = $duplicate->registry_object_id;
-        }
+//        $duplicates = $record->getDuplicateRecords();
+//        foreach ($duplicates as $duplicate) {
+//            if (static::hasRelatedClass($duplicate, $class, $processed)) {
+//                return true;
+//            }
+//            $processed[] = $duplicate->registry_object_id;
+//        }
 
         return false;
     }

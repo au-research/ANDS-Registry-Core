@@ -27,6 +27,11 @@ class XMLUtil
         return $sxml->xpath($xpath);
     }
 
+    public static function getElementsByXPathFromSXML($sxml, $xpath)
+    {
+        return $sxml->xpath($xpath);
+    }
+
     /**
      * @param $xml
      * @param $element
