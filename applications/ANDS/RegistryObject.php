@@ -139,7 +139,6 @@ class RegistryObject extends Model
             ]);
         }
     }
-    
     /**
      * is this of published status
      * @return bool
@@ -218,8 +217,4 @@ class RegistryObject extends Model
             ->get();
     }
 
-    public function hasRelatedClass($class){
-        return true;
-    }
-    
 }

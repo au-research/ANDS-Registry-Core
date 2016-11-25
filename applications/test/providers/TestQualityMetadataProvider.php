@@ -14,7 +14,7 @@ class TestQualityMetadataProvider extends UnitTest
  */
 
     public function test_it_sould_delete_all_metadata(){
-        $collectionkey = 'AUTestingRecords3RelatedCollectionDatasetRelObj1';
+        $collectionkey = 'AUTestingRecords3anudc:3317';
         $record = RegistryObjectsRepository::getPublishedByKey($collectionkey);
 
         QualityMetadataProvider::process($record);
