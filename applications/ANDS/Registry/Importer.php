@@ -7,6 +7,7 @@ namespace ANDS\Registry;
 use ANDS\DataSource;
 use ANDS\Payload;
 use ANDS\API\Task\ImportTask;
+use ANDS\Repository\RegistryObjectsRepository;
 
 /**
  * Class Importer
@@ -44,6 +45,39 @@ class Importer
         $importTask->run();
 
         return $importTask;
+    }
 
+    /**
+     * @param DataSource $dataSource
+     * @param array $customParams
+     * @return ImportTask|null
+     */
+    public static function instantDeleteRecords(DataSource $dataSource, $customParams = [])
+    {
+        $ids = [];
+        if (array_key_exists('ids', $customParams)) {
+            $ids = $customParams['ids'];
+        }
+
+        if (array_key_exists('status', $customParams)) {
+            $records = RegistryObjectsRepository::getRecordsByDataSourceIDAndStatus($dataSource->data_source_id, "PUBLISHED", 0, 1000);
+            $ids = collect($records)->pluck('registry_object_id')->toArray();
+        }
+
+        if (count($ids) === 0) {
+            return null;
+        }
+
+        $importTask = new ImportTask();
+        $importTask->init([
+            'params' => http_build_query([
+                'ds_id' => $dataSource->data_source_id,
+                'pipeline' => 'PublishingWorkflow'
+            ])
+        ])->skipLoadingPayload()->enableRunAllSubTask()->initialiseTask();
+        $importTask->setTaskData("deletedRecords", $ids);
+        $importTask->run();
+
+        return $importTask;
     }
 }

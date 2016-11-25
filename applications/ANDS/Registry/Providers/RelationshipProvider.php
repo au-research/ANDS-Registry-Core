@@ -329,7 +329,7 @@ class RelationshipProvider
 
         // directly related
         $relations = $provider
-            ->setFilter('from_key', $record->key)
+            ->setFilter('from_id', $record->registry_object_id)
             ->setLimit(0)
             ->get();
 
@@ -346,7 +346,7 @@ class RelationshipProvider
 
         // directly related
         $relations = $provider
-            ->setFilter('from_key', $record->key)
+            ->setFilter('from_id', $record->registry_object_id)
             ->setLimit(0)
             ->get();
         return $relations;
@@ -357,8 +357,10 @@ class RelationshipProvider
         $provider = Connections::getImplicitProvider();
 
         // directly related
+        // use to_id here, because implicitProvider reads from implicit related objects
+        // which has to_id instead of to_key
         $relations = $provider
-            ->setFilter('to_key', $record->key)
+            ->setFilter('to_id', $record->registry_object_id)
             ->setLimit(0)
             ->setReverse(true)
             ->get();
@@ -375,7 +377,7 @@ class RelationshipProvider
 
         // directly related
         $relations = $provider
-            ->setFilter('from_key', $record->key)
+            ->setFilter('from_id', $record->registry_object_id)
             ->setLimit(0)
             ->get();
         return $relations;

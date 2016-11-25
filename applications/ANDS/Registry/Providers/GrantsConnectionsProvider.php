@@ -131,7 +131,7 @@ class GrantsConnectionsProvider extends Connections
 
         // direct
         $direct = $this->init()
-            ->setFilter('from_key', $record->key)
+            ->setFilter('from_id', $record->registry_object_id)
             ->setFilter('relation_type', 'isOutputOf')
             ->setFilter('to_class', 'activity')
             ->setLimit(300)
@@ -193,7 +193,7 @@ class GrantsConnectionsProvider extends Connections
         $collections = [];
 
         $direct = $this->init()
-            ->setFilter('from_key', $record->key)
+            ->setFilter('from_id', $record->registry_object_id)
             ->setFilter('relation_type', 'isPartOf')
             ->setFilter('to_class', 'collection')
             ->setLimit(300)
@@ -254,7 +254,7 @@ class GrantsConnectionsProvider extends Connections
         $activities = [];
 
         $direct = $this->init()
-            ->setFilter('from_key', $record->key)
+            ->setFilter('from_id', $record->registry_object_id)
             ->setFilter('relation_type', 'isPartOf')
             ->setFilter('to_class', 'activity')
             ->setLimit(0)
@@ -293,7 +293,7 @@ class GrantsConnectionsProvider extends Connections
     {
         // find a direct relation
         $direct = $this->init()
-            ->setFilter('from_key', $record->key)
+            ->setFilter('from_id', $record->registry_object_id)
             ->setFilter('to_class', 'party')
             ->setFilter('relation_type', 'isFundedBy')
             ->setLimit(1)
