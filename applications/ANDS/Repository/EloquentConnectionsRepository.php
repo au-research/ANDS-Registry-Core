@@ -14,6 +14,8 @@ use ANDS\RegistryObject\ImplicitRelationship;
 class EloquentConnectionsRepository
 {
     private $viewSource = RelationshipView::class;
+    private $query;
+
     /**
      * EloquentConnectionsRepository constructor.
      */
@@ -33,6 +35,32 @@ class EloquentConnectionsRepository
      * @internal param $flag
      */
     public function run($filters, $flags = [], $limit = 2000, $offset = 0)
+    {
+        $this->query = $this->constructQuery($filters, $flags, $limit, $offset);
+        return $this->query->get()->toArray();
+    }
+
+    /**
+     * @param $filters
+     * @param array $flags
+     * @param int $limit
+     * @param int $offset
+     * @return mixed
+     */
+    public function countResult($filters, $flags = [], $limit = 2000, $offset = 0)
+    {
+        $this->query = $this->constructQuery($filters, $flags, $limit, $offset);
+        return $this->query->count();
+    }
+
+    /**
+     * @param $filters
+     * @param array $flags
+     * @param int $limit
+     * @param int $offset
+     * @return mixed
+     */
+    private function constructQuery($filters, $flags = [], $limit = 2000, $offset = 0)
     {
 
         // [key => value]
@@ -70,12 +98,8 @@ class EloquentConnectionsRepository
             $relationship = $relationship->limit($limit)->offset($offset);
         }
 
-        debug($relationship->toSql());
-
-        $relationship = $relationship
-            ->get();
-
-        return $relationship->toArray();
+        $this->query = $relationship;
+        return $this->query;
     }
 
     /**

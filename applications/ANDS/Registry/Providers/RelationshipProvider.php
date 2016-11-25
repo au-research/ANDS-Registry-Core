@@ -88,6 +88,77 @@ class RelationshipProvider
     }
 
     /**
+     * Returns if a record contains a specific relatedObject class
+     *
+     * @param RegistryObject $record
+     * @param $class
+     * @param array $processed
+     * @return bool
+     */
+    public static function hasRelatedClass(RegistryObject $record, $class, $processed = [])
+    {
+        if (in_array($record->registry_object_id, $processed)) {
+            return false;
+        }
+
+        // Explicit
+        $explicitProvider = Connections::getStandardProvider();
+
+        // direct
+        $result = $explicitProvider->init()
+            ->setFilter('to_class', $class)
+            ->setFilter('from_id', $record->registry_object_id)
+            ->count();
+
+        if ($result > 0) {
+            return true;
+        }
+
+        // reverse
+        $result = $explicitProvider->init()
+            ->setFilter('from_class', $class)
+            ->setFilter('to_key', $record->key)
+            ->count();
+
+        if ($result > 0) {
+            return true;
+        }
+
+        // direct implicit
+        $implicitProvider = Connections::getImplicitProvider();
+
+        $result = $implicitProvider->init()
+            ->setFilter('to_class', $class)
+            ->setFilter('from_id', $record->registry_object_id)
+            ->count();
+
+        if ($result > 0) {
+            return true;
+        }
+
+        // reverse implicit
+        $result = $implicitProvider->init()
+            ->setFilter('from_class', $class)
+            ->setFilter('to_id', $record->registry_object_id)
+            ->count();
+
+        if ($result > 0) {
+            return true;
+        }
+
+        // duplicate
+        $duplicates = $record->getDuplicateRecords();
+        foreach ($duplicates as $duplicate) {
+            if (static::hasRelatedClass($duplicate, $class, $processed)) {
+                return true;
+            }
+            $processed[] = $duplicate->registry_object_id;
+        }
+
+        return false;
+    }
+
+    /**
      * Delete Relationship and IdentifierRelationships
      * Clean up before a processing
      *

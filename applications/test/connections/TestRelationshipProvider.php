@@ -15,6 +15,16 @@ use ANDS\Registry\Providers\GrantsConnectionsProvider;
 class TestRelationshipProvider extends UnitTest
 {
 
+    // php index.php test connections TestRelationshipProvider test_it_should_find_the_related_class
+    /** @test **/
+    public function test_it_should_find_the_related_class()
+    {
+        $record = RegistryObjectsRepository::getPublishedByKey("AUTestingRecords3anudc:3317");
+
+        $hasRelatedParty = RelationshipProvider::hasRelatedClass($record, 'party');
+        $this->assertTrue($hasRelatedParty);
+    }
+
     public function test_it_sould_delete_all_relationships(){
         $collectionkey = 'IMOS/3ece0a18-0809-3fed-932a-021069ee911b';
         $record = RegistryObjectsRepository::getPublishedByKey($collectionkey);

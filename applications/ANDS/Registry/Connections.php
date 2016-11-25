@@ -55,6 +55,11 @@ class Connections {
         return $result;
     }
 
+    public function count()
+    {
+        return $this->repo->countResult($this->filters, $this->flags, $this->limit, $this->offset);
+    }
+
     public function convertRepoResultToRelationResult($repoResult)
     {
         $result = [];
