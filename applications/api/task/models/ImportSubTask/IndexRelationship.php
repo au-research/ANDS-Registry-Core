@@ -31,10 +31,10 @@ class IndexRelationship extends ImportSubTask
 
         $affectedRecords = $this->parent()->getTaskData("affectedRecords") ? $this->parent()->getTaskData("affectedRecords") : [];
 
-        // should already be unique
         $totalRecords = array_merge($importedRecords, $affectedRecords);
+        $totalRecords = array_values(array_unique($totalRecords));
 
-        $total = count($importedRecords);
+        $total = count($totalRecords);
 
         if ($total == 0) {
             $this->log("No records needed to be reindexed");

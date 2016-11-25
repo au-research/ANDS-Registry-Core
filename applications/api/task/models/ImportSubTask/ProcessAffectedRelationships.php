@@ -31,6 +31,7 @@ class ProcessAffectedRelationships extends ImportSubTask
             debug("Processing affected record: $record->title($record->registry_object_id)");
             RelationshipProvider::process($record);
             $this->updateProgress($index, $total, "Processed affected ($index/$total) $record->title($record->registry_object_id)");
+            tearDownEloquent();
         }
 
         debug("Finished processing $total affected records");
