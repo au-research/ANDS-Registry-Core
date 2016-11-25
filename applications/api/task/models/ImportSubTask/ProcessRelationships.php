@@ -4,10 +4,12 @@
 namespace ANDS\API\Task\ImportSubTask;
 
 use ANDS\Registry\Providers\RelationshipProvider;
-use ANDS\RegistryObject\Relationship;
 use ANDS\Repository\RegistryObjectsRepository;
-use Illuminate\Support\Collection;
 
+/**
+ * Class ProcessRelationships
+ * @package ANDS\API\Task\ImportSubTask
+ */
 class ProcessRelationships extends ImportSubTask
 {
     protected $requireImportedRecords = true;
@@ -62,28 +64,6 @@ class ProcessRelationships extends ImportSubTask
         if (sizeof($affectedRecordIDs) > 0) {
             $this->parent()->setTaskData('affectedRecords', $affectedRecordIDs);
         }
-
-
-        $this->processAffectedRecords();
-
     }
 
-    public function processAffectedRecords()
-    {
-        $affectedRecords = $this->parent()->getTaskData('affectedRecords');
-        if (!$affectedRecords) {
-            return;
-        }
-        $total = count($affectedRecords);
-
-        $this->log("Processing relationships of $total affected records");
-        debug("Processing $total affected records");
-
-        foreach ($affectedRecords as $index => $roID) {
-            $record = RegistryObjectsRepository::getRecordByID($roID);
-            RelationshipProvider::process($record);
-            $this->updateProgress($index, $total, "Processed affected ($index/$total) $record->title($record->registry_object_id)");
-        }
-
-    }
 }

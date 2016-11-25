@@ -13,6 +13,7 @@ use ANDS\Registry\Providers\RelationshipProvider;
 class ProcessAffectedRelationships extends ImportSubTask
 {
     protected $requireAffectedRecords = true;
+    protected $title = "PROCESSING AFFECTED RELATIONSHIPS";
 
     public function run_task()
     {
@@ -31,6 +32,7 @@ class ProcessAffectedRelationships extends ImportSubTask
             RelationshipProvider::process($record);
             $this->updateProgress($index, $total, "Processed affected ($index/$total) $record->title($record->registry_object_id)");
         }
+
         debug("Finished processing $total affected records");
 
         return;
