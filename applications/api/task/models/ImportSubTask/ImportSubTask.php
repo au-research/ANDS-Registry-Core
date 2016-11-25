@@ -44,6 +44,15 @@ class ImportSubTask extends Task
             }
         }
 
+        if ($this->requireAffectedRecords) {
+            $affectedRecords = $this->parent()->getTaskData("affectedRecords");
+            if ($affectedRecords === false || $affectedRecords === null) {
+                $this->log("Affected Records require for this task");
+                $this->setStatus("COMPLETED");
+                return;
+            }
+        }
+
         if ($this->requireHarvestedRecords) {
             $harvestedRecords = $this->parent()->getTaskData("harvestedRecordIDs");
             if ($harvestedRecords === false || $harvestedRecords === null) {

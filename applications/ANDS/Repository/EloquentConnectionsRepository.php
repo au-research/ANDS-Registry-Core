@@ -14,6 +14,8 @@ use ANDS\RegistryObject\ImplicitRelationship;
 class EloquentConnectionsRepository
 {
     private $viewSource = RelationshipView::class;
+    private $query;
+
     /**
      * EloquentConnectionsRepository constructor.
      */
@@ -34,9 +36,36 @@ class EloquentConnectionsRepository
      */
     public function run($filters, $flags = [], $limit = 2000, $offset = 0)
     {
+        $this->query = $this->constructQuery($filters, $flags, $limit, $offset);
+        return $this->query->get()->toArray();
+    }
+
+    /**
+     * @param $filters
+     * @param array $flags
+     * @param int $limit
+     * @param int $offset
+     * @return mixed
+     */
+    public function countResult($filters, $flags = [], $limit = 2000, $offset = 0)
+    {
+        $this->query = $this->constructQuery($filters, $flags, $limit, $offset);
+        return $this->query->count();
+    }
+
+    /**
+     * @param $filters
+     * @param array $flags
+     * @param int $limit
+     * @param int $offset
+     * @return mixed
+     */
+    private function constructQuery($filters, $flags = [], $limit = 2000, $offset = 0)
+    {
+
         // [key => value]
         $singleFilters = collect($filters)->filter(function($item, $key){
-            return !is_array($item) && strpos($key, "!=") === false;
+            return !is_array($item) && strpos($key, "!=") === false && $item != null;
         })->toArray();
 
         // [key => [value1, value2]
@@ -46,7 +75,7 @@ class EloquentConnectionsRepository
 
         // [key]
         $rawFilters = collect($filters)->filter(function($item, $key){
-            return strpos($key, "!=") > 0;
+            return strpos($key, "!=") > 0 || $item === null;
         })->keys()->toArray();
 
         // deal with single valued filters
@@ -69,10 +98,8 @@ class EloquentConnectionsRepository
             $relationship = $relationship->limit($limit)->offset($offset);
         }
 
-        $relationship = $relationship
-            ->get();
-
-        return $relationship->toArray();
+        $this->query = $relationship;
+        return $this->query;
     }
 
     /**

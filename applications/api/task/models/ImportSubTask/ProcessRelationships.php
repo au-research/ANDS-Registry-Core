@@ -4,10 +4,12 @@
 namespace ANDS\API\Task\ImportSubTask;
 
 use ANDS\Registry\Providers\RelationshipProvider;
-use ANDS\RegistryObject\Relationship;
 use ANDS\Repository\RegistryObjectsRepository;
-use Illuminate\Support\Collection;
 
+/**
+ * Class ProcessRelationships
+ * @package ANDS\API\Task\ImportSubTask
+ */
 class ProcessRelationships extends ImportSubTask
 {
     protected $requireImportedRecords = true;
@@ -18,6 +20,7 @@ class ProcessRelationships extends ImportSubTask
         // addRelationships to all importedRecords
         $importedRecords = $this->parent()->getTaskData("importedRecords");
         $total = count($importedRecords);
+        debug("Processing Relationship for $total records");
 
         // order records by
         $orderedRecords = [
@@ -41,22 +44,13 @@ class ProcessRelationships extends ImportSubTask
 
         $this->log("Processing relationship of $total records");
 
-        $affectedRecordIDs = [];
         foreach ($orderedRecords as $index => $record) {
             RelationshipProvider::process($record);
-            $affectedRecordIDs = array_merge(
-                $affectedRecordIDs,
-                RelationshipProvider::getAffectedIDs($record)
-            );
             $this->updateProgress($index, $total, "Processed ($index/$total) $record->title($record->registry_object_id)");
+            tearDownEloquent();
         }
 
-        // exclude affected from importedRecords
-        $affectedRecordIDs = collect($affectedRecordIDs)->unique()->filter(function($item) use ($importedRecords){
-            return !in_array($item, $importedRecords);
-        })->toArray();
-
-        $this->log("Size of affected records: ".count($affectedRecordIDs));
+        $affectedRecordIDs = RelationshipProvider::getAffectedIDsFromIDs($importedRecords);
 
         // get currently affected records, if set, merge
         $currentAffectedRecords = $this->parent()->getTaskData('affectedRecords');
@@ -64,30 +58,12 @@ class ProcessRelationships extends ImportSubTask
             $affectedRecordIDs = array_merge($currentAffectedRecords, $affectedRecordIDs);
         }
 
+        $affectedRecordIDs = array_values(array_unique($affectedRecordIDs));
+
         // only set if affected is greater than 0
         if (sizeof($affectedRecordIDs) > 0) {
             $this->parent()->setTaskData('affectedRecords', $affectedRecordIDs);
         }
-
-        $this->processAffectedRecords();
-
     }
 
-    public function processAffectedRecords()
-    {
-        $affectedRecords = $this->parent()->getTaskData('affectedRecords');
-        if (!$affectedRecords) {
-            return;
-        }
-        $total = count($affectedRecords);
-
-        $this->log("Processing relationships of $total affected records");
-
-        foreach ($affectedRecords as $index => $roID) {
-            $record = RegistryObjectsRepository::getRecordByID($roID);
-            RelationshipProvider::process($record);
-            $this->updateProgress($index, $total, "Processed affected ($index/$total) $record->title($record->registry_object_id)");
-        }
-
-    }
 }

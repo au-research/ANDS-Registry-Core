@@ -7,11 +7,13 @@ namespace ANDS\Test;
 use ANDS\API\Task\ImportTask;
 use ANDS\DataSource;
 use ANDS\Payload;
+use ANDS\Registry\Importer;
 use ANDS\Registry\Providers\GrantsConnectionsProvider;
 use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\RegistryObject;
 use ANDS\Repository\DataSourceRepository;
 use ANDS\Repository\RegistryObjectsRepository;
+use ANDS\Registry\Connections;
 
 /**
  * Class TestIndexRelationshipTask
@@ -23,8 +25,24 @@ class TestIndexRelationshipTask extends UnitTest
     /** @test **/
     public function test_it_should_sample()
     {
-        $record = RegistryObjectsRepository::getRecordByID(574582);
-        $affected = RelationshipProvider::getAffectedIDs($record);
+//        $record = RegistryObjectsRepository::getRecordByID(574582);
+//        RelationshipProvider::process($record);
+
+
+        $idsAndImmediate = [574582];
+
+        $impProvider = Connections::getImplicitProvider();
+
+        // child collections
+        $childCollections = $impProvider->init()
+            ->setFilter('to_key', "( SELECT `key` FROM dbs_registry.registry_objects WHERE registry_object_id IN (".implode(",", $idsAndImmediate).") )")
+            ->setFilter('relation_type', 'isPartOf')
+            ->setFilter('from_class', 'collection')
+            ->setLimit(0)
+            ->get();
+
+//        $affected = RelationshipProvider::getAffectedIDs($record);
+        $affected = RelationshipProvider::getAffectedIDsFromIDs([574582]);
         dd($affected);
 
         $record = RegistryObjectsRepository::getRecordByID(574580);
@@ -36,10 +54,17 @@ class TestIndexRelationshipTask extends UnitTest
     /** @test **/
     public function test_it_should_import_clean_grants_network()
     {
-        $deleteTask = $this->deleteRecords();
-//        var_dump($deleteTask->getBenchmarkData());
-        $importTask = $this->importRecords("clean_grants_test_records.xml");
-//        var_dump($importTask->getBenchmarkData());
+        // php index.php test task TestIndexRelationshipTask test_it_should_import_clean_grants_network
+
+        $dataSource = DataSourceRepository::getByKey("AUTEST1");
+
+        // delete all published records
+        Importer::instantDeleteRecords($dataSource, ['status' => 'PUBLISHED']);
+
+        // import first part
+        Importer::instantImportRecord(
+            $dataSource, new Payload(TEST_APP_PATH."core/data/clean_grants_test_records.xml")
+        );
 
         // funder of a1 is f1
         $a1 = RegistryObjectsRepository::getPublishedByKey("GrantsTestActivity1_key");
@@ -95,7 +120,9 @@ class TestIndexRelationshipTask extends UnitTest
         $this->assertEquals($a4funder->key, "GrantsTestFunder1_key");
 
         // import the second part
-        $importTask = $this->importRecords("clean_grants_test_records_part2.xml");
+        Importer::instantImportRecord(
+            $dataSource, new Payload(TEST_APP_PATH."core/data/clean_grants_test_records_part2.xml")
+        );
 
         // c7 does not have a funder
         $c7 = RegistryObjectsRepository::getPublishedByKey("GrantsTestCollection7_key");
@@ -131,16 +158,15 @@ class TestIndexRelationshipTask extends UnitTest
         $this->assertEquals($c5funder->key, "GrantsTestFunder1_key");
 
         // import part 3
-        $this->importRecords("clean_grants_test_records_part3.xml");
+        Importer::instantImportRecord(
+            $dataSource, new Payload(TEST_APP_PATH."core/data/clean_grants_test_records_part3.xml")
+        );
 
         // a5 is the same as a4, so it has a funder
         $a5 = RegistryObjectsRepository::getPublishedByKey("GrantsTestActivity5_key");
         $a5funder = GrantsConnectionsProvider::create()->getFunder($a5);
         $this->assertEquals($a5funder->key, "GrantsTestFunder1_key");
 
-        // TODO: Test SOLR relationship
-
-//        $task = $this->deleteRecords();
     }
 
     /** @test **/

@@ -115,3 +115,32 @@ CREATE TABLE `dbs_registry`.`registry_object_implicit_relationships` (
 
 ALTER TABLE `dbs_registry`.`registry_object_implicit_relationships`
 ADD INDEX `FROM_TO_RELATION` (`from_id` ASC, `to_id` ASC, `relation_type` ASC);
+
+ALTER TABLE `dbs_registry`.`registry_object_identifier_relationships`
+ADD INDEX `idx_relation_type` (`relation_type` ASC);
+
+ALTER TABLE `dbs_registry`.`registry_objects`
+ADD INDEX `idx_key` (`key` ASC),
+ADD INDEX `idx_class` (`class` ASC),
+ADD INDEX `idx_type` (`type` ASC);
+
+ALTER TABLE `dbs_registry`.`registry_object_relationships`
+ADD INDEX `idx_relation_type` (`relation_type` ASC);
+
+ALTER TABLE `dbs_registry`.`tasks`
+ADD INDEX `idx_status` (`status` ASC),
+ADD INDEX `idx_next_run` (`next_run` ASC),
+ADD INDEX `idx_type` (`type` ASC);
+
+ALTER TABLE `dbs_registry`.`registry_objects`
+ADD INDEX `idx_key_id` (`registry_object_id` ASC, `key` ASC);
+
+ALTER TABLE `dbs_registry`.`registry_object_implicit_relationships`
+ADD INDEX `idx_from` (`from_id` ASC),
+ADD INDEX `idx_to` (`to_id` ASC),
+ADD INDEX `idx_relation_type` (`relation_type` ASC),
+ADD INDEX `idx_relation_origin` (`relation_origin` ASC);
+
+ALTER TABLE `dbs_registry`.`harvests`
+ADD INDEX `idx_data_source_id` (`data_source_id` ASC);
+

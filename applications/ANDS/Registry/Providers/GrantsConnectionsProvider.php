@@ -4,12 +4,13 @@
 namespace ANDS\Registry\Providers;
 
 
+use ANDS\RegistryObject;
 use ANDS\Registry\Connections;
 use ANDS\Registry\IdentifierRelationshipView;
-use ANDS\RegistryObject;
+use ANDS\Registry\ImplicitRelationshipView;
+use ANDS\Registry\Providers\getDirectGrantCollections;
 use ANDS\Repository\RegistryObjectsRepository;
 use Illuminate\Support\Collection;
-use ANDS\Registry\ImplicitRelationshipView;
 
 /**
  * Class GrantsConnectionsProvider
@@ -19,18 +20,28 @@ class GrantsConnectionsProvider extends Connections
 {
     /**
      * Get a funder of a particular record
-     * TODO: when traversing a node that has a cached funder, return that
      *
      * @param RegistryObject $record
+     * @param array $processed
      * @return RegistryObject|null
      */
-    public function getFunder(RegistryObject $record)
+    public function getFunder(RegistryObject $record, $processed = [])
     {
+        if (in_array($record->registry_object_id, $processed)) {
+            return null;
+        }
+
+        debug("Getting funder for $record->title($record->registry_object_id)");
+        $processed[] = $record->registry_object_id;
+        debug("Processed List: ". implode(',', $processed));
+        debug("Processed List Size: ". count($processed));
+
         // check in the view for existing funder
         $implicitRelation = ImplicitRelationshipView::where('relation_type', 'isFundedBy')
             ->where('relation_origin', 'GRANTS')
             ->where('from_id', $record->id)
             ->first();
+
         if ($implicitRelation) {
             $funder = RegistryObjectsRepository::getRecordByID($implicitRelation->to_id);
             return $funder;
@@ -46,7 +57,11 @@ class GrantsConnectionsProvider extends Connections
         if ($record->class == 'collection') {
             $parentCollections = $this->getDirectGrantCollections($record);
             foreach ($parentCollections as $collection) {
-                $funder = $this->getFunder($collection);
+                if (in_array($collection->registry_object_id, $processed)) {
+                    continue;
+                }
+                $funder = $this->getFunder($collection, $processed);
+                $processed[] = $collection->registry_object_id;
                 if ($funder !== null) {
                     return $funder;
                 }
@@ -55,7 +70,11 @@ class GrantsConnectionsProvider extends Connections
             // and look for activities that produces this collection
             $activityProducers = $this->getDirectActivityProducer($record);
             foreach ($activityProducers as $activity) {
-                $funder = $this->getFunder($activity);
+                if (in_array($activity->registry_object_id, $processed)) {
+                    continue;
+                }
+                $funder = $this->getFunder($activity, $processed);
+                $processed[] = $activity->registry_object_id;
                 if ($funder !== null) {
                     return $funder;
                 }
@@ -67,7 +86,11 @@ class GrantsConnectionsProvider extends Connections
             // from this node, find a funder of every activity that it is a part of
             $parentActivities = $this->getDirectGrantActivities($record);
             foreach ($parentActivities as $activity) {
-                $funder = $this->getFunder($activity);
+                if (in_array($activity->registry_object_id, $processed)) {
+                    continue;
+                }
+                $funder = $this->getFunder($activity, $processed);
+                $processed[] = $activity->registry_object_id;
                 if ($funder !== null) {
                     return $funder;
                 }
@@ -76,8 +99,16 @@ class GrantsConnectionsProvider extends Connections
 
         // find funders of duplicate records
         $duplicateRecords = $record->getDuplicateRecords();
+
+        // limit to 10 duplicate record to safe guard against overflowing
+        $duplicateRecords = $duplicateRecords->splice(0, 10);
+
         foreach ($duplicateRecords as $duplicate) {
-            $funder = $this->getFunder($duplicate);
+            if (in_array($duplicate->registry_object_id, $processed)) {
+                continue;
+            }
+            $funder = $this->getFunder($duplicate, $processed);
+            $processed[] = $duplicate->registry_object_id;
             if ($funder !== null) {
                 return $funder;
             }
@@ -100,7 +131,7 @@ class GrantsConnectionsProvider extends Connections
 
         // direct
         $direct = $this->init()
-            ->setFilter('from_key', $record->key)
+            ->setFilter('from_id', $record->registry_object_id)
             ->setFilter('relation_type', 'isOutputOf')
             ->setFilter('to_class', 'activity')
             ->setLimit(300)
@@ -130,12 +161,18 @@ class GrantsConnectionsProvider extends Connections
 
         // identifier
 
-        $directIdentifierRelationship = IdentifierRelationshipView::where('from_key', $record->key)->where('relation_type', 'isOutputOf')->get();
+        $directIdentifierRelationship = IdentifierRelationshipView::where('from_key', $record->key)
+            ->where('relation_type', 'isOutputOf')
+            ->whereNotNull('to_key')
+            ->get();
         foreach ($directIdentifierRelationship as $relation) {
             $activities[] = RegistryObjectsRepository::getPublishedByKey($relation->to_key);
         }
 
-        $reverseIdentifierRelationship = IdentifierRelationshipView::where('to_key', $record->key)->where('relation_type', ['hasOutput', 'outputs', 'produces'])->get();
+        $reverseIdentifierRelationship = IdentifierRelationshipView::where('to_key', $record->key)
+            ->where('relation_type', ['hasOutput', 'outputs', 'produces'])
+            ->whereNotNull('from_key')
+            ->get();
         foreach ($reverseIdentifierRelationship as $relation) {
             $activities[] = RegistryObjectsRepository::getPublishedByKey($relation->from_key);
         }
@@ -156,7 +193,7 @@ class GrantsConnectionsProvider extends Connections
         $collections = [];
 
         $direct = $this->init()
-            ->setFilter('from_key', $record->key)
+            ->setFilter('from_id', $record->registry_object_id)
             ->setFilter('relation_type', 'isPartOf')
             ->setFilter('to_class', 'collection')
             ->setLimit(300)
@@ -181,15 +218,24 @@ class GrantsConnectionsProvider extends Connections
             }
         }
 
-        $directIdentifierRelationship = IdentifierRelationshipView::where('from_key', $record->key)->where('relation_type', 'isPartOf')->get();
+        $directIdentifierRelationship = IdentifierRelationshipView::where('from_key', $record->key)
+            ->where('relation_type', 'isPartOf')
+            ->whereNotNull('to_key')
+            ->get();
+
         foreach ($directIdentifierRelationship as $relation) {
             $collections[] = RegistryObjectsRepository::getPublishedByKey($relation->to_key);
         }
 
-        $reverseIdentifierRelationship = IdentifierRelationshipView::where('to_key', $record->key)->where('relation_type', 'hasPart')->get();
+        $reverseIdentifierRelationship = IdentifierRelationshipView::where('to_key', $record->key)
+            ->where('relation_type', 'hasPart')
+            ->whereNotNull('from_key')
+            ->get();
         foreach ($reverseIdentifierRelationship as $relation) {
             $collections[] = RegistryObjectsRepository::getPublishedByKey($relation->from_key);
         }
+
+
 
         return $collections;
     }
@@ -208,7 +254,7 @@ class GrantsConnectionsProvider extends Connections
         $activities = [];
 
         $direct = $this->init()
-            ->setFilter('from_key', $record->key)
+            ->setFilter('from_id', $record->registry_object_id)
             ->setFilter('relation_type', 'isPartOf')
             ->setFilter('to_class', 'activity')
             ->setLimit(0)
@@ -247,7 +293,7 @@ class GrantsConnectionsProvider extends Connections
     {
         // find a direct relation
         $direct = $this->init()
-            ->setFilter('from_key', $record->key)
+            ->setFilter('from_id', $record->registry_object_id)
             ->setFilter('to_class', 'party')
             ->setFilter('relation_type', 'isFundedBy')
             ->setLimit(1)
@@ -397,7 +443,7 @@ class GrantsConnectionsProvider extends Connections
     {
         $implicitRelation = ImplicitRelationshipView::where('relation_type', 'isPartOf')
             ->where('relation_origin', 'GRANTS')
-            ->where('to_id', $record->registry_object_id)
+            ->where('to_key', $record->key)
             ->where('from_class', 'collection')
             ->get();
 
@@ -407,22 +453,6 @@ class GrantsConnectionsProvider extends Connections
         }
 
         // TODO: Manual search when implicitRelationship are not generated yet
-
-        return [];
-    }
-
-    public function getChildCollectionsFromIDs($ids)
-    {
-        $implicitRelation = ImplicitRelationshipView::where('relation_type', 'isPartOf')
-            ->where('relation_origin', 'GRANTS')
-            ->whereIn('to_id', $ids)
-            ->where('from_class', 'collection')
-            ->get();
-
-        if ($implicitRelation->count() > 0) {
-            $childs = $implicitRelation->pluck('from_id')->toArray();
-            return RegistryObject::whereIn('registry_object_id', $childs)->get();
-        }
 
         return [];
     }
@@ -435,7 +465,7 @@ class GrantsConnectionsProvider extends Connections
     {
         $implicitRelation = ImplicitRelationshipView::where('relation_type', 'isPartOf')
             ->where('relation_origin', 'GRANTS')
-            ->where('to_id', $record->id)
+            ->where('to_key', $record->key)
             ->where('from_class', 'activity')
             ->get();
 
@@ -445,22 +475,6 @@ class GrantsConnectionsProvider extends Connections
         }
 
         // TODO: Manual search when implicitRelationship are not generated yet
-
-        return [];
-    }
-
-    public function getChildActivitiesFromIDs($ids)
-    {
-        $implicitRelation = ImplicitRelationshipView::where('relation_type', 'isPartOf')
-            ->where('relation_origin', 'GRANTS')
-            ->whereIn('to_id', $ids)
-            ->where('from_class', 'activity')
-            ->get();
-
-        if ($implicitRelation->count() > 0) {
-            $childs = $implicitRelation->pluck('from_id')->toArray();
-            return RegistryObject::whereIn('registry_object_id', $childs)->get();
-        }
 
         return [];
     }

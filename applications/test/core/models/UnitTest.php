@@ -170,7 +170,8 @@ class UnitTest
         $this->ci->unit->run(
             $left, $right,
             $name,
-            $this->getNote());
+            $this->getNote()
+        );
         $this->reset();
         return $this;
     }

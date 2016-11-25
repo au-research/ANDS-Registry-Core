@@ -248,6 +248,7 @@ class ImportTask extends Task
                     "ProcessCoreMetadata",
                     "ProcessIdentifiers",
                     "ProcessRelationships",
+                    "ProcessAffectedRelationships",
                     "ProcessQualityMetadata",
                     "IndexPortal",
                     "IndexRelationship",
@@ -265,6 +266,7 @@ class ImportTask extends Task
                     "ProcessDelete",
                     "ProcessIdentifiers",
                     "ProcessRelationships",
+                    "ProcessAffectedRelationships",
                     "ProcessQualityMetadata",
                     "IndexPortal",
                     "IndexRelationship",
@@ -274,6 +276,7 @@ class ImportTask extends Task
             case "UpdateRelationshipWorkflow":
                 $tasks = [
                     "ProcessRelationships",
+                    "ProcessAffectedRelationships",
                     "IndexRelationship"
                 ];
                 break;
@@ -300,6 +303,7 @@ class ImportTask extends Task
                     "ProcessDelete",
                     "ProcessIdentifiers",
                     "ProcessRelationships",
+                    "ProcessAffectedRelationships",
                     "ProcessQualityMetadata",
                     "IndexPortal",
                     "IndexRelationship",
@@ -371,6 +375,9 @@ class ImportTask extends Task
                 'charset' => 'utf8',
                 'collation' => 'utf8_unicode_ci',
                 'prefix' => '',
+                'options'   => array(
+                    \PDO::ATTR_PERSISTENT => true,
+                )
             ], 'default'
         );
         $capsule->setAsGlobal();

@@ -62,6 +62,11 @@ class RegistryObject extends Model
         }
     }
 
+    public function deleteRegistryObjectAttribute($key){
+        RegistryObjectAttribute::where('attribute', $key)
+            ->where('registry_object_id', $this->registry_object_id)->delete();
+    }
+    
     /**
      * Get a RegistryObjectAttribute of this by key
      *
@@ -134,7 +139,6 @@ class RegistryObject extends Model
             ]);
         }
     }
-
     /**
      * is this of published status
      * @return bool

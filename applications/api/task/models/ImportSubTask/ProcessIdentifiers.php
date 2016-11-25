@@ -16,10 +16,12 @@ class ProcessIdentifiers extends ImportSubTask
         $this->parent()->getCI()->load->model('registry/registry_object/registry_objects', 'ro');
         $importedRecords = $this->parent()->getTaskData("importedRecords");
         $total = count($importedRecords);
+        debug("Processing Identifiers for $total records");
         foreach ( $importedRecords as $index=>$roID) {
             $ro = $this->parent()->getCI()->ro->getByID($roID);
             $ro->processIdentifiers();
             $this->updateProgress($index, $total, "Processed ($index/$total) $ro->title($roID)");
         }
+        debug("Processing Identifiers for $total records");
     }
 }

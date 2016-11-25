@@ -88,6 +88,77 @@ class RelationshipProvider
     }
 
     /**
+     * Returns if a record contains a specific relatedObject class
+     *
+     * @param RegistryObject $record
+     * @param $class
+     * @param array $processed
+     * @return bool
+     */
+    public static function hasRelatedClass(RegistryObject $record, $class, $processed = [])
+    {
+        if (in_array($record->registry_object_id, $processed)) {
+            return false;
+        }
+
+        // Explicit
+        $explicitProvider = Connections::getStandardProvider();
+
+        // direct
+        $result = $explicitProvider->init()
+            ->setFilter('to_class', $class)
+            ->setFilter('from_id', $record->registry_object_id)
+            ->count();
+
+        if ($result > 0) {
+            return true;
+        }
+
+        // reverse
+        $result = $explicitProvider->init()
+            ->setFilter('from_class', $class)
+            ->setFilter('to_key', $record->key)
+            ->count();
+
+        if ($result > 0) {
+            return true;
+        }
+
+        // direct implicit
+        $implicitProvider = Connections::getImplicitProvider();
+
+        $result = $implicitProvider->init()
+            ->setFilter('to_class', $class)
+            ->setFilter('from_id', $record->registry_object_id)
+            ->count();
+
+        if ($result > 0) {
+            return true;
+        }
+
+        // reverse implicit
+        $result = $implicitProvider->init()
+            ->setFilter('from_class', $class)
+            ->setFilter('to_id', $record->registry_object_id)
+            ->count();
+
+        if ($result > 0) {
+            return true;
+        }
+
+        // duplicate
+        $duplicates = $record->getDuplicateRecords();
+        foreach ($duplicates as $duplicate) {
+            if (static::hasRelatedClass($duplicate, $class, $processed)) {
+                return true;
+            }
+            $processed[] = $duplicate->registry_object_id;
+        }
+
+        return false;
+    }
+
+    /**
      * Delete Relationship and IdentifierRelationships
      * Clean up before a processing
      *
@@ -329,9 +400,10 @@ class RelationshipProvider
 
         // directly related
         $relations = $provider
-            ->setFilter('from_key', $record->key)
+            ->setFilter('from_id', $record->registry_object_id)
             ->setLimit(0)
             ->get();
+
         return $relations;
     }
 
@@ -345,7 +417,7 @@ class RelationshipProvider
 
         // directly related
         $relations = $provider
-            ->setFilter('from_key', $record->key)
+            ->setFilter('from_id', $record->registry_object_id)
             ->setLimit(0)
             ->get();
         return $relations;
@@ -356,8 +428,10 @@ class RelationshipProvider
         $provider = Connections::getImplicitProvider();
 
         // directly related
+        // use to_id here, because implicitProvider reads from implicit related objects
+        // which has to_id instead of to_key
         $relations = $provider
-            ->setFilter('to_key', $record->key)
+            ->setFilter('to_id', $record->registry_object_id)
             ->setLimit(0)
             ->setReverse(true)
             ->get();
@@ -374,7 +448,7 @@ class RelationshipProvider
 
         // directly related
         $relations = $provider
-            ->setFilter('from_key', $record->key)
+            ->setFilter('from_id', $record->registry_object_id)
             ->setLimit(0)
             ->get();
         return $relations;
@@ -402,70 +476,110 @@ class RelationshipProvider
     }
 
     /**
-     * Get a list of affectedIDS for a given RegistryObject
-     * Directly and reverse related
+     * A quick way to get affected IDs from a list of IDs
+     * aim to replace getAffectedIDs function
      *
-     *
-     * @param RegistryObject $record
+     * @param $ids
      * @return array
      */
-    public static function getAffectedIDs(RegistryObject $record)
+    public static function getAffectedIDsFromIDs($ids)
     {
         $affectedIDs = [];
+        $directAndReverse = [];
 
         // find directly affected
-        $direct = static::getDirectRelationship($record);
+        $stdProvider = Connections::getStandardProvider();
+
+        // directly related
+        $direct = $stdProvider->init()
+            ->setFilter('from_id', $ids)
+            ->setLimit(0)
+            ->get();
+
         foreach ($direct as $relation) {
             $affectedIDs[] = $relation->prop('to_id');
+            $directAndReverse[] = $relation->prop('to_id');
         }
 
-        // find direct reverse affected
-        $reverse = static::getReverseRelationship($record);
+        // reverse
+        $keys = RegistryObject::whereIn('registry_object_id', $ids)->get()->pluck('key')->toArray();
+        $reverse = $stdProvider->init()
+            ->setFilter('to_key', $keys)
+            ->setLimit(0)
+            ->get();
+
         foreach ($reverse as $relation) {
+            $affectedIDs[] = $relation->prop('from_id');
+            $directAndReverse[] = $relation->prop('from_id');
+        }
+
+        // funder
+        $impProvider = Connections::getImplicitProvider();
+        $funders = $impProvider->init()
+            ->setFilter('from_id', $ids)
+            ->setFilter('relation_type', 'isFundedBy')
+            ->setLimit(0)
+            ->get();
+
+        foreach ($funders as $relation) {
+            $affectedIDs[] = $relation->prop('from_id');
+        }
+
+        // parent collections
+        $parentCollections = $impProvider->init()
+            ->setFilter('from_id', $ids)
+            ->setFilter('relation_type', 'isPartOf')
+            ->setFilter('to_class', 'collection')
+            ->setLimit(0)
+            ->get();
+
+        foreach ($parentCollections as $relation) {
             $affectedIDs[] = $relation->prop('to_id');
         }
 
-        $grantsProvider = GrantsConnectionsProvider::create();
+        $idsAndImmediate = array_merge($ids, $directAndReverse);
+        $keys = RegistryObject::whereIn('registry_object_id', $idsAndImmediate)->get()->pluck('key')->toArray();
 
-        // find funder
-        $funder = $grantsProvider->init()->getFunder($record);
-        if ($funder) {
-            $affectedIDs[] = $funder->registry_object_id;
+        // child collections
+        $childCollections = $impProvider->init()
+            ->setFilter('to_key', $keys)
+            ->setFilter('relation_type', 'isPartOf')
+            ->setFilter('from_class', 'collection')
+            ->setLimit(0)
+            ->get();
+
+        foreach ($childCollections as $relation) {
+            $affectedIDs[] = $relation->prop('from_id');
         }
 
-        // find parent collections
-        if ($collections = $grantsProvider->init()->getParentsCollections($record)) {
-            foreach ($collections as $collection) {
-                $affectedIDs[] = $collection->registry_object_id;
-            }
+        //parent activities
+        $parentActivities = $impProvider->init()
+            ->setFilter('from_id', $ids)
+            ->setFilter('relation_type', 'isPartOf')
+            ->setFilter('to_class', 'activity')
+            ->setLimit(0)
+            ->get();
+
+        foreach ($parentActivities as $relation) {
+            $affectedIDs[] = $relation->prop('to_id');
         }
 
-        // find all child collections
-        if ($collections = $grantsProvider->init()->getChildCollectionsFromIDs($affectedIDs)) {
-            foreach ($collections as $collection) {
-                $affectedIDs[] = $collection->registry_object_id;
-            }
+        // child activities
+        $parentActivities = $impProvider->init()
+            ->setFilter('to_id', array_merge($ids, $directAndReverse))
+            ->setFilter('relation_type', 'isPartOf')
+            ->setFilter('from_class', 'activity')
+            ->setLimit(0)
+            ->get();
+
+        foreach ($parentActivities as $relation) {
+            $affectedIDs[] = $relation->prop('from_id');
         }
 
-        // find all parents activities
-        if ($activities = $grantsProvider->init()->getParentsActivities($record)) {
-            foreach ($activities as $activity) {
-                $affectedIDs[] = $activity->registry_object_id;
-            }
-        }
-
-        // find all child activities
-        if ($record->class == 'activity') {
-            if ($activities = $grantsProvider->init()->getChildActivitiesFromIDs($affectedIDs)) {
-                foreach ($activities as $activity) {
-                    $affectedIDs[] = $activity->registry_object_id;
-                }
-            }
-        }
-
-        $affectedIDs = collect($affectedIDs)->unique()->filter(function($item){
-            return $item !== null;
-        })->toArray();
+        $affectedIDs = array_filter($affectedIDs, function($item) use ($ids){
+            return !in_array($item, $ids);
+        });
+        $affectedIDs = array_values(array_unique($affectedIDs));
 
         return $affectedIDs;
     }
