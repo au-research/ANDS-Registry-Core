@@ -15,7 +15,12 @@ class Ingest extends ImportSubTask
 
     public function run_task()
     {
-        foreach ($this->parent()->getPayloads() as $payload) {
+        $payloads = $this->parent()->getPayloads();
+        $multiplePayloads = count($payloads) > 1 ? true : false;
+
+        $payloadCounter = 0;
+        foreach ($this->parent()->getPayloads() as $payloadIndex => $payload) {
+            $payloadCounter++;
             $xml = $payload->getContentByStatus('processed');
             if ($xml === null) {
                 $this->addError("Processed XML not found for ". $payload->getPath());
@@ -23,18 +28,29 @@ class Ingest extends ImportSubTask
             }
             $registryObjects = XMLUtil::getElementsByName($xml, 'registryObject');
             $total = count($registryObjects);
-            foreach ($registryObjects as $index=>$registryObject) {
+            foreach ($registryObjects as $index => $registryObject) {
                 $this->insertRegistryObject($registryObject);
+                if (!$multiplePayloads) {
+                    $this->updateProgress(
+                        $index, $total,
+                        "Processed registryObject ($index/$total) " . trim((string) $registryObject->key)
+                    );
+                }
+            }
+            if ($multiplePayloads) {
                 $this->updateProgress(
-                    $index, $total,
-                    "Processed ($index/$total) " . trim((string) $registryObject->key)
+                    $payloadCounter, count($payloads),
+                    "Processed payload ($payloadCounter/".count($payloads).") " . $payloadIndex
                 );
             }
-            $recordsCreatedCount = $this->parent()->getTaskData("recordsCreatedCount");
-            $recordsUpdatedCount = $this->parent()->getTaskData("recordsUpdatedCount");
-            $this->parent()->updateHarvest(["importer_message" => "Records Created: ".$recordsCreatedCount. ". Records Update: ".$recordsUpdatedCount]);
-
         }
+
+        $recordsCreatedCount = $this->parent()->getTaskData("recordsCreatedCount");
+        $recordsUpdatedCount = $this->parent()->getTaskData("recordsUpdatedCount");
+        $this->parent()->updateHarvest([
+            "importer_message" => "Records Created: ".$recordsCreatedCount. ". Records Update: ".$recordsUpdatedCount
+        ]);
+
     }
 
 
