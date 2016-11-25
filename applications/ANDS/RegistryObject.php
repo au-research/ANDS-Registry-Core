@@ -139,11 +139,6 @@ class RegistryObject extends Model
             ]);
         }
     }
-
-    public function deleteRegistryObjectMetadata($key){
-        Metadata::where('attribute', $key)
-            ->where('registry_object_id', $this->registry_object_id)->delete();
-    }
     
     /**
      * is this of published status

@@ -141,3 +141,6 @@ ADD INDEX `idx_to` (`to_id` ASC),
 ADD INDEX `idx_relation_type` (`relation_type` ASC),
 ADD INDEX `idx_relation_origin` (`relation_origin` ASC);
 
+ALTER TABLE `dbs_registry`.`harvests`
+ADD INDEX `idx_data_source_id` (`data_source_id` ASC);
+
