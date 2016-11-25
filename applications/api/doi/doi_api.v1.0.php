@@ -311,21 +311,23 @@ class Doi_api
      */
     private function handleDataciteReroute($potential_doi)
     {
-        $appID ='';
-        $sharedSecret ='';
+        $appID = '';
+        $sharedSecret = '';
         $docall = false;
         $log = true;
-        $customRequest ='';
-        $response= '';
+        $customRequest = '';
+        $response = '';
         $requestBody = '';
         $responselog = array();
         $this->providesOwnResponse = true;
+        $client = 'unknown';
+        $arrayFormater = new ArrayFormatter();
 
-        if(isset($_SERVER['PHP_AUTH_USER'])) {
+        if (isset($_SERVER['PHP_AUTH_USER'])) {
             $appID = $_SERVER['PHP_AUTH_USER'];
         }
 
-        if(isset($_SERVER['PHP_AUTH_USER'])) {
+        if (isset($_SERVER['PHP_AUTH_USER'])) {
             $sharedSecret = $_SERVER["PHP_AUTH_PW"];
         }
 
@@ -333,145 +335,175 @@ class Doi_api
             $this->dois_db->hostname, 'dbs_dois', $this->dois_db->username, $this->dois_db->password
         );
 
-        $doiRepository = new DoiRepository(
-            $this->dois_db->hostname, 'dbs_dois', $this->dois_db->username, $this->dois_db->password
-        );
-
         $client = $clientRepository->getByAppID($appID);
 
-        $call =  $this->params['identifier'];
-        $responselog['activity'] = $this->params['identifier'];
-
-        // constructing the dataciteclient to talk with Datacite services
-        $dataciteClient = new DataCiteClient(
-            get_config_item("gDOIS_DATACENTRE_NAME_PREFIX").".".get_config_item("gDOIS_DATACENTRE_NAME_MIDDLE").str_pad($client->client_id,2,"-",STR_PAD_LEFT), get_config_item("gDOIS_DATACITE_PASSWORD")
-        );
-
-
-        // construct the DOIServiceProvider to ensure this client is registered to use the service
-        $doiService = new DOIServiceProvider($clientRepository, $doiRepository, $dataciteClient);
-
-        // authenticate the client
-        $result = $doiService->authenticate(
-            $appID,
-            $sharedSecret,
-            $this->getIPAddress(),
-            $manual = false
-        );
-
-        if(!$result){
-            return("ANDS doesn't know you");
-        }
-        if($potential_doi!=''){
-            $doi = $potential_doi;
-        }else{
-            $doi = $this->getDoiValue();
+        //If the client has not provided their appid or shared secret - or has provided incorrect ones - then  set up what logging we can and return the datacite error message
+        if (!$appID || !$sharedSecret) {
+            $response = "An Authentication object was not found in the SecurityContext";
+            $result = "An Authentication object was not found in the SecurityContext";
+            $responselog = ['responsecode' => 'MT009','doi'=>'','activity' => 'authenticate','result'=>$result,'message'=>json_encode($response, true)];
+            $this->doilog($arrayFormater->format($responselog),'doi_' . ($manual ? 'm_' : '') . $responselog['activity'],$client);
+            return $result;
+          }
+        if(!$client){
+            $response = "Bad credentials";
+            $result = "Bad credentials";
+            $responselog = ['responsecode' => 'MT009','doi'=>'','activity' => 'authenticate','result'=>$result,'message'=>json_encode($response, true)];
+            $this->doilog($arrayFormater->format($responselog),'doi_' . ($manual ? 'm_' : '') . $responselog['activity'],$client);
+            return $result;
         }
 
+            $doiRepository = new DoiRepository(
+                $this->dois_db->hostname, 'dbs_dois', $this->dois_db->username, $this->dois_db->password
+            );
 
-        $validDoi = true;
-        if($doi){
-            //lets check if this is a valid doi for this client
-            $doiObject = $doiRepository->getByID($doi);
-            $validDoi = $this->checkDoi($doi,$client);
+            $call = $this->params['identifier'];
+            $responselog['activity'] = $this->params['identifier'];
+            // constructing the dataciteclient to talk with Datacite services
+            $dataciteClient = new DataCiteClient(
+                get_config_item("gDOIS_DATACENTRE_NAME_PREFIX") . "." . get_config_item("gDOIS_DATACENTRE_NAME_MIDDLE") . str_pad($client->client_id, 2, "-", STR_PAD_LEFT), get_config_item("gDOIS_DATACITE_PASSWORD")
+            );
 
-        }
+            // construct the DOIServiceProvider to ensure this client is registered to use the service
+            $doiService = new DOIServiceProvider($clientRepository, $doiRepository, $dataciteClient);
 
-        $validXml = true;
+            // authenticate the client
+            $result = $doiService->authenticate(
+                $appID,
+                $sharedSecret,
+                $this->getIPAddress(),
+                $manual = false
+            );
 
-        if($this->getPostedXML() && $call=='metadata') {
-            $validXml = $doiService->validateXML($this->getPostedXML());
-        }
-
-        $validDomain= true;
-        if($this->getPostedUrl() != '' ) {
-            $validDomain = URLValidator::validDomains($this->getPostedUrl(), $client->domains);
-        }
-
-        if($call=='metadata' && $validDoi) {
-            if ($_SERVER['REQUEST_METHOD'] == 'DELETE' && $doiObject ) {
-                $responselog = ['responsecode' => 'MT003','activity' => strtoupper("DEACTIVATE") ];
-                $call .= '/' . $doi;
-                $requestBody = '';
-                $customRequest = 'DELETE';
-                $doiRepository->doiUpdate($doiObject, array('status' => 'INACTIVE'));
-                $docall = true;
-            } elseif (!$doiObject && $this->getPostedXML() != '') {
-                if(!$validXml){
-                    $responselog = ['responsecode' => 'MT006','activity' => strtoupper("RESERVE") ];
-                }else {
-                    $responselog = ['responsecode' => 'MT015', 'activity' => strtoupper("RESERVE")];
-                    $doiObject = $doiService->insertNewDOI($doi, $this->getPostedXML(), '');
-                    $doiRepository->doiUpdate($doiObject, array('status' => 'RESERVED'));
-                }
-                $requestBody = $this->getPostedXML();
-                $docall = true;
-            } elseif ($_SERVER['REQUEST_METHOD'] == 'GET') {
-                $call .= '/' . $doi;
-                $docall = true;
-                $log = false;
-            } elseif ($this->getPostedXML() && $doiObject->status == 'INACTIVE') {
-                if (!$validXml){
-                    $responselog['responsecode'] = 'MT007';
-                }else{
-                    $responselog = ['responsecode' => 'MT004', 'activity' => strtoupper("ACTIVATE")];
-                    $doiRepository->doiUpdate($doiObject, array('status' => 'ACTIVE', 'datacite_xml' => $this->getPostedXML()));
-                }
-                $requestBody = $this->getPostedXML();
-                $docall = true;
-            } elseif ($this->getPostedXML() && ($doiObject->status == 'ACTIVE' || $doiObject->status == 'RESERVED')) {
-                if (!$validXml){
-                    $responselog['responsecode'] = 'MT007';
-                }else {
-                    $responselog = ['responsecode' => 'MT002', 'activity' => strtoupper("UPDATE")];
-                    $doiRepository->doiUpdate($doiObject, array('datacite_xml' => $this->getPostedXML()));
-                }
-                $requestBody = $this->getPostedXML();
-                $docall = true;
+            if (!$result) {
+                $response = "Bad credentials";
+                $result = "Bad credentials";
+                $responselog = ['responsecode' => 'MT009','doi'=>'','activity' => 'authenticate','result'=>$result,'message'=>json_encode($response, true)];
+                $this->doilog($arrayFormater->format($responselog),'doi_' . ($manual ? 'm_' : '') . $responselog['activity'],$client);
+                return $result;
             }
-        }elseif($call=='doi' && $validDoi) {
-            if ($call == 'doi' && isset($doiObject) && $_SERVER['REQUEST_METHOD'] == 'POST') {
-                //we are either minting an already reserved doi or we are updating the url of a doi
-                if($doiObject->status =='RESERVED' && $validDomain){
-                    if($validDomain)
-                    $responselog = ['responsecode' => 'MT016','activity' => strtoupper("MINT_RESERVED") ];
-                }else{
-                    if($validDomain)
-                    $responselog = ['responsecode' => 'MT002','activity' => strtoupper("UPDATE") ];
-                }
 
-                $requestBody = "doi=" . $doi . "\nurl=" . $this->getPostedUrl();
-                //if the posted url is not valid for this client we will not update the database
-
-               if($validDomain) {
-                   $doiRepository->doiUpdate($doiObject, array('status' => 'ACTIVE', 'url' => $this->getPostedUrl()));
-               }else{
-                   $responselog = ['responsecode' => 'MT014'];
-               }
-                $docall = true;
-            }  elseif ($_SERVER['REQUEST_METHOD'] == 'GET') {
-                $call .= '/' . $doi;
-                $docall = true;
-                $log = false;
+            if ($potential_doi != '') {
+                $doi = $potential_doi;
+            } else {
+                $doi = $this->getDoiValue();
             }
-        }
 
-        if(!$validDoi){
-            $responselog['responsecode'] = 'MT017';
-            $response = "[doi] DOI prefix is not allowed";
-        }
+            $validDoi = true;
+            $doiObject = '';
+            $clientDoi = true;
+            if ($doi) {
+                //lets check if this is a valid doi for this client
+                $doiObject = $doiRepository->getByID($doi);
+                $validDoi = $this->checkDoi($doi, $client);
+                if($doiObject) $clientDoi = ($doiObject->client_id == $client->client_id) ? true : false;
 
-        if($docall) $response = $dataciteClient->request($dataciteClient->getDataciteUrl().$call, $requestBody, $customRequest);
+            }
+
+            $validXml = true;
+
+            if ($this->getPostedXML() && $call == 'metadata') {
+                if ($this->wellFormed($this->getPostedXML())) {
+                    $validXml = $doiService->validateXML($this->getPostedXML());
+                } else {
+                    $validXml = false;
+                }
+            }
+
+            $validDomain = true;
+            if ($this->getPostedUrl() != '') {
+                $validDomain = URLValidator::validDomains($this->getPostedUrl(), $client->domains);
+            }
+
+            if ($call == 'metadata' && $validDoi) {
+                if ($_SERVER['REQUEST_METHOD'] == 'DELETE' && $doiObject && $clientDoi) {
+                    $responselog = ['responsecode' => 'MT003', 'activity' => strtoupper("DEACTIVATE")];
+                    $call .= '/' . $doi;
+                    $requestBody = '';
+                    $customRequest = 'DELETE';
+                    $doiRepository->doiUpdate($doiObject, array('status' => 'INACTIVE'));
+                    $docall = true;
+                } elseif (!$doiObject && $this->getPostedXML() != '') {
+                    if (!$validXml) {
+                        $responselog = ['responsecode' => 'MT006', 'activity' => strtoupper("RESERVE")];
+                    } else {
+                        $responselog = ['responsecode' => 'MT015', 'activity' => strtoupper("RESERVE")];
+                        $doiObject = $doiService->insertNewDOI($doi, $this->getPostedXML(), '');
+                        $doiRepository->doiUpdate($doiObject, array('status' => 'RESERVED'));
+                    }
+                    $requestBody = $this->getPostedXML();
+                    $docall = true;
+                } elseif ($_SERVER['REQUEST_METHOD'] == 'GET') {
+                    $call .= '/' . $doi;
+                    $docall = true;
+                    $log = false;
+                } elseif ($this->getPostedXML() && $doiObject->status == 'INACTIVE' && $clientDoi) {
+                    if (!$validXml) {
+                        $responselog['responsecode'] = 'MT007';
+                    } else {
+                        $responselog = ['responsecode' => 'MT004', 'activity' => strtoupper("ACTIVATE")];
+                        $doiRepository->doiUpdate($doiObject, array('status' => 'ACTIVE', 'datacite_xml' => $this->getPostedXML()));
+                    }
+                    $requestBody = $this->getPostedXML();
+                    $docall = true;
+                } elseif ($this->getPostedXML() && ($doiObject->status == 'ACTIVE' || $doiObject->status == 'RESERVED') && $clientDoi) {
+                    if (!$validXml) {
+                        $responselog['responsecode'] = 'MT007';
+                    } else {
+                        $responselog = ['responsecode' => 'MT002', 'activity' => strtoupper("UPDATE")];
+                        $doiRepository->doiUpdate($doiObject, array('datacite_xml' => $this->getPostedXML()));
+                    }
+                    $requestBody = $this->getPostedXML();
+                    $docall = true;
+                }
+            } elseif ($call == 'doi' && $validDoi) {
+                if ($call == 'doi' && isset($doiObject) && $_SERVER['REQUEST_METHOD'] == 'POST' && $clientDoi) {
+                    //we are either minting an already reserved doi or we are updating the url of a doi
+                    if ($doiObject->status == 'RESERVED' && $validDomain) {
+                        if ($validDomain)
+                            $responselog = ['responsecode' => 'MT016', 'activity' => strtoupper("MINT_RESERVED")];
+                    } else {
+                        if ($validDomain)
+                            $responselog = ['responsecode' => 'MT002', 'activity' => strtoupper("UPDATE")];
+                    }
+
+                    $requestBody = "doi=" . $doi . "\nurl=" . $this->getPostedUrl();
+                    //if the posted url is not valid for this client we will not update the database
+
+                    if ($validDomain) {
+                        $doiRepository->doiUpdate($doiObject, array('status' => 'ACTIVE', 'url' => $this->getPostedUrl()));
+                    } else {
+                        $responselog = ['responsecode' => 'MT014'];
+                    }
+                    $docall = true;
+                } elseif ($_SERVER['REQUEST_METHOD'] == 'GET') {
+                    $call .= '/' . $doi;
+                    $docall = true;
+                    $log = false;
+                } else {
+                    $docall = true;
+                    $requestBody = "doi=" . $doi . "\nurl=" . $this->getPostedUrl();
+                    $responselog = ['responsecode' => 'MT018', 'activity' => strtoupper("MINT")];
+                }
+            }
+
+            if (!$validDoi) {
+                $responselog['responsecode'] = 'MT017';
+                $response = "[doi] DOI prefix is not allowed";
+            }
+            if (!$clientDoi && !$docall) {
+                $responselog['responsecode'] = 'MT008';
+                $response = "cannot access dataset which belongs to another party";
+            }
+
+            if ($docall) $response = $dataciteClient->request($dataciteClient->getDataciteUrl() . $call, $requestBody, $customRequest);
+
 
         $responselog['doi'] = $doi;
         $responselog['result'] = $result;
         $responselog['client_id'] = $client->client_id;
         $responselog['app_id'] = $appID;
         $responselog['message'] = json_encode($response, true);
-
-
-        // log is done using ArrayFormatter
-        $arrayFormater = new ArrayFormatter();
 
         // do the logging
        if($log) $this->doilog(
@@ -523,6 +555,15 @@ class Doi_api
 
     }
 
+    private function wellFormed($xml){
+        $doiXML = new \DOMDocument();
+        libxml_use_internal_errors(true);
+        if($wellFormed = $doiXML->loadXML($xml) ){
+           return true;
+        }else{
+            return false;
+        }
+    }
     private function getPostedXML()
     {
         $output= '';
@@ -570,13 +611,16 @@ class Doi_api
     private function getXmlDoi()
     {
         if($this->getPostedXML()!='') {
+
             $doiXML = new \DOMDocument();
-            $doiXML->loadXML($this->getPostedXML());
-            $xmlDoi = $doiXML->getElementsByTagName('identifier');
-            return $xmlDoi->item(0)->nodeValue;
-        }else{
-            return '';
+            if($this->wellFormed($this->getPostedXML()) ){
+                $doiXML->loadXML($this->getPostedXML());
+                $xmlDoi = $doiXML->getElementsByTagName('identifier');
+                return $xmlDoi->item(0)->nodeValue;
+            }
         }
+        return '';
+
     }
 
     /**
