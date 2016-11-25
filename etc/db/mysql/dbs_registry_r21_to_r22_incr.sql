@@ -7,9 +7,6 @@ CHANGE COLUMN `data` `data` MEDIUMTEXT NULL DEFAULT NULL ;
 
 DROP VIEW `dbs_registry`.`relationships`;
 CREATE
-    ALGORITHM = UNDEFINED
-    DEFINER = `root`@`%`
-    SQL SECURITY DEFINER
 VIEW `dbs_registry`.`relationships` AS
     SELECT
         `ror`.`registry_object_id` AS `from_id`,
@@ -39,13 +36,10 @@ VIEW `dbs_registry`.`relationships` AS
         LEFT JOIN `dbs_registry`.`registry_objects` `ros` ON ((`ror`.`registry_object_id` = `ros`.`registry_object_id`)))
         LEFT JOIN `dbs_registry`.`registry_objects` `rot` ON ((`ror`.`related_object_key` = `rot`.`key`)))
 	WHERE
-		`ros`.`status` = 'PUBLISHED' AND `rot`.`status` = 'PUBLISHED'
+		`ros`.`status` = 'PUBLISHED' AND `rot`.`status` = 'PUBLISHED';
 
 DROP VIEW `dbs_registry`.`identifier_relationships`;
 CREATE
-    ALGORITHM = UNDEFINED
-    DEFINER = `root`@`%`
-    SQL SECURITY DEFINER
 VIEW `dbs_registry`.`identifier_relationships` AS
     SELECT
         `roir`.`registry_object_id` AS `from_id`,
@@ -80,7 +74,14 @@ VIEW `dbs_registry`.`identifier_relationships` AS
             AND (`roir`.`related_object_identifier_type` = `roidn`.`identifier_type`))))
         LEFT JOIN `dbs_registry`.`registry_objects` `rot` ON ((`roidn`.`registry_object_id` = `rot`.`registry_object_id`)))
 	WHERE
-		`ros`.`status` = 'PUBLISHED' AND (`rot`.`status` IS NULL OR `rot`.`status` = 'PUBLISHED')
+		`ros`.`status` = 'PUBLISHED' AND (`rot`.`status` IS NULL OR `rot`.`status` = 'PUBLISHED');
+
+CREATE TABLE `dbs_registry`.`registry_object_implicit_relationships` (
+  `from_id` MEDIUMINT(8) NOT NULL,
+  `to_id` MEDIUMINT(8) NOT NULL,
+  `relation_type` VARCHAR(512) NULL,
+  `relation_origin` VARCHAR(32) NULL);
+
 
 create view dbs_registry.`implicit_relationships` as
   select
@@ -107,11 +108,6 @@ create view dbs_registry.`implicit_relationships` as
   WHERE
     ros.status = 'PUBLISHED' AND rot.status = 'PUBLISHED';
 
-CREATE TABLE `dbs_registry`.`registry_object_implicit_relationships` (
-  `from_id` MEDIUMINT(8) NOT NULL,
-  `to_id` MEDIUMINT(8) NOT NULL,
-  `relation_type` VARCHAR(512) NULL,
-  `relation_origin` VARCHAR(32) NULL);
 
 ALTER TABLE `dbs_registry`.`registry_object_implicit_relationships`
 ADD INDEX `FROM_TO_RELATION` (`from_id` ASC, `to_id` ASC, `relation_type` ASC);
