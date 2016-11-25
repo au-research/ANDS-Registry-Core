@@ -20,9 +20,9 @@ class GrantsConnectionsProvider extends Connections
 {
     /**
      * Get a funder of a particular record
-     * TODO: when traversing a node that has a cached funder, return that
      *
      * @param RegistryObject $record
+     * @param array $processed
      * @return RegistryObject|null
      */
     public function getFunder(RegistryObject $record, $processed = [])
@@ -457,22 +457,6 @@ class GrantsConnectionsProvider extends Connections
         return [];
     }
 
-    public function getChildCollectionsFromIDs($ids)
-    {
-        $implicitRelation = ImplicitRelationshipView::where('relation_type', 'isPartOf')
-            ->where('relation_origin', 'GRANTS')
-            ->whereIn('to_id', $ids)
-            ->where('from_class', 'collection')
-            ->get();
-
-        if ($implicitRelation->count() > 0) {
-            $childs = $implicitRelation->pluck('from_id')->toArray();
-            return RegistryObject::whereIn('registry_object_id', $childs)->get();
-        }
-
-        return [];
-    }
-
     /**
      * @param RegistryObject $record
      * @return array
@@ -491,22 +475,6 @@ class GrantsConnectionsProvider extends Connections
         }
 
         // TODO: Manual search when implicitRelationship are not generated yet
-
-        return [];
-    }
-
-    public function getChildActivitiesFromIDs($ids)
-    {
-        $implicitRelation = ImplicitRelationshipView::where('relation_type', 'isPartOf')
-            ->where('relation_origin', 'GRANTS')
-            ->whereIn('to_id', $ids)
-            ->where('from_class', 'activity')
-            ->get();
-
-        if ($implicitRelation->count() > 0) {
-            $childs = $implicitRelation->pluck('from_id')->toArray();
-            return RegistryObject::whereIn('registry_object_id', $childs)->get();
-        }
 
         return [];
     }

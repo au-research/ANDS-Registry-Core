@@ -248,6 +248,7 @@ class ImportTask extends Task
                     "ProcessCoreMetadata",
                     "ProcessIdentifiers",
                     "ProcessRelationships",
+                    "ProcessAffectedRelationships",
                     "ProcessQualityMetadata",
                     "IndexPortal",
                     "IndexRelationship",
@@ -265,6 +266,7 @@ class ImportTask extends Task
                     "ProcessDelete",
                     "ProcessIdentifiers",
                     "ProcessRelationships",
+                    "ProcessAffectedRelationships",
                     "ProcessQualityMetadata",
                     "IndexPortal",
                     "IndexRelationship",
@@ -274,6 +276,7 @@ class ImportTask extends Task
             case "UpdateRelationshipWorkflow":
                 $tasks = [
                     "ProcessRelationships",
+                    "ProcessAffectedRelationships",
                     "IndexRelationship"
                 ];
                 break;
@@ -300,6 +303,7 @@ class ImportTask extends Task
                     "ProcessDelete",
                     "ProcessIdentifiers",
                     "ProcessRelationships",
+                    "ProcessAffectedRelationships",
                     "ProcessQualityMetadata",
                     "IndexPortal",
                     "IndexRelationship",

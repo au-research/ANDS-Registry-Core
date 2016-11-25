@@ -70,6 +70,8 @@ class EloquentConnectionsRepository
             $relationship = $relationship->limit($limit)->offset($offset);
         }
 
+        debug($relationship->toSql());
+
         $relationship = $relationship
             ->get();
 

@@ -24,15 +24,6 @@ class TestRelationshipProvider extends UnitTest
     }
 
     /** @test **/
-    public function test_it_should_find_affected_records()
-    {
-        initEloquent();
-        $record = RegistryObjectsRepository::getRecordByID(574582);
-        $affectedIDs = RelationshipProvider::getAffectedIDs($record);
-        dd($affectedIDs);
-    }
-
-    /** @test **/
     public function test_it_should_find_affected_records_by_ids()
     {
         initEloquent();

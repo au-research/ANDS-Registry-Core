@@ -50,20 +50,19 @@ class ProcessRelationships extends ImportSubTask
 
         $affectedRecordIDs = RelationshipProvider::getAffectedIDsFromIDs($importedRecords);
 
-        $this->log("Size of affected records: ".count($affectedRecordIDs));
-
         // get currently affected records, if set, merge
         $currentAffectedRecords = $this->parent()->getTaskData('affectedRecords');
         if ($currentAffectedRecords) {
             $affectedRecordIDs = array_merge($currentAffectedRecords, $affectedRecordIDs);
         }
 
-        $affectedRecords = array_values(array_unique($affectedRecordIDs));
+        $affectedRecordIDs = array_values(array_unique($affectedRecordIDs));
 
         // only set if affected is greater than 0
         if (sizeof($affectedRecordIDs) > 0) {
             $this->parent()->setTaskData('affectedRecords', $affectedRecordIDs);
         }
+
 
         $this->processAffectedRecords();
 

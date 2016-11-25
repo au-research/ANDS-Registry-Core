@@ -12,6 +12,7 @@ use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\RegistryObject;
 use ANDS\Repository\DataSourceRepository;
 use ANDS\Repository\RegistryObjectsRepository;
+use ANDS\Registry\Connections;
 
 /**
  * Class TestIndexRelationshipTask
@@ -23,8 +24,24 @@ class TestIndexRelationshipTask extends UnitTest
     /** @test **/
     public function test_it_should_sample()
     {
-        $record = RegistryObjectsRepository::getRecordByID(574582);
-        $affected = RelationshipProvider::getAffectedIDs($record);
+//        $record = RegistryObjectsRepository::getRecordByID(574582);
+//        RelationshipProvider::process($record);
+
+
+        $idsAndImmediate = [574582];
+
+        $impProvider = Connections::getImplicitProvider();
+
+        // child collections
+        $childCollections = $impProvider->init()
+            ->setFilter('to_key', "( SELECT `key` FROM dbs_registry.registry_objects WHERE registry_object_id IN (".implode(",", $idsAndImmediate).") )")
+            ->setFilter('relation_type', 'isPartOf')
+            ->setFilter('from_class', 'collection')
+            ->setLimit(0)
+            ->get();
+
+//        $affected = RelationshipProvider::getAffectedIDs($record);
+        $affected = RelationshipProvider::getAffectedIDsFromIDs([574582]);
         dd($affected);
 
         $record = RegistryObjectsRepository::getRecordByID(574580);
@@ -36,6 +53,8 @@ class TestIndexRelationshipTask extends UnitTest
     /** @test **/
     public function test_it_should_import_clean_grants_network()
     {
+        // php index.php test task TestIndexRelationshipTask test_it_should_import_clean_grants_network
+
         $deleteTask = $this->deleteRecords();
 //        var_dump($deleteTask->getBenchmarkData());
         $importTask = $this->importRecords("clean_grants_test_records.xml");

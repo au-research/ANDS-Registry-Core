@@ -97,7 +97,7 @@ class ProcessDelete extends ImportSubTask
 
         $ids = collect($records)->pluck('registry_object_id')->toArray();
 
-        $affectedRecords = RelationshipProvider::getAffectedIDsFromIDs($ids);
+        $affectedRecordIDs = RelationshipProvider::getAffectedIDsFromIDs($ids);
 
         $this->log("Size of affected records: ".count($affectedRecordIDs));
 

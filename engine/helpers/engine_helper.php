@@ -487,6 +487,14 @@ function monolog($message, $logger = "activity", $type = "info", $allowBot = fal
 }
 
 function debug($message, $type = "debug") {
+
+    $env = get_config_item('deployment_state');
+    $debug = get_config_item('debug');
+
+    if ($env === "production" || $debug === false) {
+        return;
+    }
+
     $logger = new \Monolog\Logger('debug');
     $handler = new \Monolog\Handler\StreamHandler('logs/debug.log');
     $logger->pushHandler($handler);

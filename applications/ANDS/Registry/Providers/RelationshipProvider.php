@@ -403,75 +403,6 @@ class RelationshipProvider
     }
 
     /**
-     * Get a list of affectedIDS for a given RegistryObject
-     * Directly and reverse related
-     *
-     *
-     * @param RegistryObject $record
-     * @return array
-     */
-    public static function getAffectedIDs(RegistryObject $record)
-    {
-        $affectedIDs = [];
-
-        // find directly affected
-        $direct = static::getDirectRelationship($record);
-        foreach ($direct as $relation) {
-            $affectedIDs[] = $relation->prop('to_id');
-        }
-
-        // find direct reverse affected
-        $reverse = static::getReverseRelationship($record);
-        foreach ($reverse as $relation) {
-            $affectedIDs[] = $relation->prop('to_id');
-        }
-
-        $grantsProvider = GrantsConnectionsProvider::create();
-
-        // find funder
-        $funder = $grantsProvider->init()->getFunder($record);
-        if ($funder) {
-            $affectedIDs[] = $funder->registry_object_id;
-        }
-
-        // find parent collections
-        if ($collections = $grantsProvider->init()->getParentsCollections($record)) {
-            foreach ($collections as $collection) {
-                $affectedIDs[] = $collection->registry_object_id;
-            }
-        }
-
-        // find all child collections
-        if ($collections = $grantsProvider->init()->getChildCollectionsFromIDs($affectedIDs)) {
-            foreach ($collections as $collection) {
-                $affectedIDs[] = $collection->registry_object_id;
-            }
-        }
-
-        // find all parents activities
-        if ($activities = $grantsProvider->init()->getParentsActivities($record)) {
-            foreach ($activities as $activity) {
-                $affectedIDs[] = $activity->registry_object_id;
-            }
-        }
-
-        // find all child activities
-        if ($record->class == 'activity') {
-            if ($activities = $grantsProvider->init()->getChildActivitiesFromIDs($affectedIDs)) {
-                foreach ($activities as $activity) {
-                    $affectedIDs[] = $activity->registry_object_id;
-                }
-            }
-        }
-
-        $affectedIDs = collect($affectedIDs)->unique()->filter(function($item){
-            return $item !== null;
-        })->toArray();
-
-        return $affectedIDs;
-    }
-
-    /**
      * A quick way to get affected IDs from a list of IDs
      * aim to replace getAffectedIDs function
      *
@@ -481,6 +412,7 @@ class RelationshipProvider
     public static function getAffectedIDsFromIDs($ids)
     {
         $affectedIDs = [];
+        $directAndReverse = [];
 
         // find directly affected
         $stdProvider = Connections::getStandardProvider();
@@ -488,22 +420,24 @@ class RelationshipProvider
         // directly related
         $direct = $stdProvider->init()
             ->setFilter('from_id', $ids)
-            ->setFilter("to_id NOT IN (".implode(', ', $ids).")")
             ->setLimit(0)
             ->get();
 
         foreach ($direct as $relation) {
             $affectedIDs[] = $relation->prop('to_id');
+            $directAndReverse[] = $relation->prop('to_id');
         }
 
         // reverse
+        $keys = RegistryObject::whereIn('registry_object_id', $ids)->get()->pluck('key')->toArray();
         $reverse = $stdProvider->init()
-            ->setFilter('to_id', $ids)
+            ->setFilter('to_key', $keys)
             ->setLimit(0)
             ->get();
 
         foreach ($reverse as $relation) {
             $affectedIDs[] = $relation->prop('from_id');
+            $directAndReverse[] = $relation->prop('from_id');
         }
 
         // funder
@@ -530,9 +464,12 @@ class RelationshipProvider
             $affectedIDs[] = $relation->prop('to_id');
         }
 
+        $idsAndImmediate = array_merge($ids, $directAndReverse);
+        $keys = RegistryObject::whereIn('registry_object_id', $idsAndImmediate)->get()->pluck('key')->toArray();
+
         // child collections
         $childCollections = $impProvider->init()
-            ->setFilter('to_id', $ids)
+            ->setFilter('to_key', $keys)
             ->setFilter('relation_type', 'isPartOf')
             ->setFilter('from_class', 'collection')
             ->setLimit(0)
@@ -556,7 +493,7 @@ class RelationshipProvider
 
         // child activities
         $parentActivities = $impProvider->init()
-            ->setFilter('to_id', $ids)
+            ->setFilter('to_id', array_merge($ids, $directAndReverse))
             ->setFilter('relation_type', 'isPartOf')
             ->setFilter('from_class', 'activity')
             ->setLimit(0)
@@ -566,10 +503,10 @@ class RelationshipProvider
             $affectedIDs[] = $relation->prop('from_id');
         }
 
-        $affectedIDs = array_values(array_unique($affectedIDs));
         $affectedIDs = array_filter($affectedIDs, function($item) use ($ids){
             return !in_array($item, $ids);
         });
+        $affectedIDs = array_values(array_unique($affectedIDs));
 
         return $affectedIDs;
     }
