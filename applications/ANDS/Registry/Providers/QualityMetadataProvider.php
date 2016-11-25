@@ -34,9 +34,9 @@ class QualityMetadataProvider
 
     public static function process(RegistryObject $record)
     {
-//        static::deleteQualityInfo($record);
+        static::deleteQualityInfo($record);
         $quality_report = static::getQualityReport($record);
-//        static::saveQualityInfo($record, $quality_report);
+        static::saveQualityInfo($record, $quality_report);
 
     }
 
@@ -347,8 +347,6 @@ class QualityMetadataProvider
 
 
     public static function saveQualityInfo($record, $quality_report){
-
-        var_dump($quality_report);
         foreach($quality_report as $key=>$value){
             if(in_array($key, static::$attributeKeys)){
                 $record->setRegistryObjectAttribute($key, $value);
