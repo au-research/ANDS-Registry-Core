@@ -581,7 +581,12 @@ class RelationshipProvider
         $affectedIDs = array_filter($affectedIDs, function($item) use ($ids){
             return !in_array($item, $ids);
         });
-        $affectedIDs = array_values(array_unique($affectedIDs));
+
+        $affectedIDs = collect($affectedIDs)
+            ->flatten()
+            ->values()
+            ->unique()
+            ->toArray();
 
         return $affectedIDs;
     }

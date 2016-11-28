@@ -25,30 +25,15 @@ class TestIndexRelationshipTask extends UnitTest
     /** @test **/
     public function test_it_should_sample()
     {
-//        $record = RegistryObjectsRepository::getRecordByID(574582);
-//        RelationshipProvider::process($record);
+        $records = RegistryObject::where('data_source_id', 315)->where('status', 'PUBLISHED')->get()->pluck('registry_object_id')->toArray();
 
+        $affected = RelationshipProvider::getAffectedIDsFromIDs($records);
 
-        $idsAndImmediate = [574582];
+        dd(count($affected));
 
-        $impProvider = Connections::getImplicitProvider();
-
-        // child collections
-        $childCollections = $impProvider->init()
-            ->setFilter('to_key', "( SELECT `key` FROM dbs_registry.registry_objects WHERE registry_object_id IN (".implode(",", $idsAndImmediate).") )")
-            ->setFilter('relation_type', 'isPartOf')
-            ->setFilter('from_class', 'collection')
-            ->setLimit(0)
-            ->get();
-
-//        $affected = RelationshipProvider::getAffectedIDs($record);
-        $affected = RelationshipProvider::getAffectedIDsFromIDs([574582]);
-        dd($affected);
-
-        $record = RegistryObjectsRepository::getRecordByID(574580);
-        RelationshipProvider::process($record);
-        $parents = GrantsConnectionsProvider::create()->init()->getParentsCollections($record);
-        dd($parents->pluck('title'));
+        foreach ($records as $record) {
+            RelationshipProvider::process($record);
+        }
     }
 
     /** @test **/
