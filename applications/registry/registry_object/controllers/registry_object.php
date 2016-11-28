@@ -75,7 +75,10 @@ class Registry_object extends MX_Controller {
 			}
 
 			$data['revisions'] = array_slice($ro->getAllRevisions(),0,$this->maxVisibleRevisions);
-			$data['quality_text'] = $ro->get_quality_text();
+			initEloquent();
+			$record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($ro_id);
+			$quality_html = ANDS\Registry\Providers\QualityMetadataProvider::getQualityReportHTML($record);
+			$data['quality_text'] = $quality_html;
 			//var_dump($data);
 			//exit();
 			$this->load->view('registry_object_index', $data);
@@ -671,10 +674,19 @@ class Registry_object extends MX_Controller {
 	}
 
 	public function get_quality_view(){
-		$this->load->model('registry_objects', 'ro');
-		$ro = $this->ro->getByID($this->input->post('ro_id'));
-		echo $ro->get_quality_text();
+		initEloquent();
+		$record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($this->input->post('ro_id'));
+		$quality_html = ANDS\Registry\Providers\QualityMetadataProvider::getQualityReportHTML($record);
+		echo $quality_html;
 	}
+
+	public function get_quality_html(){
+		initEloquent();
+		$record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($this->input->post('ro_id'));
+		$quality_html = ANDS\Registry\Providers\QualityMetadataProvider::getQualityReportHTML($record);
+		echo $quality_html;
+	}
+
 
 	public function get_validation_text(){
 		$this->load->model('registry_objects', 'ro');

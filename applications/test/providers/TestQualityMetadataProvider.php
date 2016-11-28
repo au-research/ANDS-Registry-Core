@@ -21,7 +21,7 @@ class TestQualityMetadataProvider extends UnitTest
         $record = RegistryObjectsRepository::getPublishedByKey($collectionkey);
         QualityMetadataProvider::deleteQualityAttributes($record);
         QualityMetadataProvider::deleteQualityMetadata($record);
-        $quality_level = $record->getRegistryObjectAttributeValue('quality_level');
+        $quality_level = $record->getRegistryObjectAttributeValue('quality_info');
         $level_html = $record->getRegistryObjectAttributeValue('level_html');
 
         $this->assertNull($quality_level);
