@@ -25,15 +25,12 @@ class TestIndexRelationshipTask extends UnitTest
     /** @test **/
     public function test_it_should_sample()
     {
-        $records = RegistryObject::where('data_source_id', 315)->where('status', 'PUBLISHED')->get()->pluck('registry_object_id')->toArray();
+        $record = RegistryObject::find(798088);
+        // RelationshipProvider::process($record);
 
-        $affected = RelationshipProvider::getAffectedIDsFromIDs($records);
+        dd(RelationshipProvider::getIdentifierRelationship($record));
 
-        dd(count($affected));
-
-        foreach ($records as $record) {
-            RelationshipProvider::process($record);
-        }
+        dd(RelationshipProvider::getAffectedIDsFromIDs([798088]));
     }
 
     /** @test **/

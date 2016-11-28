@@ -1,6 +1,7 @@
 <?php
 namespace ANDS\API\Registry\Handler;
 use ANDS\API\Task\FixRelationshipTask;
+use ANDS\API\Task\ImportTask;
 use \Exception as Exception;
 use \XSLTProcessor as XSLTProcessor;
 
@@ -98,6 +99,8 @@ class ObjectHandler extends Handler{
      */
     private function record_api()
     {
+        initEloquent();
+
         $result = array();
 
         if ($this->params['object_module']) {
@@ -175,27 +178,23 @@ class ObjectHandler extends Handler{
                     $ro->indexRelationship();
                     return $ro->getRelationshipIndex();
                 } else if ($m1 == 'fixRelationship') {
-                    $task = new FixRelationshipTask();
+
                     $ro = $resource['ro'];
-                    $params = [
-                        'id' => $ro->id,
-                    ];
-                    $includes = explode(',', $this->ci->input->get('includes'));
-                    if (sizeof($includes) > 0) {
-                        $params['includes'] = implode(',', $includes);
-                        if (trim($params['includes'])=="") {
-                            unset($params['includes']);
-                        }
-                    }
-                    $task->params = http_build_query($params);
-                    $this->ci->benchmark->mark('start');
-                    $task->run_task();
-                    $this->ci->benchmark->mark('end');
-                    $took = $this->ci->benchmark->elapsed_time('start', 'end');
-                    return [
-                        'took' => $took,
-                        'task' => $task->getMessage()
-                    ];
+
+                    $task = new ImportTask;
+                    $task->init([
+                       'params' => http_build_query([
+                           'targetStatus' => 'PUBLISHED',
+                           'ds_id' => $ro->data_source_id,
+                           'runAll' => 1
+                       ])
+                    ])->skipLoadingPayload()->initialiseTask();
+
+                    $task->setTaskData('importedRecords', [$ro->id]);
+                    $task->run();
+
+                    return $task->toArray();
+
                 } else if ($m1 == 'relatedObjects') {
                     $ro = $resource['ro'];
                     $ro->addRelationships();

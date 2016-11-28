@@ -556,14 +556,27 @@ class RelationshipProvider
 
         //parent activities
         $parentActivities = $impProvider->init()
-            ->setFilter('from_id', $ids)
-            ->setFilter('relation_type', 'isPartOf')
+            ->setFilter('from_id', array_merge($ids, $directAndReverse))
+            ->setFilter('relation_type', ['isPartOf', 'isOutputOf'])
             ->setFilter('to_class', 'activity')
             ->setLimit(0)
             ->get();
 
         foreach ($parentActivities as $relation) {
             $affectedIDs[] = $relation->prop('to_id');
+        }
+
+        // reverse parent activities
+        $reverseParentActivities = $impProvider->init()
+            ->setFilter('to_key', $keys)
+            ->setFilter('relation_type', ['hasPart', 'hasOutput', 'outputs'])
+            ->setFilter('from_class', 'activity')
+            ->setLimit(0)
+            ->get();
+
+
+        foreach ($reverseParentActivities as $relation) {
+            $affectedIDs[] = $relation->prop('from_id');
         }
 
         // child activities
