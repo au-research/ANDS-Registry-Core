@@ -379,10 +379,16 @@ class RelationshipProvider
         $record->deleteRegistryObjectMetadata('parents_activity_ids');
         if ($activities = $provider->getParentsActivities($record)) {
             foreach ($activities as $activity) {
+
+                $relationType = "isOutputOf";
+                if ($record->class == "activity") {
+                    $relationType = "isPartOf";
+                }
+
                 ImplicitRelationship::firstOrCreate([
                     'from_id' => $record->registry_object_id,
                     'to_id' => $activity->registry_object_id,
-                    'relation_type' => 'isOutputOf',
+                    'relation_type' => $relationType,
                     'relation_origin' => 'GRANTS'
                 ]);
             }
@@ -427,11 +433,14 @@ class RelationshipProvider
         return $relations;
     }
 
+    /**
+     * @param RegistryObject $record
+     * @return array
+     */
     public static function getReverseImplicitRelationship(RegistryObject $record
     ) {
         $provider = Connections::getImplicitProvider();
 
-        // directly related
         // use to_id here, because implicitProvider reads from implicit related objects
         // which has to_id instead of to_key
         $relations = $provider

@@ -2,6 +2,8 @@
 namespace ANDS\API\Registry\Handler;
 use ANDS\API\Task\FixRelationshipTask;
 use ANDS\API\Task\ImportTask;
+use ANDS\Registry\Providers\RelationshipProvider;
+use ANDS\Repository\RegistryObjectsRepository;
 use \Exception as Exception;
 use \XSLTProcessor as XSLTProcessor;
 
@@ -173,10 +175,23 @@ class ObjectHandler extends Handler{
                     return $ro->sync();
                 } else if($m1 == 'relations_index') {
                     $ro = $resource['ro'];
-                    $ro->addRelationships();
-                    $ro->cacheRelationshipMetadata();
-                    $ro->indexRelationship();
-                    return $ro->getRelationshipIndex();
+
+                    $importTask = new ImportTask;
+                    $importTask->init([
+                        'params' => http_build_query([
+                            'targetStatus' => 'PUBLISHED',
+                            'ds_id' => $ro->data_source_id,
+                            'runAll' => 1
+                        ])
+                    ])->skipLoadingPayload()->initialiseTask();
+                    $task = $importTask->getTaskByName("IndexRelationship");
+
+                    $record = RegistryObjectsRepository::getRecordByID($ro->id);
+                    $relationships = RelationshipProvider::getMergedRelationships($record);
+                    $index = $task->getRelationshipIndex($relationships);
+
+                    return $index;
+
                 } else if ($m1 == 'fixRelationship') {
 
                     $ro = $resource['ro'];

@@ -166,12 +166,29 @@ class Relation
             }
         }
 
-        // flip relation_origin
-        if ($this->getProperty('to_data_source_id') == $relation->getProperty('from_data_source_id')) {
-            $relation->replaceProperty("relation_origin", "REVERSE_INT");
-        } else {
-            $relation->replaceProperty("relation_origin", "REVERSE_EXT");
+        // flip relation origin
+        $origin = $relation->prop('relation_origin');
+        switch ($origin) {
+            case "IDENTIFIER":
+                $relationOrigin = "REVERSE_IDENTIFIER";
+                break;
+            case "GRANTS":
+                $relationOrigin = "REVERSE_GRANTS";
+                break;
+            case "EXPLICIT":
+                if ($this->prop('to_data_source_id') == $relation->prop('from_data_source_id')) {
+                    $relationOrigin = "REVERSE_INT";
+                } else {
+                    $relationOrigin = "REVERSE_EXT";
+                }
+                break;
+            default:
+                $relationOrigin = "REVERSE";
+                break;
         }
+
+        $relation->replaceProperty("relation_origin", $relationOrigin);
+
 
         return $relation;
     }

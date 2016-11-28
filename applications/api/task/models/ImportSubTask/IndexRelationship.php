@@ -151,6 +151,8 @@ class IndexRelationship extends ImportSubTask
             unset($doc['relation_type']);
             if (!is_array($doc['relation'])) {
                 $doc['relation'] = [$doc['relation']];
+            }
+            if (isset($doc['relation_origin']) && !is_array($doc['relation_origin'])) {
                 $doc['relation_origin'] = [$doc['relation_origin']];
             }
 
