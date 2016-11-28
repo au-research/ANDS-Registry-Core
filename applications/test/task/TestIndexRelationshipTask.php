@@ -25,7 +25,8 @@ class TestIndexRelationshipTask extends UnitTest
     /** @test **/
     public function test_it_should_sample()
     {
-        $record = RegistryObject::find(798088);
+        $record = RegistryObject::find(751259);
+        dd(RelationshipProvider::getAffectedIDsFromIDs([751259]));
         // RelationshipProvider::process($record);
 
         $task = new ImportTask;
