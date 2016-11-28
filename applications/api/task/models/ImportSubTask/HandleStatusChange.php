@@ -69,6 +69,9 @@ class HandleStatusChange extends ImportSubTask
             $this->publishRecords($recordIDsToPublished);
             $this->parent()->setTaskData("deletedRecords", $ids);
         }
+
+        // reset the affectedRecords, so as to not count deleted records among them
+        $this->parent()->setTaskData('affectedRecords', []);
     }
 
     /**
