@@ -126,29 +126,53 @@ class IndexRelationship extends ImportSubTask
         $this->parent()->getCI()->solr->deleteByQueryCondition('from_id:'.$record->registry_object_id);
 
         // add
+        $docs = $this->getRelationshipIndex($relationships);
+
+        $this->parent()->getCI()->solr->add_json(json_encode($docs));
+    }
+
+    /**
+     * @param $relationships
+     * @return array
+     */
+    public function getRelationshipIndex($relationships)
+    {
         $docs = [];
-        foreach ($relationships as $relation) {
-            $doc = $relation->format();
-            $doc['id'] = $doc['from_id'].$doc['to_key'];
+        foreach ($relationships as $key => $relation) {
+            $doc = $relation->format([
+                'to_identifier' => 'relation_identifier_identifier',
+                'to_identifier_type' => 'relation_identifier_type'
+            ]);
+
+            $doc['id'] = $key;
             unset($doc['from_data_source_id']);
             unset($doc['to_data_source_id']);
             $doc['relation'] = [$doc['relation_type']];
             unset($doc['relation_type']);
             if (!is_array($doc['relation'])) {
                 $doc['relation'] = [$doc['relation']];
-                $doc['relation'] = [$doc['relation_origin']];
+                $doc['relation_origin'] = [$doc['relation_origin']];
             }
 
             // to_finder is the title
             if ((in_array('funds', $doc['relation']) ||
-                in_array('isFundedBy', $doc['relation']))
+                    in_array('isFundedBy', $doc['relation']))
                 && in_array($doc['to_class'], ['activity', 'collection'])
             ) {
                 $doc['to_funder'] = $doc['from_title'];
             }
 
+            // identifier_relationship
+            if (array_key_exists('relation_identifier_identifier', $doc)) {
+                $doc['to_class'] = $doc['to_related_info_type'];
+                $doc['to_type'] = $doc['to_related_info_type'];
+                $doc['to_title'] = $doc['relation_to_title'];
+                $doc['relation_identifier_url'] = getIdentifierURL($doc['relation_identifier_type'], $doc['relation_identifier_identifier']);
+            }
+
             $docs[] = $doc;
         }
-        $this->parent()->getCI()->solr->add_json(json_encode($docs));
+
+        return $docs;
     }
 }

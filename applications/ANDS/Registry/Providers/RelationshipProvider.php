@@ -77,7 +77,9 @@ class RelationshipProvider
         $allRelationships = collect($allRelationships)->flatten(1)->values()->all();
         $result = [];
         foreach ($allRelationships as $relation) {
-            $key = md5($relation->prop('to_key'), $relation->prop('from_key'));
+
+            $key = $relation->getUniqueID();
+
             if (array_key_exists($key, $result)) {
                 $result[$key]->mergeWith($relation->getProperties());
             } else {
@@ -453,6 +455,7 @@ class RelationshipProvider
             ->setFilter('from_id', $record->registry_object_id)
             ->setLimit(0)
             ->get();
+
         return $relations;
     }
 

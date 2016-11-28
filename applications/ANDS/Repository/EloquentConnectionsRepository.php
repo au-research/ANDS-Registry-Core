@@ -3,6 +3,7 @@
 
 namespace ANDS\Repository;
 
+use ANDS\Registry\IdentifierRelationshipView;
 use ANDS\Registry\ImplicitRelationshipView;
 use ANDS\Registry\RelationshipView;
 use ANDS\RegistryObject\ImplicitRelationship;
@@ -80,9 +81,15 @@ class EloquentConnectionsRepository
 
         // deal with single valued filters
         $relationship = RelationshipView::where($singleFilters);
+
         if ($this->getViewSource() == ImplicitRelationshipView::class) {
             $relationship = ImplicitRelationshipView::where($singleFilters);
         }
+
+        if ($this->getViewSource() == IdentifierRelationshipView::class) {
+            $relationship = IdentifierRelationshipView::where($singleFilters);
+        }
+
 
         // where_in filters
         foreach ($arrayFilters as $key=>$value) {

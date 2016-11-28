@@ -67,10 +67,8 @@ class Connections {
         foreach ($repoResult as $row) {
 
             $relation = new Relation();
-            foreach ($this->flags as $flag) {
-                if (array_key_exists($flag, $row)) {
-                    $relation->setProperty($flag, $row[$flag]);
-                }
+            foreach ($row as $key => $value) {
+                $relation->setProperty($key, $value);
             }
 
             // determine key
@@ -83,6 +81,9 @@ class Connections {
             }
 
             // @todo deal with missing to_key (identifier relation)
+            if ($row['to_key'] === null && $row['to_identifier'] != null) {
+                $key = md5($row['from_key'].$row['to_identifier']);
+            }
 
             // don't add existing relation
             if (in_array($relation, $result)) {
@@ -95,7 +96,6 @@ class Connections {
             } else {
                 $result[$key] = $relation;
             }
-
         }
         return $result;
     }
@@ -137,11 +137,18 @@ class Connections {
         return new static(new EloquentConnectionsRepository());
     }
 
+    /**
+     * @return static
+     */
     public static function getIdentifierProvider()
     {
         $repository = new EloquentConnectionsRepository();
         $repository->setViewSource(IdentifierRelationshipView::class);
-        return new static($repository);
+        $provider = new static($repository);
+        $provider->setFlag([
+            '*'
+        ]);
+        return $provider;
     }
 
     /**

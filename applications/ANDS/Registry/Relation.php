@@ -118,7 +118,7 @@ class Relation
     {
         $result = [];
 
-        foreach ($this->getProperties() as $key=>$value) {
+        foreach ($this->getProperties() as $key => $value) {
             if (array_key_exists($key, $mapping)) {
                 $result[$mapping[$key]] = $value;
             } else {
@@ -127,6 +127,24 @@ class Relation
         }
 
         return $result;
+    }
+
+    /**
+     * Return an unique ID for the given relation
+     *
+     * @return null|string
+     */
+    public function getUniqueID()
+    {
+        if ($this->prop('to_key')) {
+            return md5($this->prop('from_key').$this->prop('to_key'));
+        }
+
+        if ($this->prop('to_identifier')) {
+            return md5($this->prop('from_key').$this->prop('to_identifier'));
+        }
+
+        return uniqid();
     }
 
     /**

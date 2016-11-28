@@ -28,6 +28,24 @@ class TestIndexRelationshipTask extends UnitTest
         $record = RegistryObject::find(798088);
         // RelationshipProvider::process($record);
 
+        $task = new ImportTask;
+        $task->init([
+            'params' => http_build_query([
+                'ds_id' => $record->data_source_id,
+                'targetStatus' => 'PUBLISHED',
+                'runAll' => 1
+            ])
+        ])->skipLoadingPayload()->initialiseTask();
+
+        $task->setTaskData('importedRecords', [$record->registry_object_id]);
+
+        $indexRelationshipTask = $task->getTaskByName("IndexRelationship");
+        $indexRelationshipTask->run();
+
+        $relationships = RelationshipProvider::getMergedRelationships($record);
+        dd($indexRelationshipTask->getRelationshipIndex($relationships));
+
+
         dd(RelationshipProvider::getIdentifierRelationship($record));
 
         dd(RelationshipProvider::getAffectedIDsFromIDs([798088]));
