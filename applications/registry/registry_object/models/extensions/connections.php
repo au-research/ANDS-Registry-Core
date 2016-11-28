@@ -280,7 +280,7 @@ class Connections_Extension extends ExtensionBase
 
 		/* Step 1 - Straightforward link relationships */
         /* Contributor */
-        $unordered_connections = array_merge($unordered_connections, $this->_getContributorLinks($allow_drafts));
+//        $unordered_connections = array_merge($unordered_connections, $this->_getContributorLinks($allow_drafts));
 		$unordered_connections = array_merge($unordered_connections, $this->_getExplicitLinks($allow_drafts, $limit));
 		$unordered_connections= array_merge($unordered_connections, $this->_getIdentifierLinks($limit));
 		$unordered_connections= array_merge($unordered_connections, $this->_getReverseIdentifierLinks($allow_reverse_internal_links, $allow_reverse_external_links, $limit));
