@@ -342,14 +342,14 @@ class Doi_api
             $response = "An Authentication object was not found in the SecurityContext";
             $result = "An Authentication object was not found in the SecurityContext";
             $responselog = ['responsecode' => 'MT009','doi'=>'','activity' => 'authenticate','result'=>$result,'message'=>json_encode($response, true)];
-            $this->doilog($arrayFormater->format($responselog),'doi_' . ($manual ? 'm_' : '') . $responselog['activity'],$client);
+            $this->doilog($arrayFormater->format($responselog),'doi_' . $responselog['activity']);
             return $result;
           }
         if(!$client){
             $response = "Bad credentials";
             $result = "Bad credentials";
             $responselog = ['responsecode' => 'MT009','doi'=>'','activity' => 'authenticate','result'=>$result,'message'=>json_encode($response, true)];
-            $this->doilog($arrayFormater->format($responselog),'doi_' . ($manual ? 'm_' : '') . $responselog['activity'],$client);
+            $this->doilog($arrayFormater->format($responselog),'doi_' . ($manual ? 'm_' : '') . $responselog['activity']);
             return $result;
         }
 
