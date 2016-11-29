@@ -1,6 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 define('SERVICES_MODULE_PATH', REGISTRY_APP_PATH.'services/');
 
+include_once("applications/registry/registry_object/models/_transforms.php");
+use \Transforms as Transforms;
 /**
  * Registry Object controller
  *
@@ -127,46 +129,74 @@ class Registry_object extends MX_Controller {
 	}
 
 	public function edit($registry_object_id){
-		$this->load->model('registry_objects', 'ro');
-		$this->load->model("data_source/data_sources","ds");
+        acl_enforce('REGISTRY_USER');
+        initEloquent();
+        $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($registry_object_id);
 
-		$ro = $this->ro->getByID($registry_object_id);
 
-		if(!$ro) { throw new Exception("This Registry Object ID does not exist!"); }
 
-		acl_enforce('REGISTRY_USER');
-		ds_acl_enforce($ro->data_source_id);
-		$ds = $this->ds->getByID($ro->data_source_id);
+		if(!$record) { throw new Exception("This Registry Object ID does not exist!"); }
 
-		if($ro->status == PUBLISHED)
+
+		ds_acl_enforce($record->data_source_id);
+        $data_source = \ANDS\Repository\DataSourceRepository::getByID($record->data_source_id);
+
+
+        $draft_record = \ANDS\Repository\RegistryObjectsRepository::getMatchingRecord($record->key, 'DRAFT');
+
+
+		if($draft_record == null)
 		{
-			if(!($ro = $this->ro->getDraftByKey($ro->key)))
-			{
-				$ro = $this->ro->cloneToDraft($registry_object_id);
-			}
+
+            $xml = $record->getCurrentData()->data;
+
+            // write the xml payload to the file system
+            $batchID = 'MANUAL-ARO-' . md5($record->key).'-'.time();
+            \ANDS\Payload::write($record->data_source_id, $batchID, $xml);
+
+            // import Task creation
+            $importTask = new \ANDS\API\Task\ImportTask();
+            $importTask
+                ->setCI($this)->setDb($this->db)
+                ->init([
+                    'name' => 'ARO',
+                    'params' => http_build_query([
+                        'pipeline' => 'ManualEntry',
+                        'source' => 'manual',
+                        'ds_id' => $record->data_source_id,
+                        'batch_id' => $batchID,
+                        'targetStatus' => 'DRAFT'
+                    ])
+                ])
+                ->enableRunAllSubTask()
+                ->initialiseTask();
+
+            $importTask->run();
+
+            $errorLog = $importTask->getError();
+            if($errorLog == null){
+                $draft_record = \ANDS\Repository\RegistryObjectsRepository::getMatchingRecord($record->key, 'DRAFT');
+            }
 		}
 
-		if ($ro->status != DRAFT)
-		{
-			$ro->status = DRAFT;
-			$ro->save();
-		}
+        if($draft_record->registry_object_id != $registry_object_id){
+            header("Location: " . registry_url('registry_object/edit/' . $draft_record->registry_object_id));
+            return;
+        }
 
-		if ($ro->id != $registry_object_id)
-		{
-			header("Location: " . registry_url('registry_object/edit/' . $ro->id));
-		}
-		$extRif = $ro->getExtRif();
-		if(!$extRif)
-		{
-			$ro->enrich();
-			$extRif = $ro->getExtRif();
-		}
+        $extRif = $draft_record->getCurrentData()->data;
 		$data['extrif'] = $extRif;
-		$data['content'] = $ro->transformCustomForFORM($data['extrif']);
-		$data['ds'] = $ds;
 
-		$data['title'] = 'Edit: '.$ro->title;
+        $params = ["base_url"=>base_url(),
+            "registry_object_id"=>$registry_object_id,
+            "data_source_id"=>$draft_record->data_source_id,
+            "data_source_title"=>$data_source->title,
+            "ro_title"=>$draft_record->title,
+            "ro_class"=>$draft_record->class
+        ];
+		$data['content'] = ANDS\Util\XMLUtil::getHTMLForm($data['extrif'], $params);
+		$data['ds'] = $data_source;
+		$data['title'] = 'Edit: '.$draft_record->title;
 		$data['scripts'] = array('add_registry_object');
 		$data['js_lib'] = array('core', 'tinymce', 'ands_datepicker', 'prettyprint','vocab_widget','orcid_widget', 'google_map','location_capture_widget');
 		$this->load->view("add_registry_object", $data);
@@ -288,6 +318,9 @@ class Registry_object extends MX_Controller {
 
         // capture ro again and return result
         $ro = $this->ro->getByID($registry_object_id);
+        initEloquent();
+        $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($registry_object_id);
+        $quality_html = ANDS\Registry\Providers\QualityMetadataProvider::getQualityReportHTML($record);
         $result = [
             "status" => 'success',
             "ro_status" => "DRAFT",
@@ -301,7 +334,7 @@ class Registry_object extends MX_Controller {
             "ro_quality_class" => ($ro->quality_level >= 2 ? "success" : "important"),
             "qa_$ro->quality_level" => true,
             "message" => implode(NL, $errorLog),
-            "qa" => $ro->get_quality_text()
+            "qa" => $quality_html
         ];
 
         echo json_encode($result);

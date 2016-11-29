@@ -144,4 +144,21 @@ class XMLUtil
             throw new Exception($e->getMessage());
         }
     }
+
+    public static function getHTMLForm($xml, $params = [])
+    {
+        try{
+            $xslt_processor = Transforms::get_rif_to_edit_form_transformer();
+            $dom = new DOMDocument();
+            $dom->loadXML($xml, LIBXML_NOENT);
+            foreach($params as $key=>$val){
+                $xslt_processor->setParameter('', $key, $val);
+            }
+            return html_entity_decode($xslt_processor->transformToXML($dom));
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
+
 }
