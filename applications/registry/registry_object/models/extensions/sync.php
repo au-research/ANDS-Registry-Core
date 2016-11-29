@@ -1,4 +1,6 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php use ANDS\Repository\RegistryObjectsRepository;
+
+if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 class Sync_extension extends ExtensionBase{
 
@@ -117,6 +119,9 @@ class Sync_extension extends ExtensionBase{
 		$json = array();
         $party_service_conn_limit = 200;
 
+        // implementing the new record system
+        $record = RegistryObjectsRepository::getRecordByID($this->ro->id);
+
         // Not indexing PROV group
         if ($this->ro->class=='activity' && $this->ro->group=="Public Record Office Victoria"){
             return $json;
@@ -146,8 +151,9 @@ class Sync_extension extends ExtensionBase{
 			throw new Exception ('iconv installation/configuration required for simplified title');
 		}
 
-		//macthing identifier count
-		$json['matching_identifier_count'] = sizeof($this->ro->findMatchingRecords());
+		// migrate matching identifier count to new record system
+        // matching identifier count
+		$json['matching_identifier_count'] = sizeof($record->getDuplicateRecords());
 
         //originating source
 

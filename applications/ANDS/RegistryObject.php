@@ -204,11 +204,9 @@ class RegistryObject extends Model
     public function getDuplicateRecords()
     {
         // via identifier
-        $identifiers = Identifier::where('registry_object_id', $this->registry_object_id);
+        $identifiers = Identifier::where('registry_object_id', $this->registry_object_id)->get()->pluck('identifier');
 
-        $recordIDs = Identifier::whereIn(
-            'identifier', $identifiers->get()->pluck('identifier')
-        )->get()->pluck('registry_object_id')->unique()->filter(function($item){
+        $recordIDs = Identifier::whereIn('identifier', $identifiers)->get()->pluck('registry_object_id')->unique()->filter(function($item){
             return $item != $this->registry_object_id;
         });
 
