@@ -17,9 +17,14 @@ class ProcessQualityMetadata extends ImportSubTask
 
     public function run_task()
     {
-        $importedRecords = $this->parent()->getTaskData("importedRecords");
-        $total = count($importedRecords);
-        foreach ($importedRecords as $index => $roID) {
+        $importedRecords = $this->parent()->getTaskData("importedRecords") ? $this->parent()->getTaskData("importedRecords") : [];
+        $affectedRecords = $this->parent()->getTaskData("affectedRecords") ? $this->parent()->getTaskData("affectedRecords") : [];
+        $totalRecords = array_merge($importedRecords, $affectedRecords);
+        $totalRecords = array_values(array_unique($totalRecords));
+
+        $total = count($totalRecords);
+
+        foreach ($totalRecords as $index => $roID) {
             $record = RegistryObjectsRepository::getRecordByID($roID);
             QualityMetadataProvider::process($record);
             $this->updateProgress($index, $total, "Processed ($index/$total) $record->title($roID)");
