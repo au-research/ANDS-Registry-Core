@@ -419,9 +419,10 @@ class RelationshipProvider
 
     /**
      * @param RegistryObject $record
+     * @param bool $includeDuplicate
      * @return array
      */
-    public static function getImplicitRelationship(RegistryObject $record)
+    public static function getImplicitRelationship(RegistryObject $record, $includeDuplicate = true)
     {
         $provider = Connections::getImplicitProvider();
 
@@ -430,6 +431,20 @@ class RelationshipProvider
             ->setFilter('from_id', $record->registry_object_id)
             ->setLimit(0)
             ->get();
+
+        if ($includeDuplicate === false) {
+            return $relations;
+        }
+
+        // duplicates
+        $duplicates = $record->getDuplicateRecords();
+        foreach ($duplicates as $duplicate) {
+            $duplicateRelationships = self::getImplicitRelationship($duplicate, false);
+            foreach ($duplicateRelationships as $duplicateRelationship) {
+                $relations[] = $duplicateRelationship->switchFromRecord($record);
+            }
+        }
+
         return $relations;
     }
 

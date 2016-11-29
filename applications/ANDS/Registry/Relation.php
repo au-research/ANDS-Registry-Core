@@ -2,6 +2,7 @@
 
 namespace ANDS\Registry;
 
+use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 
 /**
@@ -188,8 +189,32 @@ class Relation
         }
 
         $relation->replaceProperty("relation_origin", $relationOrigin);
+        return $relation;
+    }
 
-
+    /**
+     * Switch the from record out to another
+     * Mainly used for duplicate records
+     *
+     * @param RegistryObject $record
+     * @return static
+     */
+    public function switchFromRecord(RegistryObject $record)
+    {
+        $relation = new static;
+        foreach ($this->getProperties() as $key => $value) {
+            // if it starts with from
+            if (strpos($key, 'from_') === 0) {
+                $keyValue = str_replace("from_", "", $key);
+                $replace = $record->getAttribute($keyValue);
+                if ($keyValue == "id") {
+                    $replace = $record->registry_object_id;
+                }
+                $relation->setProperty($key, $replace);
+            } else {
+                $relation->setProperty($key, $value);
+            }
+        }
         return $relation;
     }
 
