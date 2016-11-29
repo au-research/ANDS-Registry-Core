@@ -470,7 +470,7 @@ class RelationshipProvider
      * @param RegistryObject $record
      * @return array
      */
-    public static function getIdentifierRelationship(RegistryObject $record)
+    public static function getIdentifierRelationship(RegistryObject $record, $recursive = true)
     {
         $provider = Connections::getIdentifierProvider();
 
@@ -479,6 +479,19 @@ class RelationshipProvider
             ->setFilter('from_id', $record->registry_object_id)
             ->setLimit(0)
             ->get();
+
+        if ($recursive === false) {
+            return $relations;
+        }
+
+        // duplicates
+        $duplicates = $record->getDuplicateRecords();
+        foreach ($duplicates as $duplicate) {
+            $duplicateRelationships = self::getIdentifierRelationship($duplicate, false);
+            foreach ($duplicateRelationships as $duplicateRelationship) {
+                $relations[] = $duplicateRelationship->switchFromRecord($record);
+            }
+        }
 
         return $relations;
     }

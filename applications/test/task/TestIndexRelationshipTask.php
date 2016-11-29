@@ -25,7 +25,7 @@ class TestIndexRelationshipTask extends UnitTest
     /** @test **/
     public function test_it_should_sample()
     {
-        $record = RegistryObject::find(798044);
+        $record = RegistryObject::find(751824);
 
         $task = new ImportTask;
         $task->init([
