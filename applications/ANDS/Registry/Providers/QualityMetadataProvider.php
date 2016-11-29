@@ -357,7 +357,7 @@ class QualityMetadataProvider
                 "message" => "At least one identifier is recommended for the " . ucfirst($record->class) . "."
             ];
             $identifier = XMLUtil::getElementsByXPathFromSXML($xml,
-                'ro:registryObject/ro:' . $record->class . '/ro:location/ro:address/[string-length(.) > 0]');
+                'ro:registryObject/ro:' . $record->class . '/ro:identifier');
 
             if ($identifier == null) {
                 $passed = "fail";
@@ -413,7 +413,7 @@ class QualityMetadataProvider
             ];
             $identifier = XMLUtil::getElementsByXPathFromSXML(
                 $xml,
-                'ro:registryObject/ro:' . $record->class . '/ro:location/ro:address/[string-length(.) > 0]'
+                'ro:registryObject/ro:' . $record->class . '/ro:identifier'
             );
 
             if ($identifier == null) {
