@@ -128,6 +128,7 @@ class ObjectHandler extends Handler{
 
         $resource = $this->populate_resource($this->params['identifier']);
 
+
         foreach ($method1s as $m1) {
 
             if ($benchmark) {
@@ -155,6 +156,9 @@ class ObjectHandler extends Handler{
                         break;
                 }
             } else {
+
+                acl_enforce("REGISTRY_USER");
+
                 //special case
                 if ($m1 == 'solr_index') {
                     $ro = $resource['ro'];
