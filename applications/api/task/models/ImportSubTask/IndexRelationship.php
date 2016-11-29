@@ -168,7 +168,7 @@ class IndexRelationship extends ImportSubTask
             if (array_key_exists('relation_identifier_identifier', $doc)) {
                 $doc['to_class'] = $doc['to_related_info_type'];
                 $doc['to_type'] = $doc['to_related_info_type'];
-                $doc['to_title'] = $doc['relation_to_title'];
+                $doc['to_title'] = $doc['relation_to_title'] != "" ? $doc['relation_to_title'] : $doc['relation_identifier_identifier'];
                 $doc['relation_identifier_url'] = getIdentifierURL($doc['relation_identifier_type'], $doc['relation_identifier_identifier']);
             }
 
