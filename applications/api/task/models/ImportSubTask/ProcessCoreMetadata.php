@@ -59,10 +59,7 @@ class ProcessCoreMetadata extends ImportSubTask
             //determine harvest_id
             $record->setRegistryObjectAttribute('harvest_id',
                 $this->parent()->batchID);
-
-            // TODO: record_owner on RegistryObject model and RegistryObjectAttribute (as created_who)
-            $record->record_owner = "SYSTEM";
-
+            
             $record->status = $this->parent()->getTaskData("targetStatus");
             
             $record->save();

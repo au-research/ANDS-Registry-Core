@@ -164,6 +164,7 @@ class Registry_object extends MX_Controller {
                         'pipeline' => 'ManualEntry',
                         'source' => 'manual',
                         'ds_id' => $record->data_source_id,
+                        'user_name' => $this->user->name(),
                         'batch_id' => $batchID,
                         'targetStatus' => 'DRAFT'
                     ])
@@ -306,6 +307,7 @@ class Registry_object extends MX_Controller {
                     'source' => 'manual',
                     'ds_id' => $ro->data_source_id,
                     'batch_id' => $batchID,
+                    'user_name' => $this->user->name(),
                     'targetStatus' => 'DRAFT'
                 ])
             ])
@@ -847,6 +849,7 @@ class Registry_object extends MX_Controller {
                 'params' => http_build_query([
                     'pipeline' => 'PublishingWorkflow',
                     'ds_id' => $dataSourceID,
+                    'user_name' => $this->user->name(),
                     'targetStatus' => $targetStatus,
                     'source' => 'manual'
                 ])

@@ -110,6 +110,7 @@ class ImportHandler extends Handler
                 'pipeline' => 'ManualImport',
                 'source' => 'url',
                 'url' => $url,
+                'user_name' => $this->ci->user->name(),
                 'ds_id' => $dataSource->data_source_id,
                 'batch_id' => $batchID
             ])
@@ -155,6 +156,7 @@ class ImportHandler extends Handler
             'priority' => 2,
             'params' => http_build_query([
                 'class' => 'import',
+                'user_name' => $this->ci->user->name(),
                 'pipeline' => 'ManualImport',
                 'source' => 'xml',
                 'ds_id' => $dataSource->data_source_id,

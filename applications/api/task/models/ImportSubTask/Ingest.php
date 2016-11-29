@@ -62,6 +62,9 @@ class Ingest extends ImportSubTask
         if ($existingRecord = Repo::getMatchingRecord($key, $this->parent()->getTaskData("targetStatus"))) {
 
             $this->log("Record key:($key) exists with id:($existingRecord->registry_object_id). Adding new current version.");
+
+            
+            
             $this->parent()->incrementTaskData("recordsUpdatedCount");
             // deal with previous versions
             RecordData::where('registry_object_id', $existingRecord->registry_object_id)
@@ -77,6 +80,14 @@ class Ingest extends ImportSubTask
 
             $this->log("Added new Version :$newVersion->id to existing record");
             $existingRecord->setRegistryObjectAttribute('updated', time());
+            $user_name = $this->parent()->getTaskData("userName");
+
+            if($user_name == null)
+            {
+                $user_name = "SYSTEM";
+            }
+
+            $existingRecord->setRegistryObjectAttribute('created_who', $user_name);
             $existingRecord->status = $this->parent()->getTaskData("targetStatus");
             $this->parent()->addTaskData("importedRecords", $existingRecord->registry_object_id);
 
@@ -89,6 +100,15 @@ class Ingest extends ImportSubTask
             $deletedRecord->data_source_id = $this->parent()->dataSourceID;
 
             $deletedRecord->save();
+
+            $user_name = $this->parent()->getTaskData("userName");
+
+            if($user_name == null)
+            {
+                $user_name = "SYSTEM";
+            }
+
+            $deletedRecord->setRegistryObjectAttribute('created_who', $user_name);
 
             // TODO: check if the latest record data is the same first
             // TODO: the matchingRecord is similar, refactor to pull this functionality out
@@ -106,6 +126,9 @@ class Ingest extends ImportSubTask
             );
             $this->log("Added new Version:$newVersion->id and reinstated record:".$deletedRecord->registry_object_id);
 
+
+            
+            
             $deletedRecord->setRegistryObjectAttribute('updated', time());
             $this->parent()->addTaskData("importedRecords", $deletedRecord->registry_object_id);
 
@@ -119,7 +142,17 @@ class Ingest extends ImportSubTask
             $newRecord->key = $key;
             $newRecord->data_source_id = $this->parent()->dataSourceID;
             $newRecord->status = $this->parent()->getTaskData("targetStatus");
+            
+            $user_name = $this->parent()->getTaskData("userName");
+            
+            if($user_name == null)
+            {
+                $user_name = "SYSTEM";
+            }
+            $newRecord->record_owner = $user_name;
+            
             $newRecord->save();
+            $newRecord->setRegistryObjectAttribute('created_who', $user_name);
             $newRecord->setRegistryObjectAttribute('created', time());
             $newRecord->setRegistryObjectAttribute('updated', time());
 

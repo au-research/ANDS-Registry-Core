@@ -31,6 +31,7 @@ class ImportTask extends Task
     public $dataSourceID;
     public $batchID;
     public $harvestID;
+    public $userName;
     public $runAll = false;
 
     private $subtasks = [];
@@ -429,6 +430,7 @@ class ImportTask extends Task
 
         $this->batchID = array_key_exists('batch_id', $parameters) ? $parameters['batch_id'] : null;
         $this->harvestID = array_key_exists('harvest_id', $parameters) ? $parameters['harvest_id'] : null;
+        $this->userName = array_key_exists('user_name', $parameters) ? $parameters['user_name'] : null;
 
         $this->setTaskData(
             'dataSourceID',
@@ -443,6 +445,11 @@ class ImportTask extends Task
         $this->setTaskData(
             'harvestID',
             array_key_exists('harvest_id', $parameters) ? $parameters['harvest_id'] : null
+        );
+
+        $this->setTaskData(
+            'userName',
+            array_key_exists('user_name', $parameters) ? $parameters['user_name'] : null
         );
 
         if (array_key_exists('runAll', $parameters)) {
