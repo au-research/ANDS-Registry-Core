@@ -2,8 +2,14 @@
 
 
 namespace ANDS\API\Task\ImportSubTask;
+use ANDS\Registry\Providers\QualityMetadataProvider;
 use ANDS\Repository\DataSourceRepository;
+use ANDS\Repository\RegistryObjectsRepository;
 
+/**
+ * Class ProcessQualityMetadata
+ * @package ANDS\API\Task\ImportSubTask
+ */
 class ProcessQualityMetadata extends ImportSubTask
 {
     protected $requireImportedRecords = true;
@@ -11,13 +17,12 @@ class ProcessQualityMetadata extends ImportSubTask
 
     public function run_task()
     {
-        $this->parent()->getCI()->load->model('registry/registry_object/registry_objects', 'ro');
         $importedRecords = $this->parent()->getTaskData("importedRecords");
         $total = count($importedRecords);
-        foreach ($importedRecords as $index=>$roID) {
-            $ro = $this->parent()->getCI()->ro->getByID($roID);
-            $ro->update_quality_metadata();
-            $this->updateProgress($index, $total, "Processed ($index/$total) $ro->title($roID)");
+        foreach ($importedRecords as $index => $roID) {
+            $record = RegistryObjectsRepository::getRecordByID($roID);
+            QualityMetadataProvider::process($record);
+            $this->updateProgress($index, $total, "Processed ($index/$total) $record->title($roID)");
         }
     }
 }
