@@ -564,7 +564,7 @@ class RelationshipProvider
             ->get();
 
         foreach ($funders as $relation) {
-            $affectedIDs[] = $relation->prop('from_id');
+            $affectedIDs[] = $relation->prop('to_id');
         }
 
         // parent collections

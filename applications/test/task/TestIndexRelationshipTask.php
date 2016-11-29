@@ -23,6 +23,17 @@ class TestIndexRelationshipTask extends UnitTest
 {
 
     /** @test **/
+    public function test_it_should_sample_2()
+    {
+        $imported = [798173,
+            798174,
+            798175,
+            798176];
+        $affected = RelationshipProvider::getAffectedIDsFromIDs($imported);
+        dd($affected);
+    }
+
+    /** @test **/
     public function test_it_should_sample()
     {
         $record = RegistryObject::find(751824);
@@ -45,10 +56,7 @@ class TestIndexRelationshipTask extends UnitTest
 
         $relationships = RelationshipProvider::getMergedRelationships($record);
         dd($indexRelationshipTask->getRelationshipIndex($relationships));
-
-
         dd(RelationshipProvider::getIdentifierRelationship($record));
-
         dd(RelationshipProvider::getAffectedIDsFromIDs([798088]));
     }
 
