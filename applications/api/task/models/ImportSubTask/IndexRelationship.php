@@ -172,6 +172,13 @@ class IndexRelationship extends ImportSubTask
                 $doc['relation_identifier_url'] = getIdentifierURL($doc['relation_identifier_type'], $doc['relation_identifier_identifier']);
             }
 
+            // set certain things to false when they not exist
+            foreach ($doc as &$field) {
+                if ($field === null) {
+                    $field = false;
+                }
+            }
+
             $docs[] = $doc;
         }
 

@@ -220,12 +220,13 @@ class ObjectHandler extends Handler{
 
                 } else if ($m1 == 'relatedObjects') {
                     $ro = $resource['ro'];
-                    $ro->addRelationships();
-                    $ro->cacheRelationshipMetadata();
-                    return $ro->getAllRelatedObjects();
+                    $record = RegistryObjectsRepository::getRecordByID($ro->id);
+                    return RelationshipProvider::get($record);
                 } else if ($m1 == 'relatedGrantsNetwork') {
                     $ro = $resource['ro'];
-                    return $ro->_getGrantsNetworkConnections($ro->getAllRelatedObjects());
+                    $record = RegistryObjectsRepository::getRecordByID($ro->id);
+                    RelationshipProvider::process($record);
+                    return RelationshipProvider::getImplicitRelationship($record);
                 } else if ($m1 == 'relatedObjectsIndex') {
                     $this->ci->benchmark->mark('start');
                     $ro = $resource['ro'];
