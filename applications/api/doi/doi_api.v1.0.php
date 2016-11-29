@@ -423,7 +423,11 @@ class Doi_api
                     $customRequest = 'DELETE';
                     $doiRepository->doiUpdate($doiObject, array('status' => 'INACTIVE'));
                     $docall = true;
-                } elseif (!$doiObject && $this->getPostedXML() != '') {
+                }elseif ($_SERVER['REQUEST_METHOD'] == 'DELETE' && !$doiObject && $clientDoi) {
+                    $responselog = ['responsecode' => 'MT011', 'activity' => strtoupper("DEACTIVATE")];
+                    $call .= '/' . $doi;
+                    $response = "DOI doesn't exist";
+                }elseif (!$doiObject && $this->getPostedXML() != '') {
                     if (!$validXml) {
                         $responselog = ['responsecode' => 'MT006', 'activity' => strtoupper("RESERVE")];
                     } else {
