@@ -349,7 +349,7 @@ class Doi_api
             $response = "Bad credentials";
             $result = "Bad credentials";
             $responselog = ['responsecode' => 'MT009','doi'=>'','activity' => 'authenticate','result'=>$result,'message'=>json_encode($response, true)];
-            $this->doilog($arrayFormater->format($responselog),'doi_' . ($manual ? 'm_' : '') . $responselog['activity']);
+            $this->doilog($arrayFormater->format($responselog),'doi_' . $responselog['activity']);
             return $result;
         }
 
