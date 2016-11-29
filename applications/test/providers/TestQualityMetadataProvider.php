@@ -43,13 +43,13 @@ class TestQualityMetadataProvider extends UnitTest
 
     // php index.php test providers TestQualityMetadataProvider test_it_should_process_quality_for_all_records
     /** @test **/
-//    public function test_it_should_process_quality_for_all_records()
-//    {
-//        initEloquent();
-//        $records = RegistryObject::where('status', 'PUBLISHED')->where('data_source_id', 41)->get();
-//
-//        foreach ($records as $record) {
-//            QualityMetadataProvider::process($record);
-//        }
-//    }
+    public function test_it_should_process_quality_for_all_records()
+    {
+        initEloquent();
+        $records = RegistryObject::where('status', 'PUBLISHED')->where('data_source_id', 7)->get();
+
+        foreach ($records as $record) {
+            QualityMetadataProvider::process($record);
+        }
+    }
 }

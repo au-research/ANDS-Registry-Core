@@ -393,7 +393,7 @@ class QualityMetadataProvider
                 "message" => "The " . ucfirst($record->class) . " must be related to at least one Collection record if available."
             ];
             if (RelationshipProvider::hasRelatedClass($record,
-                    'activity') == false
+                    'collection') == false
             ) {
                 $passed = "fail";
                 $level_data['relatedObject'] = [
