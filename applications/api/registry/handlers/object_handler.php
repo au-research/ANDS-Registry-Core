@@ -182,10 +182,12 @@ class ObjectHandler extends Handler{
 
                     $importTask = new ImportTask;
                     $importTask->init([
+                        "name" => "Get Relationship Index for $ro->id",
                         'params' => http_build_query([
                             'targetStatus' => 'PUBLISHED',
                             'ds_id' => $ro->data_source_id,
-                            'runAll' => 1
+                            'runAll' => 1,
+                            'pipeline' => 'UpdateRelationshipWorkflow'
                         ])
                     ])->skipLoadingPayload()->initialiseTask();
                     $task = $importTask->getTaskByName("IndexRelationship");
@@ -202,10 +204,12 @@ class ObjectHandler extends Handler{
 
                     $task = new ImportTask;
                     $task->init([
+                        "name" => "Fix Relationship for $ro->id",
                        'params' => http_build_query([
                            'targetStatus' => 'PUBLISHED',
                            'ds_id' => $ro->data_source_id,
-                           'runAll' => 1
+                           'runAll' => 1,
+                           'pipeline' => 'UpdateRelationshipWorkflow'
                        ])
                     ])->skipLoadingPayload()->initialiseTask();
 
