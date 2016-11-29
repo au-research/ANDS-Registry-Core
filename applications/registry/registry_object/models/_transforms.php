@@ -16,6 +16,7 @@ class Transforms {
 	static $extrif_to_dci_transformer = NULL;
 	static $extrif_to_orcid_transformer = NULL;
 	static $extrif_to_endnote_transformer = NULL;
+	static $rif_to_edit_form_transformer = NULL;
 
 	static function get_qa_transformer()
 	{
@@ -101,7 +102,23 @@ class Transforms {
 
 		return self::$extrif_to_form_transformer;
 	}
-	
+
+
+	static function get_rif_to_edit_form_transformer()
+	{
+		if (is_null(self::$rif_to_edit_form_transformer))
+		{
+			$rifToForm = new DomDocument();
+			$rifToForm->load(REGISTRY_APP_PATH.'registry_object/transforms/rif_to_edit_form.xsl');
+			$rifToFormProc = new XSLTProcessor();
+			$rifToFormProc->importStyleSheet($rifToForm);
+			self::$rif_to_edit_form_transformer =	$rifToFormProc;
+		}
+
+		return self::$rif_to_edit_form_transformer;
+	}
+
+
 	static function get_feed_to_rif_transformer()
 	{
 		if (is_null(self::$feed_to_rif_transformer))

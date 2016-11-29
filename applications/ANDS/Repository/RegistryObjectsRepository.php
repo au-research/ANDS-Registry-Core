@@ -157,6 +157,10 @@ class RegistryObjectsRepository
             ->offset($offset)->get();
     }
 
+    /**
+     * @param $id
+     * @return RegistryObject
+     */
     public static function getRecordByID($id)
     {
         return RegistryObject::where('registry_object_id', $id)->first();
