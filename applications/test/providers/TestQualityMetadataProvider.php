@@ -32,24 +32,24 @@ class TestQualityMetadataProvider extends UnitTest
     /** @test **/
     public function test_it_sould_calculate_quality_level() {
         // $collectionkey = 'AUTestingRecords3RelatedCollectionDatasetRelObj1';
-        $collectionkey = 'AUTestingRecords3anudc:3317';
+        $collectionkey = 'www.sydney.edu.au-agriculture-environment-research-dataset-73';
         $record = RegistryObjectsRepository::getPublishedByKey($collectionkey);
         QualityMetadataProvider::process($record);
         $quality_level = $record->getRegistryObjectAttributeValue('quality_level');
-        $this->assertEquals($quality_level, 3);
+        $this->assertEquals($quality_level, 2);
 
         //QualityMetadataProvider::process($record);
     }
 
     // php index.php test providers TestQualityMetadataProvider test_it_should_process_quality_for_all_records
     /** @test **/
-    public function test_it_should_process_quality_for_all_records()
-    {
-        initEloquent();
-        $records = RegistryObject::where('status', 'PUBLISHED')->where('data_source_id', 41)->get();
-
-        foreach ($records as $record) {
-            QualityMetadataProvider::process($record);
-        }
-    }
+//    public function test_it_should_process_quality_for_all_records()
+//    {
+//        initEloquent();
+//        $records = RegistryObject::where('status', 'PUBLISHED')->where('data_source_id', 41)->get();
+//
+//        foreach ($records as $record) {
+//            QualityMetadataProvider::process($record);
+//        }
+//    }
 }

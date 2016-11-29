@@ -186,7 +186,7 @@ class QualityMetadataProvider
                 $level_data['description'] = ["passed"=>"fail", "qa_id" => "REQ_RIGHT", "message" => "At least one description of the rights, licences or access rights relating to the ".ucfirst($record->class)." is required."];
             }
 
-            $address = XMLUtil::getElementsByXPathFromSXML($xml, 'ro:registryObject/ro:'.$record->class.'/ro:location/ro:address/[string-length(.) > 0]');
+            $address = XMLUtil::getElementsByXPathFromSXML($xml, 'ro:registryObject/ro:'.$record->class.'/ro:location/ro:address');
 
             $level_data['location'] = ["passed"=>"passed", "qa_id" => "REQ_LOCATION_ADDRESS", "message" => "At least one location address is required for the ".ucfirst($record->class)."."];
 
