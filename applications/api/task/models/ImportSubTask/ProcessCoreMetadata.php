@@ -62,7 +62,9 @@ class ProcessCoreMetadata extends ImportSubTask
 
             // TODO: record_owner on RegistryObject model and RegistryObjectAttribute (as created_who)
             $record->record_owner = "SYSTEM";
+
             $record->status = $this->parent()->getTaskData("targetStatus");
+            
             $record->save();
 
             // titles and slug require the ro object
@@ -74,8 +76,6 @@ class ProcessCoreMetadata extends ImportSubTask
             $ro->generateSlug();
 
             $ro->save();
-
-            // TODO manually_assessed
 
             $this->updateProgress($index, $total, "Processed ($index/$total) $ro->title($roID)");
             unset($ro);

@@ -58,6 +58,9 @@ class HandleStatusChange extends ImportSubTask
                 } else {
                     // from draft to draft, standard status change
                     $record->status = $targetStatus;
+                    if($record->status == "ASSESSMENT_IN_PROGRESS" ){
+                        $record->setRegistryObjectAttribute('manually_assessed', 'yes');
+                    }
                     $record->save();
                 }
             } else {
