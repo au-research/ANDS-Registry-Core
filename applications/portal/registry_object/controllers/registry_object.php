@@ -58,7 +58,19 @@ class Registry_object extends MX_Controller
                 }
             }
         }
+        //dd($ro->prop['core']);
+        if($ro && $ro->core['status'] == "DELETED")
+        {
 
+            $this->blade
+                // ->set('scripts', array('view'))
+                ->set('id', $this->input->get('id'))
+                ->set('key', $this->input->get('key'))
+                ->set('slug', $this->input->get('slug'))
+                ->set('message', "")
+                ->render('deleted_record');
+            return;
+        }
 
         //If a slug is provided
         //view/{slug} => redirect to {slug}/{id}
@@ -85,7 +97,20 @@ class Registry_object extends MX_Controller
 
         if ($ro && $ro->prop['status'] == 'OK') {
             //Found the record, handle rendering of normal view page
-            $this->displayRecord($ro);
+            if($ro->core['status'] == "DELETED")
+            {
+                $this->blade
+                    // ->set('scripts', array('view'))
+                    ->set('id', $this->input->get('id'))
+                    ->set('key', $this->input->get('key'))
+                    ->set('slug', $this->input->get('slug'))
+                    ->set('message', "Record is Deleted")
+                    ->render('deleted_record');
+                return;
+            }else{
+                $this->displayRecord($ro);
+            }
+
 
         } elseif (strpos($key, 'http://purl.org/au-research/grants/nhmrc/') !== false || strpos($key,
                 'http://purl.org/au-research/grants/arc/') !== false
