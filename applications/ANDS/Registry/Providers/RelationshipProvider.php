@@ -61,7 +61,8 @@ class RelationshipProvider
             'reverse' => static::getReverseRelationship($record),
             'implicit' => static::getImplicitRelationship($record),
             'reverse_implicit' => static::getReverseImplicitRelationship($record),
-            'identifier' => static::getIdentifierRelationship($record)
+            'identifier' => static::getIdentifierRelationship($record),
+            'reverse_identifier' => static::getReverseIdentifierRelationship($record)
         ];
 
         return $allRelationships;
@@ -492,6 +493,24 @@ class RelationshipProvider
                 $relations[] = $duplicateRelationship->switchFromRecord($record);
             }
         }
+
+        return $relations;
+    }
+
+    /**
+     * @param RegistryObject $record
+     * @return array
+     */
+    public static function getReverseIdentifierRelationship(RegistryObject $record)
+    {
+        $provider = Connections::getIdentifierProvider();
+
+        // directly related
+        $relations = $provider
+            ->setFilter('to_key', $record->key)
+            ->setReverse(true)
+            ->setLimit(0)
+            ->get();
 
         return $relations;
     }

@@ -9,6 +9,10 @@ use ANDS\DataSource\Harvest as Harvest;
 use \DOMDocument as DOMDocument;
 use \Exception as Exception;
 
+/**
+ * Class ValidatePayload
+ * @package ANDS\API\Task\ImportSubTask
+ */
 class ValidatePayload extends ImportSubTask
 {
     protected $requirePayload = true;
@@ -20,7 +24,7 @@ class ValidatePayload extends ImportSubTask
     public function run_task()
     {
         $counter = 0;
-        foreach ($this->parent()->getPayloads() as $index=>&$payload) {
+        foreach ($this->parent()->getPayloads() as $index => &$payload) {
             $counter++;
             // this task requires unvalidated payload
             $path = $payload->getPath();
@@ -28,7 +32,7 @@ class ValidatePayload extends ImportSubTask
 
             // validate RIFCS schema
             try {
-                $this->log("Validation started for $path");
+                // $this->log("Validation started for $path");
                 $this->parent()->updateHarvest([
                         'message' => json_encode([
                             'progress' => [

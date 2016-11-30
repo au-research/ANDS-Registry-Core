@@ -61,10 +61,8 @@ class Ingest extends ImportSubTask
         // check existing one
         if ($existingRecord = Repo::getMatchingRecord($key, $this->parent()->getTaskData("targetStatus"))) {
 
-            $this->log("Record key:($key) exists with id:($existingRecord->registry_object_id). Adding new current version.");
+            // $this->log("Record key:($key) exists with id:($existingRecord->registry_object_id). Adding new current version.");
 
-            
-            
             $this->parent()->incrementTaskData("recordsUpdatedCount");
             // deal with previous versions
             RecordData::where('registry_object_id', $existingRecord->registry_object_id)
@@ -78,12 +76,11 @@ class Ingest extends ImportSubTask
                 )
             );
 
-            $this->log("Added new Version :$newVersion->id to existing record");
+            // $this->log("Added new Version :$newVersion->id to existing record");
             $existingRecord->setRegistryObjectAttribute('updated', time());
             $user_name = $this->parent()->getTaskData("userName");
 
-            if($user_name == null)
-            {
+            if($user_name == null) {
                 $user_name = "SYSTEM";
             }
 
@@ -103,8 +100,7 @@ class Ingest extends ImportSubTask
 
             $user_name = $this->parent()->getTaskData("userName");
 
-            if($user_name == null)
-            {
+            if($user_name == null) {
                 $user_name = "SYSTEM";
             }
 
@@ -124,16 +120,13 @@ class Ingest extends ImportSubTask
                     $registryObject->saveXML()
                 )
             );
-            $this->log("Added new Version:$newVersion->id and reinstated record:".$deletedRecord->registry_object_id);
+            // $this->log("Added new Version:$newVersion->id and reinstated record:".$deletedRecord->registry_object_id);
 
-
-            
-            
             $deletedRecord->setRegistryObjectAttribute('updated', time());
             $this->parent()->addTaskData("importedRecords", $deletedRecord->registry_object_id);
 
         } else {
-            $this->log("Record $key does not exist. Creating new record and data");
+            // $this->log("Record $key does not exist. Creating new record and data");
             $this->parent()->incrementTaskData("recordsCreatedCount");
             //find a deleted record and reinstate it
 
@@ -145,8 +138,7 @@ class Ingest extends ImportSubTask
             
             $user_name = $this->parent()->getTaskData("userName");
             
-            if($user_name == null)
-            {
+            if($user_name == null) {
                 $user_name = "SYSTEM";
             }
             $newRecord->record_owner = $user_name;
@@ -164,7 +156,7 @@ class Ingest extends ImportSubTask
                 )
             );
 
-            $this->log("Record id:$newRecord->registry_object_id created, key:$key with record data: id:$newVersion->id");
+            // $this->log("Record id:$newRecord->registry_object_id created, key:$key with record data: id:$newVersion->id");
 
             // TODO: add this record to the imported records
             $this->parent()->addTaskData("importedRecords", $newRecord->registry_object_id);

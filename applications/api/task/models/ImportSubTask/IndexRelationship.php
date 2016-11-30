@@ -120,7 +120,7 @@ class IndexRelationship extends ImportSubTask
         $result = $this->parent()->getCI()->solr->add_json(json_encode([$updateDoc]));
         $result = json_decode($result, true);
         if (array_key_exists('error', $result)) {
-            $this->addError("portal: ". $result['error']['msg']);
+            $this->addError("portal for $record->registry_object_id: ". $result['error']['msg']);
         }
     }
 
@@ -140,7 +140,7 @@ class IndexRelationship extends ImportSubTask
         $result = $this->parent()->getCI()->solr->add_json(json_encode($docs));
         $result = json_decode($result, true);
         if (array_key_exists('error', $result)) {
-            $this->addError("relations: ". $result['error']['msg']);
+            $this->addError("relations for $record->registry_object_id: ". $result['error']['msg']);
         }
     }
 

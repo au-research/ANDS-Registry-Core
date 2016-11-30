@@ -7,6 +7,10 @@ namespace ANDS\API\Task\ImportSubTask;
 use ANDS\RegistryObject;
 use ANDS\Util\XMLUtil;
 
+/**
+ * Class ProcessCoreMetadata
+ * @package ANDS\API\Task\ImportSubTask
+ */
 class ProcessCoreMetadata extends ImportSubTask
 {
     protected $requireHarvestedOrImportedRecords = true;
@@ -20,7 +24,6 @@ class ProcessCoreMetadata extends ImportSubTask
     /**
      * Update importedRecords core metadata
      *
-     * @return array
      */
     public function processUpdatedRecords()
     {
@@ -33,7 +36,7 @@ class ProcessCoreMetadata extends ImportSubTask
         $total = count($importedRecords);
         debug("Processing Core Metadata for $total records");
         foreach ($importedRecords as $index => $roID) {
-            $this->log('Processing (updated) record: ' . $roID);
+            // $this->log('Processing (updated) record: ' . $roID);
 
             $record = RegistryObject::find($roID);
             $recordData = $record->getCurrentData();

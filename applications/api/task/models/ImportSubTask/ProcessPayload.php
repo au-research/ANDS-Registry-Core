@@ -45,7 +45,7 @@ class ProcessPayload extends ImportSubTask
                     $processed[] = $registryObject->saveXML();
                     $keys[] = $key;
                 } else {
-                    $this->log("Ignored a record already exists in import list: " . $key);
+                    // $this->log("Ignored a record already exists in import list: " . $key);
                     $this->parent()->incrementTaskData("duplicateKeyinFeedCount");
                 }
             }
@@ -54,7 +54,8 @@ class ProcessPayload extends ImportSubTask
             $payload->writeContentByStatus(
                 $this->payloadOutput, XMLUtil::wrapRegistryObject($xmlPayload)
             );
-            $this->log('Process stage 1 completed for '. $path);
+
+            // $this->log('Process stage 1 completed for '. $path);
 
             if (trim($xmlPayload) == "") {
                 $this->log("Payload $path contains no importable records");
@@ -149,7 +150,7 @@ class ProcessPayload extends ImportSubTask
             $payload->writeContentByStatus(
                 $this->payloadOutput, XMLUtil::wrapRegistryObject($xmlPayload)
             );
-            $this->log('Process stage 2 completed for ' . $path);
+            // $this->log('Process stage 2 completed for ' . $path);
         }
     }
 

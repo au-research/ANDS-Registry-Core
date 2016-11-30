@@ -5,6 +5,10 @@ namespace ANDS\API\Task\ImportSubTask;
 use ANDS\Registry\Providers\IdentifierProvider;
 use ANDS\Repository\RegistryObjectsRepository;
 
+/**
+ * Class ProcessIdentifiers
+ * @package ANDS\API\Task\ImportSubTask
+ */
 class ProcessIdentifiers extends ImportSubTask
 {
     protected $requirePayload = true;
@@ -15,11 +19,12 @@ class ProcessIdentifiers extends ImportSubTask
     {
         $importedRecords = $this->parent()->getTaskData("importedRecords");
         $total = count($importedRecords);
-        debug("Processing Identifiers for $total records");
-        foreach ( $importedRecords as $index=>$roID) {
-                $record = RegistryObjectsRepository::getRecordByID($roID);
-                IdentifierProvider::process($record);
-                $this->updateProgress($index, $total, "Processed ($index/$total) $record->title($roID)");
-            }
+        $this->log("Processing Identifiers for $total records");
+        foreach ($importedRecords as $index => $roID) {
+            $record = RegistryObjectsRepository::getRecordByID($roID);
+            IdentifierProvider::process($record);
+            $this->updateProgress($index, $total,
+                "Processed ($index/$total) $record->title($roID)");
+        }
     }
 }
