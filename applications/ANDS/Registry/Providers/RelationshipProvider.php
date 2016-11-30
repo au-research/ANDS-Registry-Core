@@ -585,7 +585,7 @@ class RelationshipProvider
         // child collections
         $childCollections = $impProvider->init()
             ->setFilter('to_key', $keys)
-            ->setFilter('relation_type', 'isPartOf')
+            ->setFilter('relation_type', ['isPartOf', 'isFundedBy', 'isOutputOf'])
             ->setFilter('from_class', 'collection')
             ->setLimit(0)
             ->get();
@@ -593,6 +593,7 @@ class RelationshipProvider
         foreach ($childCollections as $relation) {
             $affectedIDs[] = $relation->prop('from_id');
         }
+
 
         //parent activities
         $parentActivities = $impProvider->init()
@@ -622,7 +623,7 @@ class RelationshipProvider
         // child activities
         $parentActivities = $impProvider->init()
             ->setFilter('to_id', array_merge($ids, $directAndReverse))
-            ->setFilter('relation_type', 'isPartOf')
+            ->setFilter('relation_type', ['isPartOf', 'isFundedBy'])
             ->setFilter('from_class', 'activity')
             ->setLimit(0)
             ->get();

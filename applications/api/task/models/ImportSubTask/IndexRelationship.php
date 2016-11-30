@@ -82,6 +82,9 @@ class IndexRelationship extends ImportSubTask
 
         foreach ($relationships as $relation) {
             $rel = $relation->format();
+            if (!$rel['to_id']) {
+                continue;
+            }
             $class = $rel['to_class'];
             if ($rel['to_class'] == 'party') {
                 if ($rel['to_type'] == "group") {
@@ -95,7 +98,9 @@ class IndexRelationship extends ImportSubTask
             $updateDoc["related_".$class."_id"][] = $rel['to_id'];
             $updateDoc["related_".$class."_title"][] = $rel['to_title'];
             foreach ($relationType as $type) {
-                $updateDoc["relationType_".$type."_id"][] = $rel['to_id'];
+                if ($type) {
+                    $updateDoc["relationType_".$type."_id"][] = $rel['to_id'];
+                }
             }
         }
 
@@ -112,7 +117,11 @@ class IndexRelationship extends ImportSubTask
             }
         }
 
-        $this->parent()->getCI()->solr->add_json(json_encode([$updateDoc]));
+        $result = $this->parent()->getCI()->solr->add_json(json_encode([$updateDoc]));
+        $result = json_decode($result, true);
+        if (array_key_exists('error', $result)) {
+            $this->addError($result['error']['msg']);
+        }
     }
 
     /**
@@ -128,7 +137,11 @@ class IndexRelationship extends ImportSubTask
         // add
         $docs = $this->getRelationshipIndex($relationships);
 
-        $this->parent()->getCI()->solr->add_json(json_encode($docs));
+        $result = $this->parent()->getCI()->solr->add_json(json_encode($docs));
+        $result = json_decode($result, true);
+        if (array_key_exists('error', $result)) {
+            $this->addError($result['error']['msg']);
+        }
     }
 
     /**
@@ -170,6 +183,9 @@ class IndexRelationship extends ImportSubTask
                 $doc['to_type'] = $doc['to_related_info_type'];
                 $doc['to_title'] = $doc['relation_to_title'] != "" ? $doc['relation_to_title'] : $doc['relation_identifier_identifier'];
                 $doc['relation_identifier_url'] = getIdentifierURL($doc['relation_identifier_type'], $doc['relation_identifier_identifier']);
+                if (is_array($doc['relation_identifier_id'])) {
+                    $doc['relation_identifier_id'] = array_first($doc['relation_identifier_id']);
+                }
             }
 
             // set certain things to false when they not exist

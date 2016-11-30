@@ -39,6 +39,7 @@ class TestIndexRelationshipTask extends UnitTest
         $record = RegistryObject::find(751824);
         $record = RegistryObject::find(798176);
         $record = RegistryObject::find(798175);
+        $record = RegistryObject::find(798069);
 
         $task = new ImportTask;
         $task->init([
@@ -50,14 +51,17 @@ class TestIndexRelationshipTask extends UnitTest
         ])->skipLoadingPayload()->initialiseTask();
 
         $task->setTaskData('importedRecords', [$record->registry_object_id]);
+        $task->setTaskData('affectedRecords', RelationshipProvider::getAffectedIDsFromIDs([$record->registry_object_id]));
 
         $indexRelationshipTask = $task->getTaskByName("IndexRelationship");
         $indexRelationshipTask->run();
 
-        $relationships = RelationshipProvider::getMergedRelationships($record);
-        dd($indexRelationshipTask->getRelationshipIndex($relationships));
-        dd(RelationshipProvider::getIdentifierRelationship($record));
-        dd(RelationshipProvider::getAffectedIDsFromIDs([798088]));
+        dd($indexRelationshipTask->getMessage());
+
+//        $relationships = RelationshipProvider::getMergedRelationships($record);
+//        dd($indexRelationshipTask->getRelationshipIndex($relationships));
+//        dd(RelationshipProvider::getIdentifierRelationship($record));
+//        dd(RelationshipProvider::getAffectedIDsFromIDs([798088]));
     }
 
     /** @test **/
