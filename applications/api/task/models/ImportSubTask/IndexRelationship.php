@@ -110,7 +110,7 @@ class IndexRelationship extends ImportSubTask
 
         foreach ($updateDoc as $key => &$value) {
             if (is_array($value)) {
-                $value = collect($value)->flatten()->values()->unique()->toArray();
+                $value = collect($value)->flatten()->values()->toArray();
             }
             if ($key != "id") {
                 $value = ["set" => $value];

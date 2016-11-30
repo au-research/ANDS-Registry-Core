@@ -43,8 +43,7 @@ class TestIndexRelationshipTask extends UnitTest
         $record = RegistryObject::find(798069);
         $record = RegistryObject::find(798146);
         $record = RegistryObject::find(798044);
-
-        dd(RelationshipProvider::get($record)['identifier']);
+        $record = RegistryObject::find(798243);
 
         $task = new ImportTask;
         $task->init([
@@ -59,6 +58,9 @@ class TestIndexRelationshipTask extends UnitTest
 
         $indexRelationshipTask = $task->getTaskByName("IndexRelationship");
         $indexRelationshipTask->run();
+
+        $relationships = RelationshipProvider::getMergedRelationships($record);
+        dd($indexRelationshipTask->getRelationshipIndex($relationships));
 
         dd($indexRelationshipTask->getMessage());
 
