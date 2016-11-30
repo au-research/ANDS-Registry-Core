@@ -447,8 +447,7 @@ class QualityMetadataProvider
                 "message" => "At least one spatial coverage for the " . ucfirst($record->class) . " is recommended."
             ];
             $spatial_coverage = XMLUtil::getElementsByXPathFromSXML($xml,
-                'ro:registryObject/ro:' . $record->class . '/ro:coverage/ro:spatial]');
-
+                'ro:registryObject/ro:' . $record->class . '/ro:coverage/ro:spatial');
             if ($spatial_coverage == null) {
                 $passed = "fail";
                 $level_data['spatial_coverage'] = [
@@ -589,7 +588,7 @@ class QualityMetadataProvider
 
         if ($record->class == 'party' || $record->class == 'activity') {
             $address = XMLUtil::getElementsByXPathFromSXML($xml,
-                'ro:registryObject/ro:' . $record->class . '/ro:location/ro:address/[string-length(.) > 0]');
+                'ro:registryObject/ro:' . $record->class . '/ro:location/ro:address');
 
             $level_data['location'] = [
                 "passed" => "passed",

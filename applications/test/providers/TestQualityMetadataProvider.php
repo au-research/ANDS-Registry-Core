@@ -32,11 +32,12 @@ class TestQualityMetadataProvider extends UnitTest
     /** @test **/
     public function test_it_sould_calculate_quality_level() {
         // $collectionkey = 'AUTestingRecords3RelatedCollectionDatasetRelObj1';
-        $collectionkey = 'www.sydney.edu.au-agriculture-environment-research-dataset-73';
+        $collectionkey = 'AUTestingRecordsQualityLevelsParty7';
         $record = RegistryObjectsRepository::getPublishedByKey($collectionkey);
         QualityMetadataProvider::process($record);
         $quality_level = $record->getRegistryObjectAttributeValue('quality_level');
-        $this->assertEquals($quality_level, 2);
+        //dd($quality_level->value);
+        $this->assertEquals($quality_level, 3);
 
         //QualityMetadataProvider::process($record);
     }
