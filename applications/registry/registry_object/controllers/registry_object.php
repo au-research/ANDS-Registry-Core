@@ -690,8 +690,9 @@ class Registry_object extends MX_Controller {
 		$ro->enrich();
 		$data['xml'] = html_entity_decode($ro->getRif());
 		$data['extrif'] = html_entity_decode($ro->getExtRif());
+        initEloquent();
 		$data['solr'] = json_encode($ro->indexable_json());
-		//$data['view'] = $ro->transformForHtml();
+		$data['view'] = $ro->transformForHtml();
 		$data['id'] = $ro->id;
 		$data['title'] = $ro->getAttribute('list_title');
 		$data['attributes'] = $ro->getAttributes();
@@ -707,6 +708,18 @@ class Registry_object extends MX_Controller {
 		$jsonData = json_encode($jsonData);
 		echo $jsonData;
 	}
+
+    public function get_record_data($id){
+        initEloquent();
+        $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($id);
+        $data['xml'] = html_entity_decode($record->getCurrentData()->data);
+        $jsonData = array();
+        $jsonData['status'] = 'OK';
+        $jsonData['ro'] = $data;
+        $jsonData = json_encode($jsonData);
+        echo $jsonData;
+    }
+
 
 	public function get_quality_view(){
 		initEloquent();

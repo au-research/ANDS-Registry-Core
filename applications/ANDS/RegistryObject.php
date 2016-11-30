@@ -35,7 +35,7 @@ class RegistryObject extends Model
     public function getCurrentData()
     {
         return RecordData::where('registry_object_id', $this->registry_object_id)
-            ->where('current', "TRUE")->first();
+            ->where('current', "TRUE")->where('scheme', "rif")->first();
     }
 
     /**
