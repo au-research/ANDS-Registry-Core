@@ -228,6 +228,9 @@ class Registry_object extends MX_Controller {
 		$qa = $ds->qa_flag==DB_TRUE ? true : false;
 		$manual_publish = ($ds->manual_publish==DB_TRUE) ? true: false;
 
+        initEloquent();
+        $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($registry_object_id);
+        $quality_html = ANDS\Registry\Providers\QualityMetadataProvider::getQualityReportHTML($record);
 		$response['title'] = 'QA Result';
 		$scripts = preg_split('/(\)\;)|(\;\\n)/', $result, -1, PREG_SPLIT_NO_EMPTY);
 		$response["ro_status"] = "DRAFT";
@@ -238,7 +241,7 @@ class Registry_object extends MX_Controller {
 		$response["ro_quality_level"] = $ro->quality_level;
 		$response["approve_required"] = $manual_publish;
 		$response["error_count"] = (int) $ro->error_count;
-		$response["qa"] = $ro->get_quality_text();
+		$response["qa"] = $quality_html;
 		$response["ro_quality_class"] = ($ro->quality_level >= 2 ? "success" : "important");
 		$response["qa_$ro->quality_level"] = true;
 
