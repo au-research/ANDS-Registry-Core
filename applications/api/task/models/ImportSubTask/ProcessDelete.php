@@ -79,14 +79,27 @@ class ProcessDelete extends ImportSubTask
         $fromRelationQuery = "";
         $toRelationQuery = "";
 
-        $affectedRecordIDs = new Collection();
+        $ids = collect($records)->pluck('registry_object_id')->toArray();
+
+        // get the affected records IDs before deleting the PUBLISHED records
+        $affectedRecordIDs = RelationshipProvider::getAffectedIDsFromIDs($ids);
 
         // TODO: refactor to reduce SQL queries
         foreach ($records as $record) {
             $record->status = "DELETED";
             $record->save();
-            RelationshipProvider::deleteAllRelationshipsFromId($record->registry_object_id);
-            // $this->log("Record $record->registry_object_id ($record->status) is set to DELETED");
+
+            // delete everything that could hold a problem
+            // identifier
+            RegistryObject\Identifier::where('registry_object_id', $record->registry_object_id)->delete();
+
+            // identifier relation
+            IdentifierRelationship::where('registry_object_id', $record->registry_object_id)->delete();
+
+            // all relationships
+            Relationship::where('registry_object_id', $record->registry_object_id)->delete();
+            ImplicitRelationship::where('from_id', $record->registry_object_id)->delete();
+
 
             $portalQuery .= " id:$record->registry_object_id";
             $fromRelationQuery .= " from_id:$record->registry_object_id";
@@ -95,9 +108,8 @@ class ProcessDelete extends ImportSubTask
             $this->parent()->incrementTaskData("recordsDeletedCount");
         }
 
-        $ids = collect($records)->pluck('registry_object_id')->toArray();
-
-        $affectedRecordIDs = RelationshipProvider::getAffectedIDsFromIDs($ids);
+        // there are nothing to be added to the affected here, because there
+        // should be no new identifiers or anything created after the delete
 
         $this->log("Size of affected records: ".count($affectedRecordIDs));
 

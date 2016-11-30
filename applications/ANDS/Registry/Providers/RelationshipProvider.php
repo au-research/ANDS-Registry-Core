@@ -524,7 +524,7 @@ class RelationshipProvider
      * @param $ids
      * @return array
      */
-    public static function getAffectedIDsFromIDs($ids)
+    public static function getAffectedIDsFromIDs($ids, $recursive = true)
     {
         $affectedIDs = [];
         $directAndReverse = [];
@@ -636,10 +636,34 @@ class RelationshipProvider
         });
 
         $affectedIDs = collect($affectedIDs)
-            ->flatten()
-            ->values()
-            ->unique()
+            ->flatten()->values()->unique()
             ->toArray();
+
+        if ($recursive === false) {
+            return $affectedIDs;
+        }
+
+        // duplicate records and all of their affected, not recursive
+        foreach ($ids as $id) {
+            $record = RegistryObjectsRepository::getRecordByID($id);
+            $duplicates = $record->getDuplicateRecords();
+            $duplicateIDs = $duplicates->pluck('registry_object_id')->toArray();
+
+            // add them to the list as well
+            $affectedIDs = array_merge($affectedIDs, $duplicateIDs);
+
+            // find affected by duplicates, not recursive
+            // should return before looking for duplicates of duplicates
+            $affectedIDsFromDuplicates = self::getAffectedIDsFromIDs($duplicateIDs, false);
+
+            // add those to the list
+            $affectedIDs = array_merge($affectedIDs, $affectedIDsFromDuplicates);
+
+            // list should now be flatten with unique values
+            $affectedIDs = collect($affectedIDs)
+                ->flatten()->values()->unique()
+                ->toArray();
+        }
 
         return $affectedIDs;
     }
