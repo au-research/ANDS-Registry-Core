@@ -29,6 +29,11 @@ class Task_api
         require_once APP_PATH . 'vendor/autoload.php';
 
         $this->taskManager = new Task\TaskManager($this->db, $this->ci);
+
+        // task operation takes a long time
+        ini_set('memory_limit', '1024M');
+        ini_set('max_execution_time', 2 * ONE_HOUR);
+        set_time_limit(0);
     }
 
     /**
