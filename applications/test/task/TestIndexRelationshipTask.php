@@ -36,6 +36,36 @@ class TestIndexRelationshipTask extends UnitTest
     /** @test **/
     public function test_it_should_sample()
     {
+        $deletedRecords = ["798066",
+            "798067",
+            "798068",
+            "798069",
+            "798070",
+            "798071",
+            "798072",
+            "798073",
+            "798074",
+            "798075",
+            "798076",
+            "798086",
+            "798088"];
+
+        $task = new ImportTask;
+        $task->init([
+            'params' => http_build_query([
+                'ds_id' => 316,
+                'targetStatus' => 'PUBLISHED',
+                'runAll' => 1,
+                'pipeline' => 'PublishingWorkflow'
+            ])
+        ])->skipLoadingPayload()->initialiseTask();
+
+        $task->setTaskData("deletedRecords", $deletedRecords);
+
+        $task->run();
+
+        dd($task->getMessage());
+
         $record = RegistryObject::find(751824);
         $record = RegistryObject::find(798176);
         $record = RegistryObject::find(798175);

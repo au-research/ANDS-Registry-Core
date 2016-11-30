@@ -4,9 +4,11 @@
 namespace ANDS\API\Task\ImportSubTask;
 
 use ANDS\RegistryObject;
+use ANDS\RegistryObject\IdentifierRelationship;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Registry\Providers\RelationshipProvider;
-use Illuminate\Support\Collection;
+use ANDS\RegistryObject\ImplicitRelationship;
+use ANDS\RegistryObject\Relationship;
 
 /**
  * Class ProcessDelete
