@@ -651,6 +651,26 @@ class RelationshipProvider
             $affectedIDs[] = $relation->prop('from_id');
         }
 
+        // identifier relationships
+        $idenProvider = Connections::getIdentifierProvider();
+        $relations = $idenProvider->init()
+            ->setFilter('from_id', array_merge($ids, $directAndReverse))
+            ->setLimit(0)
+            ->get();
+
+        foreach ($relations as $relation) {
+            $affectedIDs[] = $relation->prop('from_id');
+        }
+
+        $reverseRelations = $idenProvider->init()
+            ->setFilter('to_key', $keys)
+            ->setLimit(0)
+            ->get();
+
+        foreach ($reverseRelations as $relation) {
+            $affectedIDs[] = $relation->prop('from_id');
+        }
+
         $affectedIDs = array_filter($affectedIDs, function($item) use ($ids){
             return !in_array($item, $ids);
         });
