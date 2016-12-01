@@ -25,10 +25,39 @@ class TestIndexRelationshipTask extends UnitTest
     /** @test **/
     public function test_it_should_sample_2()
     {
-        $imported = [798173,
-            798174,
-            798175,
-            798176];
+        $imported = [798252,
+            798253,
+            798254,
+            798255,
+            798256,
+            798257,
+            798258,
+            798259,
+            798260,
+            798261,
+            798262,
+            798263,
+            798264];
+
+        $orderedRecords = [
+            'party' => [],
+            'activity' => [],
+            'collection' => [],
+            'service' => []
+        ];
+
+        foreach($imported as $id) {
+            $record = RegistryObjectsRepository::getRecordByID($id);
+            $orderedRecords[$record->class][] = $record;
+        }
+
+        $orderedRecords = array_merge(
+            $orderedRecords['party'],
+            $orderedRecords['activity'],
+            $orderedRecords['collection'],
+            $orderedRecords['service']
+        );
+
         $affected = RelationshipProvider::getAffectedIDsFromIDs($imported);
         dd($affected);
     }
@@ -47,6 +76,9 @@ class TestIndexRelationshipTask extends UnitTest
         $record = RegistryObject::find(798257);
         $record = RegistryObject::find(798251);
         $record = RegistryObject::find(798220);
+        $record = RegistryObject::find(798283);
+        $record = RegistryObject::find(809032);
+        $record = RegistryObject::find(818952);
 
         $task = new ImportTask;
         $task->init([
@@ -61,10 +93,11 @@ class TestIndexRelationshipTask extends UnitTest
 
         $indexPortalTask = $task->getTaskByName("IndexPortal");
         $indexPortalTask->run();
-        dd($indexPortalTask->getMessage());
 
         $indexRelationshipTask = $task->getTaskByName("IndexRelationship");
         $indexRelationshipTask->run();
+
+        dd($indexRelationshipTask->toArray());
 
         $relationships = RelationshipProvider::getMergedRelationships($record);
         dd($indexRelationshipTask->getRelationshipIndex($relationships));

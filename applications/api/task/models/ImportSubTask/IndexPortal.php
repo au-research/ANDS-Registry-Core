@@ -49,12 +49,20 @@ class IndexPortal extends ImportSubTask
                 $this->parent()->getCI()->solr->init()->setCore('portal');
                 $this->parent()->getCI()->solr->deleteByID($roID);
                 $this->parent()->getCI()->solr->commit();
-                $this->parent()->getCI()->solr->addJSONDoc(json_encode($portalIndex));
+                $result = $this->parent()->getCI()
+                    ->solr->add_json(json_encode(
+                        ['add' => ["doc" => $portalIndex]]
+                    ));
+                $result = json_decode($result, true);
+                if (array_key_exists('error', $result)) {
+                    $this->addError("portal for $ro->id: ". $result['error']['msg']);
+                }
             }
 
             $this->updateProgress($index, $total, "Processed ($index/$total) $ro->title($roID)");
         }
 
-         $this->parent()->getCI()->solr->init()->setCore('portal')->commit();
+         $result = $this->parent()->getCI()->solr->init()->setCore('portal')->commit();
+        debug("Commit: ". $result);
     }
 }

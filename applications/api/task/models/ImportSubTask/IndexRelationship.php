@@ -74,6 +74,10 @@ class IndexRelationship extends ImportSubTask
      */
     public function updatePortalIndex($record, $relationships)
     {
+        if (count($relationships) == 0) {
+            return;
+        }
+
         $this->parent()->getCI()->solr->init()->setCore('portal');
         // update portal index
         $updateDoc = [

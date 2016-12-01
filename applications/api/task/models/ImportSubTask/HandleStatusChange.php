@@ -95,6 +95,7 @@ class HandleStatusChange extends ImportSubTask
      */
     public function publishRecords($ids)
     {
+        debug("Publishing: ". implode(', ', $ids));
         $data = [];
         foreach ($ids as $id) {
             $record = RegistryObject::find($id);
