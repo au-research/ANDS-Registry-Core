@@ -48,16 +48,6 @@
 			    </xsl:otherwise>
 	    	</xsl:choose>
         </xsl:if>
-        <xsl:if test="string-length($dataSource) = 0">
-            <xsl:choose>
-			    <xsl:when test="$output = 'script'">
-            		<xsl:text>SetErrors("tab_mandatoryInformation_dataSource","A Data Source must be selected for this record");</xsl:text>
-			    </xsl:when>
-			    <xsl:otherwise>
-					<span class="error">A Data Source must be selected for this record</span>
-			    </xsl:otherwise>
-	    	</xsl:choose>
-        </xsl:if>
         <xsl:if test="string-length(ro:key) = 0">
             <xsl:choose>
 			    <xsl:when test="$output = 'script'">

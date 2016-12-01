@@ -227,7 +227,6 @@ class Registry_object extends MX_Controller {
 
 		$qa = $ds->qa_flag==DB_TRUE ? true : false;
 		$manual_publish = ($ds->manual_publish==DB_TRUE) ? true: false;
-
         initEloquent();
         $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($registry_object_id);
         $quality_html = ANDS\Registry\Providers\QualityMetadataProvider::getQualityReportHTML($record);
@@ -240,18 +239,24 @@ class Registry_object extends MX_Controller {
 		$response["qa_required"] = $qa;
 		$response["ro_quality_level"] = $ro->quality_level;
 		$response["approve_required"] = $manual_publish;
-		$response["error_count"] = (int) $ro->error_count;
+
 		$response["qa"] = $quality_html;
 		$response["ro_quality_class"] = ($ro->quality_level >= 2 ? "success" : "important");
 		$response["qa_$ro->quality_level"] = true;
 
-
+        $error_count = 0;
+        $warning_count = 0;
 		foreach($scripts as $script)
 		{
 			$matches = preg_split('/(\"\,\")|(\(\")|(\"\))/', $script.")", -1, PREG_SPLIT_NO_EMPTY);
+
 			if(sizeof($matches) > 2)
 			{
 				$match_response = array('field_id'=>$matches[1],'message'=>$matches[2]);
+                if($matches[0] == 'SetErrors')
+                    $error_count++;
+                if($matches[0] == 'SetWarnings')
+                    $warning_count++;
 				if (isset($matches[3]))
 				{
 					if (strtoupper($matches[3]) != $matches[3])
@@ -262,6 +267,10 @@ class Registry_object extends MX_Controller {
 				$response[$matches[0]][] = $match_response;
 			}
 		}
+        $ro->error_count = $error_count;
+        $ro->warning_count = $warning_count;
+        $ro->save();
+        $response["error_count"] = $error_count;
 		echo json_encode($response);
 	}
 
@@ -333,7 +342,7 @@ class Registry_object extends MX_Controller {
             "qa_required" => $ds->qa_flag == DB_TRUE ? true : false,
             "data_source_id" => $ro->data_source_id,
             "approve_required" => $ds->manual_publish == DB_TRUE ? true : false,
-            "error_count" => (int)$ro->error_count,
+            "error_count" => 0,
             "ro_id" => $ro->id,
             "ro_quality_level" => $ro->quality_level,
             "ro_quality_class" => ($ro->quality_level >= 2 ? "success" : "important"),
