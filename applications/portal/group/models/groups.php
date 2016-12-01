@@ -136,9 +136,16 @@ class Groups extends CI_Model {
 		//classes
 		$group['facet']['class'] = array();
 		$classes = $this->solr->getFacetResult('class');
-		foreach ($classes as $class=>$num) {
+        $expectedClasses = ['collection', 'party', 'activity', 'service'];
+        foreach ($expectedClasses as $class) {
+            if (!array_key_exists($class, $classes)) {
+                $classes[$class] = 0;
+            }
+        }
+		foreach ($classes as $class => $num) {
 			$group['facet']['class'][$class] = $num;
 		}
+
 		// dd($this->solr->getFacetResult('subject_value_resolved'));
 
 		$this->solr

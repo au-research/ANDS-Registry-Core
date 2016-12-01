@@ -42,6 +42,7 @@ class Group extends MX_Controller {
 
 	function view($slug) {
 		$group = $this->groups->get($slug);
+
 		if(isset($group) && sizeof($group) > 0){
 
             monolog([
