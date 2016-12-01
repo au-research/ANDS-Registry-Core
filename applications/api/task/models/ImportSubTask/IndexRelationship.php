@@ -134,6 +134,10 @@ class IndexRelationship extends ImportSubTask
      */
     public function updateRelationIndex($record, $relationships)
     {
+        if (count($relationships) == 0) {
+            return;
+        }
+
         // delete all from_id
         $this->parent()->getCI()->solr->init()->setCore('relations');
         $this->parent()->getCI()->solr->deleteByQueryCondition('from_id:'.$record->registry_object_id);
