@@ -152,7 +152,7 @@ class Ingest extends ImportSubTask
                 $user_name = "SYSTEM";
             }
             $newRecord->record_owner = $user_name;
-
+            $newRecord->save();
             if($this->data_source->getDataSourceAttributeValue('qa_flag') == 1){
                 $newRecord->setRegistryObjectAttribute('manually_assessed', 'no');
             }
@@ -161,7 +161,7 @@ class Ingest extends ImportSubTask
             $newRecord->setRegistryObjectAttribute('created', time());
             $newRecord->setRegistryObjectAttribute('updated', time());
 
-            $newRecord->save();
+
             // create a new record data
             $newVersion = Repo::addNewVersion(
                 $newRecord->registry_object_id,
