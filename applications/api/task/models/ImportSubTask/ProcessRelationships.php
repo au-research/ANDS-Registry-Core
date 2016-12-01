@@ -53,6 +53,14 @@ class ProcessRelationships extends ImportSubTask
             tearDownEloquent();
         }
 
+        // TODO: Move to it's own subtask called ProcessGrantsRelationship
+        foreach ($orderedRecords as $index => $record) {
+            // process implicit relationships for the grants network
+            RelationshipProvider::processGrantsRelationship($record);
+            $this->updateProgress($index, $total, "Processed ($index/$total) $record->title($record->registry_object_id)");
+            tearDownEloquent();
+        }
+
         // get affected ids after the processing (to cater for new relationships)
         $affectedRecordIDs = array_merge(
             $affectedRecordIDs,

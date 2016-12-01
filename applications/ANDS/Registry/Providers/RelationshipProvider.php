@@ -43,9 +43,6 @@ class RelationshipProvider
 
         // relatedInfo relationships
         static::processRelatedInfos($record, $recordData->data);
-
-        // process implicit relationships for the grants network
-        static::processGrantsRelationship($record);
     }
 
     /**
