@@ -12,12 +12,13 @@ class Ingest extends ImportSubTask
 {
     protected $requirePayload = true;
     protected $title = "INGESTING RECORDS";
-
+    protected $data_source = null;
+    
     public function run_task()
     {
         $payloads = $this->parent()->getPayloads();
         $multiplePayloads = count($payloads) > 1 ? true : false;
-
+        $this->data_source = DataSourceRepository::getByID($this->parent()->dataSourceID);
         $payloadCounter = 0;
         foreach ($this->parent()->getPayloads() as $payloadIndex => $payload) {
             $payloadCounter++;
@@ -85,7 +86,11 @@ class Ingest extends ImportSubTask
             }
 
             $existingRecord->setRegistryObjectAttribute('created_who', $user_name);
+            if($this->data_source->getDataSourceAttributeValue('qa_flag') == true){
+                $existingRecord->setRegistryObjectAttribute('manually_assessed', 'no');
+            }
             $existingRecord->status = $this->parent()->getTaskData("targetStatus");
+            $existingRecord->save();
             $this->parent()->addTaskData("importedRecords", $existingRecord->registry_object_id);
 
         } elseif (Repo::isPublishedStatus($this->parent()->getTaskData("targetStatus")) &&
@@ -94,6 +99,7 @@ class Ingest extends ImportSubTask
             $deletedRecord->status = $this->parent()->getTaskData("targetStatus");
             $this->parent()->incrementTaskData("recordsUpdatedCount");
             // can claim deleted records of different datasources
+
             $deletedRecord->data_source_id = $this->parent()->dataSourceID;
 
             $deletedRecord->save();
@@ -105,6 +111,10 @@ class Ingest extends ImportSubTask
             }
 
             $deletedRecord->setRegistryObjectAttribute('created_who', $user_name);
+
+            if($this->data_source->getDataSourceAttributeValue('qa_flag') == true){
+                $deletedRecord->setRegistryObjectAttribute('manually_assessed', 'no');
+            }
 
             // TODO: check if the latest record data is the same first
             // TODO: the matchingRecord is similar, refactor to pull this functionality out
@@ -142,12 +152,16 @@ class Ingest extends ImportSubTask
                 $user_name = "SYSTEM";
             }
             $newRecord->record_owner = $user_name;
-            
-            $newRecord->save();
+
+            if($this->data_source->getDataSourceAttributeValue('qa_flag') == true){
+                $newRecord->setRegistryObjectAttribute('manually_assessed', 'no');
+            }
+
             $newRecord->setRegistryObjectAttribute('created_who', $user_name);
             $newRecord->setRegistryObjectAttribute('created', time());
             $newRecord->setRegistryObjectAttribute('updated', time());
 
+            $newRecord->save();
             // create a new record data
             $newVersion = Repo::addNewVersion(
                 $newRecord->registry_object_id,

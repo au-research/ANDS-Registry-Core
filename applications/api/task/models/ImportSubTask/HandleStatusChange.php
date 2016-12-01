@@ -40,7 +40,7 @@ class HandleStatusChange extends ImportSubTask
         ]);
 
         $recordIDsToPublished = [];
-
+        $data_source = DataSourceRepository::getByID($this->parent()->dataSourceID);
         foreach ($ids as $id) {
             $this->log('Processing '. $id);
             $record = RegistryObject::find($id);
@@ -50,6 +50,9 @@ class HandleStatusChange extends ImportSubTask
                     // from published to draft, cloning record
                     $this->log('Cloning record to DRAFT');
                     $draftRecord = $this->cloneToDraft($record, $targetStatus);
+                    if($data_source->getDataSourceAttributeValue('qa_flag') == true){
+                        $draftRecord->setRegistryObjectAttribute('manually_assessed', 'no');
+                    }
                     $this->log('DRAFT record ID:'.$draftRecord->registry_object_id.' has been created');
                 } elseif(RegistryObjectsRepository::isDraftStatus($record->status)
                     && RegistryObjectsRepository::isPublishedStatus($targetStatus)) {
@@ -57,10 +60,17 @@ class HandleStatusChange extends ImportSubTask
                     $recordIDsToPublished[] = $record->registry_object_id;
                 } else {
                     // from draft to draft, standard status change
-                    $record->status = $targetStatus;
-                    if($record->status == "ASSESSMENT_IN_PROGRESS" ){
+                    
+                    if( $targetStatus == 'APPROVED' && $data_source->getDataSourceAttributeValue('qa_flag') == true){
                         $record->setRegistryObjectAttribute('manually_assessed', 'yes');
                     }
+                    
+                    elseif($targetStatus == 'DRAFT' && $data_source->getDataSourceAttributeValue('qa_flag') == true){
+                        $record->setRegistryObjectAttribute('manually_assessed', 'no');
+                    }
+
+                    $record->status = $targetStatus;
+
                     $record->save();
                 }
             } else {
