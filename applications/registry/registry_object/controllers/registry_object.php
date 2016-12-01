@@ -1568,8 +1568,8 @@ class Registry_object extends MX_Controller {
 	private function generateStatusActionBar(_registry_object $ro, _data_source $data_source)
 	{
 		$actions = array();
-		$qa = $data_source->qa_flag=='t' ? true : false;
-		$manual_publish = ($data_source->manual_publish=='t' || $data_source->manual_publish==DB_TRUE) ? true: false;
+		$qa = $data_source->qa_fla g== 1 ? true : false;
+		$manual_publish = $data_source->manual_publish == 1 ? true: false;
 		if ($this->user->hasFunction('REGISTRY_USER'))
 		{
 
