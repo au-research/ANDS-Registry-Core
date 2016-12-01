@@ -50,7 +50,7 @@ class HandleStatusChange extends ImportSubTask
                     // from published to draft, cloning record
                     $this->log('Cloning record to DRAFT');
                     $draftRecord = $this->cloneToDraft($record, $targetStatus);
-                    if($data_source->getDataSourceAttributeValue('qa_flag') == true){
+                    if($data_source->getDataSourceAttributeValue('qa_flag') == 1){
                         $draftRecord->setRegistryObjectAttribute('manually_assessed', 'no');
                     }
                     $this->log('DRAFT record ID:'.$draftRecord->registry_object_id.' has been created');
@@ -61,11 +61,11 @@ class HandleStatusChange extends ImportSubTask
                 } else {
                     // from draft to draft, standard status change
                     
-                    if( $targetStatus == 'APPROVED' && $data_source->getDataSourceAttributeValue('qa_flag') == true){
+                    if( $targetStatus == 'APPROVED' && $data_source->getDataSourceAttributeValue('qa_flag') == 1){
                         $record->setRegistryObjectAttribute('manually_assessed', 'yes');
                     }
                     
-                    elseif($targetStatus == 'DRAFT' && $data_source->getDataSourceAttributeValue('qa_flag') == true){
+                    elseif($data_source->getDataSourceAttributeValue('qa_flag') == 1){
                         $record->setRegistryObjectAttribute('manually_assessed', 'no');
                     }
 

@@ -112,7 +112,7 @@ class Ingest extends ImportSubTask
 
             $deletedRecord->setRegistryObjectAttribute('created_who', $user_name);
 
-            if($this->data_source->getDataSourceAttributeValue('qa_flag') == true){
+            if($this->data_source->getDataSourceAttributeValue('qa_flag') == 1){
                 $deletedRecord->setRegistryObjectAttribute('manually_assessed', 'no');
             }
 
@@ -153,7 +153,7 @@ class Ingest extends ImportSubTask
             }
             $newRecord->record_owner = $user_name;
 
-            if($this->data_source->getDataSourceAttributeValue('qa_flag') == true){
+            if($this->data_source->getDataSourceAttributeValue('qa_flag') == 1){
                 $newRecord->setRegistryObjectAttribute('manually_assessed', 'no');
             }
 
