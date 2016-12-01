@@ -44,6 +44,9 @@ class TestIndexRelationshipTask extends UnitTest
         $record = RegistryObject::find(798146);
         $record = RegistryObject::find(798044);
         $record = RegistryObject::find(798243);
+        $record = RegistryObject::find(798257);
+        $record = RegistryObject::find(798251);
+        $record = RegistryObject::find(798220);
 
         $task = new ImportTask;
         $task->init([
@@ -55,6 +58,10 @@ class TestIndexRelationshipTask extends UnitTest
         ])->skipLoadingPayload()->initialiseTask();
 
         $task->setTaskData('importedRecords', [$record->registry_object_id]);
+
+        $indexPortalTask = $task->getTaskByName("IndexPortal");
+        $indexPortalTask->run();
+        dd($indexPortalTask->getMessage());
 
         $indexRelationshipTask = $task->getTaskByName("IndexRelationship");
         $indexRelationshipTask->run();

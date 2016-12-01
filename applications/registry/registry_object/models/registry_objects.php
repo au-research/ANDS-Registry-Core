@@ -1074,6 +1074,7 @@ class Registry_objects extends CI_Model {
 		parent::__construct();
 		$this->load->helper('xml'); //prevent error with some helper function
 		include_once("_registry_object.php");
+        initEloquent();
 	}
 
 }
