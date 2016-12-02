@@ -555,8 +555,8 @@ class RelationshipProvider
             ->get();
 
         foreach ($direct as $relation) {
-            $affectedIDs[] = $relation->prop('to_id');
-            $directAndReverse[] = $relation->prop('to_id');
+            $affectedIDs[] = (int)$relation->prop('to_id');
+            $directAndReverse[] = (int)$relation->prop('to_id');
         }
 
         // reverse
@@ -567,8 +567,8 @@ class RelationshipProvider
             ->get();
 
         foreach ($reverse as $relation) {
-            $affectedIDs[] = $relation->prop('from_id');
-            $directAndReverse[] = $relation->prop('from_id');
+            $affectedIDs[] = (int)$relation->prop('from_id');
+            $directAndReverse[] = (int)$relation->prop('from_id');
         }
 
         // funder
@@ -580,7 +580,7 @@ class RelationshipProvider
             ->get();
 
         foreach ($funders as $relation) {
-            $affectedIDs[] = $relation->prop('to_id');
+            $affectedIDs[] = (int)$relation->prop('to_id');
         }
 
         // parent collections
@@ -592,7 +592,7 @@ class RelationshipProvider
             ->get();
 
         foreach ($parentCollections as $relation) {
-            $affectedIDs[] = $relation->prop('to_id');
+            $affectedIDs[] = (int)$relation->prop('to_id');
         }
 
         $idsAndImmediate = array_merge($ids, $directAndReverse);
@@ -607,7 +607,7 @@ class RelationshipProvider
             ->get();
 
         foreach ($childCollections as $relation) {
-            $affectedIDs[] = $relation->prop('from_id');
+            $affectedIDs[] = (int)$relation->prop('from_id');
         }
 
 
@@ -620,7 +620,7 @@ class RelationshipProvider
             ->get();
 
         foreach ($parentActivities as $relation) {
-            $affectedIDs[] = $relation->prop('to_id');
+            $affectedIDs[] = (int)$relation->prop('to_id');
         }
 
         // reverse parent activities
@@ -633,7 +633,7 @@ class RelationshipProvider
 
 
         foreach ($reverseParentActivities as $relation) {
-            $affectedIDs[] = $relation->prop('from_id');
+            $affectedIDs[] = (int)$relation->prop('from_id');
         }
 
         // child activities
@@ -645,7 +645,7 @@ class RelationshipProvider
             ->get();
 
         foreach ($parentActivities as $relation) {
-            $affectedIDs[] = $relation->prop('from_id');
+            $affectedIDs[] = (int)$relation->prop('from_id');
         }
 
         // identifier relationships
@@ -656,7 +656,7 @@ class RelationshipProvider
             ->get();
 
         foreach ($relations as $relation) {
-            $affectedIDs[] = $relation->prop('from_id');
+            $affectedIDs[] = (int)$relation->prop('from_id');
         }
 
         $reverseRelations = $idenProvider->init()
@@ -665,7 +665,7 @@ class RelationshipProvider
             ->get();
 
         foreach ($reverseRelations as $relation) {
-            $affectedIDs[] = $relation->prop('from_id');
+            $affectedIDs[] = (int)$relation->prop('from_id');
         }
 
         $affectedIDs = array_filter($affectedIDs, function($item) use ($ids){
