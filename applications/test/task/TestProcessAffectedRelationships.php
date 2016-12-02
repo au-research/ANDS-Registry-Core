@@ -26,14 +26,14 @@ class TestProcessAffectedRelationships extends UnitTest
             'runAll' => 1
         ])->skipLoadingPayload()->initialiseTask();
 
-        $publishedIDs = [574580];
+        $publishedIDs = [574584];
         //$publishedIDs = RegistryObject::where('data_source_id', 213)->where('status', 'PUBLISHED')->get()->pluck('registry_object_id')->toArray();
         $affectedIDs = RelationshipProvider::getAffectedIDsFromIDs($publishedIDs);
         foreach($affectedIDs as $id) {
             $record = Repo::getRecordByID($id);
             var_dump((string)$record->class.":".(string)$record->title);
         }
-        
+
         $importTask->setTaskData('affectedRecords', $affectedIDs);
 
         $task = $importTask->getTaskByName("ProcessAffectedRelationships");
