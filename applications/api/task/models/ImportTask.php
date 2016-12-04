@@ -249,6 +249,7 @@ class ImportTask extends Task
                     "ProcessCoreMetadata",
                     "ProcessIdentifiers",
                     "ProcessRelationships",
+                    "ProcessGrantsRelationship",
                     "ProcessAffectedRelationships",
                     "ProcessQualityMetadata",
                     "IndexPortal",
@@ -267,6 +268,7 @@ class ImportTask extends Task
                     "ProcessDelete",
                     "ProcessIdentifiers",
                     "ProcessRelationships",
+                    "ProcessGrantsRelationship",
                     "ProcessAffectedRelationships",
                     "ProcessQualityMetadata",
                     "IndexPortal",
@@ -277,6 +279,7 @@ class ImportTask extends Task
             case "UpdateRelationshipWorkflow":
                 $tasks = [
                     "ProcessRelationships",
+                    "ProcessGrantsRelationship",
                     "ProcessAffectedRelationships",
                     "IndexRelationship"
                 ];
@@ -304,15 +307,14 @@ class ImportTask extends Task
                     "ProcessDelete",
                     "ProcessIdentifiers",
                     "ProcessRelationships",
-                    "ProcessAffectedRelationships",
                     "ProcessQualityMetadata",
                     "IndexPortal",
                     "IndexRelationship",
-                    //"OptimizeRelationship",
-                    //"HandleIncrementalHarvest",
+                    "ProcessGrantsRelationship",
+                    "ProcessAffectedRelationships",
+                    "IndexRelationship",
                     "FinishImport",
-                    "ScheduleHarvest"
-                    //"Report"
+                    "ScheduleHarvest",
                 ];
                 break;
         }

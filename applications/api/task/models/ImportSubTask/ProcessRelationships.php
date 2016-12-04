@@ -13,7 +13,7 @@ use ANDS\Repository\RegistryObjectsRepository;
 class ProcessRelationships extends ImportSubTask
 {
     protected $requireImportedRecords = true;
-    protected $title = "PROCESSING RELATIONSHIPS";
+    protected $title = "PROCESSING STANDARD RELATIONSHIPS";
 
     public function run_task()
     {
@@ -53,13 +53,8 @@ class ProcessRelationships extends ImportSubTask
             tearDownEloquent();
         }
 
-        // TODO: Move to it's own subtask called ProcessGrantsRelationship
-        foreach ($orderedRecords as $index => $record) {
-            // process implicit relationships for the grants network
-            RelationshipProvider::processGrantsRelationship($record);
-            $this->updateProgress($index, $total, "Processed ($index/$total) $record->title($record->registry_object_id)");
-            tearDownEloquent();
-        }
+        // save orderedRecords back to importedRecords for next process stage
+        $this->parent()->setTaskData("importedRecords", $orderedRecords);
 
         // get affected ids after the processing (to cater for new relationships)
         $affectedRecordIDs = array_merge(
@@ -78,11 +73,14 @@ class ProcessRelationships extends ImportSubTask
         }
 
         $affectedRecordIDs = array_values(array_unique($affectedRecordIDs));
+        $total = count($affectedRecordIDs);
 
         // only set if affected is greater than 0
-        if (sizeof($affectedRecordIDs) > 0) {
+        if ($total > 0) {
             $this->parent()->setTaskData('affectedRecords', $affectedRecordIDs);
         }
+
+        $this->log("Discovered $total affected records after Processing Standard Relationships");
     }
 
 }
