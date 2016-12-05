@@ -54,7 +54,8 @@ class ProcessRelationships extends ImportSubTask
         }
 
         // save orderedRecords back to importedRecords for next process stage
-        $this->parent()->setTaskData("importedRecords", $orderedRecords);
+        $importedRecordsIDs = collect($orderedRecords)->pluck('registry_object_id')->flatten()-unique()->toArray();
+        $this->parent()->setTaskData("importedRecords", $importedRecordsIDs);
 
         // get affected ids after the processing (to cater for new relationships)
         $affectedRecordIDs = array_merge(
