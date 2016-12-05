@@ -16,7 +16,7 @@ class ProcessGrantsRelationship extends ImportSubTask
     public function run_task()
     {
         // importedRecords should already be ordered by ProcessRelationship
-        $importedRecords = $this->parent()->getTaskData("importedRecord");
+        $importedRecords = $this->parent()->getTaskData("importedRecords");
         $total = count($importedRecords);
 
         $this->log("Process Grants (inferred) Relationships started for $total records");
