@@ -36,9 +36,6 @@ class PopulateAffectedList extends ImportSubTask
             $this->updateProgress($index, $total, "Processed ($index/$numChunk)");
         }
 
-        $countAffected = count($affectedRecordIDs);
-        $this->log("Found $countAffected affected records");
-
         $currentAffectedRecords = $this->parent()->getTaskData('affectedRecords') ? $this->parent()->getTaskByData('affectedRecords') : [];
         if ($currentAffectedRecords) {
             $affectedRecordIDs = array_merge($currentAffectedRecords, $affectedRecordIDs);
@@ -48,6 +45,9 @@ class PopulateAffectedList extends ImportSubTask
         $affectedRecordIDs = collect($affectedRecordIDs)
             ->flatten()->unique()->values()->toArray();
 
-        $this->parent()->setTaskData("affectedIDs", $affectedRecordIDs);
+        $countAffected = count($affectedRecordIDs);
+        $this->log("Found $countAffected affected records");
+
+        $this->parent()->setTaskData("affectedRecords", $affectedRecordIDs);
     }
 }

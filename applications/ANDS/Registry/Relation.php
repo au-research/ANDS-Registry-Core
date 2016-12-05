@@ -101,8 +101,9 @@ class Relation
      */
     public function mergeWith($row)
     {
+        $validMultiValued = ['relation_type', 'relation_origin'];
         foreach ($row as $key => $value) {
-            if ($this->hasProperty($key) && $this->getProperty($key) != $value) {
+            if (in_array($key, $validMultiValued)) {
                 $this->setProperty($key, $value);
             }
         }
