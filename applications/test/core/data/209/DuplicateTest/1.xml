@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+  <registryObject group="AUTestingRecords">
+    <key>AUTCollection1444444444444444</key>
+    <originatingSource type="">http://demo.ands.org.au/registry/orca/register_my_data</originatingSource>
+    <collection type="collection" dateModified="2013-04-10T23:51:55Z">
+      <name type="primary">
+        <namePart>Collection with all RIF v1.6 elements (primaryName)</namePart>
+      </name>
+      <subject type="local">localSubject</subject>
+      <subject type="anzsrc-seo">830201</subject>
+      <subject type="anzsrc-for">0303</subject>
+    </collection>
+  </registryObject>
+</registryObjects>

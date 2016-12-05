@@ -562,10 +562,6 @@ function initEditForm(){
 			});
 
 			xml+='</'+ro_class+'>';
-			if($('#annotations')[0].value != '')
-			{
-				xml += '<extRif:annotations xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations')[0].value+'</extRif:annotations>';
-			}
 			xml+='</registryObject>';
 			$('#myModal .modal-header h3').html('<h3>Save &amp; Validate Registry Object</h3>');
 			$('#myModal .modal-body').html('<pre class="prettyprint linenums"><code class="language-xml">' + htmlEntities(formatXml(xml)) + '</code></pre>');
@@ -614,11 +610,6 @@ function initEditForm(){
 				
 
 				xml+='</'+ro_class+'>';
-				if($('#annotations')[0].value != '')
-				{
-					xml += '<extRif:annotations xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations')[0].value+'</extRif:annotations>';
-				}
-
 				xml+='</registryObject>';
                 //log(xml);
 				/* Keep a backup of the form's RIFCS */
@@ -797,10 +788,6 @@ function validate(){
 	});
 
 	xml+='</'+ro_class+'>';
-	if($('#annotations')[0].value != '')
-	{
-		xml += '<extRif:annotations xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects">'+$('#annotations')[0].value+'</extRif:annotations>';
-	}
 	xml+='</registryObject>';
 	prettyPrint();
 	//validate
@@ -1908,9 +1895,7 @@ $(document).on('click', '#exit_tab', function(e){
     if (window.event) keycode = window.event.keyCode;  
     else if (e) keycode = e.which;  
     var e = e || window.event;  
-    if(keycode==65 && e.altKey){  
-      $('#annotations_tab').toggle();  
-    }  
+
   }  
   
   document.onkeydown = testKeyCode; 

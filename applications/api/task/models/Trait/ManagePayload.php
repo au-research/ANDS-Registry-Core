@@ -11,6 +11,7 @@ use ANDS\Payload;
 trait ManagePayload
 {
     private $payloads = [];
+    public $skipLoading = false;
 
     /**
      * @param $key
@@ -90,12 +91,13 @@ trait ManagePayload
         $path = $this->getHarvestedPath();
 
         $this->log("Payload path: ". $path);
-
+        
         if (!is_dir($path)) {
             $path = $path . '.xml';
+            // $this->log('Loading payload from file: ' . $path);
             $this->loadPayloadFromFile($path);
         } else {
-            $this->log('Loading payload from directory: ' . $path);
+            // $this->log('Loading payload from directory: ' . $path);
             $directory = scandir($path);
             $files = array();
             foreach ($directory as $f) {
@@ -109,6 +111,12 @@ trait ManagePayload
         return $this;
     }
 
+    public function skipLoadingPayload()
+    {
+        $this->skipLoading = true;
+        return $this;
+    }
+
     /**
      * Loading a filePath into the payloads
      * TODO: need a better file accessor than file_get_contents
@@ -117,9 +125,8 @@ trait ManagePayload
      */
     private function loadPayloadFromFile($filePath)
     {
-        $this->log('Loading payload from file: ' . $filePath);
         if (!is_file($filePath)) {
-            $this->log('File '. $filePath. " is not accessible");
+            $this->addError('File '. $filePath. " is not accessible");
             return false;
         }
 
@@ -128,6 +135,10 @@ trait ManagePayload
         $this->setPayload(
             $filePath, $payload
         );
+        
+        if (is_array($this->getTaskData('payloadsInfo')) && in_array($payload->toArray(), $this->getTaskData('payloadsInfo'))) {
+            return;
+        }
 
         $this->addTaskData("payloadsInfo", $payload->toArray());
     }
@@ -141,7 +152,9 @@ trait ManagePayload
     public function getHarvestedPath()
     {
         $harvestedContentDir = get_config_item('harvested_contents_path');
-        return $harvestedContentDir . '/' . $this->getTaskData('dataSourceID') . '/' . $this->getTaskData('batchID');
+        
+        $harvestedContentDir = rtrim($harvestedContentDir, '/') . '/';
+        return $harvestedContentDir . $this->getTaskData('dataSourceID') . '/' . $this->getTaskData('batchID');
     }
 
     /**

@@ -1,6 +1,8 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 define('SERVICES_MODULE_PATH', REGISTRY_APP_PATH.'services/');
 
+include_once("applications/registry/registry_object/models/_transforms.php");
+use \Transforms as Transforms;
 /**
  * Registry Object controller
  *
@@ -75,7 +77,10 @@ class Registry_object extends MX_Controller {
 			}
 
 			$data['revisions'] = array_slice($ro->getAllRevisions(),0,$this->maxVisibleRevisions);
-			$data['quality_text'] = $ro->get_quality_text();
+			initEloquent();
+			$record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($ro_id);
+			$quality_html = ANDS\Registry\Providers\QualityMetadataProvider::getQualityReportHTML($record);
+			$data['quality_text'] = $quality_html;
 			//var_dump($data);
 			//exit();
 			$this->load->view('registry_object_index', $data);
@@ -124,46 +129,75 @@ class Registry_object extends MX_Controller {
 	}
 
 	public function edit($registry_object_id){
-		$this->load->model('registry_objects', 'ro');
-		$this->load->model("data_source/data_sources","ds");
+        acl_enforce('REGISTRY_USER');
+        initEloquent();
+        $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($registry_object_id);
 
-		$ro = $this->ro->getByID($registry_object_id);
 
-		if(!$ro) { throw new Exception("This Registry Object ID does not exist!"); }
 
-		acl_enforce('REGISTRY_USER');
-		ds_acl_enforce($ro->data_source_id);
-		$ds = $this->ds->getByID($ro->data_source_id);
+		if(!$record) { throw new Exception("This Registry Object ID does not exist!"); }
 
-		if($ro->status == PUBLISHED)
+
+		ds_acl_enforce($record->data_source_id);
+        $data_source = \ANDS\Repository\DataSourceRepository::getByID($record->data_source_id);
+
+
+        $draft_record = \ANDS\Repository\RegistryObjectsRepository::getMatchingRecord($record->key, 'DRAFT');
+
+
+		if($draft_record == null)
 		{
-			if(!($ro = $this->ro->getDraftByKey($ro->key)))
-			{
-				$ro = $this->ro->cloneToDraft($registry_object_id);
-			}
+
+            $xml = $record->getCurrentData()->data;
+
+            // write the xml payload to the file system
+            $batchID = 'MANUAL-ARO-' . md5($record->key).'-'.time();
+            \ANDS\Payload::write($record->data_source_id, $batchID, $xml);
+
+            // import Task creation
+            $importTask = new \ANDS\API\Task\ImportTask();
+            $importTask
+                ->setCI($this)->setDb($this->db)
+                ->init([
+                    'name' => 'ARO',
+                    'params' => http_build_query([
+                        'pipeline' => 'ManualEntry',
+                        'source' => 'manual',
+                        'ds_id' => $record->data_source_id,
+                        'user_name' => $this->user->name(),
+                        'batch_id' => $batchID,
+                        'targetStatus' => 'DRAFT'
+                    ])
+                ])
+                ->enableRunAllSubTask()
+                ->initialiseTask();
+
+            $importTask->run();
+
+            $errorLog = $importTask->getError();
+            if($errorLog == null){
+                $draft_record = \ANDS\Repository\RegistryObjectsRepository::getMatchingRecord($record->key, 'DRAFT');
+            }
 		}
 
-		if ($ro->status != DRAFT)
-		{
-			$ro->status = DRAFT;
-			$ro->save();
-		}
+        if($draft_record->registry_object_id != $registry_object_id){
+            header("Location: " . registry_url('registry_object/edit/' . $draft_record->registry_object_id));
+            return;
+        }
 
-		if ($ro->id != $registry_object_id)
-		{
-			header("Location: " . registry_url('registry_object/edit/' . $ro->id));
-		}
-		$extRif = $ro->getExtRif();
-		if(!$extRif)
-		{
-			$ro->enrich();
-			$extRif = $ro->getExtRif();
-		}
+        $extRif = $draft_record->getCurrentData()->data;
 		$data['extrif'] = $extRif;
-		$data['content'] = $ro->transformCustomForFORM($data['extrif']);
-		$data['ds'] = $ds;
 
-		$data['title'] = 'Edit: '.$ro->title;
+        $params = ["base_url"=>base_url(),
+            "registry_object_id"=>$registry_object_id,
+            "data_source_id"=>$draft_record->data_source_id,
+            "data_source_title"=>$data_source->title,
+            "ro_title"=>$draft_record->title,
+            "ro_class"=>$draft_record->class
+        ];
+		$data['content'] = ANDS\Util\XMLUtil::getHTMLForm($data['extrif'], $params);
+		$data['ds'] = $data_source;
+		$data['title'] = 'Edit: '.$draft_record->title;
 		$data['scripts'] = array('add_registry_object');
 		$data['js_lib'] = array('core', 'tinymce', 'ands_datepicker', 'prettyprint','vocab_widget','orcid_widget', 'google_map','location_capture_widget');
 		$this->load->view("add_registry_object", $data);
@@ -193,7 +227,9 @@ class Registry_object extends MX_Controller {
 
 		$qa = $ds->qa_flag==DB_TRUE ? true : false;
 		$manual_publish = ($ds->manual_publish==DB_TRUE) ? true: false;
-
+        initEloquent();
+        $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($registry_object_id);
+        $quality_html = ANDS\Registry\Providers\QualityMetadataProvider::getQualityReportHTML($record);
 		$response['title'] = 'QA Result';
 		$scripts = preg_split('/(\)\;)|(\;\\n)/', $result, -1, PREG_SPLIT_NO_EMPTY);
 		$response["ro_status"] = "DRAFT";
@@ -203,18 +239,24 @@ class Registry_object extends MX_Controller {
 		$response["qa_required"] = $qa;
 		$response["ro_quality_level"] = $ro->quality_level;
 		$response["approve_required"] = $manual_publish;
-		$response["error_count"] = (int) $ro->error_count;
-		$response["qa"] = $ro->get_quality_text();
+
+		$response["qa"] = $quality_html;
 		$response["ro_quality_class"] = ($ro->quality_level >= 2 ? "success" : "important");
 		$response["qa_$ro->quality_level"] = true;
 
-
+        $error_count = 0;
+        $warning_count = 0;
 		foreach($scripts as $script)
 		{
 			$matches = preg_split('/(\"\,\")|(\(\")|(\"\))/', $script.")", -1, PREG_SPLIT_NO_EMPTY);
+
 			if(sizeof($matches) > 2)
 			{
 				$match_response = array('field_id'=>$matches[1],'message'=>$matches[2]);
+                if($matches[0] == 'SetErrors')
+                    $error_count++;
+                if($matches[0] == 'SetWarnings')
+                    $warning_count++;
 				if (isset($matches[3]))
 				{
 					if (strtoupper($matches[3]) != $matches[3])
@@ -225,10 +267,95 @@ class Registry_object extends MX_Controller {
 				$response[$matches[0]][] = $match_response;
 			}
 		}
+        $ro->error_count = $error_count;
+        $ro->warning_count = $warning_count;
+        $ro->save();
+        $response["error_count"] = $error_count;
 		echo json_encode($response);
 	}
 
-	public function save($registry_object_id){
+    /**
+     * API registry/registry_object/save/:id
+     * Updated to using the Pipeline for inserting DRAFT record
+     * Save as Draft functionality
+     *
+     * @param $registry_object_id
+     * @throws Exception
+     */
+    public function save($registry_object_id)
+    {
+        set_exception_handler('json_exception_handler');
+        $this->load->model('registry_objects', 'ro');
+        $this->load->model('data_source/data_sources', 'ds');
+
+        // capture the registry object
+        $ro = $this->ro->getByID($registry_object_id);
+        if (!$ro) {
+            throw new Exception("No registry object exists with that ID!");
+        }
+        acl_enforce('REGISTRY_USER');
+        ds_acl_enforce($ro->data_source_id);
+
+        // capture the data source
+        $ds = $this->ds->getByID($ro->data_source_id);
+
+        // prepare XML
+        $xml = $this->input->post('xml');
+        $xml = $ro->cleanRIFCSofEmptyTags($xml, 'true', true);
+        $xml = \ANDS\Util\XMLUtil::wrapRegistryObject($xml);
+
+        // write the xml payload to the file system
+        $batchID = 'MANUAL-ARO-' . md5($ro->key).'-'.time();
+        \ANDS\Payload::write($ds->id, $batchID, $xml);
+
+        // import Task creation
+        $importTask = new \ANDS\API\Task\ImportTask();
+        $importTask
+            ->setCI($this)->setDb($this->db)
+            ->init([
+                'name' => 'ARO',
+                'params' => http_build_query([
+                    'pipeline' => 'ManualEntry',
+                    'source' => 'manual',
+                    'ds_id' => $ro->data_source_id,
+                    'batch_id' => $batchID,
+                    'user_name' => $this->user->name(),
+                    'targetStatus' => 'DRAFT'
+                ])
+            ])
+            ->enableRunAllSubTask()
+            ->initialiseTask();
+
+        $importTask->run();
+
+        $errorLog = $importTask->getError();
+
+        // capture ro again and return result
+        $ro = $this->ro->getByID($registry_object_id);
+        initEloquent();
+        $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($registry_object_id);
+        $quality_html = ANDS\Registry\Providers\QualityMetadataProvider::getQualityReportHTML($record);
+        $result = [
+            "status" => 'success',
+            "ro_status" => "DRAFT",
+            "title" => $ro->title,
+            "qa_required" => $ds->qa_flag == DB_TRUE ? true : false,
+            "data_source_id" => $ro->data_source_id,
+            "approve_required" => $ds->manual_publish == DB_TRUE ? true : false,
+            "error_count" => 0,
+            "ro_id" => $ro->id,
+            "ro_quality_level" => $ro->quality_level,
+            "ro_quality_class" => ($ro->quality_level >= 2 ? "success" : "important"),
+            "qa_$ro->quality_level" => true,
+            "message" => implode(NL, $errorLog),
+            "qa" => $quality_html
+        ];
+
+        echo json_encode($result);
+    }
+
+    // TODO: Remove after pipeline implementation
+	public function save_deprecated($registry_object_id){
 		set_exception_handler('json_exception_handler');
 
 		$xml = $this->input->post('xml');
@@ -246,6 +373,8 @@ class Registry_object extends MX_Controller {
 		ds_acl_enforce($ro->data_source_id);
 
 		$ds = $this->ds->getByID($ro->data_source_id);
+
+
 
 		$this->importer->forceDraft();
 
@@ -573,8 +702,9 @@ class Registry_object extends MX_Controller {
 		$ro->enrich();
 		$data['xml'] = html_entity_decode($ro->getRif());
 		$data['extrif'] = html_entity_decode($ro->getExtRif());
+        initEloquent();
 		$data['solr'] = json_encode($ro->indexable_json());
-		//$data['view'] = $ro->transformForHtml();
+		$data['view'] = $ro->transformForHtml();
 		$data['id'] = $ro->id;
 		$data['title'] = $ro->getAttribute('list_title');
 		$data['attributes'] = $ro->getAttributes();
@@ -591,11 +721,32 @@ class Registry_object extends MX_Controller {
 		echo $jsonData;
 	}
 
+    public function get_record_data($id){
+        initEloquent();
+        $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($id);
+        $data['xml'] = html_entity_decode($record->getCurrentData()->data);
+        $jsonData = array();
+        $jsonData['status'] = 'OK';
+        $jsonData['ro'] = $data;
+        $jsonData = json_encode($jsonData);
+        echo $jsonData;
+    }
+
+
 	public function get_quality_view(){
-		$this->load->model('registry_objects', 'ro');
-		$ro = $this->ro->getByID($this->input->post('ro_id'));
-		echo $ro->get_quality_text();
+		initEloquent();
+		$record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($this->input->post('ro_id'));
+		$quality_html = ANDS\Registry\Providers\QualityMetadataProvider::getQualityReportHTML($record);
+		echo $quality_html;
 	}
+
+	public function get_quality_html(){
+		initEloquent();
+		$record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($this->input->post('ro_id'));
+		$quality_html = ANDS\Registry\Providers\QualityMetadataProvider::getQualityReportHTML($record);
+		echo $quality_html;
+	}
+
 
 	public function get_validation_text(){
 		$this->load->model('registry_objects', 'ro');
@@ -636,7 +787,163 @@ class Registry_object extends MX_Controller {
 		echo json_encode($jsonData);
 	}
 
-	function update($all = false){
+	function update($all = false)
+    {
+        set_exception_handler('json_exception_handler');
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Content-type: application/json');
+        $this->load->model('registry_objects', 'ro');
+        $this->load->model('data_source/data_sources', 'ds');
+
+        $dataSourceID = $this->input->post('data_source_id');
+        $ds = $this->ds->getByID($dataSourceID);
+        if (!$ds) {
+            throw new Exception("Invalid Data Source ID specified");
+        }
+        ds_acl_enforce($ds->id);
+
+        $attributes = $this->input->post('attributes');
+        $affected_ids = $this->input->post('affected_ids');
+
+        $result = [
+            'status' => 'success',
+            'error' => [],
+            'success' => [],
+            'error_count' => 0,
+            'success_count' => 0
+        ];
+
+        if($all){
+            $filters = $this->input->post('filters');
+            $excluded_records = $this->input->post('excluded_records') ?: [];
+            $args = [
+                'sort' => isset($filters['sort']) ? $filters['sort'] : ['updated'=>'desc'],
+                'search' => isset($filters['search']) ? $filters['search'] : false,
+                'or_filter' => isset($filters['or_filter']) ? $filters['or_filter'] : false,
+                'filter' => isset($filters['filter']) ? array_merge($filters['filter'], ['status'=>$this->input->post('select_all')]) : ['status'=>$this->input->post('select_all')],
+                'data_source_id' => $dataSourceID
+            ];
+            $affected_ros = $this->ro->filter_by($args, 0, 0, true);
+            $affected_ids = [];
+            if (is_array($affected_ros)) {
+                foreach ($affected_ros as $r) {
+                    if (!in_array($r->registry_object_id, $excluded_records)) {
+                        $affected_ids[] = $r->registry_object_id;
+                    }
+                }
+            }
+        }
+
+        $statusChange = false;
+        foreach ($attributes as $attr) {
+            if ($attr["name"] == "status") {
+                $statusChange = true;
+                $targetStatus = $attr['value'];
+
+                // TODO: SUBMITTED FOR ASSESSMENT (maybe in Pipeline instead)
+                continue;
+            }
+
+            foreach ($affected_ids as $id) {
+                $ro = $this->ro->getByID($id);
+                try {
+                    $ro->setAttribute($attr['name'], $attr['value']);
+                    if ($attr['name'] == 'gold_status_flag' && $attr['value'] == 't') {
+                        $ro->setAttribute('quality_level', 4);
+                    }
+                    if ($attr['name'] == 'gold_status_flag' && $attr['value'] == 'f') {
+                        $ro->update_quality_metadata();
+                    }
+                    $result['success_count']++;
+                } catch (Exception $e) {
+                    $result['status'] = 'error';
+                    $result['error'][] = $e->getMessage();
+                }
+            }
+        }
+
+        // if there's a status changed, use the handleStatusChange pipeline
+        if ($statusChange && isset($targetStatus)) {
+
+            // for ARO screen
+            $result['message_code'] = $targetStatus;
+
+            $importTask = new \ANDS\API\Task\ImportTask();
+            $importTask->init([
+                'name' => "HandleStatusChange Pipeline",
+                'params' => http_build_query([
+                    'pipeline' => 'PublishingWorkflow',
+                    'ds_id' => $dataSourceID,
+                    'user_name' => $this->user->name(),
+                    'targetStatus' => $targetStatus,
+                    'source' => 'manual'
+                ])
+            ]);
+            $importTask
+                ->skipLoadingPayload()
+                ->enableRunAllSubTask()
+                ->setCI($this)
+                ->setDb($this->db);
+
+            $importTask
+                ->setTaskData('affectedRecords', $affected_ids)
+                ->initialiseTask();
+
+            // send the task to background to obtain a task ID
+            $importTask->sendToBackground();
+
+            // append data source log
+            $dataSource = ANDS\DataSource::find($dataSourceID);
+            $count = count($affected_ids);
+            $importStartMessage = [
+                "Manual Status Change Started for $count records",
+                "Task ID: ". $importTask->getId()
+            ];
+            $dataSource->appendDataSourceLog(
+                implode(NL, $importStartMessage),
+                "info", "IMPORTER"
+            );
+            $importTask->run();
+
+            $result['error'] = array_merge($result['error'], $importTask->getError());
+
+            // works for single record publish through the line
+            // uses for ARO screen and View screen to redirect to the new record ID
+            $result['message_code'] = $targetStatus;
+            $importedRecords = $importTask->getTaskData('importedRecords');
+            if ($importedRecords && count($importedRecords) == 1) {
+                $result['new_ro_id'] = array_first($importedRecords);
+            }
+
+            // in case the data is not updated, the ID would be the same and will be in harvestedRecordIDs
+            if (count($affected_ids) == 1) {
+                $harvestedRecordIDs = $importTask->getTaskData('harvestedRecordIDs');
+                if ($harvestedRecordIDs && count($harvestedRecordIDs) == 1) {
+                    $result['new_ro_id'] = array_first($harvestedRecordIDs);
+                }
+            }
+
+            // TODO: Carry success message here
+        }
+
+        // format result
+        $result['error_count'] = count($result['error']);
+        $result['error_message'] = '<ul class="error_message">';
+        foreach ($result['error'] as $error) {
+            $result['error_message'] .= "<li>$error</li>";
+        }
+        $result['error_message'] .= '</ul>';
+        $result['success_message'] = '<ul class="success_message">';
+        foreach ($result['success'] as $success) {
+            $result['success_message'] .= "<li>$success</li>";
+        }
+
+        echo json_encode($result, true);
+
+    }
+
+    // TODO: Remove After Pipeline
+	function update_deprecated($all = false){
 		set_exception_handler('json_exception_handler');
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
@@ -819,7 +1126,158 @@ class Registry_object extends MX_Controller {
 		echo json_encode($jsondata);
 	}
 
-	function delete(){
+
+    function reinstate(){
+        set_exception_handler('json_exception_handler');
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Content-type: application/json');
+        $deletedRegistryObjectID = $this->input->post('deleted_registry_object_id');
+        $dataSourceID = $this->input->post('data_source_id');
+        initEloquent();
+        $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($deletedRegistryObjectID);
+
+        $xml = $record->getCurrentData()->data;
+        // write the xml payload to the file system
+        $batchID = 'UNDELETE-' . md5($record->key).'-'.time();
+        \ANDS\Payload::write($dataSourceID, $batchID, $xml);
+
+        // import Task creation
+        $importTask = new \ANDS\API\Task\ImportTask();
+        $importTask
+            ->setCI($this)->setDb($this->db)
+            ->init([
+                'name' => 'Reinstate',
+                'params' => http_build_query([
+                    'pipeline' => 'ManualEntry',
+                    'source' => 'manual',
+                    'ds_id' => $dataSourceID,
+                    'batch_id' => $batchID,
+                ])
+            ])
+            ->enableRunAllSubTask()
+            ->initialiseTask();
+
+        $importTask->run();
+
+        $errorLog = $importTask->getError();
+        $message = $importTask->getMessage();
+
+        $result['response'] = 'error';
+        $result['message'] = "Unable to Reinstate Record";
+
+
+        if($errorLog)
+        {
+            $result['log'] = $errorLog;
+        }
+        elseif($importTask->getTaskData("recordsExistOtherDataSourceCount") > 0)
+        {
+            $result['log'] = "Record key:(".$record->key.NL.") exists in a different data source".NL;
+            $result['log'] .= str_replace("," , NL, implode("," , $message['log']));
+        }
+        else
+        {
+            $result['response'] = 'success';
+            $result['message'] = "Record Reinstated as ". $importTask->getTaskData("targetStatus");
+            $result['target_status'] = $importTask->getTaskData("targetStatus");
+            $result['log'] = str_replace("," , NL, implode("," , $message['log']));
+        }
+        echo json_encode($result);
+
+    }
+    
+    
+    
+    function delete(){
+        set_exception_handler('json_exception_handler');
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Content-type: application/json');
+
+        $this->load->model('registry_objects', 'ro');
+        $this->load->model('data_source/data_sources', 'ds');
+
+        $affectedIDs = $this->input->post('affected_ids');
+
+        // select_all is the status
+        $select_all = $this->input->post('select_all');
+
+        $dataSourceID = $this->input->post('data_source_id');
+        $excludedRecords = $this->input->post('excluded_records') ?: [];
+
+        // capture affected_ros mainly for select_all when affected_ids does not capture all;
+        if($select_all && $select_all != "false"){
+            $filters = $this->input->post('filters');
+            $args = [
+                'sort' => isset($filters['sort']) ? $filters['sort'] : ['updated'=>'desc'],
+                'search' => isset($filters['search']) ? $filters['search'] : false,
+                'or_filter' => isset($filters['or_filter']) ? $filters['or_filter'] : false,
+                'filter' => isset($filters['filter']) ? array_merge($filters['filter'], ['status'=>$this->input->post('select_all')]) : ['status'=>$this->input->post('select_all')],
+                'data_source_id' => $dataSourceID
+            ];
+            $affected_ros = $this->ro->filter_by($args, 0, 0, true);
+            $affectedIDs = [];
+            if (is_array($affected_ros)) {
+                foreach ($affected_ros as $r) {
+                    if (!in_array($r->registry_object_id, $excludedRecords)) {
+                        $affectedIDs[] = $r->registry_object_id;
+                    }
+                }
+            }
+        }
+
+        // The affected_ids list should be good now
+        // Running delete pipeline
+        $importTask = new \ANDS\API\Task\ImportTask();
+
+        $importTask->init([
+            'name' => "Manual Delete",
+			'type' => "PHPSHELL",
+            'params' => http_build_query([
+                'ds_id' => $dataSourceID,
+                'pipeline' => 'PublishingWorkflow',
+                'source' => 'manual'
+            ])
+        ]);
+
+        $importTask
+            ->setCI($this)
+            ->skipLoadingPayload()
+            ->enableRunAllSubTask();
+
+        $importTask
+            ->setTaskData('deletedRecords', $affectedIDs)
+            ->setCI($this)
+            ->setDb($this->db)
+            ->initialiseTask();
+
+        // send the task to background to obtain a task ID
+        $importTask->sendToBackground();
+
+        // append data source log
+        $dataSource = ANDS\DataSource::find($dataSourceID);
+        $count = count($affectedIDs);
+        $importStartMessage = [
+            "Deleting $count records",
+            "Task ID: ". $importTask->getId()
+        ];
+        $dataSource->appendDataSourceLog(
+            implode(NL, $importStartMessage),
+            "info", "IMPORTER"
+        );
+
+        $importTask->run();
+
+        // update the stats of the records
+        $ds = $this->ds->getByID($dataSourceID);
+        $ds->updateStats();
+
+        echo json_encode([
+            "status" => "success"
+        ]);
+    }
+
+    // TODO: Remove after Pipeline Integration
+	function delete_deprecated(){
 		set_exception_handler('json_exception_handler');
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
@@ -835,9 +1293,7 @@ class Registry_object extends MX_Controller {
 		$this->load->model('data_source/data_sources', 'ds');
 
 
-
 		if($select_all && $select_all != "false"){
-
 			$filters = $this->input->post('filters');
 
 
@@ -1112,8 +1568,8 @@ class Registry_object extends MX_Controller {
 	private function generateStatusActionBar(_registry_object $ro, _data_source $data_source)
 	{
 		$actions = array();
-		$qa = $data_source->qa_flag=='t' ? true : false;
-		$manual_publish = ($data_source->manual_publish=='t' || $data_source->manual_publish==DB_TRUE) ? true: false;
+		$qa = $data_source->qa_flag == 1 ? true : false;
+		$manual_publish = $data_source->manual_publish == 1 ? true: false;
 		if ($this->user->hasFunction('REGISTRY_USER'))
 		{
 

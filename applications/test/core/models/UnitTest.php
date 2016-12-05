@@ -30,6 +30,16 @@ class UnitTest
         $this->reset();
     }
 
+    public function setUpBeforeClass()
+    {
+
+    }
+
+    public function tearDownAfterClass()
+    {
+
+    }
+
     public function setUp()
     {
 
@@ -65,6 +75,7 @@ class UnitTest
         try {
             $this->ci->load->library('unit_test');
             $this->ci->unit->init();
+            $this->setUpBeforeClass();
             $testableFunctions = get_class_methods($this);
             if ($specificTestFunction && method_exists($this, $specificTestFunction)) {
                 $testableFunctions = [$specificTestFunction];
@@ -79,12 +90,13 @@ class UnitTest
                         $this->benchmark[$function] = $this->ci->benchmark->elapsed_time('start', 'end', 5);
                         $this->tearDown();
                     } catch (\Exception $e) {
-                        $this->ci->unit->run(false, true, $function, $e->getMessage());
+                        $this->ci->unit->run(false, true, $function, "Excetion: ". $e->getMessage());
                     }
                 }
             }
+            $this->tearDownAfterClass();
         } catch (\Exception $e) {
-            $this->ci->unit->run(false, true, $this->getName(), $e->getMessage());
+            $this->ci->unit->run(false, true, $this->getName(), "Exception: ". $e->getMessage());
         }
 
         // returns the correct time value for the function executed
@@ -112,7 +124,11 @@ class UnitTest
     public function assertTrue($input)
     {
         $this->getReflectorInfo();
-        $this->ci->unit->run($input, true, $this->getName(), $this->getNote());
+        $this->ci->unit->run(
+            $input,
+            true,
+            $this->getName() . " Assert $input is true",
+            $this->getNote());
         $this->reset();
         return $this;
     }
@@ -141,7 +157,52 @@ class UnitTest
     public function assertEquals($left, $right)
     {
         $this->getReflectorInfo();
-        $this->ci->unit->run($left, $right, $this->getName(), $this->getNote());
+
+        $name = $this->getName();
+        if (!is_array($left) && !is_array($right)) {
+            $name .= " : $left equals $right";
+        }
+
+        if (is_array($left) && is_array($right)) {
+            $name .= "Array(".count($left).") equals Array(".count($right).")";
+        }
+
+        $this->ci->unit->run(
+            $left, $right,
+            $name,
+            $this->getNote()
+        );
+        $this->reset();
+        return $this;
+    }
+
+
+    /**
+     * Assert if left and right is different
+     *
+     * @param $left
+     * @param $right
+     * @return $this
+     */
+    public function assertNotEquals($left, $right)
+    {
+        $this->getReflectorInfo();
+
+        $name = $this->getName();
+        if (!is_array($left) && !is_array($right)) {
+            $name .= " : $left equals $right";
+        }
+
+        if (is_array($left) && is_array($right)) {
+            $name .= "Array(".count($left).") equals Array(".count($right).")";
+        }
+
+        $this->ci->unit->run(
+            $left != $right,
+            'is_true',
+            $name,
+            $this->getNote()
+        );
         $this->reset();
         return $this;
     }
@@ -172,7 +233,12 @@ class UnitTest
     public function assertGreaterThan($left, $right)
     {
         $this->getReflectorInfo();
-        $this->ci->unit->run($left > $right, 'is_true', $this->getName(), $this->getNote());
+        $this->ci->unit->run(
+            $left > $right,
+            'is_true',
+            $this->getName(). " $left is greater than $right",
+            $this->getNote()
+        );
         $this->reset();
         return $this;
     }
@@ -214,8 +280,14 @@ class UnitTest
      */
     public function assertNull($input)
     {
+        $type = gettype($input);
         $this->getReflectorInfo();
-        $this->ci->unit->run(is_null($input), 'is_true', $this->getName(), $this->getNote());
+        $this->ci->unit->run(
+            is_null($input),
+            'is_true',
+            $this->getName() . " asserting $type is null",
+            $this->getNote()
+        );
         $this->reset();
         return $this;
     }
@@ -291,7 +363,26 @@ class UnitTest
     public function assertContains($needle, $haystack)
     {
         $this->getReflectorInfo();
-        $this->ci->unit->run(in_array($needle, $haystack), 'is_true', $this->getName(), $this->getNote());
+        $this->ci->unit->run(
+            in_array($needle, $haystack),
+            'is_true',
+            $this->getName() . " assert $needle contains in [". implode(',', $haystack)."]",
+            $this->getNote()
+        );
+        $this->reset();
+        return $this;
+    }
+
+    public function assertRegExp($pattern, $subject)
+    {
+        $this->getReflectorInfo();
+
+        if (is_array($subject)) {
+            $subject = implode(" ", $subject);
+        }
+
+        $match = preg_match($pattern, $subject);
+        $this->ci->unit->run($match > 0, 'is_true', $this->getName(), $this->getNote());
         $this->reset();
         return $this;
     }
@@ -306,7 +397,7 @@ class UnitTest
     public function assertArrayHasKey($key, $array)
     {
         $this->getReflectorInfo();
-        $this->ci->input->run(array_key_exists($key, $array), 'is_true', $this->getName(), $this->getNote());
+        $this->ci->unit->run(array_key_exists($key, $array), 'is_true', $this->getName(), $this->getNote());
         $this->reset();
         return $this;
     }

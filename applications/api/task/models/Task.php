@@ -7,6 +7,9 @@
 namespace ANDS\API\Task;
 
 
+use ANDS\Util\NotifyUtil;
+use Symfony\Component\Stopwatch\Stopwatch;
+
 class Task
 {
     private $id;
@@ -33,7 +36,6 @@ class Task
         $this->status = isset($task['status']) ? $task['status'] : false;
         $this->priority = isset($task['priority']) ? $task['priority'] : false;
         $this->params = isset($task['params']) ? $task['params'] : false;
-
         if (isset($task['data'])) {
             $this->taskData = is_array($task['data']) ? $task['data'] : json_decode($task['data'], true);
         }
@@ -56,16 +58,30 @@ class Task
      */
     public function run()
     {
+        $stopwatch = new Stopwatch();
+        $stopwatch->start($this->getName());
+
         $start = microtime(true);
 
         $this->hook_start();
+
+        if ($this->getStatus() === "STOPPED") {
+            $this->log("Task is STOPPED");
+            return;
+        }
+
         $this
             ->setStatus('RUNNING')
             ->setLastRun(date('Y-m-d H:i:s', time()))
             ->log("Task run at " . date($this->dateFormat, $start))
             ->save();
 
-        ini_set('memory_limit', $this->getMemoryLimit());
+        // high memory limit and execution time prep for big tasks
+        // web server can still reclaim worker thread and terminate PHP script execution
+        ini_set('memory_limit', '1024M');
+        ini_set('max_execution_time', 2 * ONE_HOUR);
+        set_time_limit(0);
+        ignore_user_abort(true);
 
         //overwrite this method
         try {
@@ -73,6 +89,16 @@ class Task
         } catch (Exception $e) {
             $this->stoppedWithError($e->getMessage());
         }
+
+        $event = $stopwatch->stop($this->getName());
+
+        $this->setTaskData("benchmark", [
+            'origin' => $event->getOrigin(),
+            'duration' => $event->getDuration(),
+            'duration_seconds' => $event->getDuration() / 1000,
+            'memory' => $event->getMemory(),
+            'memory_mb' => $event->getMemory() / 1048576
+        ]);
 
         $this->finalize($start);
         return $this;
@@ -103,6 +129,9 @@ class Task
     public function log($log)
     {
         $this->message['log'][] = $log;
+        if ($this->getId()) {
+            NotifyUtil::notify('task.'.$this->getId(), $log);
+        }
         return $this;
     }
 
@@ -136,7 +165,7 @@ class Task
     {
         $this
             ->setStatus("STOPPED")
-            ->log("Task stopped with error " . $error)
+            ->log("Task stopped with error: " . $error)
             ->addError($error)
             ->save();
         return $this;
@@ -145,7 +174,9 @@ class Task
     public function addError($log)
     {
         if (!array_key_exists('error', $this->message)) $this->message['error'] = [];
-        $this->message['error'][] = $log;
+        if (!in_array($log, $this->message['error'])) {
+            $this->message['error'][] = $log;
+        }
         return $this;
     }
 
@@ -169,6 +200,16 @@ class Task
         } else {
             $this->taskData[$key] = [$val];
         }
+    }
+
+    public function incrementTaskData($key, $value = 1)
+    {
+        if (!array_key_exists($key, $this->taskData)) {
+            $this->taskData[$key] = (integer)$value;
+        } else {
+            $this->taskData[$key] = (integer)$this->taskData[$key] + (integer)$value;
+        }
+        return $this;
     }
 
     public function getTaskData($key)
@@ -216,16 +257,67 @@ class Task
 
         if ($this->getLastRun()) $data['last_run'] = $this->getLastRun();
 
-        if ($this->getId() && $this->getId() != "") {
-            $updateStatus = $this->update_db($data);
-            if (!$updateStatus) {
-                $this->log('Task data failed to update');
-            }
-            return $this;
-        } else {
-            $this->log('This task does not have an ID, does not save');
+        if ($this->getId() === false || $this->getId() == "") {
+            // $this->log('This task does not have an ID, does not save');
             return true;
         }
+
+        $updateStatus = $this->update_db($data);
+        if (!$updateStatus) {
+            $this->log('Task data failed to update to the database');
+        }
+
+//        NotifyUtil::notify(
+//            $channel = "task.".$this->getId(),
+//            json_encode($this->toArray(), true)
+//        );
+
+        return $this;
+    }
+
+    public function sendToBackground()
+    {
+        if ($this->getId()) {
+            return;
+        }
+
+        $params = [];
+
+        if ($this instanceof ImportTask) {
+            $params['class'] = 'import';
+            $params['ds_id'] = $this->getDataSourceID();
+            if ($this->getBatchID()) {
+                $params['batch_id'] = $this->getBatchID();
+            }
+            if ($this->getHarvestID()) {
+                $params['harvest_id'] = $this->getHarvestID();
+            }
+            if ($this->skipLoading) {
+                $params['skipLoadingPayload'] = true;
+            }
+            if ($this->runAll) {
+                $params['runAll'] = true;
+            }
+            if ($this->getTaskData('pipeline')) {
+                $params['pipeline'] = $this->getTaskData('pipeline');
+            }
+        }
+
+        $task = [
+            'name' => $this->getName(),
+            'priority' => 5,
+            'status' => 'PENDING',
+            'type' => "POKE",
+            'params' => http_build_query($params),
+            'message' => json_encode($this->message),
+            'data' => json_encode($this->taskData),
+        ];
+
+        $taskResult = TaskManager::create($this->db, $this->ci)->addTask($task);
+
+        $this->id = $taskResult['id'];
+
+        return $this;
     }
 
     /**
@@ -289,8 +381,11 @@ class Task
 
     public function getCI()
     {
-        return $this->ci;
-        return $this;
+        if (isset($this->ci)) {
+            return $this->ci;
+        }
+        $ci =& get_instance();
+        return $ci;
     }
 
     /**
@@ -320,7 +415,7 @@ class Task
      */
     public function getId()
     {
-        return $this->id;
+        return isset($this->id) ? $this->id : null;
     }
 
     /**

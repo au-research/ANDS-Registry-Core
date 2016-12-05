@@ -980,6 +980,15 @@ class Solr
         return curl_post($this->getSolrUrl() . 'update?wt=json', $docs);
     }
 
+    public function addJSONDoc($doc)
+    {
+        return curl_post(
+            $this->getSolrUrl() . 'update/json/docs?wt=json',
+            $doc,
+            ["Content-Type: application/json; charset=utf-8"]
+        );
+    }
+
     function add_json($docs)
     {
         return curl_post($this->getSolrUrl() . 'update/?wt=json', $docs, array("Content-Type: application/json; charset=utf-8"));

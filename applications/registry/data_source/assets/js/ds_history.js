@@ -38,7 +38,7 @@ $(function(){
 			$('div[name=resultScreen] #myModal').html('');
 			/* fire off the ajax request */
 			$.ajax({
-				url: base_url + 'data_source/reinstateRecordforDataSource', 	
+				url: base_url + 'registry_object/reinstate',
 				type: 'POST',
 				data:	{ 
 					deleted_registry_object_id: recordKey,
@@ -50,12 +50,19 @@ $(function(){
 							{
 								output = Mustache.render($('#import-screen-success-report-template').html(), data);
 								$('#myModal .modal-body').html(output);
-								deleteEntry(recordKey);
-								$('#myModal .undelete_record').hide();
+
+                                if(data.target_status == "PUBLISHED"){
+                                    deleteEntry(recordKey);
+                                }else{
+                                    removeButtons(recordKey);
+                                }
+                                $('#myModal .more').hide();
+                                $('#myModal .undelete_record').hide();
 							}
 							else
 							{
-								$('#myModal .modal-body').html("<pre>" + data.log + "</pre>");
+                                output = Mustache.render($('#import-screen-success-report-template').html(), data);
+                                $('#myModal .modal-body').html(output);
 							}
 							$('.modal-footer a').toggle();
 						}, 
@@ -78,5 +85,11 @@ $(function(){
 			$(list).remove();
 		}
 	}
+
+    function removeButtons(recordKey){
+        var button = $('#'+recordKey);
+        var div = $('#'+recordKey).closest('.more');
+        div.remove();
+    }
 
 });

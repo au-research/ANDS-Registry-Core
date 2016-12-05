@@ -6,7 +6,7 @@ namespace ANDS\Test;
 use ANDS\API\Task\ImportTask;
 use ANDS\RegistryObject\Identifier;
 use ANDS\RegistryObject;
-use ANDS\RegistryObject\RelatedInfoRelationship;
+use ANDS\Registry\RelationshipView;
 use ANDS\RegistryObject\Relationship;
 use ANDS\Repository\RegistryObjectsRepository;
 
@@ -101,7 +101,7 @@ class TestEndToEndImport extends UnitTest
 
         $this->assertEquals(
             4,
-            RelatedInfoRelationship::where(
+            RelationshipView::where(
                 'registry_object_id', $record->registry_object_id
             )->count()
         );
@@ -152,7 +152,7 @@ class TestEndToEndImport extends UnitTest
 
         $this->assertEquals(
             4,
-            RelatedInfoRelationship::where(
+            RelationshipView::where(
                 'registry_object_id', $record->registry_object_id
             )->count()
         );

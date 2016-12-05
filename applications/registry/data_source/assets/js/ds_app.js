@@ -5,6 +5,9 @@ angular.module('ds_app', ['slugifier', 'ui.sortable', 'ui.tinymce', 'ngSanitize'
 				if(!id) id='';
 				return $http.get(base_url+'data_source/get/'+id).then(function(response){return response.data});
 			},
+            get_task: function(id) {
+			    return $http.get(api_url+'task/'+id).then(function(response){return response.data});
+            },
 			list_files: function(id) {
 				return $http.get(base_url+'import/list_files/'+id).then(function(response){return response.data});
 			},
@@ -29,10 +32,20 @@ angular.module('ds_app', ['slugifier', 'ui.sortable', 'ui.tinymce', 'ngSanitize'
 			remove: function(id) {
 				return $http.post(base_url+'data_source/delete/', {id:id}).then(function(response){return response.data});
 			},
-			import: function(id, type, data) {
-				if(type=='path'){
-					return $http.get(base_url+'import/put/'+id+'?batch='+data.path).then(function(response){return response.data});
-				}else return $http.post(base_url+'import/put/'+id+'/'+type, {data:data}).then(function(response){return response.data});
+			import: function(data) {
+				if (data.from == "xml") {
+					return $http({
+						url: api_url + 'registry/import/',
+						method: "POST",
+						data: $.param(data),
+						headers : { 'Content-Type': 'application/x-www-form-urlencoded' }
+					}).then(function(response){return response.data});
+				}
+				return $http({
+					url: api_url + 'registry/import/',
+					method: "GET",
+					params: data
+				}).then(function(response){return response.data});
 			},
 			start_harvest: function(id) {
 				return $http.get(base_url+'data_source/trigger_harvest/'+id).then(function(response){return response.data});
@@ -314,7 +327,7 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 			'type':'info',
 			'msg':'Saving...'
 		};
-	
+
 		$('input[name=contributor_pages]').each(function(index){
 			if($scope.ds.contributor && $scope.ds.contributor.items[index]) {
 				$scope.ds.contributor.items[index].contributor_page_key = $(this).val();
@@ -504,11 +517,14 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 		ds_factory.get(id).then(function(data){
 			if(data.status=='OK'){
 				$scope.ds = data.items[0];
+
+				$scope.bindSocket();
+
 				$scope.refresh_harvest_status();
 				if($scope.ds.logs && $scope.ds.logs.length > 0) $scope.ds.latest_log = $scope.ds.logs[0].id;
 				if($scope.ds.logs.length < 10) $scope.nomore = true;
 				document.title = $scope.ds.title + ' - Dashboard';
-				$scope.logTimer = $timeout($scope.get_latest_log, 1000);
+				// $scope.logTimer = $timeout($scope.get_latest_log, 1000);
 				$scope.process_logs();
 			} else {
 				$location.path('/');
@@ -522,6 +538,37 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 			}
 		});
 	}
+
+	$scope.bindSocket = function() {
+
+		if (typeof socket_url == 'undefined' || socket_url == "") return;
+
+		$scope.socket = io(socket_url);
+
+        $scope.socket.on('datasource.'+$scope.ds.id+'.harvest', function(msg){
+		    try {
+                var harvest = JSON.parse(msg);
+                $scope.harvester = harvest;
+                $scope.refreshHarvesterButtons();
+                $scope.refreshHarvesterMessage();
+                $scope.$apply();
+            } catch (err ) {
+                console.error(err, msg);
+            }
+		});
+
+        $scope.socket.on('datasource.'+$scope.ds.id+'.log', function(msg){
+            try {
+                var log = JSON.parse(msg);
+                $scope.ds.logs.unshift(log);
+                $scope.ds.latest_log = $scope.ds.logs[0].id;
+                $scope.process_logs();
+            } catch (err) {
+                console.error(err, msg);
+            }
+        });
+	}
+
 	$scope.get($routeParams.id);
 
 	$scope.process_logs = function() {
@@ -540,6 +587,17 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 			});
 		}
 	}
+
+	$scope.showTask = function() {
+	    ds_factory.get_task($scope.harvester.task_id).then(function(data){
+            $scope.task = data.data;
+            $('#task_content').modal('show');
+
+            $scope.socket.on('task.'+$scope.harvester.task_id, function(msg){
+                $scope.task.message.log.push(msg);
+            });
+        });
+    }
 
 	$scope.get_latest_log = function(click) {
 		$scope.ds.refreshing = true;
@@ -561,7 +619,7 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 			if(!click) $scope.logTimer = $timeout($scope.get_latest_log, timeout);
 		});
 	}
-	
+
 	$scope.more_logs = function() {
 		$scope.offset = $scope.offset + 10;
 		ds_factory.get_log($scope.ds.id, $scope.offset, 10, false).then(function(data){
@@ -582,59 +640,97 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 		}
 	}
 
+	$scope.refreshHarvesterButtons = function() {
+	    $scope.harvester.busy = false;
+        //can_start, can_stop
+        switch ($scope.harvester.status) {
+            case 'IDLE':
+                $scope.harvester.can_start = true;
+                $scope.harvester.can_stop = false;
+                break;
+            case 'HARVESTING':
+                $scope.harvester.can_start = false;
+                $scope.harvester.can_stop = true;
+                $scope.harvester.busy = true;
+                break;
+            case 'STOPPED':
+                $scope.harvester.can_start = true;
+                $scope.harvester.can_stop = false;
+                break;
+            case 'COMPLETED':
+                $scope.harvester.can_start = true;
+                $scope.harvester.can_stop = false;
+                break;
+            case 'SCHEDULED':
+                $scope.harvester.can_start = true;
+                $scope.harvester.can_stop = true;
+                break;
+            case 'WAITING':
+                $scope.harvester.can_start = false;
+                $scope.harvester.can_stop = true;
+                $scope.harvester.busy = true;
+                break;
+            case 'IMPORTING':
+            default:
+                $scope.harvester.can_start = false;
+                $scope.harvester.can_stop = false;
+                $scope.harvester.busy = true;
+                break;
+        }
+    }
+
 	$scope.refresh_harvest_status = function() {
 		ds_factory.get_harvester_status($scope.ds.id).then(function(data){
 			$scope.harvester = data.items[0];
 
-			//can_start, can_stop
-			switch($scope.harvester.status) {
-				case 'IDLE': $scope.harvester.can_start = true; $scope.harvester.can_stop = false; break;
-				case 'HARVESTING': $scope.harvester.can_start = false; $scope.harvester.can_stop = true; break;
-				case 'IMPORTING': $scope.harvester.can_start = false; $scope.harvester.can_stop = false; break;
-				case 'STOPPED': $scope.harvester.can_start = true; $scope.harvester.can_stop = false; break;
-				case 'COMPLETED': $scope.harvester.can_start = true; $scope.harvester.can_stop = false; break;
-				case 'SCHEDULED': $scope.harvester.can_start = true; $scope.harvester.can_stop = true; break;
-				case 'WAITING': $scope.harvester.can_start = false; $scope.harvester.can_stop = true; break;
-			}
+			$scope.refreshHarvesterButtons();
+            $scope.refreshHarvesterMessage();
 
-			//parse message
-			try {
-				if($scope.harvester.message){
-					$scope.harvester.message = $scope.harvester.message.replace(/(\r\n|\n|\r)/gm,"");
-					$scope.harvester.message = JSON.parse($scope.harvester.message);
-					$scope.harvester.importer_message = JSON.parse($scope.harvester.importer_message);
-					if($scope.harvester.status=='HARVESTING'){
-						if($scope.harvester.message.progress.total!='unknown' && $scope.harvester.message.progress.current && $scope.harvester.message.progress.total!=0) {
-							$scope.harvester.percent =  ($scope.harvester.message.progress.current * 100) / $scope.harvester.message.progress.total;
-							$scope.harvester.percent = $scope.harvester.percent.toFixed(2);
-						} else if($scope.ds.harvest_method=='PMHHarvester' && $scope.harvester.message.progress.current && $scope.ds.count_total && $scope.ds.count_total!=0) {
-							$scope.harvester.percent = ($scope.harvester.message.progress.current * 100) / parseInt($scope.ds.count_total);
-							$scope.harvester.percent = $scope.harvester.percent.toFixed(2);
-						}
-					}else if($scope.harvester.status=='IMPORTING' && $scope.harvester.importer_message.progress.total!=0) {
-						$scope.harvester.percent = ($scope.harvester.importer_message.progress.current * 100) / $scope.harvester.importer_message.progress.total;
-						$scope.harvester.percent = $scope.harvester.percent.toFixed(2);
-					}
-				}
-			} catch (err) {
-				console.error(err);
-			}
-
-			$scope.harvestTimer = $timeout($scope.refresh_harvest_status, 10000);
+			// $scope.harvestTimer = $timeout($scope.refresh_harvest_status, 10000);
 		});
 	}
+
+	$scope.refreshHarvesterMessage = function() {
+
+	    if ($scope.harvester.message == "undefined" || $scope.harvester.message == "" || $scope.harvester.message == 'null') {
+	        return;
+        }
+
+        try {
+            // $scope.harvester.message = $scope.harvester.message.replace(/(\r\n|\n|\r)/gm,"");
+            $scope.harvester.message = JSON.parse($scope.harvester.message);
+
+            if($scope.harvester.status=='HARVESTING') {
+                if ($scope.harvester.message.progress.total != 'unknown' && $scope.harvester.message.progress.current && $scope.harvester.message.progress.total != 0) {
+                    $scope.harvester.percent = ($scope.harvester.message.progress.current * 100) / $scope.harvester.message.progress.total;
+                    $scope.harvester.percent = $scope.harvester.percent.toFixed(2);
+                } else if ($scope.ds.harvest_method == 'PMHHarvester' && $scope.harvester.message.progress.current && $scope.ds.count_total && $scope.ds.count_total != 0) {
+                    $scope.harvester.percent = ($scope.harvester.message.progress.current * 100) / parseInt($scope.ds.count_total);
+                    $scope.harvester.percent = $scope.harvester.percent.toFixed(2);
+                }
+                return;
+            }
+
+            if ($scope.harvester.message.progress != "undefined") {
+                $scope.harvester.percent =  ($scope.harvester.message.progress.current * 100) / $scope.harvester.message.progress.total;
+                $scope.harvester.percent = $scope.harvester.percent.toFixed(2);
+            }
+
+        } catch (err) {
+            // console.error(err, $scope.harvester.message);
+        }
+    }
 
 	$scope.$on('$destroy', function(){
 		if($scope.logTimer) $timeout.cancel($scope.logTimer);
 		if($scope.harvestTimer) $timeout.cancel($scope.harvestTimer);
 	});
 
-	
-	
 	$scope.start_harvest = function() {
-		ds_factory.start_harvest($scope.ds.id).then(function(data) {
-			$scope.refresh_harvest_status();
-		});
+        ds_factory.start_harvest($scope.ds.id).then(function (data) {
+            $scope.refresh_harvest_status();
+            $scope.harvester.busy = true;
+        });
 	}
 
 	$scope.stop_harvest = function() {
@@ -711,12 +807,16 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 					}
 					break;
 			}
-			ds_factory.import($scope.ds.id, $scope.importer.type, data).then(function(data){
+
+			data.ds_id = $scope.ds.id;
+			data.from = $scope.importer.type;
+
+			ds_factory.import(data).then(function(data){
 				$scope.importer.running = false;
 				$scope.importer.result = {};
-				$scope.importer.result.message = $.trim(data.message);
+				$scope.importer.result.message = data.data.data.dataSourceLog;
 				if(data.status=='OK') {
-					$scope.importer.result.type = 'success'
+					$scope.importer.result.type = 'success';
 					$scope.get($scope.ds.id);
 				} else {
 					$scope.importer.result.type = 'error';
@@ -764,12 +864,12 @@ function bind_plugins($scope) {
 		var dataArray = Array();
 		if(vocab == 'RIFCSClass') {
 			dataArray.push({value:'Party', subtext:'Party'});
-			dataArray.push({value:'Activity', subtext:'Activity'});			
+			dataArray.push({value:'Activity', subtext:'Activity'});
 			dataArray.push({value:'Collection', subtext:'Collection'});
 			dataArray.push({value:'Service', subtext:'Service'});
 			elem.typeahead({source:dataArray,items:16});
 	} else {
-			elem.on('narrow.vocab.ands', function(event, data) {	
+			elem.on('narrow.vocab.ands', function(event, data) {
 				$.each(data.items, function(idx, e) {
 					dataArray.push({value:e.label, subtext:e.definition});
 				});
@@ -780,6 +880,6 @@ function bind_plugins($scope) {
 			});
 			widget.vocab_widget('repository', 'rifcs1.6.1');
 			widget.vocab_widget('narrow', "http://purl.org/au-research/vocabulary/RIFCS/1.6.1/" + vocab);
-		}	 
+		}
 	});
 }

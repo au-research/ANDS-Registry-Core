@@ -14,21 +14,23 @@ class TestPopulateImportOptions extends UnitTest
     /** @test **/
     public function test_it_should_populate_the_right_datasource_default_status()
     {
-        $dataSource = DataSourceRepository::getByKey("AUTestingRecords");
+        $dataSource = DataSourceRepository::getByKey("AUTEST1");
         $importTask = new ImportTask();
         $importTask
             ->init([
-                'params' => 'ds_id='.$dataSource->data_source_id.'&batch_id=1234d'
+                'params' => http_build_query([
+                    'ds_id' => $dataSource->data_source_id
+                ])
             ])
             ->initialiseTask()
             ->run();
         $taskArray = $importTask->toArray();
+        //dd($dataSource->attr('manual_publish'));
         $this->assertEquals("PUBLISHED", $taskArray["data"]["dataSourceDefaultStatus"]);
     }
 
     public function setUp()
     {
-        $importTask = new ImportTask();
-        $importTask->bootEloquentModels();
+        initEloquent();
     }
 }

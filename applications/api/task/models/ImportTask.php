@@ -8,6 +8,9 @@
 namespace ANDS\API\Task;
 
 use ANDS\API\Task\ImportSubTask\ImportSubTask;
+use ANDS\DataSource;
+use ANDS\DataSource\Harvest as Harvest;
+use ANDS\Util\NotifyUtil;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use \Exception as Exception;
 
@@ -27,7 +30,9 @@ class ImportTask extends Task
 
     public $dataSourceID;
     public $batchID;
-    private $runAll = false;
+    public $harvestID;
+    public $userName;
+    public $runAll = false;
 
     private $subtasks = [];
 
@@ -37,13 +42,18 @@ class ImportTask extends Task
     public function run_task()
     {
         $this->log('Import Task started');
+
         $this->initialiseTask();
 
         if ($this->runAll) {
             foreach ($this->getSubtasks() as $task){
-                $nextTask = $this->constructTaskObject($task);
-                $this->runSubTask($nextTask);
-                $this->saveSubTaskData($nextTask);
+                if ($this->getStatus() !== "STOPPED") {
+                    $nextTask = $this->constructTaskObject($task);
+                    $this->runSubTask($nextTask);
+                    $this->saveSubTaskData($nextTask);
+                }
+                $this->saveSubTasks();
+                $this->save();
             }
         } else {
             $nextTask = $this->getNextTask();
@@ -54,7 +64,7 @@ class ImportTask extends Task
             $this->runSubTask($nextTask);
             $this->saveSubTaskData($nextTask);
         }
-         $this->saveSubTasks();
+        $this->saveSubTasks();
         return true;
     }
 
@@ -65,13 +75,36 @@ class ImportTask extends Task
                 $task = $taskObject->toArray();
             }
         }
+        $this->save();
     }
 
     public function hook_end()
     {
-        if ($nextTask = $this->getNextTask()) {
-            $this->setStatus("PENDING");
+        if ($this->getStatus() === "STOPPED") {
+            return;
         }
+
+        if ($nextTask = $this->getNextTask()) {
+            $this->setStatus("PENDING")->save();
+        }
+
+        if ($this->getStatus() == "COMPLETED") {
+            $this->writeLog("ImportCompleted");
+        }
+    }
+
+    /**
+     * Uses the global monolog functionality to write to import.log
+     * to content of this task
+     *
+     * @param string $event
+     */
+    public function writeLog($event = "ImportCompleted")
+    {
+        /*monolog([
+            'event' => $event,
+            'data' => $this->toArray()
+        ], 'import');*/
     }
 
     /**
@@ -82,11 +115,14 @@ class ImportTask extends Task
     public function runSubTask($subTask)
     {
         try {
-            $this->log("Running task". $subTask->name);
+            $this->log("Running task". $subTask->name)->save();
             $subTask->run();
         } catch (Exception $e) {
             $subTask->stoppedWithError($e->getMessage());
-            throw new Exception($e->getMessage());
+            $this->stoppedWithError($e->getMessage());
+            $this->saveSubTaskData($subTask);
+            $this->saveSubTasks();
+            // throw new Exception($e->getMessage());
         } catch (NonFatalException $e) {
             $subTask->addError($e->getMessage());
         }
@@ -129,7 +165,12 @@ class ImportTask extends Task
      */
     public function loadSubTasks()
     {
-        $subTasks = $this->getTaskData('subtasks') ?: $this->getDefaultImportSubtasks();
+        // does not have any subtasks
+        if (!$this->getTaskData('subtasks')) {
+            $this->setPipeline("default");
+        }
+
+        $subTasks = $this->getTaskData('subtasks');
 
         /**
          * Load all the subtask as task object
@@ -191,38 +232,108 @@ class ImportTask extends Task
     }
 
     /**
-     * Returns a default list of task for an Import Task
-     * Can be overwriten if required
+     * Set a respective subtasks pipeline for this importTask
      *
-     * @return array
+     * @param $pipeline
+     * @return $this
      */
-    public function getDefaultImportSubtasks()
+    public function setPipeline($pipeline = "default")
     {
-        $pipeline = [];
-        $defaultSubtasks = ["PopulateImportOptions", "ValidatePayload", "ProcessPayload", "Ingest", "ProcessDelete", "ProcessCoreMetadata", "ProcessIdentifiers", "ProcessRelationships", "ProcessQualityMetadata", "IndexPortal"];
-        foreach ($defaultSubtasks as $subtaskName) {
-            $pipeline[] = [
-                'name' => $subtaskName,
+        switch($pipeline) {
+            case "ManualImport":
+                $tasks = [
+                    "PopulateImportOptions",
+                    "ValidatePayload",
+                    "ProcessPayload",
+                    "Ingest",
+                    "ProcessCoreMetadata",
+                    "ProcessIdentifiers",
+                    "ProcessRelationships",
+                    "ProcessGrantsRelationship",
+                    "ProcessAffectedRelationships",
+                    "ProcessQualityMetadata",
+                    "IndexPortal",
+                    "IndexRelationship",
+                    "FinishImport",
+                ];
+                break;
+            case "PublishingWorkflow":
+                $tasks = [
+                    "HandleStatusChange",
+                    "ValidatePayload",
+                    "ProcessPayload",
+                    "Ingest",
+                    "ProcessCoreMetadata",
+                    "PreserveCoreMetadata",
+                    "ProcessDelete",
+                    "ProcessIdentifiers",
+                    "ProcessRelationships",
+                    "ProcessGrantsRelationship",
+                    "PopulateAffectedList",
+                    "ProcessAffectedRelationships",
+                    "ProcessQualityMetadata",
+                    "IndexPortal",
+                    "IndexRelationship",
+                    "FinishImport",
+                ];
+                break;
+            case "UpdateRelationshipWorkflow":
+                $tasks = [
+                    "ProcessRelationships",
+                    "ProcessGrantsRelationship",
+                    "PopulateAffectedList",
+                    "ProcessAffectedRelationships",
+                    "IndexRelationship"
+                ];
+                break;
+            case "ErrorWorkflow":
+                $tasks = [
+                    "PopulateImportOptions",
+                    "FinishImport",
+                    "ScheduleHarvest"
+                    //"Report"
+                ];
+                // error will not load payloads
+                $this->skipLoadingPayload();
+                $this->setTaskData("skipLoadingPayload", true);
+                break;
+            case "default":
+            default:
+                $tasks = [
+                    "PopulateImportOptions",
+                    "ValidatePayload",
+                    "ProcessPayload",
+                    "Ingest",
+                    "ProcessCoreMetadata",
+                    "HandleRefreshHarvest",
+                    "ProcessDelete",
+                    "ProcessIdentifiers",
+                    "ProcessRelationships",
+                    "ProcessQualityMetadata",
+                    "IndexPortal",
+                    "IndexRelationship",
+                    "ProcessGrantsRelationship",
+                    "PopulateAffectedList",
+                    "ProcessAffectedRelationships",
+                    "IndexRelationship",
+                    "FinishImport",
+                    "ScheduleHarvest",
+                ];
+                break;
+        }
+
+        $pipelineTasks = [];
+        foreach ($tasks as $task) {
+            $pipelineTasks[] = [
+                'name' => $task,
                 'status' => "PENDING"
             ];
         }
-        return $pipeline;
-    }
 
-    public function setPipeline($pipeline)
-    {
-        switch($pipeline) {
-            case "PublishingWorkflow":
-                $this->setTaskData('subtasks',
-                    [
-                        ['name' => "HandleStatusChange", 'status' => 'PENDING']
-                    ]
-                );
-                break;
-            default:
-                $this->setTaskData('subtasks', $this->getDefaultImportSubtasks());
-                break;
-        }
+        $this->setTaskData('pipeline', $pipeline);
+        $this->setTaskData('subtasks', $pipelineTasks);
+
+        return $this;
     }
 
     /**
@@ -234,9 +345,17 @@ class ImportTask extends Task
     {
         $this
             ->bootEloquentModels()
-            ->loadParams()
-            ->loadSubTasks()
-            ->loadPayload();
+            ->loadParams();
+
+        if ($this->harvestID) {
+            $this->checkHarvesterMessages();
+        }
+
+        $this->loadSubTasks();
+
+        if ($this->skipLoading === false) {
+            $this->loadPayload();
+        }
 
         return $this;
     }
@@ -262,6 +381,9 @@ class ImportTask extends Task
                 'charset' => 'utf8',
                 'collation' => 'utf8_unicode_ci',
                 'prefix' => '',
+                'options'   => array(
+                    \PDO::ATTR_PERSISTENT => true,
+                )
             ], 'default'
         );
         $capsule->setAsGlobal();
@@ -307,8 +429,13 @@ class ImportTask extends Task
     {
         parse_str($this->getParams(), $parameters);
 
-        $this->dataSourceID = array_key_exists('ds_id', $parameters) ? $parameters['ds_id']: null;
+        if ($this->dataSourceID === null) {
+            $this->dataSourceID = array_key_exists('ds_id', $parameters) ? $parameters['ds_id']: null;
+        }
+
         $this->batchID = array_key_exists('batch_id', $parameters) ? $parameters['batch_id'] : null;
+        $this->harvestID = array_key_exists('harvest_id', $parameters) ? $parameters['harvest_id'] : null;
+        $this->userName = array_key_exists('user_name', $parameters) ? $parameters['user_name'] : null;
 
         $this->setTaskData(
             'dataSourceID',
@@ -320,13 +447,30 @@ class ImportTask extends Task
             array_key_exists('batch_id', $parameters) ? $parameters['batch_id'] : null
         );
 
+        $this->setTaskData(
+            'harvestID',
+            array_key_exists('harvest_id', $parameters) ? $parameters['harvest_id'] : null
+        );
+
+        $this->setTaskData(
+            'userName',
+            array_key_exists('user_name', $parameters) ? $parameters['user_name'] : null
+        );
+
         if (array_key_exists('runAll', $parameters)) {
             $this->enableRunAllSubTask();
         }
 
-
         foreach ($parameters as $key => $value) {
             $this->setTaskData($key, $value);
+        }
+
+        if ($this->getTaskData('skipLoadingPayload')) {
+            $this->skipLoadingPayload();
+        }
+
+        if ($this->getTaskData('pipeline') !== null && !$this->getTaskData('subtasks')) {
+            $this->setPipeline($this->getTaskData('pipeline'));
         }
 
         return $this;
@@ -351,6 +495,18 @@ class ImportTask extends Task
     }
 
     /**
+     * Remove a specific subtask from the pipeline by name
+     *
+     * @param $name
+     */
+    public function removeSubtaskByname($name)
+    {
+        $this->subtasks = array_filter($this->subtasks, function($task) use ($name){
+           return $task['name'] !== $name;
+        });
+    }
+
+    /**
      * Set a flag to run all tasks synchronously
      *
      * @return $this
@@ -370,5 +526,181 @@ class ImportTask extends Task
         $this->batchID = $batchID;
         $this->setTaskData('batchID', $batchID);
         return $this;
+    }
+
+    public function updateHarvest($args)
+    {
+        if (!$this->harvestID) {
+            return;
+        }
+        Harvest::where('harvest_id', $this->harvestID)->update($args);
+        NotifyUtil::notify(
+            "datasource.".$this->dataSourceID.'.harvest',
+            json_encode(Harvest::find($this->harvestID), true)
+        );
+    }
+
+    public function checkHarvesterMessages()
+    {
+        $harvest = Harvest::where('harvest_id', $this->harvestID)->first();
+        if ($harvest === null) {
+            return;
+        }
+
+        $message = json_decode($harvest->getMessage(), true);
+        if (is_string($message)) {
+            $message = json_decode($message, true);
+        }
+
+        if ($message === null) {
+            return;
+        }
+
+        if (array_key_exists('error', $message) && $message['error']['errored'] === true) {
+            $this->setPipeline("ErrorWorkflow");
+            $this->addError($message['error']['log']);
+        }
+    }
+
+
+    public function stoppedWithError($message)
+    {
+        $this->updateHarvest([
+            'importer_message'=> $message
+        ]);
+
+        if ($dataSource = DataSource::find($this->dataSourceID)) {
+            $dataSource->appendDataSourceLog($this->name." Stopped with Error". NL . $message, "error", "IMPORTER");
+        }
+
+        $source = $this->getTaskData('source');
+        if ($source == 'url' || $source == 'xml') {
+            $this->setTaskData('dataSourceLog', $message.NL.$this->getDataSourceMessage());
+        }
+
+        // if this is a harvest, run FinishImportTask and then ScheduleHarvest
+        if ($source == 'harvester') {
+            $nextTask = $this->getTaskByName("FinishImport");
+            $nextTask->disableLoggingToDatasourceLogs();
+            $this->runSubTask($nextTask);
+            $this->saveSubTaskData($nextTask);
+
+            $nextTask = $this->getTaskByName("ScheduleHarvest");
+            $this->runSubTask($nextTask);
+            $this->saveSubTaskData($nextTask);
+        }
+
+        $this->writeLog("ImportStopped");
+
+        parent::stoppedWithError($message);
+    }
+
+    public function getDataSourceMessage()
+    {
+        $targetStatus = $this->getTaskData("targetStatus");
+        $selectedKeys = [
+            "dataSourceDefaultStatus" => "Default Import Status for Data Source",
+            "targetStatus" => "Target Status for Import",
+            "recordsInFeedCount" => "Valid Records Received in Harvest",
+            "invalidRegistryObjectsCount" => "Failed to Validate",
+            "duplicateKeyinFeedCount" => "Duplicated Records",
+            "recordsExistOtherDataSourceCount" => "Record exist in other Datasource(s)",
+            "missingRegistryObjectKeyCount" => "Invalid due to Missing key",
+            "missingOriginatingSourceCount" => "Invalid due to missing OriginatingSource",
+            "missingGroupAttributeCount" => "Invalid missing group Attribute",
+            "recordsCreatedCount" => "New Records Created",
+            "recordsUpdatedCount" => "Records updated",
+            "refreshHarvestStatus" => "Refresh Harvest Status",
+            "recordsNotUpdatedCount" => "Records content unchanged",
+            "recordsDeletedCount" => "Records deleted",
+            "datasourceRecordBeforeCount" => "Number of " . $targetStatus . " records Before Import",
+            "datasourceRecordAfterCount" => "Number of " . $targetStatus . " records After Import",
+            "url" => "URL"
+        ];
+
+        $message = [];
+        $message[] = "Batch ID: ".$this->batchID;
+        $message[] = "Time: ".date("Y-m-d\TH:i:s\Z", time());
+        if ($this->getId()) {
+            $message[] = "TaskID: ".$this->getId();
+        }
+
+        foreach ($selectedKeys as $key => $title) {
+            $taskData = $this->getTaskData($key);
+            if($taskData !== 0 && $taskData !== null && $taskData != "") {
+                $message[] = $title . ": " . $taskData;
+            }
+        }
+
+        if ($errorList = $this->getError()) {
+            $message[] = NL."Error: ";
+            foreach ($errorList as $error) {
+                $message[] = $error;
+            }
+        }
+
+
+        $message = implode(NL, $message);
+        return $message;
+    }
+
+    /**
+     * @param mixed $dataSourceID
+     * @return ImportTask
+     */
+    public function setDataSourceID($dataSourceID)
+    {
+        $this->dataSourceID = $dataSourceID;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDataSourceID()
+    {
+        return $this->dataSourceID;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBatchID()
+    {
+        return $this->batchID;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getHarvestID()
+    {
+        return $this->harvestID;
+    }
+
+    /**
+     * @param mixed $harvestID
+     * @return $this
+     */
+    public function setHarvestID($harvestID)
+    {
+        $this->harvestID = $harvestID;
+        return $this;
+    }
+
+    /**
+     * Benchmark data of all subtasks
+     *
+     * @return array
+     */
+    public function getBenchmarkData()
+    {
+        $benchmark = [];
+        foreach($this->getSubtasks() as $subtask) {
+            if (array_key_exists('benchmark', $subtask['data'])) {
+                $benchmark[$subtask['name']] = $subtask['data']['benchmark'];
+            }
+        }
+        return $benchmark;
     }
 }

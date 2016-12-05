@@ -27,6 +27,11 @@ class XMLUtil
         return $sxml->xpath($xpath);
     }
 
+    public static function getElementsByXPathFromSXML($sxml, $xpath)
+    {
+        return $sxml->xpath($xpath);
+    }
+
     /**
      * @param $xml
      * @param $element
@@ -95,6 +100,15 @@ class XMLUtil
         return $return;
     }
 
+    public static function unwrapRegistryObject($xml)
+    {
+        if (strpos($xml, '<registryObjects') === false) {
+            return $xml;
+        }
+        $simpleXML = static::getSimpleXMLFromString(static::cleanNameSpace($xml));
+        return $simpleXML->registryObject->asXML();
+    }
+
     /**
      * Escape Ampercent and return the escaped xml
      *
@@ -130,4 +144,21 @@ class XMLUtil
             throw new Exception($e->getMessage());
         }
     }
+
+    public static function getHTMLForm($xml, $params = [])
+    {
+        try{
+            $xslt_processor = Transforms::get_rif_to_edit_form_transformer();
+            $dom = new DOMDocument();
+            $dom->loadXML($xml, LIBXML_NOENT);
+            foreach($params as $key=>$val){
+                $xslt_processor->setParameter('', $key, $val);
+            }
+            return html_entity_decode($xslt_processor->transformToXML($dom));
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+
+
 }

@@ -190,8 +190,9 @@
 					<td>{{client_name}}</td>
 					<td>{{client_contact_name}}</td>
 					<td>{{app_id}}</td>	
-					<td>{{shared_secret}}</td>						<td>{{ip_address}}</td>	
-					<td>{{created_when}}</td>													
+					<td>{{shared_secret}}</td>
+					<td class="limit_ip_td">{{ip_address}}</td>
+					<td>{{created_when}}</td>
 					<td>
 					<a href="javascript:;" class="edit btn btn-small" tip="Edit" app_id="{{app_id}}" client_id="{{client_id}}"><i class="icon-edit"></i></a> 
 					<a href="javascript:;" class="remove btn btn-small btn-danger" tip="Remove" client_id="{{client_id}}"><i class="icon-white icon-remove"></i></a>

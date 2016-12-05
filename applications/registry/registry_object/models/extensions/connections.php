@@ -256,7 +256,9 @@ class Connections_Extension extends ExtensionBase
     public function getAllRelatedObjects($allow_drafts = false, $include_dupe_connections = false, $allow_all_links = false, $limit=99999)
 	{
         //since this operation can take a lot of memory, allow PHP to go for a bit, bad practice
-        ini_set('memory_limit', 384000000);
+        if ((int) ini_get("memory_limit") < 384000000) {
+            ini_set('memory_limit', 384000000);
+        }
 
 		$unordered_connections = array();
 
@@ -278,7 +280,7 @@ class Connections_Extension extends ExtensionBase
 
 		/* Step 1 - Straightforward link relationships */
         /* Contributor */
-        $unordered_connections = array_merge($unordered_connections, $this->_getContributorLinks($allow_drafts));
+//        $unordered_connections = array_merge($unordered_connections, $this->_getContributorLinks($allow_drafts));
 		$unordered_connections = array_merge($unordered_connections, $this->_getExplicitLinks($allow_drafts, $limit));
 		$unordered_connections= array_merge($unordered_connections, $this->_getIdentifierLinks($limit));
 		$unordered_connections= array_merge($unordered_connections, $this->_getReverseIdentifierLinks($allow_reverse_internal_links, $allow_reverse_external_links, $limit));

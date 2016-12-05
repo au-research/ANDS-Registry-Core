@@ -127,6 +127,16 @@ class TaskManager
     }
 
     /**
+     * @param $db
+     * @param $ci
+     * @return static
+     */
+    public static function create($db, $ci)
+    {
+        return new static($db, $ci);
+    }
+
+    /**
      * Get a particular task from the database
      * Returns as a mysql row
      * @param $id
@@ -148,7 +158,7 @@ class TaskManager
      * @return array
      * @throws Exception
      */
-    public function runTask($taskId)
+    public function runTask($taskId, $subTaskName = null)
     {
         $query = $this->db->get_where('tasks', ['id' => $taskId]);
         if ($query->num_rows() == 0) throw new Exception("Task " . $taskId . " not found!");
@@ -161,7 +171,16 @@ class TaskManager
             ->setCI($this->ci);
 
         try {
-            $task->run();
+            if ($subTaskName) {
+                $task->initialiseTask();
+                $subTask = $task->getTaskByName($subTaskName);
+                $subTask->run();
+                $task->saveSubTaskData($subTask);
+                $task->saveSubTasks();
+                return $subTask->toArray();
+            } else {
+                $task->run();
+            }
         } catch (Exception $e) {
             $task->setStatus("STOPPED");
             $task->log("Error: " . $e->getMessage());

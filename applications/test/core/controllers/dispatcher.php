@@ -92,6 +92,8 @@ class Dispatcher extends MX_Controller
             'memory' => $this->benchmark->memory_usage()
         ];
 
+
+
         // display
         if (sizeof($testSuites) > 0) {
             if ($this->input->is_cli_request()) {

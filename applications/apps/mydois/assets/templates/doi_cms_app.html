@@ -51,12 +51,13 @@
                             <a target="_blank" href="{{ doi.url }}">{{ doi.url }}</a>
                         </td>
                         <td>
-                            <a target="_blank" href="http://dx.doi.org/{{ doi.doi_id }}">{{ doi.doi_id }}</a>
+                            <a target="_blank" href="http://dx.doi.org/{{ doi.doi_id }}" ng-if="doi.status!='RESERVED'">{{ doi.doi_id }}</a>
+                            <span ng-if="doi.status=='RESERVED'">{{ doi.doi_id }}</span>
                         </td>
                         <td>
                             <div class="btn-group">
                                 <a href="" class="btn btn-small" ng-click="vm.view(doi.doi_id)"><i class="icon-search"></i> View</a>
-                                <a href="" class="btn btn-small" ng-click="vm.update(doi.doi_id)"><i class="icon-edit"></i> Update</a>
+                                <a href="" class="btn btn-small" ng-click="vm.update(doi.doi_id)"  ng-if="doi.status!='RESERVED'"><i class="icon-edit"></i> Update</a>
                                 <a href="" class="btn btn-small" ng-click="vm.dodeactivate(doi.doi_id)" ng-if="doi.status=='ACTIVE'">Deactivate</a>
                                 <a href="" class="btn btn-small" ng-click="vm.doactivate(doi.doi_id)" ng-if="doi.status=='INACTIVE'">Activate</a>
                             </div>
@@ -169,7 +170,7 @@
                 <b>{{ vm.response.message }}</b><br>
                 {{ vm.response.verbosemessage }}
             </div>
-            <div ng-if="vm.readonly" class="alert alert-warning">This is a read-only view of the DOI. Please <a href="" ng-click="vm.readonly=!vm.readonly">Enable Editing</a> to update</div>
+            <div ng-if="vm.readonly && vm.viewdoi.status!='RESERVED'" class="alert alert-warning">This is a read-only view of the DOI. Please <a href="" ng-click="vm.readonly=!vm.readonly">Enable Editing</a> to update</div>
             <form class="form">
                 <div class="input-prepend input-append" style="display:inline-block">
                     <span class="add-on">DOI</span>

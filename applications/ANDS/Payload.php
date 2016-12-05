@@ -100,4 +100,21 @@ class Payload
         return $this->path;
     }
 
+    /**
+     * Static method to write a payload out to file
+     *
+     * @param $dataSourceID
+     * @param $batchID
+     * @param $content
+     */
+    public static function write($dataSourceID, $batchID, $content)
+    {
+        $harvestedContentDir = get_config_item('harvested_contents_path');
+        $harvestedContentDir = rtrim($harvestedContentDir, '/') . '/';
+        if (!is_dir($harvestedContentDir.$dataSourceID)) {
+            mkdir($harvestedContentDir.$dataSourceID);
+        }
+        file_put_contents($harvestedContentDir.$dataSourceID.'/'.$batchID.'.xml', $content);
+    }
+
 }

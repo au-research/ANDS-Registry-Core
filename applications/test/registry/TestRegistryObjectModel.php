@@ -30,7 +30,7 @@ class TestRegistryObjectModel extends UnitTest
         $ro = $this->ci->ro->getBySlug("collection-rif-v16-elements-primaryname");
         $this->assertInstanceOf($ro, new \_registry_object());
     }
-
+    
     /**
      * @name param 319959 must have related objects
      * @note relatedObjects must be a non empty array

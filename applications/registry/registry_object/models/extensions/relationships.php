@@ -265,6 +265,40 @@ class Relationships_Extension extends ExtensionBase
         return $decodedData;
     }
 
+    public function getAllRelationships($includes = ['relatedObjects', 'grantsNetwork']
+    )
+    {
+        $relationships = [];
+
+        if (in_array('relatedObjects', $includes)) {
+            $relationships = $this->ro->getAllRelatedObjects();
+        }
+        if (in_array('grantsNetwork', $includes)) {
+            if (!in_array('relatedObjects', $includes)) {
+                // generate relatedObjects only when only grantsNetwork is required
+                $relationships = $this->ro->getAllRelatedObjects();
+            }
+            if ($this->ro->isValidGrantNetworkNode($relationships)) {
+                $relationships = array_merge($relationships, $this->ro->_getGrantsNetworkConnections($relationships, false));
+            }
+        }
+
+        return $relationships;
+    }
+
+    public function getAllAffectedRecordsID()
+    {
+        $affectedIDs = [];
+        $relationships = $this->getAllRelationships();
+        foreach ($relationships as $rel) {
+            $id = $rel['registry_object_id'];
+            if (!in_array($id, $affectedIDs)) {
+                $affectedIDs[] = $id;
+            }
+        }
+        return $affectedIDs;
+    }
+
     /**
      * Returns an indexable relationship index for this record
      *

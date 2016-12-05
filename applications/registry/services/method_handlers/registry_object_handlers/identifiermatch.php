@@ -1,4 +1,6 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php use ANDS\Repository\RegistryObjectsRepository;
+
+if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_ro_handler.php');
 /**
 * Identifier matching handler
@@ -7,23 +9,19 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
 */
 class Identifiermatch extends ROHandler {
 	function handle() {
-		$result = array();
-        
-        $matching = $this->ro->findMatchingRecords();
 
-        $ci =& get_instance();
-        $ci->load->model('registry_object/registry_objects', 'ro');
-        foreach($matching as $m) {
-            $ro = $ci->ro->getByID($m);
-            if($ro){
-                $result[] = array(
-                    'registry_object_id' => $ro->id,
-                    'slug' => $ro->slug,
-                    'title' => $ro->title,
-                    'group' => $ro->group
-                );
-            }
-            unset($ro);
+		$result = array();
+
+        $record = RegistryObjectsRepository::getRecordByID($this->ro->id);
+        $duplicates = $record->getDuplicateRecords();
+
+        foreach ($duplicates as $duplicate) {
+            $result[] = [
+                'registry_object_id' => $duplicate->registry_object_id,
+                'slug' => $duplicate->slug,
+                'title' => $duplicate->title,
+                'group' => $duplicate->group
+            ];
         }
 
         return $result;

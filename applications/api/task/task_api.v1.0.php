@@ -8,8 +8,10 @@
 namespace ANDS\API;
 
 use ANDS\API\Task\ImportTask;
+use ANDS\RegistryObject;
 use \Exception as Exception;
-
+use ANDS\Registry\Providers\RelationshipProvider;
+use Illuminate\Database\Capsule\Manager as Capsule;
 
 class Task_api
 {
@@ -27,6 +29,11 @@ class Task_api
         require_once APP_PATH . 'vendor/autoload.php';
 
         $this->taskManager = new Task\TaskManager($this->db, $this->ci);
+
+        // task operation takes a long time
+        ini_set('memory_limit', '1024M');
+        ini_set('max_execution_time', 2 * ONE_HOUR);
+        set_time_limit(0);
     }
 
     /**
@@ -59,10 +66,34 @@ class Task_api
                 break;
             case 'exe' :
                 if ($this->params['identifier']) {
+                    if ($this->ci->input->get('subtask')) {
+                        return $this->taskManager->runTask($this->params['identifier'], $this->ci->input->get('subtask'));
+                    }
                     return $this->taskManager->runTask($this->params['identifier']);
                 } else {
                     throw new Exception("A task ID is required");
                 }
+                break;
+            case 'restart':
+                if (!$this->params['identifier']) {
+                    throw new Exception("A task ID is required");
+                }
+
+                $task = $this->taskManager->getTask($this->params['identifier']);
+                $taskObject = $this->taskManager->getTaskObject($task);
+                $taskObject
+                    ->setCI($this->ci)
+                    ->setDb($this->ci->db)
+                    ->setStatus('PENDING')
+                    ->enableRunAllSubTask()
+                    ->setMessage()
+                    ->clearTaskData()
+                    ->save();
+
+                return $taskObject->run();
+
+                // return $this->taskManager->runTask($this->params['identifier']);
+
                 break;
             case 'all' :
             case 'pending' :
@@ -117,15 +148,11 @@ class Task_api
         }
     }
 
-    private function test(){
-        $task = [
-            'name' => 'Minh Pipeline Test Task',
-            'type' => 'POKE',
-            'frequency' => 'ONCE',
-            'priority' => 1,
-            'params' => 'class=import&ds_id=209&batch_id=AUTestingRecordsImport'
-        ];
-        return $this->taskManager->addTask($task);
+    private function test() {
+        initEloquent();
+        // $record = RegistryObject::find(570703);
+        $record = RegistryObject::find(568190);
+        RelationshipProvider::process($record);
     }
 
     /**

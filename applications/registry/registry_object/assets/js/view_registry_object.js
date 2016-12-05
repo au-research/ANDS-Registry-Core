@@ -2,7 +2,7 @@
  */
 $(function(){
 	$('#exportRIFCS').click(function(){
-		$.getJSON(base_url+'registry_object/get_record/'+$('#ro_id').val(), function(data){
+		$.getJSON(base_url+'registry_object/get_record_data/'+$('#ro_id').val(), function(data){
             $('#myModal .modal-header h3').html('<h3>RIFCS:</h3>');
 			$('#myModal .modal-body').html('<pre class="prettyprint linenums"><code class="language-xml">' + htmlEntities(formatXml(data.ro.xml)) + '</code></pre>');
 			prettyPrint();
@@ -10,33 +10,33 @@ $(function(){
 		});
 	});
 
-    $('#exportExtRif').click(function(){
-        $.getJSON(base_url+'registry_object/get_record/'+$('#ro_id').val(), function(data){
-            console.log(data);
-            $('#myModal .modal-header h3').html('<h3>RIFCS:</h3>');
-            $('#myModal .modal-body').html('<pre class="prettyprint linenums"><code class="language-xml">' + htmlEntities(formatXml(data.ro.extrif)) + '</code></pre>');
-            prettyPrint();
-            $('#myModal').modal();
-        });
-    });
-
-    $('#exportSOLR').click(function(){
-        $.getJSON(base_url+'registry_object/get_record/'+$('#ro_id').val(), function(data){
-            console.log(data);
-            $('#myModal .modal-header h3').html('<h3>RIFCS:</h3>');
-            $('#myModal .modal-body').html('<pre class="prettyprint linenums"><code class="language-xml">' + htmlEntities(formatXml(data.ro.solr)) + '</code></pre>');
-            prettyPrint();
-            $('#myModal').modal();
-        });
-    });
-
-	$('#exportNative').click(function(){
-		$.getJSON(base_url+'registry_object/get_native_record/'+$('#ro_id').val(), function(data){
-            $('#myModal .modal-header h3').html('<h3>Native Metadata:</h3>');
-			$('#myModal .modal-body').html('<textarea style="width:95%;height:300px;margin:0 auto;">' + data.txt + '</textarea>');
-			$('#myModal').modal();
-		});
-	});
+    // $('#exportExtRif').click(function(){
+     //    $.getJSON(base_url+'registry_object/get_record/'+$('#ro_id').val(), function(data){
+     //        console.log(data);
+     //        $('#myModal .modal-header h3').html('<h3>RIFCS:</h3>');
+     //        $('#myModal .modal-body').html('<pre class="prettyprint linenums"><code class="language-xml">' + htmlEntities(formatXml(data.ro.extrif)) + '</code></pre>');
+     //        prettyPrint();
+     //        $('#myModal').modal();
+     //    });
+    // });
+    //
+    // $('#exportSOLR').click(function(){
+     //    $.getJSON(base_url+'registry_object/get_record/'+$('#ro_id').val(), function(data){
+     //        console.log(data);
+     //        $('#myModal .modal-header h3').html('<h3>RIFCS:</h3>');
+     //        $('#myModal .modal-body').html('<pre class="prettyprint linenums"><code class="language-xml">' + htmlEntities(formatXml(data.ro.solr)) + '</code></pre>');
+     //        prettyPrint();
+     //        $('#myModal').modal();
+     //    });
+    // });
+    //
+	// $('#exportNative').click(function(){
+	// 	$.getJSON(base_url+'registry_object/get_native_record/'+$('#ro_id').val(), function(data){
+     //        $('#myModal .modal-header h3').html('<h3>Native Metadata:</h3>');
+	// 		$('#myModal .modal-body').html('<textarea style="width:95%;height:300px;margin:0 auto;">' + data.txt + '</textarea>');
+	// 		$('#myModal').modal();
+	// 	});
+	// });
 
 
     $('.status_change_action').on('click', function(e){

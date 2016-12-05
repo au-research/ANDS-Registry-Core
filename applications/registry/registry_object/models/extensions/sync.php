@@ -1,4 +1,6 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php use ANDS\Repository\RegistryObjectsRepository;
+
+if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 class Sync_extension extends ExtensionBase{
 
@@ -117,6 +119,9 @@ class Sync_extension extends ExtensionBase{
 		$json = array();
         $party_service_conn_limit = 200;
 
+        // implementing the new record system
+        $record = RegistryObjectsRepository::getRecordByID($this->ro->id);
+
         // Not indexing PROV group
         if ($this->ro->class=='activity' && $this->ro->group=="Public Record Office Victoria"){
             return $json;
@@ -146,8 +151,9 @@ class Sync_extension extends ExtensionBase{
 			throw new Exception ('iconv installation/configuration required for simplified title');
 		}
 
-		//macthing identifier count
-		$json['matching_identifier_count'] = sizeof($this->ro->findMatchingRecords());
+		// migrate matching identifier count to new record system
+        // matching identifier count
+		$json['matching_identifier_count'] = sizeof($record->getDuplicateRecords());
 
         //originating source
 
@@ -277,7 +283,6 @@ class Sync_extension extends ExtensionBase{
         foreach($gXPath->query('//ro:relatedInfo') as $node) {
             $json['related_info_search'] .= htmlspecialchars(trim($node->nodeValue));
         }
-
 
 		//citation metadata text
 		$json['citation_info_search'] = '';
@@ -536,41 +541,6 @@ class Sync_extension extends ExtensionBase{
             }
         }
 
-        //Grants Structure Recursive
-        $grantStructureParents = $this->ro->getParentsGrants(false, array(),true);
-        if ($grantStructureParents && sizeof($grantStructureParents) > 0) {
-            $json['relation_grants_isFundedBy'] = '';
-            $json['relation_grants_isPartOf'] = '';
-            $json['relation_grants_isOutputOf'] = '';
-            foreach ($grantStructureParents as $parent) {
-                if ($parent['relation_type'] == 'isFundedBy' || $parent['relation_type'] == 'isFunderOf') {
-                    $json['relation_grants_isFundedBy'][] = $parent['registry_object_id'];
-                }  elseif ($parent['relation_type'] == 'isPartOf' || $parent['relation_type'] == 'hasPart') {
-                    $json['relation_grants_isPartOf'][] = $parent['registry_object_id'];
-                } elseif ($parent['relation_type'] == 'isOutputOf' || $parent['relation_type'] == 'hasOutput') {
-                    $json['relation_grants_isOutputOf'][] = $parent['registry_object_id'];
-                }
-            }
-        }
-
-
-        //Grants Structure Direct (helps with tree generation)
-        $grantStructureParents = $this->ro->getParentsGrants(false, array(),false);
-        if ($grantStructureParents && sizeof($grantStructureParents) > 0) {
-            $json['relation_grants_isFundedBy_direct'] = '';
-            $json['relation_grants_isPartOf_direct'] = '';
-            $json['relation_grants_isOutputOf_direct'] = '';
-            foreach ($grantStructureParents as $parent) {
-                if ($parent['relation_type'] == 'isFundedBy' || $parent['relation_type'] == 'isFunderOf') {
-                    $json['relation_grants_isFundedBy_direct'][] = $parent['registry_object_id'];
-                }  elseif ($parent['relation_type'] == 'isPartOf' || $parent['relation_type'] == 'hasPart') {
-                    $json['relation_grants_isPartOf_direct'][] = $parent['registry_object_id'];
-                } elseif ($parent['relation_type'] == 'isOutputOf' || $parent['relation_type'] == 'hasOutput') {
-                    $json['relation_grants_isOutputOf_direct'][] = $parent['registry_object_id'];
-                }
-            }
-        }
-
         //default values if none present
         if(!isset($json['license_class'])) $json['license_class'] = 'unknown';
 
@@ -624,6 +594,9 @@ class Sync_extension extends ExtensionBase{
         // get only unique registry_object_id to save memory
         $temp_array = array();
         foreach ($relatedObjects as &$v) {
+            if (!$v || !array_key_exists('registry_object_id', $v)) {
+                continue;
+            }
             if (!isset($temp_array[$v['registry_object_id']])) {
                 $temp_array[$v['registry_object_id']] =& $v;
             }

@@ -148,6 +148,9 @@ class Activity_grants_extension extends ExtensionBase
         if (!$relatedObjects) {
             $relatedObjects = $this->ro->getAllRelatedObjects();
         }
+
+        $relatedObjects = $this->filterValidRelatedObjects($relatedObjects);
+
         foreach ($relatedObjects as $relatedObject) {
             if (!isset($relatedObject['status']) || $relatedObject['status'] != DRAFT) {
                 if ($relatedObject['class'] == 'party'
@@ -179,7 +182,9 @@ class Activity_grants_extension extends ExtensionBase
             $relatedObjects = $this->ro->getAllRelatedObjects();
         }
         if ($relatedObjects) {
+            $relatedObjects = $this->filterValidRelatedObjects($relatedObjects);
             foreach ($relatedObjects as $relatedObject) {
+
                 if (!isset($relatedObject['status']) || $relatedObject['status'] != DRAFT) {
                     if ($relatedObject['class'] == 'party'
                         && strtolower(trim($this->_CI->ro->getAttribute($relatedObject['registry_object_id'],
@@ -213,7 +218,10 @@ class Activity_grants_extension extends ExtensionBase
             $relatedObjects = $this->ro->getAllRelatedObjects();
         }
         if ($relatedObjects) {
+            $relatedObjects = $this->filterValidRelatedObjects($relatedObjects);
             foreach ($relatedObjects as $relatedObject) {
+
+
                 if (!isset($relatedObject['status']) || $relatedObject['status'] != DRAFT) {
                     if ($relatedObject['class'] == 'party'
                         && $relatedObject['relation_type'] == 'isManagedBy'
@@ -268,6 +276,7 @@ class Activity_grants_extension extends ExtensionBase
             $relatedObjects = $this->ro->getAllRelatedObjects();
         }
         if ($relatedObjects) {
+            $relatedObjects = $this->filterValidRelatedObjects($relatedObjects);
             foreach ($relatedObjects as $relatedObject) {
 
                 if (isset($relatedObject['status']) && $relatedObject['status'] == PUBLISHED) {
@@ -340,7 +349,10 @@ class Activity_grants_extension extends ExtensionBase
             $relatedObjects = $this->ro->getAllRelatedObjects();
         }
         if ($relatedObjects) {
+            $relatedObjects = $this->filterValidRelatedObjects($relatedObjects);
             foreach ($relatedObjects as $relatedObject) {
+
+
                 if (!isset($relatedObject['status']) || $relatedObject['status'] != DRAFT
                     && strtolower(trim($this->_CI->ro->getAttribute($relatedObject['registry_object_id'],'type'))) == 'person') {
                     $isValidChild = (($relatedObject['relation_type'] == 'hasPrincipalInvestigator' && $relatedObject['origin'] == 'EXPLICIT')
@@ -429,6 +441,7 @@ class Activity_grants_extension extends ExtensionBase
 
         $result = array();
         if ($relatedObjects) {
+            $relatedObjects = $this->filterValidRelatedObjects($relatedObjects);
             foreach ($relatedObjects as $relatedObject) {
 
                 //setting the condition
@@ -495,6 +508,8 @@ class Activity_grants_extension extends ExtensionBase
         }
 
         $result = array();
+
+        $relatedObjects = $this->filterValidRelatedObjects($relatedObjects);
 
         foreach ($relatedObjects as $relatedObject) {
 
@@ -823,20 +838,20 @@ class Activity_grants_extension extends ExtensionBase
         if ($solrResult
             && array_key_exists('response', $solrResult)
             && $solrResult['response']['numFound'] > 0) {
-
-            foreach ($solrResult['response']['docs'] as $doc)
-            $result[] = [
-                'registry_object_id' => $doc['to_id'],
-                'key' => $doc['to_key'],
-                'class' => $doc['to_class'],
-                'title' => $doc['to_title'],
-                'slug' => $doc['to_slug'],
-                'status' => 'PUBLISHED',
-                'relation_type' => $doc['relation'][0],
-                'origin' => $doc['relation_origin'][0],
-                'relation_description' => isset($doc['relation_description']) ? $doc['relation_description'] : "",
-                'type' => $doc['to_type']
-            ];
+            foreach ($solrResult['response']['docs'] as $doc) {
+                $result[] = [
+                    'registry_object_id' => $doc['to_id'],
+                    'key' => $doc['to_key'],
+                    'class' => $doc['to_class'],
+                    'title' => $doc['to_title'],
+                    'slug' => $doc['to_slug'],
+                    'status' => 'PUBLISHED',
+                    'relation_type' => $doc['relation'][0],
+                    'origin' => $doc['relation_origin'][0],
+                    'relation_description' => isset($doc['relation_description']) ? $doc['relation_description'] : "",
+                    'type' => $doc['to_type']
+                ];
+            }
         }
         return $result;
     }
@@ -854,6 +869,9 @@ class Activity_grants_extension extends ExtensionBase
         }
 
         $result = array();
+
+        $relatedObjects = $this->filterValidRelatedObjects($relatedObjects);
+
         foreach ($relatedObjects as $relatedObject) {
 
             if (($relatedObject['relation_type'] == 'hasOutput' && $relatedObject['origin'] == 'EXPLICIT')
@@ -988,6 +1006,25 @@ class Activity_grants_extension extends ExtensionBase
         return false;
     }
 
+    public function filterValidRelatedObjects($relatedObjects)
+    {
+        return array_filter($relatedObjects, function($relatedObject){
+            if (!$relatedObject) {
+                return false;
+            }
+
+            if (!is_array($relatedObject)) {
+                return false;
+            }
+
+            if (!array_key_exists('relation_type', $relatedObject)) {
+                return false;
+            }
+
+            return true;
+        });
+    }
+
 
     /**
      * Helper method to return the gXPath
@@ -997,7 +1034,11 @@ class Activity_grants_extension extends ExtensionBase
     public function getGXPath()
     {
         $rifDom = new DOMDocument();
-        $rifDom->loadXML($this->ro->getRif());
+
+        $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($this->ro->id);
+        $data = $record->getCurrentData()->data;
+
+        $rifDom->loadXML($data);
         $gXPath = new DOMXpath($rifDom);
         $gXPath->registerNamespace('ro', RIFCS_NAMESPACE);
         return $gXPath;

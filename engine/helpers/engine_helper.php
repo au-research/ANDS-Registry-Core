@@ -164,6 +164,7 @@ function default_error_handler($errno, $errstr, $errfile, $errline)
 		'message' => $errstr . " > on line " . $errline . " (" . $errfile .")". 'Error: '.error_level_tostring($errno)
 	];
 	monolog($event, 'error', 'error');
+    debug($errstr . " > on line " . $errline . " (" . $errfile .")". 'Error: '.error_level_tostring($errno), 'error');
 
 	ulog($errstr . " > on line " . $errline . " (" . $errfile .")". 'Error: '.error_level_tostring($errno), 'error', 'error');
 
@@ -483,6 +484,25 @@ function monolog($message, $logger = "activity", $type = "info", $allowBot = fal
     }
 
     \ANDSLogging::log($message, $logger, $type, $allowBot);
+}
+
+function debug($message, $type = "debug") {
+
+    $env = get_config_item('deployment_state');
+    $debug = get_config_item('debug');
+
+    if ($env === "production" || $debug === false) {
+        return;
+    }
+
+    $logger = new \Monolog\Logger('debug');
+    $handler = new \Monolog\Handler\StreamHandler('logs/debug.log');
+    $logger->pushHandler($handler);
+    if ($type == "debug") {
+        $logger->debug($message);
+    } elseif ($type == "error") {
+        $logger->error($message);
+    }
 
 }
 
@@ -665,4 +685,15 @@ function isbot($useragent = false)
 	} else {
 		return false;
 	}
+}
+
+function initEloquent() {
+    require_once API_APP_PATH . 'vendor/autoload.php';
+    $importTask = new \ANDS\API\Task\ImportTask();
+    $importTask->initialiseTask();
+}
+
+function tearDownEloquent() {
+    $connection = \Illuminate\Database\Capsule\Manager::connection("default");
+    $connection->disconnect();
 }

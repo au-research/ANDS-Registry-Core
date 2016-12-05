@@ -1,6 +1,9 @@
 <?php
 namespace ANDS\API\Registry\Handler;
 use ANDS\API\Task\FixRelationshipTask;
+use ANDS\API\Task\ImportTask;
+use ANDS\Registry\Providers\RelationshipProvider;
+use ANDS\Repository\RegistryObjectsRepository;
 use \Exception as Exception;
 use \XSLTProcessor as XSLTProcessor;
 
@@ -20,7 +23,7 @@ class ObjectHandler extends Handler{
         'indent' => 'on',
         'rows' => 20,
     );
-    private $valid_methods = array('core', 'descriptions', 'relationships', 'subjects', 'spatial', 'temporal', 'citations', 'dates', 'connectiontrees', 'relatedInfo', 'identifiers', 'rights', 'contact', 'directaccess', 'logo', 'tags', 'existenceDates', 'identifiermatch', 'suggest');
+    private $valid_methods = array('core', 'descriptions', 'relationships', 'subjects', 'spatial', 'temporal', 'citations', 'dates', 'relatedInfo', 'identifiers', 'rights', 'contact', 'directaccess', 'logo', 'tags', 'existenceDates', 'identifiermatch', 'suggest');
 
     private $valid_filters = array('q', 'fq', 'fl', 'sort', 'start', 'rows', 'int_ref_id', 'facet_field', 'facet_mincount', 'facet');
 
@@ -31,7 +34,9 @@ class ObjectHandler extends Handler{
      */
     public function handle()
     {
-        ini_set('memory_limit', 256000000);
+        if ((int) ini_get("memory_limit") < 384000000) {
+            ini_set('memory_limit', 384000000);
+        }
         if ($this->params['identifier']) {
             // registry/object/(:id)
             return array(
@@ -96,6 +101,8 @@ class ObjectHandler extends Handler{
      */
     private function record_api()
     {
+        initEloquent();
+
         $result = array();
 
         if ($this->params['object_module']) {
@@ -120,6 +127,7 @@ class ObjectHandler extends Handler{
         }
 
         $resource = $this->populate_resource($this->params['identifier']);
+
 
         foreach ($method1s as $m1) {
 
@@ -148,6 +156,9 @@ class ObjectHandler extends Handler{
                         break;
                 }
             } else {
+
+                acl_enforce("REGISTRY_USER");
+
                 //special case
                 if ($m1 == 'solr_index') {
                     $ro = $resource['ro'];
@@ -168,40 +179,54 @@ class ObjectHandler extends Handler{
                     return $ro->sync();
                 } else if($m1 == 'relations_index') {
                     $ro = $resource['ro'];
-                    $ro->addRelationships();
-                    $ro->cacheRelationshipMetadata();
-                    $ro->indexRelationship();
-                    return $ro->getRelationshipIndex();
+
+                    $importTask = new ImportTask;
+                    $importTask->init([
+                        "name" => "Get Relationship Index for $ro->id",
+                        'params' => http_build_query([
+                            'targetStatus' => 'PUBLISHED',
+                            'ds_id' => $ro->data_source_id,
+                            'runAll' => 1,
+                            'pipeline' => 'UpdateRelationshipWorkflow'
+                        ])
+                    ])->skipLoadingPayload()->initialiseTask();
+                    $task = $importTask->getTaskByName("IndexRelationship");
+
+                    $record = RegistryObjectsRepository::getRecordByID($ro->id);
+                    $relationships = RelationshipProvider::getMergedRelationships($record);
+                    $index = $task->getRelationshipIndex($relationships);
+
+                    return $index;
+
                 } else if ($m1 == 'fixRelationship') {
-                    $task = new FixRelationshipTask();
+
                     $ro = $resource['ro'];
-                    $params = [
-                        'id' => $ro->id,
-                    ];
-                    $includes = explode(',', $this->ci->input->get('includes'));
-                    if (sizeof($includes) > 0) {
-                        $params['includes'] = implode(',', $includes);
-                        if (trim($params['includes'])=="") {
-                            unset($params['includes']);
-                        }
-                    }
-                    $task->params = http_build_query($params);
-                    $this->ci->benchmark->mark('start');
-                    $task->run_task();
-                    $this->ci->benchmark->mark('end');
-                    $took = $this->ci->benchmark->elapsed_time('start', 'end');
-                    return [
-                        'took' => $took,
-                        'task' => $task->getMessage()
-                    ];
+
+                    $task = new ImportTask;
+                    $task->init([
+                        "name" => "Fix Relationship for $ro->id",
+                       'params' => http_build_query([
+                           'targetStatus' => 'PUBLISHED',
+                           'ds_id' => $ro->data_source_id,
+                           'runAll' => 1,
+                           'pipeline' => 'UpdateRelationshipWorkflow'
+                       ])
+                    ])->skipLoadingPayload()->initialiseTask();
+
+                    $task->setTaskData('importedRecords', [$ro->id]);
+                    $task->run();
+
+                    return $task->toArray();
+
                 } else if ($m1 == 'relatedObjects') {
                     $ro = $resource['ro'];
-                    $ro->addRelationships();
-                    $ro->cacheRelationshipMetadata();
-                    return $ro->getAllRelatedObjects();
+                    $record = RegistryObjectsRepository::getRecordByID($ro->id);
+                    return RelationshipProvider::get($record);
                 } else if ($m1 == 'relatedGrantsNetwork') {
                     $ro = $resource['ro'];
-                    return $ro->_getGrantsNetworkConnections($ro->getAllRelatedObjects());
+                    $record = RegistryObjectsRepository::getRecordByID($ro->id);
+                    RelationshipProvider::process($record);
+                    return RelationshipProvider::getImplicitRelationship($record);
                 } else if ($m1 == 'relatedObjectsIndex') {
                     $this->ci->benchmark->mark('start');
                     $ro = $resource['ro'];

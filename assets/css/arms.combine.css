@@ -11199,3 +11199,7 @@ html {
 .show_all_dash_news:hover {
   text-decoration: underline;
 }
+.limit_ip_td {
+  max-width: 300px;
+  word-wrap: break-word;
+}

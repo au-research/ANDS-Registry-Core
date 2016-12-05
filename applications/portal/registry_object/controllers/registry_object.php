@@ -54,11 +54,23 @@ class Registry_object extends MX_Controller
                     redirect('search/#!/slug=' . $slug);
                 } elseif ($ro && $ro->prop['status'] == 'OK') {
                     //redirect to correct url
-                    redirect($ro->prop['core']['slug'].'/'.$ro->prop['core']['id']);
+                    redirect($ro->prop['core']['slug'] . '/' . $ro->prop['core']['id']);
                 }
             }
         }
+        //dd($ro->prop['core']);
+        if($ro && $ro->core['status'] == "DELETED")
+        {
 
+            $this->blade
+                // ->set('scripts', array('view'))
+                ->set('id', $this->input->get('id'))
+                ->set('key', $this->input->get('key'))
+                ->set('slug', $this->input->get('slug'))
+                ->set('message', "")
+                ->render('deleted_record');
+            return;
+        }
 
         //If a slug is provided
         //view/{slug} => redirect to {slug}/{id}
@@ -85,7 +97,20 @@ class Registry_object extends MX_Controller
 
         if ($ro && $ro->prop['status'] == 'OK') {
             //Found the record, handle rendering of normal view page
-            $this->displayRecord($ro);
+            if($ro->core['status'] == "DELETED")
+            {
+                $this->blade
+                    // ->set('scripts', array('view'))
+                    ->set('id', $this->input->get('id'))
+                    ->set('key', $this->input->get('key'))
+                    ->set('slug', $this->input->get('slug'))
+                    ->set('message', "Record is Deleted")
+                    ->render('deleted_record');
+                return;
+            }else{
+                $this->displayRecord($ro);
+            }
+
 
         } elseif (strpos($key, 'http://purl.org/au-research/grants/nhmrc/') !== false || strpos($key,
                 'http://purl.org/au-research/grants/arc/') !== false
@@ -237,7 +262,7 @@ class Registry_object extends MX_Controller
         if (isset($ro->core['theme_page'])) {
             $the_theme = $this->getTheme($ro->core['theme_page']);
         }
-        
+
         //Decide whethere to show the duplicate identifier
         $show_dup_identifier_qtip = true;
         if ($this->input->get('fl') !== false) {
@@ -285,7 +310,7 @@ class Registry_object extends MX_Controller
     /**
      * Export Controller
      * @param  string $type endnote|endnote_web
-     * @param  string  $ids  "-" separated list of ids. eg 5435-23443
+     * @param  string $ids "-" separated list of ids. eg 5435-23443
      * @return redirect
      */
     public function export($type = 'endnote', $ids)
@@ -299,9 +324,9 @@ class Registry_object extends MX_Controller
         ];
 
         // determine single record
-        if (count($ids) == 1  &&
+        if (count($ids) == 1 &&
             $ro = $this->ro->getByID($ids[0], ['core'], false)
-            ) {
+        ) {
             $event['record'] = $this->getRecordFields($ro);
         }
 
@@ -318,7 +343,7 @@ class Registry_object extends MX_Controller
          * @todo make export a portal only functionality
          * @todo investigate in making an export registry API instead
          */
-        $exportUrl = registry_url('registry_object/exportToEndNote/'. implode('-',$ids).'.ris?foo='.time());
+        $exportUrl = registry_url('registry_object/exportToEndNote/' . implode('-', $ids) . '.ris?foo=' . time());
 
         // Redirection switchboard
         switch ($type) {
@@ -326,7 +351,7 @@ class Registry_object extends MX_Controller
                 redirect($exportUrl);
                 break;
             case "endnote_web":
-                $endNoteWebUrl = "http://www.myendnoteweb.com/?func=directExport&partnerName=ResearchDataAustralia&dataIdentifier=1&dataRequestUrl=".$exportUrl;
+                $endNoteWebUrl = "http://www.myendnoteweb.com/?func=directExport&partnerName=ResearchDataAustralia&dataIdentifier=1&dataRequestUrl=" . $exportUrl;
                 redirect($endNoteWebUrl);
                 break;
         }
@@ -349,24 +374,25 @@ class Registry_object extends MX_Controller
             foreach ($rel['docs'] as &$doc) {
                 $doc['display_relationship'] = [];
                 if (array_key_exists('relation', $doc)) {
-                    foreach ($doc['relation'] as $index=>$docRelation) {
+                    foreach ($doc['relation'] as $index => $docRelation) {
                         $origin = 'EXPLICIT';
                         if (isset($doc['relation_origin'][$index])) {
                             $origin = $doc['relation_origin'][$index];
                         }
-                        $doc['display_relationship'][] = readable($docRelation,$origin,$doc['from_class'],$doc['to_class']);
+                        $doc['display_relationship'][] = readable($docRelation, $origin, $doc['from_class'], $doc['to_class']);
                     }
                 }
                 $doc['display_relationship'] = array_unique($doc['display_relationship']);
                 $doc['display_relationship'] = implode(', ', $doc['display_relationship']);
                 $doc['display_description'] = '';
             }
+
         }
 
         // search class for constructing search queries
         $searchClass = $ro->core['class'];
         if ($ro->core['class'] == 'party') {
-            if (strtolower($ro->core['type']) == 'person' || strtolower($ro->core['type'])=='administrativeposition') {
+            if (strtolower($ro->core['type']) == 'person' || strtolower($ro->core['type']) == 'administrativeposition') {
                 $searchClass = 'party_one';
             } elseif (strtolower($ro->core['type']) == 'group') {
                 $searchClass = 'party_multi';
@@ -379,22 +405,22 @@ class Registry_object extends MX_Controller
             $query = [];
             switch ($rr) {
                 case "data":
-                    $query = ['related_'.$searchClass.'_id' => $ro->id, 'class' => 'collection'];
+                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'collection'];
                     break;
                 case "programs":
-                    $query = ['related_'.$searchClass.'_id' => $ro->id, 'class' => 'activity', 'type'=>'program'];
+                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'activity', 'type' => 'program'];
                     break;
                 case "grants_projects":
-                    $query = ['related_'.$searchClass.'_id' => $ro->id, 'class' => 'activity', 'nottype'=>'program'];
+                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'activity', 'nottype' => 'program'];
                     break;
                 case "services":
-                    $query = ['related_'.$searchClass.'_id' => $ro->id, 'class' => 'service'];
+                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'service'];
                     break;
                 case "organisations";
-                    $query = ['related_'.$searchClass.'_id' => $ro->id, 'class' => 'party', 'type'=>'group'];
+                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'party', 'type' => 'group'];
                     break;
                 case "researchers":
-                    $query = ['related_'.$searchClass.'_id' => $ro->id, 'class' => 'party', 'nottype'=>'group'];
+                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'party', 'nottype' => 'group'];
                     break;
             }
             $related[$rr]['searchUrl'] = constructPortalSearchQuery($query);
@@ -408,6 +434,10 @@ class Registry_object extends MX_Controller
 
             if (!array_key_exists('docs', $related[$rr])) {
                 $related[$rr]['docs'] = [];
+            }
+
+            if ($rr == "researchers" || $rr == "organisations") {
+                $related[$rr]['docs'] = $this->researcherSort($related[$rr]['docs']);
             }
         }
 
@@ -457,11 +487,16 @@ class Registry_object extends MX_Controller
                 $ro = false;
 
                 $pullback = false;
+
                 //ORCID "Pull back"
                 if ($fr->related_info_type == 'party' && $fr->related_object_identifier_type == 'orcid' && isset($fr->related_object_identifier)) {
                     $pullback = $this->ro->resolveIdentifier('orcid', $fr->related_object_identifier);
                     $filters = array('identifier_value' => $fr->related_object_identifier);
                     $ro = $this->ro->findRecord($filters);
+                }
+
+                if (!$ro) {
+                    $ro = $this->ro->getByID($fr->registry_object_id);
                 }
 
                 monolog(
@@ -502,6 +537,38 @@ class Registry_object extends MX_Controller
                     ->render('registry_object/preview_doi');
             }
         }
+    }
+
+    /**
+     * Returns sorted related researchers
+     *
+     * @param array unsorted related researchers
+     */
+
+    function researcherSort($related){
+        //extract out the principal investigators into new array and remove them from the researcher's array
+        $r = array();
+        foreach($related as $key=>$relation){
+            foreach($relation['relation']as $relationship) {
+                if($relationship == 'isPrincipalInvestigatorOf'||$relationship == 'hasPrincipalInvestigator') {
+                    array_push($r, $relation);
+                    unset($related[$key]);
+                }
+            }
+        }
+
+        //sort both arrays on name of title of related party
+        uasort($r, function ($a, $b) {
+            return strnatcmp($a["to_title"], $b["to_title"]);
+        });
+        uasort($related, function ($a, $b) {
+            return strnatcmp($a["to_title"], $b["to_title"]);
+        });
+
+        //now join both arrays back together
+        $related = array_merge($r, $related);
+
+        return $related;
     }
 
     /**

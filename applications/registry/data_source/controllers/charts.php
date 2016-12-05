@@ -176,6 +176,7 @@ class Charts extends MX_Controller {
 		$query = $this->db->query("SELECT count(*) AS count, `status`, `class`
 							FROM registry_objects ro 
 							WHERE data_source_id=?
+							AND status!='DELETED'
 							GROUP BY `status`, `class`;", array($data_source_id));
 
 

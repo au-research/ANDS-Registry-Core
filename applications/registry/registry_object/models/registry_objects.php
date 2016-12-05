@@ -996,7 +996,7 @@ class Registry_objects extends CI_Model {
 
 	public function getDeletedRegistryObjects($search_criteria)
 	{
-		$query = $this->db->get_where('deleted_registry_objects', $search_criteria);
+		$query = $this->db->get_where('registry_objects', $search_criteria);
 		if ($query->num_rows() == 0)
 		{
 			return NULL;
@@ -1011,7 +1011,7 @@ class Registry_objects extends CI_Model {
 
 	public function getDeletedRegistryObject($id)
 	{
-		$query = $this->db->get_where('deleted_registry_objects', array("id" => $id));
+		$query = $this->db->get_where('registry_objects', array("id" => $id));
 		if ($query->num_rows() == 0)
 		{
 			return NULL;
@@ -1074,6 +1074,7 @@ class Registry_objects extends CI_Model {
 		parent::__construct();
 		$this->load->helper('xml'); //prevent error with some helper function
 		include_once("_registry_object.php");
+        initEloquent();
 	}
 
 }

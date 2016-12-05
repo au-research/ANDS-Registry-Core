@@ -3,20 +3,31 @@
 
 namespace ANDS\API\Task\ImportSubTask;
 
+use ANDS\Registry\Providers\RelationshipProvider;
+use ANDS\Repository\RegistryObjectsRepository;
 
+/**
+ * Class ProcessRelationships
+ * @package ANDS\API\Task\ImportSubTask
+ */
 class ProcessRelationships extends ImportSubTask
 {
     protected $requireImportedRecords = true;
+    protected $title = "PROCESSING STANDARD RELATIONSHIPS";
 
     public function run_task()
     {
-        $this->parent()->getCI()->load->model('registry/registry_object/registry_objects', 'ro');
-        foreach ($this->parent()->getTaskData("importedRecords") as $roID) {
-            $ro = $this->parent()->getCI()->ro->getByID($roID);
-            $ro->addRelationships();
-            // $ro->cacheRelationshipMetadata();
+        // addRelationships to all importedRecords
+        $importedRecords = $this->parent()->getTaskData("importedRecords");
+        $total = count($importedRecords);
 
-            // TODO: populate affectedRecords
+        $this->log("Processing relationship for $total records");
+        foreach ($importedRecords as $index => $id) {
+            $record = RegistryObjectsRepository::getRecordByID($id);
+            RelationshipProvider::process($record);
+            $this->updateProgress($index, $total, "Processed ($index/$total) $record->title($record->registry_object_id)");
+            tearDownEloquent();
         }
     }
+
 }
