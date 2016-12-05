@@ -269,6 +269,7 @@ class ImportTask extends Task
                     "ProcessIdentifiers",
                     "ProcessRelationships",
                     "ProcessGrantsRelationship",
+                    "PopulateAffectedList",
                     "ProcessAffectedRelationships",
                     "ProcessQualityMetadata",
                     "IndexPortal",
@@ -280,6 +281,7 @@ class ImportTask extends Task
                 $tasks = [
                     "ProcessRelationships",
                     "ProcessGrantsRelationship",
+                    "PopulateAffectedList",
                     "ProcessAffectedRelationships",
                     "IndexRelationship"
                 ];
@@ -311,6 +313,7 @@ class ImportTask extends Task
                     "IndexPortal",
                     "IndexRelationship",
                     "ProcessGrantsRelationship",
+                    "PopulateAffectedList",
                     "ProcessAffectedRelationships",
                     "IndexRelationship",
                     "FinishImport",

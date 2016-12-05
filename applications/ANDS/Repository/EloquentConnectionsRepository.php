@@ -38,6 +38,7 @@ class EloquentConnectionsRepository
     public function run($filters, $flags = [], $limit = 2000, $offset = 0)
     {
         $this->query = $this->constructQuery($filters, $flags, $limit, $offset);
+        debug("SQL: ". $this->query->toSql());
         return $this->query->get()->toArray();
     }
 

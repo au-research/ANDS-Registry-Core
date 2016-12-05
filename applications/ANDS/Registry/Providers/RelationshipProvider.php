@@ -542,6 +542,9 @@ class RelationshipProvider
      */
     public static function getAffectedIDsFromIDs($ids, $recursive = true)
     {
+
+        $ids = array_slice($ids, 0, 100);
+
         $affectedIDs = [];
         $directAndReverse = [];
 
@@ -553,6 +556,7 @@ class RelationshipProvider
             ->setFilter('from_id', $ids)
             ->setLimit(0)
             ->get();
+
 
         foreach ($direct as $relation) {
             $affectedIDs[] = (int)$relation->prop('to_id');

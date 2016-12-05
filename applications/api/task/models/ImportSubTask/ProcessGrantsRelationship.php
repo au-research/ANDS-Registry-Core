@@ -31,34 +31,5 @@ class ProcessGrantsRelationship extends ImportSubTask
         }
 
         $this->log("Process Grants (inferred) Relationships completed for $total records");
-
-        // re-obtain affected ids
-        $affectedRecordIDs = RelationshipProvider::getAffectedIDsFromIDs($importedRecords);
-
-        // get affected ids after the processing (to cater for new relationships)
-        $affectedRecordIDs = array_merge(
-            $affectedRecordIDs,
-            RelationshipProvider::getAffectedIDsFromIDs($importedRecords)
-        );
-
-        // make absolute sure that it's a unique list
-        $affectedRecordIDs = collect($affectedRecordIDs)
-            ->flatten()->unique()->values()->toArray();
-
-        // get currently affected records, if set, merge
-        $currentAffectedRecords = $this->parent()->getTaskData('affectedRecords');
-        if ($currentAffectedRecords) {
-            $affectedRecordIDs = array_merge($currentAffectedRecords, $affectedRecordIDs);
-        }
-
-        $affectedRecordIDs = array_values(array_unique($affectedRecordIDs));
-        $total = count($affectedRecordIDs);
-
-        // only set if affected is greater than 0
-        if ($total > 0) {
-            $this->parent()->setTaskData('affectedRecords', $affectedRecordIDs);
-        }
-
-        $this->log("Discovered $total affected records after Processing Grants relationships");
     }
 }
