@@ -8,6 +8,10 @@ use ANDS\Repository\DataSourceRepository;
 use ANDS\Repository\RegistryObjectsRepository;
 use Illuminate\Support\Collection;
 
+/**
+ * Class IndexPortal
+ * @package ANDS\API\Task\ImportSubTask
+ */
 class IndexPortal extends ImportSubTask
 {
     protected $title = "INDEXING PORTAL";
@@ -62,7 +66,10 @@ class IndexPortal extends ImportSubTask
             $this->updateProgress($index, $total, "Processed ($index/$total) $ro->title($roID)");
         }
 
-         $result = $this->parent()->getCI()->solr->init()->setCore('portal')->commit();
-        debug("Commit: ". $result);
+        $result = $this->parent()->getCI()->solr->init()->setCore('portal')->commit();
+        $result = json_decode($result, true);
+        if (array_key_exists('error', $result)) {
+            $this->addError("commit: ". $result['error']['msg']);
+        }
     }
 }
