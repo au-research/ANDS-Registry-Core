@@ -2,7 +2,7 @@
 
 
 namespace ANDS\API\Task\ImportSubTask;
-
+use ANDS\Registry\Providers\RelationshipProvider;
 
 /**
  * Class ProcessGrantsRelationship

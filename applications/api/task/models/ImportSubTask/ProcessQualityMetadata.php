@@ -3,7 +3,6 @@
 
 namespace ANDS\API\Task\ImportSubTask;
 use ANDS\Registry\Providers\QualityMetadataProvider;
-use ANDS\Repository\DataSourceRepository;
 use ANDS\Repository\RegistryObjectsRepository;
 
 /**
@@ -23,6 +22,8 @@ class ProcessQualityMetadata extends ImportSubTask
         $totalRecords = array_values(array_unique($totalRecords));
 
         $total = count($totalRecords);
+
+        $this->log("Running Quality metadata on $total records");
 
         foreach ($totalRecords as $index => $roID) {
             $record = RegistryObjectsRepository::getRecordByID($roID);
