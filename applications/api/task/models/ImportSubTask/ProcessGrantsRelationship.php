@@ -3,6 +3,7 @@
 
 namespace ANDS\API\Task\ImportSubTask;
 use ANDS\Registry\Providers\RelationshipProvider;
+use ANDS\Repository\RegistryObjectsRepository;
 
 /**
  * Class ProcessGrantsRelationship
@@ -21,7 +22,8 @@ class ProcessGrantsRelationship extends ImportSubTask
 
         $this->log("Process Grants (inferred) Relationships started for $total records");
 
-        foreach ($importedRecords as $index => $record) {
+        foreach ($importedRecords as $index => $id) {
+            $record = RegistryObjectsRepository::getRecordByID($id);
             // process implicit relationships for the grants network
             RelationshipProvider::processGrantsRelationship($record);
             $this->updateProgress($index, $total, "Processed ($index/$total) $record->title($record->registry_object_id)");
