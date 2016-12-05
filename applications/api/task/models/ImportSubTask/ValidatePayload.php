@@ -24,6 +24,9 @@ class ValidatePayload extends ImportSubTask
     public function run_task()
     {
         $counter = 0;
+
+        $total = count($this->parent()->getPayloads());
+        $this->log("Validating $total payload(s)");
         foreach ($this->parent()->getPayloads() as $index => &$payload) {
             $counter++;
             // this task requires unvalidated payload
@@ -66,7 +69,7 @@ class ValidatePayload extends ImportSubTask
             );
 
             $payload->init();
-            $this->log("Validation completed for $path");
+            //$this->log("Validation completed for $path");
         }
     }
 
