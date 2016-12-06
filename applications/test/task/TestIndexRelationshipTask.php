@@ -23,8 +23,27 @@ class TestIndexRelationshipTask extends UnitTest
 {
 
     /** @test **/
+    public function test_it_should_regenerate_slug()
+    {
+        // this is actually a script
+        // placeholder until a good place for script to be
+        $this->ci->load->model('registry/registry_object/registry_objects', 'ro');
+        $ids = RegistryObject::where('slug', "")->pluck('registry_object_id')->toArray();
+        foreach ($ids as $id) {
+            $ro = $this->ci->ro->getByID($id);
+            $ro->generateSlug();
+        }
+    }
+
+    /** @test **/
     public function test_it_should_sample_2()
     {
+        $this->ci->load->model('registry/registry_object/registry_objects', 'ro');
+        $ro = $this->ci->ro->getByID(971354);
+        $ro->generateSlug();
+
+        dd($ro->slug);
+
         $imported = [798252,
             798253,
             798254,

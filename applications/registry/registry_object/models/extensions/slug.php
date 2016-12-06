@@ -32,11 +32,13 @@ class Slug_Extension extends ExtensionBase
 
 		$result = explode(' ', $result);
 
+        $possibleSlug = implode('-', $result);
+
         // if the slug still consist of emptiness
         // group-id
-        if (count($result) == 0) {
+        if (count($result) == 0 || trim($possibleSlug) == "") {
             $result = [
-                $this->ro->group, $this->ro->id
+                url_title(strtolower($this->ro->group)), $this->ro->id
             ];
         }
 
