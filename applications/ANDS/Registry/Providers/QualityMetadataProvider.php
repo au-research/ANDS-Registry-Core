@@ -148,6 +148,7 @@ class QualityMetadataProvider
         $key = XMLUtil::getElementsByXPathFromSXML(
             $xml, 'ro:registryObject/ro:key'
         );
+
         $key = trim((string)$key[0]);
         $level_data['mandatoryInformation_key'] = [
             "passed" => "passed",
