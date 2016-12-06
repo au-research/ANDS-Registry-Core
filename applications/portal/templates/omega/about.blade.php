@@ -170,7 +170,7 @@
                             </a>
                         </div>
                         <div class="col-md-4 ">
-                            <a href="" data-toggle="modal" data-target="#help_modal" class="search_help">
+                            <a href="" data-toggle="modal" data-target="#help_modal" class="search_help help_link_custom">
                                 <div class="element-medium-top element-medium-bottom text-center os-animation animated fadeInUp"
                                      data-os-animation="fadeInUp" data-os-animation-delay=".3s"
                                      style="-webkit-animation: 0.3s;">

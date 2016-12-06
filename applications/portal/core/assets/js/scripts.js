@@ -290,7 +290,7 @@ jQuery(document).ready(function( $ ) {
         var url = $(this).attr('href');
         var redirect = window.location.href;
         location.href = url+'?redirect='+encodeURIComponent(redirect);
-    }).on('click', '.help_button', function(event){
+    }).on('click', '.help_button, .help_link_custom', function(event){
 
         var $loadModal = $('#help_modal')
         $.get( base_url + "page/help", function( data ) {
