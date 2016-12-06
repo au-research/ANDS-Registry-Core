@@ -7,6 +7,7 @@ namespace ANDS;
 use ANDS\RegistryObject\Identifier;
 use ANDS\RegistryObject\Metadata;
 use ANDS\Repository\RegistryObjectsRepository;
+use ANDS\Util\XMLUtil;
 use Illuminate\Database\Eloquent\Model;
 
 class RegistryObject extends Model
@@ -34,8 +35,16 @@ class RegistryObject extends Model
      */
     public function getCurrentData()
     {
-        return RecordData::where('registry_object_id', $this->registry_object_id)
-            ->where('current', "TRUE")->where('scheme', "rif")->first();
+        $currentData = RecordData::where('registry_object_id', $this->registry_object_id)
+            ->where('scheme', "rif")->where('current', 'TRUE')->first();
+
+        // get the last rif
+        if ($currentData === null) {
+            $currentData = RecordData::where('registry_object_id', $this->registry_object_id)
+                ->where('scheme', "rif")->orderBy('timestamp', 'desc')->first();
+        }
+
+        return $currentData;
     }
 
     /**
