@@ -155,7 +155,7 @@
                     </div>
                     <div class="row " data-os-animation="" data-os-animation-delay="">
                         <div class="col-md-4 ">
-                            <a href="http://ands.org.au/working-with-data/data-management/ands-for-researchers" target="_blank">
+                            <a href="http://www.ands.org.au/online-services/research-data-australia/collections-registry/providing-collection-descriptions" target="_blank">
                                 <div class="element-medium-top element-medium-bottom text-center os-animation animated fadeInUp"
                                      data-os-animation="fadeInUp" data-os-animation-delay=".0s"
                                      style="-webkit-animation: 0s;">
