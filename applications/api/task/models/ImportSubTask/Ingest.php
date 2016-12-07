@@ -92,6 +92,9 @@ class Ingest extends ImportSubTask
             $existingRecord->status = $this->parent()->getTaskData("targetStatus");
             $existingRecord->save();
             $this->parent()->addTaskData("importedRecords", $existingRecord->registry_object_id);
+            $this->parent()->addTaskData("imported_".$existingRecord->class."_ids", $existingRecord->registry_object_id);
+            $this->parent()->addTaskData("imported_".$existingRecord->class."_keys", $existingRecord->key);
+            
 
         } elseif (Repo::isPublishedStatus($this->parent()->getTaskData("targetStatus")) &&
                                 $deletedRecord = Repo::getDeletedRecord($key)) {
@@ -134,6 +137,8 @@ class Ingest extends ImportSubTask
 
             $deletedRecord->setRegistryObjectAttribute('updated', time());
             $this->parent()->addTaskData("importedRecords", $deletedRecord->registry_object_id);
+            $this->parent()->addTaskData("imported_".$deletedRecord->class."_ids", $deletedRecord->registry_object_id);
+            $this->parent()->addTaskData("imported_".$deletedRecord->class."_keys", $deletedRecord->key);
 
         } else {
             // $this->log("Record $key does not exist. Creating new record and data");
@@ -174,6 +179,8 @@ class Ingest extends ImportSubTask
 
             // TODO: add this record to the imported records
             $this->parent()->addTaskData("importedRecords", $newRecord->registry_object_id);
+            $this->parent()->addTaskData("imported_".$newRecord->class."_ids", $newRecord->registry_object_id);
+            $this->parent()->addTaskData("imported_".$newRecord->class."_keys", $newRecord->key);
         }
     }
 
