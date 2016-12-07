@@ -174,14 +174,35 @@ class Ingest extends ImportSubTask
                     $registryObject->saveXML()
                 )
             );
-
+            $newClass = $this->getClass($registryObject);
             // $this->log("Record id:$newRecord->registry_object_id created, key:$key with record data: id:$newVersion->id");
 
             // TODO: add this record to the imported records
             $this->parent()->addTaskData("importedRecords", $newRecord->registry_object_id);
-            $this->parent()->addTaskData("imported_".$newRecord->class."_ids", $newRecord->registry_object_id);
-            $this->parent()->addTaskData("imported_".$newRecord->class."_keys", $newRecord->key);
+            $this->parent()->addTaskData("imported_".$newClass."_ids", $newRecord->registry_object_id);
+            $this->parent()->addTaskData("imported_".$newClass."_keys", $newRecord->key);
         }
+    }
+
+    private static function getClass($registryObject){
+
+        if($registryObject->collection != null){
+            return "collection";
+        }
+        if($registryObject->party != null){
+            return "party";
+        }
+        if($registryObject->activity != null){
+            return "activity";
+        }
+        if($registryObject->service != null){
+            return "service";
+        }
+        else
+        {
+            return "unknown";
+        }
+
     }
 
 }
