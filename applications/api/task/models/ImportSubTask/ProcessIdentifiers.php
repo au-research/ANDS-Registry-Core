@@ -22,7 +22,10 @@ class ProcessIdentifiers extends ImportSubTask
         $this->log("Processing Identifiers for $total records");
         foreach ($importedRecords as $index => $roID) {
             $record = RegistryObjectsRepository::getRecordByID($roID);
-            IdentifierProvider::process($record);
+            $identifiers = IdentifierProvider::process($record);
+            foreach($identifiers as $identifier){
+                $this->parent()->addTaskData("imported_".$record->class."_identifiers", $identifier);
+            }
             $this->updateProgress($index, $total,
                 "Processed ($index/$total) $record->title($roID)");
         }

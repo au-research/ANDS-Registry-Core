@@ -21,7 +21,8 @@ class IdentifierProvider
     public static function process(RegistryObject $record)
     {
         static::deleteAllIdentifiers($record);
-        static::processIdentifiers($record);
+        $identifiers = static::processIdentifiers($record);
+        return $identifiers;
 
     }
 
@@ -45,9 +46,10 @@ class IdentifierProvider
      */
     public static function processIdentifiers(RegistryObject $record)
     {
-
+        $identifiers = [];
         $xml = $record->getCurrentData()->data;
         foreach (XMLUtil::getElementsByXPath($xml, 'ro:registryObject/ro:' . $record->class . '/ro:identifier') AS $identifier) {
+            $identifiers[] = trim((string) $identifier);
             Identifier::create(
                 ['registry_object_id'=>$record->registry_object_id,
                     'identifier'=>trim((string) $identifier),
@@ -56,5 +58,6 @@ class IdentifierProvider
             );
 
         }
+        return $identifiers;
     }
 }

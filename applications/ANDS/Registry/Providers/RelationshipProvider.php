@@ -540,10 +540,10 @@ class RelationshipProvider
      * @param $ids
      * @return array
      */
-    public static function getAffectedIDsFromIDs($ids, $recursive = true)
+    public static function getAffectedIDsFromIDs($ids, $keys, $recursive = true)
     {
 
-        $ids = array_slice($ids, 0, 100);
+//        $ids = array_slice($ids, 0, 100);
 
         $affectedIDs = [];
         $directAndReverse = [];
@@ -557,17 +557,22 @@ class RelationshipProvider
             ->setLimit(0)
             ->get();
 
-
         foreach ($direct as $relation) {
             $affectedIDs[] = (int)$relation->prop('to_id');
             $directAndReverse[] = (int)$relation->prop('to_id');
         }
 
-        // reverse
-        $keys = RegistryObject::whereIn('registry_object_id', $ids)->get()->pluck('key')->toArray();
         $reverse = $stdProvider->init()
             ->setFilter('to_key', $keys)
             ->setLimit(0)
+            ->count();
+
+        var_dump("reverse count is: ". $reverse);
+
+        // reverse
+        $reverse = $stdProvider->init()
+            ->setFilter('to_key', $keys)
+            ->setLimit(5000)
             ->get();
 
         foreach ($reverse as $relation) {
@@ -599,9 +604,6 @@ class RelationshipProvider
             $affectedIDs[] = (int)$relation->prop('to_id');
         }
 
-        $idsAndImmediate = array_merge($ids, $directAndReverse);
-        $keys = RegistryObject::whereIn('registry_object_id', $idsAndImmediate)->get()->pluck('key')->toArray();
-
         // child collections
         $childCollections = $impProvider->init()
             ->setFilter('to_key', $keys)
@@ -614,17 +616,16 @@ class RelationshipProvider
             $affectedIDs[] = (int)$relation->prop('from_id');
         }
 
-
         //parent activities
         $parentActivities = $impProvider->init()
-            ->setFilter('from_id', array_merge($ids, $directAndReverse))
+            ->setFilter('from_id', $ids)
             ->setFilter('relation_type', ['isPartOf', 'isOutputOf'])
             ->setFilter('to_class', 'activity')
             ->setLimit(0)
             ->get();
 
         foreach ($parentActivities as $relation) {
-            $affectedIDs[] = (int)$relation->prop('to_id');
+            $affectedIDs[] = (int) $relation->prop('to_id');
         }
 
         // reverse parent activities
@@ -634,7 +635,6 @@ class RelationshipProvider
             ->setFilter('from_class', 'activity')
             ->setLimit(0)
             ->get();
-
 
         foreach ($reverseParentActivities as $relation) {
             $affectedIDs[] = (int)$relation->prop('from_id');
@@ -684,27 +684,25 @@ class RelationshipProvider
             return $affectedIDs;
         }
 
-        // duplicate records and all of their affected, not recursive
-        foreach ($ids as $id) {
-            $record = RegistryObjectsRepository::getRecordByID($id);
-            $duplicates = $record->getDuplicateRecords();
-            $duplicateIDs = $duplicates->pluck('registry_object_id')->toArray();
+        $identifiers = RegistryObject\Identifier::whereIn('registry_object_id', $ids)->get()->pluck('identifier')->unique()->toArray();
 
-            // add them to the list as well
-            $affectedIDs = array_merge($affectedIDs, $duplicateIDs);
+        $duplicateIDs = RegistryObject\Identifier::whereIn('identifier', $identifiers)->get()->pluck('registry_object_id')->filter(function($item) use ($ids) {
+            return !in_array($item, $ids);
+        })->unique()->toArray();
 
-            // find affected by duplicates, not recursive
-            // should return before looking for duplicates of duplicates
-            $affectedIDsFromDuplicates = self::getAffectedIDsFromIDs($duplicateIDs, false);
-
-            // add those to the list
-            $affectedIDs = array_merge($affectedIDs, $affectedIDsFromDuplicates);
-
-            // list should now be flatten with unique values
-            $affectedIDs = collect($affectedIDs)
-                ->flatten()->values()->unique()
-                ->toArray();
+        if (count($duplicateIDs) === 0) {
+            return $affectedIDs;
         }
+
+        $duplicateKeys = RegistryObject::whereIn('registry_object_id', $duplicateIDs)->get()->pluck('key')->toArray();
+
+        $affectedIDsFromDuplicates = self::getAffectedIDsFromIDs($duplicateIDs, $duplicateKeys, false);
+
+        $affectedIDs = array_merge($affectedIDs, $duplicateIDs, $affectedIDsFromDuplicates);
+
+        $affectedIDs = collect($affectedIDs)
+            ->flatten()->values()->unique()
+            ->toArray();
 
         return $affectedIDs;
     }
