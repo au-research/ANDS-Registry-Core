@@ -82,9 +82,10 @@ class ProcessDelete extends ImportSubTask
         $toRelationQuery = "";
 
         $ids = collect($records)->pluck('registry_object_id')->toArray();
+        $keys = collect($records)->pluck('key')->toArray();
 
         // get the affected records IDs before deleting the PUBLISHED records
-        $affectedRecordIDs = RelationshipProvider::getAffectedIDsFromIDs($ids);
+        $affectedRecordIDs = RelationshipProvider::getAffectedIDsFromIDs($ids, $keys, true);
 
         // TODO: refactor to reduce SQL queries
         foreach ($records as $record) {
