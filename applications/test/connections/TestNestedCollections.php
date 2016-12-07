@@ -8,6 +8,7 @@ use ANDS\Registry\Providers\NestedConnectionsProvider;
 use ANDS\Registry\Relation;
 //use ANDS\Repository\CIActiveRecordConnectionsRepository as Repository;
 use ANDS\Repository\EloquentConnectionsRepository as Repository;
+use ANDS\Repository\RegistryObjectsRepository;
 
 /**
  * Class TestNestedCollections
@@ -15,6 +16,26 @@ use ANDS\Repository\EloquentConnectionsRepository as Repository;
  */
 class TestNestedCollections extends UnitTest
 {
+
+    /** @test **/
+    public function test_it_should_sample()
+    {
+        $conn = new NestedConnectionsProvider(new Repository);
+
+        $record = RegistryObjectsRepository::getRecordByID(124829);
+        $links = $conn->getNestedCollectionsFromChild($record->key, 3);
+
+        $links = array_values($links);
+        foreach ($links as &$link) {
+            $link = $link->format([
+                'from_id' => 'registry_object_id',
+                'from_title' => 'title',
+                'from_class' => 'class',
+                'from_slug' => 'slug',
+                'children' => 'children'
+            ], true);
+        }
+    }
 
     /**
      * @test

@@ -91,11 +91,12 @@ class Connections {
             }
 
             // merge relation
+            $parsedRelation = $relation;
             if (array_key_exists($key, $result)) {
-                $result[$key]->mergeWith($relation->getProperties());
-            } else {
-                $result[$key] = $relation;
+                $parsedRelation->mergeWith($relation->getProperties());
             }
+
+            $result[$key] = $parsedRelation;
         }
         return $result;
     }

@@ -7,7 +7,7 @@
 class Registry_objects extends CI_Model {
 
     //array of properties required from the Registry point for RDA purpose
-    public $rdaProperties = array('core', 'descriptions', 'relationships', 'subjects', 'spatial', 'temporal','citations','dates','relatedInfo', 'identifiers','rights', 'contact','directaccess', 'suggest', 'logo', 'tags','existenceDates', 'identifiermatch', 'accessPolicy', 'grantsNetwork');
+    public $rdaProperties = array('core', 'descriptions', 'relationships', 'subjects', 'spatial', 'temporal','citations','dates','relatedInfo', 'identifiers','rights', 'contact','directaccess', 'suggest', 'logo', 'tags','existenceDates', 'identifiermatch', 'accessPolicy', 'grantsNetwork', 'connectiontrees');
 
 	/**
 	 * get an _ro by ID

@@ -14,14 +14,15 @@ class NestedConnectionsProvider extends Connections
      * return a list of nested collections with children
      *
      * @param $key
+     * @param int $width
      * @return array
      */
-    public function getNestedCollections($key)
+    public function getNestedCollections($key, $width = 5)
     {
         $links = $this
             ->init()
             ->setFilter('from_key', $key)
-            ->setLimit(200)
+            ->setLimit(100)
             ->setFilter('to_class', 'collection')
             ->setFilter('to_status', 'PUBLISHED')
             ->setFilter('relation_type', 'hasPart')
@@ -31,7 +32,7 @@ class NestedConnectionsProvider extends Connections
             ->init()
             ->setReverse(true)
             ->setFilter('to_key', $key)
-            ->setLimit(200)
+            ->setLimit(100)
             ->setFilter('from_class', 'collection')
             ->setFilter('from_status', 'PUBLISHED')
             ->setFilter('relation_type', 'isPartOf')
@@ -39,8 +40,12 @@ class NestedConnectionsProvider extends Connections
 
         $links = array_merge($links, $reverseLinks);
 
-        foreach ($links as $key=>$relation) {
-            $nested = $this->getNestedCollections($relation->getProperty('to_key'));
+        if ($width <= 0 || count($links) == 0) {
+            return $links;
+        }
+
+        foreach ($links as $key => $relation) {
+            $nested = $this->getNestedCollections($relation->getProperty('to_key'), $width - 1);
             if (sizeof($nested) > 0) {
                 $links[$key]->setProperty('children', $nested);
             }
@@ -55,7 +60,7 @@ class NestedConnectionsProvider extends Connections
      * @param $key
      * @return array
      */
-    public function getNestedCollectionsFromChild($key)
+    public function getNestedCollectionsFromChild($key, $width = 5)
     {
         $parents = $this->getParentNestedCollections($key);
 
@@ -67,7 +72,7 @@ class NestedConnectionsProvider extends Connections
             $startFrom = $topParent->getProperty('from_key');
         }
 
-        return $this->init()->getNestedCollections($startFrom);
+        return $this->init()->getNestedCollections($startFrom, $width);
     }
 
     /**

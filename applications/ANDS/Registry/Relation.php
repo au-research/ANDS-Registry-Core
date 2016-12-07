@@ -49,9 +49,11 @@ class Relation
     /**
      * Relation constructor.
      */
-    function __construct()
+    function __construct($properties = [])
     {
-
+        foreach ($properties as $key => $value) {
+            $this->setProperty($key, $value);
+        }
     }
 
     /**
@@ -116,7 +118,7 @@ class Relation
      * @param $mapping
      * @return array
      */
-    public function format($mapping = [])
+    public function format($mapping = [], $removedUnmapped = false)
     {
         $result = [];
 
@@ -124,8 +126,19 @@ class Relation
             if (array_key_exists($key, $mapping)) {
                 $result[$mapping[$key]] = $value;
             } else {
+                if ($removedUnmapped == false) {
+                    $result[$key] = $value;
+                }
+            }
+
+            if ($key == "children" && is_array($value)) {
+                foreach ($value as $valueKey=>&$child) {
+                    $child = $child->format($mapping, $removedUnmapped);
+                }
+                $value = array_values($value);
                 $result[$key] = $value;
             }
+
         }
 
         return $result;
