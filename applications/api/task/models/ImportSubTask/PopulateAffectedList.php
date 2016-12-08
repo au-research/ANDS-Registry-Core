@@ -71,7 +71,7 @@ class PopulateAffectedList extends ImportSubTask
             return !in_array($item, $ids);
         })->unique()->values()->toArray();
 
-        $currentAffectedRecords = $this->parent()->getTaskData('affectedRecords') ? $this->parent()->getTaskByData('affectedRecords') : [];
+        $currentAffectedRecords = $this->parent()->getTaskData('affectedRecords') ? $this->parent()->getTaskData('affectedRecords') : [];
         if ($currentAffectedRecords) {
             $affectedRecordIDs = array_merge($currentAffectedRecords, $affectedRecordIDs);
         }
