@@ -147,7 +147,7 @@ angular.module('portal_theme',[]).
 							var search = $scope.el.search;
 							var filters = searches.constructFilterArray(search);
 							$scope.filter_query = searches.contructFilterQuery(filters);
-							
+
 							searches.search(filters).then(function(data){
 								$scope.result = data;
 								// $log.debug('results for ', $scope.id, data);

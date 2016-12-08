@@ -204,13 +204,13 @@ class Relation
         $relation->replaceProperty("relation_origin", $relationOrigin);
 
         // flip relation_type
-        $relation_type = $relation->prop('relation_type');
-        if (is_array($relation_type)) {
-            $relation_type = array_first($relation_type);
-        }
-        $relation->replaceProperty(
-            "relation_type", getReverseRelationshipString($relation_type)
-        );
+//        $relation_type = $relation->prop('relation_type');
+//        if (is_array($relation_type)) {
+//            $relation_type = array_first($relation_type);
+//        }
+//        $relation->replaceProperty(
+//            "relation_type", getReverseRelationshipString($relation_type)
+//        );
 
         return $relation;
     }

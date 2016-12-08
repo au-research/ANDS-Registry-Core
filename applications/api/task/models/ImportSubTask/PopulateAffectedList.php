@@ -4,6 +4,7 @@
 namespace ANDS\API\Task\ImportSubTask;
 
 use ANDS\Registry\Providers\RelationshipProvider;
+use ANDS\RegistryObject;
 
 /**
  * Class PopulateAffectedList
@@ -28,6 +29,15 @@ class PopulateAffectedList extends ImportSubTask
                     $keys, $this->parent()->getTaskData("imported_".$class."_keys")
                 );
             }
+        }
+
+        // try importedRecords if the imported_$class_ids are not populated
+        // this is the case for ManualImport pipeline
+        if (sizeof($ids) == 0) {
+            $importedRecords = $this->parent()->getTaskData('importedRecords');
+            $ids = $importedRecords;
+            $keys = RegistryObject::whereIn('registry_object_id', $ids)
+                ->get()->pluck('key')->toArray();
         }
 
         $total = count($ids);
