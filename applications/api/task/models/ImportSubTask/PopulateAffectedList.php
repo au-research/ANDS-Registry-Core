@@ -64,7 +64,7 @@ class PopulateAffectedList extends ImportSubTask
             $affectedRecordIDs = collect($affectedRecordIDs)
                 ->flatten()->unique()->values()->toArray();
 
-            $this->updateProgress($index, $total, "Processed ($index/$numChunk)");
+            $this->updateProgress($index, $numChunk, "Processed ($index/$numChunk)");
         }
 
         $affectedRecordIDs = collect($affectedRecordIDs)->filter(function($item) use ($ids){
