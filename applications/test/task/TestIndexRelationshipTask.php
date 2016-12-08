@@ -54,6 +54,7 @@ class TestIndexRelationshipTask extends UnitTest
         $record = RegistryObject::find(809032);
         $record = RegistryObject::find(840467);
         $record = RegistryObject::find(842576);
+        $record = RegistryObject::find(842576);
 
         $task = new ImportTask;
         $task->init([

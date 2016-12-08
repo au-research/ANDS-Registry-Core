@@ -33,8 +33,6 @@ class GrantsConnectionsProvider extends Connections
 
         debug("Getting funder for $record->title($record->registry_object_id)");
         $processed[] = $record->registry_object_id;
-        debug("Processed List: ". implode(',', $processed));
-        debug("Processed List Size: ". count($processed));
 
         // check in the view for existing funder
         $implicitRelation = ImplicitRelationshipView::where('relation_type', 'isFundedBy')
@@ -44,6 +42,7 @@ class GrantsConnectionsProvider extends Connections
 
         if ($implicitRelation) {
             $funder = RegistryObjectsRepository::getRecordByID($implicitRelation->to_id);
+            debug('Found funder: '. $funder->title);
             return $funder;
         }
 

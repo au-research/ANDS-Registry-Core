@@ -271,18 +271,6 @@ class RegistryObjectsRepository
     }
 
     /**
-     * Returns a list of record ID that is affected by this record id
-     *
-     * @param $id
-     * @return array
-     */
-    public static function findAffectedRecords($id)
-    {
-        return [];
-    }
-
-
-    /**
      * @param $registry_object_id
      */
     public static function deleteRelationships($registry_object_id){

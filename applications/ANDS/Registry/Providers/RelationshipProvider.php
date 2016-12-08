@@ -547,6 +547,7 @@ class RelationshipProvider
 
         $affectedIDs = [];
         $directAndReverse = [];
+        $directAndReverseKeys = [];
 
         // find directly affected
         $stdProvider = Connections::getStandardProvider();
@@ -560,14 +561,8 @@ class RelationshipProvider
         foreach ($direct as $relation) {
             $affectedIDs[] = (int)$relation->prop('to_id');
             $directAndReverse[] = (int)$relation->prop('to_id');
+            $directAndReverseKeys[] = $relation->prop('to_key');
         }
-
-        $reverse = $stdProvider->init()
-            ->setFilter('to_key', $keys)
-            ->setLimit(0)
-            ->count();
-
-        var_dump("reverse count is: ". $reverse);
 
         // reverse
         $reverse = $stdProvider->init()
@@ -578,12 +573,13 @@ class RelationshipProvider
         foreach ($reverse as $relation) {
             $affectedIDs[] = (int)$relation->prop('from_id');
             $directAndReverse[] = (int)$relation->prop('from_id');
+            $directAndReverseKeys[] = $relation->prop('from_key');
         }
 
         // funder
         $impProvider = Connections::getImplicitProvider();
         $funders = $impProvider->init()
-            ->setFilter('from_id', $ids)
+            ->setFilter('from_id', $directAndReverse)
             ->setFilter('relation_type', 'isFundedBy')
             ->setLimit(0)
             ->get();
@@ -594,7 +590,7 @@ class RelationshipProvider
 
         // parent collections
         $parentCollections = $impProvider->init()
-            ->setFilter('from_id', $ids)
+            ->setFilter('from_id', $directAndReverse)
             ->setFilter('relation_type', 'isPartOf')
             ->setFilter('to_class', 'collection')
             ->setLimit(0)
@@ -606,7 +602,7 @@ class RelationshipProvider
 
         // child collections
         $childCollections = $impProvider->init()
-            ->setFilter('to_key', $keys)
+            ->setFilter('to_key', $directAndReverseKeys)
             ->setFilter('relation_type', ['isPartOf', 'isFundedBy', 'isOutputOf'])
             ->setFilter('from_class', 'collection')
             ->setLimit(0)
