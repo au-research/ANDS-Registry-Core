@@ -32,7 +32,10 @@ class ProcessAffectedRelationships extends ImportSubTask
         ];
         foreach ($affectedRecords as $index => $roID) {
             $record = RegistryObjectsRepository::getRecordByID($roID);
-            $affected_by_class[$record->class][] = $record;
+            if($record){
+                $affected_by_class[$record->class][] = $record;
+            }
+
         }
 
         foreach ($affected_by_class as $class => $classArray) {
