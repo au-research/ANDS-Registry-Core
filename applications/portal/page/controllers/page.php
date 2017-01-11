@@ -413,6 +413,5 @@ class Page extends MX_Controller
     {
         parent::__construct();
         $this->load->library('blade');
-        $this->blade->set_template('omega');
     }
 }

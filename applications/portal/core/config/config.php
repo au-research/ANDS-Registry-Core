@@ -1,5 +1,5 @@
 <?php
-$config['default_template'] = 'omega';
+$config['default_template'] = 'ands-green';
 global $environment_directives;
 if (isset($environment_directives) && isset($environment_directives['portal'])) {
 	$config['default_model'] = $environment_directives['portal']['default_model'];

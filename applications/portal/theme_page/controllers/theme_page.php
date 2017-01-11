@@ -76,6 +76,5 @@ class Theme_page extends MX_Controller {
 	public function __construct() {
 		parent::__construct();
 		$this->load->library('blade');
-		$this->blade->set_template('omega');
 	}
 }
