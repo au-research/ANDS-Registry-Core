@@ -174,7 +174,7 @@ function default_error_handler($errno, $errstr, $errfile, $errline)
 	// Ignore E_STRICT no email either
 	if ($errno == E_STRICT) { return true; }
 
-	if (ENVIRONMENT == "development")
+	if (ENVIRONMENT == "development" || ini_get('display_errors') == 1)
 	{
 		throw new Exception($errstr . NL . "on line " . $errline . " (" . $errfile .")");
 	}

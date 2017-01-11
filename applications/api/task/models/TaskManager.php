@@ -191,6 +191,30 @@ class TaskManager
         return $task->toArray();
     }
 
+
+    public function stopTask($taskId)
+    {
+        $query = $this->db->get_where('tasks', ['id' => $taskId]);
+        if ($query->num_rows() == 0) throw new Exception("Task " . $taskId . " not found!");
+        $taskResult = $query->first_row(true);
+
+        $task = $this->getTaskObject($taskResult);
+        $task
+            ->setDb($this->db)
+            ->setCI($this->ci);
+
+        try {
+            $task->stopWithError();
+        } catch (Exception $e) {
+            $task->setStatus("STOPPED");
+            $task->log("Error: " . $e->getMessage());
+            $task->save();
+            return $task->toArray();
+        }
+
+        return $task->toArray();
+    }
+
     /**
      * Generate a Task object based on the task mysql row
      * Checks the params for the `class` first
