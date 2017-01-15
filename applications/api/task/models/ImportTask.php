@@ -474,6 +474,13 @@ class ImportTask extends Task
             $this->setPipeline($this->getTaskData('pipeline'));
         }
 
+        // if has harvestID error reporting should be enabled
+        if($this->harvestID)
+        {
+            error_reporting(E_ALL & ~E_STRICT);
+            ini_set('display_errors', '1');
+        }
+
         return $this;
     }
 
@@ -539,6 +546,33 @@ class ImportTask extends Task
             "datasource.".$this->dataSourceID.'.harvest',
             json_encode(Harvest::find($this->harvestID), true)
         );
+    }
+
+    public function stopWithError()
+    {
+        $this
+            ->bootEloquentModels()
+            ->loadParams();
+
+        $message = $this->getMessage();
+        $error_msg = "";
+
+        if (is_string($message)) {
+            $message = json_decode($message, true);
+            if (array_key_exists('error', $message) && $message['error']['errored'] === true){
+                $error_msg =  $message['error']['log'];
+            }
+        }
+        if ($dataSource = DataSource::find($this->dataSourceID)){
+            $dataSource->appendDataSourceLog($this->name . " Stopped with Error", "error", "IMPORTER");
+        }
+
+        $this->updateHarvest([
+            'status'=>'IDLE',
+            'importer_message'=> $error_msg
+        ]);
+        $this->setStatus("STOPPED");
+        $this->save();
     }
 
     public function checkHarvesterMessages()
