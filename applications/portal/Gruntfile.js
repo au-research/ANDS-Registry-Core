@@ -23,18 +23,18 @@ module.exports = function(grunt){
             styles:{
                 options:{separator:''},
                 src:[
-                    '<%= yeoman.templates %>/omega/assets/css/bootstrap2.min.css',
-                    '<%= yeoman.templates %>/omega/assets/css/theme.css',
-                    '<%= yeoman.templates %>/omega/assets/css/swatch-gray.css',
-                    '<%= yeoman.templates %>/omega/assets/css/swatch-black.min.css',
-                    '<%= yeoman.templates %>/omega/assets/css/swatch-ands-green.css',
-                    '<%= yeoman.templates %>/omega/assets/css/fonts.min.css',
+                    '<%= yeoman.templates %>/ands-green/assets/css/bootstrap2.min.css',
+                    '<%= yeoman.templates %>/ands-green/assets/css/theme.css',
+                    '<%= yeoman.templates %>/ands-green/assets/css/swatch-gray.css',
+                    '<%= yeoman.templates %>/ands-green/assets/css/swatch-black.min.css',
+                    '<%= yeoman.templates %>/ands-green/assets/css/swatch-ands-green.css',
+                    '<%= yeoman.templates %>/ands-green/assets/css/fonts.min.css',
 
                     '<%= yeoman.assets %>/lib/dynatree/src/skin/ui.dynatree.css',
                     '<%= yeoman.assets %>/lib/qtip2/jquery.qtip.css',
                     '<%= yeoman.assets %>/lib/angular-loading-bar/build/loading-bar.min.css',
 
-                    '<%= yeoman.templates %>/omega/assets/css/ands.css',
+                    '<%= yeoman.templates %>/ands-green/assets/css/ands.css',
                     '<%= yeoman.assets %>/css/portal.less.compiled.css',
                 ],
                 dest: '<%= yeoman.assets %>/css/portal.combine.css'
@@ -50,7 +50,7 @@ module.exports = function(grunt){
                     '<%=yeoman.assets %>/lib/angular-bootstrap/ui-bootstrap.min.js',
                     '<%=yeoman.assets %>/lib/angular-bootstrap/ui-bootstrap-tpls.min.js',
                     '<%=yeoman.assets %>/lib/angular-loading-bar/build/loading-bar.min.js',
-                    '<%=yeoman.templates %>/omega/assets/js/packages.min.js',
+                    '<%=yeoman.templates %>/ands-green/assets/js/packages.min.js',
                     '<%=yeoman.assets %>/lib/qtip2/jquery.qtip.js',
                     '<%=yeoman.assets %>/js/scripts.js',
                 ],
@@ -78,12 +78,12 @@ module.exports = function(grunt){
                 options:{separator:''},
                 nonull: true,
                 src:[
-                    '<%= yeoman.templates %>/omega/assets/css/bootstrap.min.css',
-                    '<%= yeoman.templates %>/omega/assets/css/theme.css',
-                    '<%= yeoman.templates %>/omega/assets/css/swatch-gray.css',
-                    '<%= yeoman.templates %>/omega/assets/css/swatch-white.css',
-                    '<%= yeoman.templates %>/omega/assets/css/swatch-black.min.css',
-                    '<%= yeoman.templates %>/omega/assets/css/fonts.min.css',
+                    '<%= yeoman.templates %>/ands-green/assets/css/bootstrap.min.css',
+                    '<%= yeoman.templates %>/ands-green/assets/css/theme.css',
+                    '<%= yeoman.templates %>/ands-green/assets/css/swatch-gray.css',
+                    '<%= yeoman.templates %>/ands-green/assets/css/swatch-white.css',
+                    '<%= yeoman.templates %>/ands-green/assets/css/swatch-black.min.css',
+                    '<%= yeoman.templates %>/ands-green/assets/css/fonts.min.css',
                     '<%= yeoman.assets %>/lib/qtip2/jquery.qtip.css',
                     '<%= yeoman.vocab_asset %>/js/lib/angular-loading-bar/build/loading-bar.min.css',
                     '<%= yeoman.vocab_asset %>/css/aui-just-lozenges.css',
@@ -104,7 +104,7 @@ module.exports = function(grunt){
                     '<%= yeoman.vocab_asset %>/js/lib/angular-bootstrap/ui-bootstrap-tpls.min.js',
                     '<%= yeoman.vocab_asset %>/js/lib/angular-loading-bar/build/loading-bar.min.js',
                     '<%= yeoman.vocab_asset %>/js/lib/ng-file-upload/angular-file-upload-all.min.js',
-                    '<%= yeoman.templates %>/omega/assets/js/packages.min.js',
+                    '<%= yeoman.templates %>/ands-green/assets/js/packages.min.js',
                     '<%= yeoman.vocab_asset %>/js/modified-ui-bootstrap-tpls-0.10.0.js'
                 ],
                 dest:'<%=yeoman.vocab_asset %>/js/lib.js'
@@ -140,8 +140,8 @@ module.exports = function(grunt){
         less: {
             core:{
                 files:{
-                    "<%= yeoman.assets %>/css/portal.less.compiled.css": "<%= yeoman.templates %>/omega/assets/less/ands-portal.less",
-                    "<%= yeoman.assets %>/css/print.css": "<%= yeoman.templates %>/omega/assets/less/print.less"
+                    "<%= yeoman.assets %>/css/portal.less.compiled.css": "<%= yeoman.templates %>/ands-green/assets/less/ands-portal.less",
+                    "<%= yeoman.assets %>/css/print.css": "<%= yeoman.templates %>/ands-green/assets/less/print.less"
                 }
             },
             vocab_less: {
