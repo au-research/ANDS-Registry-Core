@@ -25,14 +25,30 @@ class GrantsConnectionsProvider extends Connections
      * @param array $processed
      * @return RegistryObject|null
      */
-    public function getFunder(RegistryObject $record, $processed = [])
+    private $processed_by_getFunder = [];
+    private $processed_by_getParentsActivities = [];
+    private $processed_by_getParentsCollections = [];
+
+    public function getFunder(RegistryObject $record)
     {
-        if (in_array($record->registry_object_id, $processed)) {
-            return null;
+        if (in_array($record->registry_object_id, $this->processed_by_getFunder)) {
+            $implicitRelation = ImplicitRelationshipView::where('relation_type', 'isFundedBy')
+                ->where('relation_origin', 'GRANTS')
+                ->where('from_id', $record->id)
+                ->first();
+
+            if ($implicitRelation) {
+                $funder = RegistryObjectsRepository::getRecordByID($implicitRelation->to_id);
+                debug('Has funder: '. $funder->title);
+                return $funder;
+            }
+            else{
+                return null; 
+            }
         }
 
         debug("Getting funder for $record->title($record->registry_object_id)");
-        $processed[] = $record->registry_object_id;
+        $this->processed_by_getFunder[] = $record->registry_object_id;
 
         // check in the view for existing funder
         $implicitRelation = ImplicitRelationshipView::where('relation_type', 'isFundedBy')
@@ -56,11 +72,7 @@ class GrantsConnectionsProvider extends Connections
         if ($record->class == 'collection') {
             $parentCollections = $this->getDirectGrantCollections($record);
             foreach ($parentCollections as $collection) {
-                if (in_array($collection->registry_object_id, $processed)) {
-                    continue;
-                }
-                $funder = $this->getFunder($collection, $processed);
-                $processed[] = $collection->registry_object_id;
+                $funder = $this->getFunder($collection);
                 if ($funder !== null) {
                     return $funder;
                 }
@@ -69,11 +81,7 @@ class GrantsConnectionsProvider extends Connections
             // and look for activities that produces this collection
             $activityProducers = $this->getDirectActivityProducer($record);
             foreach ($activityProducers as $activity) {
-                if (in_array($activity->registry_object_id, $processed)) {
-                    continue;
-                }
-                $funder = $this->getFunder($activity, $processed);
-                $processed[] = $activity->registry_object_id;
+                $funder = $this->getFunder($activity);
                 if ($funder !== null) {
                     return $funder;
                 }
@@ -85,11 +93,7 @@ class GrantsConnectionsProvider extends Connections
             // from this node, find a funder of every activity that it is a part of
             $parentActivities = $this->getDirectGrantActivities($record);
             foreach ($parentActivities as $activity) {
-                if (in_array($activity->registry_object_id, $processed)) {
-                    continue;
-                }
-                $funder = $this->getFunder($activity, $processed);
-                $processed[] = $activity->registry_object_id;
+                $funder = $this->getFunder($activity);
                 if ($funder !== null) {
                     return $funder;
                 }
@@ -103,11 +107,7 @@ class GrantsConnectionsProvider extends Connections
         $duplicateRecords = $duplicateRecords->splice(0, 10);
 
         foreach ($duplicateRecords as $duplicate) {
-            if (in_array($duplicate->registry_object_id, $processed)) {
-                continue;
-            }
-            $funder = $this->getFunder($duplicate, $processed);
-            $processed[] = $duplicate->registry_object_id;
+            $funder = $this->getFunder($duplicate);
             if ($funder !== null) {
                 return $funder;
             }
