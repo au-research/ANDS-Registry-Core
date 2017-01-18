@@ -1,7 +1,7 @@
 
 @if(is_dev())
-<link rel="stylesheet" href="{{asset_url('ands-green/css/bootstrap.min.css','templates')}}" media="screen">
-<link rel="stylesheet" href="{{asset_url('ands-green/css/theme.css','templates')}}" media="screen">
+<link rel="stylesheet" href="{{asset_url('ands-green/css/bootstrap.css','templates')}}" media="screen">
+<link rel="stylesheet" href="{{asset_url('ands-green/css/theme.min.css','templates')}}" media="screen">
 <link rel="stylesheet" href="{{asset_url('ands-green/css/swatch-gray.css','templates')}}" media="screen">
 <link rel="stylesheet" href="{{asset_url('ands-green/css/swatch-black.min.css','templates')}}" media="screen">
 <link rel="stylesheet" href="{{asset_url('ands-green/css/swatch-ands-green.css','templates')}}" media="screen">
