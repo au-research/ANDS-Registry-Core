@@ -9,6 +9,7 @@ namespace ANDS\API\Task;
 
 use ANDS\Util\NotifyUtil;
 use Symfony\Component\Stopwatch\Stopwatch;
+use \Exception as Exception;
 
 class Task
 {
@@ -60,7 +61,6 @@ class Task
     {
         $stopwatch = new Stopwatch();
         $stopwatch->start($this->getName());
-
         $start = microtime(true);
 
         $this->hook_start();
@@ -78,7 +78,8 @@ class Task
 
         // high memory limit and execution time prep for big tasks
         // web server can still reclaim worker thread and terminate PHP script execution
-        ini_set('memory_limit', '1024M');
+        // ini_set('memory_limit', '1024M');
+        ini_set('memory_limit', '128M');
         ini_set('max_execution_time', 2 * ONE_HOUR);
         set_time_limit(0);
         ignore_user_abort(true);
@@ -99,25 +100,37 @@ class Task
             'memory' => $event->getMemory(),
             'memory_mb' => $event->getMemory() / 1048576
         ]);
-
-        $this->finalize($start);
+        try {
+            $this->finalize($start);
+        }
+        catch (Exception $e){
+            $stderr = fopen('php://stderr','a');
+            fwrite($stderr,'Unable to Finalise Task' . $e->getMessage());
+            exit(1);
+        }
         return $this;
     }
 
     public function finalize($start)
     {
-        $end = microtime(true);
-        if ($this->getStatus() !== "STOPPED") {
-            $this->setStatus('COMPLETED');
-        } else {
-            $this->log("Task completed with error");
+
+        try {
+            $end = microtime(true);
+            if ($this->getStatus() !== "STOPPED") {
+                $this->setStatus('COMPLETED');
+            } else {
+                $this->log("Task completed with error");
+            }
+            $this
+                ->log("Task finished at " . date($this->dateFormat, $end))
+                ->log("Peak memory usage: " . memory_get_peak_usage() . " bytes")
+                ->log("Took: " . $this->formatPeriod($end, $start))
+                ->save();
+            $this->hook_end();
         }
-        $this
-            ->log("Task finished at " . date($this->dateFormat, $end))
-            ->log("Peak memory usage: " . memory_get_peak_usage() . " bytes")
-            ->log("Took: " . $this->formatPeriod($end, $start))
-            ->save();
-        $this->hook_end();
+        catch(Exception $e){
+            throw new Exception($e);
+        }
     }
 
     /**
@@ -261,10 +274,17 @@ class Task
             // $this->log('This task does not have an ID, does not save');
             return true;
         }
-
-        $updateStatus = $this->update_db($data);
-        if (!$updateStatus) {
-            $this->log('Task data failed to update to the database');
+        $updateStatus = null;
+        try {
+            $updateStatus = $this->update_db($data);
+        }
+        catch(Exception $e){
+            // if we can't update the database throwing exception and
+            // trying to finalize will just get into an infinite loop!!
+            // just print error and die
+            $stderr = fopen('php://stderr','a'); //both (a)ppending, and (w)riting will work
+            fwrite($stderr,'Task data failed to update to the database' . $e->getMessage());
+            exit(1);
         }
 
 //        NotifyUtil::notify(
@@ -327,10 +347,19 @@ class Task
      */
     public function update_db($stuff)
     {
-        $result = $this->db
-            ->where('id', $this->getId())
-            ->update('tasks', $stuff);
-
+        $result = null;
+        try {
+            $this->db->reconnect();
+            $result = $this->db
+                ->where('id', $this->getId())
+                ->update('tasks', $stuff);
+        }
+        catch(Exception $e){
+            throw new Exception($e->getMessage());
+        }
+        if(!$result){
+            throw new Exception(" Update DB failed: ". $this->db->_error_message());
+        }
         return $result;
     }
 

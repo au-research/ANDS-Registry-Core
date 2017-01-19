@@ -47,7 +47,7 @@ class TestQualityMetadataProvider extends UnitTest
     public function test_it_should_process_quality_for_all_records()
     {
         initEloquent();
-        $records = RegistryObject::where('status', 'PUBLISHED')->where('data_source_id', 7)->get();
+        $records = RegistryObject::where('status', 'PUBLISHED')->where('data_source_id', 147)->get();
 
         foreach ($records as $record) {
             QualityMetadataProvider::process($record);

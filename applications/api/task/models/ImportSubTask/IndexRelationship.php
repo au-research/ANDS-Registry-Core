@@ -50,18 +50,19 @@ class IndexRelationship extends ImportSubTask
         // TODO: MAJORLY REFACTOR THIS
         foreach ($totalRecords as $index => $roID) {
             $record = RegistryObjectsRepository::getRecordByID($roID);
+            if($record){
+                $allRelationships = RelationshipProvider::getMergedRelationships($record);
 
-            $allRelationships = RelationshipProvider::getMergedRelationships($record);
+                // update portal index
+                $this->updatePortalIndex($record, $allRelationships);
 
-            // update portal index
-            $this->updatePortalIndex($record, $allRelationships);
+                // update relation index
+                $this->updateRelationIndex($record, $allRelationships);
 
-            // update relation index
-            $this->updateRelationIndex($record, $allRelationships);
-
-            $this->updateProgress(
-                $index, $total, "Processed ($index/$total) $record->title($roID)"
-            );
+                $this->updateProgress(
+                    $index, $total, "Processed ($index/$total) $record->title($roID)"
+                );
+            }
         }
 
         $this->parent()->getCI()->solr->init()->setCore('portal')->commit();

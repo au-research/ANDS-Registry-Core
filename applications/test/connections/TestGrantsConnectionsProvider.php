@@ -5,6 +5,7 @@ namespace ANDS\Test;
 
 
 use ANDS\Registry\Providers\GrantsConnectionsProvider;
+use ANDS\RegistryObject\ImplicitRelationship;
 use ANDS\Repository\RegistryObjectsRepository;
 
 /**
@@ -71,13 +72,19 @@ class TestGrantsConnectionsProvider extends UnitTest
     {
         $collectionkey = 'hdl:1959.4/004_340';
         $record = RegistryObjectsRepository::getPublishedByKey($collectionkey);
-
+        ImplicitRelationship::where('from_id', $record->registry_object_id)->delete();
         $funder = GrantsConnectionsProvider::create()
             ->getFunder($record);
-
         $this->assertEquals($funder->title, 'Department of the Environment');
         $this->assertEquals($funder->key, 'http://dx.doi.org/10.13039/501100003531');
     }
-
+    
+    /** @test **/
+    public function test_processed_list(){
+        $collectionkey = "https://researchhub.research.uwa.edu.au/vivo/individual/dataset981";
+        $record = RegistryObjectsRepository::getPublishedByKey($collectionkey);
+        $funder = GrantsConnectionsProvider::create()
+            ->getFunder($record);
+    }
 
 }

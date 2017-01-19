@@ -350,7 +350,7 @@ class RelationshipProvider
         $provider = GrantsConnectionsProvider::create();
 
         // find funder and saved it, getFunder is recursive by default
-        $record->deleteRegistryObjectMetadata('funder_id');
+
         if ($funder = $provider->getFunder($record)) {
             ImplicitRelationship::firstOrCreate([
                 'from_id' => $record->registry_object_id,
@@ -361,7 +361,7 @@ class RelationshipProvider
         }
 
         // find all parents collections
-        $record->deleteRegistryObjectMetadata('parents_collection_ids');
+
         if ($collections = $provider->getParentsCollections($record)) {
             foreach ($collections as $collection) {
                 ImplicitRelationship::firstOrCreate([
@@ -374,7 +374,7 @@ class RelationshipProvider
         }
 
         // find all parents activities
-        $record->deleteRegistryObjectMetadata('parents_activity_ids');
+
         if ($activities = $provider->getParentsActivities($record)) {
             foreach ($activities as $activity) {
 

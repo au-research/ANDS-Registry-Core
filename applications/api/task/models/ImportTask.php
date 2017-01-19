@@ -65,17 +65,18 @@ class ImportTask extends Task
             $this->saveSubTaskData($nextTask);
         }
         $this->saveSubTasks();
+        $this->save();
         return true;
     }
 
     public function saveSubTaskData($taskObject)
     {
         foreach ($this->subtasks as &$task) {
-            if ($task['name'] === $taskObject->name) {
+            if ($task['name'] === $taskObject->name && $task['status'] != "COMPLETED") {
                 $task = $taskObject->toArray();
+                break;
             }
         }
-        $this->save();
     }
 
     public function hook_end()
@@ -310,10 +311,10 @@ class ImportTask extends Task
                     "ProcessDelete",
                     "ProcessIdentifiers",
                     "ProcessRelationships",
+                    "ProcessGrantsRelationship",
                     "ProcessQualityMetadata",
                     "IndexPortal",
                     "IndexRelationship",
-                    "ProcessGrantsRelationship",
                     "PopulateAffectedList",
                     "ProcessAffectedRelationships",
                     "IndexRelationship",
@@ -550,29 +551,15 @@ class ImportTask extends Task
 
     public function stopWithError()
     {
-        $this
-            ->bootEloquentModels()
-            ->loadParams();
+        $this->initialiseTask();
 
         $message = $this->getMessage();
         $error_msg = "";
-
-        if (is_string($message)) {
-            $message = json_decode($message, true);
-            if (array_key_exists('error', $message) && $message['error']['errored'] === true){
-                $error_msg =  $message['error']['log'];
-            }
-        }
-        if ($dataSource = DataSource::find($this->dataSourceID)){
-            $dataSource->appendDataSourceLog($this->name . " Stopped with Error", "error", "IMPORTER");
+        if (array_key_exists('error', $message) && $message['error']['errored'] === true){
+            $error_msg =  $message['error']['log'];
         }
 
-        $this->updateHarvest([
-            'status'=>'IDLE',
-            'importer_message'=> $error_msg
-        ]);
-        $this->setStatus("STOPPED");
-        $this->save();
+        $this->stoppedWithError($error_msg, false);
     }
 
     public function checkHarvesterMessages()
@@ -598,9 +585,10 @@ class ImportTask extends Task
     }
 
 
-    public function stoppedWithError($message)
+    public function stoppedWithError($message, $notify = true)
     {
         $this->updateHarvest([
+            'status' => 'STOPPED BY ERROR',
             'importer_message'=> $message
         ]);
 
@@ -626,8 +614,8 @@ class ImportTask extends Task
         }
 
         $this->writeLog("ImportStopped");
-
-        parent::stoppedWithError($message);
+        if($notify)
+            parent::stoppedWithError($message);
     }
 
     public function getDataSourceMessage()
