@@ -136,7 +136,7 @@ class Spatial_Extension extends ExtensionBase
 
         foreach ($spatial_elts AS $spatial) {
 
-            $type = $spatial["type"];
+            $type = (string)trim($spatial["type"], $mask = " \t\n\r\0\x0B\xE2\x80\x8B");
             $value = preg_replace('!\s+!', ' ', (string)$spatial);
 
             if ($this->isValidKmlPolyCoords($value) && ($type == 'kmlPolyCoords' || $type == 'gmlKmlPolyCoords')) {
