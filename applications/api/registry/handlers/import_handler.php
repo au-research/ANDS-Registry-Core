@@ -2,6 +2,7 @@
 namespace ANDS\API\Registry\Handler;
 use ANDS\API\Registry\Handler\errorPipeline;
 use ANDS\API\Task\TaskManager;
+use ANDS\DataSource;
 use ANDS\Payload;
 use ANDS\Repository\DataSourceRepository;
 use \Exception as Exception;
@@ -30,16 +31,21 @@ class ImportHandler extends Handler
         }
 
         $from = array_key_exists('from', $params) ? $params['from'] : 'harvester';
-        $dataSourceID = array_key_exists('ds_id', $params) ? $params['ds_id'] : false;
-        if (!$dataSourceID) {
-            throw new Exception('Data Source ID must be provided');
-        }
+//        $dataSourceID = array_key_exists('ds_id', $params) ? $params['ds_id'] : false;
+//        if (!$dataSourceID) {
+//            throw new Exception('Data Source ID must be provided');
+//        }
 
         // setup eloquent models
         initEloquent();
 
+        $dataSourceID = array_key_exists('ds_id', $params) ? $params['ds_id'] : null;
+        if ($dataSourceID === null && array_key_exists('ds_name', $params)) {
+            $dataSourceID = DataSource::where('title', $params['ds_name'])->first()->data_source_id;
+        }
+
         // get Data Source
-        $dataSource = DataSourceRepository::getByID($params['ds_id']);
+        $dataSource = DataSourceRepository::getByID($dataSourceID);
         if ($dataSource === null) {
             throw new Exception("Data Source $dataSourceID Not Found");
         }
