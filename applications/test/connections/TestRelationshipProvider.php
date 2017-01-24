@@ -33,6 +33,16 @@ class TestRelationshipProvider extends UnitTest
         // TODO
     }
 
+    public function test_it_sould_get_correct_title_for_identifierRelationship(){
+        $collectionkey = 'AUTestingRecords3:Funder/Program12/Hub2/GrantDP0987282/Collection1';
+        $record = RegistryObjectsRepository::getPublishedByKey($collectionkey);
+        $relationships = RelationshipProvider::getIdentifierRelationship($record);
+        var_dump($relationships);
+        // TODO
+    }
+
+
+
     /** @test **/
     public function test_it_should_find_affected_records_by_ids()
     {
