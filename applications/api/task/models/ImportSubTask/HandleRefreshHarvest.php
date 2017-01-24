@@ -45,7 +45,7 @@ class HandleRefreshHarvest extends ImportSubTask
                     $this->parent()->batchID);
                 $record->status = $this->parent()->getTaskData("targetStatus");
                 $record->save();
-                $this->updateProgress($index, $total, "Processed ($index/$total) (unchanged) $record->title($roID) ");
+                // $this->updateProgress($index, $total, "Processed ($index/$total) (unchanged) $record->title($roID) ");
             } else {
                 $this->log("Unable to find RegistryObject ID: ". $roID);
             }
