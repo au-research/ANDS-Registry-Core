@@ -27,8 +27,10 @@ class ProcessQualityMetadata extends ImportSubTask
 
         foreach ($totalRecords as $index => $roID) {
             $record = RegistryObjectsRepository::getRecordByID($roID);
-            QualityMetadataProvider::process($record);
-            $this->updateProgress($index, $total, "Processed ($index/$total) $record->title($roID)");
+            if($record){
+                QualityMetadataProvider::process($record);
+                $this->updateProgress($index, $total, "Processed ($index/$total) $record->title($roID)");
+            }
         }
     }
 }

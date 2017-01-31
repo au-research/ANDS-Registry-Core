@@ -544,6 +544,10 @@ class RelationshipProvider
     {
 
 //        $ids = array_slice($ids, 0, 100);
+        $ids = collect($ids)->map(function($item){
+            return (int) $item;
+        })->toArray();
+
 
         $affectedIDs = [];
         $directAndReverse = [];
@@ -579,7 +583,7 @@ class RelationshipProvider
         // funder
         $impProvider = Connections::getImplicitProvider();
         $funders = $impProvider->init()
-            ->setFilter('from_id', $directAndReverse)
+            ->setFilter('from_id', array_merge($directAndReverse, $ids))
             ->setFilter('relation_type', 'isFundedBy')
             ->setLimit(0)
             ->get();
@@ -590,7 +594,7 @@ class RelationshipProvider
 
         // parent collections
         $parentCollections = $impProvider->init()
-            ->setFilter('from_id', $directAndReverse)
+            ->setFilter('from_id', array_merge($directAndReverse, $ids))
             ->setFilter('relation_type', 'isPartOf')
             ->setFilter('to_class', 'collection')
             ->setLimit(0)
@@ -602,7 +606,7 @@ class RelationshipProvider
 
         // child collections
         $childCollections = $impProvider->init()
-            ->setFilter('to_key', $directAndReverseKeys)
+            ->setFilter('to_key', array_merge($directAndReverseKeys, $keys))
             ->setFilter('relation_type', ['isPartOf', 'isFundedBy', 'isOutputOf'])
             ->setFilter('from_class', 'collection')
             ->setLimit(0)
@@ -669,8 +673,11 @@ class RelationshipProvider
         }
 
         $affectedIDs = array_filter($affectedIDs, function($item) use ($ids){
+
             return !in_array($item, $ids);
         });
+
+       // var_dump($affectedIDs);
 
         $affectedIDs = collect($affectedIDs)
             ->flatten()->values()->unique()
