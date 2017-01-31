@@ -14,6 +14,8 @@ class DataSource extends Model
 {
     protected $table = "data_sources";
     protected $primaryKey = "data_source_id";
+    public $timestamps = false;
+    protected $fillable = ['key', 'slug', 'title', 'record_owner'];
 
     public function dataSourceAttributes()
     {
@@ -104,6 +106,11 @@ class DataSource extends Model
         );
 
         return DataSourceLog::create($logContent);
+    }
+
+    public function stopHarvest()
+    {
+
     }
 
 }
