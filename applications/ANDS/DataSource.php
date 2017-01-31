@@ -108,9 +108,21 @@ class DataSource extends Model
         return DataSourceLog::create($logContent);
     }
 
+    public function dataSourceLog()
+    {
+        return $this->hasMany(DataSourceLog::class, "data_source_id", "data_source_id");
+    }
+
+    public function startHarvest()
+    {
+        $this->harvest->status = "SCHEDULED";
+        $this->harvest->save();
+    }
+
     public function stopHarvest()
     {
-
+        $this->harvest->status = "STOPPED";
+        $this->harvest->save();
     }
 
 }

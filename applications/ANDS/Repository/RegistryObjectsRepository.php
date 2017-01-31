@@ -72,7 +72,9 @@ class RegistryObjectsRepository
             $record->delete();
 
             // TODO: delete Portal and Relation index?
+            return true;
         }
+        return false;
     }
 
     /**
