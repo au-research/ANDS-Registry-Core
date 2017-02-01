@@ -136,14 +136,25 @@ class DatasourcesHandler extends Handler
      */
     private function handleRecords(DataSource $dataSource)
     {
+        // define list
+        $limit = $this->getInput('limit') !== null ? $this->getInput('limit') : 10;
+        $offset = $this->getInput('offset') !== null ? $this->getInput('offset') : 0;
+
+        $filters = [];
+        $fields = ['status', 'class', 'type', 'group'];
+        foreach ($fields as $field) {
+            if ($this->getInput($field) !== null) {
+                $filters[$field] = $this->getInput($field);
+            }
+        }
+
+        $records = RegistryObjectsRepository::getRecordsByDataSource($dataSource, $limit, $offset, $filters);
+
         // delete all records in a datasource
         // DELETE api/registry/datasources/:id/records
         if ($this->isDelete()) {
             return Importer::instantDeleteRecords($dataSource, [
-                'ids' =>
-                    RegistryObject::where('data_source_id', $dataSource->data_source_id)
-                    ->where('status', "!=", "DELETED")
-                    ->get()->pluck('registry_object_id')
+                'ids' => $records->pluck('registry_object_id')
             ]);
         }
 
@@ -158,20 +169,7 @@ class DatasourcesHandler extends Handler
         }
 
         // browse records
-        $offset = $this->getInput('offset') ?: 0;
-        $limit = $this->getInput('limit') ?: 10;
-
-        $query = RegistryObject::where('data_source_id', $dataSource->data_source_id)
-            ->limit($limit)->offset($offset);
-
-        $fields = ['status', 'class', 'type', 'group'];
-        foreach ($fields as $field) {
-            if ($this->getInput($field) !== null) {
-                $query = $query->where($field, $this->getInput($field));
-            }
-        }
-
-        return $query->get();
+        return $records;
     }
 
     /**

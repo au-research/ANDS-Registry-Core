@@ -3,6 +3,7 @@
 namespace ANDS\Repository;
 
 use ANDS\API\Task\ImportTask;
+use ANDS\DataSource;
 use ANDS\RegistryObject;
 use ANDS\RegistryObjectAttribute;
 use ANDS\RegistryObject\Metadata;
@@ -283,5 +284,21 @@ class RegistryObjectsRepository
 
     public static function deleteIdentifierRelationships($registry_object_id){
         IdentifierRelationship::where('registry_object_id', $registry_object_id)->delete();
+    }
+
+    public static function getRecordsByDataSource(DataSource $dataSource, $limit, $offset, $filters = [])
+    {
+
+        $query = RegistryObject::where('data_source_id', $dataSource->data_source_id);
+
+        if ($limit > 0) {
+            $query = $query->limit($limit)->offset($offset);
+        }
+
+        foreach ($filters as $key => $value) {
+            $query = $query->where($key, $value);
+        }
+
+        return $query->get();
     }
 }
