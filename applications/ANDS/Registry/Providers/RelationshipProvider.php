@@ -85,6 +85,32 @@ class RelationshipProvider
             }
         }
         return $result;
+        // duplicates
+//        $duplicates = $record->getDuplicateRecords();
+//
+//        if(count($duplicates) == 0)
+//        {
+//            return $result;
+//        }
+//
+//        foreach ($duplicates as $duplicate) {
+//            $duplicateRelationships = static::get($duplicate);
+//
+//            $allRelationships = collect($duplicateRelationships)->flatten(1)->values()->all();
+//            foreach ($allRelationships as $relation) {
+//
+//                $key = $relation->getUniqueID();
+//                $swappedRelation = $relation->switchFromRecord($record);
+//
+//                if (array_key_exists($key, $result)) {
+//                    $result[$key]->mergeWith( $swappedRelation->getProperties());
+//                } else {
+//                    $result[$key] =  $swappedRelation;
+//                }
+//            }
+//        }
+//
+//        return $result;
     }
 
     /**
@@ -401,7 +427,7 @@ class RelationshipProvider
      * @param RegistryObject $record
      * @return array
      */
-    public static function getDirectRelationship(RegistryObject $record)
+    public static function getDirectRelationship(RegistryObject $record, $includeDuplicate = true)
     {
         // TODO: use Connections Provider to get these data
         $provider = Connections::getStandardProvider();
@@ -411,6 +437,19 @@ class RelationshipProvider
             ->setFilter('from_id', $record->registry_object_id)
             ->setLimit(0)
             ->get();
+
+        if ($includeDuplicate === false) {
+            return $relations;
+        }
+
+        // duplicates
+        $duplicates = $record->getDuplicateRecords();
+        foreach ($duplicates as $duplicate) {
+            $duplicateRelationships = self::getDirectRelationship($duplicate, false);
+            foreach ($duplicateRelationships as $duplicateRelationship) {
+                $relations[] = $duplicateRelationship->switchFromRecord($record);
+            }
+        }
 
         return $relations;
     }
@@ -520,7 +559,7 @@ class RelationshipProvider
      * @param RegistryObject $record
      * @return array
      */
-    public static function getReverseRelationship(RegistryObject $record)
+    public static function getReverseRelationship(RegistryObject $record, $includeDuplicate = true)
     {
         $provider = Connections::getStandardProvider();
 
@@ -530,6 +569,18 @@ class RelationshipProvider
             ->setReverse(true)
             ->get();
 
+        if ($includeDuplicate === false) {
+            return $relations;
+        }
+
+        // duplicates
+        $duplicates = $record->getDuplicateRecords();
+        foreach ($duplicates as $duplicate) {
+            $duplicateRelationships = self::getReverseRelationship($duplicate, false);
+            foreach ($duplicateRelationships as $duplicateRelationship) {
+                $relations[] = $duplicateRelationship->switchFromRecord($record);
+            }
+        }
         return $relations;
     }
 
@@ -696,6 +747,10 @@ class RelationshipProvider
         if (count($duplicateIDs) === 0) {
             return $affectedIDs;
         }
+
+        $duplicateIDs = collect($duplicateIDs)->map(function($item){
+            return (int) $item;
+        })->toArray();
 
         $duplicateKeys = RegistryObject::whereIn('registry_object_id', $duplicateIDs)->get()->pluck('key')->toArray();
 

@@ -30,7 +30,7 @@ class TestGrantsConnectionsProvider extends UnitTest
     public function test_it_should_find_parent_activity()
     {
         $activityKey = 'ncris.innovation.gov.au/activity/19';
-        $activityKey = 'IMOS/f9c151bd-d95b-4af6-8cb7-21c05b7b383b';
+        $activityKey = 'AUTestingRecords3:Funder/Program12';
 
         $record = RegistryObjectsRepository::getPublishedByKey($activityKey);
 

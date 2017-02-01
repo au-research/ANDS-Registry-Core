@@ -7,6 +7,7 @@ use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Registry\Providers\GrantsConnectionsProvider;
+use ANDS\Registry\Relation;
 
 /**
  * Class TestRelationshipProvider
@@ -44,22 +45,92 @@ class TestRelationshipProvider extends UnitTest
 //    }
 
 
-
     /** @test **/
-    public function test_it_should_find_affected_records_by_ids_for209()
+    public function test_it_should_retrieve_relationships_for_duplicate_records()
     {
         initEloquent();
-        $ids = RegistryObject::where('data_source_id', 209)->where('status', 'PUBLISHED')->pluck('registry_object_id')->toArray();
-        $keys = RegistryObject::where('data_source_id', 209)->where('status', 'PUBLISHED')->pluck('key')->toArray();
+        $record = RegistryObjectsRepository::getPublishedByKey('AUTestingRecords3:Funder/Program12/Hub1/ProjectLP0347149/Collection3Duplicate');
 
-        $affectedIDs = RelationshipProvider::getAffectedIDsFromIDs($ids, $keys, true);
+        $relationships = RelationshipProvider::getImplicitRelationship($record);
+        echo($record->registry_object_id.NL);
+        $duplicates = $record->getDuplicateRecords();
+        echo("DUPLICATES".NL);
+        foreach ($duplicates as $duplicate) {
+            echo("ID:" . $duplicate->registry_object_id.NL);
+            echo("TITLE:". $duplicate->title.NL);
+        }
 
-        $record = RegistryObject::find(577960);
+        foreach($relationships as $rel) {
+            var_dump($rel->getProperty('to_key'));
+        }
 
-        RelationshipProvider::processGrantsRelationship($record);
+        $affectedIds = RelationshipProvider::getAffectedIDsFromIDs([$record->registry_object_id], [$record->key]);
+        echo("AFFECTED IDS".NL);
+        var_dump($affectedIds);
+        $mergedRelationships = RelationshipProvider::getMergedRelationships($record);
+        echo("MERGED".NL);
+        foreach ($mergedRelationships as $rel) {
+            echo("FROM ID:" . $rel->getProperty('from_id').NL);
+            echo("TO KEY:" . $rel->getProperty('to_key').NL);
+        }
+
+
+
+
+        echo("::::::::::::::::::::::::::::::::".NL);
+        echo("::::::::::::::::::::::::::::::::".NL);
+
+        $record = RegistryObjectsRepository::getPublishedByKey('AUTestingRecords3:Funder/Program12/Hub1/ProjectLP0347149/Collection3');
+
+        echo($record->registry_object_id.NL);
+
+
+        $duplicates = $record->getDuplicateRecords();
+        echo("DUPLICATES".NL);
+        foreach ($duplicates as $duplicate) {
+            echo("ID:" . $duplicate->registry_object_id.NL);
+            echo("TITLE:". $duplicate->title.NL);
+        }
+
+
         $relationships = RelationshipProvider::getImplicitRelationship($record);
 
-        dd($relationships);
+
+        foreach($relationships as $rel) {
+            var_dump($rel->getProperty('to_key'));
+        }
+        $affectedIds = RelationshipProvider::getAffectedIDsFromIDs([$record->registry_object_id], [$record->key]);
+        echo("AFFECTED IDS".NL);
+        var_dump($affectedIds);
+
+
+
+        $mergedRelationships = RelationshipProvider::getMergedRelationships($record);
+        echo("MERGED".NL);
+        foreach ($mergedRelationships as $rel) {
+            echo("FROM ID:" . $rel->getProperty('from_id').NL);
+            echo("TO KEY:" . $rel->getProperty('to_key').NL);
+
+        }
+
+    }
+
+
+//    /** @test **/
+//    public function test_it_should_find_affected_records_by_ids_for209()
+//    {
+//        initEloquent();
+//        $ids = RegistryObject::where('data_source_id', 209)->where('status', 'PUBLISHED')->pluck('registry_object_id')->toArray();
+//        $keys = RegistryObject::where('data_source_id', 209)->where('status', 'PUBLISHED')->pluck('key')->toArray();
+//
+//        $affectedIDs = RelationshipProvider::getAffectedIDsFromIDs($ids, $keys, true);
+//
+//        $record = RegistryObject::find(577960);
+//
+//        RelationshipProvider::processGrantsRelationship($record);
+//        $relationships = RelationshipProvider::getImplicitRelationship($record);
+//
+//        dd($relationships);
 
 //        var_dump($affectedIDs);
 
@@ -72,7 +143,7 @@ class TestRelationshipProvider extends UnitTest
 //        $affectedIDs = RelationshipProvider::getAffectedIDsFromIDs($ids, $keys, true);
 //        var_dump($affectedIDs);
 
-    }
+//   }
 //
 //    public function test_it_should_find_affected_records_by_ids_for211()
 //    {
