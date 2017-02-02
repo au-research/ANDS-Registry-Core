@@ -57,7 +57,7 @@ class Importer
     {
         $params = [
             'ds_id' => $dataSource->data_source_id,
-            'batchID' => $batchID
+            'batch_id' => $batchID
         ];
 
         $params = array_merge($params, $customParameters);
