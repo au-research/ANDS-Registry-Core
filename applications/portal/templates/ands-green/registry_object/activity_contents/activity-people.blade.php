@@ -23,5 +23,9 @@
         @endforeach
         ({{ $relation }})
     @endforeach
+    @if($related['researchers']['count'] > 5)
+        <br>
+        <a href="{{ $related['researchers']['searchUrl'] }}">View all {{ $related['researchers']['count'] }} related researchers</a>
+    @endif
 </p>
 @endif
