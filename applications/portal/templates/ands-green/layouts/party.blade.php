@@ -10,7 +10,7 @@
     		    <section class="section swatch-gray" style="z-index:1">
     		    	<div class="container">
     		    		<div class="row element-short-top">
-                            <div class="col-md-9 view-content" style="padding-right:0"  itemscope itemtype="http://schema.org/Dataset">
+                            <div class="col-md-9 view-content" style="padding-right:0" >
                                 <div class="panel panel-primary swatch-white panel-content">
                                     <div class="panel-tools">
                                         @include('registry_object/contents/icon')
