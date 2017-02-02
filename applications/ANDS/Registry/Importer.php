@@ -65,7 +65,7 @@ class Importer
         $importTask->init([
             'name' => "Import Task for $dataSource->title ($batchID)",
             'params' => http_build_query($params)
-        ])->skipLoadingPayload();
+        ]);
 
         $importTask->initialiseTask();
         $importTask->enableRunAllSubTask();
