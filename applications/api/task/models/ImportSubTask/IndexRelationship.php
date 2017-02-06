@@ -75,15 +75,14 @@ class IndexRelationship extends ImportSubTask
      */
     public function updatePortalIndex($record, $relationships)
     {
+        // if there's no relationship, quit
         if (count($relationships) == 0) {
             return;
         }
 
         $this->parent()->getCI()->solr->init()->setCore('portal');
         // update portal index
-        $updateDoc = [
-            'id' => $record->registry_object_id
-        ];
+        $updateDoc = [];
 
         foreach ($relationships as $relation) {
             $rel = $relation->format();
@@ -108,6 +107,15 @@ class IndexRelationship extends ImportSubTask
                 }
             }
         }
+
+        // if there's no valid relationship, then quit
+        if (count($updateDoc) == 0) {
+            return;
+        }
+
+        $updateDoc['id'] = $record->registry_object_id;
+
+
 
         // relation_grants_isFundedBy
         // relation_grants_isOutputOf
