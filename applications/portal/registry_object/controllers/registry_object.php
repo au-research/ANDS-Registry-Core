@@ -530,7 +530,7 @@ class Registry_object extends MX_Controller
                 monolog(
                     array(
                         'event' => 'portal_preview_doi',
-                        'record' => $this->getRecordFields($ro),
+                        'record' => $ro ? $this->getRecordFields($ro) : null,
                         'identifier_doi' => $this->input->get('identifier_doi')
                     ),
                     'portal', 'info'
