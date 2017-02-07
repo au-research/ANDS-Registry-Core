@@ -1,3 +1,8 @@
+
+ALTER TABLE `dbs_registry`.`registry_object_identifier_relationships` ALTER COLUMN `relation_type` SET DEFAULT 'hasAssociationWith';
+UPDATE `dbs_registry`.`registry_object_identifier_relationships` set `relation_type` = 'hasAssociationWith' where `relation_type` = '';
+
+
 DROP VIEW `dbs_registry`.`identifier_relationships`;
 CREATE
 VIEW `dbs_registry`.`identifier_relationships` AS
@@ -38,4 +43,5 @@ VIEW `dbs_registry`.`identifier_relationships` AS
   WHERE
     `ros`.`status` = 'PUBLISHED' AND (`rot`.`status` IS NULL OR `rot`.`status` = 'PUBLISHED');
     
-    
+
+
