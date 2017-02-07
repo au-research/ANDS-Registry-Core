@@ -161,7 +161,7 @@ class Registry_object extends MX_Controller {
                 ->init([
                     'name' => 'ARO',
                     'params' => http_build_query([
-                        'pipeline' => 'ManualEntry',
+                        'pipeline' => 'ManualImport',
                         'source' => 'manual',
                         'ds_id' => $record->data_source_id,
                         'user_name' => $this->user->name(),
@@ -315,7 +315,7 @@ class Registry_object extends MX_Controller {
             ->init([
                 'name' => 'ARO',
                 'params' => http_build_query([
-                    'pipeline' => 'ManualEntry',
+                    'pipeline' => 'ManualImport',
                     'source' => 'manual',
                     'ds_id' => $ro->data_source_id,
                     'batch_id' => $batchID,
@@ -1148,7 +1148,7 @@ class Registry_object extends MX_Controller {
             ->init([
                 'name' => 'Reinstate',
                 'params' => http_build_query([
-                    'pipeline' => 'ManualEntry',
+                    'pipeline' => 'ManualImport',
                     'source' => 'manual',
                     'ds_id' => $dataSourceID,
                     'batch_id' => $batchID,

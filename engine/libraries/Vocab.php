@@ -231,9 +231,9 @@ class Vocab {
         // only log if the response is 200
         if ($http_code === 200) {
             $this->CI->cache->file->save($cacheId, $content, 36000);
-        } else {
-            ulog("vocab response error: " . $http_code . " (" . $queryStr .")", "error", "error");
-        }
+        } //else {
+         //   ulog("vocab response error: " . $http_code . " (" . $queryStr .")", "error", "error");
+        //}
 
         return $content;
     }

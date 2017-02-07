@@ -598,6 +598,10 @@ class Registry_objects extends CI_Model {
 						   				}
 						   			}
 						   		}
+
+						   		// remove DELETED records from the search
+                                $db->where('status !=', 'DELETED');
+
 						   		if($args['where_in']){
 						   			if(sizeof($args['where_in'])>0){
 						   				$db->where_in('registry_objects.registry_object_id',$args['where_in']);

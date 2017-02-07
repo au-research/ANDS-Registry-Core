@@ -31,12 +31,13 @@ class Core extends ROHandler {
         $result['site_name'] = "Research Data Australia";
         $result['description'] = isset($this->index['list_description']) ? $this->index['list_description'] : 'No description text available.';
         if(isset($this->index['theme_page'])) {
+            $result['theme_page'] = array();
             if(is_array($this->index['theme_page'])){
                 foreach($this->index['theme_page'] as $theTheme){
-                    $result['theme_page']=$theTheme;
+                    $result['theme_page'][]=$theTheme;
                 }
             }else{
-                $result['theme_page'] = $this->index['theme_page'];
+                $result['theme_page'][] = $this->index['theme_page'];
             }
 
         }

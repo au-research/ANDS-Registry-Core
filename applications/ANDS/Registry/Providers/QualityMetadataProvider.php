@@ -16,11 +16,11 @@ use ANDS\Registry\Providers\RelationshipProvider;
 class QualityMetadataProvider
 {
     // future
-    // private static $attributeKeys = ['quality_level', 'warning_count', 'error_count'];
+    private static $attributeKeys = ['quality_level', 'warning_count', 'error_count'];
     // private static $metadataKeys = ['level_html', 'quality_html'];
     // current
 
-    private static $attributeKeys = ['quality_level'];
+    //private static $attributeKeys = ['quality_level'];
     private static $metadataKeys = ['quality_info', 'quality_html'];
 
     /**

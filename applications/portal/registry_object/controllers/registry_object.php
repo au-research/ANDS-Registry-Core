@@ -258,9 +258,14 @@ class Registry_object extends MX_Controller
         }
 
         // Theme Page
-        $the_theme = false;
+
         if (isset($ro->core['theme_page'])) {
-            $the_theme = $this->getTheme($ro->core['theme_page']);
+            $the_theme = array();
+            foreach($ro->core['theme_page'] as $a_theme) {
+                $the_theme[] = $this->getTheme($a_theme);
+            }
+        }else{
+            $the_theme = false;
         }
 
         //Decide whethere to show the duplicate identifier
@@ -525,7 +530,7 @@ class Registry_object extends MX_Controller
                 monolog(
                     array(
                         'event' => 'portal_preview_doi',
-                        'record' => $this->getRecordFields($ro),
+                        'record' => $ro ? $this->getRecordFields($ro) : null,
                         'identifier_doi' => $this->input->get('identifier_doi')
                     ),
                     'portal', 'info'
@@ -549,11 +554,13 @@ class Registry_object extends MX_Controller
         //extract out the principal investigators into new array and remove them from the researcher's array
         $r = array();
         foreach($related as $key=>$relation){
-            foreach($relation['relation']as $relationship) {
-                if($relationship == 'isPrincipalInvestigatorOf'||$relationship == 'hasPrincipalInvestigator') {
-                    array_push($r, $relation);
-                    unset($related[$key]);
-                }
+            if(isset($relation['relation'])){
+                foreach($relation['relation']as $relationship) {
+                    if($relationship == 'isPrincipalInvestigatorOf'||$relationship == 'hasPrincipalInvestigator') {
+                        array_push($r, $relation);
+                        unset($related[$key]);
+                    }
+                } 
             }
         }
 

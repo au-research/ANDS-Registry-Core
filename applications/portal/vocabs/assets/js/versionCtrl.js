@@ -45,7 +45,7 @@
 
         /* Flag to determine when to reset the content of the release date
            text field. Set by set_release_date_textfield() and reset by the
-           watcher put on vocab.release_date. */
+           watcher put on version.release_date. */
         $scope.restore_release_date_value = false;
 
         /* Special handling for the release date field. Needed because of the
@@ -60,30 +60,28 @@
             var dateValParsed = Date.parse($scope.original_version.release_date);
             if (!isNaN(dateValParsed)) {
                 var dateVal = new Date(dateValParsed);
-                $scope.vocab.release_date = dateVal;
-                // Set this flag, so that the watcher on the vocab.release_date
+                $scope.version.release_date = dateVal;
+                // Set this flag, so that the watcher on the
+                // version.release_date
                 // field knows to reset the text field to the value we got
                 // from the database.
                 $scope.restore_release_date_value = true;
             }
-            else {
-                $scope.vocab.release_date = new Date();
-            }
         };
 
-        /* Callback function used by the watcher on vocab.release_date.
+        /* Callback function used by the watcher on version.release_date.
            It overrides the content of the release date text field with
            the value we got from the database. */
         $scope.do_restore_release_date = function() {
             $('#release_date').val($scope.original_version.release_date);
         }
 
-        /* Watcher for the vocab.release_data field. If we got notification
+        /* Watcher for the version.release_data field. If we got notification
            (via the restore_release_date_value flag) to reset the text
            field value, schedule the reset. Need to use $timeout
            so that the reset happens after the current round of
            AngularJS model value propagation. */
-        $scope.$watch('vocab.release_date', function() {
+        $scope.$watch('version.release_date', function() {
             if ($scope.restore_release_date_value) {
                 $scope.restore_release_date_value = false;
                 $timeout($scope.do_restore_release_date, 0);

@@ -85,6 +85,32 @@ class RelationshipProvider
             }
         }
         return $result;
+        // duplicates
+//        $duplicates = $record->getDuplicateRecords();
+//
+//        if(count($duplicates) == 0)
+//        {
+//            return $result;
+//        }
+//
+//        foreach ($duplicates as $duplicate) {
+//            $duplicateRelationships = static::get($duplicate);
+//
+//            $allRelationships = collect($duplicateRelationships)->flatten(1)->values()->all();
+//            foreach ($allRelationships as $relation) {
+//
+//                $key = $relation->getUniqueID();
+//                $swappedRelation = $relation->switchFromRecord($record);
+//
+//                if (array_key_exists($key, $result)) {
+//                    $result[$key]->mergeWith( $swappedRelation->getProperties());
+//                } else {
+//                    $result[$key] =  $swappedRelation;
+//                }
+//            }
+//        }
+//
+//        return $result;
     }
 
     /**
@@ -305,6 +331,9 @@ class RelationshipProvider
                 }
                 $identifiers_div = "";
                 $identifier_count = 0;
+                if(trim($relation_type) == ''){
+                    $relation_type = "hasAssociationWith";
+                }
                 foreach ($related_info->identifier as $i) {
                     $identifiers_div .= getResolvedLinkForIdentifier((string)$i['type'], trim((string)$i));
                     $identifier_count++;
@@ -350,7 +379,7 @@ class RelationshipProvider
         $provider = GrantsConnectionsProvider::create();
 
         // find funder and saved it, getFunder is recursive by default
-        $record->deleteRegistryObjectMetadata('funder_id');
+
         if ($funder = $provider->getFunder($record)) {
             ImplicitRelationship::firstOrCreate([
                 'from_id' => $record->registry_object_id,
@@ -361,7 +390,7 @@ class RelationshipProvider
         }
 
         // find all parents collections
-        $record->deleteRegistryObjectMetadata('parents_collection_ids');
+
         if ($collections = $provider->getParentsCollections($record)) {
             foreach ($collections as $collection) {
                 ImplicitRelationship::firstOrCreate([
@@ -374,7 +403,7 @@ class RelationshipProvider
         }
 
         // find all parents activities
-        $record->deleteRegistryObjectMetadata('parents_activity_ids');
+
         if ($activities = $provider->getParentsActivities($record)) {
             foreach ($activities as $activity) {
 
@@ -401,7 +430,7 @@ class RelationshipProvider
      * @param RegistryObject $record
      * @return array
      */
-    public static function getDirectRelationship(RegistryObject $record)
+    public static function getDirectRelationship(RegistryObject $record, $includeDuplicate = true)
     {
         // TODO: use Connections Provider to get these data
         $provider = Connections::getStandardProvider();
@@ -411,6 +440,19 @@ class RelationshipProvider
             ->setFilter('from_id', $record->registry_object_id)
             ->setLimit(0)
             ->get();
+
+        if ($includeDuplicate === false) {
+            return $relations;
+        }
+
+        // duplicates
+        $duplicates = $record->getDuplicateRecords();
+        foreach ($duplicates as $duplicate) {
+            $duplicateRelationships = self::getDirectRelationship($duplicate, false);
+            foreach ($duplicateRelationships as $duplicateRelationship) {
+                $relations[] = $duplicateRelationship->switchFromRecord($record);
+            }
+        }
 
         return $relations;
     }
@@ -520,7 +562,7 @@ class RelationshipProvider
      * @param RegistryObject $record
      * @return array
      */
-    public static function getReverseRelationship(RegistryObject $record)
+    public static function getReverseRelationship(RegistryObject $record, $includeDuplicate = true)
     {
         $provider = Connections::getStandardProvider();
 
@@ -530,6 +572,18 @@ class RelationshipProvider
             ->setReverse(true)
             ->get();
 
+        if ($includeDuplicate === false) {
+            return $relations;
+        }
+
+        // duplicates
+        $duplicates = $record->getDuplicateRecords();
+        foreach ($duplicates as $duplicate) {
+            $duplicateRelationships = self::getReverseRelationship($duplicate, false);
+            foreach ($duplicateRelationships as $duplicateRelationship) {
+                $relations[] = $duplicateRelationship->switchFromRecord($record);
+            }
+        }
         return $relations;
     }
 
@@ -544,6 +598,10 @@ class RelationshipProvider
     {
 
 //        $ids = array_slice($ids, 0, 100);
+        $ids = collect($ids)->map(function($item){
+            return (int) $item;
+        })->toArray();
+
 
         $affectedIDs = [];
         $directAndReverse = [];
@@ -579,7 +637,7 @@ class RelationshipProvider
         // funder
         $impProvider = Connections::getImplicitProvider();
         $funders = $impProvider->init()
-            ->setFilter('from_id', $directAndReverse)
+            ->setFilter('from_id', array_merge($directAndReverse, $ids))
             ->setFilter('relation_type', 'isFundedBy')
             ->setLimit(0)
             ->get();
@@ -590,7 +648,7 @@ class RelationshipProvider
 
         // parent collections
         $parentCollections = $impProvider->init()
-            ->setFilter('from_id', $directAndReverse)
+            ->setFilter('from_id', array_merge($directAndReverse, $ids))
             ->setFilter('relation_type', 'isPartOf')
             ->setFilter('to_class', 'collection')
             ->setLimit(0)
@@ -602,7 +660,7 @@ class RelationshipProvider
 
         // child collections
         $childCollections = $impProvider->init()
-            ->setFilter('to_key', $directAndReverseKeys)
+            ->setFilter('to_key', array_merge($directAndReverseKeys, $keys))
             ->setFilter('relation_type', ['isPartOf', 'isFundedBy', 'isOutputOf'])
             ->setFilter('from_class', 'collection')
             ->setLimit(0)
@@ -669,8 +727,11 @@ class RelationshipProvider
         }
 
         $affectedIDs = array_filter($affectedIDs, function($item) use ($ids){
+
             return !in_array($item, $ids);
         });
+
+       // var_dump($affectedIDs);
 
         $affectedIDs = collect($affectedIDs)
             ->flatten()->values()->unique()
@@ -689,6 +750,10 @@ class RelationshipProvider
         if (count($duplicateIDs) === 0) {
             return $affectedIDs;
         }
+
+        $duplicateIDs = collect($duplicateIDs)->map(function($item){
+            return (int) $item;
+        })->toArray();
 
         $duplicateKeys = RegistryObject::whereIn('registry_object_id', $duplicateIDs)->get()->pluck('key')->toArray();
 

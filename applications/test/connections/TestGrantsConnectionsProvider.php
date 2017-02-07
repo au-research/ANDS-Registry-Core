@@ -5,6 +5,7 @@ namespace ANDS\Test;
 
 
 use ANDS\Registry\Providers\GrantsConnectionsProvider;
+use ANDS\RegistryObject\ImplicitRelationship;
 use ANDS\Repository\RegistryObjectsRepository;
 
 /**
@@ -29,7 +30,7 @@ class TestGrantsConnectionsProvider extends UnitTest
     public function test_it_should_find_parent_activity()
     {
         $activityKey = 'ncris.innovation.gov.au/activity/19';
-        $activityKey = 'IMOS/f9c151bd-d95b-4af6-8cb7-21c05b7b383b';
+        $activityKey = 'AUTestingRecords3:Funder/Program12';
 
         $record = RegistryObjectsRepository::getPublishedByKey($activityKey);
 
@@ -71,13 +72,19 @@ class TestGrantsConnectionsProvider extends UnitTest
     {
         $collectionkey = 'hdl:1959.4/004_340';
         $record = RegistryObjectsRepository::getPublishedByKey($collectionkey);
-
+        ImplicitRelationship::where('from_id', $record->registry_object_id)->delete();
         $funder = GrantsConnectionsProvider::create()
             ->getFunder($record);
-
         $this->assertEquals($funder->title, 'Department of the Environment');
         $this->assertEquals($funder->key, 'http://dx.doi.org/10.13039/501100003531');
     }
-
+    
+    /** @test **/
+    public function test_processed_list(){
+        $collectionkey = "https://researchhub.research.uwa.edu.au/vivo/individual/dataset981";
+        $record = RegistryObjectsRepository::getPublishedByKey($collectionkey);
+        $funder = GrantsConnectionsProvider::create()
+            ->getFunder($record);
+    }
 
 }

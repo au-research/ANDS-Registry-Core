@@ -2,6 +2,7 @@
 namespace ANDS\API\Registry\Handler;
 use ANDS\API\Registry\Handler\errorPipeline;
 use ANDS\API\Task\TaskManager;
+use ANDS\DataSource;
 use ANDS\Payload;
 use ANDS\Repository\DataSourceRepository;
 use \Exception as Exception;
@@ -30,16 +31,21 @@ class ImportHandler extends Handler
         }
 
         $from = array_key_exists('from', $params) ? $params['from'] : 'harvester';
-        $dataSourceID = array_key_exists('ds_id', $params) ? $params['ds_id'] : false;
-        if (!$dataSourceID) {
-            throw new Exception('Data Source ID must be provided');
-        }
+//        $dataSourceID = array_key_exists('ds_id', $params) ? $params['ds_id'] : false;
+//        if (!$dataSourceID) {
+//            throw new Exception('Data Source ID must be provided');
+//        }
 
         // setup eloquent models
         initEloquent();
 
+        $dataSourceID = array_key_exists('ds_id', $params) ? $params['ds_id'] : null;
+        if ($dataSourceID === null && array_key_exists('ds_name', $params)) {
+            $dataSourceID = DataSource::where('title', $params['ds_name'])->first()->data_source_id;
+        }
+
         // get Data Source
-        $dataSource = DataSourceRepository::getByID($params['ds_id']);
+        $dataSource = DataSourceRepository::getByID($dataSourceID);
         if ($dataSource === null) {
             throw new Exception("Data Source $dataSourceID Not Found");
         }
@@ -68,7 +74,7 @@ class ImportHandler extends Handler
         $harvest = $dataSource->harvest()->first();
 
         $task = [
-            'name' => "HARVESTER INITIATED IMPORT - $dataSource->title($dataSource->data_source_id) - $batchID",
+            'name' => "Harvester initiated import - $dataSource->title($dataSource->data_source_id) - $batchID",
             'type' => 'PHPSHELL',
             'frequency' => 'ONCE',
             'priority' => 2,
@@ -101,7 +107,7 @@ class ImportHandler extends Handler
         Payload::write($dataSource->data_source_id, $batchID, $content);
 
         $task = [
-            'name' => "IMPORT VIA URL - $dataSource->title($dataSource->data_source_id) - $url",
+            'name' => "Import via URL - $dataSource->title($dataSource->data_source_id) - $url",
             'type' => 'POKE',
             'frequency' => 'ONCE',
             'priority' => 2,
@@ -150,7 +156,7 @@ class ImportHandler extends Handler
         Payload::write($dataSource->data_source_id, $batchID, $xml);
 
         $task = [
-            'name' => "Import via Pasted XML - $dataSource->title($dataSource->data_source_id)",
+            'name' => "Import via pasted XML - $dataSource->title($dataSource->data_source_id)",
             'type' => 'POKE',
             'frequency' => 'ONCE',
             'priority' => 2,
@@ -188,6 +194,8 @@ class ImportHandler extends Handler
      */
     private function errorPipeline($dataSource, $batchID, $noRecords = false)
     {
+        $title = "Harvest error";
+
         $params = [
             'class' => 'import',
             'pipeline' => 'ErrorWorkflow',
@@ -198,11 +206,12 @@ class ImportHandler extends Handler
         ];
 
         if ($noRecords) {
+            $title = "Harvester initiated import";
             $params['noRecords'] = true;
         }
 
         $task = [
-            'name' => "Harvest Error - $dataSource->title($dataSource->data_source_id)",
+            'name' =>  "$title - $dataSource->title($dataSource->data_source_id)",
             'type' => 'POKE',
             'frequency' => 'ONCE',
             'priority' => 2,

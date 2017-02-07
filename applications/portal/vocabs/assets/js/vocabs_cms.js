@@ -176,9 +176,6 @@
                 // from the database.
                 $scope.restore_creation_date_value = true;
             }
-            else {
-                $scope.vocab.creation_date = new Date();
-            }
         };
 
         /* Callback function used by the watcher on vocab.creation_date.

@@ -50,18 +50,19 @@ class IndexRelationship extends ImportSubTask
         // TODO: MAJORLY REFACTOR THIS
         foreach ($totalRecords as $index => $roID) {
             $record = RegistryObjectsRepository::getRecordByID($roID);
+            if($record){
+                $allRelationships = RelationshipProvider::getMergedRelationships($record);
 
-            $allRelationships = RelationshipProvider::getMergedRelationships($record);
+                // update portal index
+                $this->updatePortalIndex($record, $allRelationships);
 
-            // update portal index
-            $this->updatePortalIndex($record, $allRelationships);
+                // update relation index
+                $this->updateRelationIndex($record, $allRelationships);
 
-            // update relation index
-            $this->updateRelationIndex($record, $allRelationships);
-
-            $this->updateProgress(
-                $index, $total, "Processed ($index/$total) $record->title($roID)"
-            );
+                $this->updateProgress(
+                    $index, $total, "Processed ($index/$total) $record->title($roID)"
+                );
+            }
         }
 
         $this->parent()->getCI()->solr->init()->setCore('portal')->commit();
@@ -74,15 +75,14 @@ class IndexRelationship extends ImportSubTask
      */
     public function updatePortalIndex($record, $relationships)
     {
+        // if there's no relationship, quit
         if (count($relationships) == 0) {
             return;
         }
 
         $this->parent()->getCI()->solr->init()->setCore('portal');
         // update portal index
-        $updateDoc = [
-            'id' => $record->registry_object_id
-        ];
+        $updateDoc = [];
 
         foreach ($relationships as $relation) {
             $rel = $relation->format();
@@ -107,6 +107,15 @@ class IndexRelationship extends ImportSubTask
                 }
             }
         }
+
+        // if there's no valid relationship, then quit
+        if (count($updateDoc) == 0) {
+            return;
+        }
+
+        $updateDoc['id'] = $record->registry_object_id;
+
+
 
         // relation_grants_isFundedBy
         // relation_grants_isOutputOf
@@ -189,7 +198,9 @@ class IndexRelationship extends ImportSubTask
             if (array_key_exists('relation_identifier_identifier', $doc)) {
                 $doc['to_class'] = $doc['to_related_info_type'];
                 $doc['to_type'] = $doc['to_related_info_type'];
-                $doc['to_title'] = $doc['relation_to_title'] != "" ? $doc['relation_to_title'] : $doc['relation_identifier_identifier'];
+                if(trim($doc['to_title']) == ''){
+                    $doc['to_title'] = $doc['relation_to_title'] != "" ? $doc['relation_to_title'] : $doc['relation_identifier_identifier'];
+                }
                 $doc['relation_identifier_url'] = getIdentifierURL($doc['relation_identifier_type'], $doc['relation_identifier_identifier']);
                 if (is_array($doc['relation_identifier_id'])) {
                     $doc['relation_identifier_id'] = array_first($doc['relation_identifier_id']);

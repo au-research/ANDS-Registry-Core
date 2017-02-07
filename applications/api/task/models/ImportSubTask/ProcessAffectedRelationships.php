@@ -42,6 +42,7 @@ class ProcessAffectedRelationships extends ImportSubTask
             foreach($classArray as $index=>$record) {
                 debug("Processing affected record: $record->title($record->registry_object_id)");
                 RelationshipProvider::process($record);
+                RelationshipProvider::processGrantsRelationship($record);
                 $this->updateProgress($index, $total, "Processed affected ($index/$total) $record->title($record->registry_object_id)");
             }
                 tearDownEloquent();

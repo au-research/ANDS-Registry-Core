@@ -49,10 +49,16 @@ class Task_api
             'identifier' => isset($method[2]) ? $method[2] : false,
             'object_module' => isset($method[3]) ? $method[3] : false,
         );
-
         switch (strtolower($this->params['submodule'])) {
             case 'test':
                 return $this->test();
+                break;
+            case 'stop':
+                if ($this->params['identifier']) {
+                    return $this->taskManager->stopTask($this->params['identifier']);
+                } else {
+                    throw new Exception("A task ID is required");
+                }
                 break;
             case 'run':
                 $someTask = $this->taskManager->findPendingTask();

@@ -191,7 +191,7 @@ class Relation
                 $relationOrigin = "REVERSE_GRANTS";
                 break;
             case "EXPLICIT":
-                if ($this->prop('to_data_source_id') == $relation->prop('from_data_source_id')) {
+                if ($relation->prop('to_data_source_id') == $relation->prop('from_data_source_id')) {
                     $relationOrigin = "REVERSE_INT";
                 } else {
                     $relationOrigin = "REVERSE_EXT";

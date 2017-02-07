@@ -107,7 +107,7 @@ class ProcessPayload extends ImportSubTask
         if ($matchingStatusRecord !== null) {
             $currentRecordData = $matchingStatusRecord->getCurrentData();
             if ($currentRecordData === null) {
-                $this->log("Record key:($matchingStatusRecord->key) does not have current record data");
+                //$this->log("Record key:($matchingStatusRecord->key) does not have current record data");
                 return true;
             }
 
@@ -115,14 +115,15 @@ class ProcessPayload extends ImportSubTask
             $newHash = md5(XMLUtil::wrapRegistryObject($registryObject->saveXML()));
 
             if ((string) $hash === (string) $newHash) {
-                $this->log("Record key:($matchingStatusRecord->key) already has a record data matching payload.");
+                //$this->log("Record key:($matchingStatusRecord->key) already has a record data matching payload.");
                 $this->parent()->addTaskData("harvestedRecordIDs", $matchingStatusRecord->registry_object_id);
                 $this->parent()->incrementTaskData("recordsNotUpdatedCount");
                 // @todo I can say something here for logging, already exists latest version
                 return false;
-            } else {
-                $this->log("New record data found for $matchingStatusRecord->key, ($hash and $newHash)");
             }
+//            else {
+//                $this->log("New record data found for $matchingStatusRecord->key, ($hash and $newHash)");
+//            }
         }
 
         return true;

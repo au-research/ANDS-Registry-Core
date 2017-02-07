@@ -49,6 +49,33 @@ class Importer
 
     /**
      * @param DataSource $dataSource
+     * @param $batchID
+     * @param array $customParameters
+     * @return ImportTask
+     */
+    public static function instantImportRecordFromBatchID(DataSource $dataSource, $batchID, $customParameters = [])
+    {
+        $params = [
+            'ds_id' => $dataSource->data_source_id,
+            'batch_id' => $batchID
+        ];
+
+        $params = array_merge($params, $customParameters);
+        $importTask = new ImportTask();
+        $importTask->init([
+            'name' => "Import Task for $dataSource->title ($batchID)",
+            'params' => http_build_query($params)
+        ]);
+
+        $importTask->initialiseTask();
+        $importTask->enableRunAllSubTask();
+        $importTask->run();
+
+        return $importTask;
+    }
+
+    /**
+     * @param DataSource $dataSource
      * @param array $customParams
      * @return ImportTask|null
      */
@@ -70,6 +97,7 @@ class Importer
 
         $importTask = new ImportTask();
         $importTask->init([
+            'name' => "Delete Records for $dataSource->title",
             'params' => http_build_query([
                 'ds_id' => $dataSource->data_source_id,
                 'pipeline' => 'PublishingWorkflow'

@@ -363,7 +363,8 @@ class Doi_api
             $dataciteClient = new DataCiteClient(
                 get_config_item("gDOIS_DATACENTRE_NAME_PREFIX") . "." . get_config_item("gDOIS_DATACENTRE_NAME_MIDDLE") . str_pad($client->client_id, 2, "-", STR_PAD_LEFT), get_config_item("gDOIS_DATACITE_PASSWORD")
             );
-
+            $dataciteClient->setDataciteUrl(get_config_item("gDOIS_SERVICE_BASE_URI"));
+        
             // construct the DOIServiceProvider to ensure this client is registered to use the service
             $doiService = new DOIServiceProvider($clientRepository, $doiRepository, $dataciteClient);
 
@@ -417,22 +418,29 @@ class Doi_api
 
             if ($call == 'metadata' && $validDoi) {
                 if ($_SERVER['REQUEST_METHOD'] == 'DELETE' && $doiObject && $clientDoi) {
-                    $responselog = ['responsecode' => 'MT003', 'activity' => strtoupper("DEACTIVATE")];
+                    if($doiObject->status=='RESERVED'||$doiObject->status=='RESERVED_INACTIVE'){
+                        $responselog = ['responsecode' => 'MT003', 'activity' => strtoupper("DEACTIVATE_RESERVE")];
+                        $doiRepository->doiUpdate($doiObject, array('status' => 'RESERVED_INACTIVE'));
+                    }else {
+                        $responselog = ['responsecode' => 'MT003', 'activity' => strtoupper("DEACTIVATE")];
+                        $doiRepository->doiUpdate($doiObject, array('status' => 'INACTIVE'));
+                    }
                     $call .= '/' . $doi;
                     $requestBody = '';
                     $customRequest = 'DELETE';
-                    $doiRepository->doiUpdate($doiObject, array('status' => 'INACTIVE'));
                     $docall = true;
                 }elseif ($_SERVER['REQUEST_METHOD'] == 'DELETE' && !$doiObject && $clientDoi) {
                     $responselog = ['responsecode' => 'MT011', 'activity' => strtoupper("DEACTIVATE")];
                     $call .= '/' . $doi;
                     $response = "DOI doesn't exist";
-                }elseif (!$doiObject && $this->getPostedXML() != '') {
+                }elseif ((!$doiObject || $doiObject->status=='RESERVED_INACTIVE') && $this->getPostedXML() != '') {
                     if (!$validXml) {
                         $responselog = ['responsecode' => 'MT006', 'activity' => strtoupper("RESERVE")];
                     } else {
                         $responselog = ['responsecode' => 'MT015', 'activity' => strtoupper("RESERVE")];
-                        $doiObject = $doiService->insertNewDOI($doi, $this->getPostedXML(), '');
+                        if(!$doiObject) {
+                            $doiObject = $doiService->insertNewDOI($doi, $this->getPostedXML(), '');
+                        }
                         $doiRepository->doiUpdate($doiObject, array('status' => 'RESERVED'));
                     }
                     $requestBody = $this->getPostedXML();
