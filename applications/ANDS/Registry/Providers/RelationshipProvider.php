@@ -331,6 +331,9 @@ class RelationshipProvider
                 }
                 $identifiers_div = "";
                 $identifier_count = 0;
+                if(trim($relation_type) == ''){
+                    $relation_type = "hasAssociationWith";
+                }
                 foreach ($related_info->identifier as $i) {
                     $identifiers_div .= getResolvedLinkForIdentifier((string)$i['type'], trim((string)$i));
                     $identifier_count++;

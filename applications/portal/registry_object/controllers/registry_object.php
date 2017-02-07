@@ -554,12 +554,10 @@ class Registry_object extends MX_Controller
         //extract out the principal investigators into new array and remove them from the researcher's array
         $r = array();
         foreach($related as $key=>$relation){
-            if(isset($relation['relation'])){
-                foreach($relation['relation']as $relationship) {
-                    if($relationship == 'isPrincipalInvestigatorOf'||$relationship == 'hasPrincipalInvestigator') {
-                        array_push($r, $relation);
-                        unset($related[$key]);
-                    }
+            foreach($relation['relation']as $relationship) {
+                if($relationship == 'isPrincipalInvestigatorOf'||$relationship == 'hasPrincipalInvestigator') {
+                    array_push($r, $relation);
+                    unset($related[$key]);
                 }
             }
         }
