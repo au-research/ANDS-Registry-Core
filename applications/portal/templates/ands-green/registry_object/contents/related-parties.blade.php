@@ -11,19 +11,21 @@
             $itemprop = false;
 
             //construct itemprop
-            if ( in_array('hasCollector', $col['relation'])
-                    || in_array('IsPrincipalInvestigatorOf', $col['relation'])
-                    || in_array('author', $col['relation'])
-            ) {
-                $itemprop = "author creator";
-            } elseif ( in_array('isParticipantIn', $col['relation']) ) {
-                $itemprop = "contributor";
-            } elseif ( in_array('isOwnerOf', $col['relation']) && $hasRights) {
-                $itemprop = "copyrightHolder";
-            } elseif ( in_array('isOwnedBy', $col['relation']) ) {
-                $itemprop = "accountablePerson";
-            } else {
-                $itemprop = false;
+            if(isset($col['relation'])){
+                if ( in_array('hasCollector', $col['relation'])
+                        || in_array('IsPrincipalInvestigatorOf', $col['relation'])
+                        || in_array('author', $col['relation'])
+                ) {
+                    $itemprop = "author creator";
+                } elseif ( in_array('isParticipantIn', $col['relation']) ) {
+                    $itemprop = "contributor";
+                } elseif ( in_array('isOwnerOf', $col['relation']) && $hasRights) {
+                    $itemprop = "copyrightHolder";
+                } elseif ( in_array('isOwnedBy', $col['relation']) ) {
+                    $itemprop = "accountablePerson";
+                } else {
+                    $itemprop = false;
+                }
             }
             ?>
 
@@ -56,21 +58,22 @@
                 }
             }
             $itemprop = false;
-
+            if(isset($col['relation'])){
             //construct itemprop
-            if ( in_array('hasCollector', $col['relation'])
-                    || in_array('IsPrincipalInvestigatorOf', $col['relation'])
-                    || in_array('author', $col['relation'])
-            ) {
-                $itemprop = "author creator";
-            } elseif ( in_array('isParticipantIn', $col['relation']) ) {
-                $itemprop = "contributor";
-            } elseif ( in_array('isOwnerOf', $col['relation']) && $hasRights) {
-                $itemprop = "copyrightHolder";
-            } elseif ( in_array('isOwnedBy', $col['relation']) ) {
-                $itemprop = "accountablePerson";
-            } else {
-                $itemprop = false;
+                if ( in_array('hasCollector', $col['relation'])
+                        || in_array('IsPrincipalInvestigatorOf', $col['relation'])
+                        || in_array('author', $col['relation'])
+                ) {
+                    $itemprop = "author creator";
+                } elseif ( in_array('isParticipantIn', $col['relation']) ) {
+                    $itemprop = "contributor";
+                } elseif ( in_array('isOwnerOf', $col['relation']) && $hasRights) {
+                    $itemprop = "copyrightHolder";
+                } elseif ( in_array('isOwnedBy', $col['relation']) ) {
+                    $itemprop = "accountablePerson";
+                } else {
+                    $itemprop = false;
+                }
             }
             ?>
 
