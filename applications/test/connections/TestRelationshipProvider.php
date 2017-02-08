@@ -49,7 +49,7 @@ class TestRelationshipProvider extends UnitTest
     public function test_it_should_retrieve_relationships_for_duplicate_records()
     {
         initEloquent();
-        $record = RegistryObjectsRepository::getPublishedByKey('AUTestingRecords3:Funder/Program12/Hub1/ProjectLP0347149/Collection3Duplicate');
+        $record = RegistryObjectsRepository::getPublishedByKey('CollectionADuplicateIdentifiers');
 
         $relationships = RelationshipProvider::getImplicitRelationship($record);
         echo($record->registry_object_id.NL);
@@ -80,7 +80,7 @@ class TestRelationshipProvider extends UnitTest
         echo("::::::::::::::::::::::::::::::::".NL);
         echo("::::::::::::::::::::::::::::::::".NL);
 
-        $record = RegistryObjectsRepository::getPublishedByKey('AUTestingRecords3:Funder/Program12/Hub1/ProjectLP0347149/Collection3');
+        $record = RegistryObjectsRepository::getPublishedByKey('AUTestingRecords3CollectionCDuplicateIdentifiers');
 
         echo($record->registry_object_id.NL);
 

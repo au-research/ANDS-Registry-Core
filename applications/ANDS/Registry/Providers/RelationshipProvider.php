@@ -6,7 +6,7 @@ namespace ANDS\Registry\Providers;
 
 use ANDS\RecordData;
 use ANDS\Registry\Connections;
-use ANDS\Registry\ImplicitRelationshipView;
+use ANDS\RegistryObject\Identifier;
 use ANDS\RegistryObject;
 use ANDS\RegistryObject\ImplicitRelationship;
 use ANDS\Repository\DataSourceRepository;
@@ -594,18 +594,28 @@ class RelationshipProvider
      * @param $ids
      * @return array
      */
-    public static function getAffectedIDsFromIDs($ids, $keys, $recursive = true)
+    public static function getAffectedIDsFromIDs($ids, $keys)
     {
-
-//        $ids = array_slice($ids, 0, 100);
-        $ids = collect($ids)->map(function($item){
-            return (int) $item;
-        })->toArray();
-
 
         $affectedIDs = [];
         $directAndReverse = [];
         $directAndReverseKeys = [];
+        $duplicateIDs = [];
+
+        $ids = collect($ids)->map(function($item){
+            return (int) $item;
+        })->toArray();
+
+        $duplicateRecords = self::getDuplicateRecordsFromIDs($ids);
+
+        foreach($duplicateRecords as $record){
+            $duplicateIDs[] = (int)$record->registry_object_id;
+
+            $ids[] = (int)$record->registry_object_id;
+            $keys[] = $record->key;
+
+        }
+
 
         // find directly affected
         $stdProvider = Connections::getStandardProvider();
@@ -731,41 +741,49 @@ class RelationshipProvider
             return !in_array($item, $ids);
         });
 
-       // var_dump($affectedIDs);
+
+        $affectedIDs = array_merge($duplicateIDs, $affectedIDs);
 
         $affectedIDs = collect($affectedIDs)
             ->flatten()->values()->unique()
             ->toArray();
 
-        if ($recursive === false) {
-            return $affectedIDs;
-        }
-
-        $identifiers = RegistryObject\Identifier::whereIn('registry_object_id', $ids)->get()->pluck('identifier')->unique()->toArray();
-
-        $duplicateIDs = RegistryObject\Identifier::whereIn('identifier', $identifiers)->get()->pluck('registry_object_id')->filter(function($item) use ($ids) {
-            return !in_array($item, $ids);
-        })->unique()->toArray();
-
-        if (count($duplicateIDs) === 0) {
-            return $affectedIDs;
-        }
-
-        $duplicateIDs = collect($duplicateIDs)->map(function($item){
-            return (int) $item;
-        })->toArray();
-
-        $duplicateKeys = RegistryObject::whereIn('registry_object_id', $duplicateIDs)->get()->pluck('key')->toArray();
-
-        $affectedIDsFromDuplicates = self::getAffectedIDsFromIDs($duplicateIDs, $duplicateKeys, false);
-
-        $affectedIDs = array_merge($affectedIDs, $duplicateIDs, $affectedIDsFromDuplicates);
-
-        $affectedIDs = collect($affectedIDs)
-            ->flatten()->values()->unique()
-            ->toArray();
 
         return $affectedIDs;
     }
 
+
+    public static function getDuplicateRecordsFromIDs($ids)
+    {
+
+        $identifiers = Identifier::whereIn('registry_object_id', $ids)->get()->pluck('identifier')->unique()->toArray();
+
+        $duplicateIDs = [];
+        $recordIDs = Identifier::whereIn('identifier', $identifiers)->get()->pluck('registry_object_id')->unique()->filter(function($item) use ($ids){
+            return !in_array((int)$item, $ids);
+        })->toArray();
+
+        $ids = array_merge($ids, $recordIDs);
+        $duplicateIDs = array_merge($duplicateIDs, $recordIDs);
+        while(count($recordIDs) > 0)
+        {
+            $moreIdentifiers = Identifier::whereIn('registry_object_id', $recordIDs)->get()->pluck('identifier')->unique()->filter(function($item) use ($identifiers){
+                return (!in_array($item, $identifiers) && $item != "");
+            })->unique()->toArray();
+            
+            if($moreIdentifiers){
+                $recordIDs = Identifier::whereIn('identifier', $moreIdentifiers)->get()->pluck('registry_object_id')->unique()->filter(function($item) use ($ids){
+                    return !in_array((int)$item, $ids);
+                })->unique()->toArray();
+                $ids = array_merge($ids, $recordIDs);
+                $duplicateIDs = array_merge($duplicateIDs, $recordIDs);
+            }else{
+                $recordIDs = [];
+            }
+
+        }
+        return RegistryObject::whereIn('registry_object_id', $duplicateIDs)
+            ->where('status', 'PUBLISHED')
+            ->get();
+    }
 }
