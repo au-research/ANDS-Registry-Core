@@ -54,6 +54,38 @@ class Importer
 
     /**
      * @param DataSource $dataSource
+     * @param $batchID
+     * @param array $customParameters
+     * @return ImportTask
+     */
+    public static function instantImportRecordFromBatchID(DataSource $dataSource, $batchID, $customParameters = [])
+    {
+        $params = [
+            'ds_id' => $dataSource->data_source_id,
+            'batch_id' => $batchID
+        ];
+
+        $params = array_merge($params, $customParameters);
+        $importTask = new ImportTask();
+        $importTask->init([
+            'name' => "Import Task for $dataSource->title ($batchID)",
+            'params' => http_build_query($params)
+        ]);
+
+        $importTask->initialiseTask();
+        $importTask->enableRunAllSubTask();
+
+        $importTask->setCI($ci =& get_instance());
+        $importTask->setDb($ci->db);
+        $importTask->sendToBackground();
+        
+        $importTask->run();
+
+        return $importTask;
+    }
+
+    /**
+     * @param DataSource $dataSource
      * @param array $customParams
      * @return ImportTask|null
      */
