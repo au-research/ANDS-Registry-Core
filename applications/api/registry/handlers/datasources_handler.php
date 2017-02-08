@@ -132,7 +132,7 @@ class DatasourcesHandler extends Handler
 
     /**
      * @param DataSource $dataSource
-     * @return \ANDS\API\Task\ImportTask|null
+     * @return array
      */
     private function handleRecords(DataSource $dataSource)
     {
@@ -153,9 +153,10 @@ class DatasourcesHandler extends Handler
         // delete all records in a datasource
         // DELETE api/registry/datasources/:id/records
         if ($this->isDelete()) {
-            return Importer::instantDeleteRecords($dataSource, [
+            $task = Importer::instantDeleteRecords($dataSource, [
                 'ids' => $records->pluck('registry_object_id')
             ]);
+            return $task->toArray();
         }
 
         // import records from url provided in GET or POST
@@ -165,7 +166,8 @@ class DatasourcesHandler extends Handler
             $content = @file_get_contents($url);
             $batchID = "MANUAL-URL-".str_slug($url).'-'.time();
             Payload::write($dataSource->data_source_id, $batchID, $content);
-            return Importer::instantImportRecordFromBatchID($dataSource, $batchID);
+            $task =  Importer::instantImportRecordFromBatchID($dataSource, $batchID);
+            return $task->toArray();
         }
 
         // browse records
