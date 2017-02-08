@@ -101,10 +101,6 @@ class Importer
             $ids = collect($records)->pluck('registry_object_id')->toArray();
         }
 
-        if (count($ids) === 0) {
-            return null;
-        }
-
         $importTask = new ImportTask();
         $importTask->init([
             'params' => http_build_query([
