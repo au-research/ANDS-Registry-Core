@@ -156,7 +156,7 @@ class DatasourcesHandler extends Handler
             $task = Importer::instantDeleteRecords($dataSource, [
                 'ids' => $records->pluck('registry_object_id')
             ]);
-            return $task->toArray();
+            return $task ? $task->toArray() : [];
         }
 
         // import records from url provided in GET or POST
