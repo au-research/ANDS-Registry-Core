@@ -78,7 +78,7 @@ class Importer
         $importTask->setCI($ci =& get_instance());
         $importTask->setDb($ci->db);
         $importTask->sendToBackground();
-        
+
         $importTask->run();
 
         return $importTask;
