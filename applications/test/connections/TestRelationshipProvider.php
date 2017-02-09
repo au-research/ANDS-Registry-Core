@@ -3,6 +3,8 @@
 
 namespace ANDS\Test;
 
+use ANDS\API\Task\ImportSubTask\IndexRelationship;
+use ANDS\API\Task\ImportTask;
 use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
@@ -49,7 +51,7 @@ class TestRelationshipProvider extends UnitTest
     public function test_it_should_retrieve_relationships_for_duplicate_records()
     {
         initEloquent();
-        $record = RegistryObjectsRepository::getPublishedByKey('CollectionADuplicateIdentifiers');
+        $record = RegistryObjectsRepository::getPublishedByKey('AUTestingRecords3:Funder/Program12/Hub1/ProjectLP0347149/Collection3Duplicate');
 
         $relationships = RelationshipProvider::getImplicitRelationship($record);
         echo($record->registry_object_id.NL);
@@ -80,7 +82,7 @@ class TestRelationshipProvider extends UnitTest
         echo("::::::::::::::::::::::::::::::::".NL);
         echo("::::::::::::::::::::::::::::::::".NL);
 
-        $record = RegistryObjectsRepository::getPublishedByKey('AUTestingRecords3CollectionCDuplicateIdentifiers');
+        $record = RegistryObjectsRepository::getPublishedByKey('AUTestingRecords3:Funder/Program12/Hub1/ProjectLP0347149/Collection3');
 
         echo($record->registry_object_id.NL);
 
@@ -112,6 +114,33 @@ class TestRelationshipProvider extends UnitTest
             echo("TO KEY:" . $rel->getProperty('to_key').NL);
 
         }
+
+    }
+
+    public function test_it_should_give_me_relationship_index()
+    {
+        initEloquent();
+        $record = RegistryObjectsRepository::getRecordByID(585731);
+        $relationships = RelationshipProvider::getMergedRelationships($record);
+
+        $importTask = new ImportTask();
+        $importTask->init([
+            'params' => http_build_query([
+                'ds_id' => 210,
+                'targetStatus' => 'PUBLISHED'
+            ])
+        ])->skipLoadingPayload();
+
+        $this->ci->load->library('solr');
+        $importTask->setCI($this->ci);
+        $importTask->initialiseTask();
+
+
+        $indexRelationshipTask = $importTask->getTaskByName("IndexRelationship");
+        $indexRelationshipTask->updateRelationIndex($record, $relationships);
+        $indexRelationshipTask->updateRelationIndex($record, $relationships);
+
+        $this->ci->solr->init()->setCore('relations')->commit();
 
     }
 

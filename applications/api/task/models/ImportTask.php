@@ -314,7 +314,6 @@ class ImportTask extends Task
                     "ProcessGrantsRelationship",
                     "ProcessQualityMetadata",
                     "IndexPortal",
-                    "IndexRelationship",
                     "PopulateAffectedList",
                     "ProcessAffectedRelationships",
                     "IndexRelationship",
