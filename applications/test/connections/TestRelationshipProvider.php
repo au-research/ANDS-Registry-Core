@@ -120,7 +120,7 @@ class TestRelationshipProvider extends UnitTest
     public function test_it_should_give_me_relationship_index()
     {
         initEloquent();
-        $record = RegistryObjectsRepository::getRecordByID(585731);
+        $record = RegistryObjectsRepository::getRecordByID(587019);
         $relationships = RelationshipProvider::getMergedRelationships($record);
 
         $importTask = new ImportTask();
@@ -134,11 +134,12 @@ class TestRelationshipProvider extends UnitTest
         $this->ci->load->library('solr');
         $importTask->setCI($this->ci);
         $importTask->initialiseTask();
-
+        $importTask->setTaskData("importedRecords", [587019]);
 
         $indexRelationshipTask = $importTask->getTaskByName("IndexRelationship");
-        $indexRelationshipTask->updateRelationIndex($record, $relationships);
-        $indexRelationshipTask->updateRelationIndex($record, $relationships);
+
+        $indexRelationshipTask->run_task();
+        dd("hello");
 
         $this->ci->solr->init()->setCore('relations')->commit();
 

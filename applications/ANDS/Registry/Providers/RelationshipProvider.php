@@ -736,4 +736,11 @@ class RelationshipProvider
             ->where('status', 'PUBLISHED')
             ->get();
     }
+
+
+    public static function getDuplicateRecordsFromIdentifiers($identifiers)
+    {
+        return Identifier::whereIn('identifier', $identifiers)->get()->pluck('registry_object_id')->unique()->toArray();
+    }
+    
 }

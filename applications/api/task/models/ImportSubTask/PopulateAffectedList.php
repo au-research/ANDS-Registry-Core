@@ -20,6 +20,8 @@ class PopulateAffectedList extends ImportSubTask
     {
         $ids = [];
         $keys = [];
+        $identifiers = [];
+        $duplicatedIdentifiers = [];
         foreach (['party', 'activity', 'collection', 'service'] as $class) {
             if ($this->parent()->getTaskData("imported_".$class."_ids")) {
                 $ids = array_merge(
@@ -28,6 +30,25 @@ class PopulateAffectedList extends ImportSubTask
                 $keys = array_merge(
                     $keys, $this->parent()->getTaskData("imported_".$class."_keys")
                 );
+            }
+        }
+
+
+        foreach (['party', 'activity', 'collection', 'service'] as $class) {
+            if ($this->parent()->getTaskData("imported_".$class."_identifiers"))
+            {
+                $classIdentifiers = $this->parent()->getTaskData("imported_".$class."_identifiers");
+
+                foreach( $classIdentifiers as $idx => $identifier)
+                {
+
+                    if(in_array($identifier, $identifiers)){
+                        $duplicatedIdentifiers[] = $identifier;
+                    }
+                    else{
+                        $identifiers[] = $identifier;
+                    }
+                }
             }
         }
 
@@ -45,6 +66,12 @@ class PopulateAffectedList extends ImportSubTask
         $this->log("Getting affectedIDs for $total records");
 
         $affectedRecordIDs = RelationshipProvider::getAffectedIDsFromIDs($ids, $keys);
+
+        $duplicateRecordIDs = RelationshipProvider::getDuplicateRecordsFromIdentifiers($duplicatedIdentifiers);
+
+        if($duplicateRecordIDs){
+            $this->parent()->setTaskData("duplicateRecords", $duplicateRecordIDs);
+        }
 
         $countAffected = count($affectedRecordIDs);
         $this->log("Found $countAffected affected records");

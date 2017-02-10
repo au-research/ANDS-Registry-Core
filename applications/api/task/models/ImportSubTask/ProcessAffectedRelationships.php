@@ -18,6 +18,7 @@ class ProcessAffectedRelationships extends ImportSubTask
     public function run_task()
     {
         $affectedRecords = $this->parent()->getTaskData('affectedRecords');
+        $duplicateRecords = $this->parent()->getTaskData("duplicateRecords") ? $this->parent()->getTaskData("duplicateRecords") : [];
 
         $this->log("Size of affected records: ".count($affectedRecords));
 
@@ -30,6 +31,7 @@ class ProcessAffectedRelationships extends ImportSubTask
             "service"=>[],
             "collection"=>[]
         ];
+
         foreach ($affectedRecords as $index => $roID) {
             $record = RegistryObjectsRepository::getRecordByID($roID);
             if($record){
@@ -45,10 +47,24 @@ class ProcessAffectedRelationships extends ImportSubTask
                 RelationshipProvider::processGrantsRelationship($record);
                 $this->updateProgress($index, $total, "Processed affected ($index/$total) $record->title($record->registry_object_id)");
             }
-                tearDownEloquent();
+            tearDownEloquent();
         }
 
-        debug("Finished processing $total affected records");
+        $this->log("Size of duplicate records: ".count($duplicateRecords));
+
+        $total_dup = count($duplicateRecords);
+
+        foreach($duplicateRecords as $index => $roID) {
+            $record = RegistryObjectsRepository::getRecordByID($roID);
+            if($record){
+                debug("Processing duplicate record: $record->title($record->registry_object_id)");
+                RelationshipProvider::process($record);
+                RelationshipProvider::processGrantsRelationship($record);
+                $this->updateProgress($index, $total_dup, "Processed duplicate ($index/$total_dup) $record->title($record->registry_object_id)");
+            }
+        }
+
+        debug("Finished processing (".($total + $total_dup).") affected/duplicate records");
 
         return;
     }
