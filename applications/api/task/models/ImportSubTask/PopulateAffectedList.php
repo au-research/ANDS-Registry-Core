@@ -66,6 +66,20 @@ class PopulateAffectedList extends ImportSubTask
         $this->log("Getting affectedIDs for $total records");
 
         $affectedRecordIDs = RelationshipProvider::getAffectedIDsFromIDs($ids, $keys);
+        $affectedRecordDuplicatesIDs = [];
+        $affectedRecordDuplicatesRecords = RelationshipProvider::getDuplicateRecordsFromIDs($affectedRecordIDs);
+        if(count($affectedRecordDuplicatesRecords) > 0){
+            foreach($affectedRecordDuplicatesRecords as $record){
+                $affectedRecordDuplicatesIDs[] = $record->registry_object_id;
+            }
+
+        }
+
+        $affectedRecordIDs = array_merge($affectedRecordIDs, $affectedRecordDuplicatesIDs);
+
+        $affectedRecordIDs = collect($affectedRecordIDs)
+            ->flatten()->values()->unique()
+            ->toArray();
 
         $duplicateRecordIDs = RelationshipProvider::getDuplicateRecordsFromIdentifiers($duplicatedIdentifiers);
 
