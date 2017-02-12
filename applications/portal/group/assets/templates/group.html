@@ -1,0 +1,108 @@
+<section class="section swatch-white section-text-shadow section-innder-shadow element-short-top element-short-bottom">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<a href="#/groups">Return to Menu</a>
+				<header><h1 class="hairline bordered-normal">[[group.name]]</h1></header>
+			</div>
+		</div>
+	</div>
+</section>
+
+<section class="section">
+	<form action="" name="contributor_form">
+	
+		<div class="container">
+			<div class="row">
+				<div class="col-md-12">
+
+					<div class="alert alert-info">
+						The contributor home page will be a public web document representing your organisation. ANDS advises that you should use only approved text and consult appropriate authorities within your organisation.
+					</div>
+
+					<div class="panel swatch-white">
+						<div class="panel-body">
+							<a href="" class="btn btn-primary" ng-click="save()" ng-if="group.status!='PUBLISHED'"><i class="fa fa-save"></i> Save</a>
+							<a href="" class="btn btn-primary" ng-click="save('DRAFT')" ng-if="group.status=='PUBLISHED'"><i class="fa fa-save"></i> Save to Draft</a>
+							<a href="" class="btn btn-info" ng-click="save('REQUESTED')" ng-if="group.status=='DRAFT'">Request Publication</a>
+							<a href="" class="btn btn-danger" ng-click="save('PUBLISHED')" ng-if="group.status!='PUBLISHED' && superuser">Publish</a>
+							<small ng-if="saveMessage">[[saveMessage]]</small>
+							<div class="pull-right">
+								<a href="[[base_url]]group/?preview=[[group.name]]" class="btn btn-link btn-sml" ng-if="group.status!='PUBLISHED'" target="_blank">Preview</a>
+								<span class="label label-default" ng-if="group.date_modified">Last Modified: [[group.date_modified]] (<span resolve-user roleid="group.modified_who"></span>)</span>
+								<span class="label label-info">[[group.status]]</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="container">
+			<div class="row">
+				<div class="col-md-8">
+					<div class="panel swatch-white">
+						<div class="panel-heading">Overview</div>
+						<div class="panel-body">
+							<div class="form-group">
+								<div text-angular ng-model="group.data.overview" ta-toolbar="tatoolbar"></div>
+							</div>
+						</div>
+					</div>
+					<div class="panel swatch-white">
+						<div class="panel-heading">Research and Key Research Areas <i class="fa fa-info icon-black" tip="Text describing a contributor's distinctive research portfolio and research strength."></i></div>
+						<div class="panel-body">
+							<div class="form-group">
+								<div text-angular ng-model="group.data.researchdarea" ta-toolbar="tatoolbar"></div>
+							</div>
+						</div>
+					</div>
+					<div class="panel swatch-white">
+						<div class="panel-heading">Research Data Profile <i class="fa fa-info icon-black" tip="Text describing and highlighting the research data (and unrelated parties, projects, and services) whose description the organisation has contributed to Research Data Australia. <br/> Note: this type of description will be auto generated for contributor pages by the system. Data providers can supplement this generated text with their own custom text by adding a description of this type. This custom text may highlight any significant collection initiatives or unique discipline data holdings perhaps related to the organisation's research Areas (described above)"></i></div>
+						<div class="panel-body">
+							<div class="form-group">
+								<div text-angular ng-model="group.data.researchdataprofile" ta-toolbar="tatoolbar"></div>
+							</div>
+						</div>
+					</div>
+					<div class="panel swatch-white">
+						<div class="panel-heading">Research Support <i class="fa fa-info icon-black" tip="Text describing specific data-related support services offered by the contributor such as archives, repositories, data centres, metadata stores, high performance computing facilities, data-intensive instruments, e-research support centres, data management support services, etc."></i></div>
+						<div class="panel-body">
+							<div class="form-group">
+								<div text-angular ng-model="group.data.researchsupport" ta-toolbar="tatoolbar"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-md-4">
+					<div class="panel swatch-white">
+						<div class="panel-heading">Logo <i class="fa fa-info icon-black" tip="Contributor page logos should ideally be medium resolution vertically stacked square logos. Other orientations can be used but note that these will be resized to fit a square display area.<br/>Supported formats: png, jpg or gif<br/>Max file size: 500KB"></i></div>
+						<div class="panel-body">
+							<input type="text" class="form-control element-shorter-bottom" ng-model="group.data.logo" placeholder="Logo URL">
+							<input type="checkbox" ng-model="group.data.hide_logo"> Hide Logo <i class="fa fa-info" tip="Checking this box will hide the default and provided logo from Research Data Australia. Please note that this will also remove the group from the home page carousel of Research Data Australia, the group will be still be present in Who Contributes to Research Data Australia page"></i>
+							<hr>
+							<img src="[[ group.data.logo ]]" alt="" ng-if="group.data.logo" style="max-width:50%;">
+							<div class="button" ng-file-select ng-file-change="upload($files)">Upload Logo</div> <i class="fa fa-refresh fa-spin" ng-if="uploading"></i>
+							<div class="alert alert-danger" ng-if="error_upload_msg" ng-bind-html="error_upload_msg"></div>
+						</div>
+					</div>
+					<div class="panel swatch-white">
+						<div class="panel-heading">Identifiers</div>
+						<div class="panel-body">
+							<div text-angular ng-model="group.data.identifiers" ta-toolbar="tatoolbar"></div>
+						</div>
+					</div>
+					<div class="panel swatch-white">
+						<div class="panel-heading">Contact</div>
+						<div class="panel-body">
+							<div class="form-group">
+								<div text-angular ng-model="group.data.contact" ta-toolbar="tatoolbar"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+</section>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+
+    <registryObject group="GrantsTest">
+        <key>GrantsTestActivity5_key</key>
+        <originatingSource>
+            DEV team
+        </originatingSource>
+        <activity type="grant">
+            <identifier type="uri">GrantsTestActivity4_identifier</identifier>
+            <name type="primary">
+                <namePart>Activity Five (SAME AS A4)</namePart>
+            </name>
+        </activity>
+    </registryObject>
+
+</registryObjects>

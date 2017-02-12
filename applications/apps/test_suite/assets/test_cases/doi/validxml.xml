@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resource xmlns="http://datacite.org/schema/kernel-3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
+    <identifier identifierType="DOI"></identifier>
+    <creators>
+        <creator>
+            <creatorName>B.R.Maslin</creatorName>
+            <affiliation>FOA</affiliation>
+        </creator>
+    </creators>
+    <titles>
+        <title>Acacia abrupta</title>
+        <title titleType="Subtitle">Version 42</title>
+    </titles>
+    <publisher>FOA</publisher>
+    <publicationYear>2015</publicationYear>
+    <subjects>
+        <subject>Acacia abrupta</subject>
+    </subjects>
+    <contributors>
+        <contributor contributorType="Editor">
+            <contributorName>Mark Chambers</contributorName>
+            <affiliation>FOA</affiliation>
+        </contributor>
+    </contributors>
+    <dates>
+        <date dateType="Created">2015-07-14</date>
+    </dates>
+    <language>en</language>
+    <resourceType resourceTypeGeneral="Text">Species information</resourceType>
+    <descriptions>
+        <description descriptionType="Other">Taxonomic treatment for Acacia abrupta</description>
+    </descriptions>
+</resource>

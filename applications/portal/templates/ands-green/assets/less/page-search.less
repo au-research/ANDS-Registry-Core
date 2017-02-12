@@ -1,0 +1,129 @@
+/**
+ * Modules used mainly in search page
+ */
+
+.scroll-fixed.ui-scrollfix {
+	width:100%;
+	z-index:100;
+	position:fixed;
+	top:0;
+	margin:0 auto !important;
+	padding:10px 0;
+	background:white;
+	border-bottom:1px solid #acacac;
+}
+
+.advanced-search-modal {
+	.modal-dialog {
+		@media screen {
+			@media (min-width:768px) {
+				width: 95%;
+			}
+			@media (min-width:1300px) {
+				width: 1200px;
+			}
+		}
+		#advmenu { padding:0 }
+		#advbody { min-height:450px;max-height:550px;overflow:auto; }
+		#advaside { padding:0 }
+		.navbar-toggle { margin:0; }
+		.navbar { min-height:40px; margin-bottom:15px;}
+		.navbar-brand { font-size:19px; padding:10px 15px;}
+	}
+}
+
+.search-header {
+	line-height:30px;
+	p {margin:0;}
+	.sort-box {
+		@media (max-width:1000px) {
+			text-align:left;
+		}
+		@media (min-width:1000px) {
+			text-align:right;
+		}
+	}
+}
+
+.angular-google-map-container { height: 400px; }
+.map-canvas {
+	img {max-width: none !important;}
+	position:relative;
+}
+.sresult {
+	.scontent {
+		margin-left:30px;
+	}
+	.stoolbar {
+		float:left; width:30px;
+	}
+}
+
+ul.pagi {
+	margin:0 auto;
+	padding:0;
+	li {
+		list-style-type:none;
+		display:inline;
+		margin:0px 5px;
+		&:active {
+			color: #eb7700 !important;
+		}
+	}
+}
+
+ul.listy {
+	padding-left:0;
+	li {
+		list-style-type:none;
+		padding:8px 5px;
+		border-bottom:1px solid #ececec;
+		&:last-child {
+			border:none;
+		}
+		a {
+			height:32px;
+			line-height:32px;
+			overflow:hidden;
+			display:inline;
+			padding:8px 0px 8px 5px;
+			small {
+				position:absolute;
+				right:30px;
+				background:white;
+				height:32px;
+				line-height:32px;
+				padding-left:10px;
+			}
+		}
+	}
+}
+
+/*Search Bar*/
+.search-section {
+	color:white;
+	i {
+		color: white !important;
+	}
+	.btn {
+		background:@lightGray;
+		color:black;
+		i {color:black !important;}
+		&:hover{
+			background:@lightGray;
+			color:black !important;
+		}
+	}
+	a {
+		color:white;
+		&:hover{
+			color:@gray;
+		}
+	}
+	h1 {
+		color:white;
+	}
+	h1.bordered:after {
+		background-color:white;
+	}
+}

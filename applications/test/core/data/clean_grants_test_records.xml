@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+    <registryObject group="GrantsTest">
+        <key>GrantsTestFunder1_key</key>
+        <originatingSource>
+            DEV team
+        </originatingSource>
+        <party type="group">
+            <identifier type="uri">
+                GrantsTestFunder1_identifier</identifier>
+            <name type="primary">
+                <namePart>Funder One</namePart>
+            </name>
+            <relatedObject>
+                <key>GrantsTestActivity1_key</key>
+                <relation type="funds"/>
+            </relatedObject>
+        </party>
+    </registryObject>
+
+    <registryObject group="GrantsTest">
+        <key>GrantsTestActivity1_key</key>
+        <originatingSource>
+            DEV team
+        </originatingSource>
+        <activity type="grant">
+            <identifier type="uri">
+                GrantsTestActivity1_identifier</identifier>
+            <name type="primary">
+                <namePart>Activity One</namePart>
+            </name>
+            <relatedObject>
+                <key>GrantsTestActivity2_key</key>
+                <relation type="hasPart"/>
+            </relatedObject>
+        </activity>
+    </registryObject>
+
+    <registryObject group="GrantsTest">
+        <key>GrantsTestActivity3_key</key>
+        <originatingSource>
+            DEV team
+        </originatingSource>
+        <activity type="grant">
+            <name type="primary">
+                <namePart>Activity Three</namePart>
+            </name>
+            <relatedObject>
+                <key>GrantsTestActivity1_key</key>
+                <relation type="isPartOf"/>
+            </relatedObject>
+        </activity>
+    </registryObject>
+
+    <registryObject group="GrantsTest">
+        <key>GrantsTestActivity2_key</key>
+        <originatingSource>
+            DEV team
+        </originatingSource>
+        <activity type="grant">
+            <name type="primary">
+                <namePart>Activity Two</namePart>
+            </name>
+            <relatedObject>
+                <key>GrantsTestCollection1_key</key>
+                <relation type="outputs"/>
+            </relatedObject>
+        </activity>
+    </registryObject>
+
+    <registryObject group="GrantsTest">
+        <key>GrantsTestCollection1_key</key>
+        <originatingSource>
+            DEV team
+        </originatingSource>
+        <collection type="collection">
+            <identifier type="local">GrantsTestCollection1_identifier</identifier>
+            <name type="primary">
+                <namePart>Collection One</namePart>
+            </name>
+            <relatedObject>
+                <key>GrantsTestCollection2_key</key>
+                <relation type="hasPart"/>
+            </relatedObject>
+            <relatedObject>
+                <key>GrantsTestCollection4_key</key>
+                <relation type="isPartOf"/>
+            </relatedObject>
+        </collection>
+    </registryObject>
+
+
+    <registryObject group="GrantsTest">
+        <key>GrantsTestCollection2_key</key>
+        <originatingSource>
+            DEV team
+        </originatingSource>
+        <collection type="collection">
+            <name type="primary">
+                <namePart>Collection Two</namePart>
+            </name>
+        </collection>
+    </registryObject>
+
+
+    <registryObject group="GrantsTest">
+        <key>GrantsTestCollection3_key</key>
+        <originatingSource>
+            DEV team
+        </originatingSource>
+        <collection type="collection">
+            <name type="primary">
+                <namePart>Collection Three</namePart>
+            </name>
+            <relatedObject>
+                <key>GrantsTestCollection1_key</key>
+                <relation type="isPartOf"/>
+            </relatedObject>
+        </collection>
+    </registryObject>
+
+    <!-- Duplicate Record -->
+    <registryObject group="GrantsTest">
+        <key>GrantsTestActivity4_key</key>
+        <originatingSource>
+            DEV team
+        </originatingSource>
+        <activity type="grant">
+            <identifier type="uri">GrantsTestActivity1_identifier</identifier>
+            <identifier type="uri">GrantsTestActivity4_identifier</identifier>
+            <name type="primary">
+                <namePart>Activity Four (SAME AS A1)</namePart>
+            </name>
+        </activity>
+    </registryObject>
+
+</registryObjects>

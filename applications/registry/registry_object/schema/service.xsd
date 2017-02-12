@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema version="1.6" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://ands.org.au/standards/rif-cs/registryObjects"
+    targetNamespace="http://ands.org.au/standards/rif-cs/registryObjects"
+    elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+    <xsd:include schemaLocation="registryTypes.xsd"/>
+
+    <xsd:annotation>
+        <xsd:documentation xml:lang="en">
+            Schema for an ISO2146 collections and services registry Service object.
+        </xsd:documentation>
+        <xsd:documentation xml:lang="en">
+            Services really need some work in order to determine how we can represent them best for both human and machine-usable consumption. This really needs some real-world use cases.
+        </xsd:documentation>
+        <xsd:documentation xml:lang="en">
+            Many of the ISO2146 Service object properties have been excluded from this schema. Use cases need to be developed to address this. The assumption at the moment is that Function, Product, Service Times, Access Policy, Policy Combining Algorithm, Service Description and Protocol Information if important would be included in a the 'description' element. I'm not sure the registry would carry out a lot of service execution or simply direct the user/automaton to the correct location.
+        </xsd:documentation>
+        <xsd:documentation xml:lang="en">
+            Services can be supported at a higher level than a collection. For example in DSpace OAI-PMH is supported at a repository level however individual collections within the repository can be harvested. What needs to be exposed at a collection level? In the example a link to the default DC implementation is provided for a collection, however if a service user wanted to know about the data source and what metadata prefixes are supported it's the repository level response which provides this information.
+        </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:element name="service">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+	           Wrapper element for descriptive and administrative metadata for a service registry object.
+           </xsd:documentation>
+        </xsd:annotation>
+
+        <xsd:complexType>
+            <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                <xsd:element name="identifier" type="identifierType" minOccurs="0"
+                    maxOccurs="unbounded">
+                    <xsd:annotation>
+                        <xsd:documentation xml:lang="en">
+                            Primary and alternative identifiers for a service. The value of the &lt;key&gt; element may be repeated, or any additional (local or global) identifiers described. Each identifier must be represented in its own identifier element.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+
+                <xsd:element name="name" type="nameType" minOccurs="0" maxOccurs="unbounded">
+                    <xsd:annotation>
+                        <xsd:documentation xml:lang="en">
+                			The name of the party in either a simple or compound form.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+
+                <xsd:element name="location" type="locationType" minOccurs="0" maxOccurs="unbounded">
+                    <xsd:annotation>
+                        <xsd:documentation xml:lang="en">
+                            Location(s) relevant to the service. A location element should contain information about a single location (e.g. service point).
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+
+                <xsd:element name="coverage" type="coverageType" minOccurs="0" maxOccurs="unbounded">
+                    <xsd:annotation>
+                        <xsd:documentation xml:lang="en">
+                            Service coverage information.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+
+                <xsd:element name="relatedObject" type="relatedObjectType" minOccurs="0"
+                    maxOccurs="unbounded">
+                    <xsd:annotation>
+                        <xsd:documentation xml:lang="en">
+                            Element for holding information about a related registry object.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+
+                <xsd:element name="subject" type="subjectType" minOccurs="0" maxOccurs="unbounded">
+                    <xsd:annotation>
+                        <xsd:documentation xml:lang="en">
+                            A subject category into which the service falls or the service is related. Multiple subjects must be represented via separate subject elements. 
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+
+                <xsd:element name="description" type="descriptionType" minOccurs="0"
+                    maxOccurs="unbounded">
+                    <xsd:annotation>
+                        <xsd:documentation xml:lang="en">
+                            A textual description or URI resolving to a description relevant to the service.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+
+                <xsd:element name="accessPolicy" type="xsd:anyURI" minOccurs="0"
+                    maxOccurs="unbounded">
+                    <xsd:annotation>
+                        <xsd:documentation xml:lang="en">
+							A URI pointing to information describing the access policy of the service.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+
+                <xsd:element name="rights" type="rightsType" minOccurs="0" maxOccurs="unbounded">
+                    <xsd:annotation>
+                        <xsd:documentation xml:lang="en">Rights(s) relevant to the collection. </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+
+                <xsd:element name="existenceDates" type="existenceDateType" minOccurs="0"
+                    maxOccurs="unbounded">
+                    <xsd:annotation>
+                        <xsd:documentation xml:lang="en">
+                            Element for holding a start date and end date.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+
+                <xsd:element name="relatedInfo" type="relatedInfoType" minOccurs="0"
+                    maxOccurs="unbounded">
+                    <xsd:annotation>
+                        <xsd:documentation xml:lang="en">
+                            A URI pointing to information related to the service.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+
+            </xsd:choice>
+
+            <xsd:attributeGroup ref="objectAttributes"/>
+
+        </xsd:complexType>
+    </xsd:element>
+
+</xsd:schema>

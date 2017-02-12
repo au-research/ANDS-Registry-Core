@@ -1,0 +1,1534 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+
+
+<registryObject group="AUTestingRecords">
+    <key>AUTCollection1</key>
+    <originatingSource type="">http://demo.ands.org.au/registry/orca/register_my_data</originatingSource>
+    <correction type="collection" dateModified="2013-04-10T23:51:55Z">
+      <name type="abbreviated">
+        <namePart>abbreviatedName</namePart>
+      </name>
+      <name type="alternative">
+        <namePart>alternativeName</namePart>
+      </name>
+      <name type="primary">
+        <namePart>Collection with all RIF v1.6 elements (primaryName)</namePart>
+      </name>
+      <description type="significanceStatement">&amp;lt;p&amp;gt;significanceStatement significanceStatement&amp;lt;/p&amp;gt;</description>
+      <description type="researchSupport">&amp;lt;p&amp;gt;researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport&amp;lt;/p&amp;gt;</description>
+      <description type="researchDataProflie">&amp;lt;p&amp;gt;researchDataProflieresea rchDataProflie researchDataP roflieresearchDataProflie researchDataProflie researchDataProflie researchDataProflie researchDataProflie&amp;lt;/p&amp;gt;</description>
+      <description type="researchAreas">&amp;lt;p&amp;gt;researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas&amp;lt;/p&amp;gt;</description>
+      <description type="note">&amp;lt;p&amp;gt;note note note note note note note note note note note note note note note note note note note note note note&amp;lt;/p&amp;gt;</description>
+      <description type="logo">&amp;lt;p&amp;gt;https://dl.dropbox.com/u/49073372/LOGO.jpg&amp;lt;/p&amp;gt;</description>
+      <description type="full">&amp;lt;p&amp;gt;full full full full full full full full full full full full full full full full full full&amp;lt;/p&amp;gt;</description>
+      <description type="deliverymethod">&amp;lt;p&amp;gt;deliverymethod deliverymethod deliverymethod deliverymethod deliverymethod deliverymethod deliverymethod deliverymethod deliverymethod deliverymethod deliverymethod deliverymethod deliverymethod deliverymethod&amp;lt;/p&amp;gt;</description>
+      <description type="brief">&amp;lt;p&amp;gt;brief brief brief brief brief brief brief brief brief brief brief brief brief brief brief brief&amp;lt;/p&amp;gt;</description>
+      <description type="lineage">&amp;lt;p&amp;gt;This is the lineage statement for the collection&amp;lt;/p&amp;gt;</description>
+      <description type="local">&amp;lt;p&amp;gt;This is a local statement for the colleciton&amp;lt;/p&amp;gt;</description>
+      <rights>
+        <rightsStatement rightsUri="http://www.rightsuri.com">Rights Statement Rights Statement</rightsStatement>
+        <licence type="AusGOALRestrictive" rightsUri="http://www.rightsuri.com">LicenceLicenceLicence</licence>
+        <accessRights rightsUri="http://www.rightsuri.com">Access Rights</accessRights>
+      </rights>
+      <rights>
+        <licence type="CC-BY">CC-BY</licence>
+        <accessRights type="open">My Access Rights details are listed here and my data is open</accessRights>
+      </rights>
+      <identifier type="AU-ANL:PEAU">nla.AUTCollection1</identifier>
+      <identifier type="AU-ANL:PEAU">nla.part.12345 </identifier>
+      <dates type="dc.available">
+        <date type="dateFrom" dateFormat="W3CDTF">2013-02-07T00:00:00Z</date>
+      </dates>
+      <dates type="dc.issued">
+        <date type="dateFrom" dateFormat="W3CDTF">2022-03-03T00:00:00Z</date>
+      </dates>
+      <location dateFrom="2013-02-14T00:00:00Z" dateTo="2013-03-02T00:00:00Z">
+        <address>
+          <electronic type="url" target="landingPage">
+            <value>https://demo.ands.org.au</value>
+            <title>My Landing Page for the data</title>
+          </electronic>
+          <physical type="postalAddress">
+            <addressPart type="addressLine">&amp;lt;p&amp;gt; 123 Example St&amp;lt;/p&amp;gt; &amp;lt;p&amp;gt; Canberra ACT 2131&amp;lt;/p&amp;gt;</addressPart>
+          </physical>
+          <electronic type="url" target="directDownload">
+            <value>https://dl.dropboxusercontent.com/u/49073372/RIF16WithError.xml</value>
+            <title>My Direct Download link</title>
+            <mediaType>XML</mediaType>
+            <byteSize>3KB</byteSize>
+          </electronic>
+        </address>
+        <spatial type="kmlPolyCoords">119.707031,-20.468189 152.753906,-32.101190 119.707031,-20.468189</spatial>
+      </location>
+      <coverage>
+        <temporal>
+          <date type="dateFrom" dateFormat="W3CDTF">2013-01-30T00:00:00Z</date>
+          <date type="dateTo" dateFormat="W3CDTF">2017-03-03T00:00:00Z</date>
+        </temporal>
+        <spatial type="kmlPolyCoords">143.085938,-22.917923</spatial>
+        <spatial type="kmlPolyCoords">121.640625,-35.173808 150.644531,-20.961440 117.246094,-14.093957 110.390625,-26.273714 127.441406,-20.961440 128.847656,-27.527758 121.640625,-35.173808</spatial>
+      </coverage>
+      <coverage>
+        <spatial type="text">Some place in Australia</spatial>
+      </coverage>
+      <relatedObject>
+        <key>Collection1</key>
+        <relation type="isDerivedFrom">
+          <description>relationshipdescription</description>
+        </relation>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTParty1</key>
+        <relation type="isManagedBy">
+          <description>relationshipdescription</description>
+        </relation>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTParty2</key>
+        <relation type="isOwnedBy">
+          <description>relationshipdescription</description>
+        </relation>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTParty3</key>
+        <relation type="hasPrincipalInvestigator">
+          <description>relationshipdescription</description>
+        </relation>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTParty4</key>
+        <relation type="hasPrincipalInvestigator">
+          <description>relationshipdescription</description>
+        </relation>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTParty5</key>
+        <relation type="hasCollector">
+          <description>relationshipdescription</description>
+        </relation>
+      </relatedObject>
+      <relatedObject>
+        <key>Service1</key>
+        <relation type="isDerivedFrom">
+          <description>These two have quite a serious relationship going on</description>
+        </relation>
+      </relatedObject>
+      <relatedObject>
+        <key>Activity1</key>
+        <relation type="hasValueAddedBy">
+          <description>Very casual</description>
+        </relation>
+      </relatedObject>
+      <relatedObject>
+        <key>Collection28</key>
+        <relation type="hasPart"/>
+      </relatedObject>
+      <relatedObject>
+        <key>MON:be2d9ab52bb74712850b5900180cbc5d</key>
+        <relation type="hasCollector"/>
+      </relatedObject>
+      <subject type="local">localSubject</subject>
+      <subject type="anzsrc-seo">830201</subject>
+      <subject type="anzsrc-for">0303</subject>
+      <relatedInfo type="metadata">
+        <title>Related Info Title</title>
+        <identifier type="doi">10.1234567882484</identifier>
+        <format>
+          <identifier type="mediaType">formatidentifier</identifier>
+        </format>
+        <notes>related info notes</notes>
+      </relatedInfo>
+      <relatedInfo type="dataQualityInformation">
+        <title>relatedinfo Title</title>
+        <identifier type="infouri">infouri.12345</identifier>
+        <notes>Related Info Notes</notes>
+      </relatedInfo>
+      <relatedInfo type="publication">
+        <title>Related Info Title</title>
+        <identifier type="doi">10.123123123</identifier>
+        <relation type="hasPart"/>
+      </relatedInfo>
+      <relatedInfo type="website">
+        <title>Stuff</title>
+        <identifier type="uri">http://www.smithy.com</identifier>
+        <relation type="hasAssociationWith">
+          <description>A website relationship</description>
+        </relation>
+      </relatedInfo>
+      <relatedInfo type="party">
+        <title>AUTParty6</title>
+        <identifier type="orcid">orcid.AUTParty6</identifier>
+        <relation type="hasCollector"/>
+      </relatedInfo>
+      <relatedInfo type="reuseInformation">
+        <title>Example Reuse Information</title>
+        <identifier type="uri">http://exampleofreuse.com</identifier>
+        <notes>To reuse this data following the steps outlined at the URL</notes>
+      </relatedInfo>
+      <relatedInfo type="publication">
+        <title>Another Publication Example</title>
+        <identifier type="issn">789879.3.34.ISSN</identifier>
+      </relatedInfo>
+      <citationInfo>
+        <citationMetadata>
+          <identifier type="doi">10.123123123</identifier>
+          <title>Citation Title</title>
+          <version>V0.2</version>
+          <placePublished>Australia</placePublished>
+          <publisher>Some Example Publisher</publisher>
+          <url>http://www.exapmle.com</url>
+          <context>Context</context>
+          <contributor seq="1">
+            <namePart type="given">Joe Blogs</namePart>
+          </contributor>
+          <date type="created">12-12-2001</date>
+        </citationMetadata>
+      </citationInfo>
+    </correction>
+  </registryObject>
+
+
+<registryObject group="AUTestingRecords">
+    <key>http://nla.gov.au/nla.party-AUT</key>
+    <originatingSource type="">nla.gov.au</originatingSource>
+    <partly type="group">
+      <name type="primary">
+        <namePart>(AUTestingRecords3) University of  chorizo risotto AUTestingRecords3</namePart>
+      </name>
+      <description type="brief">&amp;lt;p&amp;gt;A party for all&amp;lt;/p&amp;gt;</description>
+      <identifier type="AU-ANL:PEAU">http://nla.gov.au/nla.party-AUT</identifier>
+      <location>
+        <address>
+          <electronic type="url">
+            <value>http://www.unsw.edu.au/a</value>
+          </electronic>
+        </address>
+      </location>
+    </partly>
+  </registryObject>
+
+  <registryObject group="AUTestingRecords">
+    <key>AUTestingRecordsNestedx100IMOS/7f2f5084-2933-3b79-847e-33c348a8265e2</key>
+    <originatingSource> Atlantic Oceanographic and Meteorological Laboratory (AOML) </originatingSource>
+    <collection type="dataset">
+      <identifier type="uri">http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=7f2f5084-2933-3b79-847e-33c348a8265e AUTbx12</identifier>
+      <name type="primary">
+        <namePart>(LVL 5) Nested Collections Large Numbers2</namePart>
+      </name>
+      <dates type="created">
+        <date type="dateFrom" dateFormat="W3CDTF">2014-09-09T06:06:26</date>
+      </dates>
+      <relatedObject>
+        <key>AUTestingRecordsNestedx100IMOS/8cc13f98-9897-4193-8ba6-d1f05356d3f2</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <location>
+        <address>
+          <electronic type="url">
+            <value> http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=7f2f5084-2933-3b79-847e-33c348a8265e </value>
+          </electronic>
+        </address>
+      </location>
+      <relatedObject>
+        <key>AUTestingRecordsNestedx100IMOS/4b9ecd05-3162-312a-a90f-905245ca01f9</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <subject type="local">oceans</subject>
+      <subject type="local">Oceans | Ocean Temperature | Water Temperature</subject>
+      <subject type="local">Oceans | Salinity/density | Salinity</subject>
+      <subject type="local">Oceans | Ocean Pressure | Water Pressure</subject>
+      <subject type="local">Oceans | Ocean Chemistry | Dissolved Gases</subject>
+      <subject type="local">Profiling Float | Autonomous Profiling Float</subject>
+      <description type="full"> This dataset contains temperature, salinity, pressure and dissolved oxygen data for all profiles of the Argo float 2900114 managed by the Atlantic Oceanographic and Meteorological Laboratory (AOML). Argo is a major international collaborative project to observe the world's oceans and help scientists understand ocean processes and the ocean's roles in climate. The data collected also improves our ability to forecast climate and ocean conditions. The float drift at depth of between 1 and 2 km. Every ten days each float ascends to the surface, measuring temperature and salinity as it rises. This data is transmitted to satellites along with the float's position. The float then dives and starts a new cycle. The Argo float, WMO 2900114 was first deployed on the 2007-09-30T07:30:00 at launch location (Latitude : -64.9316635131836 ; Longitude : 119.15666961669922). The variables available for this Argo float are : Temperature, Practical Salinity, Pressure and Dissolved Oxygen. The last location of the Argo float was transmitted on the 2011-11-17T09:30:10 at the following location (Latitude : -55.862 ; Longitude : 105.108). </description>
+      <coverage>
+        <spatial type="iso19139dcmiBox"> northlimit=-55.538; southlimit=-65.52; westlimit=83.295; eastLimit=119.342; projection=WGS84 </spatial>
+        <spatial type="text"> northlimit=-55.538; southlimit=-65.52; westlimit=83.295; eastLimit=119.342; projection=WGS84 </spatial>
+      </coverage>
+      <coverage>
+        <temporal>
+          <date type="dateFrom" dateFormat="W3CDTF">2007-09-30T14:34:00</date>
+          <date type="dateTo" dateFormat="W3CDTF">2011-11-17T09:30:10</date>
+        </temporal>
+      </coverage>
+      <relatedInfo type="website">
+        <identifier type="uri"> http://thredds.aodn.org.au/thredds/catalog/IMOS/Argo/dac/aoml/2900114/catalog.html AUTbx1</identifier>
+        <relation type="hasAssociationWith"/>
+        <title>Data available via the IMOS OPeNDAP server</title>
+      </relatedInfo>
+      <rights>
+        <rightsStatement> Argo Data (Temperature and Salinity profiles) are freely available without any restriction, via the internet Global Data Centres (GDACs) and the GTS of WMO. Please support Argo by acknowledging your use of Argo data with the following words: "These data where collected and made freely available by the International Argo project and the national initiatives that contribute to it. (http://www.argo.net).Argo is a pilot programme of the Global Ocean Observing System." </rightsStatement>
+      </rights>
+      <citationInfo>
+        <citationMetadata>
+          <identifier type="uri"> http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=7f2f5084-2933-3b79-847e-33c348a8265e AUTbx1</identifier>
+          <title>AOML - Argo float, WMO 2900114</title>
+          <date type="created">2014</date>
+          <contributor>
+            <namePart> Atlantic Oceanographic and Meteorological Laboratory (AOML) </namePart>
+          </contributor>
+          <publisher>Integrated Marine Observing System (IMOS)</publisher>
+        </citationMetadata>
+      </citationInfo>
+    </collection>
+  </registryObject>
+  <registryObject group="AUTestingRecords">
+    <key>AUTestingRecordsNestedx100IMOS/7f2f5084-2933-3b79-847e-33c348a8265e2</key>
+    <originatingSource> Atlantic Oceanographic and Meteorological Laboratory (AOML) </originatingSource>
+    <collection type="dataset">
+      <identifier type="uri">http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=7f2f5084-2933-3b79-847e-33c348a8265e AUTbx12</identifier>
+      <name type="primary">
+        <namePart>(LVL 5) Nested Collections Large Numbers2</namePart>
+      </name>
+      <dates type="created">
+        <date type="dateFrom" dateFormat="W3CDTF">2014-09-09T06:06:26</date>
+      </dates>
+      <relatedObject>
+        <key>AUTestingRecordsNestedx100IMOS/8cc13f98-9897-4193-8ba6-d1f05356d3f2</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <location>
+        <address>
+          <electronic type="url">
+            <value> http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=7f2f5084-2933-3b79-847e-33c348a8265e </value>
+          </electronic>
+        </address>
+      </location>
+      <relatedObject>
+        <key>AUTestingRecordsNestedx100IMOS/4b9ecd05-3162-312a-a90f-905245ca01f9</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <subject type="local">oceans</subject>
+      <subject type="local">Oceans | Ocean Temperature | Water Temperature</subject>
+      <subject type="local">Oceans | Salinity/density | Salinity</subject>
+      <subject type="local">Oceans | Ocean Pressure | Water Pressure</subject>
+      <subject type="local">Oceans | Ocean Chemistry | Dissolved Gases</subject>
+      <subject type="local">Profiling Float | Autonomous Profiling Float</subject>
+      <description type="full"> This dataset contains temperature, salinity, pressure and dissolved oxygen data for all profiles of the Argo float 2900114 managed by the Atlantic Oceanographic and Meteorological Laboratory (AOML). Argo is a major international collaborative project to observe the world's oceans and help scientists understand ocean processes and the ocean's roles in climate. The data collected also improves our ability to forecast climate and ocean conditions. The float drift at depth of between 1 and 2 km. Every ten days each float ascends to the surface, measuring temperature and salinity as it rises. This data is transmitted to satellites along with the float's position. The float then dives and starts a new cycle. The Argo float, WMO 2900114 was first deployed on the 2007-09-30T07:30:00 at launch location (Latitude : -64.9316635131836 ; Longitude : 119.15666961669922). The variables available for this Argo float are : Temperature, Practical Salinity, Pressure and Dissolved Oxygen. The last location of the Argo float was transmitted on the 2011-11-17T09:30:10 at the following location (Latitude : -55.862 ; Longitude : 105.108). </description>
+      <coverage>
+        <spatial type="iso19139dcmiBox"> northlimit=-55.538; southlimit=-65.52; westlimit=83.295; eastLimit=119.342; projection=WGS84 </spatial>
+        <spatial type="text"> northlimit=-55.538; southlimit=-65.52; westlimit=83.295; eastLimit=119.342; projection=WGS84 </spatial>
+      </coverage>
+      <coverage>
+        <temporal>
+          <date type="dateFrom" dateFormat="W3CDTF">2007-09-30T14:34:00</date>
+          <date type="dateTo" dateFormat="W3CDTF">2011-11-17T09:30:10</date>
+        </temporal>
+      </coverage>
+      <relatedInfo type="website">
+        <identifier type="uri"> http://thredds.aodn.org.au/thredds/catalog/IMOS/Argo/dac/aoml/2900114/catalog.html AUTbx1</identifier>
+        <relation type="hasAssociationWith"/>
+        <title>Data available via the IMOS OPeNDAP server</title>
+      </relatedInfo>
+      <rights>
+        <rightsStatement> Argo Data (Temperature and Salinity profiles) are freely available without any restriction, via the internet Global Data Centres (GDACs) and the GTS of WMO. Please support Argo by acknowledging your use of Argo data with the following words: "These data where collected and made freely available by the International Argo project and the national initiatives that contribute to it. (http://www.argo.net).Argo is a pilot programme of the Global Ocean Observing System." </rightsStatement>
+      </rights>
+      <citationInfo>
+        <citationMetadata>
+          <identifier type="uri"> http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=7f2f5084-2933-3b79-847e-33c348a8265e AUTbx1</identifier>
+          <title>AOML - Argo float, WMO 2900114</title>
+          <date type="created">2014</date>
+          <contributor>
+            <namePart> Atlantic Oceanographic and Meteorological Laboratory (AOML) </namePart>
+          </contributor>
+          <publisher>Integrated Marine Observing System (IMOS)</publisher>
+        </citationMetadata>
+      </citationInfo>
+    </collection>
+  </registryObject>
+  <registryObject group="AUTestingRecords">
+    <key>AUTestingRecordsNestedx100IMOS/7f2f5084-2933-3b79-847e-33c348a8265e2</key>
+    <originatingSource> Atlantic Oceanographic and Meteorological Laboratory (AOML) </originatingSource>
+    <collection type="dataset">
+      <identifier type="uri">http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=7f2f5084-2933-3b79-847e-33c348a8265e AUTbx12</identifier>
+      <name type="primary">
+        <namePart>(LVL 5) Nested Collections Large Numbers2</namePart>
+      </name>
+      <dates type="created">
+        <date type="dateFrom" dateFormat="W3CDTF">2014-09-09T06:06:26</date>
+      </dates>
+      <relatedObject>
+        <key>AUTestingRecordsNestedx100IMOS/8cc13f98-9897-4193-8ba6-d1f05356d3f2</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <location>
+        <address>
+          <electronic type="url">
+            <value> http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=7f2f5084-2933-3b79-847e-33c348a8265e </value>
+          </electronic>
+        </address>
+      </location>
+      <relatedObject>
+        <key>AUTestingRecordsNestedx100IMOS/4b9ecd05-3162-312a-a90f-905245ca01f9</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <subject type="local">oceans</subject>
+      <subject type="local">Oceans | Ocean Temperature | Water Temperature</subject>
+      <subject type="local">Oceans | Salinity/density | Salinity</subject>
+      <subject type="local">Oceans | Ocean Pressure | Water Pressure</subject>
+      <subject type="local">Oceans | Ocean Chemistry | Dissolved Gases</subject>
+      <subject type="local">Profiling Float | Autonomous Profiling Float</subject>
+      <description type="full"> This dataset contains temperature, salinity, pressure and dissolved oxygen data for all profiles of the Argo float 2900114 managed by the Atlantic Oceanographic and Meteorological Laboratory (AOML). Argo is a major international collaborative project to observe the world's oceans and help scientists understand ocean processes and the ocean's roles in climate. The data collected also improves our ability to forecast climate and ocean conditions. The float drift at depth of between 1 and 2 km. Every ten days each float ascends to the surface, measuring temperature and salinity as it rises. This data is transmitted to satellites along with the float's position. The float then dives and starts a new cycle. The Argo float, WMO 2900114 was first deployed on the 2007-09-30T07:30:00 at launch location (Latitude : -64.9316635131836 ; Longitude : 119.15666961669922). The variables available for this Argo float are : Temperature, Practical Salinity, Pressure and Dissolved Oxygen. The last location of the Argo float was transmitted on the 2011-11-17T09:30:10 at the following location (Latitude : -55.862 ; Longitude : 105.108). </description>
+      <coverage>
+        <spatial type="iso19139dcmiBox"> northlimit=-55.538; southlimit=-65.52; westlimit=83.295; eastLimit=119.342; projection=WGS84 </spatial>
+        <spatial type="text"> northlimit=-55.538; southlimit=-65.52; westlimit=83.295; eastLimit=119.342; projection=WGS84 </spatial>
+      </coverage>
+      <coverage>
+        <temporal>
+          <date type="dateFrom" dateFormat="W3CDTF">2007-09-30T14:34:00</date>
+          <date type="dateTo" dateFormat="W3CDTF">2011-11-17T09:30:10</date>
+        </temporal>
+      </coverage>
+      <relatedInfo type="website">
+        <identifier type="uri"> http://thredds.aodn.org.au/thredds/catalog/IMOS/Argo/dac/aoml/2900114/catalog.html AUTbx1</identifier>
+        <relation type="hasAssociationWith"/>
+        <title>Data available via the IMOS OPeNDAP server</title>
+      </relatedInfo>
+      <rights>
+        <rightsStatement> Argo Data (Temperature and Salinity profiles) are freely available without any restriction, via the internet Global Data Centres (GDACs) and the GTS of WMO. Please support Argo by acknowledging your use of Argo data with the following words: "These data where collected and made freely available by the International Argo project and the national initiatives that contribute to it. (http://www.argo.net).Argo is a pilot programme of the Global Ocean Observing System." </rightsStatement>
+      </rights>
+      <citationInfo>
+        <citationMetadata>
+          <identifier type="uri"> http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=7f2f5084-2933-3b79-847e-33c348a8265e AUTbx1</identifier>
+          <title>AOML - Argo float, WMO 2900114</title>
+          <date type="created">2014</date>
+          <contributor>
+            <namePart> Atlantic Oceanographic and Meteorological Laboratory (AOML) </namePart>
+          </contributor>
+          <publisher>Integrated Marine Observing System (IMOS)</publisher>
+        </citationMetadata>
+      </citationInfo>
+    </collection>
+  </registryObject>
+  <registryObject group="AUTestingRecords">
+    <key>AUTestingRecordsNestedx100IMOS/7f2f5084-2933-3b79-847e-33c348a8265e2</key>
+    <originatingSource> Atlantic Oceanographic and Meteorological Laboratory (AOML) </originatingSource>
+    <collection type="dataset">
+      <identifier type="uri">http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=7f2f5084-2933-3b79-847e-33c348a8265e AUTbx12</identifier>
+      <name type="primary">
+        <namePart>(LVL 5) Nested Collections Large Numbers2</namePart>
+      </name>
+      <dates type="created">
+        <date type="dateFrom" dateFormat="W3CDTF">2014-09-09T06:06:26</date>
+      </dates>
+      <relatedObject>
+        <key>AUTestingRecordsNestedx100IMOS/8cc13f98-9897-4193-8ba6-d1f05356d3f2</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <location>
+        <address>
+          <electronic type="url">
+            <value> http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=7f2f5084-2933-3b79-847e-33c348a8265e </value>
+          </electronic>
+        </address>
+      </location>
+      <relatedObject>
+        <key>AUTestingRecordsNestedx100IMOS/4b9ecd05-3162-312a-a90f-905245ca01f9</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <subject type="local">oceans</subject>
+      <subject type="local">Oceans | Ocean Temperature | Water Temperature</subject>
+      <subject type="local">Oceans | Salinity/density | Salinity</subject>
+      <subject type="local">Oceans | Ocean Pressure | Water Pressure</subject>
+      <subject type="local">Oceans | Ocean Chemistry | Dissolved Gases</subject>
+      <subject type="local">Profiling Float | Autonomous Profiling Float</subject>
+      <description type="full"> This dataset contains temperature, salinity, pressure and dissolved oxygen data for all profiles of the Argo float 2900114 managed by the Atlantic Oceanographic and Meteorological Laboratory (AOML). Argo is a major international collaborative project to observe the world's oceans and help scientists understand ocean processes and the ocean's roles in climate. The data collected also improves our ability to forecast climate and ocean conditions. The float drift at depth of between 1 and 2 km. Every ten days each float ascends to the surface, measuring temperature and salinity as it rises. This data is transmitted to satellites along with the float's position. The float then dives and starts a new cycle. The Argo float, WMO 2900114 was first deployed on the 2007-09-30T07:30:00 at launch location (Latitude : -64.9316635131836 ; Longitude : 119.15666961669922). The variables available for this Argo float are : Temperature, Practical Salinity, Pressure and Dissolved Oxygen. The last location of the Argo float was transmitted on the 2011-11-17T09:30:10 at the following location (Latitude : -55.862 ; Longitude : 105.108). </description>
+      <coverage>
+        <spatial type="iso19139dcmiBox"> northlimit=-55.538; southlimit=-65.52; westlimit=83.295; eastLimit=119.342; projection=WGS84 </spatial>
+        <spatial type="text"> northlimit=-55.538; southlimit=-65.52; westlimit=83.295; eastLimit=119.342; projection=WGS84 </spatial>
+      </coverage>
+      <coverage>
+        <temporal>
+          <date type="dateFrom" dateFormat="W3CDTF">2007-09-30T14:34:00</date>
+          <date type="dateTo" dateFormat="W3CDTF">2011-11-17T09:30:10</date>
+        </temporal>
+      </coverage>
+      <relatedInfo type="website">
+        <identifier type="uri"> http://thredds.aodn.org.au/thredds/catalog/IMOS/Argo/dac/aoml/2900114/catalog.html AUTbx1</identifier>
+        <relation type="hasAssociationWith"/>
+        <title>Data available via the IMOS OPeNDAP server</title>
+      </relatedInfo>
+      <rights>
+        <rightsStatement> Argo Data (Temperature and Salinity profiles) are freely available without any restriction, via the internet Global Data Centres (GDACs) and the GTS of WMO. Please support Argo by acknowledging your use of Argo data with the following words: "These data where collected and made freely available by the International Argo project and the national initiatives that contribute to it. (http://www.argo.net).Argo is a pilot programme of the Global Ocean Observing System." </rightsStatement>
+      </rights>
+      <citationInfo>
+        <citationMetadata>
+          <identifier type="uri"> http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=7f2f5084-2933-3b79-847e-33c348a8265e AUTbx1</identifier>
+          <title>AOML - Argo float, WMO 2900114</title>
+          <date type="created">2014</date>
+          <contributor>
+            <namePart> Atlantic Oceanographic and Meteorological Laboratory (AOML) </namePart>
+          </contributor>
+          <publisher>Integrated Marine Observing System (IMOS)</publisher>
+        </citationMetadata>
+      </citationInfo>
+    </collection>
+  </registryObject>
+
+<registryObject group="AUTestingRecords">
+    <key></key>
+    <originatingSource> Indian National Centre for Ocean Information Services (INCOIS) </originatingSource>
+    <collection type="dataset">
+      <identifier type="uri"> http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=86ec0cee-0620-3724-963a-d0432495584d AUTbx114</identifier>
+      <name type="primary">
+        <namePart>(LVL 2) Nested Collections Large Numbers14</namePart>
+      </name>
+      <dates type="created">
+        <date type="dateFrom" dateFormat="W3CDTF">2014-09-09T06:10:16</date>
+      </dates>
+      <relatedObject>
+        <key>AUTestingRecordsNestedx100IMOS/8cc13f98-9897-4193-8ba6-d1f05356d3f2</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <location>
+        <address>
+          <electronic type="url">
+            <value> http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=86ec0cee-0620-3724-963a-d0432495584d </value>
+          </electronic>
+        </address>
+      </location>
+      <relatedObject>
+        <key>AUTestingRecordsNestedx100IMOS/6512aaf2-0862-332a-a540-490a2e0aedfb</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <subject type="local">oceans</subject>
+      <subject type="local">Oceans | Ocean Temperature | Water Temperature</subject>
+      <subject type="local">Oceans | Salinity/density | Salinity</subject>
+      <subject type="local">Oceans | Ocean Pressure | Water Pressure</subject>
+      <subject type="local">Profiling Float | Autonomous Profiling Float</subject>
+      <description type="full"> This dataset contains temperature, salinity and pressure data for all profiles of the Argo float 2901092 managed by the Indian National Centre for Ocean Information Services (INCOIS).Argo is a major international collaborative project to observe the world's oceans and help scientists understand ocean processes and the ocean's roles in climate. The data collected also improves our ability to forecast climate and ocean conditions. The float drift at depth of between 1 and 2 km. Every ten days each float ascends to the surface, measuring temperature and salinity as it rises. This data is transmitted to satellites along with the float's position. The float then dives and starts a new cycle. The Argo float, WMO 2901092 was first deployed on the 2008-08-24T18:00:00 at launch location (Latitude : -1.0 ; Longitude : 81.53). The variables available for this Argo float are : Temperature, Practical Salinity and Pressure. The last location of the Argo float was transmitted on the 2013-12-08T14:23:56 at the following location (Latitude : -5.073 ; Longitude : 102.708). </description>
+      <coverage>
+        <spatial type="iso19139dcmiBox"> northlimit=0.856; southlimit=-6.3; westlimit=80.355; eastLimit=104.202; projection=WGS84 </spatial>
+        <spatial type="text"> northlimit=0.856; southlimit=-6.3; westlimit=80.355; eastLimit=104.202; projection=WGS84 </spatial>
+      </coverage>
+      <coverage>
+        <temporal>
+          <date type="dateFrom" dateFormat="W3CDTF">2008-08-26T00:23:32</date>
+          <date type="dateTo" dateFormat="W3CDTF">2013-12-08T14:23:56</date>
+        </temporal>
+      </coverage>
+      <relatedInfo type="website">
+        <identifier type="uri"> http://thredds.aodn.org.au/thredds/catalog/IMOS/Argo/dac/incois/2901092/catalog.html AUTbx1</identifier>
+        <relation type="hasAssociationWith"/>
+        <title>Data available via the IMOS OPeNDAP server</title>
+      </relatedInfo>
+      <rights>
+        <rightsStatement> Argo Data (Temperature and Salinity profiles) are freely available without any restriction, via the internet Global Data Centres (GDACs) and the GTS of WMO. Please support Argo by acknowledging your use of Argo data with the following words: "These data where collected and made freely available by the International Argo project and the national initiatives that contribute to it. (http://www.argo.net). Argo is a pilot programme of the Global Ocean Observing System." </rightsStatement>
+      </rights>
+      <citationInfo>
+        <citationMetadata>
+          <identifier type="uri">http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=86ec0cee-0620-3724-963a-d0432495584d AUTbx1</identifier>
+          <title>INCOIS - Argo float, WMO 2901092</title>
+          <date type="created">2014</date>
+          <contributor>
+            <namePart> Indian National Centre for Ocean Information Services (INCOIS) </namePart>
+          </contributor>
+          <publisher>Integrated Marine Observing System (IMOS)</publisher>
+        </citationMetadata>
+      </citationInfo>
+    </collection>
+  </registryObject>
+
+
+<registryObject group="AUTestingRecords">
+    <key>AUTestingRecordsNestedx100IMOS/86ec0cee-0620-3724-963a-d0432495584d15</key>
+    <collection type="dataset">
+      <identifier type="uri"> http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=86ec0cee-0620-3724-963a-d0432495584d AUTbx115</identifier>
+      <name type="primary">
+        <namePart>(LVL 2) Nested Collections Large Numbers15</namePart>
+      </name>
+      <dates type="created">
+        <date type="dateFrom" dateFormat="W3CDTF">2014-09-09T06:10:16</date>
+      </dates>
+      <relatedObject>
+        <key>AUTestingRecordsNestedx100IMOS/8cc13f98-9897-4193-8ba6-d1f05356d3f2</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <location>
+        <address>
+          <electronic type="url">
+            <value> http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=86ec0cee-0620-3724-963a-d0432495584d </value>
+          </electronic>
+        </address>
+      </location>
+      <relatedObject>
+        <key>AUTestingRecordsNestedx100IMOS/6512aaf2-0862-332a-a540-490a2e0aedfb</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <subject type="local">oceans</subject>
+      <subject type="local">Oceans | Ocean Temperature | Water Temperature</subject>
+      <subject type="local">Oceans | Salinity/density | Salinity</subject>
+      <subject type="local">Oceans | Ocean Pressure | Water Pressure</subject>
+      <subject type="local">Profiling Float | Autonomous Profiling Float</subject>
+      <description type="full"> This dataset contains temperature, salinity and pressure data for all profiles of the Argo float 2901092 managed by the Indian National Centre for Ocean Information Services (INCOIS).Argo is a major international collaborative project to observe the world's oceans and help scientists understand ocean processes and the ocean's roles in climate. The data collected also improves our ability to forecast climate and ocean conditions. The float drift at depth of between 1 and 2 km. Every ten days each float ascends to the surface, measuring temperature and salinity as it rises. This data is transmitted to satellites along with the float's position. The float then dives and starts a new cycle. The Argo float, WMO 2901092 was first deployed on the 2008-08-24T18:00:00 at launch location (Latitude : -1.0 ; Longitude : 81.53). The variables available for this Argo float are : Temperature, Practical Salinity and Pressure. The last location of the Argo float was transmitted on the 2013-12-08T14:23:56 at the following location (Latitude : -5.073 ; Longitude : 102.708). </description>
+      <coverage>
+        <spatial type="iso19139dcmiBox"> northlimit=0.856; southlimit=-6.3; westlimit=80.355; eastLimit=104.202; projection=WGS84 </spatial>
+        <spatial type="text"> northlimit=0.856; southlimit=-6.3; westlimit=80.355; eastLimit=104.202; projection=WGS84 </spatial>
+      </coverage>
+      <coverage>
+        <temporal>
+          <date type="dateFrom" dateFormat="W3CDTF">2008-08-26T00:23:32</date>
+          <date type="dateTo" dateFormat="W3CDTF">2013-12-08T14:23:56</date>
+        </temporal>
+      </coverage>
+      <relatedInfo type="website">
+        <identifier type="uri"> http://thredds.aodn.org.au/thredds/catalog/IMOS/Argo/dac/incois/2901092/catalog.html AUTbx1</identifier>
+        <relation type="hasAssociationWith"/>
+        <title>Data available via the IMOS OPeNDAP server</title>
+      </relatedInfo>
+      <rights>
+        <rightsStatement> Argo Data (Temperature and Salinity profiles) are freely available without any restriction, via the internet Global Data Centres (GDACs) and the GTS of WMO. Please support Argo by acknowledging your use of Argo data with the following words: "These data where collected and made freely available by the International Argo project and the national initiatives that contribute to it. (http://www.argo.net). Argo is a pilot programme of the Global Ocean Observing System." </rightsStatement>
+      </rights>
+      <citationInfo>
+        <citationMetadata>
+          <identifier type="uri">http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=86ec0cee-0620-3724-963a-d0432495584d AUTbx1</identifier>
+          <title>INCOIS - Argo float, WMO 2901092</title>
+          <date type="created">2014</date>
+          <contributor>
+            <namePart> Indian National Centre for Ocean Information Services (INCOIS) </namePart>
+          </contributor>
+          <publisher>Integrated Marine Observing System (IMOS)</publisher>
+        </citationMetadata>
+      </citationInfo>
+    </collection>
+  </registryObject>
+
+
+<registryObject group="AUTestingRecords">
+    <key>AUTestingRecordsNestedx100IMOS/86ec0cee-0620-3724-963a-d0432495584d16</key>
+    <originatingSource></originatingSource>
+    <collection type="dataset">
+      <identifier type="uri"> http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=86ec0cee-0620-3724-963a-d0432495584d AUTbx116</identifier>
+      <name type="primary">
+        <namePart>(LVL 2) Nested Collections Large Numbers16</namePart>
+      </name>
+      <dates type="created">
+        <date type="dateFrom" dateFormat="W3CDTF">2014-09-09T06:10:16</date>
+      </dates>
+      <relatedObject>
+        <key>AUTestingRecordsNestedx100IMOS/8cc13f98-9897-4193-8ba6-d1f05356d3f2</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <location>
+        <address>
+          <electronic type="url">
+            <value> http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=86ec0cee-0620-3724-963a-d0432495584d </value>
+          </electronic>
+        </address>
+      </location>
+      <relatedObject>
+        <key>AUTestingRecordsNestedx100IMOS/6512aaf2-0862-332a-a540-490a2e0aedfb</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <subject type="local">oceans</subject>
+      <subject type="local">Oceans | Ocean Temperature | Water Temperature</subject>
+      <subject type="local">Oceans | Salinity/density | Salinity</subject>
+      <subject type="local">Oceans | Ocean Pressure | Water Pressure</subject>
+      <subject type="local">Profiling Float | Autonomous Profiling Float</subject>
+      <description type="full"> This dataset contains temperature, salinity and pressure data for all profiles of the Argo float 2901092 managed by the Indian National Centre for Ocean Information Services (INCOIS).Argo is a major international collaborative project to observe the world's oceans and help scientists understand ocean processes and the ocean's roles in climate. The data collected also improves our ability to forecast climate and ocean conditions. The float drift at depth of between 1 and 2 km. Every ten days each float ascends to the surface, measuring temperature and salinity as it rises. This data is transmitted to satellites along with the float's position. The float then dives and starts a new cycle. The Argo float, WMO 2901092 was first deployed on the 2008-08-24T18:00:00 at launch location (Latitude : -1.0 ; Longitude : 81.53). The variables available for this Argo float are : Temperature, Practical Salinity and Pressure. The last location of the Argo float was transmitted on the 2013-12-08T14:23:56 at the following location (Latitude : -5.073 ; Longitude : 102.708). </description>
+      <coverage>
+        <spatial type="iso19139dcmiBox"> northlimit=0.856; southlimit=-6.3; westlimit=80.355; eastLimit=104.202; projection=WGS84 </spatial>
+        <spatial type="text"> northlimit=0.856; southlimit=-6.3; westlimit=80.355; eastLimit=104.202; projection=WGS84 </spatial>
+      </coverage>
+      <coverage>
+        <temporal>
+          <date type="dateFrom" dateFormat="W3CDTF">2008-08-26T00:23:32</date>
+          <date type="dateTo" dateFormat="W3CDTF">2013-12-08T14:23:56</date>
+        </temporal>
+      </coverage>
+      <relatedInfo type="website">
+        <identifier type="uri"> http://thredds.aodn.org.au/thredds/catalog/IMOS/Argo/dac/incois/2901092/catalog.html AUTbx1</identifier>
+        <relation type="hasAssociationWith"/>
+        <title>Data available via the IMOS OPeNDAP server</title>
+      </relatedInfo>
+      <rights>
+        <rightsStatement> Argo Data (Temperature and Salinity profiles) are freely available without any restriction, via the internet Global Data Centres (GDACs) and the GTS of WMO. Please support Argo by acknowledging your use of Argo data with the following words: "These data where collected and made freely available by the International Argo project and the national initiatives that contribute to it. (http://www.argo.net). Argo is a pilot programme of the Global Ocean Observing System." </rightsStatement>
+      </rights>
+      <citationInfo>
+        <citationMetadata>
+          <identifier type="uri">http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=86ec0cee-0620-3724-963a-d0432495584d AUTbx1</identifier>
+          <title>INCOIS - Argo float, WMO 2901092</title>
+          <date type="created">2014</date>
+          <contributor>
+            <namePart> Indian National Centre for Ocean Information Services (INCOIS) </namePart>
+          </contributor>
+          <publisher>Integrated Marine Observing System (IMOS)</publisher>
+        </citationMetadata>
+      </citationInfo>
+    </collection>
+  </registryObject>
+
+
+<registryObject group="AUTestingRecords">
+    <key>AUTestingRecordsNestedx100IMOS/86ec0cee-0620-3724-963a-d0432495584d17</key>
+    <originatingSource> Indian National Centre for Ocean Information Services (INCOIS) </originatingSource>
+    <collection type="dataset">
+      <identifier type="uri"> http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=86ec0cee-0620-3724-963a-d0432495584d AUTbx117</identifier>
+      <name type="primary">
+        <namePart>(LVL 2) Nested Collections Large Numbers17</namePart>
+      </name>
+      <dates type="created">
+        <date type="dateFrom" dateFormat="W3CDTF">2014-09-09T06:10:16</date>
+      </dates>
+      <relatedObject>
+        <key>AUTestingRecordsNestedx100IMOS/8cc13f98-9897-4193-8ba6-d1f05356d3f2</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <location>
+        <address>
+          <electronic type="url">
+            <value> http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=86ec0cee-0620-3724-963a-d0432495584d </value>
+          </electronic>
+        </address>
+      </location>
+      <relatedObject>
+        <key>AUTestingRecordsNestedx100IMOS/6512aaf2-0862-332a-a540-490a2e0aedfb</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <subject type="local">oceans</subject>
+      <subject type="local">Oceans | Ocean Temperature | Water Temperature</subject>
+      <subject type="local">Oceans | Salinity/density | Salinity</subject>
+      <subject type="local">Oceans | Ocean Pressure | Water Pressure</subject>
+      <subject type="local">Profiling Float | Autonomous Profiling Float</subject>
+      <description type="full"> This dataset contains temperature, salinity and pressure data for all profiles of the Argo float 2901092 managed by the Indian National Centre for Ocean Information Services (INCOIS).Argo is a major international collaborative project to observe the world's oceans and help scientists understand ocean processes and the ocean's roles in climate. The data collected also improves our ability to forecast climate and ocean conditions. The float drift at depth of between 1 and 2 km. Every ten days each float ascends to the surface, measuring temperature and salinity as it rises. This data is transmitted to satellites along with the float's position. The float then dives and starts a new cycle. The Argo float, WMO 2901092 was first deployed on the 2008-08-24T18:00:00 at launch location (Latitude : -1.0 ; Longitude : 81.53). The variables available for this Argo float are : Temperature, Practical Salinity and Pressure. The last location of the Argo float was transmitted on the 2013-12-08T14:23:56 at the following location (Latitude : -5.073 ; Longitude : 102.708). </description>
+      <coverage>
+        <spatial type="iso19139dcmiBox"> northlimit=0.856; southlimit=-6.3; westlimit=80.355; eastLimit=104.202; projection=WGS84 </spatial>
+        <spatial type="text"> northlimit=0.856; southlimit=-6.3; westlimit=80.355; eastLimit=104.202; projection=WGS84 </spatial>
+      </coverage>
+      <coverage>
+        <temporal>
+          <date type="dateFrom" dateFormat="W3CDTF">2008-08-26T00:23:32</date>
+          <date type="dateTo" dateFormat="W3CDTF">2013-12-08T14:23:56</date>
+        </temporal>
+      </coverage>
+      <relatedInfo type="website">
+        <identifier type="uri"> http://thredds.aodn.org.au/thredds/catalog/IMOS/Argo/dac/incois/2901092/catalog.html AUTbx1</identifier>
+        <relation type="hasAssociationWith"/>
+        <title>Data available via the IMOS OPeNDAP server</title>
+      </relatedInfo>
+      <rights>
+        <rightsStatement> Argo Data (Temperature and Salinity profiles) are freely available without any restriction, via the internet Global Data Centres (GDACs) and the GTS of WMO. Please support Argo by acknowledging your use of Argo data with the following words: "These data where collected and made freely available by the International Argo project and the national initiatives that contribute to it. (http://www.argo.net). Argo is a pilot programme of the Global Ocean Observing System." </rightsStatement>
+      </rights>
+      <citationInfo>
+        <citationMetadata>
+          <identifier type="uri">http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=86ec0cee-0620-3724-963a-d0432495584d AUTbx1</identifier>
+          <title>INCOIS - Argo float, WMO 2901092</title>
+          <date type="created">2014</date>
+          <contributor>
+            <namePart> Indian National Centre for Ocean Information Services (INCOIS) </namePart>
+          </contributor>
+          <publisher>Integrated Marine Observing System (IMOS)</publisher>
+        </citationMetadata>
+      </citationInfo>
+    </collection>
+  </registryObject>
+  <registryObject group="AUTestingRecords">
+    <key>AUTestingRecordsjcu.edu.au/collection/enmasse/335</key>
+    <originatingSource>https://research.jcu.edu.au/researchdata/default</originatingSource>
+    <collection type="dataset" dateAccessioned="2013-05-07T00:00:00Z">
+      <identifier type="local">jcu.edu.au/collection/enmasse/886AUT3355</identifier>
+      <name type="primary" xml:lang="en">
+        <namePart>(AUTestingRecords) Record with 1 relatedInfos which has no type. 
+        </namePart>
+      </name>
+      <location>
+        <address>
+          <electronic type="url">
+            <value>
+https://research.jcu.edu.au/researchdata/default/detail/1ea54e7577c3d52eab895d8956bb4b29
+</value>
+          </electronic>
+        </address>
+        <address>
+          <electronic type="url">
+            <value>https://research.jcu.edu.au/enmasse/886/data</value>
+          </electronic>
+        </address>
+        <address>
+          <physical>
+            <addressPart type="text">CC-DAM, James Cook University, Townsville Campus</addressPart>
+          </physical>
+        </address>
+      </location>
+      <coverage>
+        <temporal>
+          <date type="dateFrom" dateFormat="W3CDTF">2006-01-01T00:00:00Z</date>
+          <date type="dateTo" dateFormat="W3CDTF">2010-12-31T00:00:00Z</date>
+        </temporal>
+      </coverage>
+      <coverage>
+        <spatial type="kmlPolyCoords" xml:lang="en">
+          145.08,-17.70 145.52,-17.70 145.52,-16.28 145.08,-16.28 145.08,-17.70
+        </spatial>
+      </coverage>
+      <subject type="local" xml:lang="en">Australian Wet Tropics</subject>
+      <subject type="local" xml:lang="en">Invertebrates</subject>
+      <subject type="local" xml:lang="en">Species distribution</subject>
+      <subject type="anzsrc-for" xml:lang="en">060208</subject>
+      <subject type="anzsrc-seo" xml:lang="en">960805</subject>
+      <subject type="anzsrc-toa">Strategic basic research</subject>
+      <description type="full" xml:lang="en">
+        Rainforest invertebrates have been monitored at permanent monitoring sites across the Australian Wet Tropics rainforest between 2006-2009. Such surveys were conducted on monthly to bi-monthly basis across the Spec, Atherton, Windsor, Carbine and Bellenden Ker Uplands during these years. The Wet Tropics rainforest of North Queensland has the highest biodiversity of any region in Australia. While world heritage listing of the area has prevented ongoing impacts from land clearing, our research suggests that the fauna of the region is highly vulnerable to global climate change. Almost half of the unique rainforest fauna could be lost with an increase in temperature of 3-4 degrees Celsius. This is significant as the IPCC fourth assessment report and regional climate models suggest that we will see between 1.0-4.2 degrees Celsius of warming by the year 2070: potentially causing a catastrophic impact on the world heritage values of the region. Long-term monitoring of the region seeks to understand patterns of biodiversity and to detect shifts in phenology of the invertebrates of the Wet Tropics rainforest. Insects were sampled using a combination of Malaise traps, pitfall traps, and flight intercept traps (FIT) at permanent monitoring sites across the Australian Wet Tropics.
+      </description>
+      <description type="brief" xml:lang="en">
+        Insects were sampled using a combination of Malaise traps, pitfall traps, and flight intercept traps (FIT) at permanent monitoring sites across the Australian Wet Tropics.
+      </description>
+      <description type="note" xml:lang="en">
+        Insects were sampled using a combination of Malaise traps, pitfall traps, and flight intercept traps (FIT) at this permanent site. Flight intercept traps: A vertical screen of transparent plastic was stretched between two stakes, and a trough containing preservative fluid (propylene glycol) was arranged below its bottom edge. Traps were cleared monthly from 2006 to 2009. Samples are stored in ethanol at JCU. Malaise traps: An open-sided tent with a central vertical panel that reaches down to the ground was erected. Fast-flying insects, such as flies and wasps, hit the central panel and fly upwards towards a sloping roof that directs them towards a collecting chamber at the high end of the trap. Propylene glycol was used as a preservative in the collecting chamber. Traps were cleared monthly from 2006 to 2009. Samples are stored in ethanol at JCU. Insect pitfall traps (2006-2010): Six pitfall traps at 200 m intervals were placed along a 1 km transect at each altitude, (sites are consistent with previous research by Williams et al). Pitfall traps consisted of two round plastic take away containers (11 cm diameter) placed inside each other. Dung was wrapped in &amp;apos;chux&amp;apos; table wipes and hung on top of the trap using wooden barbeque skewers. 150 ml of Formalin (4% phosphate buffered formaldehyde) was used as a killing agent and preservative in each trap. A metal &amp;apos;cage&amp;apos; (bathroom soap holder) was placed around each pitfall trap and pinned to the ground. A metal plate covered the cage acting as rain guard. Specimens were brought back to JCU. - A minimal amount of preservative (150 ml per trap) was used. - A cover will prevent rainfall from entering the trap thus preventing overspilling of the preservative. - Traps will be placed on slightly higher ground or on a natural or artificial mound so as to prevent surface runoff from entering the trap thus avoiding overspilling of the preservative. - A metal &amp;apos;cage&amp;apos; (bathroom soap holder) will be placed around each pitfall trap and pinned to the ground. The gaps on the cage are 12 mm x 12 mm. This will allow dung beetles to be trapped and at the same time exclude all mammals and the majority of reptiles from accidentally falling in the trap. - Vertebrates are also repelled by formalin so there is no risk of them interfering with the trap. Many scientists even add formalin to other trap types so as to avoid vertebrate interference. - Ethics has been approved under A1120
+      </description>
+      <rights>
+        <accessRights>
+          Restricted access. Login authentication is required to access the data - please contact the data manager or nominated primary contact to negotiate access. If you have difficulty, please contact researchdata@jcu.edu.au for assistance.
+        </accessRights>
+        <licence rightsUri="http://creativecommons.org/licenses/by-nc/3.0/au">CC BY-NC: Attribution-Noncommercial 3.0 AU</licence>
+      </rights>
+      <citationInfo>
+        <fullCitation style="Datacite">
+          Williams, Stephen; Williams, Stephen (2013). Invertebrate monitoring in the Australian Wet Tropics rainforest at CU8A2 (145.29762113, -16.58640134, 800.0m above MSL) collected by Malaise, FIT and Pitfall sampling. James Cook University. [Data Files] jcu.edu.au/collection/enmasse/886
+        </fullCitation>
+      </citationInfo>
+      <relatedInfo type="">
+        <identifier type="doi">10.23565dd95d5</identifier>
+        <relation type="isCitedBy"/>
+        <title>Some title</title>
+        <notes>a few notes for the relatedInfo</notes>
+      </relatedInfo>
+    </collection>
+  </registryObject>
+  <registryObject group="AUTestingRecords">
+    <key>AUTestingRecords2RelatedPartyGroupRelObj1</key>
+    <originatingSource>https://research.jcu.edu.au/researchdata/default</originatingSource>
+    <collection type="dataset" dateAccessioned="2013-05-07T00:00:00Z">
+      <identifier type="local">jcu.edu.au/collection/enmasse/886AUT3355</identifier>
+      <name type="primary" xml:lang="en">
+        <namePart>(AUTestingRecords) Record with 1 relatedInfos which has no type. 
+        </namePart>
+      </name>
+      <location>
+        <address>
+          <electronic type="url">
+            <value>
+https://research.jcu.edu.au/researchdata/default/detail/1ea54e7577c3d52eab895d8956bb4b29
+</value>
+          </electronic>
+        </address>
+        <address>
+          <electronic type="url">
+            <value>https://research.jcu.edu.au/enmasse/886/data</value>
+          </electronic>
+        </address>
+        <address>
+          <physical>
+            <addressPart type="text">CC-DAM, James Cook University, Townsville Campus</addressPart>
+          </physical>
+        </address>
+      </location>
+      <coverage>
+        <temporal>
+          <date type="dateFrom" dateFormat="W3CDTF">2006-01-01T00:00:00Z</date>
+          <date type="dateTo" dateFormat="W3CDTF">2010-12-31T00:00:00Z</date>
+        </temporal>
+      </coverage>
+      <coverage>
+        <spatial type="kmlPolyCoords" xml:lang="en">
+          145.08,-17.70 145.52,-17.70 145.52,-16.28 145.08,-16.28 145.08,-17.70
+        </spatial>
+      </coverage>
+      <subject type="local" xml:lang="en">Australian Wet Tropics</subject>
+      <subject type="local" xml:lang="en">Invertebrates</subject>
+      <subject type="local" xml:lang="en">Species distribution</subject>
+      <subject type="anzsrc-for" xml:lang="en">060208</subject>
+      <subject type="anzsrc-seo" xml:lang="en">960805</subject>
+      <subject type="anzsrc-toa">Strategic basic research</subject>
+      <description type="full" xml:lang="en">
+        Rainforest invertebrates have been monitored at permanent monitoring sites across the Australian Wet Tropics rainforest between 2006-2009. Such surveys were conducted on monthly to bi-monthly basis across the Spec, Atherton, Windsor, Carbine and Bellenden Ker Uplands during these years. The Wet Tropics rainforest of North Queensland has the highest biodiversity of any region in Australia. While world heritage listing of the area has prevented ongoing impacts from land clearing, our research suggests that the fauna of the region is highly vulnerable to global climate change. Almost half of the unique rainforest fauna could be lost with an increase in temperature of 3-4 degrees Celsius. This is significant as the IPCC fourth assessment report and regional climate models suggest that we will see between 1.0-4.2 degrees Celsius of warming by the year 2070: potentially causing a catastrophic impact on the world heritage values of the region. Long-term monitoring of the region seeks to understand patterns of biodiversity and to detect shifts in phenology of the invertebrates of the Wet Tropics rainforest. Insects were sampled using a combination of Malaise traps, pitfall traps, and flight intercept traps (FIT) at permanent monitoring sites across the Australian Wet Tropics.
+      </description>
+      <description type="brief" xml:lang="en">
+        Insects were sampled using a combination of Malaise traps, pitfall traps, and flight intercept traps (FIT) at permanent monitoring sites across the Australian Wet Tropics.
+      </description>
+      <description type="note" xml:lang="en">
+        Insects were sampled using a combination of Malaise traps, pitfall traps, and flight intercept traps (FIT) at this permanent site. Flight intercept traps: A vertical screen of transparent plastic was stretched between two stakes, and a trough containing preservative fluid (propylene glycol) was arranged below its bottom edge. Traps were cleared monthly from 2006 to 2009. Samples are stored in ethanol at JCU. Malaise traps: An open-sided tent with a central vertical panel that reaches down to the ground was erected. Fast-flying insects, such as flies and wasps, hit the central panel and fly upwards towards a sloping roof that directs them towards a collecting chamber at the high end of the trap. Propylene glycol was used as a preservative in the collecting chamber. Traps were cleared monthly from 2006 to 2009. Samples are stored in ethanol at JCU. Insect pitfall traps (2006-2010): Six pitfall traps at 200 m intervals were placed along a 1 km transect at each altitude, (sites are consistent with previous research by Williams et al). Pitfall traps consisted of two round plastic take away containers (11 cm diameter) placed inside each other. Dung was wrapped in &amp;apos;chux&amp;apos; table wipes and hung on top of the trap using wooden barbeque skewers. 150 ml of Formalin (4% phosphate buffered formaldehyde) was used as a killing agent and preservative in each trap. A metal &amp;apos;cage&amp;apos; (bathroom soap holder) was placed around each pitfall trap and pinned to the ground. A metal plate covered the cage acting as rain guard. Specimens were brought back to JCU. - A minimal amount of preservative (150 ml per trap) was used. - A cover will prevent rainfall from entering the trap thus preventing overspilling of the preservative. - Traps will be placed on slightly higher ground or on a natural or artificial mound so as to prevent surface runoff from entering the trap thus avoiding overspilling of the preservative. - A metal &amp;apos;cage&amp;apos; (bathroom soap holder) will be placed around each pitfall trap and pinned to the ground. The gaps on the cage are 12 mm x 12 mm. This will allow dung beetles to be trapped and at the same time exclude all mammals and the majority of reptiles from accidentally falling in the trap. - Vertebrates are also repelled by formalin so there is no risk of them interfering with the trap. Many scientists even add formalin to other trap types so as to avoid vertebrate interference. - Ethics has been approved under A1120
+      </description>
+      <rights>
+        <accessRights>
+          Restricted access. Login authentication is required to access the data - please contact the data manager or nominated primary contact to negotiate access. If you have difficulty, please contact researchdata@jcu.edu.au for assistance.
+        </accessRights>
+        <licence rightsUri="http://creativecommons.org/licenses/by-nc/3.0/au">CC BY-NC: Attribution-Noncommercial 3.0 AU</licence>
+      </rights>
+      <citationInfo>
+        <fullCitation style="Datacite">
+          Williams, Stephen; Williams, Stephen (2013). Invertebrate monitoring in the Australian Wet Tropics rainforest at CU8A2 (145.29762113, -16.58640134, 800.0m above MSL) collected by Malaise, FIT and Pitfall sampling. James Cook University. [Data Files] jcu.edu.au/collection/enmasse/886
+        </fullCitation>
+      </citationInfo>
+      <relatedInfo type="">
+        <identifier type="doi">10.23565dd95d5</identifier>
+        <relation type="isCitedBy"/>
+        <title>Some title</title>
+        <notes>a few notes for the relatedInfo</notes>
+      </relatedInfo>
+    </collection>
+  </registryObject>
+  <registryObject group="AUTestingRecords">
+    <key>AUTestingRecordsjcu.edu.au/collection/enmasse/335</key>
+    <originatingSource>https://research.jcu.edu.au/researchdata/default</originatingSource>
+    <collection type="dataset" dateAccessioned="2013-05-07T00:00:00Z">
+      <identifier type="local">jcu.edu.au/collection/enmasse/886AUT3355</identifier>
+      <name type="primary" xml:lang="en">
+        <namePart>(AUTestingRecords) Record with 1 relatedInfos which has no type. 
+        </namePart>
+      </name>
+      <location>
+        <address>
+          <electronic type="url">
+            <value>
+https://research.jcu.edu.au/researchdata/default/detail/1ea54e7577c3d52eab895d8956bb4b29
+</value>
+          </electronic>
+        </address>
+        <address>
+          <electronic type="url">
+            <value>https://research.jcu.edu.au/enmasse/886/data</value>
+          </electronic>
+        </address>
+        <address>
+          <physical>
+            <addressPart type="text">CC-DAM, James Cook University, Townsville Campus</addressPart>
+          </physical>
+        </address>
+      </location>
+      <coverage>
+        <temporal>
+          <date type="dateFrom" dateFormat="W3CDTF">2006-01-01T00:00:00Z</date>
+          <date type="dateTo" dateFormat="W3CDTF">2010-12-31T00:00:00Z</date>
+        </temporal>
+      </coverage>
+      <coverage>
+        <spatial type="kmlPolyCoords" xml:lang="en">
+          145.08,-17.70 145.52,-17.70 145.52,-16.28 145.08,-16.28 145.08,-17.70
+        </spatial>
+      </coverage>
+      <subject type="local" xml:lang="en">Australian Wet Tropics</subject>
+      <subject type="local" xml:lang="en">Invertebrates</subject>
+      <subject type="local" xml:lang="en">Species distribution</subject>
+      <subject type="anzsrc-for" xml:lang="en">060208</subject>
+      <subject type="anzsrc-seo" xml:lang="en">960805</subject>
+      <subject type="anzsrc-toa">Strategic basic research</subject>
+      <description type="full" xml:lang="en">
+        Rainforest invertebrates have been monitored at permanent monitoring sites across the Australian Wet Tropics rainforest between 2006-2009. Such surveys were conducted on monthly to bi-monthly basis across the Spec, Atherton, Windsor, Carbine and Bellenden Ker Uplands during these years. The Wet Tropics rainforest of North Queensland has the highest biodiversity of any region in Australia. While world heritage listing of the area has prevented ongoing impacts from land clearing, our research suggests that the fauna of the region is highly vulnerable to global climate change. Almost half of the unique rainforest fauna could be lost with an increase in temperature of 3-4 degrees Celsius. This is significant as the IPCC fourth assessment report and regional climate models suggest that we will see between 1.0-4.2 degrees Celsius of warming by the year 2070: potentially causing a catastrophic impact on the world heritage values of the region. Long-term monitoring of the region seeks to understand patterns of biodiversity and to detect shifts in phenology of the invertebrates of the Wet Tropics rainforest. Insects were sampled using a combination of Malaise traps, pitfall traps, and flight intercept traps (FIT) at permanent monitoring sites across the Australian Wet Tropics.
+      </description>
+      <description type="brief" xml:lang="en">
+        Insects were sampled using a combination of Malaise traps, pitfall traps, and flight intercept traps (FIT) at permanent monitoring sites across the Australian Wet Tropics.
+      </description>
+      <description type="note" xml:lang="en">
+        Insects were sampled using a combination of Malaise traps, pitfall traps, and flight intercept traps (FIT) at this permanent site. Flight intercept traps: A vertical screen of transparent plastic was stretched between two stakes, and a trough containing preservative fluid (propylene glycol) was arranged below its bottom edge. Traps were cleared monthly from 2006 to 2009. Samples are stored in ethanol at JCU. Malaise traps: An open-sided tent with a central vertical panel that reaches down to the ground was erected. Fast-flying insects, such as flies and wasps, hit the central panel and fly upwards towards a sloping roof that directs them towards a collecting chamber at the high end of the trap. Propylene glycol was used as a preservative in the collecting chamber. Traps were cleared monthly from 2006 to 2009. Samples are stored in ethanol at JCU. Insect pitfall traps (2006-2010): Six pitfall traps at 200 m intervals were placed along a 1 km transect at each altitude, (sites are consistent with previous research by Williams et al). Pitfall traps consisted of two round plastic take away containers (11 cm diameter) placed inside each other. Dung was wrapped in &amp;apos;chux&amp;apos; table wipes and hung on top of the trap using wooden barbeque skewers. 150 ml of Formalin (4% phosphate buffered formaldehyde) was used as a killing agent and preservative in each trap. A metal &amp;apos;cage&amp;apos; (bathroom soap holder) was placed around each pitfall trap and pinned to the ground. A metal plate covered the cage acting as rain guard. Specimens were brought back to JCU. - A minimal amount of preservative (150 ml per trap) was used. - A cover will prevent rainfall from entering the trap thus preventing overspilling of the preservative. - Traps will be placed on slightly higher ground or on a natural or artificial mound so as to prevent surface runoff from entering the trap thus avoiding overspilling of the preservative. - A metal &amp;apos;cage&amp;apos; (bathroom soap holder) will be placed around each pitfall trap and pinned to the ground. The gaps on the cage are 12 mm x 12 mm. This will allow dung beetles to be trapped and at the same time exclude all mammals and the majority of reptiles from accidentally falling in the trap. - Vertebrates are also repelled by formalin so there is no risk of them interfering with the trap. Many scientists even add formalin to other trap types so as to avoid vertebrate interference. - Ethics has been approved under A1120
+      </description>
+      <rights>
+        <accessRights>
+          Restricted access. Login authentication is required to access the data - please contact the data manager or nominated primary contact to negotiate access. If you have difficulty, please contact researchdata@jcu.edu.au for assistance.
+        </accessRights>
+        <licence rightsUri="http://creativecommons.org/licenses/by-nc/3.0/au">CC BY-NC: Attribution-Noncommercial 3.0 AU</licence>
+      </rights>
+      <citationInfo>
+        <fullCitation style="Datacite">
+          Williams, Stephen; Williams, Stephen (2013). Invertebrate monitoring in the Australian Wet Tropics rainforest at CU8A2 (145.29762113, -16.58640134, 800.0m above MSL) collected by Malaise, FIT and Pitfall sampling. James Cook University. [Data Files] jcu.edu.au/collection/enmasse/886
+        </fullCitation>
+      </citationInfo>
+      <relatedInfo type="">
+        <identifier type="doi">10.23565dd95d5</identifier>
+        <relation type="isCitedBy"/>
+        <title>Some title</title>
+        <notes>a few notes for the relatedInfo</notes>
+      </relatedInfo>
+    </collection>
+  </registryObject>
+  <registryObject group="AUTestingRecords">
+    <key>AUTestingRecordsNestedx100IMOS/7f2f5084-2933-3b79-847e-33c348a8265e17</key>
+    <originatingSource> Atlantic Oceanographic and Meteorological Laboratory (AOML) </originatingSource>
+    <collection type="dataset">
+      <identifier type="uri">http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=7f2f5084-2933-3b79-847e-33c348a8265e AUTbx117</identifier>
+      <name type="primary">
+        <namePart>(LVL 5) Nested Collections Large Numbers17</namePart>
+      </name>
+      <dates type="created">
+        <date type="dateFrom" dateFormat="W3CDTF">2014-09-09T06:06:26</date>
+      </dates>
+      <relatedObject>
+        <key>AUTestingRecordsNestedx100IMOS/8cc13f98-9897-4193-8ba6-d1f05356d3f2</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <location>
+        <address>
+          <electronic type="url">
+            <value> http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=7f2f5084-2933-3b79-847e-33c348a8265e </value>
+          </electronic>
+        </address>
+      </location>
+      <relatedObject>
+        <key>AUTestingRecordsNestedx100IMOS/4b9ecd05-3162-312a-a90f-905245ca01f9</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <subject type="local">oceans</subject>
+      <subject type="local">Oceans | Ocean Temperature | Water Temperature</subject>
+      <subject type="local">Oceans | Salinity/density | Salinity</subject>
+      <subject type="local">Oceans | Ocean Pressure | Water Pressure</subject>
+      <subject type="local">Oceans | Ocean Chemistry | Dissolved Gases</subject>
+      <subject type="local">Profiling Float | Autonomous Profiling Float</subject>
+      <description type="full"> This dataset contains temperature, salinity, pressure and dissolved oxygen data for all profiles of the Argo float 2900114 managed by the Atlantic Oceanographic and Meteorological Laboratory (AOML). Argo is a major international collaborative project to observe the world's oceans and help scientists understand ocean processes and the ocean's roles in climate. The data collected also improves our ability to forecast climate and ocean conditions. The float drift at depth of between 1 and 2 km. Every ten days each float ascends to the surface, measuring temperature and salinity as it rises. This data is transmitted to satellites along with the float's position. The float then dives and starts a new cycle. The Argo float, WMO 2900114 was first deployed on the 2007-09-30T07:30:00 at launch location (Latitude : -64.9316635131836 ; Longitude : 119.15666961669922). The variables available for this Argo float are : Temperature, Practical Salinity, Pressure and Dissolved Oxygen. The last location of the Argo float was transmitted on the 2011-11-17T09:30:10 at the following location (Latitude : -55.862 ; Longitude : 105.108). </description>
+      <coverage>
+        <spatial type="iso19139dcmiBox"> northlimit=-55.538; southlimit=-65.52; westlimit=83.295; eastLimit=119.342; projection=WGS84 </spatial>
+        <spatial type="text"> northlimit=-55.538; southlimit=-65.52; westlimit=83.295; eastLimit=119.342; projection=WGS84 </spatial>
+      </coverage>
+      <coverage>
+        <temporal>
+          <date type="dateFrom" dateFormat="W3CDTF">2007-09-30T14:34:00</date>
+          <date type="dateTo" dateFormat="W3CDTF">2011-11-17T09:30:10</date>
+        </temporal>
+      </coverage>
+      <relatedInfo type="website">
+        <identifier type="uri"> http://thredds.aodn.org.au/thredds/catalog/IMOS/Argo/dac/aoml/2900114/catalog.html AUTbx1</identifier>
+        <relation type="hasAssociationWith"/>
+        <title>Data available via the IMOS OPeNDAP server</title>
+      </relatedInfo>
+      <rights>
+        <rightsStatement> Argo Data (Temperature and Salinity profiles) are freely available without any restriction, via the internet Global Data Centres (GDACs) and the GTS of WMO. Please support Argo by acknowledging your use of Argo data with the following words: "These data where collected and made freely available by the International Argo project and the national initiatives that contribute to it. (http://www.argo.net).Argo is a pilot programme of the Global Ocean Observing System." </rightsStatement>
+      </rights>
+      <citationInfo>
+        <citationMetadata>
+          <identifier type="uri"> http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=7f2f5084-2933-3b79-847e-33c348a8265e AUTbx1</identifier>
+          <title>AOML - Argo float, WMO 2900114</title>
+          <date type="created">2014</date>
+          <contributor>
+            <namePart> Atlantic Oceanographic and Meteorological Laboratory (AOML) </namePart>
+          </contributor>
+          <publisher>Integrated Marine Observing System (IMOS)</publisher>
+        </citationMetadata>
+      </citationInfo>
+    </collection>
+  </registryObject>
+  <registryObject group="AUTestingRecords">
+    <key>AUTestingRecordsNestedx100IMOS/7f2f5084-2933-3b79-847e-33c348a8265e15</key>
+    <originatingSource> Atlantic Oceanographic and Meteorological Laboratory (AOML) </originatingSource>
+    <collection type="dataset">
+      <identifier type="uri">http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=7f2f5084-2933-3b79-847e-33c348a8265e AUTbx115</identifier>
+      <name type="primary">
+        <namePart>(LVL 5) Nested Collections Large Numbers15</namePart>
+      </name>
+      <dates type="created">
+        <date type="dateFrom" dateFormat="W3CDTF">2014-09-09T06:06:26</date>
+      </dates>
+      <relatedObject>
+        <key>AUTestingRecordsNestedx100IMOS/8cc13f98-9897-4193-8ba6-d1f05356d3f2</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <location>
+        <address>
+          <electronic type="url">
+            <value> http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=7f2f5084-2933-3b79-847e-33c348a8265e </value>
+          </electronic>
+        </address>
+      </location>
+      <relatedObject>
+        <key>AUTestingRecordsNestedx100IMOS/4b9ecd05-3162-312a-a90f-905245ca01f9</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <subject type="local">oceans</subject>
+      <subject type="local">Oceans | Ocean Temperature | Water Temperature</subject>
+      <subject type="local">Oceans | Salinity/density | Salinity</subject>
+      <subject type="local">Oceans | Ocean Pressure | Water Pressure</subject>
+      <subject type="local">Oceans | Ocean Chemistry | Dissolved Gases</subject>
+      <subject type="local">Profiling Float | Autonomous Profiling Float</subject>
+      <description type="full"> This dataset contains temperature, salinity, pressure and dissolved oxygen data for all profiles of the Argo float 2900114 managed by the Atlantic Oceanographic and Meteorological Laboratory (AOML). Argo is a major international collaborative project to observe the world's oceans and help scientists understand ocean processes and the ocean's roles in climate. The data collected also improves our ability to forecast climate and ocean conditions. The float drift at depth of between 1 and 2 km. Every ten days each float ascends to the surface, measuring temperature and salinity as it rises. This data is transmitted to satellites along with the float's position. The float then dives and starts a new cycle. The Argo float, WMO 2900114 was first deployed on the 2007-09-30T07:30:00 at launch location (Latitude : -64.9316635131836 ; Longitude : 119.15666961669922). The variables available for this Argo float are : Temperature, Practical Salinity, Pressure and Dissolved Oxygen. The last location of the Argo float was transmitted on the 2011-11-17T09:30:10 at the following location (Latitude : -55.862 ; Longitude : 105.108). </description>
+      <coverage>
+        <spatial type="iso19139dcmiBox"> northlimit=-55.538; southlimit=-65.52; westlimit=83.295; eastLimit=119.342; projection=WGS84 </spatial>
+        <spatial type="text"> northlimit=-55.538; southlimit=-65.52; westlimit=83.295; eastLimit=119.342; projection=WGS84 </spatial>
+      </coverage>
+      <coverage>
+        <temporal>
+          <date type="dateFrom" dateFormat="W3CDTF">2007-09-30T14:34:00</date>
+          <date type="dateTo" dateFormat="W3CDTF">2011-11-17T09:30:10</date>
+        </temporal>
+      </coverage>
+      <relatedInfo type="website">
+        <identifier type="uri"> http://thredds.aodn.org.au/thredds/catalog/IMOS/Argo/dac/aoml/2900114/catalog.html AUTbx1</identifier>
+        <relation type="hasAssociationWith"/>
+        <title>Data available via the IMOS OPeNDAP server</title>
+      </relatedInfo>
+      <rights>
+        <rightsStatement> Argo Data (Temperature and Salinity profiles) are freely available without any restriction, via the internet Global Data Centres (GDACs) and the GTS of WMO. Please support Argo by acknowledging your use of Argo data with the following words: "These data where collected and made freely available by the International Argo project and the national initiatives that contribute to it. (http://www.argo.net).Argo is a pilot programme of the Global Ocean Observing System." </rightsStatement>
+      </rights>
+      <citationInfo>
+        <citationMetadata>
+          <identifier type="uri"> http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=7f2f5084-2933-3b79-847e-33c348a8265e AUTbx1</identifier>
+          <title>AOML - Argo float, WMO 2900114</title>
+          <date type="created">2014</date>
+          <contributor>
+            <namePart> Atlantic Oceanographic and Meteorological Laboratory (AOML) </namePart>
+          </contributor>
+          <publisher>Integrated Marine Observing System (IMOS)</publisher>
+        </citationMetadata>
+      </citationInfo>
+    </collection>
+  </registryObject>
+  
+  
+  <registryObject group="AUTestingRecords">
+    <key>AUTestingRecordsNestedx100IMOS/7f2f5084-2933-3b79-847e-33c348a8265e16</key>
+    <originatingSource> Atlantic Oceanographic and Meteorological Laboratory (AOML) </originatingSource>
+    <collection type="dataset">
+      <identifier type="uri">http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=7f2f5084-2933-3b79-847e-33c348a8265e AUTbx116</identifier>
+      <name type="primary">
+        <namePart>(LVL 5) Nested Collections Large Numbers16</namePart>
+      </name>
+      <dates type="created">
+        <date type="dateFrom" dateFormat="W3CDTF">2014-09-09T06:06:26</date>
+      </dates>
+      <relatedObject>
+        <key>AUTestingRecordsNestedx100IMOS/8cc13f98-9897-4193-8ba6-d1f05356d3f2</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <location>
+        <address>
+          <electronic type="url">
+            <value> http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=7f2f5084-2933-3b79-847e-33c348a8265e </value>
+          </electronic>
+        </address>
+      </location>
+      <relatedObject>
+        <key>AUTestingRecordsNestedx100IMOS/4b9ecd05-3162-312a-a90f-905245ca01f9</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <subject type="local">oceans</subject>
+      <subject type="local">Oceans | Ocean Temperature | Water Temperature</subject>
+      <subject type="local">Oceans | Salinity/density | Salinity</subject>
+      <subject type="local">Oceans | Ocean Pressure | Water Pressure</subject>
+      <subject type="local">Oceans | Ocean Chemistry | Dissolved Gases</subject>
+      <subject type="local">Profiling Float | Autonomous Profiling Float</subject>
+      <description type="full"> This dataset contains temperature, salinity, pressure and dissolved oxygen data for all profiles of the Argo float 2900114 managed by the Atlantic Oceanographic and Meteorological Laboratory (AOML). Argo is a major international collaborative project to observe the world's oceans and help scientists understand ocean processes and the ocean's roles in climate. The data collected also improves our ability to forecast climate and ocean conditions. The float drift at depth of between 1 and 2 km. Every ten days each float ascends to the surface, measuring temperature and salinity as it rises. This data is transmitted to satellites along with the float's position. The float then dives and starts a new cycle. The Argo float, WMO 2900114 was first deployed on the 2007-09-30T07:30:00 at launch location (Latitude : -64.9316635131836 ; Longitude : 119.15666961669922). The variables available for this Argo float are : Temperature, Practical Salinity, Pressure and Dissolved Oxygen. The last location of the Argo float was transmitted on the 2011-11-17T09:30:10 at the following location (Latitude : -55.862 ; Longitude : 105.108). </description>
+      <coverage>
+        <spatial type="iso19139dcmiBox"> northlimit=-55.538; southlimit=-65.52; westlimit=83.295; eastLimit=119.342; projection=WGS84 </spatial>
+        <spatial type="text"> northlimit=-55.538; southlimit=-65.52; westlimit=83.295; eastLimit=119.342; projection=WGS84 </spatial>
+      </coverage>
+      <coverage>
+        <temporal>
+          <date type="dateFrom" dateFormat="W3CDTF">2007-09-30T14:34:00</date>
+          <date type="dateTo" dateFormat="W3CDTF">2011-11-17T09:30:10</date>
+        </temporal>
+      </coverage>
+      <relatedInfo type="website">
+        <identifier type="uri"> http://thredds.aodn.org.au/thredds/catalog/IMOS/Argo/dac/aoml/2900114/catalog.html AUTbx1</identifier>
+        <relation type="hasAssociationWith"/>
+        <title>Data available via the IMOS OPeNDAP server</title>
+      </relatedInfo>
+      <rights>
+        <rightsStatement> Argo Data (Temperature and Salinity profiles) are freely available without any restriction, via the internet Global Data Centres (GDACs) and the GTS of WMO. Please support Argo by acknowledging your use of Argo data with the following words: "These data where collected and made freely available by the International Argo project and the national initiatives that contribute to it. (http://www.argo.net).Argo is a pilot programme of the Global Ocean Observing System." </rightsStatement>
+      </rights>
+      <citationInfo>
+        <citationMetadata>
+          <identifier type="uri"> http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show?uuid=7f2f5084-2933-3b79-847e-33c348a8265e AUTbx1</identifier>
+          <title>AOML - Argo float, WMO 2900114</title>
+          <date type="created">2014</date>
+          <contributor>
+            <namePart> Atlantic Oceanographic and Meteorological Laboratory (AOML) </namePart>
+          </contributor>
+          <publisher>Integrated Marine Observing System (IMOS)</publisher>
+        </citationMetadata>
+      </citationInfo>
+    </collection>
+  </registryObject>
+  <registryObject group="AUTestingRecords">
+    <key>AUTestingRecordsjcu.edu.au/collection/enmasse/328</key>
+    <originatingSource>https://research.jcu.edu.au/researchdata/default</originatingSource>
+    <collection type="dataset" dateAccessioned="2013-05-07T00:00:00Z">
+      <identifier type="local">jcu.edu.au/collection/enmasse/328AUT234.3.ods</identifier>
+      <name type="primary" xml:lang="en">
+        <namePart>(AUTestingRecords) Collection to related to.
+Microclimate monitoring of the Australian Wet Tropics rainforest at WU13A2 (145.00882695, -16.23531394, 1300.0m above MSL) collected by iButton Thermochron
+</namePart>
+      </name>
+      <location>
+        <address>
+          <electronic type="url">
+            <value>
+https://research.jcu.edu.au/researchdata/default/detail/48b9b36270239724163ab5b608ffc1e3
+</value>
+          </electronic>
+        </address>
+        <address>
+          <electronic type="url">
+            <value>https://research.jcu.edu.au/enmasse/328/data</value>
+          </electronic>
+        </address>
+        <address>
+          <physical>
+            <addressPart type="text">CC-DAM, James Cook University, Townsville Campus</addressPart>
+          </physical>
+        </address>
+      </location>
+      <coverage>
+        <temporal>
+          <date type="dateFrom" dateFormat="W3CDTF">2004-02-02T00:00:00Z</date>
+          <text>2004 - ongoing</text>
+        </temporal>
+      </coverage>
+      <coverage>
+        <spatial type="kmlPolyCoords" xml:lang="en">
+145.08,-17.70 145.52,-17.70 145.52,-16.28 145.08,-16.28 145.08,-17.70
+</spatial>
+      </coverage>
+      <relatedObject>
+        <key>AUTestingRecordsjcu.edu.au/collection/enmasse/2</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTestingRecordshttp://nla.gov.au/nla.party-1507923</key>
+        <relation type="hasCollector"/>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTestingRecordshttp://nla.gov.au/nla.party-1507923</key>
+        <relation type="hasAssociationWith">
+          <description>Primary Contact</description>
+        </relation>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTestingRecordsjcu.edu.au/activities/15549</key>
+        <relation type="isOutputOf"/>
+      </relatedObject>
+      <subject type="local" xml:lang="en">Australian Wet Tropics</subject>
+      <subject type="local" xml:lang="en">environmental data</subject>
+      <subject type="local" xml:lang="en">microclimate</subject>
+      <subject type="anzsrc-for" xml:lang="en">050101</subject>
+      <subject type="anzsrc-seo" xml:lang="en">960305</subject>
+      <subject type="anzsrc-toa">Strategic basic research</subject>
+      <description type="full" xml:lang="en">
+Sensors used: - HOBO micro weather station - iButton Thermochron - iButton Hygrochron Hobo micro weather station data loggers, ibuttons and hygrobuttons were used to collect long-term microclimate data from 2006-2009 at permanent monitoring sites across the Australian Wet Tropics. Air temperature and humidity sampling was conducted manually in relation to standardized vertebrate sampling quarterly from 2004 (ongoing). The HOBO data loggers and iButton Hygrochron were erected 1m from the ground 0.25 m squared. They were placed well within the forest out of public view and camouflage painted. Sensors associated with each logger measured the following readings continuously at 15 minute intervals: - Air Temperate - Humidity - Soil Temperature - Soil Moisture - Leaf wetness An iButton Thermochron was placed beneath a log to measure under-log temperature. This set of 3 microclimate data loggers were established at 25 sites in November 2006: Site Name AU10A2 AU1A3 AU2A2 AU4A2 AU6A2 AU8A2 BK10A2 BK12A2 BK14A2 BK16A2 CU10A2 CU12A2 CU1A1 CU2A2 CU4A2 CU6A2 CU8A2 SU10A2 SU10B2 SU350A2 SU6A2 SU8A2 WU11A2 WU13A2 WU9A2
+</description>
+      <description type="brief" xml:lang="en">
+Hobo micro weather station data loggers and iButton thermochrons and hygrochrons were used to collect long-term microclimate data from 2006-2009 at permanent monitoring sites across the Australian Wet Tropics. Manual quarterly sampling of temperature and humidity has been ongoing since February 2004.
+</description>
+      <description type="note" xml:lang="en">
+iButton Thermochrons were used to collect long-term microclimate data from 2006-2009 at this permanent monitoring site. An iButton Thermochron was placed beneath a log to measure under-log temperature.
+</description>
+      <rights>
+        <accessRights>
+Restricted access. Login authentication is required to access the data - please contact the data manager or nominated primary contact to negotiate access. If you have difficulty, please contact researchdata@jcu.edu.au for assistance.
+</accessRights>
+        <licence rightsUri="http://creativecommons.org/licenses/by-nc/3.0/au">CC BY-NC: Attribution-Noncommercial 3.0 AU</licence>
+      </rights>
+      <relatedInfo type="publication">
+        <identifier type="uri">http://dx.doi.org/10.1890/09-1069.1AUT234.3.ods</identifier>
+        <title>
+Distributions, life history specialisation and phylogeny of the rainforest vertebrates in the Australian Wet Tropics.
+</title>
+      </relatedInfo>
+      <relatedInfo type="party">
+        <identifier type="orcid">0000-0001-9650-1472</identifier>
+        <relation type="hasAssociationWith"/>
+        <title>Stephanie</title>
+      </relatedInfo>
+      <citationInfo>
+        <fullCitation style="Datacite">
+Williams, Stephen (2013). Microclimate monitoring of the Australian Wet Tropics rainforest at WU13A2 (145.00882695, -16.23531394, 1300.0m above MSL) collected by iButton Thermochron. James Cook University. [Data Files] jcu.edu.au/collection/enmasse/328
+</fullCitation>
+      </citationInfo>
+    </collection>
+  </registryObject>
+
+
+<registryObject group="AUTestingRecords">
+    <key>AUTestingRecordsjcu.edu.au/collection/enmasse/292</key>
+    <originatingSource>https://research.jcu.edu.au/researchdata/default</originatingSource>
+    <collection type="dataset" dateAccessioned="2013-05-07T00:00:00Z">
+      <identifier type="local">jcu.edu.au/collection/enmasse/292AUT234.3.ods</identifier>
+      <name type="primary" xml:lang="en">
+        <namePart>(AUTestingRecords) Collection to related to.
+Microclimate monitoring of the Australian Wet Tropics rainforest at WU13A3 (145.00756856, -16.23396486, 1300.0m above MSL) collected by iButton Hygrochron
+</namePart>
+      </name>
+      <location>
+        <address>
+          <electronic type="url">
+            <value>
+https://research.jcu.edu.au/researchdata/default/detail/bc7324689465a8356c7a5a164e2f3a96
+</value>
+          </electronic>
+        </address>
+        <address>
+          <electronic type="url">
+            <value>https://research.jcu.edu.au/enmasse/292/data</value>
+          </electronic>
+        </address>
+        <address>
+          <physical>
+            <addressPart type="text">CC-DAM, James Cook University, Townsville Campus</addressPart>
+          </physical>
+        </address>
+      </location>
+      <coverage>
+        <temporal>
+          <date type="dateFrom" dateFormat="W3CDTF">2004-02-02T00:00:00Z</date>
+          <text>2004 - ongoing</text>
+        </temporal>
+      </coverage>
+      <coverage>
+        <spatial type="kmlPolyCoords" xml:lang="en">
+145.08,-17.70 145.52,-17.70 145.52,-16.28 145.08,-16.28 145.08,-17.70
+</spatial>
+      </coverage>
+      <relatedObject>
+        <key>AUTestingRecordsjcu.edu.au/collection/enmasse/2</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTestingRecordshttp://nla.gov.au/nla.party-1507923</key>
+        <relation type="hasCollector"/>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTestingRecordshttp://nla.gov.au/nla.party-1507923</key>
+        <relation type="hasAssociationWith">
+          <description>Primary Contact</description>
+        </relation>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTestingRecordsjcu.edu.au/activities/15549</key>
+        <relation type="isOutputOf"/>
+      </relatedObject>
+      <subject type="local" xml:lang="en">Australian Wet Tropics</subject>
+      <subject type="local" xml:lang="en">environmental data</subject>
+      <subject type="local" xml:lang="en">microclimate</subject>
+      <subject type="anzsrc-for" xml:lang="en">050101</subject>
+      <subject type="anzsrc-seo" xml:lang="en">960305</subject>
+      <subject type="anzsrc-toa">Strategic basic research</subject>
+      <description type="full" xml:lang="en">
+Sensors used: - HOBO micro weather station - iButton Thermochron - iButton Hygrochron Hobo micro weather station data loggers, ibuttons and hygrobuttons were used to collect long-term microclimate data from 2006-2009 at permanent monitoring sites across the Australian Wet Tropics. Air temperature and humidity sampling was conducted manually in relation to standardized vertebrate sampling quarterly from 2004 (ongoing). The HOBO data loggers and iButton Hygrochron were erected 1m from the ground 0.25 m squared. They were placed well within the forest out of public view and camouflage painted. Sensors associated with each logger measured the following readings continuously at 15 minute intervals: - Air Temperate - Humidity - Soil Temperature - Soil Moisture - Leaf wetness An iButton Thermochron was placed beneath a log to measure under-log temperature. This set of 3 microclimate data loggers were established at 25 sites in November 2006: Site Name AU10A2 AU1A3 AU2A2 AU4A2 AU6A2 AU8A2 BK10A2 BK12A2 BK14A2 BK16A2 CU10A2 CU12A2 CU1A1 CU2A2 CU4A2 CU6A2 CU8A2 SU10A2 SU10B2 SU350A2 SU6A2 SU8A2 WU11A2 WU13A2 WU9A2
+</description>
+      <description type="brief" xml:lang="en">
+Hobo micro weather station data loggers and iButton thermochrons and hygrochrons were used to collect long-term microclimate data from 2006-2009 at permanent monitoring sites across the Australian Wet Tropics. Manual quarterly sampling of temperature and humidity has been ongoing since February 2004.
+</description>
+      <description type="note" xml:lang="en">
+iButton Hygrochrons were used to collect long-term microclimate data from 2006-2009 at this permanent monitoring site. The iButton Hygrochrons were erected 1m from the ground. They were placed well within the forest out of public view and camouflage painted. Sensors measured the following readings continuously at 15 minute intervals: - Air Temperate - Humidity
+</description>
+      <rights>
+        <accessRights>
+Restricted access. Login authentication is required to access the data - please contact the data manager or nominated primary contact to negotiate access. If you have difficulty, please contact researchdata@jcu.edu.au for assistance.
+</accessRights>
+        <licence rightsUri="http://creativecommons.org/licenses/by-nc/3.0/au">CC BY-NC: Attribution-Noncommercial 3.0 AU</licence>
+      </rights>
+      <relatedInfo type="publication">
+        <identifier type="uri">http://dx.doi.org/10.1890/09-1069.1AUT234.3.ods</identifier>
+        <title>
+Distributions, life history specialisation and phylogeny of the rainforest vertebrates in the Australian Wet Tropics.
+</title>
+      </relatedInfo>
+      <relatedInfo type="party">
+        <identifier type="orcid">0000-0001-9650-1472</identifier>
+        <relation type="hasAssociationWith"/>
+        <title>Stephanie</title>
+      </relatedInfo>
+      <citationInfo>
+        <fullCitation style="Datacite">
+Williams, Stephen (2013). Microclimate monitoring of the Australian Wet Tropics rainforest at WU13A3 (145.00756856, -16.23396486, 1300.0m above MSL) collected by iButton Hygrochron. James Cook University. [Data Files] jcu.edu.au/collection/enmasse/292
+</fullCitation>
+      </citationInfo>
+    </collection>
+  </registryObject>
+
+
+<registryObject group="AUTestingRecords">
+    <key>AUTestingRecordsjcu.edu.au/collection/enmasse/264</key>
+    <originatingSource>https://research.jcu.edu.au/researchdata/default</originatingSource>
+    <collection type="dataset" dateAccessioned="2013-05-07T00:00:00Z">
+      <identifier type="local">jcu.edu.au/collection/enmasse/264AUT234.3.ods</identifier>
+      <name type="primary" xml:lang="en">
+        <namePart>(AUTestingRecords) Collection to related to.
+Microclimate monitoring of the Australian Wet Tropics rainforest at WU9A2 (145.08408764, -16.28476505, 900.0m above MSL) collected by HOBO Data logger
+</namePart>
+      </name>
+      <location>
+        <address>
+          <electronic type="url">
+            <value>
+https://research.jcu.edu.au/researchdata/default/detail/42d56789913211f0488a61297d83b99a
+</value>
+          </electronic>
+        </address>
+        <address>
+          <electronic type="url">
+            <value>https://research.jcu.edu.au/enmasse/264/data</value>
+          </electronic>
+        </address>
+        <address>
+          <physical>
+            <addressPart type="text">CC-DAM, James Cook University, Townsville Campus</addressPart>
+          </physical>
+        </address>
+      </location>
+      <coverage>
+        <temporal>
+          <date type="dateFrom" dateFormat="W3CDTF">2004-02-02T00:00:00Z</date>
+          <text>2004 - ongoing</text>
+        </temporal>
+      </coverage>
+      <coverage>
+        <spatial type="kmlPolyCoords" xml:lang="en">
+145.08,-17.70 145.52,-17.70 145.52,-16.28 145.08,-16.28 145.08,-17.70
+</spatial>
+      </coverage>
+      <relatedObject>
+        <key>AUTestingRecordsjcu.edu.au/collection/enmasse/2</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTestingRecordshttp://nla.gov.au/nla.party-1507923</key>
+        <relation type="hasCollector"/>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTestingRecordshttp://nla.gov.au/nla.party-1507923</key>
+        <relation type="hasAssociationWith">
+          <description>Primary Contact</description>
+        </relation>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTestingRecordsjcu.edu.au/activities/15549</key>
+        <relation type="isOutputOf"/>
+      </relatedObject>
+      <subject type="local" xml:lang="en">Australian Wet Tropics</subject>
+      <subject type="local" xml:lang="en">environmental data</subject>
+      <subject type="local" xml:lang="en">microclimate</subject>
+      <subject type="anzsrc-for" xml:lang="en">050101</subject>
+      <subject type="anzsrc-seo" xml:lang="en">960305</subject>
+      <subject type="anzsrc-toa">Strategic basic research</subject>
+      <description type="full" xml:lang="en">
+Sensors used: - HOBO micro weather station - iButton Thermochron - iButton Hygrochron Hobo micro weather station data loggers, ibuttons and hygrobuttons were used to collect long-term microclimate data from 2006-2009 at permanent monitoring sites across the Australian Wet Tropics. Air temperature and humidity sampling was conducted manually in relation to standardized vertebrate sampling quarterly from 2004 (ongoing). The HOBO data loggers and iButton Hygrochron were erected 1m from the ground 0.25 m squared. They were placed well within the forest out of public view and camouflage painted. Sensors associated with each logger measured the following readings continuously at 15 minute intervals: - Air Temperate - Humidity - Soil Temperature - Soil Moisture - Leaf wetness An iButton Thermochron was placed beneath a log to measure under-log temperature. This set of 3 microclimate data loggers were established at 25 sites in November 2006: Site Name AU10A2 AU1A3 AU2A2 AU4A2 AU6A2 AU8A2 BK10A2 BK12A2 BK14A2 BK16A2 CU10A2 CU12A2 CU1A1 CU2A2 CU4A2 CU6A2 CU8A2 SU10A2 SU10B2 SU350A2 SU6A2 SU8A2 WU11A2 WU13A2 WU9A2
+</description>
+      <description type="brief" xml:lang="en">
+Hobo micro weather station data loggers and iButton thermochrons and hygrochrons were used to collect long-term microclimate data from 2006-2009 at permanent monitoring sites across the Australian Wet Tropics. Manual quarterly sampling of temperature and humidity has been ongoing since February 2004.
+</description>
+      <description type="note" xml:lang="en">
+Hobo micro weather station data loggers were used to collect long-term microclimate data from 2006-2009 at this permanent monitoring site. The HOBO data loggers were erected 1m from the ground 0.25 m squared. They were placed well within the forest out of public view and camouflage painted. Sensors associated with each logger measured the following readings continuously at 15 minute intervals: - Air Temperate - Humidity - Soil Temperature - Soil Moisture - Leaf wetness
+</description>
+      <rights>
+        <accessRights>
+Restricted access. Login authentication is required to access the data - please contact the data manager or nominated primary contact to negotiate access. If you have difficulty, please contact researchdata@jcu.edu.au for assistance.
+</accessRights>
+        <licence rightsUri="http://creativecommons.org/licenses/by-nc/3.0/au">CC BY-NC: Attribution-Noncommercial 3.0 AU</licence>
+      </rights>
+      <relatedInfo type="publication">
+        <identifier type="uri">http://dx.doi.org/10.1890/09-1069.1AUT234.3.ods</identifier>
+        <title>
+Distributions, life history specialisation and phylogeny of the rainforest vertebrates in the Australian Wet Tropics.
+</title>
+      </relatedInfo>
+      <relatedInfo type="website">
+        <identifier type="uri">http://research.jcu.edu.au/research/ctbccAUT234.3.ods</identifier>
+        <title>
+Centre for Tropical Biodiversity and Climate Change
+</title>
+      </relatedInfo>
+      <citationInfo>
+        <fullCitation style="Datacite">
+Williams, Stephen (2013). Microclimate monitoring of the Australian Wet Tropics rainforest at WU9A2 (145.08408764, -16.28476505, 900.0m above MSL) collected by HOBO Data logger. James Cook University. [Data Files] jcu.edu.au/collection/enmasse/264
+</fullCitation>
+      </citationInfo>
+    </collection>
+  </registryObject>
+
+
+<registryObject group="AUTestingRecords">
+    <key>AUTestingRecordsjcu.edu.au/collection/enmasse/306</key>
+    <originatingSource>https://research.jcu.edu.au/researchdata/default</originatingSource>
+    <collection type="dataset" dateAccessioned="2013-05-07T00:00:00Z">
+      <identifier type="local">jcu.edu.au/collection/enmasse/306AUT234.3.ods</identifier>
+      <name type="primary" xml:lang="en">
+        <namePart>(AUTestingRecords) Collection to related to.
+Microclimate monitoring of the Australian Wet Tropics rainforest at WU9A2 (145.08408764, -16.28476505, 900.0m above MSL) collected by iButton Hygrochron
+</namePart>
+      </name>
+      <location>
+        <address>
+          <electronic type="url">
+            <value>
+https://research.jcu.edu.au/researchdata/default/detail/bf144db1ca35254e06136705351f0f11
+</value>
+          </electronic>
+        </address>
+        <address>
+          <electronic type="url">
+            <value>https://research.jcu.edu.au/enmasse/306/data</value>
+          </electronic>
+        </address>
+        <address>
+          <physical>
+            <addressPart type="text">CC-DAM, James Cook University, Townsville Campus</addressPart>
+          </physical>
+        </address>
+      </location>
+      <coverage>
+        <temporal>
+          <date type="dateFrom" dateFormat="W3CDTF">2004-02-02T00:00:00Z</date>
+          <text>2004 - ongoing</text>
+        </temporal>
+      </coverage>
+      <coverage>
+        <spatial type="kmlPolyCoords" xml:lang="en">
+145.08,-17.70 145.52,-17.70 145.52,-16.28 145.08,-16.28 145.08,-17.70
+</spatial>
+      </coverage>
+      <relatedObject>
+        <key>AUTestingRecordsjcu.edu.au/collection/enmasse/2</key>
+        <relation type="isPartOf"/>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTestingRecordshttp://nla.gov.au/nla.party-1507923</key>
+        <relation type="hasCollector"/>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTestingRecordshttp://nla.gov.au/nla.party-1507923</key>
+        <relation type="hasAssociationWith">
+          <description>Primary Contact</description>
+        </relation>
+      </relatedObject>
+      <relatedObject>
+        <key>AUTestingRecordsjcu.edu.au/activities/15549</key>
+        <relation type="isOutputOf"/>
+      </relatedObject>
+      <subject type="local" xml:lang="en">Australian Wet Tropics</subject>
+      <subject type="local" xml:lang="en">environmental data</subject>
+      <subject type="local" xml:lang="en">microclimate</subject>
+      <subject type="anzsrc-for" xml:lang="en">050101</subject>
+      <subject type="anzsrc-seo" xml:lang="en">960305</subject>
+      <subject type="anzsrc-toa">Strategic basic research</subject>
+      <description type="full" xml:lang="en">
+Sensors used: - HOBO micro weather station - iButton Thermochron - iButton Hygrochron Hobo micro weather station data loggers, ibuttons and hygrobuttons were used to collect long-term microclimate data from 2006-2009 at permanent monitoring sites across the Australian Wet Tropics. Air temperature and humidity sampling was conducted manually in relation to standardized vertebrate sampling quarterly from 2004 (ongoing). The HOBO data loggers and iButton Hygrochron were erected 1m from the ground 0.25 m squared. They were placed well within the forest out of public view and camouflage painted. Sensors associated with each logger measured the following readings continuously at 15 minute intervals: - Air Temperate - Humidity - Soil Temperature - Soil Moisture - Leaf wetness An iButton Thermochron was placed beneath a log to measure under-log temperature. This set of 3 microclimate data loggers were established at 25 sites in November 2006: Site Name AU10A2 AU1A3 AU2A2 AU4A2 AU6A2 AU8A2 BK10A2 BK12A2 BK14A2 BK16A2 CU10A2 CU12A2 CU1A1 CU2A2 CU4A2 CU6A2 CU8A2 SU10A2 SU10B2 SU350A2 SU6A2 SU8A2 WU11A2 WU13A2 WU9A2
+</description>
+      <description type="brief" xml:lang="en">
+Hobo micro weather station data loggers and iButton thermochrons and hygrochrons were used to collect long-term microclimate data from 2006-2009 at permanent monitoring sites across the Australian Wet Tropics. Manual quarterly sampling of temperature and humidity has been ongoing since February 2004.
+</description>
+      <description type="note" xml:lang="en">
+iButton Hygrochrons were used to collect long-term microclimate data from 2006-2009 at this permanent monitoring site. The iButton Hygrochrons were erected 1m from the ground. They were placed well within the forest out of public view and camouflage painted. Sensors measured the following readings continuously at 15 minute intervals: - Air Temperate - Humidity
+</description>
+      <rights>
+        <accessRights>
+Restricted access. Login authentication is required to access the data - please contact the data manager or nominated primary contact to negotiate access. If you have difficulty, please contact researchdata@jcu.edu.au for assistance.
+</accessRights>
+        <licence rightsUri="http://creativecommons.org/licenses/by-nc/3.0/au">CC BY-NC: Attribution-Noncommercial 3.0 AU</licence>
+      </rights>
+      <relatedInfo type="publication">
+        <identifier type="uri">http://dx.doi.org/10.1890/09-1069.1AUT234.3.ods</identifier>
+        <title>
+Distributions, life history specialisation and phylogeny of the rainforest vertebrates in the Australian Wet Tropics.
+</title>
+      </relatedInfo>
+      <relatedInfo type="website">
+        <identifier type="uri">http://research.jcu.edu.au/research/ctbccAUT234.3.ods</identifier>
+        <title>
+Centre for Tropical Biodiversity and Climate Change
+</title>
+      </relatedInfo>
+      <citationInfo>
+        <fullCitation style="Datacite">
+Williams, Stephen (2013). Microclimate monitoring of the Australian Wet Tropics rainforest at WU9A2 (145.08408764, -16.28476505, 900.0m above MSL) collected by iButton Hygrochron. James Cook University. [Data Files] jcu.edu.au/collection/enmasse/306
+</fullCitation>
+      </citationInfo>
+    </collection>
+  </registryObject>
+  </registryObjects>

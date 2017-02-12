@@ -1,0 +1,13 @@
+# this is a configuration file for the python script doi_link_checker.py
+# edit accordingly and save it as myconfig.py
+# Author u4187959
+
+import ssl
+
+context = ssl.SSLContext(ssl.PROTOCOL_TLSv1)
+context.load_cert_chain(certfile="<location of a cert file or just use a self signed certificate>")
+adminEmailAddr = "<admin_email_addr>"
+db_host='<db_server_ip_or_name>'
+db_user='<db_username>'
+db_passwd='<user_password>'
+db='<database_name>'

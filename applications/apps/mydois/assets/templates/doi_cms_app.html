@@ -1,0 +1,328 @@
+<div class="content-header">
+    <h1>{{ vm.client.client_name }}</h1>
+</div>
+<div id="breadcrumb" style="clear:both;">
+    <a href="{{ base_url }}"><i class="icon-home"></i> Home</a>
+    <a href="{{ base_url}}mydois">Digital Object Identifiers</a>
+    <a href="{{ base_url}}mydois/app/#/?app_id={{ vm.client.client_id }}" class="current">
+        {{ vm.client.client_name }} <small class="muted">({{ vm.client.app_id }})</small>
+    </a>
+</div>
+<div class="container-fluid">
+    <div class="widget-box">
+        <div class="widget-title">
+            <ul class="nav nav-tabs">
+                <li ng-class="{'active': vm.tab=='list'}"><a href="" ng-click="vm.tab = 'list'">My DOIs</a></li>
+                <li ng-class="{'active': vm.tab=='view'}" ng-if="vm.viewdoi"><a href="" ng-click="vm.view(vm.viewdoi.doi_id)">{{ vm.viewdoi.doi_id  }}</a></li>
+                <li ng-class="{'active': vm.tab=='mint'}"><a href="" ng-click="vm.tab = 'mint'">Mint DOI</a></li>
+                <li ng-class="{'active': vm.tab=='log'}"><a href="" ng-click="vm.tab = 'log'">Activity Log</a></li>
+                <li ng-class="{'active': vm.tab=='detail'}"><a href="" ng-click="vm.tab = 'detail'">App ID Configuration</a></li>
+                <li ng-class="{'active': vm.tab=='check'}"><a href="" ng-click="vm.tab = 'check'">Check DOI Links</a></li>
+                <li ng-class="{'active': vm.tab=='bulk'}"><a href="" ng-click="vm.tab = 'bulk'">Bulk Update</a></li>
+            </ul>
+        </div>
+        <div class="widget-content" ng-if="vm.tab=='list'">
+            <h3>Listing DOIs for {{ vm.client.client_name }} <small>({{ vm.client.app_id }})</small></h3>
+
+            <form class="form-search" ng-submit="vm.refreshDOIs(vm.filter)">
+                <div class="input-append">
+                    <input type="text" ng-model="vm.filter" placeholder="Search for DOI ID" class="input-medium search-query">
+                    <button type="submit" class="btn">Search</button>
+                </div>
+            </form>
+            <br/>
+            <div class="alert alert-warning" ng-if="vm.dois.length === 0">
+                There are no DOIs available for viewing
+            </div>
+            <table class="table table-hover table-condensed" ng-if="vm.dois.length">
+                <thead>
+                    <tr>
+                        <th style="text-align:left">Title</th>
+                        <th style="text-align:left">DOI</th>
+                        <th style="text-align:left"></th>
+                        <th style="text-align:left">Status</th>
+                        <th style="text-align:left">Last Updated</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="doi in vm.dois">
+                        <td class="word-wrap">
+                            <small><strong>{{ doi.title }}</strong></small><br/>
+                            <a target="_blank" href="{{ doi.url }}">{{ doi.url }}</a>
+                        </td>
+                        <td>
+                            <a target="_blank" href="http://dx.doi.org/{{ doi.doi_id }}" ng-if="doi.status!='RESERVED'">{{ doi.doi_id }}</a>
+                            <span ng-if="doi.status=='RESERVED'">{{ doi.doi_id }}</span>
+                        </td>
+                        <td>
+                            <div class="btn-group">
+                                <a href="" class="btn btn-small" ng-click="vm.view(doi.doi_id)"><i class="icon-search"></i> View</a>
+                                <a href="" class="btn btn-small" ng-click="vm.update(doi.doi_id)"  ng-if="doi.status!='RESERVED'"><i class="icon-edit"></i> Update</a>
+                                <a href="" class="btn btn-small" ng-click="vm.dodeactivate(doi.doi_id)" ng-if="doi.status=='ACTIVE'">Deactivate</a>
+                                <a href="" class="btn btn-small" ng-click="vm.doactivate(doi.doi_id)" ng-if="doi.status=='INACTIVE'">Activate</a>
+                            </div>
+                        </td>
+                        <td>
+                            {{ doi.status }}
+                        </td>
+                        <td>
+                            {{ doi.updated_when }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <a href=""
+                class="btn btn-default btn-block"
+                ng-click="vm.doisListNext(vm.offset)"
+                ng-if="vm.offset < vm.total"
+                >
+                Displaying ({{ vm.offset }} / {{ vm.total }}) View More <i class="caret"></i>
+            </a>
+        </div>
+
+        <div class="widget-content" ng-if="vm.tab=='detail'">
+            <dl class="dl-vertical">
+                <dt>Client Name</dt>
+                <dd>{{ vm.client.client_name }}</dd>
+                <dt>Client Contact Name</dt>
+                <dd>{{ vm.client.client_contact_name }}</dd>
+                <dt>Client Contact Email</dt>
+                <dd>{{ vm.client.client_contact_email }}</dd>
+            </dl>
+            <dl>
+                <dt>Authorised IP Address</dt>
+                <dd><pre>{{ vm.client.ip_address }}</pre></dd>
+                <dt>DataCite Prefix</dt>
+                <dd><pre>{{ vm.client.datacite_prefix }}</pre></dd>
+                <dt>Permitted URL Domains</dt>
+                <dd><pre>{{ vm.client.permitted_url_domains.join(', ') }}</pre></dd>
+            </dl>
+            <p class="alert">To request a change to any of the information related to this DOI AppID, please contact <a href="mailto:services@ands.org.au">services@ands.org.au</a></p>
+        </div>
+
+        <div class="widget-content" ng-if="vm.tab=='check'">
+            <div class="alert alert-info">
+                The DOI Link report will be sent to the registered Client Contact Email.
+            </div>
+            <a href="" class="btn btn-primary" ng-click="vm.dolinkcheck()" ng-if="!vm.linkchecking">Check DOI Links</a>
+            <a href="" disable class="btn btn-primary disabled" ng-if="vm.linkchecking">Loading...</a>
+            <hr>
+            <div ng-if="vm.link_checker_result" ng-bind-html="vm.link_checker_result"> </div>
+        </div>
+
+        <div class="widget-content nopadding" ng-if="vm.tab=='log'">
+            <ul class="activity-list">
+                <li ng-repeat="log in vm.logs" ng-class="{'error': log.result=='FAILURE'}">
+                    <a href="" ng-click="log.show=!log.show" class="expand_log" ng-class="{'error': log.result=='FAILURE'}">
+                        <i class="icon-list-alt"></i> {{ log.activity }}
+                        <span class="label">{{log.timestamp}}</span>
+                    </a>
+                    <div class="log" ng-show="log.show">
+                        <pre>{{ log.message }}</pre>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="widget-content" ng-if="vm.tab=='mint'">
+            <form class="form">
+                <div class="input-prepend input-append" style="display:inline-block">
+                    <span class="add-on">DOI</span>
+                    <input type="text" ng-model="vm.newdoi_id" readonly="readonly">
+                </div>
+                <div class="input-prepend input-append" style="display:inline-block">
+                    <span class="add-on">URL</span>
+                    <input type="text" ng-model="vm.newdoi_url" >
+                </div>
+                <a href="http://schema.datacite.org/meta/kernel-3.1/index.html" target="_blank" class="pull-right">DataCite Schema Help</a>
+                <div class="container-fluid" style="padding-left:0;">
+                    <div class="row-fluid">
+                        <div class="span12">
+                            <datacite-xml-builder xml="vm.newdoixml"></datacite-xml-builder>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+
+            <div class="collapse" id="viewdetails">
+                <pre class="prettyprint xml" ng-if="vm.newdoixml">{{ vm.formatXml(vm.stripBlankElements(vm.newdoixml)) }}</pre>
+                <textarea ng-model="vm.newdoixml" style="width:100%" rows="10" ng-if="vm.editxml"></textarea>
+                <a href="" class="btn btn-info" ng-click="vm.editxml=!vm.editxml"><i class="icon-pencil icon-white"></i> Edit XML</a>
+           </div>
+
+          <div>
+
+            </div>
+            <a class="btn  btn-info" data-toggle="collapse" data-target="#viewdetails">View XML &raquo;</a>
+            <a href="" ng-hide="vm.loading" class="btn btn-primary" ng-click="vm.mint()">Mint</a>
+            <a ng-if="vm.loading" href="" class="btn btn-primary disabled">Loading...</a>
+            <a href="" class="btn btn-link" ng-click="vm.cancel()">Cancel</a>
+            <div class="alert alert-info" ng-if="vm.response">
+                <b>{{ vm.response.message }}</b><br>
+                {{ vm.response.verbosemessage }}
+            </div>
+
+        </div>
+
+        <div class="widget-content" ng-if="vm.tab=='view'">
+            <div class="alert alert-info" ng-if="vm.response">
+                <b>{{ vm.response.message }}</b><br>
+                {{ vm.response.verbosemessage }}
+            </div>
+            <div ng-if="vm.readonly && vm.viewdoi.status!='RESERVED'" class="alert alert-warning">This is a read-only view of the DOI. Please <a href="" ng-click="vm.readonly=!vm.readonly">Enable Editing</a> to update</div>
+            <form class="form">
+                <div class="input-prepend input-append" style="display:inline-block">
+                    <span class="add-on">DOI</span>
+                    <input type="text" ng-model="vm.viewdoi.doi_id" readonly="readonly">
+                </div>
+
+                <div class="input-prepend input-append" style="display:inline-block">
+                    <span class="add-on">URL</span>
+                    <input type="text" ng-model="vm.viewdoi.url" ng-readonly="vm.readonly">
+                </div>
+                <a href="http://schema.datacite.org/meta/kernel-3.1/index.html" target="_blank" class="pull-right">DataCite Schema Help</a>
+                <div class="container-fluid" style="padding-left:0;" ng-if="vm.viewdoi">
+                    <div class="row-fluid">
+                        <datacite-xml-builder xml="vm.viewdoi.datacite_xml" readonly="vm.readonly"></datacite-xml-builder>
+                        <div ng-if="vm.readonly">
+                            <pre class="prettyprint xml">{{ vm.formatXml(vm.stripBlankElements(vm.viewdoi.datacite_xml)) }}</pre>
+                        </div>
+                        <div class="collapse"  id="viewdetails" ng-if="!vm.readonly">
+                            <pre class="prettyprint xml">{{ vm.formatXml(vm.stripBlankElements(vm.viewdoi.datacite_xml)) }}</pre>
+                            <textarea ng-model="vm.viewdoi.datacite_xml" style="width:100%" rows="10" ng-if="vm.editxml"></textarea>
+                            <a href="" class="btn btn-info" ng-click="vm.editxml=!vm.editxml"><i class="icon-pencil icon-white"></i> Edit XML</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <a ng-if="!vm.readonly" class="btn  btn-info" data-toggle="collapse" data-target="#viewdetails">View XML &raquo;</a>
+            <a ng-if="!vm.readonly" ng-hide="vm.loading" href="" class="btn btn-primary" ng-click="vm.doupdate()">Update</a>
+            <a ng-if="vm.loading" href="" class="btn btn-primary disabled">Loading...</a>
+            <a ng-if="!vm.readonly" href="" class="btn btn-link" ng-click="vm.cancel()">Cancel</a>
+            <div class="alert alert-info" ng-if="vm.response">
+                <b>{{ vm.response.message }}</b><br>
+                {{ vm.response.verbosemessage }}
+            </div>
+        </div>
+
+        <div class="widget-content" ng-if="vm.tab=='bulk'">
+
+            <div class="alert alert-info">
+                Please ensure you have requested the ANDS Services team to add any new URL domains to your account before initiating a bulk URL request.
+            </div>
+
+            <form class="form" ng-submit="vm.bulkPreview()">
+                <div class="input-prepend input-append" style="display:inline-block">
+                    <span class="add-on">Type</span>
+                    <select ng-options="bulk.id as bulk.label for bulk in vm.bulk_types" ng-model="vm.bulk_type"></select>
+                </div>
+                <div class="input-prepend input-append" style="display:inline-block">
+                    <span class="add-on">From</span>
+                    <input type="text" ng-model="vm.bulk_from">
+                </div>
+                <div class="input-prepend input-append" style="display:inline-block">
+                    <span class="add-on">To</span>
+                    <input type="text" ng-model="vm.bulk_to">
+                </div>
+                <div class="controls" style="display:inline-block">
+                    <input type="submit" class="btn btn-default" value="Preview" style="margin-top:14px"/>
+                    <a href="" class="btn btn-primary"
+                       ng-click="vm.sendBulkRequest()"
+                       ng-if="vm.bulkPreviewResponse && vm.bulkPreviewResponse.result.length" style="margin-top:14px">
+                        Send Bulk Request
+                    </a>
+                </div>
+            </form>
+
+            <div ng-if="vm.bulkPreviewResponse">
+                <p>
+                    Showing {{ vm.bulkPreviewResponse.result.length }} of {{ vm.bulkPreviewResponse.total }} possible result(s)
+                </p>
+                <table class="table table-hover table-condensed">
+                    <thead>
+                    <tr>
+                        <th style="text-align:left">DOI</th>
+                        <th style="text-align:left">From</th>
+                        <th style="text-align:left">To</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="result in vm.bulkPreviewResponse.result">
+                        <td class="word-wrap">{{ result.doi }}</td>
+                        <td>{{result.from}}</td>
+                        <td>{{result.to}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div ng-if="!vm.bulkRequestedResponse">
+                    <a href=""
+                       class="btn btn-primary"
+                       ng-if="vm.bulkPreviewResponse && vm.bulkPreviewResponse.result.length"
+                       ng-click="vm.sendBulkRequest()">
+                        Send Bulk Request
+                    </a>
+                </div>
+            </div>
+            <div class="alert alert-success" ng-if="vm.bulkRequestedResponse">
+                {{ vm.bulkRequestedResponse.message }}
+            </div>
+
+            <hr>
+            <a class="btn btn-small"
+               ng-click="vm.getBulkRequests()" ng-if="vm.bulkRequests">
+                <i class="icon icon-small icon-refresh"></i>Refresh Bulk Requests
+            </a>
+
+            <div ng-if="vm.bulkRequests" ng-repeat="bulkRequest in vm.bulkRequests">
+                <h5>Bulk Request ({{ bulkRequest.counts.PROGRESS }}% Completed) Created {{ bulkRequest.date_created }}</h5>
+                <div class="input-prepend input-append" style="display:inline-block">
+                    <span class="add-on">Type</span>
+                    <input type="text" disabled ng-model="bulkRequest.params.type">
+                </div>
+                <div class="input-prepend input-append" style="display:inline-block">
+                    <span class="add-on">From</span>
+                    <input type="text" disabled ng-model="bulkRequest.params.from">
+                </div>
+                <div class="input-prepend input-append" style="display:inline-block">
+                    <span class="add-on">To</span>
+                    <input type="text" disabled ng-model="bulkRequest.params.to">
+                </div>
+
+                <ul class="nav nav-pills">
+                    <li ng-class="{'active': bulkRequest.activeStatus=='PENDING'}">
+                        <a href="" ng-click="vm.setActiveStatus(bulkRequest, 'PENDING')">Pending <span class="label">{{ bulkRequest.counts.PENDING }}</span></a>
+                    </li>
+                    <li ng-class="{'active': bulkRequest.activeStatus=='COMPLETED'}">
+                        <a href="" ng-click="vm.setActiveStatus(bulkRequest, 'COMPLETED')">Completed <span class="label">{{ bulkRequest.counts.COMPLETED }}</span></a>
+                    </li>
+                    <li ng-class="{'active': bulkRequest.activeStatus=='ERROR'}">
+                        <a href="" ng-click="vm.setActiveStatus(bulkRequest, 'ERROR')">Error <span class="label">{{ bulkRequest.counts.ERROR }}</span></a>
+                    </li>
+                </ul>
+                <ul class="activity-list" ng-if="bulkRequest.activeStatusList">
+                    <li ng-repeat="log in bulkRequest.activeStatusList" ng-class="{'error': log.status=='ERROR'}">
+                        <a href="" ng-click="log.show=!log.show" class="expand_log" ng-class="{'error': log.status=='ERROR'}">
+                            <i class="icon-list-alt"></i> {{ log.doi }}
+                            <span class="label">{{log.status}}</span>
+                        </a>
+                        <div class="log" ng-show="log.show">
+                            <pre>{{ log.message }}</pre>
+                        </div>
+                    </li>
+                </ul>
+                <a class="btn btn-danger btn-small"
+                   ng-if="(bulkRequest.counts.PROGRESS == 100 && !bulkRequest.deleting) || bulkRequest.status == 'COMPLETED'"
+                    ng-click="vm.removeBulk(bulkRequest)">
+                    <i class="icon icon-white icon-remove"></i>
+                    Remove Bulk Request
+                </a>
+                <hr/>
+            </div>
+
+
+        </div>
+
+    </div>
+</div>

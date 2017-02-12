@@ -1,0 +1,187 @@
+.navbar {
+	margin-bottom:0px;
+}
+span.dynatree-empty,
+span.dynatree-vline,
+span.dynatree-expander,
+span.dynatree-icon,
+span.dynatree-checkbox,
+span.dynatree-radio,
+span.dynatree-drag-helper-img,
+#dynatree-drop-marker
+{
+    width: 16px;
+    height: 16px;
+    /*	display: -moz-inline-box; /* @ FF 1+2 removed for issue 221 */
+    /*	-moz-box-align: start; /* issue 221 */
+    display: inline-block; /* Required to make a span sizeable */
+    vertical-align: top;
+    background-repeat: no-repeat;
+    background-position: left;
+    background-image: url("icons.gif");
+}
+
+ul.dynatree-container
+{
+    font-family: tahoma, arial, helvetica;
+    font-size: 10pt; /* font size should not be too big */
+    white-space: nowrap;
+    padding: 3px;
+    margin: 0; /* issue 201 */
+    background-color: white;
+    border: none;
+    overflow: auto;
+    height: auto; /* issue 263 */
+}
+
+
+span.dynatree-selected a
+{
+    color: #ffa255 !important;
+    font-style: italic;
+    font-weight: bold;
+}
+
+.feedback_button {
+    box-shadow: -1px 1px 2px rgba(0, 0, 0, 0.5);
+    border-radius: 2px 0px 0px;
+    position: fixed;
+    display: block;
+    white-space: nowrap;
+    text-decoration: none !important;
+    font-family: arial,FreeSans,Helvetica,sans-serif;
+    cursor: pointer;
+    font-size: 14px;
+    z-index: 99;
+    bottom:0;
+    right:10px;
+}
+
+.help_button {
+    box-shadow: -1px 1px 2px rgba(0, 0, 0, 0.5);
+    border-radius: 2px 0px 0px;
+    position: fixed;
+    display: block;
+    white-space: nowrap;
+    text-decoration: none !important;
+    font-family: arial,FreeSans,Helvetica,sans-serif;
+    cursor: pointer;
+    font-size: 14px;
+    z-index: 99;
+    bottom:0;
+    right:126px;
+    width:69px !important;
+}
+
+.yellow_button {
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    background: #f58000;
+    border: none;
+    padding: 5px 5px;
+    margin: 10px 0;
+    width: 105px;
+    text-decoration: none;
+}
+
+.yellow_button:hover {
+    background: #F58072;
+    color: #fff;
+}
+ul{
+    list-style-position:inside;
+}
+.label {
+    line-height: 28px;
+    cursor: pointer;
+    background: #cdd2d5;
+    color: white !important;
+    padding: 3px 6px;
+}
+
+.label-open {
+    background: #a3be99;
+}
+
+
+.label-conditional {
+    background: #efb214;
+}
+
+
+.label-restricted {
+    background: #e93938;
+}
+
+/*a[href^="http://"]:after,
+a[href^="https://"]:after {
+    font-family: FontAwesome;
+    content: "\f08e";
+    display: inline-block;
+    padding-left: 3px;
+    vertical-align: middle;
+}
+
+a[href*="ands.org.au"]:after,
+a[href*="doi.org/"]:after,
+a[href*="nla"]:after,
+a[href*="orcid"]:after,
+a[href*="handle.net"]:after,
+a[href*="creativecommons.org/"]:after{
+    content: '';
+    margin: 0;
+}
+a.gov_logo:after{
+    content: '';
+    margin: 0;
+}
+a.cboxElement:after{
+    content: '';
+    margin: 0;
+}*/
+
+a.noexicon:after {
+    content: '';
+    margin: 0;
+}
+.Z3988{
+    display:none;
+    visibility: hidden !important;
+    left:0px !important;
+    width:0px !important;
+    height:0px !important;
+    margin:0px !important;
+    padding:0px !important;
+    line-height:0;
+}
+
+.profile_image_large {max-width:70%;}
+.profile_image_small {width:30px}
+.header_title{
+    display:inline;
+    border:1px white solid;
+}
+.oneLineTruncate{
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+h1.bordered:after{
+    width:150px;
+}
+.text-center > h1.bordered:after{
+    width:150px;
+    left:46% !important
+}
+.text-center h1.bordered:after{
+    width:150px;
+    left:46%
+}
+.listTruncate {
+    width: 90%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

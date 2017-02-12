@@ -1,0 +1,22 @@
+<div style="modal-center">
+	<div class="modal-header">
+		<button type="button" class="close" ng-click="dismiss()"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		<h4 class="modal-title">Export</h4>
+	</div>
+	<div class="modal-body swatch-white" ng-if="!empty" ng-cloak>
+		<p ng-if="record">Exporting Record: <b>[[ record.core.title ]]</b></p>
+		<p ng-if="records">
+			Exporting [[ records.length ]] records
+			<ul>
+				<li ng-repeat="record in records">[[ record.title ]]</li>
+			</ul>
+		</p>
+		
+		<a href="[[ export('endnote') ]]" target="_blank" class="btn btn-primary">EndNote</a>
+		<a href="[[ export('endnote_web') ]]" target="_blank" class="btn btn-primary">EndNote Web</a>
+	</div>
+	<div class="modal-body swatch-white" ng-if="empty">
+		<p>You haven't selected a record to export.</p> 
+		<p>Please select a record to export</p>
+	</div>
+</div>

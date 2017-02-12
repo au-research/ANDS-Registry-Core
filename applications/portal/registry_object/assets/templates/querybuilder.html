@@ -1,0 +1,73 @@
+<!-- <div class="swatch-white">
+    <div class="panel panel-primary element-no-top element-no-bottom panel-content" style="border:1px solid #cfcfcf;background:white;padding-bottom:20px">
+        <div class="swatch-white" ng-if="group.rules.length > 0">
+            <div ng-repeat="rule in group.rules | orderBy:'index'" class="condition swatch-white element element-no-top element-no-bottom">
+                <div ng-switch="rule.hasOwnProperty('group')">
+                    <div ng-switch-when="true">
+                        <query-builder group="rule.group"></query-builder>
+                    </div>
+                    <div ng-switch-default="ng-switch-default">
+                        <div class="form-inline">
+                            <select ng-options="t.name as t.display for t in fields" ng-model="rule.field" class="form-control input-sm"></select>
+                            <select ng-options="t.name as t.display for t in conditions" ng-model="rule.condition" class="form-control input-sm"></select>
+                            <input style="margin-left: 5px" type="text" ng-model="rule.data" class="form-control input-sm"/>
+                            <button ng-if="group.rules.length > 1"style="margin-left: 5px" ng-click="removeCondition($index)" class="btn btn-sm btn-link"><i class="fa fa-remove"></i></button>
+                            <button ng-if="$index==group.rules.length-1" style="margin-left: 5px" ng-click="addCondition()" class="btn btn-sm btn-link"><i class="fa fa-plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <select ng-if="$index<group.rules.length-1" ng-options="o.name as o.name for o in operators" ng-model="group.operator" class="input-sm"></select>
+            </div>
+        </div>
+
+        <div class="panel-body swatch-white">
+            <div class="form-inline">
+                <button style="margin-left: 5px" ng-click="addGroup()" class="btn btn-sm btn-link">
+                    <i class="fa fa-plus"></i> Add Row
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+ -->
+<div class="swatch-white" ng-if="group.rules.length > 0">
+    <div ng-repeat="rule in group.rules | orderBy:'index'" class="condition swatch-white element element-no-top element-no-bottom">
+        <div ng-switch="rule.hasOwnProperty('group')">
+            <div ng-switch-when="true">
+                <query-builder group="rule.group"></query-builder>
+            </div>
+            <div ng-switch-default="ng-switch-default">
+                <div class="form-inline">
+                    <span class="btn-group">
+                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">[[ rule.field | getDisplayFor:fields]] <span class="caret"></span></button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li ng-repeat="item in fields">
+                                <a ng-click="rule.field = item.name" href="" ng-bind-html="item.display"></a>
+                            </li>
+                        </ul>
+                    </span>
+                    <span class="btn-group">
+                        <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">[[ rule.condition | getDisplayFor:conditions ]] <span class="caret"></span></button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li ng-repeat="item in conditions">
+                                <a ng-click="rule.condition = item.name" href="" ng-bind-html="item.display"></a>
+                            </li>
+                        </ul>
+                    </span>
+                    <input style="margin-left: 5px" type="text" ng-model="rule.data" class="form-control input-sm" placeholder="Value"/>
+                    <button ng-if="group.rules.length > 1"style="margin-left: 5px" ng-click="removeCondition($index)" class="btn btn-sm btn-link"><i class="fa fa-remove"></i></button>
+                    <button ng-if="$index==group.rules.length-1" style="margin-left: 5px" ng-click="addCondition()" class="btn btn-sm btn-link"><i class="fa fa-plus"></i> Add Row</button>
+                </div>
+            </div>
+        </div>
+
+        <span class="btn-group element-shorter-top element-shorter-bottom" ng-if="$index<group.rules.length-1">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">[[ group.operator ]] <span class="caret"></span></button>
+            <ul class="dropdown-menu" role="menu">
+                <li ng-repeat="item in operators">
+                    <a ng-click="group.operator = item.name" href="" ng-bind-html="item.name"></a>
+                </li>
+            </ul>
+        </span>
+    </div>
+</div>

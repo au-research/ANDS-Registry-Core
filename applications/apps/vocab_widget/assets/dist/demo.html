@@ -1,0 +1,21 @@
+<html>
+<head>
+	<title>Location Capture Widget - Demo</title>
+	<script src='//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
+	<script type="text/javascript" src="vocab_widget.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="vocab_widget.min.css" />
+	<script>
+	$("#vocab-tree").vocab_widget({
+		mode:'tree',
+		repository:'anzsrc-for'})
+	.on('treeselect.vocab.ands', function(event) {
+		var target = $(event.target);
+		var data = target.data('vocab');
+		alert('You clicked ' + data.label + '\r\n<' + data.about + '>');
+	});
+	</script>
+</head>
+<body>
+	<div id="vocab-tree"></div>
+</body>
+</html>
