@@ -1,0 +1,588 @@
+<?xml version="1.0"?>
+<xsd:schema version="1.6" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://ands.org.au/standards/rif-cs/registryObjects"
+    targetNamespace="http://ands.org.au/standards/rif-cs/registryObjects"
+    elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+    <!-- Point to a local cached version of the W3 XML schema to avoid 20s+ wait times in validation -->
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="xml.xsd"/>
+
+    <xsd:annotation>
+        <xsd:documentation>Type library for Registry Schema</xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:complexType name="identifierType">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="type" use="required" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:documentation>A value taken from a controlled vocabulary indicating the
+                            type of identifier.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="datesType">
+        <xsd:sequence>
+            <xsd:element name="date" minOccurs="0" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>The date element describes a specific date associated with an event in the life cycle of the data collection object.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string">
+                            <xsd:attribute name="type" use="required" type="xsd:string">
+                                <xsd:annotation>
+                                    <xsd:documentation>A value taken from a controlled vocabulary indicating the type of
+date.</xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:attribute>
+                            <xsd:attribute name="dateFormat" use="required" type="xsd:string">
+                                <xsd:annotation>
+                                    <xsd:documentation>The format of the date element (from the RIFCS Date Type vocabulary).</xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:attribute>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="type" use="required" type="xsd:string">
+            <xsd:annotation>
+                <xsd:documentation>A value taken from the Temporal Coverage Date Type vocabulary indicating the type of this date.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="nameType">
+        <xsd:sequence>
+            <xsd:element name="namePart" minOccurs="1" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>Either a single string (using one &lt;namePart&gt; element)
+                        or the name represented in compound form with the content of each namePart
+                        being described by the type attribute.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string">
+                            <xsd:attribute name="type" use="optional" type="xsd:string">
+                                <xsd:annotation>
+                                    <xsd:documentation>A value taken from a controlled vocabulary
+                                        indicating the type of electronic
+                                        address.</xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:attribute>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attributeGroup ref="dateRangeAttributes"/>
+        <xsd:attribute name="type" use="optional" type="xsd:string">
+            <xsd:annotation>
+                <xsd:documentation>A value taken from a controlled vocabulary indicating the type of
+                    name.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute ref="xml:lang"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="spatialType">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="type" use="required" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:documentation>A value taken from a controlled vocabulary indicating the
+                            type of spatial location.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute ref="xml:lang"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="physicalAddressType">
+        <xsd:sequence>
+            <xsd:element name="addressPart" minOccurs="1" maxOccurs="unbounded">
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string">
+                            <xsd:attribute name="type" use="required" type="xsd:string">
+                                <xsd:annotation>
+                                    <xsd:documentation>A value taken from a controlled vocabulary
+                                        indicating the type of address part.</xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:attribute>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="type" use="optional" type="xsd:string">
+            <xsd:annotation>
+                <xsd:documentation>A value taken from a controlled vocabulary indicating the type of
+                    physical address.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute ref="xml:lang"/>
+    </xsd:complexType>
+
+    <xsd:complexType name="electronicAddressType">
+        <xsd:annotation>
+            <xsd:documentation>An electronic address will generally hold an e-mail address or URL
+                pointing to the object being described. However in the case of a service it is
+                possible to describe the service in terms of its base URL using the &lt;value&gt;
+                element and using the &lt;arg&gt; element to describe the service arguments. A
+                separate collection object which supports the service would then provide a URL to
+                its implementation of the service in its &lt;url&gt; element when describing the
+                &lt;relatedObject&gt;.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="value" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+            <xsd:element name="title" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="notes" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="mediaType" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="byteSize" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="arg" minOccurs="0" maxOccurs="unbounded">
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string">
+                            <xsd:attribute name="required" use="required">
+                                <xsd:annotation>
+                                    <xsd:documentation>Indicates whether the argument is required
+                                        (true) or optional (false).</xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:simpleType>
+                                    <xsd:restriction base="xsd:string">
+                                        <xsd:enumeration value="true"/>
+                                        <xsd:enumeration value="false"/>
+                                    </xsd:restriction>
+                                </xsd:simpleType>
+                            </xsd:attribute>
+                            <xsd:attribute name="type" type="xsd:string" use="required">
+                                <xsd:annotation>
+                                    <xsd:documentation>A value taken from a controlled vocabulary
+                                        indicating the type of argument.</xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:attribute>
+                            <xsd:attribute name="use" type="xsd:string" use="optional">
+                                <xsd:annotation>
+                                    <xsd:documentation>A value taken from a controlled vocabulary
+                                        indicating the type of use for the
+                                        argument.</xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:attribute>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="type" use="optional" type="xsd:string">
+            <xsd:annotation>
+                <xsd:documentation>A value taken from a controlled vocabulary indicating the type of
+                    electronic address.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="target" use="optional" type="xsd:string">
+            <xsd:annotation>
+                <xsd:documentation>Clicking the URL within electronic/value may perform one of two functions.  Populate electronic/@target with one of the following values to indicate which function is served:
+                    Proposed values:
+                    landingPage - URL takes you to the metadata for the collection
+                    directDownload - URL triggers a direct download</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="locationType">
+        <xsd:annotation>
+            <xsd:documentation>The location element can hold physical and/or electronic addresses as
+                well as geographical references. Use the &lt;address&gt; element for physical or
+                electronic address and the &lt;spatial&gt; element for geographical references. An
+                electronic address could be a website containing details about the activity or email
+                address whereas physical addresses can be provided for snail mail, billing,
+                enquiries. Physical addresses are split into parts should a more granular division
+                of address be required.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="address" minOccurs="0" maxOccurs="unbounded">
+                <xsd:complexType>
+                    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                        <xsd:element name="electronic" type="electronicAddressType" minOccurs="0"
+                            maxOccurs="unbounded"/>
+                        <xsd:element name="physical" type="physicalAddressType" minOccurs="0"
+                            maxOccurs="unbounded"/>
+                    </xsd:choice>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="spatial" type="spatialType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+        <xsd:attributeGroup ref="dateRangeAttributes"/>
+        <xsd:attribute name="type" use="optional" type="xsd:string">
+            <xsd:annotation>
+                <xsd:documentation>This attribute is not currently used</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="coverageType">
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="spatial" type="spatialType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="temporal" type="temporalType" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:choice>
+    </xsd:complexType>
+
+    <xsd:complexType name="temporalType">
+        <xsd:choice minOccurs="0" maxOccurs="unbounded">
+            <xsd:element name="date" minOccurs="0" maxOccurs="unbounded">
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string">
+                            <xsd:attribute name="type" use="required" type="xsd:string"/>
+                            <xsd:attribute name="dateFormat" use="required" type="xsd:string">
+                                <xsd:annotation>
+                                    <xsd:documentation>The format of the date
+                                        element.</xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:attribute>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="text" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:choice>
+    </xsd:complexType>
+
+    <xsd:complexType name="relatedObjectType">
+        <xsd:sequence>
+            <xsd:element name="key" type="xsd:string" minOccurs="1" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>Element holding a key which uniquely identifies a related
+                        registry object.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="relation" type="relationType" minOccurs="1" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="relationType">
+        <xsd:annotation>
+            <xsd:documentation>A wrapper element containing metadata about the current registry
+                object's relationship to another registry object.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:choice minOccurs="0" maxOccurs="2">
+            <xsd:element name="description" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>A plain text description of the relation.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string">
+                            <xsd:attribute ref="xml:lang"/>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="url" type="xsd:anyURI" minOccurs="0" maxOccurs="1">
+                <xsd:annotation>
+                    <xsd:documentation>A URI expressing or implementing the relationship. For
+                        example if describing a collection's relation to a service, the URL which
+                        implements the related service in the collection's context can be
+                        represented in this element.</xsd:documentation>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:choice>
+        <xsd:attribute name="type" type="xsd:string" use="required">
+            <xsd:annotation>
+                <xsd:documentation>A value taken from a controlled vocabulary indicating the type of
+                    relation.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="subjectType">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="type" use="required" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:documentation>A value taken from a controlled vocabulary indicating the
+                            type of subject.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="termIdentifier" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:documentation>The value of an association which identifies
+                            the term. This string may be a URI.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute ref="xml:lang"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="descriptionType">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="type" use="required" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:documentation>A value taken from a controlled vocabulary indicating the
+                            type of description.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute ref="xml:lang"/>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="rightsType">
+        <xsd:choice minOccurs="1" maxOccurs="3">
+            <xsd:element name="rightsStatement" type="rightsInfoType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="licence" type="rightsTypedInfoType" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="accessRights" type="rightsTypedInfoType" minOccurs="0" maxOccurs="1"
+            />
+        </xsd:choice>
+    </xsd:complexType>
+
+
+    <xsd:complexType name="rightsInfoType">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="rightsUri" use="optional" type="xsd:anyURI">
+                    <xsd:annotation>
+                        <xsd:documentation>A URI.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+    <xsd:complexType name="rightsTypedInfoType">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="rightsUri" use="optional" type="xsd:anyURI">
+                    <xsd:annotation>
+                        <xsd:documentation>A URI.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="type" use="optional" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:documentation>A value taken from a controlled vocabulary indicating the
+                            type of rights or license.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="existenceDateType">
+        <xsd:sequence>
+            <xsd:element name="startDate" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string">
+                            <xsd:attribute name="dateFormat" use="required" type="xsd:string">
+                                <xsd:annotation>
+                                    <xsd:documentation>The format of the date element.</xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:attribute>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="endDate" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string">
+                            <xsd:attribute name="dateFormat" use="required" type="xsd:string">
+                                <xsd:annotation>
+                                    <xsd:documentation>The format of the date element.</xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:attribute>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="relatedInfoType">
+        <xsd:choice minOccurs="1" maxOccurs="unbounded">
+            <xsd:element name="identifier" type="identifierType" minOccurs="1" maxOccurs="unbounded"/>
+            <xsd:element name="relation" type="relationType" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="title" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="notes" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element minOccurs="0" name="format" type="relatedInfoFormatType"/>
+        </xsd:choice>
+        <xsd:attribute name="type" use="optional" type="xsd:string">
+            <xsd:annotation>
+                <xsd:documentation>A value taken from a controlled vocabulary indicating the type of
+                    description.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="citationInfoType">
+        <xsd:choice minOccurs="1" maxOccurs="1">
+            <xsd:element name="fullCitation" minOccurs="1" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string">
+                            <xsd:attribute name="style" use="optional" type="xsd:string">
+                                <xsd:annotation>
+                                    <xsd:documentation>A value taken from a controlled vocabulary
+                                        indicating the citation style used.</xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:attribute>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="citationMetadata" minOccurs="1" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                        <xsd:element name="identifier" type="identifierType" minOccurs="1"
+                            maxOccurs="1"/>
+                        <xsd:element name="contributor" type="citationNameType" minOccurs="1"
+                            maxOccurs="unbounded"/>
+                        <xsd:element name="title" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+                        <xsd:element name="version" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+                        
+                        <xsd:element name="edition" type="xsd:string" minOccurs="0" maxOccurs="1">
+                                <xsd:annotation>
+                                    <xsd:documentation>THIS ELEMENT IS DEPRECATED AS OF V1.4 (USE
+                                        'version' ELEMENT INSTEAD.</xsd:documentation>
+                                </xsd:annotation>
+                        </xsd:element>
+                        
+                        <xsd:element name="publisher" type="xsd:string" minOccurs="1" maxOccurs="1"/>
+                        <xsd:element name="placePublished" type="xsd:string" minOccurs="0"
+                            maxOccurs="1"/>
+                        <xsd:element name="date" type="citationDateType" minOccurs="1"
+                            maxOccurs="unbounded"/>
+                        <xsd:element name="url" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+                        <xsd:element name="context" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+                    </xsd:choice>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:choice>
+    </xsd:complexType>
+
+    <xsd:complexType name="citationNameType">
+        <xsd:sequence>
+            <xsd:element name="namePart" minOccurs="1" maxOccurs="unbounded">
+                <xsd:annotation>
+                    <xsd:documentation>Either a single string (using one &lt;namePart&gt; element)
+                        or the name represented in compound form with the content of each namePart
+                        being described by the type attribute.</xsd:documentation>
+                </xsd:annotation>
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string">
+                            <xsd:attribute name="type" use="optional" type="xsd:string">
+                                <xsd:annotation>
+                                    <xsd:documentation>A value taken from a controlled vocabulary
+                                        indicating the type of namePart.</xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:attribute>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+        <xsd:attribute name="seq" use="optional" type="xsd:nonNegativeInteger">
+            <xsd:annotation>
+                <xsd:documentation>An attribute used to indicate any ordering within *like*
+                    contributor types (e.g. in a list of co-authors). Where not specified ordering
+                    is left up to the consuming application. It should not be assumed the sequence
+                    of contributors will be output in the order they appear within the
+                    XML.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+
+    <xsd:complexType name="citationDateType">
+        <xsd:simpleContent>
+            <xsd:extension base="xsd:string">
+                <xsd:attribute name="type" use="required" type="xsd:string">
+                    <xsd:annotation>
+                        <xsd:documentation>A value taken from a controlled vocabulary indicating the
+                            type of date.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:simpleContent>
+    </xsd:complexType>
+
+    <xsd:attributeGroup name="objectAttributes">
+        <xsd:attribute name="type" type="xsd:string" use="required">
+            <xsd:annotation>
+                <xsd:documentation>A value taken from a controlled vocabulary indicating the type of
+                    object being described</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="dateModified" type="xsd:string" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>The date this object’s metadata was last changed. This only
+                    refers to the metadata of the registry object itself. For example if a
+                    collection has a new item added to it this does not constitute a modification to
+                    the object. Where an object's metadata has not changed, this attribute should be
+                    set to the object's creation date.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:attributeGroup>
+
+    <xsd:attributeGroup name="dateRangeAttributes">
+        <xsd:attribute name="dateFrom" type="xsd:string" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>The date from which the metadata being described was current.
+                    This is only applicable where versions of the same metadata is being provided
+                    (e.g. name changes). Should be UTC and of one of the forms described in section
+                    3.2.7 of the W3C's Schema Data Types document
+                    (http://www.w3.org/TR/xmlschema-2/).</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="dateTo" type="xsd:string" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>The date the metadata being described was no longer current. This
+                    is only applicable where versions of the same metadata is being provided (e.g.
+                    name changes). Should be UTC and of one of the forms described in section 3.2.7
+                    of the W3C's Schema Data Types document
+                    (http://www.w3.org/TR/xmlschema-2/).</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:attributeGroup>
+
+    <xsd:attributeGroup name="registryObjectAttributes">
+        <xsd:attribute name="group" type="xsd:string" use="required">
+            <xsd:annotation>
+                <xsd:documentation>A string available for grouping of repository objects, typically
+                    by organisation.</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:attributeGroup>
+
+    <xsd:attributeGroup name="collectionAttributes">
+        <xsd:attribute name="dateAccessioned" type="xsd:string" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>The date this object was registered in a managed environment.
+                    Must be UTC and of one of the forms described in section 3.2.7 of the W3C's
+                    Schema Data Types document
+                    (http://www.w3.org/TR/xmlschema-2/).</xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:attributeGroup>
+
+    <xsd:complexType name="relatedInfoFormatType">
+        <xsd:sequence>
+            <xsd:element maxOccurs="unbounded" minOccurs="1" name="identifier">
+                <xsd:complexType>
+                    <xsd:simpleContent>
+                        <xsd:extension base="xsd:string">
+                            <xsd:attribute name="type" type="xsd:string" use="required"/>
+                        </xsd:extension>
+                    </xsd:simpleContent>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>

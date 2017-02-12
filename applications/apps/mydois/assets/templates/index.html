@@ -1,0 +1,40 @@
+<div class="content-header">
+    <h1>DOI Query Tool</h1>
+</div>
+<div id="breadcrumb" style="clear:both;">
+    <a href="{{ base_url }}"><i class="icon-home"></i> Home</a>
+    <a href="{{ base_url}}mydois" class="current">Digital Object Identifiers</a>
+</div>
+<div class="container-fluid">
+    <div class="rows">
+        <div class="span6 offset4">
+            <div class="widget-box">
+                <div class="widget-title">
+                    <h5>DOI Query Tool</h5>
+                </div>
+                <div class="widget-content">
+                    <form action="" class="form-search">
+                        <div class="input-append">
+                            <input type="text" class="search-query" ng-model="vm.filter " placeholder="Type to filter">
+                            <button class="btn">Filter</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="widget-content"
+                    ng-repeat="app_id in vm.client.assoc_doi_app_id | filter:vm.filter track by $index">
+                    <dl>
+                        <dt>Name</dt>
+                        <dd>{{ app_id.client_name }}</dd>
+                        <dt>Contact</dt>
+                        <dd>{{ app_id.client_contact_name }}</dd>
+                        <dt>Datacite prefix</dt>
+                        <dd>{{ app_id.datacite_prefix }}</dd>
+                        <dt>App ID</dt>
+                        <dd>{{ app_id.app_id }}</dd>
+                    </dl>
+                    <a href="#/manage/{{ app_id.app_id }}" class="btn btn-primary">Manage</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

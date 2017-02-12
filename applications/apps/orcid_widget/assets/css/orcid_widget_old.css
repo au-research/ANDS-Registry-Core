@@ -1,0 +1,94 @@
+
+/**
+ * Demonstration styles (not required for normal operation)
+ */
+div.formarea
+{
+    width: 500px;
+    padding:30px;
+    border: 1px solid #999;
+}
+
+form
+{
+    font-size:12px;
+}
+
+div.formfields
+{
+    padding:20px;
+    font-size:10px;
+}
+
+dl dt {
+    font-weight:bold;
+}
+
+dl dd {
+    margin-left:0px;
+    margin-bottom:10px;
+}
+
+fieldset legend { font-size: 14px; font-weight: bold; }
+
+.note { color: #999; background-color: #333; padding:0.5em; display:none; }
+
+.note pre { color: #ccc; }
+
+.note-toggle { background-color: orange; border-color: orange; border-radius: 5px; font-weight: bold; }
+
+.error-message{color:red;}
+
+.orcid_message{font-weight:bold;}
+
+input.error{border:1px solid red;}
+
+.info-box{
+	background-color:#ffffff;
+ 	border: 1px solid #666666;
+  	padding:5px;
+   	border-radius:15px;
+    -moz-border-radius: 15px;	
+    width:500px;
+}
+.orcid-modal{
+	background-color:#ffffff;
+ 	/*border: 1px solid green */;
+  	padding:5px;
+   	border-radius:15px;
+    -moz-border-radius: 15px;
+    width:500px;	
+}
+.orcid-header{
+	padding:20px;
+
+}
+.orcid-image{
+	background-image:url('../img/orcid_tagline_small.png');
+	background-repeat:no-repeat;
+	background-position:right; 
+	width:140px;
+	height:50px;
+	position:relative;
+	float:right;
+	margin-top:-8px;
+	margin-right:5px;
+}
+.orcid{
+	color:#99CC00;
+
+}
+.orcidsearch-btn
+{
+	text-align:left;
+	background-color:#ffffff;
+	padding-left:3px;	
+}
+.orcidPreview .ui-tooltip-titlebar{
+	background-color: #ffffff;
+	color:#666666;
+	padding-left:12px;
+}
+.results{
+	max-height:400px;
+}

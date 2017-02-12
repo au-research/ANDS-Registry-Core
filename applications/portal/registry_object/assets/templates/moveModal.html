@@ -1,0 +1,44 @@
+<div style="modal-center">
+	<div class="modal-header">
+		<button type="button" class="close" ng-click="dismiss()"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		<h4 class="modal-title">Save to MyRDA</h4>
+	</div>
+	<div class="modal-body swatch-white" ng-if="loggedin && !empty" ng-cloak>
+		<p ng-if="record">Saving Record: <b>[[ record.core.title ]]</b></p>
+		<p ng-if="records">Saving [[ records.length ]] records</p>
+		<div ng-if="folders">
+			<label for="">To folder</label>
+			<ul>
+				<li ng-repeat="(name,total) in folders" ng-if="name!='all'" >
+					<a href="" ng-click="moveToFolder(name)">[[ name ]]</a>
+					<i ng-if="record" class="fa" ng-class="{true:'fa-check'}[inFolder(record.id,name)]"></i>
+					<i ng-if="records" class="fa" ng-class="{true:'fa-check'}[inRecordsFolder(records,name)]"></i>
+				</li>
+			</ul>
+		</div>
+		<label for="">Or into a new folder</label>
+		<form action="" ng-submit="moveToFolder(new_folder)">
+			<div class="input-group">
+	            <input type="text" value="" name="s" class="form-control ng-pristine ng-valid" placeholder="New Folder" ng-model="new_folder">
+	            <span class="input-group-btn">
+	                <button class="btn" type="submit" value="Search">Go</button>
+	            </span>
+	        </div>
+        </form>
+        <hr>
+        <div ng-if="bookmarked">
+        	<a href="" class="btn btn-danger" ng-click="unBookmark(record.id)"><i class="fa fa-trash-o"></i> Remove from MyRDA</a>
+        </div>
+        <div class="alert alert-success" ng-if="success_msg">[[ success_msg ]]</div>
+		<div class="alert alert-important" ng-if="error_msg">[[ error_msg ]]</div>
+	</div>
+	<div class="modal-body swatch-white" ng-if="!loggedin" ng-cloak>
+		<p>You are not logged in to MyRDA. Please <a href="[[base_url]]profile/login/?redirect=[[ getCurrentURL() ]]">Login to MyRDA</a> to save records</p>
+	</div>
+	<div class="modal-body swatch-white">
+		<a href="[[base_url]]profile" target="_blank">Open MyRDA</a>
+	</div>
+	<div class="modal-body swatch-white" ng-if="empty" ng-cloak>
+		<p>Please select a record to save to MyRDA</p>
+	</div>
+</div>

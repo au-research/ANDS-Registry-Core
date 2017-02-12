@@ -1,0 +1,65 @@
+<div class="content-header">
+    <h1>Analytics Home</h1>
+</div>
+<div id="breadcrumb" style="clear:both;">
+    <a href="#/"><i class="icon-home"></i> Home</a>
+    <a href="#/" class="current">Analytics</a>
+</div>
+
+<div class="container-fluid">
+ <div class="row-fluid">
+        <div class="span12">
+           <p> Welcome to the demonstrator version of an analytics tool which summarises your organisation's profile in Research Data Australia and other ANDS services.
+               The service currently reports on the quality and accessibility of content published through RDA as well as on its usage (eg page views, searches performed and data accesses).</p>
+
+            <p>Where applicable the tool also reports on your organisation's DOI activity and any coverage in the Thomson Reuter's Data Citation Index.</p>
+
+            <p>Reporting begins from December 2014.</p>
+
+            <p>The tool will be updated in response to your needs.  Feedback is welcomed and can be provided to <a href="mailto:services@ands.org.au">services@ands.org.au.</a></p>
+        
+        </div>
+    </div>
+    <div class="row-fluid">
+        <div class="span6">
+            <form action="" class="form-search">
+                <div class="input-append">
+                    <input type="text" class="search-query" ng-model="vm.query" placeholder="Type to filter">
+                    <button class="btn">Filter</button>
+                </div>
+            </form>
+        </div>
+        <div class="span6"ng-if="vm.superUser==true">
+            <span class="pull-right">
+                <a href="#/masterview" class="btn btn-primary">Masterview</a>
+                <a href="{{ vm.apps_url }}analytics/getOrg/csv-download " class="btn">Export to CSV</a>
+            </span>
+        </div>
+    </div>
+    <div class="widget-box" ng-repeat="org in vm.orgs | orderBy : 'name' | filter:vm.query">
+        <div class="widget-title">
+            <h5>{{ org.name }}</h5>
+        </div>
+        <div class="widget-content">
+            <div ng-if="org.data_sources">
+                <h5>Data sources:</h5>
+                <ul>
+                    <li ng-repeat="ds in org.data_sources">{{ ds.title }}</li>
+                </ul>
+            </div>
+            <div ng-if="org.groups">
+                <h5>Groups: </h5>
+                <ul>
+                   <li ng-repeat="group in org.groups">{{ group }}</li>
+                </ul>
+            </div>
+            <div ng-if="org.doi_app_id">
+                <h5>DOI App IDs: </h5>
+                <ul>
+                    <li ng-repeat="doi in org.doi_app_id">{{ doi }}</li>
+                </ul>
+            </div>
+            <a href="#/report/{{ org.role_id }}" class="btn btn-primary">View Stat Dashboard</a>
+        </div>
+    </div>
+</div>

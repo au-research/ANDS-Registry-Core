@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://ands.org.au/standards/rif-cs/extendedRegistryObjects"
+    targetNamespace="http://ands.org.au/standards/rif-cs/extendedRegistryObjects" elementFormDefault="qualified"> 
+
+
+    <xsd:element name="annotations" type="annotationType"/>
+    
+    <xsd:complexType name="annotationType">
+        <xsd:annotation>
+            <xsd:documentation>
+                experimental element to allow partners to submit rif-cs with embeded metadata
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:any minOccurs='0' maxOccurs='unbounded' processContents='lax'/>
+        </xsd:sequence>
+    </xsd:complexType>                            
+
+
+</xsd:schema>

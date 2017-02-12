@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+
+    <registryObject group="GrantsTest">
+        <key>GrantsTestCollection4_key</key>
+        <originatingSource> DEV team </originatingSource>
+        <collection type="collection">
+            <name type="primary">
+                <namePart>Collection Four</namePart>
+            </name>
+        </collection>
+    </registryObject>
+
+    <registryObject group="GrantsTest">
+        <key>GrantsTestCollection5_key</key>
+        <originatingSource> DEV team </originatingSource>
+        <collection type="collection">
+            <name type="primary">
+                <namePart>Collection Five</namePart>
+            </name>
+            <relatedObject>
+                <key>GrantsTestActivity1_key</key>
+                <relation type="isOutputOf"/>
+            </relatedObject>
+        </collection>
+    </registryObject>
+
+    <registryObject group="GrantsTest">
+        <key>GrantsTestCollection6_key</key>
+        <originatingSource> DEV team </originatingSource>
+        <collection type="collection">
+            <identifier type="uri">GrantsTestCollection6_identifier</identifier>
+            <name type="primary">
+                <namePart>Collection Six (SAME AS C1)</namePart>
+            </name>
+            <relatedObject>
+                <key>GrantsTestActivity1_key</key>
+                <relation type="isOutputOf"/>
+            </relatedObject>
+            <relatedInfo type="collection">
+                <identifier type="local">GrantsTestCollection1_identifier</identifier>
+                <relation type="hasPart"/>
+                <title>The Collection 1 </title>
+            </relatedInfo>
+        </collection>
+    </registryObject>
+
+    <registryObject group="GrantsTest">
+        <key>GrantsTestCollection7_key</key>
+        <originatingSource> DEV team </originatingSource>
+        <collection type="collection">
+            <identifier type="uri">GrantsTestCollection7_identifier</identifier>
+            <name type="primary">
+                <namePart>Collection Seven</namePart>
+            </name>
+            <relatedObject>
+                <key>GrantsTestActivity3_key</key>
+                <relation type="hasAssociationWith"/>
+            </relatedObject>
+        </collection>
+    </registryObject>
+
+
+</registryObjects>

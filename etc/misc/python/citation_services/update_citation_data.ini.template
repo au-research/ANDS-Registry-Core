@@ -1,0 +1,39 @@
+# Template configuration for citation data updater.
+# Make a copy, and modify for your own local environment.
+
+# Top-level configuration. Must be in a section "DEFAULT".
+[DEFAULT]
+
+# Email address to use as the sender of generated emails.
+# This address is also used as the recipient of generated emails
+# in some cases.
+sender_email      = <sender_email_addr>
+
+# SMTP host
+smtp_host         = <address of SMTP server to use to send emails>
+
+# Database connection for accessing the registry objects to be checked.
+database_module   = <Python module for db connector; only pymysql supported!>
+database_host     = <database server hostname or IP address>
+database_user     = <database username>
+database_password = <database password>
+
+
+# (Override) settings for Thomson Reuters Data Citation Index
+[TRDCI]
+database_name     = <database name for looking up ROs>
+# If specified, also perform updates directly in the portal database.
+portal_database_name = <portal database name for updating citation stats>
+# API connection parameters: URL, username, password, and the
+# Thomson Reuters service to use.
+service_url       = https://gateway.webofknowledge.com/gateway/Gateway.cgi
+username          = username
+password          = password
+service_id        = DRCI
+# The frequency at which citation data is updated in the provider, in
+# days.  There is no point looking up citation data for a record, if
+# it was last looked up within this many days of the present.
+update_frequency  = 7
+# Batch size for lookups. At most batch_size registry objects are
+# looked up at once.
+batch_size        = 20

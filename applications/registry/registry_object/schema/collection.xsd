@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema version="1.6" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://ands.org.au/standards/rif-cs/registryObjects"
+    targetNamespace="http://ands.org.au/standards/rif-cs/registryObjects"
+    elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+    <xsd:include schemaLocation="registryTypes.xsd"/>
+
+    <xsd:annotation>
+        <xsd:documentation xml:lang="en">
+            Schema for an ISO2146 collections and services registry Collection object.
+        </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:element name="collection">
+        <xsd:annotation>
+            <xsd:documentation xml:lang="en">
+	           Wrapper element for descriptive and administrative metadata for a collection registry object.
+           </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                <xsd:element name="identifier" type="identifierType" minOccurs="0"
+                    maxOccurs="unbounded">
+                    <xsd:annotation>
+                        <xsd:documentation xml:lang="en">
+                            Primary and alternative identifiers for a collection. The value of the &lt;key&gt; element may be repeated, or any additional (local or global) identifiers described. Each identifier must be represented in its own identifier element.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+
+                <xsd:element name="name" type="nameType" minOccurs="0" maxOccurs="unbounded">
+                    <xsd:annotation>
+                        <xsd:documentation xml:lang="en">
+                			The name of the party in either a simple or compound form.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+
+                <xsd:element name="dates" type="datesType" minOccurs="0" maxOccurs="unbounded">
+                    <xsd:annotation>
+                        <xsd:documentation xml:lang="en">Dates associated with an event in the life cycle of the data collection object as provided for in Dublin Core and other metadata standards.</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+
+                <xsd:element name="location" type="locationType" minOccurs="0" maxOccurs="unbounded">
+                    <xsd:annotation>
+                        <xsd:documentation xml:lang="en">
+                            Location(s) relevant to the collection. A location element should contain information about a single location (e.g. collection web site).
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+
+                <xsd:element name="coverage" type="coverageType" minOccurs="0" maxOccurs="unbounded">
+                    <xsd:annotation>
+                        <xsd:documentation xml:lang="en">
+                            Collection coverage information.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+
+                <xsd:element name="relatedObject" type="relatedObjectType" minOccurs="0"
+                    maxOccurs="unbounded">
+                    <xsd:annotation>
+                        <xsd:documentation xml:lang="en">
+                            Element for holding information about a related registry object.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+
+                <xsd:element name="subject" type="subjectType" minOccurs="0" maxOccurs="unbounded">
+                    <xsd:annotation>
+                        <xsd:documentation xml:lang="en">
+                            A subject category into which the collection falls or the collection is related. Multiple subjects must be represented via separate subject elements. 
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+
+                <xsd:element name="description" type="descriptionType" minOccurs="0"
+                    maxOccurs="unbounded">
+                    <xsd:annotation>
+                        <xsd:documentation xml:lang="en">
+                            A textual description or URI resolving to a description relevant to the collection.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+
+                <xsd:element name="rights" type="rightsType" minOccurs="0" maxOccurs="unbounded">
+                    <xsd:annotation>
+                        <xsd:documentation xml:lang="en">Rights(s) relevant to the collection. </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+
+                <xsd:element name="relatedInfo" type="relatedInfoType" minOccurs="0"
+                    maxOccurs="unbounded">
+                    <xsd:annotation>
+                        <xsd:documentation xml:lang="en">
+                            A URI pointing to information related to the collection.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+
+                <xsd:element name="citationInfo" type="citationInfoType" minOccurs="0"
+                    maxOccurs="unbounded">
+                    <xsd:annotation>
+                        <xsd:documentation xml:lang="en">
+                            A full citation string or metadata that can be used to generate a citation
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+
+            </xsd:choice>
+
+            <xsd:attributeGroup ref="objectAttributes"/>
+            <xsd:attributeGroup ref="collectionAttributes"/>
+
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

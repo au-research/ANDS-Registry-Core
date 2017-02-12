@@ -1,0 +1,169 @@
+.dl-wide
+{
+	dt
+	{
+		width:265px !important;
+	}
+	dd
+	{
+		margin-left: 275px !important;
+	}
+}
+
+.rosearch-btn
+{
+	span.status
+	{
+		margin-left:25px;
+		padding:2px;
+		font-size:0.8em;
+	}
+	span.class
+	{
+		margin-left:10px;
+		padding:2px;
+		color:#999;
+		font-size:0.8em;
+	}
+}
+
+.ro-list{
+	margin:0px;
+	padding:0;
+	font-size:87%;
+	li{
+		.light-gradient();
+		list-style-type:none;
+		margin:0;padding:10px;
+		&:hover{
+			background:#eee;
+		}
+		cursor:pointer;
+		.name{
+			img{
+				width:20px;
+				margin-right:10px;
+			}
+			.text-shadow();
+		}
+		.num{
+			color:white;
+			font-size:11px;
+			font-weight:bold;
+			float:right;
+			background-color:@accentColor;
+			padding: 1px 9px;
+			-webkit-border-radius: 9px;
+			-moz-border-radius: 9px;
+			border-radius: 9px;
+		}
+		a{
+			text-decoration:none;
+			color:@fontColor;
+			&:hover{
+				text-decoration:none;
+			}
+		}
+	}
+}
+
+.align-left
+{
+	text-align:left !important;
+}
+
+.padded_list
+{
+	li 
+	{
+		padding-bottom:6px;
+	}
+}
+
+img.HARVEST_INFO, img.HARVESTER_INFO
+{
+	display:none;
+}
+
+.activity-list{
+	li.error{
+		border-right:5px solid #b94a48;
+		a.expand_log{
+			background: #edd0cf;
+		}
+	}
+	li{
+		.log{
+			margin:10px;
+		}
+		span.label{
+			color:white;
+		}
+	}
+}
+
+#importRecordsFromURLModal{
+  .modal-screen-container{
+      min-height:240px;
+      max-height:450px;
+      overflow:auto;
+  }
+  .modal-body{
+      #remoteSourceURLDisplay{
+        width:380px;
+        font-style:italic;
+        padding:15px 0px 15px 15px;
+        .ellipsis(); 
+      }
+      input[name="url"]{
+        width:90%;
+      } 
+   }
+}
+
+.dataTable{
+	.key{
+		max-width:40px;
+		.ellipsis()
+	}
+}
+
+#edit-datasource{
+	form{
+		#primary-relationship-form{
+			margin-left:210px;
+			fieldset{
+				legend{
+					font-size:16px;
+					margin:0;
+					line-height:18px;
+				}
+			}
+		}
+	}
+}
+
+.quality_report{
+	span{
+		display:block;
+		border:1px solid #ccc;
+		padding:5px;
+		margin:5px 0;
+		background:#efefef;
+		&:hover{
+			text-decoration:none;
+			color:#333;
+		}
+	}
+	span.info{
+		border-left: 10px solid #3a87ad;
+	}
+	span.warning{
+		border-left: 10px solid #f89406;
+	}
+	span.error{
+		border-left: 10px solid #b94a48;
+	}
+}
+
+.goto{cursor:pointer;}

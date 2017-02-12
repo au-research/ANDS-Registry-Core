@@ -1,0 +1,59 @@
+.orcid_search, .orcid_lookup, .select_orcid_search_result, .close_search, .search_orcid{
+	cursor:pointer;
+	margin: 0px 0px 0px 5px;
+	float:none !important;
+}
+.orcid_before_html{
+	margin-right:5px;
+}
+.orcid_success_div, .orcid_search_div{
+	background:white;
+	width:auto;
+	border:1px solid #ccc;
+	margin:10px;
+	padding:10px;
+	position:relative;
+}
+.orcid_error_div{
+	padding:10px;
+	color:red;
+}
+.orcid_success_div a{
+	float:none !important;
+}
+
+.close_search{
+	position:absolute;
+	top:4px;
+	right:5px;
+}
+
+/* the styles below will be applied if the orcid widget is invoked with custom display paramters set to true */
+.custom_search_div{
+	background-color:#fff;
+	background-image:url('../img/orcid_tagline_small.png');
+	background-repeat:no-repeat;
+	background-position:95% top; 
+    width:550px;
+    margin:10px;
+    padding:15px;
+    text-align:left;
+    border:2px solid #333; 
+    opacity:0.8;
+    position:relative;
+    -moz-border-radius:6px;
+    -webkit-border-radius:6px;
+    -moz-box-shadow: 0 0 50px #ccc;
+    -webkit-box-shadow: 0 0 50px #ccc;
+}
+.custom_info_box{
+	background-color:#ffffff;
+ 	border: 1px solid #666666;
+  	padding:5px;
+   	border-radius:15px;
+    -moz-border-radius: 15px;	
+    width:auto;
+}
+.custom_info_box h6{
+	font-size: 1.2em;
+}

@@ -1,0 +1,33 @@
+DirectoryIndex index.php
+
+RewriteEngine on
+RewriteBase /
+
+RewriteRule ^services/ registry/ [R=301,L]
+
+# ANDS-specific deploy rules (not needed in third-party deployment)
+# RewriteRule ^apps/mydois/doi_(.*?)\.php api/doi/$1 [R=301,L,QSA]
+# RewriteRule ^apps/mydois/(.*)\.(.*) https://researchdata.ands.org.au/api/doi/$1.$2 [NC,P]
+# RewriteRule ^registry/orca/services/oai\.php registry/services/oai [R=301,L,QSA]
+
+RewriteCond $1 ^(css|img|js|less|lib|uploads|shared|images)
+RewriteRule ^assets/(.*?)/(.*)$ assets/$1/$2 [L]
+RewriteRule ^assets/templates/(.*?)/(.*)$ applications/portal/templates/$1/assets/$2 [L]
+RewriteRule ^assets/(.*?)/(.*)$ applications/portal/$1/assets/$2 [L]
+
+RewriteCond $1 ^(registry|roles|apps|developer)
+RewriteCond $2 ^(css|img|js|less|lib)
+RewriteRule ^(.*?)/assets/(.*?)/(.*)$ assets/$2/$3 [L]
+
+RewriteCond $1 !^applications/.*/
+RewriteRule ^(.*?)/assets/(.*?)/(.*)$ applications/$1/$2/assets/$3 [L]
+
+RewriteCond $1 !^(Shibboleth.sso)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_URI} !(.*)/$
+RewriteRule ^(.*)$ $1/ [L]
+
+RewriteCond $1 !^(index\.php|robots\.txt|favicon\.ico|legacy|googledocverificationidfile\.html|Shibboleth.sso)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*?)/(.*)$ ./index.php?/$2&app=$1 [L,QSA]

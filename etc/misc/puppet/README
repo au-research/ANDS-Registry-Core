@@ -1,0 +1,27 @@
+The andsservices Puppet module installs the ANDS services (Orca and Cosi) by pulling
+them from GitHub, and installs the following required software.
+
+PHP 5.3
+PostgresSQL
+MySQL
+Apache
+Apache Solr 4.1.0
+Tomcat 6
+OpenJDK 1.7.0
+
+At time of writing there is a bug in Puppet that prevents installing modules from
+the local filesystem, so the andsservices module and the modules it depends on must
+be installed manually.
+
+To install and run this module,
+ - install Puppet:
+      http://docs.puppetlabs.com/guides/installation.html#installing-puppet-1
+ - copy the andsservices directory to Puppet's module directory:
+      cp -r andsservices "`puppet config print confdir`/modules"
+ - install required Puppet modules:
+      echo "puppetlabs/apache puppetlabs/mysql puppetlabs/postgresql \
+      puppetlabs/vcsrepo yguenane/jpackage" | xargs -n 1 puppet module install
+ - edit the parameters in andsservices/manifests/params.pp, if desired:
+      nano "`puppet config print confdir`/modules/andsservices/manifests/params.pp" 
+ - run the module:
+      puppet apply -e "class {'andsservices': }"

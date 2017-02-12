@@ -1,0 +1,129 @@
+.light-gradient{
+	background: #F8F8F8;
+	background: -moz-linear-gradient(top, #F8F8F8 0%, #E3E3E3 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#F8F8F8), color-stop(100%, #E3E3E3));
+	background: -webkit-linear-gradient(top, #F8F8F8 0%, #E3E3E3 100%);
+	background: -o-linear-gradient(top, #F8F8F8 0%, #E3E3E3 100%);
+	background: -ms-linear-gradient(top, #F8F8F8 0%, #E3E3E3 100%);
+	background: linear-gradient(top, #F8F8F8 0%, #E3E3E3 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f8f8f8', endColorstr='#e3e3e3',GradientType=0 );
+}
+
+.ellipsis{
+	text-overflow: ellipsis; 
+	-o-text-overflow: ellipsis; 
+	-icab-text-overflow: ellipsis; 
+	-khtml-text-overflow: ellipsis; 
+	-moz-text-overflow: ellipsis; 
+	-webkit-text-overflow: ellipsis;  
+	overflow:hidden;
+	overflow-wrap:none;
+	word-wrap:none;
+	word-break: keep-all;
+	white-space: nowrap;
+}
+
+.tag{
+	display:inline-block;
+	font-size:10px;
+	border:1px solid #ccc;
+	padding: 1px 7px;
+	margin:2px 2px;
+	color:black;
+	background:#efefef;
+	&:hover{
+		text-decoration:none;
+		color:#333;
+	}
+	i{
+		margin:-1px;
+	}
+	img{
+		max-height:15px;
+		padding:5px;
+	}
+}
+.no-border-tag{
+	border:none;
+	background:transparent;
+}
+
+.status_DRAFT{
+	border-left:5px solid @status_DRAFT;
+}
+.status_PUBLISHED{
+	border-left:5px solid @status_PUBLISHED;
+}
+.status_SUBMITTED_FOR_ASSESSMENT{
+	border-left:5px solid @status_SUBMITTED_FOR_ASSESSMENT;
+}
+.status_ASSESSMENT_IN_PROGRESS{
+	border-left:5px solid @status_ASSESSMENT_IN_PROGRESS;
+}
+.status_APPROVED{
+	border-left:5px solid @status_APPROVED;
+}
+.status_MORE_WORK_REQUIRED{
+	border-left:5px solid @status_MORE_WORK_REQUIRED;
+}
+.ql_1{
+	background: @ql_1;
+	color:black;
+}
+.ql_2{
+	background: @ql_2;
+	color:black;
+}
+.ql_3{
+	background: @ql_3;
+	color:black;
+}
+.ql_4{
+	background: @ql_4;
+	color:black;
+}
+
+.class_icon_collection{
+	
+}
+.class_icon_party{
+	height:20px;
+	width:20px;
+	background:transparent url('assets/img/party.png') no-repeat right top;
+}
+.class_icon_activity{
+
+}
+
+
+
+.text-shadow{
+	text-shadow: 2px 2px 1px #ffffff;
+    //filter: dropshadow(color=#ffffff, offx=2, offy=2);
+}
+
+.text-shadow-black{
+	text-shadow: 2px 2px 1px #000000;
+    //filter: dropshadow(color=#000000, offx=2, offy=2);
+}
+.no-text-shadow{
+	text-shadow: 0px 0px 0px;
+	//filter: dropshadow(color=#ffffff, offx=0, offy=0);
+}
+
+.box-shadow{
+	-webkit-box-shadow:  0px 0px 1px 1px black;
+}
+
+.rotate {
+	/* Safari */
+	-webkit-transform: rotate(-90deg);
+	/* Firefox */
+	-moz-transform: rotate(-90deg);
+	/* IE */
+	-ms-transform: rotate(-90deg);
+	/* Opera */
+	-o-transform: rotate(-90deg);
+	/* Internet Explorer */
+	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}

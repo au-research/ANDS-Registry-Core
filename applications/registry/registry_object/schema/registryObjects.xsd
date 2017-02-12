@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema version="1.6" 
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns="http://ands.org.au/standards/rif-cs/registryObjects"
+            xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects"
+            targetNamespace="http://ands.org.au/standards/rif-cs/registryObjects"
+            elementFormDefault="qualified"
+            attributeFormDefault="unqualified">
+    
+    <xsd:import namespace="http://ands.org.au/standards/rif-cs/extendedRegistryObjects" schemaLocation="extRif.xsd"/>    
+    
+    <xsd:annotation>
+        <xsd:documentation xml:lang="en">
+            An early draft of an ISO2146 schema to promote discussion. This is intended as an alternative to that currently published on the draft ISO2146 web site. It is based on experience from the pilot collection and services registry developed under the APSR ORCA project (see http://www.apsr.edu.au/orca/index.htm).
+        </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:annotation>
+        <xsd:documentation xml:lang="en">
+            The schema structure has been based on the original PREMIS approach where the core objects are provided their own schema. This may be useful in a maintenance context, a usability context, in establishing focussed working groups, and even swapping out alternative models should better representations of core entities become available in the future. It may be useful in allowing more targetted processing and data exchange.
+        </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:annotation>
+        <xsd:documentation xml:lang="en">
+            Each sub-schema represents one of the object sub-types. While there are commonalities across the different entities, the content model of a property may in future be better controlled/tailored if they are tied to their object type. In this schema the common elements are replicated in each of the different registry object classes. This will in future allow different rules (content models) to be imposed on how they are expressed. While at a theoretical level this is redundant (and theoreticians may shudder!) in practice this is likely to be needed and will make an implementors job a little easier.
+        </xsd:documentation>
+    </xsd:annotation>
+    
+    <xsd:annotation>
+        <xsd:documentation xml:lang="en">
+            Change history
+            v1.6- 21 November 2014
+                 * add optional attribute: target and elements: title, note, mediaType, byteSize to electronicAddressType
+            v1.5- 15 October 2013
+                 * add relation to the relatedInfo element
+                 * change cardinality of identifier in relatedInfo element
+            v1.4 - 15 October 2012
+                 * add new dates element
+                 * add new relatedInfo format element
+                 * add new version element to citationMetadata 
+                 * removed edition element from citationMetadata
+                 * changed various citationMetadata fields from mandatory to optional
+            v1.3 - 12 September 2011
+                * add new rights element
+                * add new existenceDate element
+                * add new termIdentifier attribute to subject element
+                * add new publisher element to citationMetadata
+            v1.2.0 - 7 July 2010
+                * remove type attribute from location
+                * add coverage element to collection, party, service and activity
+                * change relatedInfoType content model and add type attribute
+                * add citationInfoType and citation element to collection
+            v1.0.1 - 4 June 2009
+                * added type attribute to location
+            v1.0 - 13 March 2009
+                * remove dateCreated attribute
+                * move dateModified attribute to individual object classes and make optional
+                * add dateAccessioned attribute to collection
+                * add originatingSource element under registryObject with optional type attribute
+                * change simpleNameType and complexType to a single nameType
+                * make the relation element's description element optional
+                * move date range attributes from physical and spatial up to the location element
+                * import namespace in registryTypes.xsd updated to proper XML namespace and schema location
+                * update default and target namespace to reflect ANDS ownership
+                * remove xml:lang from namePart and addressPart
+            v0.4 - 29 Feb 2008 (Review feedback during ORCA redevelopment)
+                * Removed dateRangeType and converted to attribute group
+                * Registry object wrapper element and relocation of key element and common attributes
+                * Remove type attribute from common attributes (in support of object wrapper element)
+                * Change relation type element from NMTOKENS to xsd:string to support simpler processing of relations
+                * Electronic address element type attribute now optional
+                * Removed type attribute from relatedObjectType
+                * Removed uri element from relatedObjectType
+                * Add type attribute to complexNameType
+                * Drop uri element from electronicAddressType, add value element in its place
+                * Remove args element from relatedObject
+                * Add description element and type attribute to relation element
+            v0.3 - 20 Feb 2008
+                * Added group attribute to registry objects
+            v0.2 - 4 Feb 2008 (ORCA developer meeting)
+                * enumeration values moved to external vocabularies
+                * dateCreated attribute added to all repository objects
+                * type attribute added to description element
+                * collection/service relation model applied to party, activity
+                * profile element removed
+                * type library created and imports added to object schemas
+                * type attribute added to collection element
+            v0.1 - 7 Dec 2007
+                * Initial Draft
+        </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:include schemaLocation="activity.xsd"/>
+    <xsd:include schemaLocation="collection.xsd"/>
+    <xsd:include schemaLocation="party.xsd"/>
+    <xsd:include schemaLocation="service.xsd"/>
+
+    <xsd:element name="registryObjects">
+        <xsd:annotation>
+            <xsd:documentation>
+                Wrapper element for registryObject elements.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="registryObject" minOccurs="0" maxOccurs="unbounded">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            This element is a wrapper element containing descriptive and administrative metadata for a single registry object.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="key" type="xsd:string" minOccurs="1" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>
+        	                        The key (or primary identifier) of an object. It must unique within its context of use.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            </xsd:element>
+                            <xsd:element name="originatingSource" minOccurs="1" maxOccurs="1">
+								<xsd:annotation>
+	                                <xsd:documentation>
+			                            A string or URI identifying the entity holding the managed version of the registry object metadata. For example in a federated aggregation context this must identify the original repository or owning institution from which the metadata was harvested *not* the aggregator from which it was harvested.
+        	                        </xsd:documentation>
+								</xsd:annotation>
+								<xsd:complexType>
+			        	            <xsd:simpleContent>
+			            	            <xsd:extension base="xsd:string">
+			                	            <xsd:attribute name="type" use="optional" type="xsd:string">
+				                	            <xsd:annotation>
+									    	        <xsd:documentation>A value taken from a controlled vocabulary indicating the type of originating source.</xsd:documentation>
+												</xsd:annotation>
+											</xsd:attribute>
+			                    	    </xsd:extension>
+			                    	</xsd:simpleContent>
+				                </xsd:complexType>
+							</xsd:element>                    
+                            <xsd:choice>
+                                <xsd:element ref="activity" minOccurs="1" maxOccurs="1"/>
+                                <xsd:element ref="collection" minOccurs="1" maxOccurs="1"/>
+                                <xsd:element ref="party" minOccurs="1" maxOccurs="1"/>
+                                <xsd:element ref="service" minOccurs="1" maxOccurs="1"/>
+                            </xsd:choice>
+                            <xsd:element ref='extRif:annotations' minOccurs='0' maxOccurs='1'/>
+                             
+                        </xsd:sequence>
+                        
+                        <xsd:attributeGroup ref="registryObjectAttributes"/>
+                        
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+</xsd:schema>

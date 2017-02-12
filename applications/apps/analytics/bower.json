@@ -1,0 +1,26 @@
+{
+  "name": "analytics",
+  "version": "0.0.0",
+  "homepage": "https://github.com/au-research/ANDS-Registry-Core",
+  "authors": [
+    "Minh Duc Nguyen <minh.nguyen@ands.org.au>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "assets/js/lib",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-chart.js": "~0.7.2",
+    "angular-bootstrap": "0.8.0",
+    "angular-daterangepicker": "~0.1.16",
+    "angular-route": "~1.4.3"
+  },
+  "devDependencies": {
+    "angular-route": "~1.4.3"
+  }
+}
