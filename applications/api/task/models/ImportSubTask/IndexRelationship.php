@@ -147,9 +147,10 @@ class IndexRelationship extends ImportSubTask
             return;
         }
 
+
         // delete all from_id
         $this->parent()->getCI()->solr->init()->setCore('relations');
-        $this->parent()->getCI()->solr->deleteByQueryCondition('from_id:'.$record->registry_object_id);
+        $this->parent()->getCI()->solr->deleteByQueryCondition('+from_id:'.$record->registry_object_id);
 
         // add
         $docs = $this->getRelationshipIndex($relationships);
@@ -160,6 +161,8 @@ class IndexRelationship extends ImportSubTask
             $this->addError("relations for $record->registry_object_id: ". $result['error']['msg']);
         }
     }
+    
+    
 
     /**
      * @param $relationships

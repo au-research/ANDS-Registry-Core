@@ -3,6 +3,8 @@
 
 namespace ANDS\Test;
 
+use ANDS\API\Task\ImportSubTask\IndexRelationship;
+use ANDS\API\Task\ImportTask;
 use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
@@ -112,6 +114,34 @@ class TestRelationshipProvider extends UnitTest
             echo("TO KEY:" . $rel->getProperty('to_key').NL);
 
         }
+
+    }
+
+    public function test_it_should_give_me_relationship_index()
+    {
+        initEloquent();
+        $record = RegistryObjectsRepository::getRecordByID(587019);
+        $relationships = RelationshipProvider::getMergedRelationships($record);
+
+        $importTask = new ImportTask();
+        $importTask->init([
+            'params' => http_build_query([
+                'ds_id' => 210,
+                'targetStatus' => 'PUBLISHED'
+            ])
+        ])->skipLoadingPayload();
+
+        $this->ci->load->library('solr');
+        $importTask->setCI($this->ci);
+        $importTask->initialiseTask();
+        $importTask->setTaskData("importedRecords", [587019]);
+
+        $indexRelationshipTask = $importTask->getTaskByName("IndexRelationship");
+
+        $indexRelationshipTask->run_task();
+        dd("hello");
+
+        $this->ci->solr->init()->setCore('relations')->commit();
 
     }
 
