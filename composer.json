@@ -9,6 +9,11 @@
         }
     ],
 
+    "scripts": {
+        "post-update-cmd": "composer dump-autoload --optimize",
+        "post-install-cmd": "composer dump-autoload --optimize"
+    },
+
     "autoload" : {
         "psr-4": {
             "ANDS\\API\\Registry\\": "applications/api/registry",
@@ -28,6 +33,7 @@
         "predis/predis": "^1.1",
         "symfony/stopwatch": "^3.1",
         "monolog/monolog": "^1.19",
-        "jaybizzle/crawler-detect": "1.*"
+        "jaybizzle/crawler-detect": "1.*",
+        "vlucas/phpdotenv": "^2.4"
     }
 }

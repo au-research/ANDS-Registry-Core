@@ -41,7 +41,6 @@ class Registry_object extends MX_Controller
             if ($ro && $ro->prop['status'] == 'OK') {
                 if ($ro->prop['core']['slug']) {
                     //it's ok
-
                 } else {
                     if (!$slug || $slug != $ro->prop['core']['slug']) {
                         redirect($ro->prop['core']['slug'] . '/' . $id);
