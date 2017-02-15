@@ -19,6 +19,12 @@
  *
  */
 
+// pull in vendor
+if (!file_exists('./vendor/autoload.php')) {
+    die("Installation incompleted. vendor directory missing. Try running composer install");
+}
+require_once './vendor/autoload.php';
+
 // Pull in the global imports
 $eDBCONF = array();
 require_once('./global_config.php');
@@ -224,9 +230,12 @@ if (defined('ENVIRONMENT'))
  * And away we go...
  *
  */
+define('BASE', './');
+
 require_once APPPATH.'libraries/RegistryPlugin.php';
-require_once './applications/api/vendor/autoload.php';
+
 require_once BASEPATH.'core/CodeIgniter.php';
+initEloquent();
 
 /* End of file index.php */
 /* Location: ./index.php */

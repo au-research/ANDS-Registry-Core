@@ -467,7 +467,7 @@ class Maintenance extends MX_Controller
 
         echo "---spawning task---";
 
-        require_once API_APP_PATH . 'vendor/autoload.php';
+        require_once BASE . 'vendor/autoload.php';
 
         $task = [
             'name' => "Sync Missing Records for Data Source: ". $dataSourceID,
