@@ -1102,7 +1102,7 @@ class Registry_object extends MX_Controller {
 
 		// set a background task to fix the relationship of the published records and sync them
 		if (sizeof($published) > 0) {
-			require_once API_APP_PATH . 'vendor/autoload.php';
+			require_once BASE . 'vendor/autoload.php';
 			$params = [
 				'class' => 'fixRelationship',
 				'type' => 'ro',
@@ -1332,7 +1332,7 @@ class Registry_object extends MX_Controller {
 
 		// set a background task to fix the relationship of the deleted records by removing them
 		if (sizeof($affected_ids) > 0) {
-			require_once API_APP_PATH . 'vendor/autoload.php';
+			require_once BASE . 'vendor/autoload.php';
 			$params = [
 				'class' => 'fixRelationship',
 				'type' => 'ro',

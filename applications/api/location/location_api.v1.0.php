@@ -184,6 +184,6 @@ class Location_api
     public function __construct()
     {
         $this->ci = &get_instance();
-        require_once APP_PATH . 'vendor/autoload.php';
+        require_once BASE . 'vendor/autoload.php';
     }
 }

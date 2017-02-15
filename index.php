@@ -18,6 +18,27 @@
  * NOTE: If you change these, also change the error_reporting() code below
  *
  */
+if (!file_exists('./vendor/autoload.php')) {
+    die("Installation incompleted. vendor directory missing. Try running composer install");
+}
+require_once './vendor/autoload.php';
+
+// pull in .env file
+if (!file_exists('.env')) {
+    die("Installation incompleted. .env file missing");
+}
+$dotenv = new Dotenv\Dotenv(__DIR__);
+$result = $dotenv->load();
+
+function env($env, $default = "") {
+    return getenv($env) ?: $default;
+}
+
+// pull in vendor
+if (!file_exists('./vendor/autoload.php')) {
+    die("Installation incompleted. vendor directory missing. Try running composer install");
+}
+require_once './vendor/autoload.php';
 
 // Pull in the global imports
 $eDBCONF = array();
@@ -224,9 +245,10 @@ if (defined('ENVIRONMENT'))
  * And away we go...
  *
  */
+define("BASE", "./");
 require_once APPPATH.'libraries/RegistryPlugin.php';
-require_once './applications/api/vendor/autoload.php';
 require_once BASEPATH.'core/CodeIgniter.php';
+initEloquent();
 
 /* End of file index.php */
 /* Location: ./index.php */

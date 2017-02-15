@@ -26,7 +26,7 @@ class Dispatcher extends MX_Controller
         array_unshift($params, $method);
 
         $this->load->library('unit_test');
-        require_once(APP_PATH . 'vendor/autoload.php');
+        require_once(BASE . 'vendor/autoload.php');
 
         //get all testable modules (testsuites)
         $testableModules = array();
