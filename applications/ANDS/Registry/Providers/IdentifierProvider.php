@@ -49,14 +49,15 @@ class IdentifierProvider
         $identifiers = [];
         $xml = $record->getCurrentData()->data;
         foreach (XMLUtil::getElementsByXPath($xml, 'ro:registryObject/ro:' . $record->class . '/ro:identifier') AS $identifier) {
-            $identifiers[] = trim((string) $identifier);
-            Identifier::create(
-                ['registry_object_id'=>$record->registry_object_id,
-                    'identifier'=>trim((string) $identifier),
-                    'identifier_type'=> trim((string) $identifier['type'])
-                ]
-            );
-
+            if(trim((string) $identifier != "")){
+                $identifiers[] = trim((string) $identifier);
+                Identifier::create(
+                    ['registry_object_id'=>$record->registry_object_id,
+                        'identifier'=>trim((string) $identifier),
+                        'identifier_type'=> trim((string) $identifier['type'])
+                    ]
+                );
+            }
         }
         return $identifiers;
     }
