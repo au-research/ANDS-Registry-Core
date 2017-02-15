@@ -1102,7 +1102,7 @@ class Registry_object extends MX_Controller {
 
 		// set a background task to fix the relationship of the published records and sync them
 		if (sizeof($published) > 0) {
-			require_once BASE_PATH . 'vendor/autoload.php';
+			require_once BASE . 'vendor/autoload.php';
 			$params = [
 				'class' => 'fixRelationship',
 				'type' => 'ro',
