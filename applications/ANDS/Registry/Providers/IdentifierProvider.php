@@ -48,12 +48,18 @@ class IdentifierProvider
     {
         $identifiers = [];
         $xml = $record->getCurrentData()->data;
-        foreach (XMLUtil::getElementsByXPath($xml, 'ro:registryObject/ro:' . $record->class . '/ro:identifier') AS $identifier) {
-            $identifiers[] = trim((string) $identifier);
+        foreach (XMLUtil::getElementsByXPath($xml,
+            'ro:registryObject/ro:' . $record->class . '/ro:identifier') AS $identifier) {
+            $identifierValue = trim((string)$identifier;
+            if ($identifierValue == "") {
+                continue;
+            }
+            $identifiers[] = $identifierValue;
             Identifier::create(
-                ['registry_object_id'=>$record->registry_object_id,
-                    'identifier'=>trim((string) $identifier),
-                    'identifier_type'=> trim((string) $identifier['type'])
+                [
+                    'registry_object_id' => $record->registry_object_id,
+                    'identifier' => $identifierValue,
+                    'identifier_type' => trim((string)$identifier['type'])
                 ]
             );
 

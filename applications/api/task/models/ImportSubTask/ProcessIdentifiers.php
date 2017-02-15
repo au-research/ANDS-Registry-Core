@@ -11,7 +11,6 @@ use ANDS\Repository\RegistryObjectsRepository;
  */
 class ProcessIdentifiers extends ImportSubTask
 {
-    protected $requirePayload = true;
     protected $requireImportedRecords = true;
     protected $title = "PROCESSING IDENTIFIERS";
 

@@ -281,6 +281,7 @@ class ImportTask extends Task
                 break;
             case "UpdateRelationshipWorkflow":
                 $tasks = [
+                    "ProcessIdentifiers",
                     "ProcessRelationships",
                     "ProcessGrantsRelationship",
                     "PopulateAffectedList",
