@@ -1,12 +1,32 @@
 {
-    "name": "mnguyen/core",
+    "name": "au-research/ands-researchdata-registry",
+    "description": "Core ANDS codebase which includes a metadata registry, front-end portal and access management system. This software currently powers the ANDS National Collections Registry and Research Data Australia",
+
     "authors": [
         {
             "name": "Minh Duc Nguyen",
             "email": "minh.nguyen@ands.org.au"
         }
     ],
+
+    "autoload" : {
+        "psr-4": {
+            "ANDS\\API\\Registry\\": "applications/api/registry",
+            "ANDS\\API\\Registry\\Handler\\": "applications/api/registry/handlers/",
+            "ANDS\\API\\Log\\": "applications/api/log",
+            "ANDS\\API\\Log\\Handler\\": "applications/api/log/handlers/",
+            "ANDS\\API\\Log\\Indexer\\": "applications/api/log/indexers/",
+            "ANDS\\API\\Task\\": "applications/api/task/models",
+            "ANDS\\": "applications/ANDS",
+            "ANDS\\API\\DOI\\": "applications/api/doi"
+        }
+    },
+
     "require": {
+        "illuminate/database": "5.2.*",
+        "au-research/ands-doi-service": "0.1.*",
+        "predis/predis": "^1.1",
+        "symfony/stopwatch": "^3.1",
         "monolog/monolog": "^1.19",
         "jaybizzle/crawler-detect": "1.*"
     }

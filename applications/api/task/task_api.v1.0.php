@@ -26,7 +26,7 @@ class Task_api
     {
         $this->ci = &get_instance();
         $this->db = $this->ci->load->database('registry', true);
-        require_once APP_PATH . 'vendor/autoload.php';
+        require_once BASE . 'vendor/autoload.php';
 
         $this->taskManager = new Task\TaskManager($this->db, $this->ci);
 
