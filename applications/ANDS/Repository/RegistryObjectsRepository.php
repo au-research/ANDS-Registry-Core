@@ -125,7 +125,7 @@ class RegistryObjectsRepository
      *
      * @param $key
      * @param string $status
-     * @return mixed
+     * @return RegistryObject
      */
     public static function getByKeyAndStatus($key, $status = "PUBLISHED")
     {
