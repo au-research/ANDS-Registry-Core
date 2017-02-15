@@ -49,7 +49,7 @@ $active_group = 'registry';
 $active_record = TRUE;
 
 // Temporary workaround to pull this from the global_config.php
-global $eDBCONF;
+$eDBCONF = include(BASE . "config/database.php");
 
 foreach($eDBCONF as $groupname=>$value)
 {

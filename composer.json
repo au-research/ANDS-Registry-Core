@@ -23,7 +23,8 @@
             "ANDS\\API\\Log\\Indexer\\": "applications/api/log/indexers/",
             "ANDS\\API\\Task\\": "applications/api/task/models",
             "ANDS\\": "applications/ANDS",
-            "ANDS\\API\\DOI\\": "applications/api/doi"
+            "ANDS\\API\\DOI\\": "applications/api/doi",
+            "ANDS\\Test\\": "applications/test/core/models"
         }
     },
 
