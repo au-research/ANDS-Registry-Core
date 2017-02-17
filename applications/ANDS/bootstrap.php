@@ -2,8 +2,13 @@
 
 use Illuminate\Database\Capsule\Manager as Capsule;
 
+define('BASEPATH', '/../../');
+
 // require_once the autoload file (again)
 require_once __DIR__.'/../../vendor/autoload.php';
+
+// require the constants
+require_once __DIR__.'/../../engine/config/constants.php';
 
 // bootstrap the application
 
