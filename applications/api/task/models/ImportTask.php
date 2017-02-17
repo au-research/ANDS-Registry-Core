@@ -371,26 +371,7 @@ class ImportTask extends Task
      */
     public function bootEloquentModels()
     {
-        $ci =& get_instance();
-        $capsule = new Capsule;
-        $capsule->addConnection(
-            [
-                'driver' => 'mysql',
-                'host' => $ci->db->hostname,
-                'database' => $ci->db->database,
-                'username' => $ci->db->username,
-                'password' => $ci->db->password,
-                'charset' => 'utf8',
-                'collation' => 'utf8_unicode_ci',
-                'prefix' => '',
-                'options'   => array(
-                    \PDO::ATTR_PERSISTENT => true,
-                )
-            ], 'default'
-        );
-        $capsule->setAsGlobal();
-        $capsule->getConnection('default');
-        $capsule->bootEloquent();
+//        initEloquent();
         return $this;
     }
 

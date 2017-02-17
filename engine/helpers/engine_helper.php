@@ -688,9 +688,27 @@ function isbot($useragent = false)
 }
 
 function initEloquent() {
-    require_once BASE . 'vendor/autoload.php';
-    $importTask = new \ANDS\API\Task\ImportTask();
-    $importTask->initialiseTask();
+    $dotenv = new \Dotenv\Dotenv(__DIR__ . '/../../');
+    $dotenv->load();
+
+    $capsule = new \Illuminate\Database\Capsule\Manager;
+    $capsule->addConnection(
+        [
+            'driver' => 'mysql',
+            'host' => getenv("DB_HOSTNAME"),
+            'database' => "dbs_registry",
+            'username' => getenv("DB_USERNAME"),
+            'password' => getenv("DB_PASSWORD"),
+            'charset' => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix' => '',
+            'options'   => array(
+                \PDO::ATTR_PERSISTENT => true,
+            )
+        ], 'default'
+    );
+    $capsule->setAsGlobal();
+    $capsule->bootEloquent();
 }
 
 function tearDownEloquent() {
