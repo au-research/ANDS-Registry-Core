@@ -1,7 +1,7 @@
 <phpunit
         backupStaticAttributes="false"
 
-        bootstrap="./vendor/autoload.php"
+        bootstrap="./applications/ANDS/bootstrap.php"
 
         cacheTokens="false"
         colors="false"
