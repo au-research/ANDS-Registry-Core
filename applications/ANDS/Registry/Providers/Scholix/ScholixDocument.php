@@ -10,6 +10,17 @@ class ScholixDocument
 
     /**
      * @param $prop
+     * @param array $value
+     * @return $this
+     */
+    public function set($prop, $value = [])
+    {
+        $this->properties[$prop] = $value;
+        return $this;
+    }
+
+    /**
+     * @param $prop
      * @return mixed|null
      */
     public function prop($prop)
@@ -23,5 +34,20 @@ class ScholixDocument
     public function getProperties()
     {
         return $this->properties;
+    }
+
+    public function toArray()
+    {
+        return $this->properties;
+    }
+
+    public function toJson()
+    {
+        return json_encode($this->properties, true);
+    }
+
+    public function toXML()
+    {
+        return "";
     }
 }
