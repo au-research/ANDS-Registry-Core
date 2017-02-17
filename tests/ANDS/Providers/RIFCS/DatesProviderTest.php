@@ -7,8 +7,12 @@ namespace ANDS\Providers\RIFCS;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Repository\RegistryObjectsRepository;
 
-class DatesProviderTest extends \PHPUnit_Framework_TestCase
+class DatesProviderTest extends \RegistryTestClass
 {
+    protected $requiredKeys = [
+        "AUTCollectionToTestSearchFields37"
+    ];
+
     /** @test **/
     public function it_should_get_the_correct_publication_date()
     {
