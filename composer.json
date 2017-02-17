@@ -31,7 +31,11 @@
             "ANDS\\": "applications/ANDS",
             "ANDS\\API\\DOI\\": "applications/api/doi",
             "ANDS\\Test\\": "applications/test/core/models"
-        }
+        },
+        "files": [
+            "applications/ANDS/Helpers.php",
+            "engine/helpers/engine_helper.php"
+        ]
     },
 
     "require": {

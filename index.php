@@ -23,22 +23,15 @@ if (!file_exists('./vendor/autoload.php')) {
 }
 require_once './vendor/autoload.php';
 
-// pull in .env file
+// pull in .env file, now getenv() and env() is available globally
 if (!file_exists('.env')) {
     die("Installation incompleted. .env file missing");
 }
 $dotenv = new Dotenv\Dotenv(__DIR__);
 $result = $dotenv->load();
 
-function env($env, $default = "") {
-    return getenv($env) ?: $default;
-}
-
-// pull in vendor
-if (!file_exists('./vendor/autoload.php')) {
-    die("Installation incompleted. vendor directory missing. Try running composer install");
-}
-require_once './vendor/autoload.php';
+// bootstrap the application, eloquent default database connection is now available globally
+require_once "./applications/ANDS/bootstrap.php";
 
 // Pull in the global imports
 $eDBCONF = array();
@@ -248,7 +241,6 @@ if (defined('ENVIRONMENT'))
 define("BASE", "./");
 require_once APPPATH.'libraries/RegistryPlugin.php';
 require_once BASEPATH.'core/CodeIgniter.php';
-initEloquent();
 
 /* End of file index.php */
 /* Location: ./index.php */
