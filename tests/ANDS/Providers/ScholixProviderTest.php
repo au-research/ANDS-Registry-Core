@@ -67,14 +67,6 @@ class ScholixProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /** @test **/
-    public function it_should_get_the_correct_publication_date()
-    {
-        $record = RegistryObjectsRepository::getPublishedByKey("AUTCollectionToTestSearchFields37");
-        $publicationDate = ScholixProvider::getPublicationDate($record);
-        $this->assertEquals("2001-12-12", $publicationDate);
-    }
-
-    /** @test **/
     public function it_should_get_the_correct_identifiers()
     {
         $record = RegistryObjectsRepository::getPublishedByKey("AUTCollectionToTestSearchFields37");
