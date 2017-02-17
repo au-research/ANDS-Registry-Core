@@ -75,7 +75,7 @@ class ScholixProvider implements RegistryContentProvider
 
         $doc = new ScholixDocument;
 
-        $doc->set('link', [
+        $link = [
             'publicationDate' => DatesProvider::getPublicationDate($record, $data),
             'publisher' => [
                 'name' => $record->group,
@@ -87,10 +87,61 @@ class ScholixProvider implements RegistryContentProvider
                     'identifier' =>  'http://nla.gov.au/nla.party-1508909',
                     'schema' => 'AU-ANL:PEAU'
                 ]
-            ]
-        ]);
+            ],
+            'relationship' => self::getRelationships($record, $data)
+        ];
+        $relationships = self::getRelationships($record, $data);
+        if (count($relationships)) {
+            $link['relationship'] = $relationships;
+        }
+
+        $doc->set('link', $link);
 
         return $doc;
+    }
+
+    public static function getRelatedPublications(RegistryObject $record, $data = null)
+    {
+        if (!$data) {
+            $data = MetadataProvider::get($record);
+        }
+
+        $relationships = collect($data['relationships'])->filter(function($item) {
+            $type = $item->prop('to_related_info_type');
+            if (!$type) {
+                $type = $item->prop('to_type');
+            }
+
+            if ($type == 'publication') {
+                return true;
+            }
+            return false;
+        })->toArray();
+        return $relationships;
+    }
+
+    public static function getRelationships(RegistryObject $record, $data = null)
+    {
+        if (!$data) {
+            $data = MetadataProvider::get($record);
+        }
+
+        $relationships = collect($data['relationships'])->map(function($item) {
+            $relationType = $item->prop('relation_type');
+            $validRelationTypes = ['isCitedBy', 'isReferencedBy', 'isDocumentedBy', 'isSupplementedBy', 'isSupplementTo', 'isReviewedBy'];
+            if (in_array($relationType, $validRelationTypes)) {
+                return [
+                    'name' => $item->prop('relation_type'),
+                    'schema' => 'RIF-CS',
+                    'inverse' => $item->prop('relation_type')
+                ];
+            }
+            return null;
+        })->filter(function($item) {
+            return $item;
+        })->values()->toArray();
+
+        return $relationships;
     }
 
     public static function getIdentifiers(RegistryObject $record, $xml = null)
