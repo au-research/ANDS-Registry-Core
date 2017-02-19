@@ -4,6 +4,7 @@
 namespace ANDS\Registry\Providers;
 
 
+use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\Providers\Scholix\ScholixDocument;
 use ANDS\RegistryObject;
 use ANDS\Util\XMLUtil;
@@ -70,15 +71,15 @@ class ScholixProvider implements RegistryContentProvider
      */
     public static function get(RegistryObject $record)
     {
-        $data = self::getRecordData($record);
+        $data = MetadataProvider::get($record);
 
         $doc = new ScholixDocument;
 
-        $doc->set('link', [
-            'publicationDate' => self::getPublicationDate($record, $data),
+        $link = [
+            'publicationDate' => DatesProvider::getPublicationDate($record, $data),
             'publisher' => [
                 'name' => $record->group,
-                'identifiers' => self::getIdentifiers($record, $data)
+                'identifiers' => self::getIdentifiers($record, $data['recordData'])
             ],
             'linkProvider' => [
                 'name' => 'Australian National Data Service',
@@ -86,82 +87,73 @@ class ScholixProvider implements RegistryContentProvider
                     'identifier' =>  'http://nla.gov.au/nla.party-1508909',
                     'schema' => 'AU-ANL:PEAU'
                 ]
-            ]
-        ]);
+            ],
+            'relationship' => self::getRelationships($record, $data)
+        ];
+        $relationships = self::getRelationships($record, $data);
+        if (count($relationships)) {
+            $link['relationship'] = $relationships;
+        }
+
+        $doc->set('link', $link);
 
         return $doc;
     }
 
-    /**
-     * Returns the publicationDate of a scholix document
-     * Business Rules implemented within
-     *
-     * @param RegistryObject $record
-     * @param null $data
-     * @return string
-     */
-    public static function getPublicationDate(RegistryObject $record, $data = null)
+    public static function getRelatedPublications(RegistryObject $record, $data = null)
     {
         if (!$data) {
-            $data = self::getRecordData($record);
+            $data = MetadataProvider::get($record);
         }
 
-        /*
-         * registryObject/collection/citationInfo/citationMetadata/date[@type=’publication date’]
-         * registryObject/collection/citationInfo/citationMetadata/date[@type=’issued date’]
-         * registryObject/collection/citationInfo/citationMetadata/date[@type=’created’]
-         */
-        foreach (XMLUtil::getElementsByXPath($data['recordData'],
-            'ro:registryObject/ro:' . $record->class . '/ro:citationInfo/ro:citationMetadata/ro:date') AS $date) {
-            $value = (string) $date;
-            $type = (string) $date['type'];
-            if (in_array($type, ['publication_date', 'issued_date', 'created'])) {
-                return (new Carbon($value))->format('Y-m-d');
-            }
-        }
-
-        /**
-         * registryObject/collection/dates[@type=’issued’]
-         * registryObject/collection/dates[@type=’available’]
-         * registryObject/collection/dates[@type=’created’]
-         */
-        foreach (XMLUtil::getElementsByXPath($data['recordData'],
-            'ro:registryObject/ro:' . $record->class . '/ro:date') AS $date) {
-            $value = (string) $date;
-            $type = (string) $date['type'];
-            if (in_array($type, ['issued', 'available', 'created'])) {
-                return (new Carbon($value))->format('Y-m-d');
-            }
-        }
-
-        /**
-         * registryObject/Collection@dateModified
-         */
-        foreach (XMLUtil::getElementsByXPath($data['recordData'],
-            'ro:registryObject/ro:' . $record->class) AS $object) {
-
-            if ($dateAccessioned = (string) $object['dateAccessioned']) {
-                return (new Carbon($dateAccessioned))->format('Y-m-d');
+        $relationships = collect($data['relationships'])->filter(function($item) {
+            $type = $item->prop('to_related_info_type');
+            if (!$type) {
+                $type = $item->prop('to_type');
             }
 
-            if ($dateModified = (string) $object['dateModified']) {
-                return (new Carbon($dateModified))->format('Y-m-d');
+            if ($type == 'publication') {
+                return true;
             }
-        }
-
-        $value = $record->getRegistryObjectAttributeValue('created');
-        return (new Carbon($value))->format('Y-m-d');
+            return false;
+        })->toArray();
+        return $relationships;
     }
 
-    public static function getIdentifiers(RegistryObject $record, $data = null)
+    public static function getRelationships(RegistryObject $record, $data = null)
+    {
+        if (!$data) {
+            $data = MetadataProvider::get($record);
+        }
+
+        $relationships = collect($data['relationships'])->map(function($item) {
+            $relationType = $item->prop('relation_type');
+            $validRelationTypes = ['isCitedBy', 'isReferencedBy', 'isDocumentedBy', 'isSupplementedBy', 'isSupplementTo', 'isReviewedBy'];
+            if (in_array($relationType, $validRelationTypes)) {
+                return [
+                    'name' => $item->prop('relation_type'),
+                    'schema' => 'RIF-CS',
+                    'inverse' => $item->prop('relation_type')
+                ];
+            }
+            return null;
+        })->filter(function($item) {
+            return $item;
+        })->values()->toArray();
+
+        return $relationships;
+    }
+
+    public static function getIdentifiers(RegistryObject $record, $xml = null)
     {
         $identifiers = [];
 
-        if (!$data) {
-            $data = self::getRecordData($record);
+        if (!$xml) {
+            $data = MetadataProvider::getSelective($record, ['recordData']);
+            $xml = $data['recordData'];
         }
 
-        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+        foreach (XMLUtil::getElementsByXPath($xml,
             'ro:registryObject/ro:' . $record->class . '/ro:identifier') AS $identifier) {
             $identifiers[] = [
                 'identifier' => (string) $identifier,
@@ -170,13 +162,5 @@ class ScholixProvider implements RegistryContentProvider
         }
 
         return $identifiers;
-    }
-
-    public static function getRecordData(RegistryObject $record)
-    {
-        $relationships = RelationshipProvider::getMergedRelationships($record);
-        $recordData = $record->getCurrentData()->data;
-
-        return compact('relationships', 'recordData');
     }
 }

@@ -50,7 +50,7 @@ class IdentifierProvider
         $xml = $record->getCurrentData()->data;
         foreach (XMLUtil::getElementsByXPath($xml,
             'ro:registryObject/ro:' . $record->class . '/ro:identifier') AS $identifier) {
-            $identifierValue = trim((string)$identifier;
+            $identifierValue = trim((string)$identifier);
             if ($identifierValue == "") {
                 continue;
             }
