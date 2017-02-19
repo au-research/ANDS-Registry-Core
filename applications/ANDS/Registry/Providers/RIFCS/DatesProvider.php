@@ -17,11 +17,15 @@ class DatesProvider implements RIFCSProvider
         return;
     }
 
+    /**
+     * Return the available dates
+     *
+     * @param RegistryObject $record
+     * @return array
+     */
     public static function get(RegistryObject $record)
     {
-
         $data = MetadataProvider::get($record);
-
         return [
             'publicationDate' => self::getPublicationDate($record, $data, 'Y-m-d')
         ];
@@ -52,7 +56,7 @@ class DatesProvider implements RIFCSProvider
             $value = (string) $date;
             $type = (string) $date['type'];
             if (in_array($type, ['publication_date', 'issued_date', 'created'])) {
-                return (new Carbon($value))->format($format);
+                return self::formatDate($value, $format);
             }
         }
 
@@ -66,7 +70,7 @@ class DatesProvider implements RIFCSProvider
             $value = (string) $date;
             $type = (string) $date['type'];
             if (in_array($type, ['issued', 'available', 'created'])) {
-                return (new Carbon($value))->format($format);
+                return self::formatDate($value, $format);
             }
         }
 
@@ -77,17 +81,29 @@ class DatesProvider implements RIFCSProvider
             'ro:registryObject/ro:' . $record->class) AS $object) {
 
             if ($dateAccessioned = (string) $object['dateAccessioned']) {
-                return (new Carbon($dateAccessioned))->format($format);
+                return self::formatDate($dateAccessioned, $format);
             }
 
             if ($dateModified = (string) $object['dateModified']) {
-                return (new Carbon($dateModified))->format($format);
+                return self::formatDate($dateModified, $format);
             }
         }
 
         // date the record was ingested into the Registry as last resort
         $value = $record->getRegistryObjectAttributeValue('created');
 
+        return self::formatDate($value, $format);
+    }
+
+    /**
+     * Return the date value in the given format
+     *
+     * @param $value
+     * @param $format
+     * @return string
+     */
+    public static function formatDate($value, $format)
+    {
         return (new Carbon($value))->format($format);
     }
 }
