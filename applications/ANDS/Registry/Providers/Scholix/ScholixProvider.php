@@ -29,6 +29,11 @@ class ScholixProvider implements RegistryContentProvider
             return false;
         }
 
+        // record type needs to be a dataset or a collection
+        if (!in_array($record->type, ['dataset', 'collection'])) {
+            return false;
+        }
+
         // search through combined relationships to see if there's a related publication
         if (!$relationships) {
             $relationships = RelationshipProvider::getMergedRelationships($record);
@@ -74,6 +79,12 @@ class ScholixProvider implements RegistryContentProvider
         $data = MetadataProvider::get($record);
 
         $doc = new ScholixDocument;
+
+        /**
+         * Business Rule:
+         * for each collection/identifier OR citationInfo/citationMetadata/identifier OR key
+         * Produces a link to each of the related publication
+         */
 
         $link = [
             'publicationDate' => DatesProvider::getPublicationDate($record, $data),
