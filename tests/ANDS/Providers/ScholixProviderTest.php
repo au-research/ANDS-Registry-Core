@@ -3,7 +3,7 @@
 use ANDS\Registry\Providers\ScholixProvider;
 use ANDS\Repository\RegistryObjectsRepository;
 
-class ScholixProviderTest extends \PHPUnit_Framework_TestCase
+class ScholixProviderTest extends RegistryTestClass
 {
     protected $requiredKeys = [
         "AUTestingRecordsu/collection/enmasse/1248",
@@ -67,15 +67,23 @@ class ScholixProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /** @test **/
-    public function it_should_get_the_correct_publication_date()
+    public function it_should_get_the_correct_relationships_format()
     {
         $record = RegistryObjectsRepository::getPublishedByKey("AUTCollectionToTestSearchFields37");
-        $publicationDate = ScholixProvider::getPublicationDate($record);
-        $this->assertEquals("2001-12-12", $publicationDate);
+        $relationships = ScholixProvider::getRelationships($record);
+        $this->assertEmpty($relationships);
     }
 
     /** @test **/
-    public function it_should_get_the_correct_identifiers()
+    public function it_should_get_the_right_publication_relationships()
+    {
+        $record = RegistryObjectsRepository::getPublishedByKey("AUTCollectionToTestSearchFields37");
+        $relationships = ScholixProvider::getRelatedPublications($record);
+        $this->assertEquals(2, count($relationships));
+    }
+
+    /** @test **/
+    public function it_should_get_the_correct_identifiers_format()
     {
         $record = RegistryObjectsRepository::getPublishedByKey("AUTCollectionToTestSearchFields37");
         $identifiers = ScholixProvider::getIdentifiers($record);
@@ -83,14 +91,4 @@ class ScholixProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(2, count($identifiers));
     }
 
-    public function setUp()
-    {
-        restore_error_handler();
-        foreach ($this->requiredKeys as $key) {
-            $record = RegistryObjectsRepository::getPublishedByKey($key);
-            if ($record === null) {
-                $this->markTestSkipped("The record with $key is not available. Skipping tests");
-            }
-        }
-    }
 }
