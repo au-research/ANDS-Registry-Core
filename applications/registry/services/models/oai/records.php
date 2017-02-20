@@ -27,6 +27,7 @@ class Records extends CI_Model
 		$args['wherein'] = false;
         $args["allowedClass"] = false;
         $args['allowedType'] = false;
+        $args['attributeExist'] = false;
 		$count = '';
         $batch_size = 100;
         $ro_count = 0;
@@ -60,6 +61,10 @@ class Records extends CI_Model
             $args['allowedType'] = array('collection', 'repository', 'dataset', 'software');
         }
 
+        if ($supplied_format == "scholix") {
+			$args['attributeExist'] = "scholixable";
+		}
+
 		if(!($set&&!$args["wherein"]))
 		{
 		$count = $this->ro->_get(array(array('args' => $args,
@@ -89,6 +94,12 @@ class Records extends CI_Model
                                      $db->where_in("registry_objects.type",
                                          $args["allowedType"]);
                                  }
+
+								if ($args['attributeExist']) {
+                                    $db->where('registry_object_attributes.attribute', $args['attributeExist']);
+								}
+
+
 
 							     return $db;
 						     })),
@@ -142,6 +153,12 @@ class Records extends CI_Model
                                        $db->where_in("registry_objects.type",
                                            $args["allowedType"]);
                                    }
+
+                                   if ($args['attributeExist']) {
+                                       $db->where('registry_object_attributes.attribute', $args['attributeExist']);
+                                   }
+
+
 							       $db->order_by("registry_objects.registry_object_id", "asc");
 							       return $db;
 						       })),

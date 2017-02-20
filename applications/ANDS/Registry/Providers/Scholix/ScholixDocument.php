@@ -4,10 +4,13 @@
 namespace ANDS\Registry\Providers\Scholix;
 
 
+use Carbon\Carbon;
+
 class ScholixDocument
 {
     public $properties = [];
     public $links = [];
+    public $record;
 
     public function addLink($link)
     {
@@ -76,16 +79,42 @@ class ScholixDocument
         return json_encode($this->links, true);
     }
 
-    public function toXML()
+    public function toOAI()
     {
         $xml = "";
-        foreach ($this->links as $link) {
+
+        foreach ($this->links as $index => $link) {
+            $identifier = "oai:ands.org.au::" . $this->record->registry_object_id. "-".($index+1);
+            $date = Carbon::now()->format('Y-m-d\TH:i:s\Z');
+            $dataSource = "dataSource:".$this->record->datasource->slug;
+            $group = str_replace(" ", "0x20", $this->record->group);
+            $xml .= "<record>";
+            $xml .= "<header>
+                <identifier>$identifier</identifier>
+                <datestamp>$date</datestamp>
+                <setSpec>$dataSource</setSpec>
+                <setSpec>class:{$this->record->class}</setSpec>
+                <setSpec>group:$group</setSpec>
+            </header>";
+            $xml .= "<metadata>";
             $xml .= $this->json2xml($link['link']);
+            $xml .= "</metadata>";
+            $xml .= "</record>";
         }
         return $xml;
     }
 
-    private function json2xml($link)
+    public function toXML($wrapper = "links")
+    {
+        $xml = "<$wrapper>";
+        foreach ($this->links as $link) {
+            $xml .= $this->json2xml($link['link']);
+        }
+        $xml .= "</$wrapper>";
+        return $xml;
+    }
+
+    public function json2xml($link)
     {
         $str = "<link xmlns=\"http://www.scholix.org\"
  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"
@@ -96,20 +125,20 @@ class ScholixDocument
         $str .= "<publisher>";
         $str .= "<name>".$link['publisher']['name']."</name>";
         foreach ($link['publisher']['identifier'] as $identifier) {
-            $str .= "<identifier>";
+            $str .= "<identifiers>";
             $str .= "<identifier>".$identifier['identifier']."</identifier>";
             $str .= "<schema>".$identifier['schema']."</schema>";
-            $str .= "</identifier>";
+            $str .= "</identifiers>";
         }
         $str .= "</publisher>";
 
         $str .= "<linkProvider>";
         $str .= "<name>".$link['linkProvider']['name']."</name>";
         foreach ($link['linkProvider']['identifier'] as $identifier) {
-            $str .= "<identifier>";
+            $str .= "<identifiers>";
             $str .= "<identifier>".$identifier['identifier']."</identifier>";
             $str .= "<schema>".$identifier['schema']."</schema>";
-            $str .= "</identifier>";
+            $str .= "</identifiers>";
         }
         $str .= "</linkProvider>";
 
@@ -125,26 +154,31 @@ class ScholixDocument
 
         // source
         $str .= "<source>";
-        $str .= "<title>".$link['source']['title']."</title>";
-        $str .= "<title>".$link['source']['objectType']."</title>";
         foreach ($link['source']['identifier'] as $identifier) {
             $str .= "<identifier>";
             $str .= "<identifier>".$identifier['identifier']."</identifier>";
             $str .= "<schema>".$identifier['schema']."</schema>";
             $str .= "</identifier>";
         }
+        $str .= "<objectType>";
+        $str .= "<type>". $link['source']['objectType']."</type>";
+        $str .= "</objectType>";
+        $str .= "<title>".$link['source']['title']."</title>";
         $str .= "</source>";
-
 
         // target
         $str .= "<target>";
-        $str .= "<title>".$link['target']['title']."</title>";
-        $str .= "<title>".$link['target']['objectType']."</title>";
         foreach ($link['target']['identifier'] as $identifier) {
             $str .= "<identifier>";
             $str .= "<identifier>".$identifier['identifier']."</identifier>";
             $str .= "<schema>".$identifier['schema']."</schema>";
             $str .= "</identifier>";
+        }
+        $str .= "<objectType>";
+        $str .= "<type>". $link['target']['objectType']."</type>";
+        $str .= "</objectType>";
+        if (array_key_exists('title', $link['target'])) {
+            $str .= "<title>".$link['target']['title']."</title>";
         }
         $str .= "</target>";
 
