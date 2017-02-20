@@ -276,14 +276,19 @@ class ScholixProvider implements RegistryContentProvider
 
     public static function getTargetMetadataRelatedInfo($publication)
     {
-        return [
+        $target = [
             'identifier' => [
                 ['identifier' => $publication->prop('to_identifier'),
                 'schema' => $publication->prop('to_identifier_type')]
             ],
-            'objectType' => 'literature',
-            'title' => $publication->prop('to_title') ?: ""
+            'objectType' => 'literature'
         ];
+
+        if ($publication->prop('to_title')) {
+            $target['title'] = $publication->prop('to_title');
+        }
+
+        return $target;
     }
 
     public static function getTargetMetadataObject($publication)
