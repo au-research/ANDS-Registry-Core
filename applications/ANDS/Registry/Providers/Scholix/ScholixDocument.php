@@ -4,10 +4,13 @@
 namespace ANDS\Registry\Providers\Scholix;
 
 
+use Carbon\Carbon;
+
 class ScholixDocument
 {
     public $properties = [];
     public $links = [];
+    public $record;
 
     public function addLink($link)
     {
@@ -76,12 +79,38 @@ class ScholixDocument
         return json_encode($this->links, true);
     }
 
-    public function toXML()
+    public function toOAI()
     {
         $xml = "";
+
+        foreach ($this->links as $index => $link) {
+            $identifier = "oai:ands.org.au::" . $this->record->registry_object_id. "-".($index+1);
+            $date = Carbon::now()->format('Y-m-d\TH:i:s\Z');
+            $dataSource = "dataSource:".$this->record->datasource->slug;
+            $group = str_replace(" ", "0x20", $this->record->group);
+            $xml .= "<record>";
+            $xml .= "<header>
+                <identifier>$identifier</identifier>
+                <datestamp>$date</datestamp>
+                <setSpec>$dataSource</setSpec>
+                <setSpec>class:{$this->record->class}</setSpec>
+                <setSpec>group:$group</setSpec>
+            </header>";
+            $xml .= "<metadata>";
+            $xml .= $this->json2xml($link['link']);
+            $xml .= "</metadata>";
+            $xml .= "</record>";
+        }
+        return $xml;
+    }
+
+    public function toXML($wrapper = "record")
+    {
+        $xml = "<$wrapper>";
         foreach ($this->links as $link) {
             $xml .= $this->json2xml($link['link']);
         }
+        $xml .= "</$wrapper>";
         return $xml;
     }
 

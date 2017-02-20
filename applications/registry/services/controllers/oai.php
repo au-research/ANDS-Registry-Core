@@ -46,6 +46,7 @@ class Oai extends MX_Controller
 		array('prefix' => 'dci',
 		      'schema' => '',
 		      'ns'     => ''),
+		['prefix' => 'scholix', 'schema' => '', 'ns' => ''],
 		array('prefix' => 'oai_dc',
 		      'schema' => 'http://www.openarchives.org/OAI/2.0/oai_dc.xsd',
 		      'ns'     => 'http://www.openarchives.org/OAI/2.0/oai_dc/'),
@@ -379,6 +380,12 @@ class Oai extends MX_Controller
                         $this->output->append_output("\t\t\t</metadata>\n");
                         $this->output->append_output("\t\t</record>\n");
                     }
+				}
+				elseif ($format == "scholix") {
+
+					$record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($rec->id);
+					$scholix = \ANDS\Registry\Providers\ScholixProvider::get($record);
+					$this->output->append_output($scholix->toOAI());
 				}
                 else
                 {
