@@ -89,4 +89,28 @@ class IdentifierProvider
         }
         return $identifiers;
     }
+
+    public static function getCitationMetadataIdentifiers(RegistryObject $record, $xml = null)
+    {
+        if (!$xml) {
+            $xml = $record->getCurrentData()->data;
+        }
+
+        $identifiers = [];
+
+        $xpath = "ro:registryObject/ro:{$record->class}/ro:citationInfo/ro:citationMetadata/ro:identifier";
+
+        foreach (XMLUtil::getElementsByXPath($xml, $xpath) AS $identifier) {
+            $identifierValue = trim((string)$identifier);
+            if ($identifierValue == "") {
+                continue;
+            }
+            $identifiers[] = [
+                'value' => $identifierValue,
+                'type' => trim((string)$identifier['type'])
+            ];
+        }
+
+        return $identifiers;
+    }
 }
