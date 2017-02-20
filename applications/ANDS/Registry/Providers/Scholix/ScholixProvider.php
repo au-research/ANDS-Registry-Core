@@ -79,6 +79,7 @@ class ScholixProvider implements RegistryContentProvider
         $data = MetadataProvider::get($record);
 
         $doc = new ScholixDocument;
+        $doc->record = $record;
 
         $commonLinkMetadata = [
             'publicationDate' => DatesProvider::getPublicationDate($record, $data),
