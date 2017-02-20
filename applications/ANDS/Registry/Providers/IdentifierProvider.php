@@ -10,6 +10,7 @@ use ANDS\Util\XMLUtil;
 
 /**
  * Class IdentifierProvider
+ * TODO: refactor into RIFCSProvider
  * @package ANDS\Registry\Providers
  */
 class IdentifierProvider
@@ -41,7 +42,7 @@ class IdentifierProvider
 
     /**
      * Create Identifiers from current RIFCS
-     *
+     * TODO: Refactor to use self::get()
      * @param RegistryObject $record
      */
     public static function processIdentifiers(RegistryObject $record)
@@ -63,6 +64,28 @@ class IdentifierProvider
                 ]
             );
 
+        }
+        return $identifiers;
+    }
+
+    public static function get(RegistryObject $record, $xml = null)
+    {
+        if (!$xml) {
+            $xml = $record->getCurrentData()->data;
+        }
+
+        $identifiers = [];
+
+        foreach (XMLUtil::getElementsByXPath($xml,
+            'ro:registryObject/ro:' . $record->class . '/ro:identifier') AS $identifier) {
+            $identifierValue = trim((string)$identifier);
+            if ($identifierValue == "") {
+                continue;
+            }
+            $identifiers[] = [
+                'value' => $identifierValue,
+                'type' => trim((string)$identifier['type'])
+            ];
         }
         return $identifiers;
     }

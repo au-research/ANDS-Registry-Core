@@ -31,7 +31,7 @@ $dotenv = new Dotenv\Dotenv(__DIR__);
 $result = $dotenv->load();
 
 // bootstrap the application, eloquent default database connection is now available globally
-require_once "./applications/ANDS/bootstrap.php";
+//include_once "./applications/ANDS/bootstrap.php";
 
 // Pull in the global imports
 $eDBCONF = array();
