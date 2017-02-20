@@ -69,7 +69,7 @@ class DatesProvider implements RIFCSProvider
             'ro:registryObject/ro:' . $record->class . '/ro:date') AS $date) {
             $value = (string) $date;
             $type = (string) $date['type'];
-            if (in_array($type, ['issued', 'available', 'created'])) {
+            if (in_array($type, ['dc.issued', 'dc.available', 'dc.created'])) {
                 return self::formatDate($value, $format);
             }
         }

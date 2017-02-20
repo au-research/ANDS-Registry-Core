@@ -62,8 +62,11 @@ class ScholixProviderTest extends RegistryTestClass
         $scholix = ScholixProvider::get($record);
         $arrayForm = $scholix->toArray();
 
-        $this->assertArrayHasKey('link', $arrayForm);
-        $this->assertArrayHasKey('publicationDate', $arrayForm['link']);
+        foreach ($arrayForm as $link) {
+            $this->assertArrayHasKey('link', $link);
+            $this->assertArrayHasKey('publicationDate', $link['link']);
+        }
+
     }
 
     /** @test **/
@@ -89,6 +92,13 @@ class ScholixProviderTest extends RegistryTestClass
         $identifiers = ScholixProvider::getIdentifiers($record);
         $this->assertNotEmpty($identifiers);
         $this->assertEquals(2, count($identifiers));
+    }
+
+    /** @test **/
+    public function it_should_get_the_right_publication_format()
+    {
+        $record = RegistryObjectsRepository::getPublishedByKey("AUTCollectionToTestSearchFields37");
+        $scholix = ScholixProvider::get($record);
     }
 
 }
