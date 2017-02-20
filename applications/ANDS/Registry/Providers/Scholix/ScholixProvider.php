@@ -80,13 +80,7 @@ class ScholixProvider implements RegistryContentProvider
 
         $doc = new ScholixDocument;
 
-        /**
-         * Business Rule:
-         * for each collection/identifier OR citationInfo/citationMetadata/identifier OR key
-         * Produces a link to each of the related publication
-         */
-
-        $link = [
+        $commonLinkMetadata = [
             'publicationDate' => DatesProvider::getPublicationDate($record, $data),
             'publisher' => [
                 'name' => $record->group,
@@ -97,18 +91,100 @@ class ScholixProvider implements RegistryContentProvider
                 'identifiers' => [
                     'identifier' =>  'http://nla.gov.au/nla.party-1508909',
                     'schema' => 'AU-ANL:PEAU'
-                ]
-            ],
-            'relationship' => self::getRelationships($record, $data)
+                ],
+                'objectType' => $record->type,
+                'title' => $record->title
+            ]
         ];
         $relationships = self::getRelationships($record, $data);
-        if (count($relationships)) {
-            $link['relationship'] = $relationships;
+        if (count($relationships) > 0) {
+            $commonLinkMetadata['relationship'] = $relationships;
         }
 
-        $doc->set('link', $link);
+        /**
+         * Business Rule:
+         * for each collection/identifier OR citationInfo/citationMetadata/identifier OR key
+         * Produces a link to each of the related publication
+         */
+
+        $relatedPublications = self::getRelatedPublications($record, $data);
+
+        // key
+        $keyLink = $commonLinkMetadata;
+        $keyLink['source'] = self::getKeySource($record, $data);
+        foreach ($relatedPublications as $publication) {
+            $keyTargetLink = $keyLink;
+            if ($publication->isRelatesToIdentifier()) {
+                $target = self::getTargetMetadataRelatedInfo($publication);
+            } else {
+                $target = self::getTargetMetadataObject($publication);
+            }
+            $keyTargetLink['target'] = $target;
+            $doc->addLink($keyTargetLink);
+        }
+
+        // collection/identifier
+        $collectionIdentifierLink = $commonLinkMetadata;
+        $collectionIdentifierLink['source'] =
+        $identifiers = IdentifierProvider::get($record, $data['recordData']);
+        foreach ($identifiers as $identifier) {
+            $identifierlink = $commonLinkMetadata;
+            $identifierlink['source'] = self::getIdentifierSource($record, $identifier);
+            $doc->addLink($identifierlink);
+        }
+
+        // collection/citationInfo/citationMetadata/identifier
 
         return $doc;
+    }
+
+    public static function getKeySource(RegistryObject $record, $data = null)
+    {
+        if (!$data) {
+            $data = MetadataProvider::get($record);
+        }
+
+        $source = [
+            'identifier' => [
+                'value' => $record->key,
+                'schema' => 'RIF-CS'
+            ],
+            'objectType' => $record->type,
+            'title' => $record->title,
+            'creators' => []
+        ];
+
+        /**
+         * source[creator]
+         * relatedObject/relation[@type=isPrincipleInvestigatorOf|hasPrincipalInvestigator]
+         */
+        $creators = collect($data['relationships'])->filter(function($item) {
+            return in_array($item->prop('relation_type'), ['isPrincipleInvestigatorOf', 'hasPrincipalInvestigator']) && ($item->prop('to_class') == "party");
+        })->map(function($item) {
+            $to = $item->to();
+            $creator = [
+                'name' => $to->title
+            ];
+            $identifiers = collect(IdentifierProvider::get($to))->map(function($item) {
+                return [
+                    'identifier' => $item->value,
+                    'schema' => $item->type
+                ];
+            })->toArray();
+            if (count($identifiers) > 0) {
+                $creator['identifier'] = $identifiers;
+            }
+            return $creator;
+        })->values()->toArray();
+        $source['creators'] = array_merge($source['creators'], $creators);
+
+        /**
+         * source[creator]
+         * citationMetadata/contributor
+         * TODO
+         */
+
+        return $source;
     }
 
     public static function getRelatedPublications(RegistryObject $record, $data = null)
@@ -173,5 +249,35 @@ class ScholixProvider implements RegistryContentProvider
         }
 
         return $identifiers;
+    }
+
+    private static function getIdentifierSource($record, $identifier)
+    {
+        $source = [
+            'identifier' => [
+                'identifier' => $identifier['value'],
+                'schema' => $identifier['type']
+            ]
+        ];
+
+
+        return $source;
+    }
+
+    public static function getTargetMetadataRelatedInfo($publication)
+    {
+        return [
+            'identifier' => [
+                'identifier' => $publication->prop('to_identifier'),
+                'schema' => $publication->prop('to_identifier_type')
+            ],
+            'objectType' => 'literature',
+            'title' => $publication->prop('to_title')
+        ];
+    }
+
+    public static function getTargetMetadataObject($publication)
+    {
+        return [];
     }
 }
