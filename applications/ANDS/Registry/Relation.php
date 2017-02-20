@@ -272,4 +272,12 @@ class Relation
         }
         return $this->to;
     }
+
+    public function isRelatesToIdentifier()
+    {
+        if ($this->prop('relation_origin') == "IDENTIFIER") {
+            return true;
+        }
+        return false;
+    }
 }

@@ -27,9 +27,14 @@ class XMLInterface extends FormatHandler
     public function display($payload)
     {
         echo "<?xml version=\"1.0\"?>" . NL;
-        echo "<response>" . NL;
-        echo $this->json_to_xml($payload);
-        echo "</response>";
+        $content = "<response>". $this->json_to_xml($payload) ."</response>";
+
+        // special condition for scholix export
+        // TODO refactor
+        if (array_key_exists('scholix', $payload[0])) {
+            $content = $payload[0]['scholix'];
+        }
+        echo $content;
     }
 
     /**
