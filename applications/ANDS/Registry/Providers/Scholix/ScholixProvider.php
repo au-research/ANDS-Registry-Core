@@ -84,13 +84,13 @@ class ScholixProvider implements RegistryContentProvider
             'publicationDate' => DatesProvider::getPublicationDate($record, $data),
             'publisher' => [
                 'name' => $record->group,
-                'identifiers' => self::getIdentifiers($record, $data['recordData'])
+                'identifier' => self::getIdentifiers($record, $data['recordData'])
             ],
             'linkProvider' => [
                 'name' => 'Australian National Data Service',
-                'identifiers' => [
-                    'identifier' =>  'http://nla.gov.au/nla.party-1508909',
-                    'schema' => 'AU-ANL:PEAU'
+                'identifier' => [
+                    ['identifier' =>  'http://nla.gov.au/nla.party-1508909',
+                    'schema' => 'AU-ANL:PEAU']
                 ],
                 'objectType' => $record->type,
                 'title' => $record->title
@@ -124,13 +124,20 @@ class ScholixProvider implements RegistryContentProvider
         }
 
         // collection/identifier
-        $collectionIdentifierLink = $commonLinkMetadata;
-        $collectionIdentifierLink['source'] =
         $identifiers = IdentifierProvider::get($record, $data['recordData']);
         foreach ($identifiers as $identifier) {
             $identifierlink = $commonLinkMetadata;
             $identifierlink['source'] = self::getIdentifierSource($record, $identifier);
-            $doc->addLink($identifierlink);
+            foreach ($relatedPublications as $publication) {
+                $keyTargetLink = $identifierlink;
+                if ($publication->isRelatesToIdentifier()) {
+                    $target = self::getTargetMetadataRelatedInfo($publication);
+                } else {
+                    $target = self::getTargetMetadataObject($publication);
+                }
+                $keyTargetLink['target'] = $target;
+                $doc->addLink($keyTargetLink);
+            }
         }
 
         // collection/citationInfo/citationMetadata/identifier
@@ -146,12 +153,11 @@ class ScholixProvider implements RegistryContentProvider
 
         $source = [
             'identifier' => [
-                'value' => $record->key,
-                'schema' => 'RIF-CS'
+                ['identifier' => $record->key, 'schema' => 'RIF-CS']
             ],
             'objectType' => $record->type,
             'title' => $record->title,
-            'creators' => []
+            'creator' => []
         ];
 
         /**
@@ -176,7 +182,7 @@ class ScholixProvider implements RegistryContentProvider
             }
             return $creator;
         })->values()->toArray();
-        $source['creators'] = array_merge($source['creators'], $creators);
+        $source['creator'] = array_merge($source['creator'], $creators);
 
         /**
          * source[creator]
@@ -251,15 +257,19 @@ class ScholixProvider implements RegistryContentProvider
         return $identifiers;
     }
 
-    private static function getIdentifierSource($record, $identifier)
+    private static function getIdentifierSource(RegistryObject $record, $identifier)
     {
         $source = [
             'identifier' => [
-                'identifier' => $identifier['value'],
-                'schema' => $identifier['type']
-            ]
+                ['identifier' => $identifier['value'],
+                'schema' => $identifier['type']]
+            ],
+            'title' => $record->title,
+            'objectType' => $record->type,
+            'creator' => []
         ];
 
+        // TODO: creator
 
         return $source;
     }
@@ -268,16 +278,17 @@ class ScholixProvider implements RegistryContentProvider
     {
         return [
             'identifier' => [
-                'identifier' => $publication->prop('to_identifier'),
-                'schema' => $publication->prop('to_identifier_type')
+                ['identifier' => $publication->prop('to_identifier'),
+                'schema' => $publication->prop('to_identifier_type')]
             ],
             'objectType' => 'literature',
-            'title' => $publication->prop('to_title')
+            'title' => $publication->prop('to_title') ?: ""
         ];
     }
 
     public static function getTargetMetadataObject($publication)
     {
+        // TODO
         return [];
     }
 }

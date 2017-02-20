@@ -78,7 +78,78 @@ class ScholixDocument
 
     public function toXML()
     {
-        return "<link></link>";
+        $xml = "";
+        foreach ($this->links as $link) {
+            $xml .= $this->json2xml($link['link']);
+        }
+        return $xml;
+    }
+
+    private function json2xml($link)
+    {
+        $str = "<link xmlns=\"http://www.scholix.org\"
+ xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"
+ xsi:schemaLocation=\"http://www.scholix.org file:/Users/sandro/Desktop/scholix1.xsd\">";
+
+        $str .= "<publicationDate>".$link['publicationDate']."</publicationDate>";
+
+        $str .= "<publisher>";
+        $str .= "<name>".$link['publisher']['name']."</name>";
+        foreach ($link['publisher']['identifier'] as $identifier) {
+            $str .= "<identifier>";
+            $str .= "<identifier>".$identifier['identifier']."</identifier>";
+            $str .= "<schema>".$identifier['schema']."</schema>";
+            $str .= "</identifier>";
+        }
+        $str .= "</publisher>";
+
+        $str .= "<linkProvider>";
+        $str .= "<name>".$link['linkProvider']['name']."</name>";
+        foreach ($link['linkProvider']['identifier'] as $identifier) {
+            $str .= "<identifier>";
+            $str .= "<identifier>".$identifier['identifier']."</identifier>";
+            $str .= "<schema>".$identifier['schema']."</schema>";
+            $str .= "</identifier>";
+        }
+        $str .= "</linkProvider>";
+
+        if (array_key_exists('relationship', $link)) {
+            foreach ($link['relationship'] as $relationship) {
+                $str .= "<relationship>";
+                $str .= "<name>".$relationship['name']."</name>";
+                $str .= "<schema>".$relationship['schema']."</schema>";
+                $str .= "<inverseRelationship>".$relationship['inverseRelationship']."</inverseRelationship>";
+                $str .= "</relationship>";
+            }
+        }
+
+        // source
+        $str .= "<source>";
+        $str .= "<title>".$link['source']['title']."</title>";
+        $str .= "<title>".$link['source']['objectType']."</title>";
+        foreach ($link['source']['identifier'] as $identifier) {
+            $str .= "<identifier>";
+            $str .= "<identifier>".$identifier['identifier']."</identifier>";
+            $str .= "<schema>".$identifier['schema']."</schema>";
+            $str .= "</identifier>";
+        }
+        $str .= "</source>";
+
+
+        // target
+        $str .= "<target>";
+        $str .= "<title>".$link['target']['title']."</title>";
+        $str .= "<title>".$link['target']['objectType']."</title>";
+        foreach ($link['target']['identifier'] as $identifier) {
+            $str .= "<identifier>";
+            $str .= "<identifier>".$identifier['identifier']."</identifier>";
+            $str .= "<schema>".$identifier['schema']."</schema>";
+            $str .= "</identifier>";
+        }
+        $str .= "</target>";
+
+        $str .= "</link>";
+        return $str;
     }
 
 }

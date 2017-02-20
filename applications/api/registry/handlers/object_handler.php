@@ -151,8 +151,8 @@ class ObjectHandler extends Handler{
                                 $result[$m1] = $r;
                             }
                         } catch (Exception $e) {
-                            dd($e);
                             $result[$m1] = $e->getMessage();
+                            dd($e);
                         }
                         break;
                 }
