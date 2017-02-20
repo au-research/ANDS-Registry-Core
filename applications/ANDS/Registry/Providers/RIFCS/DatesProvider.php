@@ -104,6 +104,22 @@ class DatesProvider implements RIFCSProvider
      */
     public static function formatDate($value, $format)
     {
+        if (self::isValidTimeStamp($value)) {
+            return Carbon::createFromTimestamp($value)->format($format);
+        }
         return (new Carbon($value))->format($format);
+    }
+
+    /**
+     * Returns if the value is a timestamp
+     *
+     * @param $timestamp
+     * @return bool
+     */
+    public static function isValidTimeStamp($timestamp)
+    {
+        return ((string) (int) $timestamp === $timestamp)
+            && ($timestamp <= PHP_INT_MAX)
+            && ($timestamp >= ~PHP_INT_MAX);
     }
 }

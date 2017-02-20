@@ -69,7 +69,7 @@ class RelationshipProvider
      * @param RegistryObject $record
      * @return array
      */
-    public static function getMergedRelationships(RegistryObject $record)
+    public static function getMergedRelationships(RegistryObject $record, $includeDuplicates = true)
     {
         $allRelationships = static::get($record);
         $allRelationships = collect($allRelationships)->flatten(1)->values()->all();
@@ -85,28 +85,31 @@ class RelationshipProvider
             }
         }
 
+        if (!$includeDuplicates === false) {
+            return $result;
+        }
+
         $duplicates = $record->getDuplicateRecords();
 
-        if(count($duplicates) == 0)
-        {
+        if (count($duplicates) == 0) {
             return $result;
         }
 
         foreach ($duplicates as $duplicate) {
             $duplicateRelationships = static::get($duplicate);
-
-            $allRelationships = collect($duplicateRelationships)->flatten(1)->values()->all();
+            $allRelationships = collect($duplicateRelationships)
+                ->flatten(1)->values()->all();
             foreach ($allRelationships as $relation) {
 
                 $key = $relation->getUniqueID();
                 $swappedRelation = $relation->switchFromRecord($record);
 
                 if (array_key_exists($key, $result)) {
-                    $result[$key]->mergeWith( $swappedRelation->getProperties());
+                    $result[$key]->mergeWith($swappedRelation->getProperties());
                 } else {
                     unset($result[$key]);
                     $swappedKey = $swappedRelation->getUniqueID();
-                    $result[$swappedKey] =  $swappedRelation;
+                    $result[$swappedKey] = $swappedRelation;
                 }
             }
         }

@@ -104,7 +104,7 @@ class ScholixDocument
         return $xml;
     }
 
-    public function toXML($wrapper = "record")
+    public function toXML($wrapper = "links")
     {
         $xml = "<$wrapper>";
         foreach ($this->links as $link) {
