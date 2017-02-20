@@ -239,6 +239,7 @@ if (defined('ENVIRONMENT'))
  *
  */
 define("BASE", "./");
+initEloquent();
 require_once APPPATH.'libraries/RegistryPlugin.php';
 require_once BASEPATH.'core/CodeIgniter.php';
 
