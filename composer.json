@@ -35,7 +35,8 @@
         "files": [
             "applications/ANDS/Helpers.php",
             "engine/helpers/engine_helper.php",
-            "tests/RegistryTestClass.php"
+            "tests/RegistryTestClass.php",
+            "tests/CommandsTestClass.php"
         ]
     },
 
@@ -46,7 +47,8 @@
         "symfony/stopwatch": "^3.1",
         "monolog/monolog": "^1.19",
         "jaybizzle/crawler-detect": "1.*",
-        "vlucas/phpdotenv": "^2.4"
+        "vlucas/phpdotenv": "^2.4",
+        "symfony/console": "^3.2"
     },
 
     "require-dev": {
