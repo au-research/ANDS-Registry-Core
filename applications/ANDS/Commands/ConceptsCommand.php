@@ -8,7 +8,8 @@
 
 namespace ANDS\Commands;
 
-
+use MinhD\SolrClient\SolrClient;
+use MinhD\SolrClient\SolrDocument;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputDefinition;
@@ -23,10 +24,8 @@ class ConceptsCommand extends Command
         $this
             // the name of the command (the part after "ands")
             ->setName('concepts:index')
-
             // the short description shown while running "php ands concepts"
             ->setDescription('Add a vocabulary to the Solr Concepts index.')
-
             ->setDefinition(
                 new InputDefinition([
                     new InputOption(
@@ -35,32 +34,55 @@ class ConceptsCommand extends Command
                         InputOption::VALUE_REQUIRED,
                         'concepts_json_tree',
                         'concepts_tree.json'
+                    ),
+                    new InputOption(
+                        'vocab_type',
+                        't',
+                        InputOption::VALUE_REQUIRED,
+                        'Vocab type',
+                        'ANZSRC-for'
                     )]))
-
             // the full command description shown when running the command with
             // the "--help" option
-            ->setHelp("This command allows you to add a vocabulary to the Solr Concepts index.")
-        ;
+            ->setHelp("This command allows you to add a vocabulary to the Solr Concepts index.");
     }
 
 
-    private function generate_solr($concepts_array, $broader){
+    private function generate_solr($concepts_array, $broader, $type)
+    {
 
-        foreach($concepts_array as $concepts){
+        foreach ($concepts_array as $concepts) {
 
-            $broader .= ", ".$concepts['prefLabel'];
+            $current_broader = $broader;
+            $current_broader[] = $concepts['prefLabel'];
 
-            print_r("id : " .$concepts['iri']."\n");
-            print_r("label : " .$concepts['prefLabel']."\n");
-            print_r(isset($concepts['definition']) ? "description : " .$concepts['definition']."\n" : "description : " ."\n");
-            print_r("broarder : ".$broader."\n");
+            $concept = array();
+            $concept['type'] = $type;
+            $concept['id'] = $concepts['iri'];
+            $concept['iri'] = $concepts['iri'];
+            $concept['notation'] = isset($concepts['notation'])? (string)$concepts['notation'] : ' ';
+            $concept['label'] = $concepts['prefLabel'];
+            $concept['label_s'] = $concepts['prefLabel'];
+            $concept['search_label_ss'] = $current_broader;
+            $concept['description'] = isset($concepts['definition']) ? $concepts['definition'] : '';
+            $concept['description_s'] = isset($concepts['definition']) ? $concepts['definition'] : '';
+            $concept['search_labels_string_s'] = implode(" ", $current_broader);
+            $concept['broader_labels_ss'] = $broader;
 
-            //$broader_list[] = $broader;
+            print_r($concept);
 
-            isset($concepts['narrower']) ? $this->generate_solr($concepts['narrower'], $broader) : '';
+            $client = new SolrClient('devl.ands.org.au', '8983');
+            $client->setCore('concepts');
 
+            // Adding document
+            $client->add(
+                new SolrDocument($concept)
+            );
+            $client->commit();
 
-
+            if (isset($concepts['narrower'])) {
+                $this->generate_solr($concepts['narrower'], $current_broader, $type);
+            }
         }
     }
 
@@ -69,19 +91,18 @@ class ConceptsCommand extends Command
 
         $source = $input->getOption('concepts_file');
 
+        $type = $input->getOption('vocab_type');
+
         $concepts_source = file_get_contents($source);
 
         $concepts_array = json_decode($concepts_source, true);
 
-        // $broader = array();
+        $broader = array();
 
-        $this->generate_solr($concepts_array[0]['narrower'],'' );
+        $output->writeln('You are about to index concepts of a ' . $type . ' vocabulary from ' . $source . ".");
 
-        $output->writeln('You are about to ');
+        $this->generate_solr($concepts_array[0]['narrower'], $broader, $type);
 
-        $output->writeln('index a concept.');
-
-        $output->writeln($source);
     }
 
 }
