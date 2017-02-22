@@ -100,9 +100,9 @@ class RelationshipProvider
             $allRelationships = collect($duplicateRelationships)
                 ->flatten(1)->values()->all();
             foreach ($allRelationships as $relation) {
-
-                $key = $relation->getUniqueID();
+                
                 $swappedRelation = $relation->switchFromRecord($record);
+                $key = $relation->getUniqueID();
 
                 if (array_key_exists($key, $result)) {
                     $result[$key]->mergeWith($swappedRelation->getProperties());
@@ -535,6 +535,7 @@ class RelationshipProvider
         $relations = $provider
             ->setFilter('to_key', $record->key)
             ->setReverse(true)
+            ->setLimit(0)
             ->get();
 
         return $relations;
