@@ -60,7 +60,7 @@ class ConceptsCommand extends Command
             $concept['type'] = $type;
             $concept['id'] = $concepts['iri'];
             $concept['iri'] = $concepts['iri'];
-            $concept['notation'] = isset($concepts['notation'])? (string)$concepts['notation'] : ' ';
+            $concept['notation'] = isset($concepts['notation'])? (string)$concepts['notation'] : '';
             $concept['label'] = $concepts['prefLabel'];
             $concept['label_s'] = $concepts['prefLabel'];
             $concept['search_label_ss'] = $current_broader;
@@ -69,7 +69,7 @@ class ConceptsCommand extends Command
             $concept['search_labels_string_s'] = implode(" ", $current_broader);
             $concept['broader_labels_ss'] = $broader;
 
-            print_r($concept);
+           // print_r($concept);
 
             $client = new SolrClient('devl.ands.org.au', '8983');
             $client->setCore('concepts');
@@ -99,9 +99,9 @@ class ConceptsCommand extends Command
 
         $broader = array();
 
-        $output->writeln('You are about to index concepts of a ' . $type . ' vocabulary from ' . $source . ".");
-
         $this->generate_solr($concepts_array[0]['narrower'], $broader, $type);
+
+        $output->writeln('You have indexed concepts of a ' . $type . ' vocabulary from ' . $source . ".");
 
     }
 
