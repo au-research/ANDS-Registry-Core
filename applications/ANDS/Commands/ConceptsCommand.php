@@ -40,7 +40,7 @@ class ConceptsCommand extends Command
                         't',
                         InputOption::VALUE_REQUIRED,
                         'Vocab type',
-                        'ANZSRC-for'
+                        'anzsrc-for'
                     )]))
             // the full command description shown when running the command with
             // the "--help" option
@@ -48,19 +48,27 @@ class ConceptsCommand extends Command
     }
 
 
-    private function generate_solr($concepts_array, $broader, $type)
+    private function generate_solr($concepts_array, $broader, $iri, $notation, $type)
     {
 
         foreach ($concepts_array as $concepts) {
 
             $current_broader = $broader;
             $current_broader[] = $concepts['prefLabel'];
+            $current_iri = $iri;
+            $current_iri[] = $concepts['iri'];
+            if(isset($concepts['notation'])){
+                $current_notation = $notation;
+                $current_notation[] = (string)$concepts['notation'];
+            }else{
+                $current_notation = NULL;
+            }
 
             $concept = array();
             $concept['type'] = $type;
             $concept['id'] = $concepts['iri'];
             $concept['iri'] = $concepts['iri'];
-            $concept['notation'] = isset($concepts['notation'])? (string)$concepts['notation'] : '';
+            $concept['notation_s'] = isset($concepts['notation'])? (string)$concepts['notation'] : '';
             $concept['label'] = $concepts['prefLabel'];
             $concept['label_s'] = $concepts['prefLabel'];
             $concept['search_label_ss'] = $current_broader;
@@ -68,6 +76,8 @@ class ConceptsCommand extends Command
             $concept['description_s'] = isset($concepts['definition']) ? $concepts['definition'] : '';
             $concept['search_labels_string_s'] = implode(" ", $current_broader);
             $concept['broader_labels_ss'] = $broader;
+            $concept['broader_iris_ss'] = $iri;
+            $concept['broader_notations_ss'] = $notation;
 
            // print_r($concept);
 
@@ -81,7 +91,7 @@ class ConceptsCommand extends Command
             $client->commit();
 
             if (isset($concepts['narrower'])) {
-                $this->generate_solr($concepts['narrower'], $current_broader, $type);
+                $this->generate_solr($concepts['narrower'], $current_broader, $current_iri,$current_notation,$type);
             }
         }
     }
@@ -98,8 +108,10 @@ class ConceptsCommand extends Command
         $concepts_array = json_decode($concepts_source, true);
 
         $broader = array();
+        $broader_iri = array();
+        $broader_notation = array();
 
-        $this->generate_solr($concepts_array[0]['narrower'], $broader, $type);
+        $this->generate_solr($concepts_array[0]['narrower'], $broader,$broader_iri, $broader_notation, $type);
 
         $output->writeln('You have indexed concepts of a ' . $type . ' vocabulary from ' . $source . ".");
 
