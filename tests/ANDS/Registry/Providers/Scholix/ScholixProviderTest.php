@@ -9,7 +9,7 @@ class ScholixProviderTest extends RegistryTestClass
         "AUTestingRecordsu/collection/enmasse/1248",
         "AUTCollectionToTestSearchFields37",
         "AUTestingRecordsQualityLevelsCollection8_demo",
-        "AUTestingRecordsQualityLevelsParty7_demo"
+        "AUTestingRecordsQualityLevelsParty7_demo",
     ];
 
     /** @test **/
@@ -56,20 +56,6 @@ class ScholixProviderTest extends RegistryTestClass
     }
 
     /** @test **/
-    public function it_should_get_the_correct_scholix_doc()
-    {
-        $record = RegistryObjectsRepository::getPublishedByKey("AUTCollectionToTestSearchFields37");
-        $scholix = ScholixProvider::get($record);
-        $arrayForm = $scholix->toArray();
-
-        foreach ($arrayForm as $link) {
-            $this->assertArrayHasKey('link', $link);
-            $this->assertArrayHasKey('publicationDate', $link['link']);
-        }
-
-    }
-
-    /** @test **/
     public function it_should_get_the_correct_relationships_format()
     {
         $record = RegistryObjectsRepository::getPublishedByKey("AUTCollectionToTestSearchFields37");
@@ -99,6 +85,59 @@ class ScholixProviderTest extends RegistryTestClass
     {
         $record = RegistryObjectsRepository::getPublishedByKey("AUTCollectionToTestSearchFields37");
         $scholix = ScholixProvider::get($record);
+
+        $links = $scholix->toArray();
+
+        $this->assertGreaterThan(0, count($links));
+
+        // each link has publicationDate, publisher and linkProvider, source and target
+        foreach ($links as $link) {
+            $this->assertArrayHasKey('link', $link);
+            $this->assertArrayHasKey('publicationDate', $link['link']);
+            $this->assertArrayHasKey('publisher', $link['link']);
+            $this->assertArrayHasKey('linkProvider', $link['link']);
+            $this->assertArrayHasKey('source', $link['link']);
+            $this->assertArrayHasKey('target', $link['link']);
+
+            // each publisher has a name, and identifiers
+            $publisher = $link['link']['publisher'];
+            $this->assertArrayHasKey('name', $publisher);
+            $this->assertArrayHasKey('identifier', $publisher);
+
+            // name is group
+            $this->assertEquals($record->group, $publisher['name']);
+
+            // linkProvider
+            $linkProvider = $link['link']['linkProvider'];
+            $this->assertArrayHasKey('name', $linkProvider);
+            $this->assertArrayHasKey('objectType', $linkProvider);
+            $this->assertArrayHasKey('title', $linkProvider);
+            $this->assertArrayHasKey('identifier', $linkProvider);
+        }
+    }
+
+    /** @test **/
+    public function it_should_has_all_identifiers_as_source()
+    {
+        $record = RegistryObjectsRepository::getPublishedByKey("AUTCollectionToTestSearchFields37");
+        $scholix = ScholixProvider::get($record);
+
+        $links = $scholix->toArray();
+
+        $sourcesIdentifiers = collect($links)->pluck('link')->pluck('source')->pluck('identifier')->flatten();
+
+        // each identifier has a source
+        $identifiers = collect(\ANDS\Registry\Providers\IdentifierProvider::get($record))->flatten();
+        foreach ($identifiers as $identifier) {
+            $this->assertContains($identifier, $sourcesIdentifiers);
+        }
+
+        // each citationMetadata identifier also has a source
+        $citationIdentifiers = \ANDS\Registry\Providers\IdentifierProvider::getCitationMetadataIdentifiers($record);
+        $citationIdentifiers = collect($citationIdentifiers)->flatten();
+        foreach ($citationIdentifiers as $identifier) {
+            $this->assertContains($identifier, $sourcesIdentifiers);
+        }
     }
 
 }
