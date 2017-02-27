@@ -363,9 +363,7 @@ class ScholixProvider implements RegistryContentProvider
 
             $name = "$given, $family";
 
-            $creators[] = [
-                'name' => $name
-            ];
+            $creators[] = [ 'name' => $name ];
         }
 
         return $creators;
