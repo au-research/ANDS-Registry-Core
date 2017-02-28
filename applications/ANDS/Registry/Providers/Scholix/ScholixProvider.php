@@ -8,8 +8,8 @@ use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\Providers\Scholix\ScholixDocument;
 use ANDS\Registry\Relation;
 use ANDS\RegistryObject;
+use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\XMLUtil;
-use Carbon\Carbon;
 
 class ScholixProvider implements RegistryContentProvider
 {
@@ -83,10 +83,9 @@ class ScholixProvider implements RegistryContentProvider
         $doc->record = $record;
 
         $commonLinkMetadata = [
-            'publicationDate' => DatesProvider::getPublicationDate($record, $data),
+            'publicationDate' => DatesProvider::getCreatedDate($record),
             'publisher' => [
-                'name' => $record->group,
-                'identifier' => self::getIdentifiers($record, $data['recordData'])
+                'name' => $record->group
             ],
             'linkProvider' => [
                 'name' => 'Australian National Data Service',
@@ -98,6 +97,12 @@ class ScholixProvider implements RegistryContentProvider
                 'title' => $record->title
             ]
         ];
+
+        // identifiers
+        $identifiers = self::getIdentifiers($record, $data['relationships']);
+        if (count($identifiers) > 0) {
+            $commonLinkMetadata['publisher']['identifier'] = $identifiers;
+        }
 
         $relationships = self::getRelationships($record, $data);
         if (count($relationships) > 0) {
@@ -192,6 +197,8 @@ class ScholixProvider implements RegistryContentProvider
     }
 
     /**
+     * Returns possible related publications
+     *
      * @param RegistryObject $record
      * @param null $data
      * @return Relation[]
@@ -224,6 +231,13 @@ class ScholixProvider implements RegistryContentProvider
         return $relationships;
     }
 
+    /**
+     * Returns the relationships for the given link
+     *
+     * @param RegistryObject $record
+     * @param null $data
+     * @return array
+     */
     public static function getRelationships(RegistryObject $record, $data = null)
     {
         if (!$data) {
@@ -231,16 +245,11 @@ class ScholixProvider implements RegistryContentProvider
         }
 
         $relationships = collect($data['relationships'])->map(function($item) {
-            $relationType = $item->prop('relation_type');
-            $validRelationTypes = ['isCitedBy', 'isReferencedBy', 'isDocumentedBy', 'isSupplementedBy', 'isSupplementTo', 'isReviewedBy'];
-            if (in_array($relationType, $validRelationTypes)) {
-                return [
-                    'name' => $item->prop('relation_type'),
-                    'schema' => 'RIF-CS',
-                    'inverse' => getReverseRelationshipString($item->prop('relation_type'))
-                ];
-            }
-            return null;
+            return [
+                'name' => $item->prop('relation_type'),
+                'schema' => 'RIF-CS',
+                'inverse' => getReverseRelationshipString($item->prop('relation_type'))
+            ];
         })->filter(function($item) {
             return $item;
         })->values()->toArray();
@@ -248,22 +257,42 @@ class ScholixProvider implements RegistryContentProvider
         return $relationships;
     }
 
-    public static function getIdentifiers(RegistryObject $record, $xml = null)
+    /**
+     * Find the identifiers of a relatedObject/party
+     * with the title = record[group]
+     * @param RegistryObject $record
+     * @param null $relationships
+     * @return array
+     */
+    public static function getIdentifiers(RegistryObject $record, $relationships = null)
     {
-        $identifiers = [];
-
-        if (!$xml) {
-            $data = MetadataProvider::getSelective($record, ['recordData']);
-            $xml = $data['recordData'];
+        if (!$relationships) {
+            $data = MetadataProvider::getSelective($record, ['relationships']);
+            $relationships = $data['relationships'];
         }
 
-        foreach (XMLUtil::getElementsByXPath($xml,
-            'ro:registryObject/ro:' . $record->class . '/ro:identifier') AS $identifier) {
-            $identifiers[] = [
-                'identifier' => (string) $identifier,
-                'schema' => (string) $identifier['type']
-            ];
+        $party = collect($relationships)->filter(
+            function($relation) use ($record){
+                return $relation->prop('to_class') == 'party'
+                    && $relation->prop('to_title') == $record->group;
+            }
+        );
+
+        if ($party->count() == 0) {
+            return [];
         }
+
+        // get 1
+        $party = $party->pop();
+        $party = RegistryObjectsRepository::getRecordByID($party->prop('to_id'));
+        $identifiers = collect(IdentifierProvider::get($party))
+            ->map(function($item){
+                return [
+                    'identifier' => $item['value'],
+                    'schema' => $item['type']
+                ];
+            }
+        )->toArray();
 
         return $identifiers;
     }

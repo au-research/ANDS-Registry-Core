@@ -92,7 +92,22 @@ class DatesProvider implements RIFCSProvider
         // date the record was ingested into the Registry as last resort
         $value = $record->getRegistryObjectAttributeValue('created');
 
-        return self::formatDate($value, $format);
+
+    }
+
+    /**
+     * Returns created date
+     *
+     * @param RegistryObject $record
+     * @param string $format
+     * @return string
+     */
+    public static function getCreatedDate(RegistryObject $record, $format = 'Y-m-d')
+    {
+        return self::formatDate(
+            $record->getRegistryObjectAttributeValue('created'),
+            $format
+        );
     }
 
     /**
@@ -122,4 +137,6 @@ class DatesProvider implements RIFCSProvider
             && ($timestamp <= PHP_INT_MAX)
             && ($timestamp >= ~PHP_INT_MAX);
     }
+
+
 }
