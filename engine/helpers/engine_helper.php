@@ -272,6 +272,14 @@ function json_error_handler($errno, $errstr, $errfile, $errline) {
 }
 if (function_exists('xdebug_disable')) xdebug_disable();
 
+/**
+ * Very widely used helper function for getting a URL to an asset
+ *
+ * TODO: Refactor to not use CI anymore
+ * @param $path
+ * @param string $loc
+ * @return string
+ */
 function asset_url( $path, $loc = 'modules')
 {
 	if($loc == 'base'){
@@ -281,6 +289,7 @@ function asset_url( $path, $loc = 'modules')
 	} else if( $loc == 'core'){
 		return base_url( 'assets/core/' . $path );
 	} else if ($loc == 'modules'){
+	    $CI =& get_instance();
 		if ($module_path = $CI->router->fetch_module()){
 			return base_url( 'assets/' . $module_path . "/" . $path );
 		}
