@@ -66,8 +66,6 @@ class ScholixProvider implements RegistryContentProvider
             $record->setRegistryObjectAttribute(self::$scholixableAttr, true);
         }
 
-        // TODO implement get and store
-
         return;
     }
 
