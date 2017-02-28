@@ -18,7 +18,8 @@ class Related_object_suggestor extends _GenericSuggestor
             'describes',
             'isLocationFor',
             'isDescribedBy',
-            'isLocatedIn'
+            'isLocatedIn',
+            'hasAssociationWith'
         ),
         'party' =>  array(
             'isPrincipalInvestigatorOf',
