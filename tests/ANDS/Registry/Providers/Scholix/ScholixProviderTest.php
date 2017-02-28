@@ -10,6 +10,11 @@ class ScholixProviderTest extends RegistryTestClass
         "AUTCollectionToTestSearchFields37",
         "AUTestingRecordsQualityLevelsCollection8_demo",
         "AUTestingRecordsQualityLevelsParty7_demo",
+        "AUTestingRecords2ScholixRecords16",
+        "AUTestingRecords2ScholixRecords14",
+        "AUTestingRecords2ScholixRecords15",
+        "AUTestingRecords2ScholixRecords18",
+        "AUTestingRecords2ScholixGroupRecord1",
     ];
 
     /** @test **/
@@ -72,12 +77,34 @@ class ScholixProviderTest extends RegistryTestClass
     }
 
     /** @test **/
-    public function it_should_get_the_correct_identifiers_format()
+    public function it_should_get_the_right_identifier()
     {
-        $record = RegistryObjectsRepository::getPublishedByKey("AUTCollectionToTestSearchFields37");
-        $identifiers = ScholixProvider::getIdentifiers($record);
-        $this->assertNotEmpty($identifiers);
-        $this->assertEquals(2, count($identifiers));
+        $partyRecord = RegistryObjectsRepository::getPublishedByKey("AUTestingRecords2ScholixGroupRecord1");
+        $partyRecordIdentifiers = \ANDS\Registry\Providers\IdentifierProvider::get($partyRecord);
+
+        $shouldHave = [
+            "AUTestingRecords2ScholixRecords16",
+            "AUTestingRecords2ScholixRecords14",
+            "AUTestingRecords2ScholixRecords18"
+        ];
+
+        $shouldNotHave = [
+            "AUTestingRecords2ScholixRecords15"
+        ];
+
+        foreach ($shouldHave as $key) {
+            $record = RegistryObjectsRepository::getPublishedByKey($key);
+            $identifiers = ScholixProvider::getIdentifiers($record);
+            $this->assertEquals(count($identifiers), count($partyRecordIdentifiers));
+        }
+
+        foreach ($shouldNotHave as $key) {
+            $record = RegistryObjectsRepository::getPublishedByKey($key);
+            $identifiers = ScholixProvider::getIdentifiers($record);
+            $this->assertNotEquals(count($identifiers), count($partyRecordIdentifiers));
+        }
+
+        $this->assertTrue(true);
     }
 
     /** @test **/
