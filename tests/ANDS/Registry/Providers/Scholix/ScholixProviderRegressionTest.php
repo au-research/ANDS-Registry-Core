@@ -1,5 +1,6 @@
 <?php
 
+use ANDS\Registry\Providers\Scholix\ScholixDocument;
 use ANDS\Registry\Providers\ScholixProvider;
 use ANDS\Repository\RegistryObjectsRepository;
 
@@ -31,6 +32,9 @@ class ScholixProviderRegressionTest extends \RegistryTestClass
         $link = $links[0]['link'];
         $this->assertEquals('doi', $link['source']['identifier'][0]['schema']);
         $this->assertEquals('uri', $link['target']['identifier'][0]['schema']);
+
+        // check xml
+        $this->checkXML($scholix);
     }
 
     /** @test **/
@@ -53,6 +57,9 @@ class ScholixProviderRegressionTest extends \RegistryTestClass
         $this->assertContains('doi', $sourceIdentifiers);
         $this->assertContains('uri', $targetIdentifiers);
         $this->assertContains('handle', $targetIdentifiers);
+
+        // check xml
+        $this->checkXML($scholix);
     }
 
     /** @test **/
@@ -75,6 +82,9 @@ class ScholixProviderRegressionTest extends \RegistryTestClass
         $creator = collect($links)->pluck('link')->pluck('source')->pluck('creator')->flatten(1)->toArray();
 
         $this->assertEquals(1, count($creator));
+
+        // check xml
+        $this->checkXML($scholix);
     }
 
     /** @test **/
@@ -95,6 +105,9 @@ class ScholixProviderRegressionTest extends \RegistryTestClass
 
         $creators = collect($links)->pluck('link')->pluck('source')->pluck('creator')->flatten(1)->toArray();
         $this->assertEquals(2, count($creators));
+
+        // check xml
+        $this->checkXML($scholix);
     }
 
     /** @test **/
@@ -123,6 +136,9 @@ class ScholixProviderRegressionTest extends \RegistryTestClass
 
         $creators = collect($links)->pluck('link')->pluck('source')->pluck('creator')->flatten(1);
         // TODO: Check Creators count is 3
+
+        // check xml
+        $this->checkXML($scholix);
     }
 
     /** @test **/
@@ -141,6 +157,9 @@ class ScholixProviderRegressionTest extends \RegistryTestClass
 
         $creators = collect($links)->pluck('link')->pluck('source')->pluck('creator')->flatten(1)->pluck('name')->toArray();
         $this->assertContains("Contributor, Scholix", $creators);
+
+        // check xml
+        $this->checkXML($scholix);
     }
 
     /** @test **/
@@ -171,6 +190,8 @@ class ScholixProviderRegressionTest extends \RegistryTestClass
         $creators = collect($links)->pluck('link')->pluck('source')->pluck('creator')->flatten(1);
         $this->assertEquals(2, count($creators));
 
+        // check xml
+        $this->checkXML($scholix);
     }
 
     /** @test **/
@@ -189,6 +210,9 @@ class ScholixProviderRegressionTest extends \RegistryTestClass
          */
 
         $this->assertEquals(34, count($links));
+
+        // check xml
+        $this->checkXML($scholix);
     }
 
     /** @test **/
@@ -207,5 +231,29 @@ class ScholixProviderRegressionTest extends \RegistryTestClass
          */
 
         $this->assertEquals(2, count($links));
+
+        // check xml
+        $this->checkXML($scholix);
+    }
+
+    private function checkXML(ScholixDocument $scholix)
+    {
+        // TODO Removed once the Schema has been updated
+        // PR: https://github.com/scholix/schema/pull/5
+        return true;
+
+        $xmls = [];
+        foreach ($scholix->getLinks() as $link) {
+            $xmls[] = $scholix->json2xml($link['link']);
+        }
+        foreach ($xmls as $xml) {
+            $util = \ANDS\Util\XMLUtil::create();
+            $result = $util->validateSchema("scholix", $xml);
+            if (!$result) {
+                print_r($xml);
+                $this->fail($util->getValidationMessage());
+            }
+            $this->assertTrue($result);
+        }
     }
 }
