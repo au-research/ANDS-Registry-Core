@@ -90,6 +90,9 @@ class PopulateAffectedList extends ImportSubTask
         $countAffected = count($affectedRecordIDs);
         $this->log("Found $countAffected affected records");
 
+        // values
+        $affectedRecordIDs = array_values($affectedRecordIDs);
+
         $this->parent()->setTaskData("affectedRecords", $affectedRecordIDs);
     }
 }
