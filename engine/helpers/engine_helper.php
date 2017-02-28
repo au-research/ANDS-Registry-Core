@@ -1,6 +1,11 @@
 <?php
 
 function get_config_item($name) {
+
+    if (env($name)) {
+        return env($name);
+    }
+
 	$_ci =& get_instance();
 	if($_ci->config->item($name)) {
 		return $_ci->config->item($name);
@@ -269,12 +274,10 @@ if (function_exists('xdebug_disable')) xdebug_disable();
 
 function asset_url( $path, $loc = 'modules')
 {
-	$CI =& get_instance();
-
 	if($loc == 'base'){
-		return $CI->config->item('default_base_url').'assets/'.$path;
+		return baseUrl().'assets/'.$path;
 	} else if ($loc == 'shared'){
-		return $CI->config->item('default_base_url').'assets/shared/'.$path;
+		return baseUrl().'assets/shared/'.$path;
 	} else if( $loc == 'core'){
 		return base_url( 'assets/core/' . $path );
 	} else if ($loc == 'modules'){
@@ -287,7 +290,7 @@ function asset_url( $path, $loc = 'modules')
 	} else if ($loc == 'templates'){
 		return base_url('assets/templates/'.$path);
 	} else if ($loc =='base_path'){
-		return $CI->config->item('default_base_url').$path;
+		return baseUrl() . $path;
 	} else if ($loc == 'full_base_path') {
 		return base_url('assets/'.$path);
 	}
@@ -488,8 +491,9 @@ function monolog($message, $logger = "activity", $type = "info", $allowBot = fal
 
 function debug($message, $type = "debug") {
 
-    $env = get_config_item('deployment_state');
-    $debug = get_config_item('debug');
+    $env = get_config_item('ENVIRONMENT');
+//    $debug = get_config_item('debug');
+    $debug = true;
 
     if ($env === "production" || $debug === false) {
         return;
@@ -696,7 +700,7 @@ function initEloquent() {
         [
             'driver' => 'mysql',
             'host' => getenv("DB_HOSTNAME"),
-            'database' => "dbs_registry",
+            'database' => env("DB_DATABASE", "dbs_registry"),
             'username' => getenv("DB_USERNAME"),
             'password' => getenv("DB_PASSWORD"),
             'charset' => 'utf8',
