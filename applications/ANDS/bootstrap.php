@@ -20,7 +20,7 @@ $capsule->addConnection(
     [
         'driver' => 'mysql',
         'host' => getenv("DB_HOSTNAME"),
-        'database' => "dbs_registry",
+        'database' => env("DB_DATABASE", "dbs_registry"),
         'username' => getenv("DB_USERNAME"),
         'password' => getenv("DB_PASSWORD"),
         'charset' => 'utf8',
