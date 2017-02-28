@@ -35,6 +35,7 @@
         "files": [
             "applications/ANDS/Helpers.php",
             "engine/helpers/engine_helper.php",
+            "engine/helpers/presentation_helper.php",
             "engine/helpers/shared_helper.php",
             "tests/RegistryTestClass.php",
             "tests/CommandsTestClass.php"
