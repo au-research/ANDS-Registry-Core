@@ -363,7 +363,7 @@ class GrantsConnectionsProvider extends Connections
             }
         }
 
-        return $activities;
+        return collect($activities);
     }
 
     /**
@@ -398,7 +398,7 @@ class GrantsConnectionsProvider extends Connections
             }
         }
 
-        return collect($collections)->toArray();
+        return collect($collections);
     }
 
     /**
