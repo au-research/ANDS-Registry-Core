@@ -4,6 +4,7 @@
 namespace ANDS\Registry\Providers\Scholix;
 
 
+use ANDS\API\Task\ImportSubTask\ProcessDelete;
 use Carbon\Carbon;
 
 class ScholixDocument
@@ -106,11 +107,18 @@ class ScholixDocument
 
     public function toXML($wrapper = "links")
     {
-        $xml = "<$wrapper>";
+        $xml = "";
+        if ($wrapper) {
+            $xml .= "<$wrapper>";
+        }
+
         foreach ($this->links as $link) {
             $xml .= $this->json2xml($link['link']);
         }
-        $xml .= "</$wrapper>";
+
+        if ($wrapper) {
+            $xml .= "</$wrapper>";
+        }
         return $xml;
     }
 
@@ -147,7 +155,7 @@ class ScholixDocument
                 $str .= "<relationship>";
                 $str .= "<name>".$relationship['name']."</name>";
                 $str .= "<schema>".$relationship['schema']."</schema>";
-                $str .= "<inverseRelationship>".$relationship['inverseRelationship']."</inverseRelationship>";
+                $str .= "<inverseRelationship>".$relationship['inverse']."</inverseRelationship>";
                 $str .= "</relationship>";
             }
         }
@@ -184,6 +192,11 @@ class ScholixDocument
 
         $str .= "</link>";
         return $str;
+    }
+
+    public function getLinks()
+    {
+        return $this->links;
     }
 
 }
