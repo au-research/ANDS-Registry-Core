@@ -5,10 +5,12 @@ namespace ANDS\Commands;
 
 
 use ANDS\API\Task\ImportSubTask\IndexRelationship;
+use ANDS\Registry\Providers\IdentifierProvider;
 use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\Repository\RegistryObjectsRepository;
 use Exception;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputInterface;
@@ -50,7 +52,20 @@ class RegistryObjectGetCommand extends Command
             case "attr":
             case "attributes":
             case "attribute":
-                var_dump($record->attributesToArray());
+                $table = new Table($output);
+                $rows = collect($record->attributesToArray())
+                    ->map(function($value, $key){
+                        return [$key, $value];
+                    })->toArray();
+                $table->setHeaders(['key', 'value'])->setRows($rows)->render();
+                break;
+            case "identifiers":
+                $table = new Table($output);
+                $rows = collect(IdentifierProvider::get($record))
+                    ->map(function($value, $key){
+                        return [$key, $value];
+                    })->toArray();
+                $table->setHeaders(['key', 'value'])->setRows($rows)->render();
                 break;
             case "relationships":
                 var_dump(RelationshipProvider::getMergedRelationships($record));

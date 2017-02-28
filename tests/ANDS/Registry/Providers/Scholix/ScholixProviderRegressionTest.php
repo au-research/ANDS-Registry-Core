@@ -8,15 +8,16 @@ use ANDS\Repository\RegistryObjectsRepository;
 class ScholixProviderRegressionTest extends \RegistryTestClass
 {
     protected $requiredKeys = [
-        "AUTestingRecords2ScholixRecords1", // regression
-        "AUTestingRecords2ScholixRecords2", // regression
-        "AUTestingRecords2ScholixRecords9", // regression
-        "AUTestingRecords2ScholixRecords12", // regression
-        "AUTestingRecords2ScholixRecords18", // regression
-        "AUTestingRecords2ScholixRecords33", // regression
-        "AUTestingRecords2ScholixRecords37", // regression
-        "AUTestingRecords2ScholixRecords43", // regression
-        "AUTestingRecords2ScholixRecords44", // regression
+//        "AUTestingRecords2ScholixRecords1", // regression
+//        "AUTestingRecords2ScholixRecords2", // regression
+//        "AUTestingRecords2ScholixRecords9", // regression
+//        "AUTestingRecords2ScholixRecords12", // regression
+//        "AUTestingRecords2ScholixRecords18", // regression
+//        "AUTestingRecords2ScholixRecords33", // regression
+//        "AUTestingRecords2ScholixRecords37", // regression
+//        "AUTestingRecords2ScholixRecords43", // regression
+//        "AUTestingRecords2ScholixRecords44", // regression
+        "AUTestingRecords3:Funder/Program13/Collection4",
     ];
 
     /** @test **/
@@ -236,6 +237,24 @@ class ScholixProviderRegressionTest extends \RegistryTestClass
         $this->checkXML($scholix);
     }
 
+    /** @test **/
+    public function it_should_regression_collection_4()
+    {
+        $record = RegistryObjectsRepository::getPublishedByKey("AUTestingRecords3:Funder/Program13/Collection4");
+        $scholix = ScholixProvider::get($record);
+        $links = $scholix->toArray();
+
+        $this->assertGreaterThan(0, count($links));
+        $dateCreated = \ANDS\Registry\Providers\RIFCS\DatesProvider::getCreatedDate($record);
+
+        $link = $links[0]['link'];
+        $publicationDate = $link['publicationDate'];
+
+        $this->assertEquals($dateCreated, $publicationDate);
+
+        // should have a creator
+    }
+
     private function checkXML(ScholixDocument $scholix)
     {
         // TODO Removed once the Schema has been updated
@@ -256,4 +275,6 @@ class ScholixProviderRegressionTest extends \RegistryTestClass
             $this->assertTrue($result);
         }
     }
+
+
 }
