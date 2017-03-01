@@ -8,15 +8,17 @@ use ANDS\Repository\RegistryObjectsRepository;
 class ScholixProviderRegressionTest extends \RegistryTestClass
 {
     protected $requiredKeys = [
-//        "AUTestingRecords2ScholixRecords1", // regression
-//        "AUTestingRecords2ScholixRecords2", // regression
-//        "AUTestingRecords2ScholixRecords9", // regression
-//        "AUTestingRecords2ScholixRecords12", // regression
-//        "AUTestingRecords2ScholixRecords18", // regression
-//        "AUTestingRecords2ScholixRecords33", // regression
-//        "AUTestingRecords2ScholixRecords37", // regression
-//        "AUTestingRecords2ScholixRecords43", // regression
-//        "AUTestingRecords2ScholixRecords44", // regression
+        "AUTestingRecords2ScholixRecords1", // regression
+        "AUTestingRecords2ScholixRecords2", // regression
+        "AUTestingRecords2ScholixRecords9", // regression
+        "AUTestingRecords2ScholixRecords12", // regression
+        "AUTestingRecords2ScholixRecords18", // regression
+        "AUTestingRecords2ScholixRecords33", // regression
+        "AUTestingRecords2ScholixRecords37", // regression
+        "AUTestingRecords2ScholixRecords41", // regression
+        "AUTestingRecords2ScholixRecords43", // regression
+        "AUTestingRecords2ScholixRecords44", // regression
+        "AUTestingRecords2ScholixRecords46", // regression
         "AUTestingRecords3:Funder/Program13/Collection4",
     ];
 
@@ -70,19 +72,24 @@ class ScholixProviderRegressionTest extends \RegistryTestClass
         $scholix = ScholixProvider::get($record);
         $links = $scholix->toArray();
 
-        // Expected Result: A single Link Info Package with a link from the collection doi identifier to the publication uri identifier. Single creator.
+        // (AUTestingRecords2) Simple Scholix Source Collection With 1 relatedObject hasCollector creator, a Single Identifier and Single RelatedInfo Publication with 2x relations.
 
         $this->assertEquals(1, count($links));
 
         $sourceIdentifiers = collect($links)->pluck('link')->pluck('source')->pluck('identifier')->flatten();
         $targetIdentifiers = collect($links)->pluck('link')->pluck('target')->pluck('identifier')->flatten();
 
+        // from doi to uri
         $this->assertContains('doi', $sourceIdentifiers);
         $this->assertContains('uri', $targetIdentifiers);
 
+        // 1 creator
         $creator = collect($links)->pluck('link')->pluck('source')->pluck('creator')->flatten(1)->toArray();
-
         $this->assertEquals(1, count($creator));
+
+        // 2 relations
+        $relations = collect($links)->pluck('link')->pluck('relationship')->flatten(1)->toArray();
+        $this->assertEquals(2, count($relations));
 
         // check xml
         $this->checkXML($scholix);
@@ -196,6 +203,20 @@ class ScholixProviderRegressionTest extends \RegistryTestClass
     }
 
     /** @test **/
+    public function it_should_regression_41()
+    {
+        $record = RegistryObjectsRepository::getPublishedByKey("AUTestingRecords2ScholixRecords41");
+        $scholix = ScholixProvider::get($record);
+        $links = $scholix->toArray();
+
+        // (AUTestingRecords2) Scholix Source Collection With a identifier only in citationMetadata and relationship to 4x RelatedInfo Publication 1x reverse RelatedObject collection/publication. 3 with relations 1 without. 2xdates 1 in citationMetadata and 1
+
+        $this->assertEquals(5, count($links));
+
+        $this->assertTrue(true);
+    }
+
+    /** @test **/
     public function it_should_regression_43()
     {
         $record = RegistryObjectsRepository::getPublishedByKey("AUTestingRecords2ScholixRecords43");
@@ -235,6 +256,18 @@ class ScholixProviderRegressionTest extends \RegistryTestClass
 
         // check xml
         $this->checkXML($scholix);
+    }
+
+    /** @test **/
+    public function it_should_regression_46()
+    {
+        $record = RegistryObjectsRepository::getPublishedByKey("AUTestingRecords2ScholixRecords46");
+        $scholix = ScholixProvider::get($record);
+        $links = $scholix->toArray();
+
+        //(AUTestingRecords2) Scholix Source Collection With a Single Identifier, 1x not supported Date and 1 RelatedInfo Publication and 1 relatedObject collection/publication. 3 creators all reverse. 2 x relatedInfo 1 x RelatedObject
+
+        $this->assertTrue(true);
     }
 
     /** @test **/
