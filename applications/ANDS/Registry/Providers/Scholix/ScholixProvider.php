@@ -113,11 +113,6 @@ class ScholixProvider implements RegistryContentProvider
 
         $relatedPublications = self::getRelatedPublications($record, $data);
 
-        $relationships = self::getRelationships($record, $relatedPublications);
-        if (count($relationships) > 0) {
-            $commonLinkMetadata['relationship'] = $relationships;
-        }
-
         // construct targets
         $targets = [];
         foreach ($relatedPublications as $publication) {
@@ -126,17 +121,25 @@ class ScholixProvider implements RegistryContentProvider
                 $toIdentifiers = IdentifierProvider::get($to);
 
                 if (count($toIdentifiers) == 0) {
-                    $targets[] = self::getTargetMetadataObject($publication, []);
+                    $targets[] = [
+                        'relationship' => $publication,
+                        'target' => self::getTargetMetadataObject($publication, [])
+                    ];
                 }
 
                 foreach ($toIdentifiers as $identifier) {
-                    $targets[] = self::getTargetMetadataObject($publication, $identifier);
+                    $targets[] = [
+                        'relationship' => $publication,
+                        'target' => self::getTargetMetadataObject($publication, $identifier)
+                    ];
                 }
             } else {
-                $targets[] = self::getTargetMetadataRelatedInfo($publication);
+                $targets[] = [
+                    'relationship' => $publication,
+                    'target' =>  self::getTargetMetadataRelatedInfo($publication)
+                ];
             }
         }
-
 
         // collection/identifier
         // collection/citationInfo/citationMetadata/identifier
@@ -152,7 +155,12 @@ class ScholixProvider implements RegistryContentProvider
             $identifierlink = $commonLinkMetadata;
             $identifierlink['source'] = self::getIdentifierSource($record, $identifier, $data);
             foreach ($targets as $target) {
-                $identifierlink['target'] = $target;
+
+                unset($identifierlink['relationship']);
+
+                $identifierlink['relationship'] = self::getRelationships($target['relationship']);
+
+                $identifierlink['target'] = $target['target'];
                 $doc->addLink($identifierlink);
             }
         }
@@ -234,25 +242,34 @@ class ScholixProvider implements RegistryContentProvider
     /**
      * Returns the relationships for the given link
      *
-     * @param RegistryObject $record
-     * @param null $publications
+     * @param Relation $publication
      * @return array
      */
-    public static function getRelationships(RegistryObject $record, $publications = null)
+    public static function getRelationships(Relation $publication)
     {
-        if (!$publications) {
-            $publications = self::getRelatedPublications($record);
+        $relationType = $publication->prop('relation_type');
+        $relationOrigin = $publication->prop('relation_origin');
+
+        $relationships = [];
+
+        if (is_string($relationType)) {
+            $relationType = explode(', ', $relationType);
         }
 
-        $relationships = collect($publications)->map(function($item) {
-            return [
-                'name' => $item->prop('relation_type'),
-                'schema' => 'RIF-CS',
-                'inverse' => getReverseRelationshipString($item->prop('relation_type'))
-            ];
-        })->filter(function($item) {
-            return $item;
-        })->values()->unique()->toArray();
+        if (is_array($relationType)) {
+            foreach ($relationType as $type) {
+
+                if (strpos($relationOrigin, "REVERSE") > -1) {
+                    $type = getReverseRelationshipString($type);
+                }
+
+                $relationships[] = [
+                    'name' => $type,
+                    'schema' => 'RIF-CS',
+                    'inverse' => getReverseRelationshipString($type)
+                ];
+            }
+        }
 
         return $relationships;
     }

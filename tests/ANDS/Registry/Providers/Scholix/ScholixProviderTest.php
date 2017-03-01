@@ -61,16 +61,6 @@ class ScholixProviderTest extends RegistryTestClass
     }
 
     /** @test **/
-    public function it_should_get_the_correct_relationships()
-    {
-        $record = RegistryObjectsRepository::getPublishedByKey("AUTCollectionToTestSearchFields37");
-        $relationships = ScholixProvider::getRelationships($record);
-
-        // TODO: Test the relationships only come from publications
-        $this->assertNotEmpty($relationships);
-    }
-
-    /** @test **/
     public function it_should_get_the_right_identifier()
     {
         $partyRecord = RegistryObjectsRepository::getPublishedByKey("AUTestingRecords2ScholixGroupRecord1");
