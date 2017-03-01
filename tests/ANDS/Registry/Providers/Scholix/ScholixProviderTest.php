@@ -65,6 +65,8 @@ class ScholixProviderTest extends RegistryTestClass
     {
         $record = RegistryObjectsRepository::getPublishedByKey("AUTCollectionToTestSearchFields37");
         $relationships = ScholixProvider::getRelationships($record);
+
+        // TODO: Test the relationships only come from publications
         $this->assertNotEmpty($relationships);
     }
 

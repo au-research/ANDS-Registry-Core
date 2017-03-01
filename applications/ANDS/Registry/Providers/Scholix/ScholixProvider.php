@@ -105,11 +105,6 @@ class ScholixProvider implements RegistryContentProvider
             $commonLinkMetadata['publisher']['identifier'] = $identifiers;
         }
 
-        $relationships = self::getRelationships($record, $data);
-        if (count($relationships) > 0) {
-            $commonLinkMetadata['relationship'] = $relationships;
-        }
-
         /**
          * Business Rule:
          * for each collection/identifier OR citationInfo/citationMetadata/identifier OR key
@@ -118,6 +113,10 @@ class ScholixProvider implements RegistryContentProvider
 
         $relatedPublications = self::getRelatedPublications($record, $data);
 
+        $relationships = self::getRelationships($record, $relatedPublications);
+        if (count($relationships) > 0) {
+            $commonLinkMetadata['relationship'] = $relationships;
+        }
 
         // construct targets
         $targets = [];
@@ -236,16 +235,16 @@ class ScholixProvider implements RegistryContentProvider
      * Returns the relationships for the given link
      *
      * @param RegistryObject $record
-     * @param null $data
+     * @param null $publications
      * @return array
      */
-    public static function getRelationships(RegistryObject $record, $data = null)
+    public static function getRelationships(RegistryObject $record, $publications = null)
     {
-        if (!$data) {
-            $data = MetadataProvider::get($record);
+        if (!$publications) {
+            $publications = self::getRelatedPublications($record);
         }
 
-        $relationships = collect($data['relationships'])->map(function($item) {
+        $relationships = collect($publications)->map(function($item) {
             return [
                 'name' => $item->prop('relation_type'),
                 'schema' => 'RIF-CS',
