@@ -13,9 +13,11 @@ class ScholixProviderRegressionTest extends \RegistryTestClass
         "AUTestingRecords2ScholixRecords9", // regression
         "AUTestingRecords2ScholixRecords12", // regression
         "AUTestingRecords2ScholixRecords18", // regression
+        "AUTestingRecords2ScholixRecords25", // regression
         "AUTestingRecords2ScholixRecords33", // regression
         "AUTestingRecords2ScholixRecords37", // regression
         "AUTestingRecords2ScholixRecords41", // regression
+        "AUTestingRecords2ScholixRecords42", // regression
         "AUTestingRecords2ScholixRecords43", // regression
         "AUTestingRecords2ScholixRecords44", // regression
         "AUTestingRecords2ScholixRecords46", // regression
@@ -150,6 +152,15 @@ class ScholixProviderRegressionTest extends \RegistryTestClass
     }
 
     /** @test **/
+    public function it_should_regression_25()
+    {
+        $record = RegistryObjectsRepository::getPublishedByKey("AUTestingRecords2ScholixRecords25");
+        $scholix = ScholixProvider::get($record);
+        $links = $scholix->toArray();
+        // TODO: Check 25
+    }
+
+    /** @test **/
     public function it_should_regression_33()
     {
         $record = RegistryObjectsRepository::getPublishedByKey("AUTestingRecords2ScholixRecords33");
@@ -212,6 +223,18 @@ class ScholixProviderRegressionTest extends \RegistryTestClass
         // (AUTestingRecords2) Scholix Source Collection With a identifier only in citationMetadata and relationship to 4x RelatedInfo Publication 1x reverse RelatedObject collection/publication. 3 with relations 1 without. 2xdates 1 in citationMetadata and 1
 
         $this->assertEquals(5, count($links));
+
+        $this->assertTrue(true);
+    }
+
+    /** @test **/
+    public function it_should_regression_42()
+    {
+        $record = RegistryObjectsRepository::getPublishedByKey("AUTestingRecords2ScholixRecords42");
+        $scholix = ScholixProvider::get($record);
+        $links = $scholix->toArray();
+
+        // TODO: Verify 42
 
         $this->assertTrue(true);
     }
