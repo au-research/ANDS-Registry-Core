@@ -45,6 +45,11 @@ class RegistryObject extends Model
         return $this->belongsTo(DataSource::class, 'data_source_id', 'data_source_id');
     }
 
+    public function registryObjectAttributes()
+    {
+        return $this->hasMany(RegistryObjectAttribute::class, 'registry_object_id', 'registry_object_id');
+    }
+
     /**
      * Eloquent
      * Returns a current recordData
