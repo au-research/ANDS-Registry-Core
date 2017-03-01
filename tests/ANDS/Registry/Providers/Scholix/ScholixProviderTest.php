@@ -61,19 +61,11 @@ class ScholixProviderTest extends RegistryTestClass
     }
 
     /** @test **/
-    public function it_should_get_the_correct_relationships_format()
+    public function it_should_get_the_correct_relationships()
     {
         $record = RegistryObjectsRepository::getPublishedByKey("AUTCollectionToTestSearchFields37");
         $relationships = ScholixProvider::getRelationships($record);
-        $this->assertEmpty($relationships);
-    }
-
-    /** @test **/
-    public function it_should_get_the_right_publication_relationships()
-    {
-        $record = RegistryObjectsRepository::getPublishedByKey("AUTCollectionToTestSearchFields37");
-        $relationships = ScholixProvider::getRelatedPublications($record);
-        $this->assertEquals(2, count($relationships));
+        $this->assertNotEmpty($relationships);
     }
 
     /** @test **/
@@ -126,10 +118,9 @@ class ScholixProviderTest extends RegistryTestClass
             $this->assertArrayHasKey('source', $link['link']);
             $this->assertArrayHasKey('target', $link['link']);
 
-            // each publisher has a name, and identifiers
+            // each publisher has a name
             $publisher = $link['link']['publisher'];
             $this->assertArrayHasKey('name', $publisher);
-            $this->assertArrayHasKey('identifier', $publisher);
 
             // name is group
             $this->assertEquals($record->group, $publisher['name']);
