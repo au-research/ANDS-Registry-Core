@@ -131,22 +131,26 @@ class ScholixDocument
         $str .= "<publicationDate>".$link['publicationDate']."</publicationDate>";
 
         $str .= "<publisher>";
-        $str .= "<name>".$link['publisher']['name']."</name>";
-        foreach ($link['publisher']['identifier'] as $identifier) {
-            $str .= "<identifiers>";
-            $str .= "<identifier>".$identifier['identifier']."</identifier>";
-            $str .= "<schema>".$identifier['schema']."</schema>";
-            $str .= "</identifiers>";
+        $str .= "<name>".htmlspecialchars($link['publisher']['name'])."</name>";
+        if (array_key_exists('identifier', $link['publisher'])) {
+            foreach ($link['publisher']['identifier'] as $identifier) {
+                $str .= "<identifiers>";
+                $str .= "<identifier>".htmlspecialchars($identifier['identifier'])."</identifier>";
+                $str .= "<schema>".htmlspecialchars($identifier['schema'])."</schema>";
+                $str .= "</identifiers>";
+            }
         }
         $str .= "</publisher>";
 
         $str .= "<linkProvider>";
-        $str .= "<name>".$link['linkProvider']['name']."</name>";
-        foreach ($link['linkProvider']['identifier'] as $identifier) {
-            $str .= "<identifiers>";
-            $str .= "<identifier>".$identifier['identifier']."</identifier>";
-            $str .= "<schema>".$identifier['schema']."</schema>";
-            $str .= "</identifiers>";
+        $str .= "<name>".htmlspecialchars($link['linkProvider']['name'])."</name>";
+        if (array_key_exists('identifier', $link['linkProvider'])) {
+            foreach ($link['linkProvider']['identifier'] as $identifier) {
+                $str .= "<identifiers>";
+                $str .= "<identifier>" . htmlspecialchars($identifier['identifier']) . "</identifier>";
+                $str .= "<schema>" . htmlspecialchars($identifier['schema']) . "</schema>";
+                $str .= "</identifiers>";
+            }
         }
         $str .= "</linkProvider>";
 
@@ -162,31 +166,35 @@ class ScholixDocument
 
         // source
         $str .= "<source>";
-        foreach ($link['source']['identifier'] as $identifier) {
-            $str .= "<identifier>";
-            $str .= "<identifier>".$identifier['identifier']."</identifier>";
-            $str .= "<schema>".$identifier['schema']."</schema>";
-            $str .= "</identifier>";
+        if (array_key_exists('identifier', $link['source'])) {
+            foreach ($link['source']['identifier'] as $identifier) {
+                $str .= "<identifier>";
+                $str .= "<identifier>" . $identifier['identifier'] . "</identifier>";
+                $str .= "<schema>" . $identifier['schema'] . "</schema>";
+                $str .= "</identifier>";
+            }
         }
         $str .= "<objectType>";
         $str .= "<type>". $link['source']['objectType']."</type>";
         $str .= "</objectType>";
-        $str .= "<title>".$link['source']['title']."</title>";
+        $str .= "<title>".htmlspecialchars($link['source']['title'])."</title>";
         $str .= "</source>";
 
         // target
         $str .= "<target>";
-        foreach ($link['target']['identifier'] as $identifier) {
-            $str .= "<identifier>";
-            $str .= "<identifier>".$identifier['identifier']."</identifier>";
-            $str .= "<schema>".$identifier['schema']."</schema>";
-            $str .= "</identifier>";
+        if (array_key_exists('identifier', $link['target'])) {
+            foreach ($link['target']['identifier'] as $identifier) {
+                $str .= "<identifier>";
+                $str .= "<identifier>" . htmlspecialchars($identifier['identifier']) . "</identifier>";
+                $str .= "<schema>" . $identifier['schema'] . "</schema>";
+                $str .= "</identifier>";
+            }
         }
         $str .= "<objectType>";
         $str .= "<type>". $link['target']['objectType']."</type>";
         $str .= "</objectType>";
         if (array_key_exists('title', $link['target'])) {
-            $str .= "<title>".$link['target']['title']."</title>";
+            $str .= "<title>".htmlspecialchars($link['target']['title'])."</title>";
         }
         $str .= "</target>";
 
