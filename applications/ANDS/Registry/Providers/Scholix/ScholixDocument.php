@@ -178,6 +178,26 @@ class ScholixDocument
         $str .= "<type>". $link['source']['objectType']."</type>";
         $str .= "</objectType>";
         $str .= "<title>".htmlspecialchars($link['source']['title'])."</title>";
+
+        // creator
+        if (array_key_exists('creator', $link['source'])) {
+            foreach ($link['source']['creator'] as $creator) {
+                $str .= "<creator>";
+                $str .= "<creatorName>" . $creator['name'] . "</creatorName>";
+                if (array_key_exists('identifier', $creator)) {
+                    $str .= "<identifiers>";
+                    foreach ($creator['identifier'] as $identifier) {
+                        $str .= "<identifier>";
+                        $str .= "<identifier>" . $identifier['identifier'] . "</identifier>";
+                        $str .= "<schema>" . $identifier['schema'] . "</schema>";
+                        $str .= "</identifier>";
+                    }
+                    $str .= "</identifiers>";
+                }
+                $str .= "</creator>";
+            }
+        }
+
         $str .= "</source>";
 
         // target
@@ -196,6 +216,26 @@ class ScholixDocument
         if (array_key_exists('title', $link['target'])) {
             $str .= "<title>".htmlspecialchars($link['target']['title'])."</title>";
         }
+
+        // creator
+        if (array_key_exists('creator', $link['target'])) {
+            foreach ($link['target']['creator'] as $creator) {
+                $str .= "<creator>";
+                $str .= "<creatorName>" . $creator['name'] . "</creatorName>";
+                if (array_key_exists('identifier', $creator)) {
+                    $str .= "<identifiers>";
+                    foreach ($creator['identifier'] as $identifier) {
+                        $str .= "<identifier>";
+                        $str .= "<identifier>" . $identifier['identifier'] . "</identifier>";
+                        $str .= "<schema>" . $identifier['schema'] . "</schema>";
+                        $str .= "</identifier>";
+                    }
+                    $str .= "</identifiers>";
+                }
+                $str .= "</creator>";
+            }
+        }
+
         $str .= "</target>";
 
         $str .= "</link>";
