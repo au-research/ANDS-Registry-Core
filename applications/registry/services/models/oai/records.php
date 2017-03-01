@@ -62,7 +62,9 @@ class Records extends CI_Model
         }
 
         if ($supplied_format == "scholix") {
-			$args['attributeExist'] = "scholixable";
+			$args['hasAttribute'] = [
+				"scholixable" => 1
+			];
 		}
 
 		if(!($set&&!$args["wherein"]))
@@ -95,8 +97,13 @@ class Records extends CI_Model
                                          $args["allowedType"]);
                                  }
 
-								if ($args['attributeExist']) {
-                                    $db->where('registry_object_attributes.attribute', $args['attributeExist']);
+								if ($args['hasAttribute']) {
+							     	foreach ($args['hasAttribute'] as $key => $value) {
+                                        $db
+											->where('registry_object_attributes.attribute', $key)
+											->where('registry_object_attributes.value', $value);
+									}
+                                    ;
 								}
 
 
@@ -154,8 +161,13 @@ class Records extends CI_Model
                                            $args["allowedType"]);
                                    }
 
-                                   if ($args['attributeExist']) {
-                                       $db->where('registry_object_attributes.attribute', $args['attributeExist']);
+                                   if ($args['hasAttribute']) {
+                                       foreach ($args['hasAttribute'] as $key => $value) {
+                                           $db
+                                               ->where('registry_object_attributes.attribute', $key)
+                                               ->where('registry_object_attributes.value', $value);
+                                       }
+                                       ;
                                    }
 
 

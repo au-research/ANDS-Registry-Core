@@ -6,3 +6,10 @@ if (!function_exists('env')) {
         return getenv($env) ?: $default;
     }
 }
+
+if (!function_exists('baseUrl')) {
+    function baseUrl($suffix = "")
+    {
+        return env('PROTOCOL') . env('BASE_URL') . '/'. $suffix;
+    }
+}

@@ -7,7 +7,7 @@ return [
         'dbdriver' => 'mysqli'
     ],
     'registry' => [
-        'database' => 'dbs_registry'
+        'database' => env('DB_DATABASE', 'dbs_registry')
     ],
     'roles' => [
         'database' => 'dbs_roles'

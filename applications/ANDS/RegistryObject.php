@@ -19,6 +19,17 @@ class RegistryObject extends Model
     public $identifiers = null;
 
     /**
+     * Eloquent Accessor
+     * usage: $this->id will return $this->registry_object_id
+     *
+     * @return mixed
+     */
+    public function getIdAttribute()
+    {
+        return $this->registry_object_id;
+    }
+
+    /**
      * Eloquent
      * Returns all record_data that ties to this
      *
@@ -32,6 +43,11 @@ class RegistryObject extends Model
     public function datasource()
     {
         return $this->belongsTo(DataSource::class, 'data_source_id', 'data_source_id');
+    }
+
+    public function registryObjectAttributes()
+    {
+        return $this->hasMany(RegistryObjectAttribute::class, 'registry_object_id', 'registry_object_id');
     }
 
     /**

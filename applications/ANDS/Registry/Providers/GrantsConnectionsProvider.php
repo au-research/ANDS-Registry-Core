@@ -8,7 +8,6 @@ use ANDS\RegistryObject;
 use ANDS\Registry\Connections;
 use ANDS\Registry\IdentifierRelationshipView;
 use ANDS\Registry\ImplicitRelationshipView;
-use ANDS\Registry\Providers\getDirectGrantCollections;
 use ANDS\Repository\RegistryObjectsRepository;
 use Illuminate\Support\Collection;
 
@@ -32,19 +31,7 @@ class GrantsConnectionsProvider extends Connections
     public function getFunder(RegistryObject $record)
     {
         if (in_array($record->registry_object_id, $this->processed_by_getFunder)) {
-            $implicitRelation = ImplicitRelationshipView::where('relation_type', 'isFundedBy')
-                ->where('relation_origin', 'GRANTS')
-                ->where('from_id', $record->id)
-                ->first();
-
-            if ($implicitRelation) {
-                $funder = RegistryObjectsRepository::getRecordByID($implicitRelation->to_id);
-                debug('Has funder: '. $funder->title);
-                return $funder;
-            }
-            else{
-                return null; 
-            }
+            return null;
         }
 
         debug("Getting funder for $record->title($record->registry_object_id)");
@@ -327,16 +314,20 @@ class GrantsConnectionsProvider extends Connections
      * TODO: cache
      *
      * @param RegistryObject $record
-     * @param array $processed
      * @return array
      */
-    public function getParentsActivities(RegistryObject $record, $processed = [])
+    public function getParentsActivities(RegistryObject $record)
     {
+        if (in_array($record->id, $this->processed_by_getParentsActivities)) {
+            return [];
+        }
         $implicitRelation = ImplicitRelationshipView::where('relation_type', 'isPartOf')
             ->where('relation_origin', 'GRANTS')
             ->where('from_id', $record->registry_object_id)
             ->where('to_class', 'activity')
             ->get();
+
+        $this->processed_by_getParentsActivities[] = $record->id;
 
         if ($implicitRelation->count() > 0) {
             $ids = $implicitRelation->pluck('to_id')->toArray();
@@ -353,21 +344,11 @@ class GrantsConnectionsProvider extends Connections
             $activities = $this->getDirectActivityProducer($record);
         }
 
-        if (count($processed) == 0) {
-            $processed = collect($activities)->pluck('registry_object_id')->unique()->toArray();
-        }
-
         if (count($activities) == 0) {
             $parentCollections = $this->getDirectGrantCollections($record);
             if (count($parentCollections) > 0) {
                 foreach ($parentCollections as $parentCollection) {
-                    $grandParents = $this->getParentsActivities($parentCollection, $processed);
-                    // make sure to only include grandParents who have not already been processed
-                    $grandParents = collect($grandParents)
-                        ->filter(function($item) use ($processed){
-                        return !in_array($item->registry_object_id, $processed);
-                    });
-
+                    $grandParents = $this->getParentsActivities($parentCollection);
                     if (count($grandParents) > 0) {
                         $activities = collect($activities)->merge($grandParents);
                     }
@@ -376,30 +357,26 @@ class GrantsConnectionsProvider extends Connections
         }
 
         foreach ($activities as $parentActivity) {
-            $grandParents = $this->getParentsActivities($parentActivity, $processed);
-
-            // make sure to only include grandParents who have not already been processed
-            $grandParents = collect($grandParents)->filter(function($item) use ($processed){
-               return !in_array($item->registry_object_id, $processed);
-            });
-
-            if ($grandParents->count() > 0) {
+            $grandParents = $this->getParentsActivities($parentActivity);
+            if (count($grandParents) > 0) {
                 $activities = collect($activities)->merge($grandParents);
             }
         }
 
-        return $activities;
+        return collect($activities);
     }
 
     /**
      * Get all parents collections from a given node
      * TODO: cache
      * @param RegistryObject $record
-     * @param array $processed
      * @return array
      */
-    public function getParentsCollections(RegistryObject $record, $processed = [])
+    public function getParentsCollections(RegistryObject $record)
     {
+        if (in_array($record->id, $this->processed_by_getParentsCollections)) {
+            return [];
+        }
         $implicitRelation = ImplicitRelationshipView::where('relation_type', 'isPartOf')
             ->where('relation_origin', 'GRANTS')
             ->where('from_id', $record->registry_object_id)
@@ -411,27 +388,17 @@ class GrantsConnectionsProvider extends Connections
             return RegistryObject::whereIn('registry_object_id', $ids)->get();
         }
 
+        $this->processed_by_getParentsCollections[] = $record->id;
+
         $collections = $this->getDirectGrantCollections($record);
-
-        if (count($processed) == 0) {
-            $processed = collect($collections)->pluck('registry_object_id')->toArray();
-        }
-
         foreach ($collections as $parent) {
-
-            $grandParents = $this->getParentsCollections($parent, $processed);
-            // make sure to only include grandParents who have not already been processed
-
-            $grandParents = collect($grandParents)->filter(function($item) use ($processed){
-                return !in_array($item->registry_object_id, $processed);
-            });
-
+            $grandParents = $this->getParentsCollections($parent);
             if (count($grandParents) > 0) {
                 $collections = collect($collections)->merge($grandParents);
             }
         }
 
-        return $collections;
+        return collect($collections);
     }
 
     /**
