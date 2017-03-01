@@ -385,7 +385,7 @@ class Oai extends MX_Controller
 
 					$record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($rec->id);
 					$scholix = \ANDS\Registry\Providers\ScholixProvider::get($record);
-					$this->output->append_output($scholix->toOAI());
+                    $this->output->append_output($scholix->toOAI());
 				}
                 else
                 {

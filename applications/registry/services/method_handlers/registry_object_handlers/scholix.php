@@ -19,6 +19,8 @@ class Scholix extends ROHandler {
                 return $scholix->toJson();
             case "xml":
                 return $scholix->toXML();
+            case "oai":
+                return $scholix->toOAI();
             default:
                 return $scholix->toArray();
         }

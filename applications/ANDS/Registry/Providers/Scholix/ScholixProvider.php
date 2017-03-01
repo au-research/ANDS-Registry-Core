@@ -62,9 +62,10 @@ class ScholixProvider implements RegistryContentProvider
         $record->deleteRegistryObjectAttribute(self::$scholixableAttr);
 
         $relationships = RelationshipProvider::getMergedRelationships($record);
-        if (self::isScholixable($record, $relationships)) {
-            $record->setRegistryObjectAttribute(self::$scholixableAttr, true);
-        }
+        $record->setRegistryObjectAttribute(
+            self::$scholixableAttr,
+            self::isScholixable($record, $relationships)
+        );
 
         return;
     }
