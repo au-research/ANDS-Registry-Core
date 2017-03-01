@@ -253,7 +253,7 @@ class ScholixProvider implements RegistryContentProvider
             ];
         })->filter(function($item) {
             return $item;
-        })->values()->toArray();
+        })->values()->unique()->toArray();
 
         return $relationships;
     }
