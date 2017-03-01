@@ -29,7 +29,10 @@ class Relation
                     array_push($this->properties[$key], $value);
                 }
             } elseif ($this->properties[$key] != $value) {
-                $this->properties[$key] = array($this->properties[$key], $value);
+                $this->properties[$key] = [
+                    $this->properties[$key],
+                    $value
+                ];
             }
         } else {
             $this->properties[$key] = $value;
