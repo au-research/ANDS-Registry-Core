@@ -11,6 +11,8 @@ use \Exception as Exception;
 class XMLUtil
 {
 
+    private $validationMessage;
+
     /**
      * @param $xml
      * @param $xpath
@@ -158,6 +160,54 @@ class XMLUtil
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }
+    }
+
+    /**
+     * validates datacite xml against required schema version
+     *
+     * @param $schema
+     * @param $payload
+     * @return string
+     * @internal param $xml
+     */
+    public function validateSchema($schema, $payload)
+    {
+        libxml_use_internal_errors(true);
+
+        try {
+            $xml = new \DOMDocument();
+            $xml->loadXML($payload);
+        } Catch (\Exception $e) {
+            $this->validationMessage = $e->getMessage();
+            return false;
+        }
+
+        $schemaPath = dirname(__DIR__) ."/../../etc/schema/$schema/$schema.xsd";
+        $result = $xml->schemaValidate($schemaPath);
+        foreach (libxml_get_errors() as $error) {
+            $this->validationMessage = $error->message;
+        }
+        return $result;
+    }
+
+    /**
+     * Returns a new instance of the class, to be able to use validationMessage
+     * Mainly use when call validateSchemaVersion statically
+     *
+     * @usage XMLValidator::create()->validateSchemaVersion($xml)
+     * @return static
+     */
+    public static function create()
+    {
+        return new static;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getValidationMessage()
+    {
+        return $this->validationMessage;
     }
 
 

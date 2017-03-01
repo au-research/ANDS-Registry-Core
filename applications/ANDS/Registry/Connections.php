@@ -93,7 +93,7 @@ class Connections {
             // merge relation
             $parsedRelation = $relation;
             if (array_key_exists($key, $result)) {
-                $parsedRelation->mergeWith($relation->getProperties());
+                $parsedRelation->mergeWith($result[$key]->getProperties());
             }
 
             $result[$key] = $parsedRelation;
