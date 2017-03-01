@@ -4,11 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-<<<<<<< Updated upstream
     "content-hash": "5a9e78ff364e542f098ea07955d4c29e",
-=======
-    "content-hash": "0ca3dee563e1d6a7fb0dd048445ff8f9",
->>>>>>> Stashed changes
     "packages": [
         {
             "name": "au-research/ands-doi-service",
