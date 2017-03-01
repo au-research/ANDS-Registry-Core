@@ -429,6 +429,10 @@ class ScholixProvider implements RegistryContentProvider
             $target['title'] = $publication->prop('to_title');
         }
 
+        if ($publication->prop('relation_to_title')) {
+            $target['title'] = $publication->prop('relation_to_title');
+        }
+
         // No creator
 
         return $target;
