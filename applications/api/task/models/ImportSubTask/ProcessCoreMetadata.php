@@ -4,6 +4,7 @@
 namespace ANDS\API\Task\ImportSubTask;
 
 
+use ANDS\Registry\Providers\ScholixProvider;
 use ANDS\RegistryObject;
 use ANDS\Util\XMLUtil;
 
@@ -76,6 +77,12 @@ class ProcessCoreMetadata extends ImportSubTask
             $ro->generateSlug();
 
             $ro->save();
+
+            /**
+             * Process Scholixable records
+             * TODO: Move to it's own ImportSubTask
+             */
+            ScholixProvider::process($record);
 
             $this->updateProgress($index, $total, "Processed ($index/$total) $ro->title($roID)");
             unset($ro);
