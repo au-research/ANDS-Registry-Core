@@ -411,7 +411,16 @@ class ScholixProvider implements RegistryContentProvider
                 return $item['type'] == 'family';
             })->pluck('value')->first();
 
-            $name = "$given, $family";
+            $name = "";
+
+            if ($given || $family) {
+                $name = "$given, $family";
+            }
+
+            // first name part if no given nor family
+            if ((!$given || !$family) && (count($nameParts) > 0)){
+                $name = $nameParts[0]['value'];
+            }
 
             $creators[] = [ 'name' => $name ];
         }
@@ -526,7 +535,6 @@ class ScholixProvider implements RegistryContentProvider
             if ($given || $family) {
                 $name = "$given, $family";
             }
-
 
             // first name part if no given nor family
             if ((!$given || !$family) && (count($nameParts) > 0)){
