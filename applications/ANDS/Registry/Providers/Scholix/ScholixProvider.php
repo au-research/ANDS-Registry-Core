@@ -174,8 +174,9 @@ class ScholixProvider implements RegistryContentProvider
         $keyLink = $commonLinkMetadata;
         $keyLink['source'] = self::getKeySource($record, $data);
         foreach ($targets as $target) {
-            $identifierlink['target'] = $target;
-            $doc->addLink($identifierlink);
+            $keyLink['relationship'] = self::getRelationships($target['relationship']);
+            $keyLink['target'] = $target['target'];
+            $doc->addLink($keyLink);
         }
 
         return $doc;
@@ -189,11 +190,16 @@ class ScholixProvider implements RegistryContentProvider
 
         $source = [
             'identifier' => [
-                ['identifier' => baseUrl('view?key=') . $record->key, 'schema' => 'Research Data Australia']
+                [
+                    'identifier' => baseUrl('view?key=') . $record->key,                          'schema' => 'Research Data Australia'
+                ]
             ],
-            'objectType' => $record->type,
             'title' => $record->title,
-            'creator' => []
+            'objectType' => $record->type,
+            'publicationDate' => DatesProvider::getPublicationDate($record),
+            'publisher' => [
+                'name' => $record->group
+            ]
         ];
 
         $creators = self::getSourceCreators($record, $data);
@@ -473,11 +479,11 @@ class ScholixProvider implements RegistryContentProvider
             ]
         ];
 
-        // TODO Creator
         // relation[@type=author]
-        $creators = collect(RelationshipProvider::getMergedRelationships($record))->filter(function($item){
-            return $item->prop('relation_type') == 'author';
-        })->toArray();
+//        $creators = self::getSourceCreators($record);
+//        if (count($creators) > 0) {
+//            $target['creator'] = $creators;
+//        }
 
         // TODO citationMetadata/contributor
 
