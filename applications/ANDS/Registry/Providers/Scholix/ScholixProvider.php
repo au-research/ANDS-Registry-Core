@@ -479,13 +479,66 @@ class ScholixProvider implements RegistryContentProvider
             ]
         ];
 
-        // relation[@type=author]
-//        $creators = self::getSourceCreators($record);
-//        if (count($creators) > 0) {
-//            $target['creator'] = $creators;
-//        }
+        $data = MetadataProvider::getSelective($record, ['relationships', 'recordData']);
 
-        // TODO citationMetadata/contributor
+        // relation[@type=author]
+        $creators = collect($data['relationships'])->filter(function($item) {
+            $validRelations = ['author'];
+            return in_array($item->prop('relation_type'), $validRelations) && ($item->prop('to_class') == "party");
+        })->map(function($item) {
+            $to = $item->to();
+            $creator = [
+                'name' => $to->title
+            ];
+            $identifiers = collect(IdentifierProvider::get($to))->map(function($item) {
+                return [
+                    'identifier' => $item['value'],
+                    'schema' => $item['type']
+                ];
+            })->toArray();
+            if (count($identifiers) > 0) {
+                $creator['identifier'] = $identifiers;
+            }
+            return $creator;
+        })->values()->toArray();
+
+        // citationMetadata/contributor
+        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+            'ro:registryObject/ro:' . $record->class . '/ro:citationInfo/ro:citationMetadata/ro:contributor') AS $contributor) {
+            $nameParts = [];
+            foreach ($contributor->namePart as $part) {
+                $nameParts[] = [
+                    'value' => (string) $part,
+                    'type' => (string) $part['type']
+                ];
+            }
+
+            $given = collect($nameParts)->filter(function($item){
+                return $item['type'] == 'given';
+            })->pluck('value')->first();
+
+            $family = collect($nameParts)->filter(function($item){
+                return $item['type'] == 'family';
+            })->pluck('value')->first();
+
+            $name = "";
+
+            if ($given || $family) {
+                $name = "$given, $family";
+            }
+
+
+            // first name part if no given nor family
+            if ((!$given || !$family) && (count($nameParts) > 0)){
+                $name = $nameParts[0]['value'];
+            }
+
+            $creators[] = [ 'name' => $name ];
+        }
+
+        if (count($creators) > 0) {
+            $target['creator'] = $creators;
+        }
 
         return $target;
     }
