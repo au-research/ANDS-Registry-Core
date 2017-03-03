@@ -102,6 +102,7 @@ class SubjectProvider implements RIFCSProvider
                     $resolved_value =  $top_response->label[0];
                     $uri = $top_response->iri[0];
                     $score = $top_response->score;
+
                     isset($top_response->notation_s)? $new_value = $top_response->notation_s : $new_value = $value;
                     $positive_hit = self::checkResult($top_response,$subject);
                 }
@@ -109,7 +110,7 @@ class SubjectProvider implements RIFCSProvider
                 if($positive_hit) {
                     $subjectsResolved[$value] = array('type' => $resolved_type, 'value' => $new_value, 'resolved' => $resolved_value, 'uri' => $uri, 'score' => $score);
                     if($top_response->broader_labels_ss) {
-                        isset($top_response->broader_notations_ss) ? $index = $top_response->broader_notations_ss: $index = $top_response->broader_labels_ss;
+                        isset($top_response->broader_notations_ss[0]) ? $index = $top_response->broader_notations_ss : $index = $top_response->broader_labels_ss;
                         for($i=0;$i<count($top_response->broader_labels_ss);$i++) {
                              $subjectsResolved[$index[$i]] = array(
                                 'type'=>$resolved_type,
