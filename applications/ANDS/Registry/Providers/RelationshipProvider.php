@@ -85,7 +85,7 @@ class RelationshipProvider
             }
         }
 
-        if (!$includeDuplicates === false) {
+        if ($includeDuplicates != true) {
             return $result;
         }
 

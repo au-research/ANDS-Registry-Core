@@ -75,7 +75,7 @@ class DatesProvider implements RIFCSProvider
         }
 
         /**
-         * registryObject/Collection@dateModified
+         * registryObject/Collection@dateAccessioned
          */
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class) AS $object) {
@@ -83,16 +83,9 @@ class DatesProvider implements RIFCSProvider
             if ($dateAccessioned = (string) $object['dateAccessioned']) {
                 return self::formatDate($dateAccessioned, $format);
             }
-
-            if ($dateModified = (string) $object['dateModified']) {
-                return self::formatDate($dateModified, $format);
-            }
         }
 
-        // date the record was ingested into the Registry as last resort
-        $value = $record->getRegistryObjectAttributeValue('created');
-
-
+        return self::getCreatedDate($record, $format);
     }
 
     /**
