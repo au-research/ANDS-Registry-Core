@@ -19,6 +19,9 @@ return [
         'database' => 'dbs_statistics'
     ],
     'dois' => [
+        'hostname' => env('DB_DOI_HOSTNAME', env('DB_HOSTNAME', 'localhost')),
+        'username' => env('DB_DOI_HOSTNAME', env('DB_USERNAME', 'webuser')),
+        'password' => env('DB_DOI_PASSWORD', env('DB_PASSWORD', '')),
         'database' => 'dbs_dois'
     ],
     'portal' => [

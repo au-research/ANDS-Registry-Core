@@ -244,7 +244,7 @@ function notifySiteAdmin($errno, $errstr, $errfile, $errline)
 	}
 }
 
-//set_error_handler("default_error_handler");
+set_error_handler("default_error_handler");
 
 function default_exception_handler( $e ) {
 
@@ -260,7 +260,7 @@ function default_exception_handler( $e ) {
 
     echo $_ci->load->view( 'footer' , $data , true);
 }
-//set_exception_handler('default_exception_handler');
+set_exception_handler('default_exception_handler');
 
 function json_exception_handler( $e ) {
     echo json_encode(array("status"=>"ERROR", "message"=> $e->getMessage()));
