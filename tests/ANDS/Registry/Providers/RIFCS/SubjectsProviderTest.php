@@ -27,7 +27,6 @@ class SubjectsProviderTest extends \RegistryTestClass
     {
         $record = RegistryObjectsRepository::getPublishedByKey("AUTCollectionToTestSearchFields37");
         $resolved_subjects = SubjectProvider::processSubjects($record);
-        print_r($resolved_subjects);
         $this->assertArraySubset(['03'=>
             ['type' => 'anzsrc-for',
             'value' => '03',
