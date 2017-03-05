@@ -11,10 +11,15 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
     {
         restore_error_handler();
         foreach ($this->requiredKeys as $key) {
-            $record = RegistryObjectsRepository::getPublishedByKey($key);
-            if ($record === null) {
-                $this->markTestSkipped("The record with $key is not available. Skipping tests...");
-            }
+            $this->ensureKeyExist($key);
+        }
+    }
+
+    public function ensureKeyExist($key)
+    {
+        $record = RegistryObjectsRepository::getPublishedByKey($key);
+        if ($record === null) {
+            $this->markTestSkipped("The record with $key is not available. Skipping tests...");
         }
     }
 }
