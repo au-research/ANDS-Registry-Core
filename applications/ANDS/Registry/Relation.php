@@ -283,4 +283,9 @@ class Relation
         }
         return false;
     }
+
+    public function isReverse()
+    {
+        return strpos($this->prop('relation_origin'), "REVERSE") >= 0;
+    }
 }
