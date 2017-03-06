@@ -363,8 +363,6 @@ class ScholixProvider implements RegistryContentProvider
             $data = MetadataProvider::get($record);
         }
 
-//        dd($data['relationships']);
-
         /**
          * source[creator]
          * relatedObject/party
@@ -380,7 +378,10 @@ class ScholixProvider implements RegistryContentProvider
 
             return in_array($item->prop('relation_type'), $validRelations) && ($item->prop('to_class') == "party");
 
-        })->map(function($item) {
+        });
+
+        // map and get identfiers
+        $creators = $creators->map(function($item) {
             $to = $item->to();
             $creator = [
                 'name' => $to->title
