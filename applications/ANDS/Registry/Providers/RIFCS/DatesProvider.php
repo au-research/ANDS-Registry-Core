@@ -8,6 +8,7 @@ use ANDS\Registry\Providers\RIFCSProvider;
 use ANDS\RegistryObject;
 use ANDS\Util\XMLUtil;
 use Carbon\Carbon;
+use DateTime;
 
 class DatesProvider implements RIFCSProvider
 {
@@ -55,7 +56,7 @@ class DatesProvider implements RIFCSProvider
             'ro:registryObject/ro:' . $record->class . '/ro:citationInfo/ro:citationMetadata/ro:date') AS $date) {
             $value = (string) $date;
             $type = (string) $date['type'];
-            if (in_array($type, ['publication_date', 'issued_date', 'created'])) {
+            if (in_array($type, ['publicationDate', 'issued_date', 'created'])) {
                 return self::formatDate($value, $format);
             }
         }
@@ -110,8 +111,13 @@ class DatesProvider implements RIFCSProvider
      * @param $format
      * @return string
      */
-    public static function formatDate($value, $format)
+    public static function formatDate($value, $format = 'Y-m-d')
     {
+        // if it comes in as the year, just return the year
+        if (self::validateDate($value, 'Y')) {
+            return $value;
+        }
+
         if (self::isValidTimeStamp($value)) {
             return Carbon::createFromTimestamp($value)->format($format);
         }
@@ -129,6 +135,12 @@ class DatesProvider implements RIFCSProvider
         return ((string) (int) $timestamp === $timestamp)
             && ($timestamp <= PHP_INT_MAX)
             && ($timestamp >= ~PHP_INT_MAX);
+    }
+
+    public static function validateDate($date, $format = 'Y-m-d')
+    {
+        $d = DateTime::createFromFormat($format, $date);
+        return $d && $d->format($format) === $date;
     }
 
 
