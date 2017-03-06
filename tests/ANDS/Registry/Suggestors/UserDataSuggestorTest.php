@@ -4,17 +4,21 @@
 namespace ANDS\Registry\Suggestors;
 
 
-class UserDataSuggestorTest extends \PHPUnit_Framework_TestCase
-{
-    /** @test **/
-    public function it_should_get_stuff()
-    {
-        $suggestor = new UserDataSuggestor();
-        dd($suggestor->suggestByView());
-    }
+use ANDS\Repository\RegistryObjectsRepository;
 
-    public function setUp()
+class UserDataSuggestorTest extends \RegistryTestClass
+{
+    protected $requiredKeys = [
+        "AUTestingRecords5parties12323489"
+    ];
+
+    /** @test **/
+    public function it_should_be_able_to_get_suggestion_for_a_given_record()
     {
-        restore_error_handler();
+        $record = RegistryObjectsRepository::getPublishedByKey("AUTestingRecords5parties12323489");
+
+        $suggestor = new UserDataSuggestor();
+        $suggestions = $suggestor->suggestByView($record);
+        $this->assertNotEmpty($suggestions);
     }
 }
