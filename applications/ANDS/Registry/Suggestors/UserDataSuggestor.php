@@ -81,7 +81,8 @@ class UserDataSuggestor
                     'bool' => [
                         'should' => $shouldMatchIps,
                         'must' => [
-                            'match' => [ 'doc.@fields.event' => 'portal_view' ]
+                            ['match' => ['doc.@fields.event' => 'portal_view']],
+                            ['match' => ['doc.@fields.record.class' => 'collection']],
                         ],
                         'must_not' => [
                             'match' => ['doc.@fields.record.id' => $id]
@@ -96,7 +97,7 @@ class UserDataSuggestor
                         ],
                         'aggs' => [
                             'records_viewed' => [
-                                'significant_terms' => [
+                                'terms' => [
                                     'field' => 'doc.@fields.record.id.raw'
                                 ]
                             ]
@@ -129,9 +130,17 @@ class UserDataSuggestor
         $result = [];
         foreach ($sorted as $id => $score) {
             $record = RegistryObjectsRepository::getRecordByID($id);
+
+            // filter out record that doesn't exists
             if (!$record) {
                 continue;
             }
+
+            // filter out record that is non published
+            if (!RegistryObjectsRepository::isPublishedStatus($record->status)) {
+                continue;
+            }
+
             $result[] = [
                 'id' => $record->id,
                 'title' => $record->title,
