@@ -157,7 +157,10 @@ class ScholixProviderRegressionTest extends \RegistryTestClass
         $record = RegistryObjectsRepository::getPublishedByKey("AUTestingRecords2ScholixRecords25");
         $scholix = ScholixProvider::get($record);
         $links = $scholix->toArray();
-        // TODO: Check 25
+
+        // should have 5 creators
+        $creators = $links[0]['link']['source']['creator'];
+        $this->assertEquals(5, count($creators));
     }
 
     /** @test **/
