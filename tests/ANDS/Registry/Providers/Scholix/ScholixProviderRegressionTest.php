@@ -290,13 +290,19 @@ class ScholixProviderRegressionTest extends \RegistryTestClass
 
         //(AUTestingRecords2) Scholix Source Collection With a Single Identifier, 1x not supported Date and 1 RelatedInfo Publication and 1 relatedObject collection/publication. 3 creators all reverse. 2 x relatedInfo 1 x RelatedObject
 
-        $this->assertTrue(true);
+        // 3 creators per link
+        foreach ($links as $link) {
+            $creators = collect($link['link'])['source']['creator'];
+            $this->assertEquals(3, count($creators));
+        }
     }
 
     /** @test **/
     public function it_should_regression_collection_4()
     {
-        $record = RegistryObjectsRepository::getPublishedByKey("AUTestingRecords3:Funder/Program13/Collection4");
+        $key = "AUTestingRecords3:Funder/Program13/Collection4";
+        $this->ensureKeyExist($key);
+        $record = RegistryObjectsRepository::getPublishedByKey($key);
         $scholix = ScholixProvider::get($record);
         $links = $scholix->toArray();
 

@@ -363,14 +363,23 @@ class ScholixProvider implements RegistryContentProvider
             $data = MetadataProvider::get($record);
         }
 
+//        dd($data['relationships']);
+
         /**
          * source[creator]
          * relatedObject/party
          * relatedInfo/relation/party
          */
         $creators = collect($data['relationships'])->filter(function($item) {
+
             $validRelations = ['hasPrincipalInvestigator', 'hasAuthor', 'coInvestigator', 'isOwnedBy', 'hasCollector'];
+
+            if ($item->isReverse()) {
+                return in_array(getReverseRelationshipString($item->prop('relation_type')), $validRelations) && ($item->prop('to_class') == "party");
+            }
+
             return in_array($item->prop('relation_type'), $validRelations) && ($item->prop('to_class') == "party");
+
         })->map(function($item) {
             $to = $item->to();
             $creator = [
