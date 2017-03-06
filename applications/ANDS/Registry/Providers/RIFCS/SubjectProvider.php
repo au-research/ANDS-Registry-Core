@@ -71,7 +71,7 @@ class SubjectProvider implements RIFCSProvider
      * @param $record
      * @return array
      */
-    function processSubjects(RegistryObject $record)
+    public static function processSubjects(RegistryObject $record)
     {
         $subjects = self::getSubjects($record);
 
@@ -110,15 +110,23 @@ class SubjectProvider implements RIFCSProvider
                 if($positive_hit) {
                     $subjectsResolved[$value] = array('type' => $resolved_type, 'value' => $new_value, 'resolved' => $resolved_value, 'uri' => $uri, 'score' => $score);
                     if($top_response->broader_labels_ss) {
-                        isset($top_response->broader_notations_ss[0]) ? $index = $top_response->broader_notations_ss : $index = $top_response->broader_labels_ss;
-                        for($i=0;$i<count($top_response->broader_labels_ss);$i++) {
-                             $subjectsResolved[$index[$i]] = array(
-                                'type'=>$resolved_type,
-                                'value'=>$index[$i],
-                                'resolved'=>$top_response->broader_labels_ss[$i],
-                                'uri'=>$top_response->broader_iris_ss[$i]
+
+                        $values = $top_response->toArray();
+                        if (array_key_exists('broader_notations_ss', $values)) {
+                            $index = $top_response->broader_notations_ss;
+                        }else {
+                            $index = $top_response->broader_labels_ss;
+                        }
+
+                        for ($i = 0; $i < count($top_response->broader_labels_ss); $i++) {
+                            $subjectsResolved[$index[$i]] = array(
+                                'type' => $resolved_type,
+                                'value' => $index[$i],
+                                'resolved' => $top_response->broader_labels_ss[$i],
+                                'uri' => $top_response->broader_iris_ss[$i]
                             );
                         }
+
                     }
                 }else{
                     $subjectsResolved[$value] = array('type' => $type, 'value' => $value, 'resolved' => $value, 'uri' => $uri);
@@ -129,7 +137,7 @@ class SubjectProvider implements RIFCSProvider
         return $subjectsResolved;
     }
 
-    function checkResult($resolved, $subject){
+    public static function checkResult($resolved, $subject){
         if((string)($subject['value']==$resolved->label[0])) return true;
         if($resolved->score<0.8) return false;
         return true;
