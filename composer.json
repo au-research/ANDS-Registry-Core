@@ -51,7 +51,8 @@
         "jaybizzle/crawler-detect": "1.*",
         "vlucas/phpdotenv": "^2.4",
         "symfony/console": "^3.2",
-        "minhd/solr-client": "~0.1.7"
+        "minhd/solr-client": "~0.1.7",
+        "elasticsearch/elasticsearch": "~2.0"
     },
 
     "require-dev": {
