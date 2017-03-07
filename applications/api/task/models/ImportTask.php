@@ -8,6 +8,7 @@
 namespace ANDS\API\Task;
 
 use ANDS\API\Task\ImportSubTask\ImportSubTask;
+use ANDS\API\Task\ImportSubTask\NonFatalException;
 use ANDS\DataSource;
 use ANDS\DataSource\Harvest as Harvest;
 use ANDS\Util\NotifyUtil;
