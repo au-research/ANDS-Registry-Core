@@ -127,16 +127,40 @@ class ProcessDelete extends ImportSubTask
             $this->parent()->setTaskData('affectedRecords', $affectedRecordIDs);
         }
 
-        // delete from the solr index
         $this->parent()->getCI()->load->library('solr');
-        $this->parent()->getCI()->solr->init()
-            ->setCore('portal')
-            ->deleteByQueryCondition($portalQuery);
-        $this->parent()->getCI()->solr->commit();
+        // chunk the ids by 300
+        $chunks = collect($ids)->chunk(300)->toArray();
+        foreach ($chunks as $chunk) {
 
-        $this->parent()->getCI()->solr->init()
-            ->setCore('relations')
-            ->deleteByQueryCondition($fromRelationQuery.$toRelationQuery);
-        $this->parent()->getCI()->solr->commit();
+            $portalQuery = collect($chunk)->map(function($id) {
+                return ' id:'.$id;
+            })->implode(' ');
+
+            $relationsQuery = collect($chunk)->map(function($id) {
+                return ' from_id:'.$id. ' to_id:'. $id;
+            })->implode(' ');
+
+            // delete from the solr index
+            $result = $this->parent()->getCI()->solr->init()
+                ->setCore('portal')
+                ->deleteByQueryCondition($portalQuery);
+
+            $result = json_decode($result, true);
+            if (array_key_exists('error', $result)) {
+                $this->addError("unindexing failed ". $result['error']['msg']);
+            }
+
+            $result = $this->parent()->getCI()->solr->init()
+                ->setCore('relations')
+                ->deleteByQueryCondition($relationsQuery);
+
+            $result = json_decode($result, true);
+            if (array_key_exists('error', $result)) {
+                $this->addError("unindexing failed ". $result['error']['msg']);
+            }
+        }
+
+        $this->parent()->getCI()->solr->init()->setCore('portal')->commit();
+        $this->parent()->getCI()->solr->init()->setCore('relations')->commit();
     }
 }

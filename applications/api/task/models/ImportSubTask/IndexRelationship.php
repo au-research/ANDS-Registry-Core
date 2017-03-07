@@ -54,10 +54,36 @@ class IndexRelationship extends ImportSubTask
                 $allRelationships = RelationshipProvider::getMergedRelationships($record);
 
                 // update portal index
-                $this->updatePortalIndex($record, $allRelationships);
+                try {
+                    $this->updatePortalIndex($record, $allRelationships);
+                } catch (\Exception $e) {
+                    $message = $e->getMessage();
+                    if ($message == "") {
+                        $trace = $e->getTrace();
+                        $first = array_shift($trace);
+                        $message = implode(' ', $first['args']);
+                        $this->addError($message);
+                    } else {
+                        $this->addError($message);
+                    }
+
+                }
+
 
                 // update relation index
-                $this->updateRelationIndex($record, $allRelationships);
+                try {
+                    $this->updateRelationIndex($record, $allRelationships);
+                } catch (\Exception $e) {
+                    $message = $e->getMessage();
+                    if ($message == "") {
+                        $trace = $e->getTrace();
+                        $first = array_shift($trace);
+                        $message = implode(' ', $first['args']);
+                        $this->addError($message);
+                    } else {
+                        $this->addError($message);
+                    }
+                }
 
                 $this->updateProgress(
                     $index, $total, "Processed ($index/$total) $record->title($roID)"
@@ -99,6 +125,7 @@ class IndexRelationship extends ImportSubTask
             }
 
             $relationType = is_array($rel['relation_type']) ? $rel['relation_type'] : [$rel['relation_type']];
+            $relationType = collect($relationType)->flatten()->toArray();
             $updateDoc["related_".$class."_id"][] = $rel['to_id'];
             $updateDoc["related_".$class."_title"][] = $rel['to_title'];
             foreach ($relationType as $type) {
@@ -115,8 +142,6 @@ class IndexRelationship extends ImportSubTask
 
         $updateDoc['id'] = $record->registry_object_id;
 
-
-
         // relation_grants_isFundedBy
         // relation_grants_isOutputOf
         // relation_grants_isPartOf
@@ -129,6 +154,8 @@ class IndexRelationship extends ImportSubTask
                 $value = ["set" => $value];
             }
         }
+
+
 
         $result = $this->parent()->getCI()->solr->add_json(json_encode([$updateDoc]));
         $result = json_decode($result, true);
