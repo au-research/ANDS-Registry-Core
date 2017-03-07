@@ -286,6 +286,6 @@ class Relation
 
     public function isReverse()
     {
-        return strpos($this->prop('relation_origin'), "REVERSE") >= 0;
+        return strpos($this->prop('relation_origin'), "REVERSE") !== false;
     }
 }
