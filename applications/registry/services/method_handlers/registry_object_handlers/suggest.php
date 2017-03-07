@@ -97,6 +97,14 @@ class Suggest extends ROHandler {
         if (!$limit)
             $limit = 5;
 
+        // CC-1156. Removed related dataset in the fullSet
+        $relatedDatasets = $this->getRelatedDatasets($this->ro->id);
+        if (count($relatedDatasets) > 0) {
+            foreach ($relatedDatasets as $related) {
+                unset($fullSet[$related]);
+            }
+        }
+
         //if Limit is set to -1, return all
         if ($limit == -1) {
             $subSet = $fullSet;
@@ -126,5 +134,31 @@ class Suggest extends ROHandler {
 
         }
         return null;
+    }
+
+    private function getRelatedDatasets($id)
+    {
+        $ci =& get_instance();
+        $ci->load->library('solr');
+        $ci->solr
+            ->init()
+            ->setCore('relations')
+            ->setOpt('rows', 100)
+            ->setOpt('fq', '+from_id:'.$id)
+            ->setOpt('fl', 'to_id')
+            ->setOpt('fq', '+to_class:collection');
+
+        $solrResult = $ci->solr->executeSearch(true);
+
+        $result = [];
+
+        if ($solrResult && array_key_exists('response', $solrResult) && $solrResult['response']['numFound'] > 0) {
+            $result['count'] = $solrResult['response']['numFound'];
+            foreach ($solrResult['response']['docs'] as $doc) {
+                $results[] = $doc['to_id'];
+            }
+        }
+
+        return $result;
     }
 }
