@@ -198,6 +198,8 @@ class ScholixDocument
             }
         }
 
+        $str .= "<publicationDate>". $link['source']['publicationDate'] . "</publicationDate>";
+
         $str .= "</source>";
 
         // target
@@ -235,6 +237,8 @@ class ScholixDocument
                 $str .= "</creator>";
             }
         }
+
+        $str .= "<publicationDate>". $link['source']['publicationDate'] . "</publicationDate>";
 
         $str .= "</target>";
 
