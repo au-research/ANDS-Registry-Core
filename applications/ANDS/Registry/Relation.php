@@ -245,6 +245,32 @@ class Relation
     }
 
     /**
+     * Switch the to record out to another
+     * Mainly used for duplicate records
+     *
+     * @param RegistryObject $record
+     * @return static
+     */
+    public function switchToRecord(RegistryObject $record)
+    {
+        $relation = new static;
+        foreach ($this->getProperties() as $key => $value) {
+            // if it starts with from
+            if (strpos($key, 'to_') === 0) {
+                $keyValue = str_replace("to_", "", $key);
+                $replace = $record->getAttribute($keyValue);
+                if ($keyValue == "id") {
+                    $replace = $record->registry_object_id;
+                }
+                $relation->setProperty($key, $replace);
+            } else {
+                $relation->setProperty($key, $value);
+            }
+        }
+        return $relation;
+    }
+
+    /**
      * @return $this
      */
     public function getObjects()
