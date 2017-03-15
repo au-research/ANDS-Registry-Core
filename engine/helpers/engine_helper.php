@@ -705,21 +705,27 @@ function initEloquent() {
     $dotenv->load();
 
     $capsule = new \Illuminate\Database\Capsule\Manager;
-    $capsule->addConnection(
-        [
-            'driver' => 'mysql',
-            'host' => getenv("DB_HOSTNAME"),
-            'database' => env("DB_DATABASE", "dbs_registry"),
-            'username' => getenv("DB_USERNAME"),
-            'password' => getenv("DB_PASSWORD"),
-            'charset' => 'utf8',
-            'collation' => 'utf8_unicode_ci',
-            'prefix' => '',
-            'options'   => array(
-                \PDO::ATTR_PERSISTENT => true,
-            )
-        ], 'default'
-    );
+
+    $databases = require (dirname(__DIR__) . '/../config/database.php');
+    $default = $databases['default'];
+    foreach ($databases as $key => $db) {
+        $capsule->addConnection(
+            [
+                'driver' => 'mysql',
+                'host' => array_key_exists('hostname', $db) ? $db['hostname'] : $default['hostname'],
+                'database' => array_key_exists('database', $db) ? $db['database'] : "dbs_registry",
+                'username' => array_key_exists('username', $db) ? $db['username'] : $default['username'],
+                'password' => array_key_exists('password', $db) ? $db['password'] : $default['password'],
+                'charset' => 'utf8',
+                'collation' => 'utf8_general_ci',
+                'prefix' => '',
+                'options'   => array(
+                    \PDO::ATTR_PERSISTENT => true,
+                )
+            ], $key
+        );
+    }
+
     $capsule->setAsGlobal();
     $capsule->bootEloquent();
 }

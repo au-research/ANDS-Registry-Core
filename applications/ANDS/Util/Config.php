@@ -25,13 +25,13 @@ class Config
         }
 
         // name should now be the config name
-        $filePath = BASE . "config/$name.php";
+        $filePath = dirname(__DIR__) . "/../../config/$name.php";
 
         if (!file_exists($filePath)) {
             throw new \Exception("Configuration $name does not exists");
         }
 
-        $configuration = include(BASE . "config/$name.php");
+        $configuration = include(dirname(__DIR__) . "/../../config/$name.php");
 
         if ($config && array_key_exists($config, $configuration)) {
             return $configuration[$config];
