@@ -72,23 +72,16 @@ class ScholixProviderTest extends RegistryTestClass
             "AUTestingRecords2ScholixRecords18"
         ];
 
-        $shouldNotHave = [
-            "AUTestingRecords2ScholixRecords15"
-        ];
+        $partyRecordIdentifiers = collect($partyRecordIdentifiers)->pluck('value')->toArray();
 
         foreach ($shouldHave as $key) {
             $record = RegistryObjectsRepository::getPublishedByKey($key);
             $identifiers = ScholixProvider::getIdentifiers($record);
-            $this->assertEquals(count($identifiers), count($partyRecordIdentifiers));
+            foreach ($identifiers as $id) {
+                $this->assertContains($id['identifier'], $partyRecordIdentifiers);
+            }
         }
 
-        foreach ($shouldNotHave as $key) {
-            $record = RegistryObjectsRepository::getPublishedByKey($key);
-            $identifiers = ScholixProvider::getIdentifiers($record);
-            $this->assertNotEquals(count($identifiers), count($partyRecordIdentifiers));
-        }
-
-        $this->assertTrue(true);
     }
 
     /** @test **/
