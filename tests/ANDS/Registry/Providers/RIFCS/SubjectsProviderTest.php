@@ -11,7 +11,8 @@ class SubjectsProviderTest extends \RegistryTestClass
 {
     protected $requiredKeys = [
         "AUTCollectionToTestSearchFields37",
-        "AODN/073fde5a-bff3-1c1f-e053-08114f8c5588"
+        "AODN/073fde5a-bff3-1c1f-e053-08114f8c5588",
+        "1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn"
     ];
 
     /** @test **/
@@ -27,6 +28,7 @@ class SubjectsProviderTest extends \RegistryTestClass
     {
         $record = RegistryObjectsRepository::getPublishedByKey("AUTCollectionToTestSearchFields37");
         $resolved_subjects = SubjectProvider::processSubjects($record);
+      //  print_r($resolved_subjects);
         $this->assertArraySubset(['03'=>
             ['type' => 'anzsrc-for',
             'value' => '03',
@@ -38,10 +40,36 @@ class SubjectsProviderTest extends \RegistryTestClass
     {
         $record = RegistryObjectsRepository::getPublishedByKey("AODN/073fde5a-bff3-1c1f-e053-08114f8c5588");
         $resolved_subjects = SubjectProvider::processSubjects($record);
+       // dd($resolved_subjects);
         $this->assertArraySubset(['Earth Science | Atmosphere | Atmospheric Radiation | Solar Radiation'=>
-            ['type' => 'GCMD',
+            ['type' => 'gcmd',
                 'value' => 'Earth Science | Atmosphere | Atmospheric Radiation | Solar Radiation',
                 'resolved' => 'SOLAR RADIATION',
                 'uri' => 'http://gcmdservices.gsfc.nasa.gov/kms/concept/a0f3474e-9a54-4a82-97c4-43864b48df4c']], $resolved_subjects);
+    }
+
+    /** @test **/
+    public function it_should_get_the_notation_value_string_subjects()
+    {
+        $record = RegistryObjectsRepository::getPublishedByKey("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
+        $resolved_subjects = SubjectProvider::processSubjects($record);
+        $this->assertArraySubset(['1108' =>
+           ['type' => 'anzsrc-for',
+            'value' => '1108',
+            'resolved' => 'MEDICAL MICROBIOLOGY',
+            'uri' => 'http://purl.org/au-research/vocabulary/anzsrc-for/2008/1108']], $resolved_subjects);
+    }
+
+    /** @test **/
+    public function it_should_not_get_the_local_notation_mismatch_value_string_subjects()
+    {
+        $record = RegistryObjectsRepository::getPublishedByKey("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
+        $resolved_subjects = SubjectProvider::processSubjects($record);
+       // print_r($resolved_subjects);
+        $this->assertArraySubset(['1301 Medical Virology' =>
+            ['type' => 'local',
+                'value' => '1301 Medical Virology',
+                'resolved' => '1301 Medical Virology',
+                'uri' => '']], $resolved_subjects);
     }
 }
