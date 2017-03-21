@@ -27,7 +27,7 @@ class Subject_Extension extends ExtensionBase
         $portalConfigCategories = array(
             'keywords' => array(
                 'display' => 'Keywords',
-                'list' => array('anzlic-theme', 'australia', 'caab', 'external_territories', 'cultural_group', 'DEEDI eResearch Archive Subjects', 'ISO Keywords', 'iso639-3', 'keyword', 'Local', 'local', 'marlin_regions', 'marlin_subjects', 'ocean_and_sea_regions', 'person_org', 'states/territories', 'Subject Keywords')
+                'list' => array('anzlic-theme', 'australia', 'caab', 'external_territories', 'cultural_group', 'DEEDI eResearch Archive Subjects', 'ISO Keywords', 'keyword', 'Local', 'local', 'marlin_regions', 'marlin_subjects', 'ocean_and_sea_regions', 'person_org', 'states/territories', 'Subject Keywords')
             ),
             'scot' => array(
                 'display' => 'Schools of Online Thesaurus',
@@ -57,6 +57,10 @@ class Subject_Extension extends ExtensionBase
             'lcsh' => array(
                 'display' => 'LCSH',
                 'list' => array('lcsh')
+            ),
+            'iso639-3' => array(
+                'display' => 'iso639-3',
+                'list' => array('iso639-3')
             )
         );
 
