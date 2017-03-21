@@ -12,13 +12,13 @@ class SubjectsProviderTest extends \RegistryTestClass
     protected $requiredKeys = [
 //        "AUTCollectionToTestSearchFields37",
 //        "AODN/073fde5a-bff3-1c1f-e053-08114f8c5588",
-//        "1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn"
+       "1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn"
     ];
 
     /** @test **/
     public function it_should_get_the_subjects()
     {
-        $record = RegistryObjectsRepository::getPublishedByKey("AUTCollectionToTestSearchFields37");
+        $record = RegistryObjectsRepository::getPublishedByKey("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
         $subjects = SubjectProvider::getSubjects($record);
         $this->assertArraySubset(['0' => ['type' => 'local','value' => 'localSubject','uri' => '']], $subjects);
     }
@@ -26,7 +26,7 @@ class SubjectsProviderTest extends \RegistryTestClass
     /** @test **/
     public function it_should_get_the_resolved_subjects()
     {
-        $record = RegistryObjectsRepository::getPublishedByKey("AUTCollectionToTestSearchFields37");
+        $record = RegistryObjectsRepository::getPublishedByKey("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
         $resolved_subjects = SubjectProvider::processSubjects($record);
       //  print_r($resolved_subjects);
         $this->assertArraySubset(['03'=>
