@@ -68,7 +68,12 @@ class RegistryObjectGetCommand extends Command
                 $table->setHeaders(['key', 'value'])->setRows($rows)->render();
                 break;
             case "relationships":
-                var_dump(RelationshipProvider::getMergedRelationships($record));
+                $relationships = RelationshipProvider::getMergedRelationships($record);
+                $relationships = collect($relationships)->filter(function($relation) {
+                    return $relation->prop('to_id') == 902442;
+                })->toArray();
+                var_dump(array_shift($relationships)->getProperties());
+                var_dump($relationships);
                 break;
             case "relationships-count":
                 $count = count(RelationshipProvider::getMergedRelationships($record));
