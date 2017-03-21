@@ -47,7 +47,16 @@ class IndexPortal extends ImportSubTask
             $ro = $this->parent()->getCI()->ro->getByID($roID);
 
             // index without relationship data
-            $portalIndex = $ro->indexable_json(null, []);
+            try {
+                $portalIndex = $ro->indexable_json(null, []);
+            } catch (\Exception $e) {
+                $msg = $e->getMessage();
+                if (!$msg) {
+                    $msg = implode(" ", array_first($e->getTrace())['args']);
+                }
+                $this->addError("Error indexing $ro->id : $msg");
+            }
+
             if (count($portalIndex) > 0) {
                 // TODO: Check response
                 $this->parent()->getCI()->solr->init()->setCore('portal');

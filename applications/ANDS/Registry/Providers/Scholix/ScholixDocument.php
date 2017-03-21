@@ -198,7 +198,9 @@ class ScholixDocument
             }
         }
 
-        $str .= "<publicationDate>". $link['source']['publicationDate'] . "</publicationDate>";
+        if (array_key_exists('publicationDate', $link['target'])) {
+            $str .= "<publicationDate>" . $link['source']['publicationDate'] . "</publicationDate>";
+        }
 
         $str .= "</source>";
 
@@ -238,7 +240,9 @@ class ScholixDocument
             }
         }
 
-        $str .= "<publicationDate>". $link['source']['publicationDate'] . "</publicationDate>";
+        if (array_key_exists('publicationDate', $link['target'])) {
+            $str .= "<publicationDate>" . $link['target']['publicationDate'] . "</publicationDate>";
+        }
 
         $str .= "</target>";
 
