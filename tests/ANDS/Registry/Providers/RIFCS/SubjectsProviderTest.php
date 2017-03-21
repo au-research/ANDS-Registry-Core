@@ -10,9 +10,9 @@ use ANDS\Repository\RegistryObjectsRepository;
 class SubjectsProviderTest extends \RegistryTestClass
 {
     protected $requiredKeys = [
-        "AUTCollectionToTestSearchFields37",
-        "AODN/073fde5a-bff3-1c1f-e053-08114f8c5588",
-        "1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn"
+//        "AUTCollectionToTestSearchFields37",
+//        "AODN/073fde5a-bff3-1c1f-e053-08114f8c5588",
+//        "1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn"
     ];
 
     /** @test **/
@@ -51,6 +51,7 @@ class SubjectsProviderTest extends \RegistryTestClass
     /** @test **/
     public function it_should_get_the_notation_value_string_subjects()
     {
+        $this->ensureKeyExist("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
         $record = RegistryObjectsRepository::getPublishedByKey("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
         $resolved_subjects = SubjectProvider::processSubjects($record);
         $this->assertArraySubset(['1108' =>
@@ -63,6 +64,7 @@ class SubjectsProviderTest extends \RegistryTestClass
     /** @test **/
     public function it_should_not_get_the_local_notation_mismatch_value_string_subjects()
     {
+        $this->ensureKeyExist("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
         $record = RegistryObjectsRepository::getPublishedByKey("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
         $resolved_subjects = SubjectProvider::processSubjects($record);
        // print_r($resolved_subjects);
@@ -71,5 +73,19 @@ class SubjectsProviderTest extends \RegistryTestClass
                 'value' => '1301 Medical Virology',
                 'resolved' => '1301 Medical Virology',
                 'uri' => '']], $resolved_subjects);
+    }
+
+    /** @test **/
+    public function it_should_resolve_the_iso639_notation()
+    {
+        $this->ensureKeyExist("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
+        $record = RegistryObjectsRepository::getPublishedByKey("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
+        $resolved_subjects = SubjectProvider::processSubjects($record);
+        // print_r($resolved_subjects);
+        $this->assertArraySubset(['tpi' =>
+            ['type' => 'iso639-3',
+                'value' => 'tpi',
+                'resolved' => 'Tok Pisin',
+                'uri' => 'http://lexvo.org/id/iso639-3/tpi']], $resolved_subjects);
     }
 }

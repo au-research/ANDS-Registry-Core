@@ -81,6 +81,7 @@ class SubjectProvider implements RIFCSProvider
         $subjectsResolved = array();
 
         foreach ($subjects AS $subject) {
+            $uri='';
             $type = $subject["type"];
             $value = (string)($subject['value']);
             $uri = $subject['uri'];
@@ -92,40 +93,41 @@ class SubjectProvider implements RIFCSProvider
                 $search_value = self::formatSearchString($value);
                 //  $label_search_value = self::suspectAnzsrc($value);
                 //  if(!is_numeric($search_value)) $search_extra = ' + label_s:('.$search_value.') ^5';
-                $solrResult = $solrClient->search([
-                    'q' => $search_value,
-                    'fl' => '* , score',
-                    'sort' => 'score desc',
-                ]);
+                  $solrResult = $solrClient->search([
+                      'q' => $search_value,
+                      'fl' => '* , score',
+                      'sort' => 'score desc',
+                  ]);
+
 
                 if ($solrResult->getNumFound() > 0) {
                     $result = $solrResult->getDocs();
                     $top_response = $result[0];
-                    $resolved_type = $top_response->type[0];
-                    $resolved_value = $top_response->label[0];
-                    $uri = $top_response->iri[0];
-                    $score = $top_response->score;
-                    $values = $top_response->toArray();
+
                     $new_value =  array_key_exists('notation_s', $values) ? $top_response->notation_s : $value;
                     $positive_hit = self::checkResult($top_response, $subject, $new_value);
                 }
 
                 if ($positive_hit && !array_key_exists($new_value, $subjectsResolved)) {
-
-                    $subjectsResolved[$new_value] = array('type' => $resolved_type, 'value' => $new_value, 'resolved' => $resolved_value, 'uri' => $uri, 'score' => $score);
-                    if ($top_response->broader_labels_ss) {
+                    $uri = $top_response->iri[0];
+                    $resolved_type = $top_response->type[0];
+                    $resolved_value = $top_response->label[0];
+                    $score = $top_response->score;
+                    $values = $top_response->toArray();
+                    $subjectsResolved[$new_value] = array('type' => $resolved_type, 'value' => $new_value." a positive hit", 'resolved' => $resolved_value, 'uri' => $uri);
+                    if (array_key_exists('broader_labels_ss', $values)) {
                         array_key_exists('broader_notations_ss', $values) ? $index = $top_response->broader_notations_ss : $index = $top_response->broader_labels_ss;
                         for ($i = 0; $i < count($top_response->broader_labels_ss); $i++) {
                             $subjectsResolved[$index[$i]] = array(
                                 'type' => $resolved_type,
-                                'value' => $index[$i],
+                                'value' => $index[$i]." a broader one",
                                 'resolved' => $top_response->broader_labels_ss[$i],
                                 'uri' => $top_response->broader_iris_ss[$i]
                             );
                         }
                     }
                 } else if (!$positive_hit) {
-                    $subjectsResolved[$value] = array('type' => $type, 'value' => $value, 'resolved' => $value, 'uri' => $subject['uri']);
+                    $subjectsResolved[$value] = array('type' => $type, 'value' => $value, 'resolved' => $value, 'uri' => $uri);
                 }
             }
         }
@@ -143,7 +145,7 @@ class SubjectProvider implements RIFCSProvider
 
         $search_string = $string;
 
-        if (is_numeric($search_string)) return $search_string;
+        //if (is_numeric($search_string)) return $search_string;
 
         // determine if string has a preceding numeric notation before the prefLabel then don't quote the search string
         $notation = explode(" ", $string);
@@ -156,9 +158,11 @@ class SubjectProvider implements RIFCSProvider
         $search_string = str_replace("&", "", $search_string);
         $search_string = str_replace("(", "", $search_string);
         $search_string = str_replace(")", "", $search_string);
+        $search_string = str_replace(":", "", $search_string);
+        $search_string = str_replace(";", "", $search_string);
 
         // quote the search string so solr reserved characters don't break the solr query
-        return 'label_s:("' . $search_string . '") ^5 + "' . $search_string . '"';
+        return 'label_s:("' . $search_string . '") ^5 + notation_s:"' . $search_string . '" ^5 + "'.$search_string.'"' ;
     }
 
     /**
