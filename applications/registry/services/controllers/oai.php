@@ -116,13 +116,13 @@ class Oai extends MX_Controller
 			catch (OAI_Exceptions $e)
 			{
 				$this->_do_error($e->oai_code(),
-						 $e->getMessage());
+						 get_exception_msg($e));
 				return;
 			}
 			catch (Exception $ee)
 			{
 				$this->_do_error(Oai::ERROR,
-						 $ee->getMessage());
+						 get_exception_msg($ee));
 				return;
 			}
 
@@ -134,12 +134,12 @@ class Oai extends MX_Controller
 			catch (Oai_Exceptions $oai_error)
 			{
 				$this->_do_error($oai_error->oai_code(),
-						 $oai_error->getMessage());
+						 get_exception_msg($oai_error));
 				return;
 			}
 			catch (Exception $error)
 			{
-				$this->_do_error(Oai::ERROR, $error->getMessage());
+				$this->_do_error(Oai::ERROR, get_exception_msg($error));
 				return;
 			}
 		}

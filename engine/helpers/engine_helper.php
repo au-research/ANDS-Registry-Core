@@ -256,18 +256,22 @@ function default_exception_handler( $e ) {
 
     echo $_ci->load->view( 'header' , $data , true);
 
-   	echo $_ci->load->view( 'exception' , array("message" => $e->getMessage()) , true );
+   	echo $_ci->load->view( 'exception' , array("message" => get_exception_msg($e)) , true );
 
     echo $_ci->load->view( 'footer' , $data , true);
+}
+
+function get_exception_msg(Exception $e) {
+    $msg = $e->getMessage();
+    if (!$msg) {
+       return implode(" ", array_first($e->getTrace())['args']);
+    }
+    return $msg;
 }
 set_exception_handler('default_exception_handler');
 
 function json_exception_handler( Exception $e ) {
-    $msg = $e->getMessage();
-    if (!$msg) {
-        $msg = implode(" ", array_first($e->getTrace())['args']);
-    }
-    echo json_encode(array("status"=>"ERROR", "message"=> $msg));
+    echo json_encode(array("status"=>"ERROR", "message"=> get_exception_msg($e)));
 }
 
 function json_error_handler($errno, $errstr, $errfile, $errline) {
