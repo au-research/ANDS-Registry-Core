@@ -37,10 +37,10 @@ class Suggest extends ROHandler {
                 'boost' => 0.1,
                 'handler' => 'tags'
             ],
-            'user_view_behavior' => [
-                'boost' => 0.5,
-                'handler' => 'user_view_behavior'
-            ]
+//            'user_view_behavior' => [
+//                'boost' => 0.5,
+//                'handler' => 'user_view_behavior'
+//            ]
         ];
 
         //populate the pool with the different suggestors
