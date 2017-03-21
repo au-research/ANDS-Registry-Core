@@ -262,8 +262,12 @@ function default_exception_handler( $e ) {
 }
 set_exception_handler('default_exception_handler');
 
-function json_exception_handler( $e ) {
-    echo json_encode(array("status"=>"ERROR", "message"=> $e->getMessage()));
+function json_exception_handler( Exception $e ) {
+    $msg = $e->getMessage();
+    if (!$msg) {
+        $msg = implode(" ", array_first($e->getTrace())['args']);
+    }
+    echo json_encode(array("status"=>"ERROR", "message"=> $msg));
 }
 
 function json_error_handler($errno, $errstr, $errfile, $errline) {
