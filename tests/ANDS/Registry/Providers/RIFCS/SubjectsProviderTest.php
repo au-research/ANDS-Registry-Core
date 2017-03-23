@@ -36,7 +36,7 @@ class SubjectsProviderTest extends \RegistryTestClass
             'uri' => 'http://purl.org/au-research/vocabulary/anzsrc-for/2008/03']], $resolved_subjects);
     } */
     /** @test **/
-  /*  public function it_should_get_the_non_notation_subjects()
+    public function it_should_get_the_non_notation_subjects()
     {
         $record = RegistryObjectsRepository::getPublishedByKey("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
         $resolved_subjects = SubjectProvider::processSubjects($record);
@@ -46,7 +46,7 @@ class SubjectsProviderTest extends \RegistryTestClass
                 'value' => 'Earth Science | Atmosphere | Atmospheric Radiation | Solar Radiation',
                 'resolved' => 'SOLAR RADIATION',
                 'uri' => 'http://gcmdservices.gsfc.nasa.gov/kms/concept/a0f3474e-9a54-4a82-97c4-43864b48df4c']], $resolved_subjects);
-    } */
+    }
 
     /** @test **/
   /*  public function it_should_get_the_notation_value_string_subjects()
@@ -81,7 +81,7 @@ class SubjectsProviderTest extends \RegistryTestClass
         $this->ensureKeyExist("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
         $record = RegistryObjectsRepository::getPublishedByKey("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
         $resolved_subjects = SubjectProvider::processSubjects($record);
-        // print_r($resolved_subjects);
+         //print_r($resolved_subjects);
          $this->assertArraySubset(['tpi' =>
             ['type' => 'iso639-3',
                 'value' => 'tpi',
