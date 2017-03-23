@@ -55,6 +55,10 @@ class JSONNOHEADERInterface extends FormatHandler
 
         $ci = &get_instance();
 
+        if (!is_array($payload) && is_string($payload)) {
+            $payload = [$payload];
+        }
+
         $terms = array_merge(array('event'=>'api_error'), $payload);
         api_log_terms($terms);
 
