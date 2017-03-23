@@ -163,8 +163,12 @@ class DatasourcesHandler extends Handler
         // import records from url provided in GET or POST
         // POST api/registry/datasources/:id/records
         if ($this->isPost()) {
+            if (!array_key_exists('url', $this->input)) {
+                throw new Exception("Missing url. Input: " . implode(', ', array_keys($this->input)));
+            }
             $url = $this->input['url'];
             $content = @file_get_contents($url);
+
             $batchID = "MANUAL-URL-".str_slug($url).'-'.time();
             Payload::write($dataSource->data_source_id, $batchID, $content);
             $task =  Importer::instantImportRecordFromBatchID($dataSource, $batchID);
