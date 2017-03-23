@@ -327,8 +327,8 @@ class Statistics extends MX_Controller
                 $pids_statistics[$month . " - " . $theYear]['PIDs Minted'] = $row->thecount;
             }
 
-            $query = $doi_db->query("SELECT COUNT(DISTINCT(app_id)) as thecount FROM trusted_client
-			WHERE created_when <  CAST('" . date("Y-m-d", $newMonth) . "' AS timestamp with time zone)");
+            $query = $doi_db->query("SELECT COUNT(DISTINCT(app_id)) as thecount FROM trusted_client WHERE created_when <  " . date("Y-m-d", $newMonth));
+
             foreach ($query->result() as $key => $row) {
                 $month = date("M", $newMonth);
                 $pids_statistics[$month . " - " . $theYear]['Registered Clients'] = $row->thecount;
