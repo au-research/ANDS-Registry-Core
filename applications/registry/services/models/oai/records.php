@@ -28,6 +28,7 @@ class Records extends CI_Model
         $args["allowedClass"] = false;
         $args['allowedType'] = false;
         $args['attributeExist'] = false;
+        $args['hasAttribute'] = false;
 		$count = '';
         $batch_size = 100;
         $ro_count = 0;

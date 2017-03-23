@@ -14,11 +14,12 @@ class _mydois extends CI_Model
 		parent::__construct();
 		$this->_CI =& get_instance();
 		$this->doi_db = $this->load->database('dois', TRUE);
-		$this->DOI_SERVICE_BASE_URI = $this->_CI->config->item('gDOIS_SERVICE_BASE_URI');	
-		$this->DOIS_DATACENTRE_NAME_PREFIX = $this->_CI->config->item('gDOIS_DATACENTRE_NAME_PREFIX');
-		$this->DOIS_DATACENTRE_NAME_MIDDLE = $this->_CI->config->item('gDOIS_DATACENTRE_NAME_MIDDLE');
-		$this->DOIS_DATACENTRE_PREFIXS = $this->_CI->config->item('gDOIS_DATACENTRE_PREFIXS');
-		$this->gDefaultBaseUrl = $this->_CI->config->item('default_base_url');
+		$config = \ANDS\Util\Config::get('datacite');
+		$this->DOI_SERVICE_BASE_URI = $config['base_url'];
+		$this->DOIS_DATACENTRE_NAME_PREFIX = $config['name_prefix'];
+		$this->DOIS_DATACENTRE_NAME_MIDDLE = $config['name_middle'];
+		$this->DOIS_DATACENTRE_PREFIXS = $config['prefixs'];
+		$this->gDefaultBaseUrl = get_config_item('default_base_url');
 	}
 
 	function getTrustedClients(){

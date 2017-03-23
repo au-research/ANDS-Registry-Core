@@ -26,5 +26,8 @@ return [
     ],
     'portal' => [
         'database' => 'dbs_portal'
+    ],
+    'pids' => [
+        'database' => 'dbs_pids'
     ]
 ];
