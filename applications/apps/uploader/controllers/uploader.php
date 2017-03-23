@@ -58,9 +58,9 @@ class Uploader extends MX_Controller {
 		else
 		{
 			// Create the compressed copy of the image based on a hash of the uploaded filename
-			$upload_result = $this->upload->data();
-			$image = new Imagick(  $this->directory . $upload_result['file_name'] );
-			$image->setBackgroundColor(new ImagickPixel('white'));
+//			$upload_result = $this->upload->data();
+//			$image = new IMagick(  $this->directory . $upload_result['file_name'] );
+//			$image->setBackgroundColor(new ImagickPixel('white'));
 			// Create the optimised image
 			// "bestfit" param will ensure that the image is downscaled proportionally if needed
 			// if ($image->getImageWidth() >= $image->getImageHeight() 
@@ -73,18 +73,18 @@ class Uploader extends MX_Controller {
 			// 	$image->resizeImage(self::IMAGE_PORTRAIT_WIDTH,self::IMAGE_PORTRAIT_HEIGHT, Imagick::FILTER_LANCZOS, 1, true);
 			// }
 
-			$flattened = new IMagick();
-			$flattened->newImage($image->getImageWidth(), $image->getImageHeight(), new ImagickPixel("white"));
-			$flattened->compositeImage($image, imagick::COMPOSITE_OVER, 0, 0);
-			$flattened->setImageFormat("jpg");
-			$flattened->setImageCompression(Imagick::COMPRESSION_JPEG);
-			// $flattened->setCompression(Imagick::COMPRESSION_JPEG);
-			// $flattened->setCompressionQuality(self::COMPRESSION_PERCENTAGE); 
-			$flattened->writeImage($this->directory . 'img_' . md5($upload_result['file_name']) . ".jpg");
-			$flattened->clear();
-			$flattened->destroy();
-			$image->clear();
-			$image->destroy();
+//			$flattened = new IMagick();
+//			$flattened->newImage($image->getImageWidth(), $image->getImageHeight(), new ImagickPixel("white"));
+//			$flattened->compositeImage($image, imagick::COMPOSITE_OVER, 0, 0);
+//			$flattened->setImageFormat("jpg");
+//			$flattened->setImageCompression(Imagick::COMPRESSION_JPEG);
+//			// $flattened->setCompression(Imagick::COMPRESSION_JPEG);
+//			// $flattened->setCompressionQuality(self::COMPRESSION_PERCENTAGE);
+//			$flattened->writeImage($this->directory . 'img_' . md5($upload_result['file_name']) . ".jpg");
+//			$flattened->clear();
+//			$flattened->destroy();
+//			$image->clear();
+//			$image->destroy();
 
 			$data['success_message'] = "File successfully uploaded!";
 			$data['recent_uploads'] = $this->getRecentUploads();
@@ -115,10 +115,12 @@ class Uploader extends MX_Controller {
 			// Do not list optimised files (i.e. those starting with FILE_PREFIX)
 			if (!is_array($file) && strpos($file, self::FILE_PREFIX) !== 0)
 			{
-				$return_map[] = array(	'date_modified' => filemtime($this->directory . $file),
-										'filename' => $file,
-										'optimised_filename' => self::FILE_PREFIX . md5($file) . self::FILE_SUFFIX);
-			}
+				$return_map[] = [
+                    'date_modified' => filemtime($this->directory . $file),
+                    'filename' => $file,
+                    'optimised_filename' => $file
+                ];
+            }
 		}
 
 		// Sort by date order and take the most recent 30 files

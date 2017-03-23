@@ -6,6 +6,7 @@
 
 namespace ANDS\API;
 
+use ANDS\Util\Config;
 use \Exception as Exception;
 
 
@@ -65,10 +66,28 @@ class Status_api
     private function report()
     {
         $result = [
+            'database' => $this->getDatabaseStatus(),
             'harvester' => $this->getDaemonStatus('harvester'),
             'task' => $this->getDaemonStatus('task'),
             'solr' => $this->getSOLRStatus() ? array_merge($this->getSOLRStatus(), ['RUNNING'=>true]) : ['RUNNING'=>false]
         ];
+        return $result;
+    }
+
+    private function getDatabaseStatus()
+    {
+        $capsule = new \Illuminate\Database\Capsule\Manager;
+        $config = Config::get('database');
+        $result = [];
+        foreach ($config as $key => $value) {
+            $result[$key] = true;
+            try {
+                $capsule->getConnection('default');
+            } catch (\Exception $e) {
+                $result[$key] = false;
+            }
+        }
+
         return $result;
     }
 
@@ -81,19 +100,30 @@ class Status_api
      */
     private function getDaemonStatus($daemon)
     {
+        $status = false;
         if ($daemon == 'harvester') {
             $query = $this->db->get_where('configs', ['key' => 'harvester_status']);
             $queryResult = $query->first_row();
-            $status = json_decode($queryResult->value, true);
+            if ($queryResult) {
+                $status = json_decode($queryResult->value, true);
+            }
         } elseif ($daemon == 'task') {
             $query = $this->db->get_where('configs', ['key' => 'tasks_daemon_status']);
             $queryResult = $query->first_row();
-            $status = json_decode($queryResult->value, true);
+            if ($queryResult) {
+                $status = json_decode($queryResult->value, true);
+            }
         } else {
             $status = false;
         }
 
-        if (!$status) throw new Exception ('No status found for ' . $daemon . ' daemon');
+        if (!$status) {
+            return [
+                'msg' => 'no status available',
+                'lastReport' => 'never',
+                'RUNNING' => false
+            ];
+        }
 
         $lastReportSince = (int) $status['last_report_timestamp'];
         $lastReport = (time() - $lastReportSince);
