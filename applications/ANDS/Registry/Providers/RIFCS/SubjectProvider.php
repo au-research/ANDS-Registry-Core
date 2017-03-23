@@ -81,7 +81,7 @@ class SubjectProvider implements RIFCSProvider
         $subjectsResolved = array();
 
         foreach ($subjects AS $subject) {
-            $uri='';
+            //$uri='';
             $type = $subject["type"];
             $value = (string)($subject['value']);
             $uri = $subject['uri'];
@@ -109,6 +109,7 @@ class SubjectProvider implements RIFCSProvider
                 }
 
                 if ($positive_hit && !array_key_exists($new_value, $subjectsResolved)) {
+                    $uri = '';
                     $uri = $top_response->iri[0];
                     $resolved_type = $top_response->type[0];
                     $resolved_value = $top_response->label[0];
@@ -127,7 +128,7 @@ class SubjectProvider implements RIFCSProvider
                         }
                     }
                 } else if (!$positive_hit) {
-                    $subjectsResolved[$value] = array('type' => $type, 'value' => $value, 'resolved' => $value, 'uri' => $uri);
+                    $subjectsResolved[$value] = array('type' => $type, 'value' => $value, 'resolved' => $value, 'uri' => $subject['uri']);
                 }
             }
         }
@@ -144,6 +145,7 @@ class SubjectProvider implements RIFCSProvider
     {
 
         $search_string = $string;
+        $label_string = $string;
 
         //if (is_numeric($search_string)) return $search_string;
 
@@ -161,8 +163,22 @@ class SubjectProvider implements RIFCSProvider
         $search_string = str_replace(":", "", $search_string);
         $search_string = str_replace(";", "", $search_string);
 
+
+        //determine the actual final term of a gcmd value
+
+        $multi_value = explode("|", $string);
+        if (count($multi_value) > 1) {
+            return 'label_s:("' . strtoupper(trim(array_pop($multi_value))) . '") ^5 + search_labels_string_s:' . $search_string . ' OR "' . $search_string . '"';
+        }
+
+        $multi_value = explode("&gt;",$string);
+        if (count($multi_value) > 1) {
+            return 'label_s:("' . strtoupper(trim(array_pop($multi_value)))  . '") ^5 + search_labels_string_s:' . $search_string . ' OR "' . $search_string . '"';
+        }
+
+
         // quote the search string so solr reserved characters don't break the solr query
-        return 'label_s:("' . $search_string . '") ^5 + notation_s:"' . $search_string . '" ^5 + "'.$search_string.'"' ;
+        return 'label_s:("' . $label_string . '") ^5 + notation_s:"' . $search_string . '" ^5 + "'.$search_string.'"' ;
     }
 
     /**
