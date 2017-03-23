@@ -13,6 +13,7 @@ use ANDS\Payload;
 use ANDS\Registry\Importer;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
+use ANDS\Util\Config;
 use \Exception as Exception;
 
 /**
@@ -354,7 +355,7 @@ class DatasourcesHandler extends Handler
      */
     public function verifyAuth()
     {
-        $whitelist = get_config_item('api_whitelist_ip');
+        $whitelist = Config::get('app.api_whitelist_ip');
 
         if (!$whitelist) {
             throw new Exception("Whitelist IP not configured properly. This operation is unsafe.");
