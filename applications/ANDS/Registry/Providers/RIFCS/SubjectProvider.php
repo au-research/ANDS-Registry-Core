@@ -19,7 +19,8 @@ use ANDS\Util\XMLUtil;
  */
 class SubjectProvider implements RIFCSProvider
 {
-
+    public static $RESOLVABLE = ['anzsrc', 'anzsrc-for', 'anzsrc-seo',
+        'gcmd', 'iso639-3','local'];
 
     public static function process(RegistryObject $record)
     {
@@ -81,24 +82,20 @@ class SubjectProvider implements RIFCSProvider
         $subjectsResolved = array();
 
         foreach ($subjects AS $subject) {
-            //$uri='';
+
             $type = $subject["type"];
             $value = (string)($subject['value']);
-            $uri = $subject['uri'];
             $positive_hit = false;
-            $search_extra = '';
             $score = 0;
 
             if (!array_key_exists((string)$value, $subjectsResolved)) {
-                $search_value = self::formatSearchString($value);
-                //  $label_search_value = self::suspectAnzsrc($value);
-                //  if(!is_numeric($search_value)) $search_extra = ' + label_s:('.$search_value.') ^5';
-                  $solrResult = $solrClient->search([
-                      'q' => $search_value,
-                      'fl' => '* , score',
-                      'sort' => 'score desc',
-                  ]);
+                $search_value = self::formatSearchString($value,strtolower($type));
 
+                $solrResult = $solrClient->search([
+                    'q' => $search_value,
+                    'fl' => '* , score',
+                    'sort' => 'score desc',
+                ]);
 
                 if ($solrResult->getNumFound() > 0) {
                     $result = $solrResult->getDocs();
@@ -108,14 +105,13 @@ class SubjectProvider implements RIFCSProvider
                     $positive_hit = self::checkResult($top_response, $subject, $new_value);
                 }
 
-                if ($positive_hit && !array_key_exists($new_value, $subjectsResolved)) {
-                    $uri = '';
-                    $uri = $top_response->iri[0];
+                if (in_array(strtolower($type), self::$RESOLVABLE) && $positive_hit && !array_key_exists($new_value, $subjectsResolved)) {
+                    $resolved_uri = $top_response->iri[0];
                     $resolved_type = $top_response->type[0];
                     $resolved_value = $top_response->label[0];
                     $score = $top_response->score;
 
-                    $subjectsResolved[$new_value] = array('type' => $resolved_type, 'value' => $new_value, 'resolved' => $resolved_value, 'uri' => $uri);
+                    $subjectsResolved[$new_value] = array('type' => $resolved_type, 'value' => $new_value, 'resolved' => $resolved_value, 'uri' => $resolved_uri);
                     if (array_key_exists('broader_labels_ss', $values)) {
                         array_key_exists('broader_notations_ss', $values) ? $index = $top_response->broader_notations_ss : $index = $top_response->broader_labels_ss;
                         for ($i = 0; $i < count($top_response->broader_labels_ss); $i++) {
@@ -127,8 +123,13 @@ class SubjectProvider implements RIFCSProvider
                             );
                         }
                     }
-                } else if (!$positive_hit) {
-                    $subjectsResolved[$value] = array('type' => $type, 'value' => $value, 'resolved' => $value, 'uri' => $subject['uri']);
+
+                } else if (!$positive_hit || !in_array(strtolower($type), self::$RESOLVABLE)) {
+                    //no match or a very loose match was found so it is not a gcmd vocab
+                    if(strtolower($type) =='gcmd' || strtolower($type) == 'anzsrc-for' || strtolower($type) == 'anzsrc-seo' ) $type = 'local';
+
+                    $uri= $subject['uri']? $subject['uri'] : " ";
+                    $subjectsResolved[$value] = array('type' => $type, 'value' => $value, 'resolved' => $value, 'uri' => $uri );
                 }
             }
         }
@@ -141,13 +142,11 @@ class SubjectProvider implements RIFCSProvider
      * @param $string
      * @return string
      */
-    public static function formatSearchString($string)
+    public static function formatSearchString($string,$type)
     {
 
         $search_string = $string;
         $label_string = $string;
-
-        //if (is_numeric($search_string)) return $search_string;
 
         // determine if string has a preceding numeric notation before the prefLabel then don't quote the search string
         $notation = explode(" ", $string);
@@ -166,16 +165,8 @@ class SubjectProvider implements RIFCSProvider
 
         //determine the actual final term of a gcmd value
 
-        $multi_value = explode("|", $string);
-        if (count($multi_value) > 1) {
-            return 'label_s:("' . strtoupper(trim(array_pop($multi_value))) . '") ^5 + search_labels_string_s:' . $search_string . ' OR "' . $search_string . '"';
-        }
-
-        $multi_value = explode("&gt;",$string);
-        if (count($multi_value) > 1) {
-            return 'label_s:("' . strtoupper(trim(array_pop($multi_value)))  . '") ^5 + search_labels_string_s:' . $search_string . ' OR "' . $search_string . '"';
-        }
-
+        if(self::isMultiValue($string) && ($type=='gcmd'||$type=='local'))
+            return 'label_s:("' . strtoupper(self::getNarrowestConcept($string)) . '") ^5 + search_labels_string_s:' . $search_string . ' OR "' . $search_string . '"';
 
         // quote the search string so solr reserved characters don't break the solr query
         return 'label_s:("' . $label_string . '") ^5 + notation_s:"' . $search_string . '" ^5 + "'.$search_string.'"' ;
@@ -187,10 +178,12 @@ class SubjectProvider implements RIFCSProvider
      * @param $resolved $subject
      * @return boolean
      */
+
     public static function checkResult($resolved, $subject,$notation_value )
     {
 
         $value = $subject['value'];
+        $type = strtolower($subject['type']);
 
         // if this could be a numeric notation preceding a resolved value - strip off the notation and check the resolved value
         // if the resolved type is the same as the supplied type disregard any discrepancy in the supplied numeric notation
@@ -205,18 +198,12 @@ class SubjectProvider implements RIFCSProvider
         }
 
         // if this is a concatenated gcmd value strip off the final subject value to check resolved value
-        if ($resolved->type[0] == 'gcmd') {
-            $multi_value_1 = explode("|", $subject['value']);
-            if (count($multi_value_1 > 1)) $value = trim($multi_value_1[count($multi_value_1) - 1]);
+        if ($resolved->type[0] == 'gcmd' && self::isMultiValue($subject['value']))
+            $value = self::getNarrowestConcept($subject['value']);
 
-            $multi_value_2 = explode("&gt;", $subject['value']);
-            if (count($multi_value_2 > 1)) $value = trim($multi_value_2[count($multi_value_2) - 1]);
-        }
 
         // if we have a direct value string check the resolved value
-        if (strtoupper($value) == strtoupper($resolved->label[0])) {
-            return true;
-        }
+        if (strtoupper($value) == strtoupper($resolved->label[0]))  return true;
 
         // determine threshold of appropriate match for all other cases
         if ($resolved->score < 0.3) {
@@ -224,6 +211,41 @@ class SubjectProvider implements RIFCSProvider
         }
 
         return true;
+    }
+
+    /**
+     * determine if the provided value is a concatenated concepts string of concepts
+     *
+     * @param $string
+     * @return boolean
+     */
+    public static function isMultiValue($string)
+    {
+
+        $multi_value = explode("|", $string);
+        if (count($multi_value) > 1)  return true;
+
+        $multi_value = explode("&gt;",$string);
+        if (count($multi_value) > 1) return true;
+
+        return false;
+    }
+
+    /**
+     * determine narrowest concept of a concatenated concepts string of concepts
+     *
+     * @param $string
+     * @return string
+     */
+    public static function getNarrowestConcept($string)
+    {
+
+        $multi_value = explode("|", $string);
+        if (count($multi_value) > 1)  return trim(array_pop($multi_value));
+
+        $multi_value = explode("&gt;",$string);
+        if (count($multi_value) > 1) return trim(array_pop($multi_value));
+
     }
 }
 ?>
