@@ -114,6 +114,7 @@ class Hybrid_Provider_Adapter
 		# get hybridauth base url
 		$HYBRID_AUTH_URL_BASE = Hybrid_Auth::$config["base_url"];
 
+
 		# we make use of session_id() as storage hash to identify the current user
 		# using session_regenerate_id() will be a problem, but ..
 		$this->params["hauth_token"] = session_id();
