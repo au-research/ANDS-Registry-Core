@@ -54,19 +54,25 @@ class IndexPortal extends ImportSubTask
                 if (!$msg) {
                     $msg = implode(" ", array_first($e->getTrace())['args']);
                 }
-                $this->addError("Error indexing $ro->id : $msg");
+                $this->addError("Error getting portalIndex for $ro->id : $msg");
             }
 
             if (count($portalIndex) > 0) {
                 // TODO: Check response
                 $this->parent()->getCI()->solr->init()->setCore('portal');
                 $this->parent()->getCI()->solr->deleteByID($roID);
-                $this->parent()->getCI()->solr->commit();
+//                $this->parent()->getCI()->solr->commit();
                 $result = $this->parent()->getCI()
                     ->solr->add_json(json_encode(
                         ['add' => ["doc" => $portalIndex]]
                     ));
                 $result = json_decode($result, true);
+
+                if ($result === null) {
+                    $this->addError("portal for $ro->id failed : unknown reason");
+                    continue;
+                }
+
                 if (array_key_exists('error', $result)) {
                     $this->addError("portal for $ro->id: ". $result['error']['msg']);
                 }
@@ -80,5 +86,7 @@ class IndexPortal extends ImportSubTask
         if (array_key_exists('error', $result)) {
             $this->addError("commit: ". $result['error']['msg']);
         }
+
+        $this->log("Finished Indexing $total records");
     }
 }
