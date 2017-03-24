@@ -151,6 +151,14 @@ class UserDataSuggestor
             ];
         }
 
+        // normalise
+        $highest = collect($result)->pluck('score')->max();
+
+        $result = collect($result)->map(function($item) use ($highest){
+            $item['score'] = round($item['score'] / $highest, 5);
+            return $item;
+        })->toArray();
+
         return $result;
     }
 }
