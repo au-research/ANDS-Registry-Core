@@ -16,15 +16,16 @@ class SubjectsProviderTest extends \RegistryTestClass
     ];
 
     /** @test **/
-  /*  public function it_should_get_the_subjects()
+   public function it_should_get_the_subjects()
     {
         $record = RegistryObjectsRepository::getPublishedByKey("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
         $subjects = SubjectProvider::getSubjects($record);
-        $this->assertArraySubset(['0' => ['type' => 'local','value' => 'localSubject','uri' => '']], $subjects);
-    } */
+       // print_r($subjects);
+        $this->assertArraySubset(['21' => ['type' => 'local','value' => 'localSubject','uri' => '']], $subjects);
+    } 
 
     /** @test **/
- /*   public function it_should_get_the_resolved_subjects()
+    public function it_should_get_the_resolved_subjects()
     {
         $record = RegistryObjectsRepository::getPublishedByKey("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
         $resolved_subjects = SubjectProvider::processSubjects($record);
@@ -34,7 +35,7 @@ class SubjectsProviderTest extends \RegistryTestClass
             'value' => '03',
             'resolved' => 'CHEMICAL SCIENCES',
             'uri' => 'http://purl.org/au-research/vocabulary/anzsrc-for/2008/03']], $resolved_subjects);
-    } */
+    }
     /** @test **/
     public function it_should_get_the_non_notation_subjects()
     {
@@ -49,7 +50,7 @@ class SubjectsProviderTest extends \RegistryTestClass
     }
 
     /** @test **/
-  /*  public function it_should_get_the_notation_value_string_subjects()
+    public function it_should_get_the_notation_value_string_subjects()
     {
         $this->ensureKeyExist("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
         $record = RegistryObjectsRepository::getPublishedByKey("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
@@ -59,10 +60,10 @@ class SubjectsProviderTest extends \RegistryTestClass
             'value' => '1108',
             'resolved' => 'MEDICAL MICROBIOLOGY',
             'uri' => 'http://purl.org/au-research/vocabulary/anzsrc-for/2008/1108']], $resolved_subjects);
-    } */
+    }
 
     /** @test **/
-    /*  public function it_should_not_get_the_local_notation_mismatch_value_string_subjects()
+     public function it_should_not_get_the_local_notation_mismatch_value_string_subjects()
       {
           $this->ensureKeyExist("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
           $record = RegistryObjectsRepository::getPublishedByKey("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
@@ -72,8 +73,8 @@ class SubjectsProviderTest extends \RegistryTestClass
               ['type' => 'local',
                   'value' => '1301 Medical Virology',
                   'resolved' => '1301 Medical Virology',
-                  'uri' => '']], $resolved_subjects);
-      } */
+                  'uri' => ' ']], $resolved_subjects);
+      }
 
     /** @test **/
     public function it_should_resolve_the_iso639_notation()
@@ -87,5 +88,21 @@ class SubjectsProviderTest extends \RegistryTestClass
                 'value' => 'tpi',
                 'resolved' => 'Tok Pisin',
                 'uri' => 'http://lexvo.org/id/iso639-3/tpi']], $resolved_subjects);
+    }
+
+    /** @test **/
+    public function it_should_return_true_multivalue_string()
+    {
+        $multi_value = "Earth Science | Atmosphere | Aerosols | Aerosol Backscatter";
+        $result = SubjectProvider::isMultiValue($multi_value);
+        $this->assertTrue($result);
+    }
+
+    /** @test **/
+    public function it_should_return_narrowest_concept()
+    {
+        $multi_value = "Earth Science | Atmosphere | Aerosols | Aerosol Backscatter";
+        $result = SubjectProvider::getNarrowestConcept($multi_value);
+        $this->assertEquals($result,"Aerosol Backscatter");
     }
 }
