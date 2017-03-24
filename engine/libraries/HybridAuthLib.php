@@ -8,7 +8,7 @@ class HybridAuthLib extends Hybrid_Auth
 	{
 		$ci =& get_instance();
 		$ci->load->helper('url_helper');
-		$config = config_item('oauth_config');
+		$config = \ANDS\Util\Config::get('oauth');
 		parent::__construct($config);
 		// log_message('debug', 'HybridAuthLib Class Initalized');
 	}
