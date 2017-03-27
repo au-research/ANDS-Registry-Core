@@ -8,6 +8,7 @@ use ANDS\RecordData;
 use ANDS\RegistryObject;
 use ANDS\Registry\Providers\MetadataProvider;
 use ANDS\Registry\Providers\RIFCSProvider;
+use ANDS\Util\Config;
 use MinhD\SolrClient\SolrClient;
 use MinhD\SolrClient\SolrSearchResult;
 use ANDS\Util\XMLUtil;
@@ -77,7 +78,7 @@ class SubjectProvider implements RIFCSProvider
     {
         $subjects = self::getSubjects($record);
 
-        $solrClient = new SolrClient('test.ands.org.au', '8983');
+        $solrClient = new SolrClient(Config::get('app.solr_url'));
         $solrClient->setCore('concepts');
         $subjectsResolved = array();
 

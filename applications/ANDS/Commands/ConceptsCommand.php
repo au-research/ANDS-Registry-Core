@@ -8,6 +8,7 @@
 
 namespace ANDS\Commands;
 
+use ANDS\Util\Config;
 use MinhD\SolrClient\SolrClient;
 use MinhD\SolrClient\SolrDocument;
 use Symfony\Component\Console\Command\Command;
@@ -81,7 +82,7 @@ class ConceptsCommand extends Command
 
            // print_r($concept);
 
-            $client = new SolrClient('devl.ands.org.au', '8983');
+            $client = new SolrClient(Config::get('app.solr_url'));
             $client->setCore('concepts');
 
             // Adding document
