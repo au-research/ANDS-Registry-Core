@@ -56,6 +56,8 @@
         vm.getRDASummaryData = function() {
             analyticFactory.summary(vm.filters).then(function(data){
 
+                vm.rdaChartData = {data: {}};
+
                 if (data.dates.length == 0) {
                     //no data, set existing data dates to 0
                     angular.forEach(vm.rdaChartData.data, function(obj){
