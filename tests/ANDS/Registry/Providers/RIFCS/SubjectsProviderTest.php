@@ -20,7 +20,7 @@ class SubjectsProviderTest extends \RegistryTestClass
     {
         $record = RegistryObjectsRepository::getPublishedByKey("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
         $subjects = SubjectProvider::getSubjects($record);
-       // print_r($subjects);
+        //print_r($subjects);
         $this->assertArraySubset(['21' => ['type' => 'local','value' => 'localSubject','uri' => '']], $subjects);
     } 
 
@@ -42,9 +42,9 @@ class SubjectsProviderTest extends \RegistryTestClass
         $record = RegistryObjectsRepository::getPublishedByKey("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
         $resolved_subjects = SubjectProvider::processSubjects($record);
        // dd($resolved_subjects);
-        $this->assertArraySubset(['Earth Science | Atmosphere | Atmospheric Radiation | Solar Radiation'=>
+        $this->assertArraySubset(['Solar Radiation'=>
             ['type' => 'gcmd',
-                'value' => 'Earth Science | Atmosphere | Atmospheric Radiation | Solar Radiation',
+                'value' => 'Solar Radiation',
                 'resolved' => 'SOLAR RADIATION',
                 'uri' => 'http://gcmdservices.gsfc.nasa.gov/kms/concept/a0f3474e-9a54-4a82-97c4-43864b48df4c']], $resolved_subjects);
     }
@@ -79,11 +79,13 @@ class SubjectsProviderTest extends \RegistryTestClass
     /** @test **/
     public function it_should_resolve_the_iso639_notation()
     {
+
         $this->ensureKeyExist("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
         $record = RegistryObjectsRepository::getPublishedByKey("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
+
         $resolved_subjects = SubjectProvider::processSubjects($record);
-         //print_r($resolved_subjects);
-         $this->assertArraySubset(['tpi' =>
+        //print_r($resolved_subjects);
+        $this->assertArraySubset(['tpi' =>
             ['type' => 'iso639-3',
                 'value' => 'tpi',
                 'resolved' => 'Tok Pisin',

@@ -90,19 +90,22 @@ class SubjectProvider implements RIFCSProvider
 
             if (!array_key_exists((string)$value, $subjectsResolved)) {
                 $search_value = self::formatSearchString($value,strtolower($type));
-
-                $solrResult = $solrClient->search([
+                      $solrResult = $solrClient->search([
                     'q' => $search_value,
                     'fl' => '* , score',
                     'sort' => 'score desc',
+                    'facet' => 'on',
+                    'facet.field' => 'label_s'
                 ]);
 
                 if ($solrResult->getNumFound() > 0) {
                     $result = $solrResult->getDocs();
+                    $subjectFacet = $solrResult->getFacetField('label_s');
                     $top_response = $result[0];
                     $values = $top_response->toArray();
                     $new_value =  array_key_exists('notation_s', $values) ? $top_response->notation_s : $value;
-                    $positive_hit = self::checkResult($top_response, $subject, $new_value);
+                    $positive_hit = self::checkResult($top_response, $subject, $new_value,$subjectFacet);
+                    if(self::isMultiValue($new_value) && (strtolower($type)=='gcmd'||$type=='local')) $new_value = self::getNarrowestConcept($new_value);
                 }
 
                 if (in_array(strtolower($type), self::$RESOLVABLE) && $positive_hit && !array_key_exists($new_value, $subjectsResolved)) {
@@ -179,11 +182,17 @@ class SubjectProvider implements RIFCSProvider
      * @return boolean
      */
 
-    public static function checkResult($resolved, $subject,$notation_value )
+    public static function checkResult($resolved, $subject,$notation_value, $subjectFacet)
     {
 
         $value = $subject['value'];
         $type = strtolower($subject['type']);
+        isset($subjectFacet[$value])? $numFound = $subjectFacet[$value]: $numFound = 0;
+
+        //if we have a local type and the provided subject value is a numeric, then do not provide a match
+
+        if(strtolower($subject['type'])=='local' && is_numeric($subject['value'])) return false;
+
 
         // if this could be a numeric notation preceding a resolved value - strip off the notation and check the resolved value
         // if the resolved type is the same as the supplied type disregard any discrepancy in the supplied numeric notation
@@ -197,9 +206,13 @@ class SubjectProvider implements RIFCSProvider
             return ($type_match OR $notation_match) AND $value_match ? true : false;
         }
 
+        // if we have a direct value string check the resolved value and number of exact hits if multiple hits then don't match
+        if (strtoupper($value) == strtoupper($resolved->label[0]) && $numFound > 1)  return false;
+
         // if this is a concatenated gcmd value strip off the final subject value to check resolved value
         if ($resolved->type[0] == 'gcmd' && self::isMultiValue($subject['value']))
             $value = self::getNarrowestConcept($subject['value']);
+
 
 
         // if we have a direct value string check the resolved value
