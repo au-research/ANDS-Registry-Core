@@ -217,6 +217,7 @@ class Hybrid_Auth
 			$provider_adapter->login();
 		}
 
+
 		// else, then return the adapter instance for the given provider
 		else{
 			Hybrid_Logger::info( "Hybrid_Auth::authenticate( $providerId ), User is already connected to this provider. Return the adapter instance." );
