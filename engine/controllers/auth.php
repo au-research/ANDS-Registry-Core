@@ -84,6 +84,7 @@ class Auth extends CI_Controller {
 		//get parameters from POST
 		$params = array_merge($params, $post);
 
+
 		try {
 			$this->load->model('authenticators/'.$authenticator_class, 'auth');
 			$this->auth->load_params($params);

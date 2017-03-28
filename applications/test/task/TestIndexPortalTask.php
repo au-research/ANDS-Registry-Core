@@ -34,14 +34,18 @@ class TestIndexPortalTask extends UnitTest
             'params' => 'ds_id='. $this->ds_id .'&batch_id='.$this->batch_id.'&harvest_id='.$this->harvest_id.'&pipeline='.$this->pipeline
         ])->setCI($this->ci)->initialiseTask();
         $importTask->setTaskData('targetStatus','PUBLISHED');
-        $importTask->setTaskData("importedRecords", [582611,582572,582550,582640,582667,582420,582421,582422,582423,582424,582425,582947,582948,582949,582950,582951,582374,582376,582377,582382,582383,582384,582303,582305,582347,582348,582349,582426,582427,582428,582429,582430,582431,582432,582433,582434,582435,582436,582437,582450,582451,582452,582454,582459,582509,582313,582316,582325,582326,582327,582973,582974]);
+        $importTask->setTaskData("importedRecords", [820191, 820192, 820193, 820194, 820176, 820195, 820196, 820197, 820198, 820199, 820200, 820201, 820202, 820203, 820204, 820205, 820206, 820207, 820208, 820209, 820210, 820189, 820211, 820212, 820213, 820178, 820214, 820187, 820188, 820215, 820216, 820217, 820218, 820219, 820220, 820221, 820222, 820223, 820224, 820225, 820226, 820186, 820227, 820228, 820984, 820987, 820990, 820993, 820996, 820999, 821002,821005, 821008, 821011, 821014,821017,821020, 821023]);
+
+//        $importTask->setTaskData('importedRecords', [820200]);
         
 
         $task = $importTask->getTaskByName("IndexPortal");
         $task->run_task();
 
-        $task = $importTask->getTaskByName('IndexRelationship');
-        $task->run_task();
+        dd($task->getMessage());
+
+//        $task = $importTask->getTaskByName('IndexRelationship');
+//        $task->run_task();
         return $task;
     }
 
