@@ -71,6 +71,7 @@ class ConceptsCommand extends Command
             $concept['notation_s'] = isset($concepts['notation'])? (string)$concepts['notation'] : '';
             $concept['label'] = $concepts['prefLabel'];
             $concept['label_s'] = $concepts['prefLabel'];
+            $concept['search_label_s'] = strtolower($concepts['prefLabel']);
             $concept['search_label_ss'] = $current_broader;
             $concept['description'] = isset($concepts['definition']) ? $concepts['definition'] : '';
             $concept['description_s'] = isset($concepts['definition']) ? $concepts['definition'] : '';
