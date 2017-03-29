@@ -296,6 +296,7 @@ class ImportTask extends Task
                     "ProcessIdentifiers",
                     "ProcessRelationships",
                     "ProcessGrantsRelationship",
+                    "ProcessQualityMetadata",
                     "IndexPortal",
                     "IndexRelationship"
                 ];
