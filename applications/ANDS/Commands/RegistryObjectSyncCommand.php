@@ -112,23 +112,28 @@ class RegistryObjectSyncCommand extends Command
         $output->writeln("Identifying all records");
 
         $total = RegistryObject::where('status', 'PUBLISHED')->count();
+        $output->writeln("There are $total PUBLISHED records");
 
         $synced = RegistryObject::where('status', 'PUBLISHED')
             ->whereHas('registryObjectAttributes', function($query){
                 return $query
                     ->where('attribute', 'indexed_portal_at');
-            })->get()->pluck('registry_object_id')->toArray();
-        $syncedCount = count($synced);
+            });
+        $syncedCount = $synced->count();
+        $output->writeln("There are {$syncedCount} synced records");
 
         $notSynced = RegistryObject::where('status', 'PUBLISHED')
-            ->whereNotIn('registry_object_id', $synced);
+            ->whereHas('registryObjectAttributes', function($query){
+                return $query
+                    ->where('attribute', 'indexed_portal_at');
+            }, '<', 1);
         $notSyncedCount = $notSynced->count();
+        $output->writeln("There are {$notSyncedCount} un-synced records");
+
+        $syncedPercentage = $syncedCount / $notSyncedCount * 100;
+        $output->writeln("Sync Percentage: {$syncedPercentage}%");
 
         $this->notSynced = $notSynced;
-
-        $output->writeln("There are $total PUBLISHED records");
-        $output->writeln("There are $syncedCount synced records");
-        $output->writeln("There are $notSyncedCount un-synced records");
     }
 
     private function randomProcess(InputInterface $input, OutputInterface $output)
