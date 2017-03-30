@@ -170,10 +170,10 @@ class SubjectProvider implements RIFCSProvider
         //determine the actual final term of a gcmd value
 
         if(self::isMultiValue($string) && ($type=='gcmd'||$type=='local'))
-            return 'label_s:("' . strtoupper(self::getNarrowestConcept($string)) . '") ^5 + search_labels_string_s:' . $search_string . ' OR "' . $search_string . '"';
+            return 'search_label_s:("' . strtolower(self::getNarrowestConcept($string)) . '") ^5 + search_labels_string_s:' . $search_string . ' OR "' . $search_string . '"';
 
         // quote the search string so solr reserved characters don't break the solr query
-        return 'label_s:("' . $label_string . '") ^5 + notation_s:"' . $search_string . '" ^5 + "'.$search_string.'"' ;
+            return 'search_label_s:("' . strtolower($label_string) . '") ^5 + notation_s:"' . $search_string . '" ^5 + "'.$search_string.'"' ;
     }
 
     /**
