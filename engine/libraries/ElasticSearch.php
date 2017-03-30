@@ -3,6 +3,7 @@
 /**
  * Class ElasticSearch
  */
+use ANDS\Util\Config;
 class ElasticSearch {
 
     private $CI;
@@ -28,8 +29,8 @@ class ElasticSearch {
         $this->path = '/';
         $this->chunkSize = 5000;
 
-        if (get_config_item('elasticsearch_url')) {
-            $this->setUrl(get_config_item('elasticsearch_url'));
+        if ($url = Config::get('app.elasticsearch_url')) {
+            $this->setUrl($url);
         }
 
         return $this;
@@ -247,7 +248,6 @@ class ElasticSearch {
      * @return bool|mixed
      */
     function search($content = false) {
-//        dd($this->options);
         if (!$content) {
             $content = json_encode($this->options);
         }
@@ -316,14 +316,22 @@ class ElasticSearch {
      */
     function exec($verb, $content = false, $noresponse = false) {
         $this->response = null;
-        $ch = curl_init($this->elasticSearchUrl.$this->path);
+
+        $url = $this->elasticSearchUrl.$this->path;
+        $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $verb);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 
         if ($content) {
-            if (is_array($content)) $content = json_encode($content, true);
+            if (is_array($content)) {
+                $content = json_encode($content, true);
+            }
+            curl_setopt($ch, CURLOPT_POST, true );
             curl_setopt($ch, CURLOPT_POSTFIELDS, $content);
         }
+
         $this->response = curl_exec($ch);
 
         if ($noresponse) {

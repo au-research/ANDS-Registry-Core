@@ -15,6 +15,7 @@ use ANDS\DOI\Formatter\StringFormatter;
 use ANDS\DOI\Model\Doi;
 use ANDS\DOI\Repository\ClientRepository;
 use ANDS\DOI\Repository\DoiRepository;
+use ANDS\Util\Config;
 
 /**
  * Class DoiBulkTask
@@ -146,10 +147,14 @@ class DoiBulkTask extends Task
         $bulkRequest = BulkRequest::find($this->bulkID);
 
         $client = $clientRepository->getByID($bulkRequest->client_id);
+
+        $config = Config::get('datacite');
+        $clientUsername = $config['name_prefix'] . "." . $config['name_middle'] . str_pad($client->client_id, 2, '-', STR_PAD_LEFT);
         $dataciteClient = new DataCiteClient(
-            get_config_item("gDOIS_DATACENTRE_NAME_PREFIX").".".get_config_item("gDOIS_DATACENTRE_NAME_MIDDLE").str_pad($client->client_id,2,"-",STR_PAD_LEFT), get_config_item("gDOIS_DATACITE_PASSWORD")
+            $clientUsername, $config['password']
         );
-        $dataciteClient->setDataciteUrl(get_config_item("gDOIS_SERVICE_BASE_URI"));
+
+        $dataciteClient->setDataciteUrl($config['base_url']);
         $doiService = new DOIServiceProvider($clientRepository, $doiRepository, $dataciteClient);
         $doiService->setAuthenticatedClient($client);
 

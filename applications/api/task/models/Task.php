@@ -326,7 +326,7 @@ class Task
             'name' => $this->getName(),
             'priority' => 5,
             'status' => 'PENDING',
-            'type' => "POKE",
+            'type' => "PHPSHELL",
             'params' => http_build_query($params),
             'message' => json_encode($this->message),
             'data' => json_encode($this->taskData),
