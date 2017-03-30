@@ -87,25 +87,25 @@ class SubjectProvider implements RIFCSProvider
             $type = $subject["type"];
             $value = (string)($subject['value']);
             $positive_hit = false;
-            $score = 0;
 
             if (!array_key_exists((string)$value, $subjectsResolved)) {
                 $search_value = self::formatSearchString($value,strtolower($type));
-                      $solrResult = $solrClient->search([
+                    $solrResult = $solrClient->search([
                     'q' => $search_value,
                     'fl' => '* , score',
                     'sort' => 'score desc',
                     'facet' => 'on',
-                    'facet.field' => 'label_s'
+                    'facet.field' => 'search_label_s'
                 ]);
-
+                $subjectFacet = $solrResult->getFacetField('search_label_s');
+                $numFound = isset($subjectFacet[strtolower($value)]) ?  $subjectFacet[strtolower($value)] : 0;
                 if ($solrResult->getNumFound() > 0) {
                     $result = $solrResult->getDocs();
-                    $subjectFacet = $solrResult->getFacetField('label_s');
+                    $subjectFacet = $solrResult->getFacetField('search_label_s');
                     $top_response = $result[0];
                     $values = $top_response->toArray();
                     $new_value =  array_key_exists('notation_s', $values) ? $top_response->notation_s : $value;
-                    $positive_hit = self::checkResult($top_response, $subject, $new_value,$subjectFacet);
+                    $positive_hit = self::checkResult($top_response, $subject, $new_value, $numFound);
                     if(self::isMultiValue($new_value) && (strtolower($type)=='gcmd'||$type=='local')) $new_value = self::getNarrowestConcept($new_value);
                 }
 
@@ -130,7 +130,7 @@ class SubjectProvider implements RIFCSProvider
 
                 } else if (!$positive_hit || !in_array(strtolower($type), self::$RESOLVABLE)) {
                     //no match or a very loose match was found so it is not a gcmd vocab
-                    if(strtolower($type) =='gcmd' || strtolower($type) == 'anzsrc-for' || strtolower($type) == 'anzsrc-seo' ) $type = 'local';
+                    if((strtolower($type) =='gcmd' || strtolower($type) == 'anzsrc-for' || strtolower($type) == 'anzsrc-seo') AND $numFound < 2 ) $type = 'local';
 
                     $uri= $subject['uri']? $subject['uri'] : " ";
                     $subjectsResolved[$value] = array('type' => $type, 'value' => $value, 'resolved' => $value, 'uri' => $uri );
@@ -183,12 +183,11 @@ class SubjectProvider implements RIFCSProvider
      * @return boolean
      */
 
-    public static function checkResult($resolved, $subject,$notation_value, $subjectFacet)
+    public static function checkResult($resolved, $subject,$notation_value, $numFound)
     {
 
         $value = $subject['value'];
         $type = strtolower($subject['type']);
-        isset($subjectFacet[$value])? $numFound = $subjectFacet[$value]: $numFound = 0;
 
         //if we have a local type and the provided subject value is a numeric, then do not provide a match
 
@@ -259,6 +258,8 @@ class SubjectProvider implements RIFCSProvider
 
         $multi_value = explode("&gt;",$string);
         if (count($multi_value) > 1) return trim(array_pop($multi_value));
+
+        return $string;
 
     }
 }
