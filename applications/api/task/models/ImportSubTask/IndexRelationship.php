@@ -103,8 +103,8 @@ class IndexRelationship extends ImportSubTask
 
         }
 
-        $this->parent()->getCI()->solr->init()->setCore('portal')->commit();
-        $this->parent()->getCI()->solr->init()->setCore('relations')->commit();
+//        $this->parent()->getCI()->solr->init()->setCore('portal')->commit();
+//        $this->parent()->getCI()->solr->init()->setCore('relations')->commit();
     }
 
     /**

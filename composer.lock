@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "8338cbe6b422d28a5a6ded979200c3e1",
+    "content-hash": "56ab517322d5552250befe4ae2348f1b",
     "packages": [
         {
             "name": "au-research/ands-doi-service",
@@ -650,17 +650,73 @@
             "time": "2016-08-05T14:49:58+00:00"
         },
         {
-            "name": "jaybizzle/crawler-detect",
-            "version": "v1.2.36",
+            "name": "javibravo/simpleue",
+            "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/JayBizzle/Crawler-Detect.git",
-                "reference": "186cdc021f972a7e06963a84ef692d75f5b325c6"
+                "url": "https://github.com/javibravo/simpleue.git",
+                "reference": "b6dfdbacd6df3d43d4a94262ece8bd96b25193fa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/186cdc021f972a7e06963a84ef692d75f5b325c6",
-                "reference": "186cdc021f972a7e06963a84ef692d75f5b325c6",
+                "url": "https://api.github.com/repos/javibravo/simpleue/zipball/b6dfdbacd6df3d43d4a94262ece8bd96b25193fa",
+                "reference": "b6dfdbacd6df3d43d4a94262ece8bd96b25193fa",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5",
+                "psr/log": "~1.0"
+            },
+            "require-dev": {
+                "aws/aws-sdk-php": "^3.9",
+                "pda/pheanstalk": "^3.1",
+                "phpunit/phpunit": "4.0.*",
+                "predis/predis": "^1.0"
+            },
+            "suggest": {
+                "aws/aws-sdk-php": "Allow work with AWS Simple Queue Service (SQS) queues",
+                "pda/pheanstalk": "Allow work with Beanstalkd queues",
+                "predis/predis": "Allow work with Redis queues"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Simpleue\\": "src/Simpleue"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Javier Bravo",
+                    "email": "javibravo85@gmail.com"
+                }
+            ],
+            "description": "Php package to manage queue tasks in a simple way",
+            "homepage": "http://github.com/javibravo/simpleue",
+            "keywords": [
+                "job",
+                "queue",
+                "redis",
+                "sqs",
+                "task"
+            ],
+            "time": "2017-01-13 18:27:47"
+        },
+        {
+            "name": "jaybizzle/crawler-detect",
+            "version": "v1.2.37",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/JayBizzle/Crawler-Detect.git",
+                "reference": "850e5fc85506f9bee623fd29936ceb044d63ad2b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/850e5fc85506f9bee623fd29936ceb044d63ad2b",
+                "reference": "850e5fc85506f9bee623fd29936ceb044d63ad2b",
                 "shasum": ""
             },
             "require": {
@@ -695,7 +751,7 @@
                 "crawlerdetect",
                 "php crawler detect"
             ],
-            "time": "2017-03-03T21:13:00+00:00"
+            "time": "2017-03-21T09:17:34+00:00"
         },
         {
             "name": "minhd/solr-client",
@@ -1082,20 +1138,23 @@
         },
         {
             "name": "react/promise",
-            "version": "v2.5.0",
+            "version": "v2.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/reactphp/promise.git",
-                "reference": "2760f3898b7e931aa71153852dcd48a75c9b95db"
+                "reference": "62785ae604c8d69725d693eb370e1d67e94c4053"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/reactphp/promise/zipball/2760f3898b7e931aa71153852dcd48a75c9b95db",
-                "reference": "2760f3898b7e931aa71153852dcd48a75c9b95db",
+                "url": "https://api.github.com/repos/reactphp/promise/zipball/62785ae604c8d69725d693eb370e1d67e94c4053",
+                "reference": "62785ae604c8d69725d693eb370e1d67e94c4053",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.8"
             },
             "type": "library",
             "autoload": {
@@ -1121,7 +1180,7 @@
                 "promise",
                 "promises"
             ],
-            "time": "2016-12-22T14:09:01+00:00"
+            "time": "2017-03-25T12:08:31+00:00"
         },
         {
             "name": "symfony/console",
@@ -2684,7 +2743,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "javibravo/simpleue": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
