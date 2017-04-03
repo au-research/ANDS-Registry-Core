@@ -533,18 +533,18 @@ class RelationshipProvider
     {
         $provider = Connections::getIdentifierProvider();
 
-//        $identifiers = IdentifierProvider::get($record);
-//
-//        if (count($identifiers) == 0) {
-//            return [];
-//        }
-//
-//        $identifierValues = collect($identifiers)->pluck('value');
+        $identifiers = IdentifierProvider::get($record);
+
+        if (count($identifiers) == 0) {
+            return [];
+        }
+
+        $identifierValues = collect($identifiers)->pluck('value');
 
         // directly related
         $relations = $provider
-            ->setFilter('to_key', $record->key)
-//            ->setFilter('to_identifier', $identifierValues)
+//            ->setFilter('to_key', $record->key)
+            ->setFilter('to_identifier', $identifierValues)
             ->setReverse(true)
             ->setLimit(0)
             ->get();
