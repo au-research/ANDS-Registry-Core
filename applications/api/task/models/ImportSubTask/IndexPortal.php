@@ -87,11 +87,11 @@ class IndexPortal extends ImportSubTask
             $this->updateProgress($index, $total, "Processed ($index/$total) $ro->title($roID)");
         }
 
-        $result = $this->parent()->getCI()->solr->init()->setCore('portal')->commit();
-        $result = json_decode($result, true);
-        if (array_key_exists('error', $result)) {
-            $this->addError("commit: ". $result['error']['msg']);
-        }
+//        $result = $this->parent()->getCI()->solr->init()->setCore('portal')->commit();
+//        $result = json_decode($result, true);
+//        if (array_key_exists('error', $result)) {
+//            $this->addError("commit: ". $result['error']['msg']);
+//        }
 
         $this->log("Finished Indexing $total records");
     }
