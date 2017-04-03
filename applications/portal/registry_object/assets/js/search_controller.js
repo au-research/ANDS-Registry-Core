@@ -340,12 +340,13 @@
                     if(!doc.hide) {
                         search_factory.get_matching_records(doc.id).then(function(data){
                             if (doc && !doc.hide) {
-                                doc.identifiermatch = data.message.identifiermatch;
-                                if(doc && !doc.hide) {
-                                    angular.forEach(doc.identifiermatch, function(idd){
-                                        $scope.hidedoc(idd.registry_object_id);
-                                    });
-                                }
+                                console.log(doc)
+                               // doc.identifiermatch = data.message.identifiermatch;
+                               // if(doc && !doc.hide) {
+                               //     angular.forEach(doc.identifiermatch, function(idd){
+                                //        $scope.hidedoc(idd.registry_object_id);
+                                 //   });
+                               // }
                             }
                         });
                     }
@@ -882,7 +883,7 @@
         };
 
         $scope.clearSubject = function() {
-            var fields_array = ['anzsrc-for', 'anzsrc-seo', 'anzsrc', 'keywords', 'scot', 'pont', 'psychit', 'apt', 'gcmd', 'lcsh'];
+            var fields_array = ['anzsrc-for', 'anzsrc-seo', 'anzsrc', 'keywords', 'scot', 'pont', 'psychit', 'apt', 'gcmd', 'lcsh','iso639-3'];
             angular.forEach(fields_array, function(ss){
                 delete $scope.prefilters[ss];
             });
@@ -894,7 +895,7 @@
             var ret = 0;
             var fields_array = [];
             if(type=='subject') {
-                fields_array = ['anzsrc-for', 'anzsrc-seo', 'anzsrc', 'keywords', 'scot', 'pont', 'psychit', 'apt', 'gcmd', 'lcsh'];
+                fields_array = ['anzsrc-for', 'anzsrc-seo', 'anzsrc', 'keywords', 'scot', 'pont', 'psychit', 'apt', 'gcmd', 'lcsh','iso639-3'];
                 angular.forEach(fields_array, function(ss){
                     ret = $scope.prefilters[ss] ? 1 : ret;
                 });

@@ -34,6 +34,7 @@ angular.module('portal-filters', [])
 				case 'anzsrc': return 'ANZSRC'; break;
 				case 'apt': return 'Australian Pictorial Thesaurus'; break;
 				case 'gcmd': return 'GCMD Keyword'; break;
+				case 'iso639-3': return 'iso639-3 Language'; break;
 				case 'lcsh': return 'LCSH'; break;
 				case 'keywords': return 'Keyword'; break;
 				case 'refine': return 'Keyword'; break;
