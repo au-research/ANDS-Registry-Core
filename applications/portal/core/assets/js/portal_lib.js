@@ -15249,6 +15249,7 @@ app.config(function(uiGmapGoogleMapApiProvider) {
 				case 'anzsrc': return 'ANZSRC'; break;
 				case 'apt': return 'Australian Pictorial Thesaurus'; break;
 				case 'gcmd': return 'GCMD Keyword'; break;
+                case 'iso639-3': return 'iso639-3 Language'; break;
 				case 'lcsh': return 'LCSH'; break;
 				case 'keywords': return 'Keyword'; break;
 				case 'refine': return 'Keyword'; break;
@@ -17049,7 +17050,7 @@ app.directive('focusMe', function($timeout, $parse) {
         };
 
         $scope.clearSubject = function() {
-            var fields_array = ['anzsrc-for', 'anzsrc-seo', 'anzsrc', 'keywords', 'scot', 'pont', 'psychit', 'apt', 'gcmd', 'lcsh'];
+            var fields_array = ['anzsrc-for', 'anzsrc-seo', 'anzsrc', 'keywords', 'scot', 'pont', 'psychit', 'apt', 'gcmd', 'lcsh', 'iso639-3'];
             angular.forEach(fields_array, function(ss){
                 delete $scope.prefilters[ss];
             });
@@ -17061,7 +17062,7 @@ app.directive('focusMe', function($timeout, $parse) {
             var ret = 0;
             var fields_array = [];
             if(type=='subject') {
-                fields_array = ['anzsrc-for', 'anzsrc-seo', 'anzsrc', 'keywords', 'scot', 'pont', 'psychit', 'apt', 'gcmd', 'lcsh'];
+                fields_array = ['anzsrc-for', 'anzsrc-seo', 'anzsrc', 'keywords', 'scot', 'pont', 'psychit', 'apt', 'gcmd', 'lcsh', 'iso639-3'];
                 angular.forEach(fields_array, function(ss){
                     ret = $scope.prefilters[ss] ? 1 : ret;
                 });
@@ -17424,7 +17425,8 @@ app.directive('focusMe', function($timeout, $parse) {
                 {value: 'psychit', label: 'Thesaurus of Psychological Index Terms'},
                 {value: 'apt', label: 'Australian Pictorial Thesaurus'},
                 {value: 'lcsh', label: 'LCSH'},
-                {value: 'gcmd', label: 'Global Change Master Directory Keywords'}
+                {value: 'gcmd', label: 'Global Change Master Directory Keywords'},
+                {value: 'iso639-3', label: 'iso639-3 Language'}
             ],
 
             search_types_activities: [

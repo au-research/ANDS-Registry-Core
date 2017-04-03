@@ -40,7 +40,8 @@
                 {value: 'psychit', label: 'Thesaurus of Psychological Index Terms'},
                 {value: 'apt', label: 'Australian Pictorial Thesaurus'},
                 {value: 'lcsh', label: 'LCSH'},
-                {value: 'gcmd', label: 'Global Change Master Directory Keywords'}
+                {value: 'gcmd', label: 'Global Change Master Directory Keywords'},
+                {value: 'iso639-3', label: 'iso639-3 Language'}
             ],
 
             search_types_activities: [

@@ -585,6 +585,7 @@ class Solr
                 case 'apt':
                 case 'gcmd':
                 case 'lcsh':
+                case 'iso639-3':
                     if (is_array($value)) {
                         $subject_search_query = join('" OR tsubject_'.$key.':"', $value);
                         $subject_search_query = "(tsubject_'.$key.'':\"" . $subject_search_query . "\")";
