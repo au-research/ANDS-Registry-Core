@@ -5,6 +5,7 @@ namespace ANDS\API\Task\ImportSubTask;
 
 use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\RegistryObject;
+use ANDS\Repository\RegistryObjectsRepository;
 
 /**
  * Class PopulateAffectedList
@@ -18,6 +19,12 @@ class PopulateAffectedList extends ImportSubTask
 
     public function run_task()
     {
+        $targetStatus = $this->parent()->getTaskData('targetStatus');
+        if (!RegistryObjectsRepository::isPublishedStatus($targetStatus)) {
+            $this->log("Target status is ". $targetStatus.' does not affect records');
+            return;
+        }
+
         $ids = [];
         $keys = [];
         $identifiers = [];

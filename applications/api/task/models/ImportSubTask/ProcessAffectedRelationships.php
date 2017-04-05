@@ -17,6 +17,12 @@ class ProcessAffectedRelationships extends ImportSubTask
 
     public function run_task()
     {
+        $targetStatus = $this->parent()->getTaskData('targetStatus');
+        if (!RegistryObjectsRepository::isPublishedStatus($targetStatus)) {
+            $this->log("Target status is ". $targetStatus.' does not affect records');
+            return;
+        }
+
         $affectedRecords = $this->parent()->getTaskData('affectedRecords');
         $duplicateRecords = $this->parent()->getTaskData("duplicateRecords") ? $this->parent()->getTaskData("duplicateRecords") : [];
 
