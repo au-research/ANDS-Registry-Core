@@ -7,8 +7,9 @@
 namespace ANDS\API;
 
 use ANDS\Util\Config;
+use Carbon\Carbon;
 use \Exception as Exception;
-
+use Illuminate\Database\Capsule\Manager as DB;
 
 class Status_api
 {
@@ -76,15 +77,26 @@ class Status_api
 
     private function getDatabaseStatus()
     {
-        $capsule = new \Illuminate\Database\Capsule\Manager;
+        initEloquent();
         $config = Config::get('database');
         $result = [];
         foreach ($config as $key => $value) {
             $result[$key] = true;
             try {
-                $capsule->getConnection('default');
+                $conn = DB::connection($key);
+
+                // get Pdo would throw an exception if the database is not connected correctly
+                $conn->getPdo();
+                $result[$key] = [
+                    'host' => $conn->getConfig('host'),
+                    'database' => $conn->getDatabaseName(),
+                    'RUNNING' => true
+                ];
             } catch (\Exception $e) {
-                $result[$key] = false;
+                $result[$key] = [
+                    'msg' => $e->getMessage(),
+                    'RUNNING' => false,
+                ];
             }
         }
 
@@ -120,16 +132,16 @@ class Status_api
         if (!$status) {
             return [
                 'msg' => 'no status available',
+                'runningSince' => 'never',
                 'lastReport' => 'never',
                 'RUNNING' => false
             ];
         }
 
-        $lastReportSince = (int) $status['last_report_timestamp'];
-        $lastReport = (time() - $lastReportSince);
+        $status['runningSince'] = Carbon::createFromTimestamp((int) $status['start_up_time'])->diffForHumans();
+        $status['lastReport'] = Carbon::createFromTimestamp((int) $status['last_report_timestamp'])->diffForHumans();
 
-        $status['lastReport'] = $lastReport .' seconds ago';
-        $status['RUNNING'] = ($lastReport > 60) ? false : true;
+        $status['RUNNING'] = (Carbon::createFromTimestamp((int) $status['last_report_timestamp'])->diffInSeconds() > 60) ? false : true;
 
         return $status;
     }
