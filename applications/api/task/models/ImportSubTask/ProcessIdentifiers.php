@@ -25,6 +25,9 @@ class ProcessIdentifiers extends ImportSubTask
             foreach($identifiers as $identifier){
                 $this->parent()->addTaskData("imported_".$record->class."_identifiers", $identifier);
             }
+
+            $duplicateCount = count($record->findAllDuplicates());
+            $record->setRegistryObjectAttribute("duplicate_count", $duplicateCount);
             $this->updateProgress($index, $total,
                 "Processed ($index/$total) $record->title($roID)");
         }

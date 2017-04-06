@@ -290,6 +290,17 @@ class ImportTask extends Task
                     "IndexRelationship"
                 ];
                 break;
+            case "SyncWorkflow":
+                $tasks = [
+                    "ProcessCoreMetadata",
+                    "ProcessIdentifiers",
+                    "ProcessRelationships",
+                    "ProcessGrantsRelationship",
+                    "ProcessQualityMetadata",
+                    "IndexPortal",
+                    "IndexRelationship"
+                ];
+                break;
             case "ErrorWorkflow":
                 $tasks = [
                     "PopulateImportOptions",

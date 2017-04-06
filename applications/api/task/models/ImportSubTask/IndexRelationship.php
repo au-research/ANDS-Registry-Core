@@ -6,6 +6,7 @@ namespace ANDS\API\Task\ImportSubTask;
 
 use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\Repository\RegistryObjectsRepository;
+use Carbon\Carbon;
 
 /**
  * Class IndexRelationship
@@ -50,49 +51,60 @@ class IndexRelationship extends ImportSubTask
         // TODO: MAJORLY REFACTOR THIS
         foreach ($totalRecords as $index => $roID) {
             $record = RegistryObjectsRepository::getRecordByID($roID);
-            if($record){
-                $allRelationships = RelationshipProvider::getMergedRelationships($record);
-
-                // update portal index
-                try {
-                    $this->updatePortalIndex($record, $allRelationships);
-                } catch (\Exception $e) {
-                    $message = $e->getMessage();
-                    if ($message == "") {
-                        $trace = $e->getTrace();
-                        $first = array_shift($trace);
-                        $message = implode(' ', $first['args']);
-                        $this->addError($message);
-                    } else {
-                        $this->addError($message);
-                    }
-
-                }
-
-
-                // update relation index
-                try {
-                    $this->updateRelationIndex($record, $allRelationships);
-                } catch (\Exception $e) {
-                    $message = $e->getMessage();
-                    if ($message == "") {
-                        $trace = $e->getTrace();
-                        $first = array_shift($trace);
-                        $message = implode(' ', $first['args']);
-                        $this->addError($message);
-                    } else {
-                        $this->addError($message);
-                    }
-                }
-
-                $this->updateProgress(
-                    $index, $total, "Processed ($index/$total) $record->title($roID)"
-                );
+            if (!$record) {
+                $this->addError("No Record with id $roID found to be indexed");
+                continue;
             }
+
+            $allRelationships = RelationshipProvider::getMergedRelationships($record);
+
+            // save relations_count
+            $record->setRegistryObjectAttribute('relations_count', count($allRelationships));
+
+            // update portal index
+            try {
+                $this->updatePortalIndex($record, $allRelationships);
+            } catch (\Exception $e) {
+                $message = $e->getMessage();
+                if ($message == "") {
+                    $trace = $e->getTrace();
+                    $first = array_shift($trace);
+                    $message = implode(' ', $first['args']);
+                    $this->addError($message);
+                } else {
+                    $this->addError($message);
+                }
+                continue;
+            }
+
+
+            // update relation index
+            try {
+                $this->updateRelationIndex($record, $allRelationships);
+            } catch (\Exception $e) {
+                $message = $e->getMessage();
+                if ($message == "") {
+                    $trace = $e->getTrace();
+                    $first = array_shift($trace);
+                    $message = implode(' ', $first['args']);
+                    $this->addError($message);
+                } else {
+                    $this->addError($message);
+                }
+                continue;
+            }
+
+            // save last_sync_relations
+            $record->setRegistryObjectAttribute('indexed_relations_at', Carbon::now()->timestamp);
+
+            $this->updateProgress(
+                $index, $total, "Processed ($index/$total) $record->title($roID)"
+            );
+
         }
 
-        $this->parent()->getCI()->solr->init()->setCore('portal')->commit();
-        $this->parent()->getCI()->solr->init()->setCore('relations')->commit();
+//        $this->parent()->getCI()->solr->init()->setCore('portal')->commit();
+//        $this->parent()->getCI()->solr->init()->setCore('relations')->commit();
     }
 
     /**
