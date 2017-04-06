@@ -462,12 +462,13 @@ class Sync_extension extends ExtensionBase{
 			 	$json['subject_anzsrcseo'][] = $s['resolved'];
 			 } else if(trim(strtolower($s['type']))=='gcmd') {
                  $json['subject_gcmd'][] = $s['resolved'];
+                 $json['tsubject_'.$type][] = $s['resolved'];
              } else if(trim(strtolower($s['type']))=='iso639-3') {
                 $json['subject_iso639-3'][] = $s['resolved'];
              }
 
             $type = $this->ro->getPortalTypes($s['type']);
-            $json['tsubject_'.$type][] = $s['value'];
+            if(trim(strtolower($s['type']))!='gcmd') $json['tsubject_'.$type][] = $s['value'];
 		}
 
 		//related objects
