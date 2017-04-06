@@ -21,8 +21,10 @@ foreach($ro->subjects as $col){
                 ?>
                 @foreach($subjects as $col)
                     @if(isset($col['resolved']) && $col['subject']!='')
-                        @if($col['type']=='anzsrc-for' || $col['type']=='anzsrc-seo' || $col['type']=='gcmd'|| $col['type']=='iso639-3')
+                        @if($col['type']=='anzsrc-for' || $col['type']=='anzsrc-seo'|| $col['type']=='iso639-3')
                             <a href="{{base_url().'search/#!/'.$col['type'].'='.$col['subject'].$classSearchComp}}"><span  itemprop="about keywords">{{ titleCase($col['resolved']) }}</span></a> |
+                        @elseif($col['type']=='gcmd')
+                            <a href="{{base_url().'search/#!/'.$col['type'].'='.$col['resolved'].$classSearchComp}}"><span  itemprop="about keywords">{{ $col['subject'] }}</span></a> |
                         @else
                             <a href="{{base_url().'search/#!/subject_value_resolved='.rawurlencode($col['resolved']).$classSearchComp}}" ><span  itemprop="about keywords">{{$col['resolved']}}</span></a> |
                         @endif
