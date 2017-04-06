@@ -461,7 +461,14 @@ class Registry_object extends MX_Controller {
             throw new Exception("Invalid DataSource ID");
         }
         ds_acl_enforce($data['data_source_id']);
-        
+
+        // check existence of key
+        $key = $data['registry_object_key'];
+        if ($draftRecord = \ANDS\Repository\RegistryObjectsRepository::getDraftByKey($key)) {
+            $status = $draftRecord->status;
+            throw new Exception("A RegistryObject with key $key already exists in status $status");
+        }
+
         // prepare XML
         $xml = "<registryObject group='".$data['group']."'>".NL;
         $xml .= "<key>".$data['registry_object_key']."</key>".NL;
