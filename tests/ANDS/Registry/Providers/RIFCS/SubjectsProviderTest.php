@@ -84,7 +84,7 @@ class SubjectsProviderTest extends \RegistryTestClass
         $record = RegistryObjectsRepository::getPublishedByKey("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
 
         $resolved_subjects = SubjectProvider::processSubjects($record);
-        //print_r($resolved_subjects);
+       // print_r($resolved_subjects);
         $this->assertArraySubset(['tpi' =>
             ['type' => 'iso639-3',
                 'value' => 'tpi',
