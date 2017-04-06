@@ -2,6 +2,7 @@
 define('SERVICES_MODULE_PATH', REGISTRY_APP_PATH.'services/');
 
 include_once("applications/registry/registry_object/models/_transforms.php");
+use ANDS\DataSource;
 use \Transforms as Transforms;
 /**
  * Registry Object controller
@@ -443,58 +444,90 @@ class Registry_object extends MX_Controller {
 		$data = $this->input->post('data');
 
 		acl_enforce('REGISTRY_USER');
-		ds_acl_enforce($data['data_source_id']);
 
-		$this->load->model('registry_objects', 'ro');
-		$record_owner = $this->user->identifier();
-		$this->load->model('data_source/data_sources', 'ds');
-		$ds = $this->ds->getByID($data['data_source_id']);
-		$jsondata = array();
-		$jsondata['success'] = false;
-		$jsondata['message'] = '';
-		$jsondata['ro_id'] = null;
-		if(!$ds){
-			$jsondata['message'] = 'do datasource';
-		}
-		else{
-			$ro = $this->ro->getDraftByKey($data['registry_object_key']);
-			if($ro)
-			{
-				throw new Exception("A registry object with this key already exists. Registry Object keys must be unique!");
-			}
+        // bootstrap result
+        $result = [
+            'success' => false,
+            'message' => '',
+            'ro_id' => null
+        ];
 
-			$this->importer->setDatasource($ds);
-			$xml = "<registryObject group='".$data['group']."'>".NL;
-	  		$xml .= "<key>".$data['registry_object_key']."</key>".NL;
-	  		$xml .= "<originatingSource type=''>".$data['originating_source']."</originatingSource>".NL;
-	  		$xml .= "<".$data['ro_class']." type='".$data['type']."'>".NL;
-	  		$xml .= "<name type='primary'><namePart>No Name/Title</namePart></name>";
-	  		$xml .= "<description type=''></description>";
-	  		$xml .= "<identifier type=''></identifier>";
-	  		if($data['ro_class']=='collection') $xml .="<dates type=''></dates>";
-	  		$xml .= "<location></location>";
-	  		$xml .= "<relatedObject><key></key><relation type=''></relation></relatedObject>";
-	  		$xml .= "<subject type=''></subject>";
-	  		$xml .= "<relatedInfo></relatedInfo>";
-	  		$xml .= "</".$data['ro_class'].">".NL;
-			$xml .= "</registryObject>";
-			$this->importer->forceDraft();
-			$this->importer->setXML(wrapRegistryObjects($xml));
-			$this->importer->commit();
-			$error_log = $this->importer->getErrors();
-			if($error_log)
-			{
-				throw new Exception($error_log);
-			}
-			else
-			{
-				$jsondata['success'] = true;
-				$ro = $this->ro->getDraftByKey($data['registry_object_key']);
-				$jsondata['ro_id'] = $ro->id;
-				$jsondata['message'] = 'new Registry Object with id ' . $ro->id . ' was created';
-			}
-		}
- 		echo json_encode($jsondata);
+        // check data source
+        if (!array_key_exists('data_source_id', $data)) {
+            throw new Exception("DataSource ID must be provided");
+        }
+        $dataSource = DataSource::find($data['data_source_id']);
+        if (!$dataSource) {
+            throw new Exception("Invalid DataSource ID");
+        }
+        ds_acl_enforce($data['data_source_id']);
+
+        // check existence of key
+        $key = $data['registry_object_key'];
+        if ($draftRecord = \ANDS\Repository\RegistryObjectsRepository::getDraftByKey($key)) {
+            $status = $draftRecord->status;
+            throw new Exception("A RegistryObject with key $key already exists in status $status");
+        }
+
+        // prepare XML
+        $xml = "<registryObject group='".$data['group']."'>".NL;
+        $xml .= "<key>".$data['registry_object_key']."</key>".NL;
+        $xml .= "<originatingSource type=''>".$data['originating_source']."</originatingSource>".NL;
+        $xml .= "<".$data['ro_class']." type='".$data['type']."'>".NL;
+        $xml .= "<name type='primary'><namePart>No Name/Title</namePart></name>";
+        $xml .= "<description type=''></description>";
+        $xml .= "<identifier type=''></identifier>";
+        if($data['ro_class']=='collection') $xml .="<dates type=''></dates>";
+        $xml .= "<location></location>";
+        $xml .= "<relatedObject><key></key><relation type=''></relation></relatedObject>";
+        $xml .= "<subject type=''></subject>";
+        $xml .= "<relatedInfo></relatedInfo>";
+        $xml .= "</".$data['ro_class'].">".NL;
+        $xml .= "</registryObject>";
+        $xml = \ANDS\Util\XMLUtil::wrapRegistryObject($xml);
+
+        // write the xml payload to the file system
+        $batchID = 'MANUAL-ARO-' . md5($data['registry_object_key']).'-'.time();
+        \ANDS\Payload::write($dataSource->data_source_id, $batchID, $xml);
+
+        // import Task creation
+        $importTask = new \ANDS\API\Task\ImportTask();
+        $importTask
+            ->setCI($this)->setDb($this->db)
+            ->init([
+                'name' => 'ARO',
+                'params' => http_build_query([
+                    'pipeline' => 'ManualImport',
+                    'source' => 'manual',
+                    'ds_id' => $dataSource->data_source_id,
+                    'batch_id' => $batchID,
+                    'user_name' => $this->user->name(),
+                    'targetStatus' => 'DRAFT'
+                ])
+            ])
+            ->enableRunAllSubTask()
+            ->initialiseTask();
+
+        $importTask->run();
+        $errorLog = $importTask->getError();
+        if ($errorLog) {
+            $result['message'] = implode(', ', $errorLog);
+            echo json_encode($result);
+            return;
+        }
+
+        // no error
+        $jsondata['success'] = true;
+        $key = $data['registry_object_key'];
+        $draftRecord = \ANDS\Repository\RegistryObjectsRepository::getByKeyAndStatus($key, "DRAFT");
+        if (!$draftRecord) {
+            throw new Exception("Error getting DRAFT record for $key");
+        }
+        $result['success'] = true;
+        $result['ro_id'] = $draftRecord->id;
+        $jsondata['message'] = 'new Registry Object with id ' . $draftRecord->id . ' was created';
+
+        echo json_encode($result);
 	}
 
 	public function related_object_search_form(){
