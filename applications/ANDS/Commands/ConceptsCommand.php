@@ -55,24 +55,29 @@ class ConceptsCommand extends Command
         foreach ($concepts_array as $concepts) {
 
             $current_broader = $broader;
-            $current_broader[] = $concepts['prefLabel'];
+            $current_broader[] = isset($concepts['prefLabel']) ? $concepts['prefLabel']: '' ;
             $current_iri = $iri;
             $current_iri[] = $concepts['iri'];
             if(isset($concepts['notation'])){
-                $current_notation = $notation;
+                $current_notations =  (string)$concepts['notation'];
                 $current_notation[] = (string)$concepts['notation'];
+            }elseif ($type=="iso639-3") {
+                $notations = explode("/",$concepts['iri']);
+                $current_notations = array_pop($notations);
             }else{
+                $current_notations = NULL;
                 $current_notation = NULL;
             }
+            isset($concepts['prefLabel']) ? $current_prefLabel = $concepts['prefLabel'] : $current_prefLabel = $current_notations;
 
             $concept = array();
             $concept['type'] = $type;
             $concept['id'] = $concepts['iri'];
             $concept['iri'] = $concepts['iri'];
-            $concept['notation_s'] = isset($concepts['notation'])? (string)$concepts['notation'] : '';
-            $concept['label'] = $concepts['prefLabel'];
-            $concept['label_s'] = $concepts['prefLabel'];
-            $concept['search_label_s'] = strtolower($concepts['prefLabel']);
+            $concept['notation_s'] = isset($current_notations)? (string)$current_notations : NULL;
+            $concept['label'] = $current_prefLabel;
+            $concept['label_s'] = $current_prefLabel;
+            $concept['search_label_s'] = strtolower($current_prefLabel);
             $concept['search_label_ss'] = $current_broader;
             $concept['description'] = isset($concepts['definition']) ? $concepts['definition'] : '';
             $concept['description_s'] = isset($concepts['definition']) ? $concepts['definition'] : '';
@@ -81,18 +86,17 @@ class ConceptsCommand extends Command
             $concept['broader_iris_ss'] = $iri;
             $concept['broader_notations_ss'] = $notation;
 
-           // print_r($concept);
-
             $client = new SolrClient(Config::get('app.solr_url'));
+
             $client->setCore('concepts');
 
             // Adding document
-            $client->add(
+            $result = $client->add(
                 new SolrDocument($concept)
             );
-            $client->commit();
 
             if (isset($concepts['narrower'])) {
+
                 $this->generate_solr($concepts['narrower'], $current_broader, $current_iri,$current_notation,$type);
             }
         }
