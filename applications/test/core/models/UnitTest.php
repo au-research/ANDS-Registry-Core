@@ -90,7 +90,11 @@ class UnitTest
                         $this->benchmark[$function] = $this->ci->benchmark->elapsed_time('start', 'end', 5);
                         $this->tearDown();
                     } catch (\Exception $e) {
-                        $this->ci->unit->run(false, true, $function, "Excetion: ". $e->getMessage());
+                        $message = $e->getMessage();
+                        if (!$message) {
+                            $message = $e->getTraceAsString();
+                        }
+                        $this->ci->unit->run(false, true, $function, "Exception: ". $message);
                     }
                 }
             }
