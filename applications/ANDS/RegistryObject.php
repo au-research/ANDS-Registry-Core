@@ -15,6 +15,19 @@ class RegistryObject extends Model
     protected $table = "registry_objects";
     protected $primaryKey = "registry_object_id";
     public $timestamps = false;
+    public $duplicateRecordIds = null;
+    public $identifiers = null;
+
+    /**
+     * Eloquent Accessor
+     * usage: $this->id will return $this->registry_object_id
+     *
+     * @return mixed
+     */
+    public function getIdAttribute()
+    {
+        return $this->registry_object_id;
+    }
 
     /**
      * Eloquent
@@ -25,6 +38,16 @@ class RegistryObject extends Model
     public function data()
     {
         return $this->hasMany(RecordData::class, 'registry_object_id', 'registry_object_id');
+    }
+
+    public function datasource()
+    {
+        return $this->belongsTo(DataSource::class, 'data_source_id', 'data_source_id');
+    }
+
+    public function registryObjectAttributes()
+    {
+        return $this->hasMany(RegistryObjectAttribute::class, 'registry_object_id', 'registry_object_id');
     }
 
     /**
@@ -212,16 +235,47 @@ class RegistryObject extends Model
 
     public function getDuplicateRecords()
     {
-        // via identifier
-        $identifiers = Identifier::where('registry_object_id', $this->registry_object_id)->get()->pluck('identifier');
+        $this->findAllDuplicates();
 
-        $recordIDs = Identifier::whereIn('identifier', $identifiers)->get()->pluck('registry_object_id')->unique()->filter(function($item){
-            return $item != $this->registry_object_id;
-        });
-
-        return RegistryObject::whereIn('registry_object_id', $recordIDs)
+        return RegistryObject::whereIn('registry_object_id', $this->duplicateRecordIds)
             ->where('status', 'PUBLISHED')
             ->get();
     }
 
+    public function findAllDuplicates(){
+
+        if(is_array($this->duplicateRecordIds)){
+            return $this->duplicateRecordIds;
+        }
+        
+        $this->identifiers = Identifier::where('registry_object_id', $this->registry_object_id)->get()->pluck('identifier')->toArray();
+
+        $recordIDs = Identifier::whereIn('identifier', $this->identifiers)->get()->pluck('registry_object_id')->unique()->filter(function($item){
+            return $item != $this->registry_object_id;
+        })->toArray();
+
+
+
+        $this->duplicateRecordIds = $recordIDs;
+
+        while(count($recordIDs) > 0)
+        {
+            $moreIdentifiers = Identifier::whereIn('registry_object_id', $this->duplicateRecordIds)->get()->pluck('identifier')->unique()->filter(function($item){
+                return !in_array($item, $this->identifiers);
+            })->toArray();
+
+            if($moreIdentifiers){
+                $recordIDs = Identifier::whereIn('identifier', $moreIdentifiers)->get()->pluck('registry_object_id')->unique()->filter(function($item){
+                    return !in_array($item ,$this->duplicateRecordIds);
+                })->toArray();
+                $this->duplicateRecordIds = array_merge($this->duplicateRecordIds, $recordIDs);
+            }else{
+                $recordIDs = [];
+            }
+
+        }
+        
+        return $this->duplicateRecordIds;
+        
+    }
 }

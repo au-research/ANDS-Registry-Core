@@ -10,30 +10,10 @@ class Subject_Extension extends ExtensionBase
 
 	function processSubjects()
 	{
-		$subjectsResolved = array();
-		$this->_CI->load->library('vocab');
-		$sxml = $this->ro->getSimpleXML();
-		$sxml->registerXPathNamespace("ro", RIFCS_NAMESPACE);
-		$subjects = $sxml->xpath('//ro:subject');
-		foreach ($subjects AS $subject)
-		{
-			$type = (string)$subject["type"];
-			$value = (string)$subject;
-			if(!array_key_exists($value, $subjectsResolved))
-			{
-				$resolvedValue = $this->_CI->vocab->resolveSubject($value, $type);
-				$subjectsResolved[$value] = array('type'=>$type, 'value'=>$value, 'resolved'=>$resolvedValue['value'], 'uri'=>$resolvedValue['about']);
-				if($resolvedValue['uriprefix'] != 'non-resolvable')
-				{
-					$broaderSubjects = $this->_CI->vocab->getBroaderSubjects($resolvedValue['uriprefix'],$value);
-					foreach($broaderSubjects as $broaderSubject)
-					{
-						$subjectsResolved[$broaderSubject['notation']] = array('type'=>$type, 'value'=>$broaderSubject['notation'], 'resolved'=>$broaderSubject['value'], 'uri'=>$broaderSubject['about']);
-					}
-				}
-			}
-		}
-		return $subjectsResolved;
+	    $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($this->ro->id);
+        $subjectsResolved = \ANDS\Registry\Providers\RIFCS\SubjectProvider::processSubjects($record);
+        //dd($subjectsResolved);
+        return $subjectsResolved;
 	}
 
     /**
@@ -47,7 +27,7 @@ class Subject_Extension extends ExtensionBase
         $portalConfigCategories = array(
             'keywords' => array(
                 'display' => 'Keywords',
-                'list' => array('anzlic-theme', 'australia', 'caab', 'external_territories', 'cultural_group', 'DEEDI eResearch Archive Subjects', 'ISO Keywords', 'iso639-3', 'keyword', 'Local', 'local', 'marlin_regions', 'marlin_subjects', 'ocean_and_sea_regions', 'person_org', 'states/territories', 'Subject Keywords')
+                'list' => array('anzlic-theme', 'australia', 'caab', 'external_territories', 'cultural_group', 'DEEDI eResearch Archive Subjects', 'ISO Keywords', 'keyword', 'Local', 'local', 'marlin_regions', 'marlin_subjects', 'ocean_and_sea_regions', 'person_org', 'states/territories', 'Subject Keywords')
             ),
             'scot' => array(
                 'display' => 'Schools of Online Thesaurus',
@@ -77,6 +57,10 @@ class Subject_Extension extends ExtensionBase
             'lcsh' => array(
                 'display' => 'LCSH',
                 'list' => array('lcsh')
+            ),
+            'iso639-3' => array(
+                'display' => 'iso639-3',
+                'list' => array('iso639-3')
             )
         );
 

@@ -170,7 +170,7 @@ class Vocab_api
    public function __construct()
     {
         $this->ci = &get_instance();
-        require_once APP_PATH . 'vendor/autoload.php';
+        require_once BASE . 'vendor/autoload.php';
         // some constants
         $solr_base = get_config_item('solr_url');
         $sissvoc_base = get_config_item('sissvoc_url');

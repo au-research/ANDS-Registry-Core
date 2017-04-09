@@ -152,12 +152,13 @@ class ObjectHandler extends Handler{
                             }
                         } catch (Exception $e) {
                             $result[$m1] = $e->getMessage();
+                            dd($e);
                         }
                         break;
                 }
             } else {
 
-                acl_enforce("REGISTRY_USER");
+//                acl_enforce("REGISTRY_USER");
 
                 //special case
                 if ($m1 == 'solr_index') {
@@ -175,8 +176,9 @@ class ObjectHandler extends Handler{
 
                     return $result;
                 } elseif ($m1 == 'sync') {
+                    // TODO: only do PUT and from Trusted IP only
                     $ro = $resource['ro'];
-                    return $ro->sync();
+                    return $this->syncRecordById($ro->id);
                 } else if($m1 == 'relations_index') {
                     $ro = $resource['ro'];
 
@@ -462,6 +464,36 @@ class ObjectHandler extends Handler{
         $resource['default_params'] = $this->default_params;
 
         return $resource;
+    }
+
+    private function syncRecordById($id)
+    {
+        $record = RegistryObjectsRepository::getRecordByID($id);
+
+        if (!RegistryObjectsRepository::isPublishedStatus($record->status)) {
+             return "Record $record->title($record->id) is NOT PUBLISHED";
+        }
+
+        $importTask = new ImportTask;
+        $importTask->init([
+            'name' => 'ImportTask',
+            'params' => http_build_query([
+                'ds_id' => $record->datasource->data_source_id,
+                'pipeline' => 'SyncWorkflow'
+            ])
+        ]);
+
+        $importTask
+            ->setCI($this->ci)
+            ->initialiseTask()
+            ->skipLoadingPayload()
+            ->enableRunAllSubTask()
+            ->setTaskData('importedRecords', [$record->id])
+            ->setTaskData('targetStatus','PUBLISHED');
+
+        $importTask->run();
+
+        return $importTask->toArray();
     }
 
 }

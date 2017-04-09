@@ -6,6 +6,7 @@ namespace ANDS\API\Task\ImportSubTask;
 
 use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\Repository\RegistryObjectsRepository;
+use Carbon\Carbon;
 
 /**
  * Class IndexRelationship
@@ -50,23 +51,60 @@ class IndexRelationship extends ImportSubTask
         // TODO: MAJORLY REFACTOR THIS
         foreach ($totalRecords as $index => $roID) {
             $record = RegistryObjectsRepository::getRecordByID($roID);
-            if($record){
-                $allRelationships = RelationshipProvider::getMergedRelationships($record);
-
-                // update portal index
-                $this->updatePortalIndex($record, $allRelationships);
-
-                // update relation index
-                $this->updateRelationIndex($record, $allRelationships);
-
-                $this->updateProgress(
-                    $index, $total, "Processed ($index/$total) $record->title($roID)"
-                );
+            if (!$record) {
+                $this->addError("No Record with id $roID found to be indexed");
+                continue;
             }
+
+            $allRelationships = RelationshipProvider::getMergedRelationships($record);
+
+            // save relations_count
+            $record->setRegistryObjectAttribute('relations_count', count($allRelationships));
+
+            // update portal index
+            try {
+                $this->updatePortalIndex($record, $allRelationships);
+            } catch (\Exception $e) {
+                $message = $e->getMessage();
+                if ($message == "") {
+                    $trace = $e->getTrace();
+                    $first = array_shift($trace);
+                    $message = implode(' ', $first['args']);
+                    $this->addError($message);
+                } else {
+                    $this->addError($message);
+                }
+                continue;
+            }
+
+
+            // update relation index
+            try {
+                $this->updateRelationIndex($record, $allRelationships);
+            } catch (\Exception $e) {
+                $message = $e->getMessage();
+                if ($message == "") {
+                    $trace = $e->getTrace();
+                    $first = array_shift($trace);
+                    $message = implode(' ', $first['args']);
+                    $this->addError($message);
+                } else {
+                    $this->addError($message);
+                }
+                continue;
+            }
+
+            // save last_sync_relations
+            $record->setRegistryObjectAttribute('indexed_relations_at', Carbon::now()->timestamp);
+
+            $this->updateProgress(
+                $index, $total, "Processed ($index/$total) $record->title($roID)"
+            );
+
         }
 
-        $this->parent()->getCI()->solr->init()->setCore('portal')->commit();
-        $this->parent()->getCI()->solr->init()->setCore('relations')->commit();
+//        $this->parent()->getCI()->solr->init()->setCore('portal')->commit();
+//        $this->parent()->getCI()->solr->init()->setCore('relations')->commit();
     }
 
     /**
@@ -99,6 +137,7 @@ class IndexRelationship extends ImportSubTask
             }
 
             $relationType = is_array($rel['relation_type']) ? $rel['relation_type'] : [$rel['relation_type']];
+            $relationType = collect($relationType)->flatten()->toArray();
             $updateDoc["related_".$class."_id"][] = $rel['to_id'];
             $updateDoc["related_".$class."_title"][] = $rel['to_title'];
             foreach ($relationType as $type) {
@@ -115,8 +154,6 @@ class IndexRelationship extends ImportSubTask
 
         $updateDoc['id'] = $record->registry_object_id;
 
-
-
         // relation_grants_isFundedBy
         // relation_grants_isOutputOf
         // relation_grants_isPartOf
@@ -129,6 +166,8 @@ class IndexRelationship extends ImportSubTask
                 $value = ["set" => $value];
             }
         }
+
+
 
         $result = $this->parent()->getCI()->solr->add_json(json_encode([$updateDoc]));
         $result = json_decode($result, true);
@@ -147,9 +186,10 @@ class IndexRelationship extends ImportSubTask
             return;
         }
 
+
         // delete all from_id
         $this->parent()->getCI()->solr->init()->setCore('relations');
-        $this->parent()->getCI()->solr->deleteByQueryCondition('from_id:'.$record->registry_object_id);
+        $this->parent()->getCI()->solr->deleteByQueryCondition('+from_id:'.$record->registry_object_id);
 
         // add
         $docs = $this->getRelationshipIndex($relationships);
@@ -160,6 +200,8 @@ class IndexRelationship extends ImportSubTask
             $this->addError("relations for $record->registry_object_id: ". $result['error']['msg']);
         }
     }
+    
+    
 
     /**
      * @param $relationships

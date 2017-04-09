@@ -6,8 +6,10 @@
 
 namespace ANDS\API;
 
+use ANDS\Util\Config;
+use Carbon\Carbon;
 use \Exception as Exception;
-
+use Illuminate\Database\Capsule\Manager as DB;
 
 class Status_api
 {
@@ -65,10 +67,39 @@ class Status_api
     private function report()
     {
         $result = [
+            'database' => $this->getDatabaseStatus(),
             'harvester' => $this->getDaemonStatus('harvester'),
             'task' => $this->getDaemonStatus('task'),
             'solr' => $this->getSOLRStatus() ? array_merge($this->getSOLRStatus(), ['RUNNING'=>true]) : ['RUNNING'=>false]
         ];
+        return $result;
+    }
+
+    private function getDatabaseStatus()
+    {
+        initEloquent();
+        $config = Config::get('database');
+        $result = [];
+        foreach ($config as $key => $value) {
+            $result[$key] = true;
+            try {
+                $conn = DB::connection($key);
+
+                // get Pdo would throw an exception if the database is not connected correctly
+                $conn->getPdo();
+                $result[$key] = [
+                    'host' => $conn->getConfig('host'),
+                    'database' => $conn->getDatabaseName(),
+                    'RUNNING' => true
+                ];
+            } catch (\Exception $e) {
+                $result[$key] = [
+                    'msg' => $e->getMessage(),
+                    'RUNNING' => false,
+                ];
+            }
+        }
+
         return $result;
     }
 
@@ -81,25 +112,36 @@ class Status_api
      */
     private function getDaemonStatus($daemon)
     {
+        $status = false;
         if ($daemon == 'harvester') {
             $query = $this->db->get_where('configs', ['key' => 'harvester_status']);
             $queryResult = $query->first_row();
-            $status = json_decode($queryResult->value, true);
+            if ($queryResult) {
+                $status = json_decode($queryResult->value, true);
+            }
         } elseif ($daemon == 'task') {
             $query = $this->db->get_where('configs', ['key' => 'tasks_daemon_status']);
             $queryResult = $query->first_row();
-            $status = json_decode($queryResult->value, true);
+            if ($queryResult) {
+                $status = json_decode($queryResult->value, true);
+            }
         } else {
             $status = false;
         }
 
-        if (!$status) throw new Exception ('No status found for ' . $daemon . ' daemon');
+        if (!$status) {
+            return [
+                'msg' => 'no status available',
+                'runningSince' => 'never',
+                'lastReport' => 'never',
+                'RUNNING' => false
+            ];
+        }
 
-        $lastReportSince = (int) $status['last_report_timestamp'];
-        $lastReport = (time() - $lastReportSince);
+        $status['runningSince'] = Carbon::createFromTimestamp((int) $status['start_up_time'])->diffForHumans();
+        $status['lastReport'] = Carbon::createFromTimestamp((int) $status['last_report_timestamp'])->diffForHumans();
 
-        $status['lastReport'] = $lastReport .' seconds ago';
-        $status['RUNNING'] = ($lastReport > 60) ? false : true;
+        $status['RUNNING'] = (Carbon::createFromTimestamp((int) $status['last_report_timestamp'])->diffInSeconds() > 60) ? false : true;
 
         return $status;
     }

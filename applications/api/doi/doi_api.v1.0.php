@@ -15,6 +15,7 @@ use ANDS\DOI\Repository\ClientRepository;
 use ANDS\DOI\Repository\DoiRepository;
 use ANDS\DOI\Transformer\XMLTransformer;
 use ANDS\DOI\Validator\URLValidator;
+use ANDS\Util\Config;
 use \Exception as Exception;
 
 class Doi_api
@@ -138,12 +139,13 @@ class Doi_api
             $sharedSecret = $_SERVER["PHP_AUTH_PW"];
         }
 
+        $database = Config::get('database.dois');
         $clientRepository = new ClientRepository(
-            $this->dois_db->hostname, 'dbs_dois', $this->dois_db->username, $this->dois_db->password
+            $database['hostname'], $database['database'], $database['username'], $database['password']
         );
 
         $doiRepository = new DoiRepository(
-            $this->dois_db->hostname, 'dbs_dois', $this->dois_db->username, $this->dois_db->password
+            $database['hostname'], $database['database'], $database['username'], $database['password']
         );
 
         // handles xml.xml
@@ -232,12 +234,16 @@ class Doi_api
         }
 
         // constructing the dataciteclient to talk with datacite services
+        $config = Config::get('datacite');
+
+        $clientUsername = $config['name_prefix'] . "." . $config['name_middle'] . str_pad($client->client_id, 2, '-', STR_PAD_LEFT);
+
         $dataciteClient = new DataCiteClient(
-            get_config_item("gDOIS_DATACENTRE_NAME_PREFIX").".".get_config_item("gDOIS_DATACENTRE_NAME_MIDDLE").str_pad($client->client_id,2,"-",STR_PAD_LEFT), get_config_item("gDOIS_DATACITE_PASSWORD")
+            $clientUsername, $config['password']
         );
 
         // set to the default DOI Service in global config
-        $dataciteClient->setDataciteUrl(get_config_item("gDOIS_SERVICE_BASE_URI"));
+        $dataciteClient->setDataciteUrl($config['base_url']);
 
         // construct the DOIServiceProvider to handle DOI requests
         $doiService = new DOIServiceProvider($clientRepository, $doiRepository, $dataciteClient);
@@ -359,11 +365,17 @@ class Doi_api
 
             $call = $this->params['identifier'];
             $responselog['activity'] = $this->params['identifier'];
+
             // constructing the dataciteclient to talk with Datacite services
+            $config = Config::get('datacite');
+            $clientUsername = $config['name_prefix'] . "." . $config['name_middle'] . str_pad($client->client_id, 2, '-', STR_PAD_LEFT);
+
             $dataciteClient = new DataCiteClient(
-                get_config_item("gDOIS_DATACENTRE_NAME_PREFIX") . "." . get_config_item("gDOIS_DATACENTRE_NAME_MIDDLE") . str_pad($client->client_id, 2, "-", STR_PAD_LEFT), get_config_item("gDOIS_DATACITE_PASSWORD")
+                $clientUsername, $config['password']
             );
-            $dataciteClient->setDataciteUrl(get_config_item("gDOIS_SERVICE_BASE_URI"));
+
+            // set to the default DOI Service in global config
+            $dataciteClient->setDataciteUrl($config['base_url']);
         
             // construct the DOIServiceProvider to ensure this client is registered to use the service
             $doiService = new DOIServiceProvider($clientRepository, $doiRepository, $dataciteClient);
@@ -744,7 +756,7 @@ class Doi_api
                 'class' => 'doiBulk',
                 'bulkID' => $bulkRequest->id
             ]),
-            'type' => 'POKE'
+            'type' => 'PHPSHELL'
         ]);
 
         // log to ELK
@@ -1060,7 +1072,7 @@ class Doi_api
     private function _isDataCiteAlive($timeout = 5)
     {
         $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, (get_config_item("gDOIS_SERVICE_BASE_URI")));
+        curl_setopt($curl, CURLOPT_URL, (Config::get('datacite.base_url')));
         curl_setopt($curl, CURLOPT_FILETIME, true);
         curl_setopt($curl, CURLOPT_NOBODY, true);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -1073,6 +1085,6 @@ class Doi_api
     public function __construct()
     {
         $this->ci = &get_instance();
-        require_once APP_PATH . 'vendor/autoload.php';
+        require_once BASE . 'vendor/autoload.php';
     }
 }

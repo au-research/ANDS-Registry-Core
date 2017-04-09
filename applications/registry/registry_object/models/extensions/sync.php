@@ -449,7 +449,7 @@ class Sync_extension extends ExtensionBase{
 
 		//subjects
 		$subjects = $this->ro->processSubjects();
-		$fields = array('subject_value_resolved', 'subject_value_unresolved', 'subject_type', 'subject_vocab_uri', 'subject_anzsrcfor', 'subject_anzsrcseo');
+		$fields = array('subject_value_resolved', 'subject_value_unresolved', 'subject_type', 'subject_vocab_uri', 'subject_anzsrcfor', 'subject_anzsrcseo','subject_gcmd','subject_iso639-3');
 		foreach($fields as $f) $json[$f] = array();
 		foreach($subjects as $s) {
 			$json['subject_value_unresolved'][] = $s['value'];
@@ -460,10 +460,15 @@ class Sync_extension extends ExtensionBase{
 			 	$json['subject_anzsrcfor'][] = $s['resolved'];
 			 } else if(trim(strtolower($s['type']))=='anzsrc-seo') {
 			 	$json['subject_anzsrcseo'][] = $s['resolved'];
-			 }
+			 } else if(trim(strtolower($s['type']))=='gcmd') {
+                 $json['subject_gcmd'][] = $s['resolved'];
+                 $json['tsubject_'.$type][] = $s['resolved'];
+             } else if(trim(strtolower($s['type']))=='iso639-3') {
+                $json['subject_iso639-3'][] = $s['resolved'];
+             }
 
             $type = $this->ro->getPortalTypes($s['type']);
-            $json['tsubject_'.$type][] = $s['value'];
+            if(trim(strtolower($s['type']))!='gcmd') $json['tsubject_'.$type][] = $s['value'];
 		}
 
 		//related objects

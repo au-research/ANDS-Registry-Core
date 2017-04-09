@@ -729,7 +729,7 @@ class Importer {
 
         //adding task
         if (sizeof($roIDs) > 0) {
-            require_once API_APP_PATH . 'vendor/autoload.php';
+            require_once BASE . 'vendor/autoload.php';
             $params = [
                 'class' => 'fixRelationship',
                 'type' => 'ro',

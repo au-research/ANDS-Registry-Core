@@ -29,7 +29,10 @@ class Relation
                     array_push($this->properties[$key], $value);
                 }
             } elseif ($this->properties[$key] != $value) {
-                $this->properties[$key] = array($this->properties[$key], $value);
+                $this->properties[$key] = [
+                    $this->properties[$key],
+                    $value
+                ];
             }
         } else {
             $this->properties[$key] = $value;
@@ -242,6 +245,32 @@ class Relation
     }
 
     /**
+     * Switch the to record out to another
+     * Mainly used for duplicate records
+     *
+     * @param RegistryObject $record
+     * @return static
+     */
+    public function switchToRecord(RegistryObject $record)
+    {
+        $relation = new static;
+        foreach ($this->getProperties() as $key => $value) {
+            // if it starts with from
+            if (strpos($key, 'to_') === 0) {
+                $keyValue = str_replace("to_", "", $key);
+                $replace = $record->getAttribute($keyValue);
+                if ($keyValue == "id") {
+                    $replace = $record->registry_object_id;
+                }
+                $relation->setProperty($key, $replace);
+            } else {
+                $relation->setProperty($key, $value);
+            }
+        }
+        return $relation;
+    }
+
+    /**
      * @return $this
      */
     public function getObjects()
@@ -271,5 +300,18 @@ class Relation
             $this->to = RegistryObjectsRepository::getRecordByID($this->getProperty('to_id'));
         }
         return $this->to;
+    }
+
+    public function isRelatesToIdentifier()
+    {
+        if ($this->prop('relation_origin') == "IDENTIFIER") {
+            return true;
+        }
+        return false;
+    }
+
+    public function isReverse()
+    {
+        return strpos($this->prop('relation_origin'), "REVERSE") !== false;
     }
 }

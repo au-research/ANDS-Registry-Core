@@ -27,6 +27,8 @@ class Records extends CI_Model
 		$args['wherein'] = false;
         $args["allowedClass"] = false;
         $args['allowedType'] = false;
+        $args['attributeExist'] = false;
+        $args['hasAttribute'] = false;
 		$count = '';
         $batch_size = 100;
         $ro_count = 0;
@@ -60,6 +62,12 @@ class Records extends CI_Model
             $args['allowedType'] = array('collection', 'repository', 'dataset', 'software');
         }
 
+        if ($supplied_format == "scholix") {
+			$args['hasAttribute'] = [
+				"scholixable" => 1
+			];
+		}
+
 		if(!($set&&!$args["wherein"]))
 		{
 		$count = $this->ro->_get(array(array('args' => $args,
@@ -89,6 +97,17 @@ class Records extends CI_Model
                                      $db->where_in("registry_objects.type",
                                          $args["allowedType"]);
                                  }
+
+								if ($args['hasAttribute']) {
+							     	foreach ($args['hasAttribute'] as $key => $value) {
+                                        $db
+											->where('registry_object_attributes.attribute', $key)
+											->where('registry_object_attributes.value', $value);
+									}
+                                    ;
+								}
+
+
 
 							     return $db;
 						     })),
@@ -142,6 +161,17 @@ class Records extends CI_Model
                                        $db->where_in("registry_objects.type",
                                            $args["allowedType"]);
                                    }
+
+                                   if ($args['hasAttribute']) {
+                                       foreach ($args['hasAttribute'] as $key => $value) {
+                                           $db
+                                               ->where('registry_object_attributes.attribute', $key)
+                                               ->where('registry_object_attributes.value', $value);
+                                       }
+                                       ;
+                                   }
+
+
 							       $db->order_by("registry_objects.registry_object_id", "asc");
 							       return $db;
 						       })),

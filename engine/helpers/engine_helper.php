@@ -1,6 +1,11 @@
 <?php
 
 function get_config_item($name) {
+
+    if (env($name)) {
+        return env($name);
+    }
+
 	$_ci =& get_instance();
 	if($_ci->config->item($name)) {
 		return $_ci->config->item($name);
@@ -251,14 +256,22 @@ function default_exception_handler( $e ) {
 
     echo $_ci->load->view( 'header' , $data , true);
 
-   	echo $_ci->load->view( 'exception' , array("message" => $e->getMessage()) , true );
+   	echo $_ci->load->view( 'exception' , array("message" => get_exception_msg($e)) , true );
 
     echo $_ci->load->view( 'footer' , $data , true);
 }
+
+function get_exception_msg(Exception $e) {
+    $msg = $e->getMessage();
+    if (!$msg) {
+       return implode(" ", array_first($e->getTrace())['args']);
+    }
+    return $msg;
+}
 set_exception_handler('default_exception_handler');
 
-function json_exception_handler( $e ) {
-    echo json_encode(array("status"=>"ERROR", "message"=> $e->getMessage()));
+function json_exception_handler( Exception $e ) {
+    echo json_encode(array("status"=>"ERROR", "message"=> get_exception_msg($e)));
 }
 
 function json_error_handler($errno, $errstr, $errfile, $errline) {
@@ -267,17 +280,24 @@ function json_error_handler($errno, $errstr, $errfile, $errline) {
 }
 if (function_exists('xdebug_disable')) xdebug_disable();
 
+/**
+ * Very widely used helper function for getting a URL to an asset
+ *
+ * TODO: Refactor to not use CI anymore
+ * @param $path
+ * @param string $loc
+ * @return string
+ */
 function asset_url( $path, $loc = 'modules')
 {
-	$CI =& get_instance();
-
 	if($loc == 'base'){
-		return $CI->config->item('default_base_url').'assets/'.$path;
+		return baseUrl().'assets/'.$path;
 	} else if ($loc == 'shared'){
-		return $CI->config->item('default_base_url').'assets/shared/'.$path;
+		return baseUrl().'assets/shared/'.$path;
 	} else if( $loc == 'core'){
 		return base_url( 'assets/core/' . $path );
 	} else if ($loc == 'modules'){
+	    $CI =& get_instance();
 		if ($module_path = $CI->router->fetch_module()){
 			return base_url( 'assets/' . $module_path . "/" . $path );
 		}
@@ -287,7 +307,7 @@ function asset_url( $path, $loc = 'modules')
 	} else if ($loc == 'templates'){
 		return base_url('assets/templates/'.$path);
 	} else if ($loc =='base_path'){
-		return $CI->config->item('default_base_url').$path;
+		return baseUrl() . $path;
 	} else if ($loc == 'full_base_path') {
 		return base_url('assets/'.$path);
 	}
@@ -488,8 +508,9 @@ function monolog($message, $logger = "activity", $type = "info", $allowBot = fal
 
 function debug($message, $type = "debug") {
 
-    $env = get_config_item('deployment_state');
-    $debug = get_config_item('debug');
+    $env = get_config_item('ENVIRONMENT');
+//    $debug = get_config_item('debug');
+    $debug = true;
 
     if ($env === "production" || $debug === false) {
         return;
@@ -688,9 +709,32 @@ function isbot($useragent = false)
 }
 
 function initEloquent() {
-    require_once API_APP_PATH . 'vendor/autoload.php';
-    $importTask = new \ANDS\API\Task\ImportTask();
-    $importTask->initialiseTask();
+    $dotenv = new \Dotenv\Dotenv(__DIR__ . '/../../');
+    $dotenv->load();
+
+    $capsule = new \Illuminate\Database\Capsule\Manager;
+
+    $databases = require (dirname(__DIR__) . '/../config/database.php');
+    $default = $databases['default'];
+    foreach ($databases as $key => $db) {
+        $capsule->addConnection(
+            [
+                'driver' => 'mysql',
+                'host' => array_key_exists('hostname', $db) ? $db['hostname'] : $default['hostname'],
+                'database' => array_key_exists('database', $db) ? $db['database'] : "dbs_registry",
+                'username' => array_key_exists('username', $db) ? $db['username'] : $default['username'],
+                'password' => array_key_exists('password', $db) ? $db['password'] : $default['password'],
+                'charset' => 'utf8',
+                'collation' => 'utf8_general_ci',
+                'prefix' => '',
+                'options'   => array(
+                    \PDO::ATTR_PERSISTENT => true,
+                )
+            ], $key
+        );
+    }
+    $capsule->setAsGlobal();
+    $capsule->bootEloquent();
 }
 
 function tearDownEloquent() {

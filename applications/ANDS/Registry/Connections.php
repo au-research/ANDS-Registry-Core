@@ -63,7 +63,10 @@ class Connections {
     public function convertRepoResultToRelationResult($repoResult)
     {
         $result = [];
-
+        if(count($repoResult) == 0)
+        {
+            return $result;
+        }
         foreach ($repoResult as $row) {
 
             $relation = new Relation();
@@ -93,7 +96,7 @@ class Connections {
             // merge relation
             $parsedRelation = $relation;
             if (array_key_exists($key, $result)) {
-                $parsedRelation->mergeWith($relation->getProperties());
+                $parsedRelation->mergeWith($result[$key]->getProperties());
             }
 
             $result[$key] = $parsedRelation;
