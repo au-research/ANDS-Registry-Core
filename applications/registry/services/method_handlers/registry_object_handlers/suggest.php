@@ -14,14 +14,34 @@ class Suggest extends ROHandler {
 
         $result['message'] = 'No Suggested Collection was found';
         //pools
-        $suggestors = array(
-           'subjects'=>array('boost'=>0.3,'handler'=>'subjects'),
-           'shared_text'=>array('boost'=>0.3,'handler'=>'shared_text'),
-           'related_object'=>array('boost'=>0.1,'handler'=>'related_object'),
-           'temporal_coverage'=>array('boost'=>0.1,'handler'=>'temporal_coverage'),
-           'spatial_coverage'=>array('boost'=>0.1,'handler'=>'spatial_coverage'),
-           'tags'=>array('boost'=>0.1,'handler'=>'tags')
-        );
+        $suggestors = [
+            'subjects' => [
+                'boost' => 0.3,
+                'handler' => 'subjects'
+            ],
+            'shared_text' => [
+                'boost' => 0.3, 'handler' => 'shared_text'
+            ],
+            'related_object' => [
+                'boost' => 0.1,
+                'handler' => 'related_object'],
+            'temporal_coverage' => [
+                'boost' => 0.1,
+                'handler' => 'temporal_coverage'
+            ],
+            'spatial_coverage' => [
+                'boost' => 0.1,
+                'handler' => 'spatial_coverage'
+            ],
+            'tags' => [
+                'boost' => 0.1,
+                'handler' => 'tags'
+            ],
+//            'user_view_behavior' => [
+//                'boost' => 0.5,
+//                'handler' => 'user_view_behavior'
+//            ]
+        ];
 
         //populate the pool with the different suggestors
         $ci =& get_instance();
@@ -77,6 +97,14 @@ class Suggest extends ROHandler {
         if (!$limit)
             $limit = 5;
 
+        // CC-1156. Removed related dataset in the fullSet
+        $relatedDatasets = $this->getRelatedDatasets($this->ro->id);
+        if (count($relatedDatasets) > 0) {
+            foreach ($relatedDatasets as $related) {
+                unset($fullSet[$related]);
+            }
+        }
+
         //if Limit is set to -1, return all
         if ($limit == -1) {
             $subSet = $fullSet;
@@ -106,5 +134,31 @@ class Suggest extends ROHandler {
 
         }
         return null;
+    }
+
+    private function getRelatedDatasets($id)
+    {
+        $ci =& get_instance();
+        $ci->load->library('solr');
+        $ci->solr
+            ->init()
+            ->setCore('relations')
+            ->setOpt('rows', 100)
+            ->setOpt('fq', '+from_id:'.$id)
+            ->setOpt('fl', 'to_id')
+            ->setOpt('fq', '+to_class:collection');
+
+        $solrResult = $ci->solr->executeSearch(true);
+
+        $result = [];
+
+        if ($solrResult && array_key_exists('response', $solrResult) && $solrResult['response']['numFound'] > 0) {
+            $result['count'] = $solrResult['response']['numFound'];
+            foreach ($solrResult['response']['docs'] as $doc) {
+                $results[] = $doc['to_id'];
+            }
+        }
+
+        return $result;
     }
 }

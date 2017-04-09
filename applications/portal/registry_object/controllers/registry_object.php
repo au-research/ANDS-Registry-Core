@@ -41,7 +41,6 @@ class Registry_object extends MX_Controller
             if ($ro && $ro->prop['status'] == 'OK') {
                 if ($ro->prop['core']['slug']) {
                     //it's ok
-
                 } else {
                     if (!$slug || $slug != $ro->prop['core']['slug']) {
                         redirect($ro->prop['core']['slug'] . '/' . $id);
@@ -397,10 +396,10 @@ class Registry_object extends MX_Controller
         // search class for constructing search queries
         $searchClass = $ro->core['class'];
         if ($ro->core['class'] == 'party') {
-            if (strtolower($ro->core['type']) == 'person' || strtolower($ro->core['type']) == 'administrativeposition') {
-                $searchClass = 'party_one';
-            } elseif (strtolower($ro->core['type']) == 'group') {
+            if (strtolower($ro->core['type']) == 'group') {
                 $searchClass = 'party_multi';
+            } else {
+                $searchClass = 'party_one';
             }
         }
 

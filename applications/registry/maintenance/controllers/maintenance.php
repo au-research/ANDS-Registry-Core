@@ -467,7 +467,7 @@ class Maintenance extends MX_Controller
 
         echo "---spawning task---";
 
-        require_once API_APP_PATH . 'vendor/autoload.php';
+        require_once BASE . 'vendor/autoload.php';
 
         $task = [
             'name' => "Sync Missing Records for Data Source: ". $dataSourceID,
@@ -486,37 +486,31 @@ class Maintenance extends MX_Controller
         echo "task added: ".$taskAdded['id'];
     }
 
-    function test()
+    function fixRecordsWithNoIdentifiers()
     {
-        set_exception_handler('json_exception_handler');
-        header('Cache-Control: no-cache, must-revalidate');
-        header('Content-type: application/json');
-        $this->load->model('data_source/data_sources', 'ds');
-        $this->load->model('registry_object/registry_objects', 'ro');
-        $this->load->library('solr');
+        initEloquent();
+        $ids = \ANDS\RegistryObject\Identifier::where('identifier', '')->get()->pluck('registry_object_id')->toArray();
 
-        $this->benchmark->mark('start');
-//		$ro = $this->ro->getByID(15144);
-//        $ro = $this->ro->getByID(518517);
-//        $ro = $this->ro->getByID(553796);
-//        $ro = $this->ro->getByID(553497);
-//        $ro = $this->ro->getByID(189908);
-//        $ro = $this->ro->getByID(400676);
-        $ro = $this->ro->getByID(574424);
-//        $ro = $this->ro->getByID(476461);
+        $importTask = new \ANDS\API\Task\ImportTask();
+        $importTask->init([
+            'name' => "Fix records with identifiers is null",
+            'params' => http_build_query([
+                'ds_id' => 147,
+                'targetStatus' => 'PUBLISHED',
+                'pipeline' => 'UpdateRelationshipWorkflow'
+            ]),
+            'type' => 'DONTRUNME'
+        ]);
+        $importTask->setDb($this->db)->setCI($this);
+        $importTask
+            ->skipLoadingPayload()
+            ->enableRunAllSubTask()
+            ->setTaskData("importedRecords", $ids);
+        $importTask->initialiseTask();
+        $importTask->sendToBackground()->run();
 
-//        $parents = $ro->getAllRelatedObjects();
-//        dd($parents);
-        $relatedObjects = $ro->getAllRelatedObjects();
-        $relatedObjects = array_merge($relatedObjects, $ro->_getGrantsNetworkConnections($relatedObjects));
-        var_dump(sizeof($relatedObjects));
-//        $ro->getRelationshipIndex();
-//        $rels = $ro->getCachedRelationshipMetadata();
+        return $importTask;
 
-
-
-        $this->benchmark->mark('end');
-        dd($this->benchmark->elapsed_time('start', 'end'));
     }
 
     function sync($roID) {

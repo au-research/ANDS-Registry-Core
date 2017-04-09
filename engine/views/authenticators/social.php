@@ -1,5 +1,5 @@
 <?php
-    $oauth_conf = $this->config->item('oauth_config');
+    $oauth_conf = \ANDS\Util\Config::get('oauth');
 ?>
 <?php if($oauth_conf['providers']['Facebook']['enabled']): ?>
     <a href="<?php echo registry_url('auth/authenticate/facebook'); ?>?redirect=<?php echo $this->input->get('redirect') ?>" class="btn btn-primary btn-block btn-icon-left">Login with Facebook <span><i class="fa fa-facebook"></i></span></a>

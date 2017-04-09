@@ -11,27 +11,22 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
 */
 class Connectiontrees extends ROHandler {
 
-    public function handle_nestedprovider()
+    public function handle_wip()
     {
-        $ci =& get_instance();
-        $ci->load->model('registry_object/registry_objects','thisro');
-        $ci->load->model('services/connectiontree','connectiontree');
-
         $conn = new NestedConnectionsProvider(new EloquentConnectionsRepository);
-        $links = $conn->getNestedCollectionsFromChild($this->ro->key, 4);
+        $links = $conn->getNestedCollectionsFromChild($this->ro->key, 5);
 
-        $links = array_values($links);
-        foreach ($links as &$link) {
-            $link = $link->format([
-                'from_id' => 'registry_object_id',
-                'from_title' => 'title',
-                'from_class' => 'class',
-                'from_slug' => 'slug',
-                'relation_type' => 'relation_type',
-                'from_status' => 'status',
-                'children' => 'children'
-            ], true);
-        }
+        $links = $links->format([
+            'from_id' => 'registry_object_id',
+            'from_title' => 'title',
+            'from_class' => 'class',
+            'from_slug' => 'slug',
+            'relation_type' => 'relation_type',
+            'from_status' => 'status',
+            'children' => 'children'
+        ], true);
+
+        $links = [$links];
 
         return $links;
     }
@@ -50,7 +45,7 @@ class Connectiontrees extends ROHandler {
 
         if ($ro->class == 'collection') {
             $ancestors = $ci->connectiontree->getImmediateAncestors($ro, true);
-            $depth = 5;
+            $depth = 4;
             if ($ancestors) {
                 foreach ($ancestors AS $ancestor_element) {
                     if($ro->id != $ancestor_element['registry_object_id']){

@@ -113,7 +113,7 @@ class RegistryObjectsRepository
      * Get the published version of a record by key
      *
      * @param $key
-     * @return mixed
+     * @return RegistryObject
      */
     public static function getPublishedByKey($key)
     {
@@ -121,17 +121,30 @@ class RegistryObjectsRepository
     }
 
     /**
+     * Get any record in the DRAFT Group by key
+     *
+     * @param $key
+     * @return RegistryObject
+     */
+    public static function getDraftByKey($key)
+    {
+        return self::getByKeyAndStatus($key, self::getDraftStatusGroup());
+    }
+
+    /**
      * Useful function to get record by key and status
      *
      * @param $key
-     * @param string $status
-     * @return mixed
+     * @param array|string $status
+     * @return RegistryObject
      */
     public static function getByKeyAndStatus($key, $status = "PUBLISHED")
     {
         $importTask = new ImportTask();
         $importTask->init([])->bootEloquentModels();
-
+        if (is_array($status)) {
+            return RegistryObject::where('key', $key)->whereIn('status', $status)->first();
+        }
         return RegistryObject::where('key', $key)->where('status', $status)->first();
     }
 

@@ -6,6 +6,7 @@ namespace ANDS\API\Task\ImportSubTask;
 use ANDS\Repository\RegistryObjectsRepository as Repo;
 use ANDS\Repository\DataSourceRepository;
 use ANDS\Repository\RegistryObjectsRepository;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 /**
@@ -45,31 +46,53 @@ class IndexPortal extends ImportSubTask
         // TODO: MAJORLY REFACTOR THIS
         foreach ($importedRecords as $index=>$roID) {
             $ro = $this->parent()->getCI()->ro->getByID($roID);
+            $record = RegistryObjectsRepository::getRecordByID($roID);
 
             // index without relationship data
-            $portalIndex = $ro->indexable_json(null, []);
+            try {
+                $portalIndex = $ro->indexable_json(null, []);
+            } catch (\Exception $e) {
+                $msg = $e->getMessage();
+                if (!$msg) {
+                    $msg = implode(" ", array_first($e->getTrace())['args']);
+                }
+                $this->addError("Error getting portalIndex for $ro->id : $msg");
+            }
+
             if (count($portalIndex) > 0) {
                 // TODO: Check response
                 $this->parent()->getCI()->solr->init()->setCore('portal');
                 $this->parent()->getCI()->solr->deleteByID($roID);
-                $this->parent()->getCI()->solr->commit();
+//                $this->parent()->getCI()->solr->commit();
                 $result = $this->parent()->getCI()
                     ->solr->add_json(json_encode(
                         ['add' => ["doc" => $portalIndex]]
                     ));
                 $result = json_decode($result, true);
+
+                if ($result === null) {
+                    $this->addError("portal for $ro->id failed : unknown reason");
+                    continue;
+                }
+
                 if (array_key_exists('error', $result)) {
                     $this->addError("portal for $ro->id: ". $result['error']['msg']);
+                    continue;
                 }
+
+                // save last_sync_portal
+                $record->setRegistryObjectAttribute('indexed_portal_at', Carbon::now()->timestamp);
             }
 
             $this->updateProgress($index, $total, "Processed ($index/$total) $ro->title($roID)");
         }
 
-        $result = $this->parent()->getCI()->solr->init()->setCore('portal')->commit();
-        $result = json_decode($result, true);
-        if (array_key_exists('error', $result)) {
-            $this->addError("commit: ". $result['error']['msg']);
-        }
+//        $result = $this->parent()->getCI()->solr->init()->setCore('portal')->commit();
+//        $result = json_decode($result, true);
+//        if (array_key_exists('error', $result)) {
+//            $this->addError("commit: ". $result['error']['msg']);
+//        }
+
+        $this->log("Finished Indexing $total records");
     }
 }

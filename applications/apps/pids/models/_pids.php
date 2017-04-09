@@ -18,7 +18,7 @@ class _pids extends CI_Model
 	}
 
 	function getTrustedClients(){
-		$result = $this->pid_db->get('public.trusted_client');
+		$result = $this->pid_db->get('trusted_client');
 		return $result->result_array();
 	}
 
@@ -70,7 +70,7 @@ class _pids extends CI_Model
 
 	function getAllAppID(){
 		$result = array();
-		$query = $this->pid_db->select('app_id')->distinct()->from('public.trusted_client')->get();
+		$query = $this->pid_db->select('app_id')->distinct()->from('trusted_client')->get();
 		if($query->num_rows()==0) return array();
 		foreach($query->result_array() as $r){
 			$result[] = $r['app_id'];
@@ -222,7 +222,7 @@ class _pids extends CI_Model
     }
 
 	function removeTrustedClient($ip, $appId){
-		$this->pid_db->delete('public.trusted_client', array('ip_address'=>$ip, 'app_id'=>$appId));
+		$this->pid_db->delete('trusted_client', array('ip_address'=>$ip, 'app_id'=>$appId));
 	}
 
     function getFilePrefixForCurrentIdentifier()
@@ -256,7 +256,7 @@ class _pids extends CI_Model
 		$result = array();
 		$searchQuery = $this->pid_db
 					->select('*')
-					->from('public.search_view')
+					->from('search_view')
 					->like('data', '####')
 					->get();
 		if($searchQuery->num_rows()==0) return array();
@@ -272,7 +272,7 @@ class _pids extends CI_Model
 	{
 		$this->pid_db->where('type', 'AGENTID');
 		$this->pid_db->where('handle', $pid_handler);
-		$query = $this->pid_db->update('public.handles', array('data'=>$owner_handler)); 
+		$query = $this->pid_db->update('handles', array('data'=>$owner_handler)); 
 		return $query;
 	}
 
@@ -282,7 +282,7 @@ class _pids extends CI_Model
 		$this->_CI->session->set_userdata(PIDS_USER_IDENTIFIER, $userIdentifier);
 		$this->_CI->session->set_userdata(PIDS_USER_DOMAIN, $userDomain);
 		$identifierStr = $userIdentifier.'####'.$userDomain;
-		$query = $this->pid_db->get_where("public.handles", array("type"=>'DESC', 'data'=>$identifierStr));
+		$query = $this->pid_db->get_where("handles", array("type"=>'DESC', 'data'=>$identifierStr));
 		if($query->num_rows()>0){
 			$array = $query->result_array();
 			return $array[0]['handle'];
@@ -294,7 +294,7 @@ class _pids extends CI_Model
 		$aHandles = array();
 		$query = $this->pid_db
 			->select('handle')->distinct()
-			->from('public.handles')
+			->from('handles')
 			->where('handle !=',$ownerHandle)
 			->where("type",'AGENTID')
 			->where('data',$ownerHandle)
@@ -314,7 +314,7 @@ class _pids extends CI_Model
 			}
 			$searchQuery = $this->pid_db
 					->select('handle')->distinct()
-					->from('public.search_view')
+					->from('search_view')
 					->where('handle !=', $ownerHandle)
 					->like('data', $searchText)
 					->or_like('handle', $searchText)
@@ -341,7 +341,7 @@ class _pids extends CI_Model
 
 	function getHandlesDetails($handles)
 	{
-		$query = $this->pid_db->select('*')->from("public.handles")->where_in("handle",$handles)->get();
+		$query = $this->pid_db->select('*')->from("handles")->where_in("handle",$handles)->get();
 		if($query->num_rows()>0){
 			return $query->result_array();
 		}

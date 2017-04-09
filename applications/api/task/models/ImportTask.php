@@ -8,6 +8,7 @@
 namespace ANDS\API\Task;
 
 use ANDS\API\Task\ImportSubTask\ImportSubTask;
+use ANDS\API\Task\ImportSubTask\NonFatalException;
 use ANDS\DataSource;
 use ANDS\DataSource\Harvest as Harvest;
 use ANDS\Util\NotifyUtil;
@@ -249,6 +250,7 @@ class ImportTask extends Task
                     "Ingest",
                     "ProcessCoreMetadata",
                     "ProcessIdentifiers",
+                    "ProcessLinks",
                     "ProcessRelationships",
                     "ProcessGrantsRelationship",
                     "PopulateAffectedList",
@@ -269,6 +271,7 @@ class ImportTask extends Task
                     "PreserveCoreMetadata",
                     "ProcessDelete",
                     "ProcessIdentifiers",
+                    "ProcessLinks",
                     "ProcessRelationships",
                     "ProcessGrantsRelationship",
                     "PopulateAffectedList",
@@ -281,10 +284,22 @@ class ImportTask extends Task
                 break;
             case "UpdateRelationshipWorkflow":
                 $tasks = [
+                    "ProcessIdentifiers",
                     "ProcessRelationships",
                     "ProcessGrantsRelationship",
                     "PopulateAffectedList",
                     "ProcessAffectedRelationships",
+                    "IndexRelationship"
+                ];
+                break;
+            case "SyncWorkflow":
+                $tasks = [
+                    "ProcessCoreMetadata",
+                    "ProcessIdentifiers",
+                    "ProcessRelationships",
+                    "ProcessGrantsRelationship",
+                    "ProcessQualityMetadata",
+                    "IndexPortal",
                     "IndexRelationship"
                 ];
                 break;
@@ -310,11 +325,11 @@ class ImportTask extends Task
                     "HandleRefreshHarvest",
                     "ProcessDelete",
                     "ProcessIdentifiers",
+                    "ProcessLinks",
                     "ProcessRelationships",
                     "ProcessGrantsRelationship",
                     "ProcessQualityMetadata",
                     "IndexPortal",
-                    "IndexRelationship",
                     "PopulateAffectedList",
                     "ProcessAffectedRelationships",
                     "IndexRelationship",
@@ -371,26 +386,7 @@ class ImportTask extends Task
      */
     public function bootEloquentModels()
     {
-        $ci =& get_instance();
-        $capsule = new Capsule;
-        $capsule->addConnection(
-            [
-                'driver' => 'mysql',
-                'host' => $ci->db->hostname,
-                'database' => $ci->db->database,
-                'username' => $ci->db->username,
-                'password' => $ci->db->password,
-                'charset' => 'utf8',
-                'collation' => 'utf8_unicode_ci',
-                'prefix' => '',
-                'options'   => array(
-                    \PDO::ATTR_PERSISTENT => true,
-                )
-            ], 'default'
-        );
-        $capsule->setAsGlobal();
-        $capsule->getConnection('default');
-        $capsule->bootEloquent();
+//        initEloquent();
         return $this;
     }
 
