@@ -6,6 +6,8 @@ namespace ANDS\Commands;
 
 use ANDS\RegistryObject;
 use ANDS\Task\SyncRecordTask;
+use ANDS\Util\Config;
+use MinhD\SolrClient\SolrClient;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Predis\Client;
@@ -16,6 +18,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class SyncRecordWorkerRedisCommand extends Command
 {
@@ -71,6 +74,9 @@ class SyncRecordWorkerRedisCommand extends Command
             $this->process($input, $output);
         }
 
+        if ($command == "identify-index") {
+            $this->identifyIndex($input, $output);
+        }
 
     }
 
@@ -102,6 +108,13 @@ class SyncRecordWorkerRedisCommand extends Command
         $notSyncedCount = $notSynced->count();
         $output->writeln("There are {$notSyncedCount} un-synced records");
 
+        $helper = $this->getHelper('question');
+        $question = new ConfirmationQuestion('Proceed to fix? [y|N] : ', false);
+        if (!$helper->ask($input, $output, $question)) {
+            $output->writeln("Aborting.");
+            return;
+        }
+
         // write to ands.task-queue
         $redisClient = new Client(array(
             'host' => $input->getOption('host'),
@@ -119,6 +132,64 @@ class SyncRecordWorkerRedisCommand extends Command
             );
             $output->writeln("Sent $id to queue");
         }
+    }
 
+    private function identifyIndex(InputInterface $input, OutputInterface $output)
+    {
+        $DBPublished = RegistryObject::where('status', 'PUBLISHED');
+        $output->writeln("There are {$DBPublished->count()} PUBLISHED records");
+
+        $solrClient = new SolrClient(Config::get('app.solr_url'));
+        $solrClient->setCore('portal');
+        $numFound = $solrClient->search([
+            'q' => '*:*',
+        ])->getNumFound();
+        $output->writeln("There are {$numFound} Indexed records");
+
+        $result = $solrClient->search([
+            'q' => '*:*',
+            'fl' => 'id',
+            'rows' => $numFound
+        ]);
+        $ids = [];
+        foreach ($result->getDocs() as $doc) {
+            $ids[] = $doc->id;
+        }
+
+        $DBPublished = $DBPublished->pluck('registry_object_id')->toArray();
+        $diffLeft = array_diff($DBPublished, $ids);
+        $diffLeftCount = count($diffLeft);
+        $output->writeln("There are {$diffLeftCount} records that needs indexed");
+
+        $diffRight = array_diff($ids, $DBPublished);
+        $diffRightCount = count($diffRight);
+        $output->writeln("There are {$diffRightCount} index that needs removal");
+
+        $helper = $this->getHelper('question');
+        $question = new ConfirmationQuestion('Proceed to fix? [y|N] : ', false);
+        if (!$helper->ask($input, $output, $question)) {
+            $output->writeln("Aborting.");
+            return;
+        }
+
+        // Fix diffLeft
+        $output->writeln("Sending {$diffLeftCount} records to index queue");
+        $redisClient = new Client(array(
+            'host' => $input->getOption('host'),
+            'port' => $input->getOption('port'),
+            'database' => $input->getOption('database'),
+            'schema' => 'tcp'
+        ));
+        $redisQueue = new RedisQueue($redisClient, $input->getOption('queue'));
+        foreach ($diffLeft as $id) {
+            $redisQueue->sendJob(
+                json_encode([
+                    'record_id' => $id
+                ])
+            );
+            $output->writeln("Sent $id to queue");
+        }
+
+        // TODO: Fix diffRight
     }
 }
