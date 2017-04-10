@@ -128,18 +128,6 @@ class LinkProvider implements RegistryContentProvider
         }
 
         foreach(XMLUtil::getElementsByXPath($xml,
-            'ro:registryObject/ro:' . $record->class.'/ro:identifier') AS $identifier) {
-            if((string)$identifier != '') {
-                $vType = strtolower((string) $identifier['type']);
-                $type = 'identifier_'.$vType.'_link';
-                $link = static::getResolvedLinkForIdentifier($vType, (string) $identifier);
-                if($link != '')
-                {
-                    array_push($identifiersLinks, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$link,'status'=>'NEW')));
-                }
-            }
-        }
-        foreach(XMLUtil::getElementsByXPath($xml,
             'ro:registryObject/ro:' . $record->class.'/ro:relatedInfo/ro:identifier') AS $identifier) {
             if((string)$identifier != '') {
                 $vType = strtolower((string) $identifier['type']);
@@ -191,17 +179,19 @@ class LinkProvider implements RegistryContentProvider
     public static function getResolvedLinkForIdentifier($type, $identifier)
     {
         $identifier = trim($identifier);
-        $typeArray = ['handle', 'purl', 'doi', 'uri', 'orcid', 'au-anl:peau'];
+        $typeArray = ['handle', 'purl', 'doi', 'uri', 'url', 'ark', 'orcid', 'au-anl:peau' ];
 
         if ((strpos($identifier,'http://') === 0 || strpos($identifier,'https://') === 0)
             && in_array($type, $typeArray)){
             return $identifier;
         }
+
         switch ($type){
             case 'handle':
-                if(strpos($identifier,"hdl:") > 0)
+                if(strpos($identifier,"hdl:") === 0) {
                     return "http://hdl.handle.net/" . substr($identifier, strpos($identifier, "hdl:") + 4);
-                elseif(strpos($identifier, "dl.handle.net/") > 0)
+                }
+                elseif(strpos($identifier, "hdl.handle.net/") === 0)
                     return "http://hdl.handle.net/" . substr($identifier, strpos($identifier, "hdl.handle.net/") + 15);
                 else
                     return "http://hdl.handle.net/" . $identifier;
@@ -219,6 +209,9 @@ class LinkProvider implements RegistryContentProvider
                     return "http://dx.doi.org/" . substr($identifier, strpos($identifier, "doi.org/") + 8 );
                 break;
             case 'uri':
+                return 'http://'  .$identifier;
+                break;
+            case 'url':
                 return 'http://'  .$identifier;
                 break;
             case 'ark':
