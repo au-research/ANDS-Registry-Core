@@ -55,6 +55,7 @@ class ConceptsCommand extends Command
         foreach ($concepts_array as $concepts) {
 
             $current_broader = $broader;
+            $current_notation = $notation;
             $current_broader[] = isset($concepts['prefLabel']) ? $concepts['prefLabel']: '' ;
             $current_iri = $iri;
             $current_iri[] = $concepts['iri'];
@@ -117,7 +118,7 @@ class ConceptsCommand extends Command
         $broader_iri = array();
         $broader_notation = array();
 
-        $this->generate_solr($concepts_array[0]['narrower'], $broader,$broader_iri, $broader_notation, $type);
+        $this->generate_solr($concepts_array, $broader,$broader_iri, $broader_notation, $type);
 
         $output->writeln('You have indexed concepts of a ' . $type . ' vocabulary from ' . $source . ".");
 
