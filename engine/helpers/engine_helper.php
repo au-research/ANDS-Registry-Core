@@ -733,7 +733,6 @@ function initEloquent() {
             ], $key
         );
     }
-
     $capsule->setAsGlobal();
     $capsule->bootEloquent();
 }

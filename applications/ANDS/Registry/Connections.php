@@ -63,7 +63,10 @@ class Connections {
     public function convertRepoResultToRelationResult($repoResult)
     {
         $result = [];
-
+        if(count($repoResult) == 0)
+        {
+            return $result;
+        }
         foreach ($repoResult as $row) {
 
             $relation = new Relation();
