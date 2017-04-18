@@ -179,7 +179,7 @@ class LinkProvider implements RegistryContentProvider
     public static function getResolvedLinkForIdentifier($type, $identifier)
     {
         $identifier = trim($identifier);
-        $typeArray = ['handle', 'purl', 'doi', 'uri', 'orcid', 'au-anl:peau'];
+        $typeArray = ['handle', 'purl', 'doi', 'uri', 'url', 'ark', 'orcid', 'au-anl:peau' ];
 
         if ((strpos($identifier,'http://') === 0 || strpos($identifier,'https://') === 0)
             && in_array($type, $typeArray)){
@@ -209,6 +209,9 @@ class LinkProvider implements RegistryContentProvider
                     return "http://dx.doi.org/" . substr($identifier, strpos($identifier, "doi.org/") + 8 );
                 break;
             case 'uri':
+                return 'http://'  .$identifier;
+                break;
+            case 'url':
                 return 'http://'  .$identifier;
                 break;
             case 'ark':
