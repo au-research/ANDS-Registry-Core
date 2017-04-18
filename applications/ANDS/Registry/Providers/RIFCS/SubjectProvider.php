@@ -206,8 +206,8 @@ class SubjectProvider implements RIFCSProvider
             return ($type_match OR $notation_match) AND $value_match ? true : false;
         }
 
-        // if we have a direct value string check the resolved value and number of exact hits if multiple hits then don't match
-        if (strtoupper($value) == strtoupper($resolved->label[0]) && $numFound > 1)  return false;
+        // if we have a direct value string check the resolved value and number of exact hits and defined type - if multiple hits or local type is local then don't match
+        if (strtoupper($value) == strtoupper($resolved->label[0]) && ($numFound > 1 || $type == 'local'))  return false;
 
         // if this is a concatenated gcmd value strip off the final subject value to check resolved value
         if ($resolved->type[0] == 'gcmd' && self::isMultiValue($subject['value']))
