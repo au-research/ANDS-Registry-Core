@@ -57,6 +57,7 @@ class Registry_object extends MX_Controller
                 }
             }
         }
+
         //dd($ro->prop['core']);
         if($ro && $ro->core['status'] == "DELETED")
         {
@@ -81,16 +82,14 @@ class Registry_object extends MX_Controller
             } elseif ($ro && $ro->prop['status'] == 'OK') {
                 redirect($slug . '/' . $ro->prop['core']['id']);
             }
-
         }
-
 
         //If a key is provided
         //view/?key={key} => redirect to {slug}/{id}
         if ((!$ro || $ro->prop['status'] == 'ERROR') && $key) {
-            $ro = $this->ro->getByKey($key, $useCache);
-            if ($ro && $ro->prop['status'] == 'OK') {
-                redirect($ro->prop['core']['slug'] . '/' . $ro->prop['core']['id']);
+            $record = \ANDS\Repository\RegistryObjectsRepository::getPublishedByKey($key);
+            if ($record) {
+                redirect($record->slug.'/'.$record->id);
             }
         }
 

@@ -158,7 +158,7 @@ class ObjectHandler extends Handler{
                 }
             } else {
 
-//                acl_enforce("REGISTRY_USER");
+                acl_enforce("REGISTRY_USER");
 
                 //special case
                 if ($m1 == 'solr_index') {

@@ -9,6 +9,7 @@ use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\RegistryObject\ImplicitRelationship;
 use ANDS\RegistryObject\Relationship;
+use ANDS\RegistryObject\Links;
 
 /**
  * Class ProcessDelete
@@ -103,6 +104,8 @@ class ProcessDelete extends ImportSubTask
             Relationship::where('registry_object_id', $record->registry_object_id)->delete();
             ImplicitRelationship::where('from_id', $record->registry_object_id)->delete();
 
+            //delete links
+            Links::where('registry_object_id', $record->registry_object_id)->delete();
 
             $portalQuery .= " id:$record->registry_object_id";
             $fromRelationQuery .= " from_id:$record->registry_object_id";
