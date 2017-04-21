@@ -7,27 +7,27 @@ return [
         'dbdriver' => 'mysqli'
     ],
     'registry' => [
-        'database' => env('DB_DATABASE', 'dbs_registry')
+        'database' => env('DB_DATABASE_REGISTRY', 'dbs_registry')
     ],
     'roles' => [
-        'database' => 'dbs_roles'
+        'database' => env('DB_DATABASE_ROLES', 'dbs_roles')
     ],
     'vocabs' => [
-        'database' => 'dbs_vocabs'
+        'database' => env('DB_DATABASE_VOCABS', 'dbs_vocabs')
     ],
     'statistics' => [
-        'database' => 'dbs_statistics'
+        'database' => env('DB_DATABASE_STATISTICS', 'dbs_statistics')
     ],
     'dois' => [
         'hostname' => env('DB_DOI_HOSTNAME', env('DB_HOSTNAME', 'localhost')),
         'username' => env('DB_DOI_HOSTNAME', env('DB_USERNAME', 'webuser')),
         'password' => env('DB_DOI_PASSWORD', env('DB_PASSWORD', '')),
-        'database' => 'dbs_dois'
+        'database' => env('DB_DATABASE_DOIS', 'dbs_dois')
     ],
     'portal' => [
-        'database' => 'dbs_portal'
+        'database' => env('DB_DATABASE_PORTAL', 'dbs_portal')
     ],
     'pids' => [
-        'database' => 'dbs_pids'
+        'database' => env('DB_DATABASE_PIDS', 'dbs_pids')
     ]
 ];
