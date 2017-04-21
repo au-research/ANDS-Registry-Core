@@ -4,7 +4,8 @@ return [
         'hostname' => env('DB_HOSTNAME', 'localhost'),
         'username' => env('DB_USERNAME', 'webuser'),
         'password' => env('DB_PASSWORD', ''),
-        'dbdriver' => 'mysqli'
+        'dbdriver' => 'mysqli',
+        'database' => env('DB_DATABASE', 'dbs_registry')
     ],
     'registry' => [
         'database' => env('DB_DATABASE_REGISTRY', 'dbs_registry')
