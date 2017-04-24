@@ -7,6 +7,7 @@ namespace ANDS\Commands;
 use ANDS\RegistryObject;
 use ANDS\Task\SyncRecordTask;
 use ANDS\Util\Config;
+use Illuminate\Support\Facades\Input;
 use MinhD\SolrClient\SolrClient;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -166,7 +167,24 @@ class SyncRecordWorkerRedisCommand extends Command
         $output->writeln("There are {$diffRightCount} index that needs removal");
 
         $helper = $this->getHelper('question');
-        $question = new ConfirmationQuestion('Proceed to fix? [y|N] : ', false);
+        $question = new ConfirmationQuestion("Proceed to remove {$diffRightCount} index? [y|N] : ", false);
+        if (!$helper->ask($input, $output, $question)) {
+            $output->writeln("Aborting.");
+            return;
+        }
+
+        // chunk at 200 each
+        $chunks = collect($diffRight)->chunk(200);
+        $total = count($chunks);
+        foreach ($chunks as $index => $chunk) {
+            $query = "id:(". implode(' OR ', $chunk->toArray()). ")";
+            $solrClient->removeByQuery($query);
+            $i = $index + 1;
+            $output->writeln("Processed $i/$total");
+        }
+
+        $helper = $this->getHelper('question');
+        $question = new ConfirmationQuestion("Proceed to fix {$diffLeftCount} unindexed records ? [y|N] : ", false);
         if (!$helper->ask($input, $output, $question)) {
             $output->writeln("Aborting.");
             return;
