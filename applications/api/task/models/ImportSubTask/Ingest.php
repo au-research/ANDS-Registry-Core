@@ -67,7 +67,7 @@ class Ingest extends ImportSubTask
             $this->parent()->incrementTaskData("recordsUpdatedCount");
             // deal with previous versions
             RecordData::where('registry_object_id', $existingRecord->registry_object_id)
-                ->update(['current' => '']);
+                ->update(['current' => 'FALSE']);
 
             // add new version in and set it to current
             $newVersion = Repo::addNewVersion(
