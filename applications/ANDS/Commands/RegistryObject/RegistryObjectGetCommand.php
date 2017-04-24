@@ -1,7 +1,7 @@
 <?php
 
 
-namespace ANDS\Commands;
+namespace ANDS\Commands\RegistryObject;
 
 
 use ANDS\API\Task\ImportSubTask\IndexRelationship;

@@ -41,7 +41,7 @@ class ScholixProvider implements RegistryContentProvider
         }
 
         $types = collect($relationships)->map(function($item) {
-            return $item->prop('to_related_info_type') ?: $item->prop('to_type');
+            return $item->prop('to_type') ?: $item->prop('to_related_info_type');
         })->toArray();
 
         if (!in_array('publication', $types)) {
