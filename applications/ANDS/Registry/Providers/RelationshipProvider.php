@@ -533,9 +533,18 @@ class RelationshipProvider
     {
         $provider = Connections::getIdentifierProvider();
 
+        $identifiers = IdentifierProvider::get($record);
+
+        if (count($identifiers) == 0) {
+            return [];
+        }
+
+        $identifierValues = collect($identifiers)->pluck('value');
+
         // directly related
         $relations = $provider
-            ->setFilter('to_key', $record->key)
+//            ->setFilter('to_key', $record->key)
+            ->setFilter('to_identifier', $identifierValues)
             ->setReverse(true)
             ->setLimit(0)
             ->get();
@@ -648,7 +657,7 @@ class RelationshipProvider
 
         // child collections
         $childCollections = $impProvider->init()
-            ->setFilter('to_key', array_merge($directAndReverseKeys, $keys))
+            ->setFilter('to_id', array_merge($ids, $directAndReverse))
             ->setFilter('relation_type', ['isPartOf', 'isFundedBy', 'isOutputOf'])
             ->setFilter('from_class', 'collection')
             ->setLimit(0)
@@ -705,17 +714,21 @@ class RelationshipProvider
             $affectedIDs[] = (int)$relation->prop('from_id');
         }
 
-        $reverseRelations = $idenProvider->init()
-            ->setFilter('to_key', $keys)
-            ->setLimit(0)
-            ->get();
+        // Optimisation, convert $ids to list of identifiers
+        $identifiers = Identifier::whereIn('registry_object_id', array_merge($ids, $directAndReverse))->pluck('identifier')->toArray();
 
-        foreach ($reverseRelations as $relation) {
-            $affectedIDs[] = (int)$relation->prop('from_id');
+        if (count($identifiers) > 0) {
+            $reverseRelations = $idenProvider->init()
+                ->setFilter('to_identifier', $identifiers)
+                ->setLimit(0)
+                ->get();
+
+            foreach ($reverseRelations as $relation) {
+                $affectedIDs[] = (int)$relation->prop('from_id');
+            }
         }
 
         $affectedIDs = array_filter($affectedIDs, function($item) use ($ids){
-
             return !in_array($item, $ids);
         });
 

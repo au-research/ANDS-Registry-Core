@@ -1,7 +1,7 @@
 <?php
 
 
-namespace ANDS\Commands;
+namespace ANDS\Commands\Scholix;
 
 
 use ANDS\Registry\Providers\ScholixProvider;
