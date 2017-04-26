@@ -4,6 +4,7 @@
 namespace ANDS\Registry\Providers;
 
 
+use ANDS\DataSource;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\RegistryObject;
 use ANDS\RegistryObjectAttribute;
@@ -42,6 +43,23 @@ class OAIRecordRepository implements OAIRepository
             $sets[] = new Set("class:{$class}", $class);
         }
 
+        // data source
+        $dataSources = DataSource::all();
+        foreach ($dataSources as $ds) {
+
+            // name with dashes instead of space
+            $title = htmlspecialchars($ds->title, ENT_XML1);;
+            $name = str_replace(" ", "-", $title);
+            $sets[] = new Set("datasource:$name", $ds->title);
+
+            // id
+            $sets[] = new Set("datasource:{$ds->data_source_id}", $ds->title);
+        }
+
+        // TODO: group
+        // group name with 0x20 instead of space (backward compat)
+        // group id
+
         $total = count($sets);
 
         return compact('total', 'sets', 'limit', 'offset');
@@ -55,33 +73,26 @@ class OAIRecordRepository implements OAIRepository
                 'schema' => "http://services.ands.org.au/documentation/rifcs/1.3/schema/registryObjects.xsd",
                 'metadataNamespace' => 'http://ands.org.au/standards/rif-cs/registryObjects
 '
+            ],
+            [
+                'metadataPrefix' => 'oai_dc',
+                'schema' => "http://www.openarchives.org/OAI/2.0/oai_dc.xsd",
+                'metadataNamespace' => 'http://www.openarchives.org/OAI/2.0/oai_dc/'
             ]
         ];
+
+        // TODO: scholix
     }
 
     public function listRecords($metadataFormat = null, $set = null, $options)
     {
-        // TODO Set
-        $records = RegistryObject::where('status', 'PUBLISHED');
-
-        if ($options['set']) {
-            $set = $options['set'];
-            $set = explode(':', $set);
-            if ($set[0] == "class") {
-                $records = $records->where('class', $set[1]);
-            }
+        if ($metadataFormat == "scholix") {
+            // TODO
         }
 
-        $total = $records->count();
-
-        $limit = $options['limit'];
-        $offset = $options['offset'];
-
-
-
-        $records = $records->take($limit)->skip($offset);
-
-        $records = $records->get();
+        $registryObjects = $this->getRegistryObjects($options);
+        $records = $registryObjects['records'];
+        $total = $registryObjects['total'];
 
         $result = [];
         foreach ($records as $record) {
@@ -94,12 +105,16 @@ class OAIRecordRepository implements OAIRepository
             $oaiRecord->addSet(new Set("class:{$record->class}", $record->class));
 
             // metadata TODO metadataPrefix
-            $metadata = "<registryObject />";
-            $recordMetadata = MetadataProvider::getSelective($record, ['recordData']);
-            if (array_key_exists('recordData', $recordMetadata)) {
-                $metadata = XMLUtil::unwrapRegistryObject($recordMetadata['recordData']);
+            if ($metadataFormat == 'rif') {
+                $metadata = "<registryObject />";
+                $recordMetadata = MetadataProvider::getSelective($record, ['recordData']);
+                if (array_key_exists('recordData', $recordMetadata)) {
+                    $metadata = XMLUtil::unwrapRegistryObject($recordMetadata['recordData']);
+                }
+                $oaiRecord->setMetadata($metadata);
+            } elseif ($metadataFormat == "oai_dc") {
+                // TODO DCI Provider?
             }
-            $oaiRecord->setMetadata($metadata);
 
             $result[] = $oaiRecord;
         }
@@ -107,8 +122,8 @@ class OAIRecordRepository implements OAIRepository
         return [
             'total' => $total,
             'records' => $result,
-            'limit' => $limit,
-            'offset' => $offset
+            'limit' => $options['limit'],
+            'offset' => $options['offset']
         ];
     }
 
@@ -132,8 +147,59 @@ class OAIRecordRepository implements OAIRepository
         // TODO: Implement listRecordsByToken() method.
     }
 
-    public function listIdentifiers($metadataPrefix = null)
+    public function listIdentifiers($metadataPrefix = null, $options)
     {
-        // TODO: Implement listIdentifiers() method.
+        // rif
+        $registryObjects = $this->getRegistryObjects($options);
+
+        $result = [];
+
+        foreach ($registryObjects['records'] as $record) {
+            $oaiRecord = new Record(
+                "oai:ands.org.au:{$record->id}",
+                DatesProvider::getCreatedDate($record, $this->getDateFormat())
+            );
+
+            // set
+            $oaiRecord->addSet(new Set("class:{$record->class}", $record->class));
+
+            $result[] = $oaiRecord;
+        }
+
+        return [
+            'total' => $registryObjects['total'],
+            'records' => $result,
+            'limit' => $options['limit'],
+            'offset' => $options['offset']
+        ];
+
+        // TODO: scholix
+    }
+
+    private function getRegistryObjects($options)
+    {
+        $records = RegistryObject::where('status', 'PUBLISHED');
+
+        if ($options['set']) {
+            $set = $options['set'];
+            $set = explode(':', $set);
+            if ($set[0] == "class") {
+                $records = $records->where('class', $set[1]);
+            }
+        }
+
+        $total = $records->count();
+
+        $limit = $options['limit'];
+        $offset = $options['offset'];
+
+        $records = $records->take($limit)->skip($offset);
+
+        $records = $records->get();
+
+        return [
+            'records' => $records,
+            'total' => $total
+        ];
     }
 }
