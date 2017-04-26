@@ -4,6 +4,7 @@
 namespace ANDS\API\Task\ImportSubTask;
 
 
+use ANDS\Registry\Group;
 use ANDS\Registry\Providers\ScholixProvider;
 use ANDS\RegistryObject;
 use ANDS\Util\XMLUtil;
@@ -54,7 +55,18 @@ class ProcessCoreMetadata extends ImportSubTask
                     $element = array_first($element);
                     $record->class = $class;
                     $record->type = (string)$element['type'];
+                    $group = (string)$registryObjectElement['group'];
                     $record->group = (string)$registryObjectElement['group'];
+
+                    // added group if not exists
+                    $exist = Group::where('title', $group)->first();
+                    if (!$exist) {
+                        $group = new Group;
+                        $group->title = $title;
+                        $group->slug = str_slug($title);
+                        $group->save();
+                    }
+
                     $record->save();
                     break;
                 }
