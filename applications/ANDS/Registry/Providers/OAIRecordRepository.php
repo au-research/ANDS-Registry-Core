@@ -5,6 +5,7 @@ namespace ANDS\Registry\Providers;
 
 
 use ANDS\DataSource;
+use ANDS\Registry\Group;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\RegistryObject;
 use ANDS\RegistryObjectAttribute;
@@ -58,9 +59,18 @@ class OAIRecordRepository implements OAIRepository
             $sets[] = new Set("datasource:{$ds->data_source_id}", $ds->title);
         }
 
-        // TODO: group
-        // group name with 0x20 instead of space (backward compat)
-        // group id
+        // group
+        $groups = Group::all();
+        foreach ($groups as $group) {
+
+            // name with 0x20
+            $title = htmlspecialchars($group->title, ENT_XML1);
+            $name = str_replace(" ", "0x20", $title);
+            $sets[] = new Set("group:$name", $group->title);
+
+            // id
+            $sets[] = new Set("group:{$group->id}", $group->title);
+        }
 
         $total = count($sets);
 
@@ -155,23 +165,26 @@ class OAIRecordRepository implements OAIRepository
     {
         $dataSource = $record->datasource;
         $escapedDSTitle = htmlspecialchars($dataSource->title, ENT_XML1);
-        $group = $record->group;
+        $groupName = $record->group;
 
         $sets = [
             new Set("class:{$record->class}", $record->class),
-            new Set("datasource:". $dataSource->data_source_id, $dataSource->title),
+            new Set("datasource:". $dataSource->data_source_id, $escapedDSTitle),
         ];
 
-        // TODO: group
+        // group by id
+        $group = Group::where('title', $groupName)->first();
+        $sets[] = new Set("group:".$group->id, $group);
 
         // data source backward compat
-        $name = str_replace(" ", "-", $dataSource->title);
-        $sets[] = new Set("datasource:$name", $dataSource->title);
+        $name = str_replace(" ", "-", $escapedDSTitle);
+        $sets[] = new Set("datasource:$name", $escapedDSTitle);
 
         // group backward compat
-        $name = str_replace(" ", "-", $group);
+        $name = str_replace(" ", "-", $groupName);
         $name = urlencode($name);
-        $sets[] = new Set("group:$name", $group);
+        $sets[] = new Set("group:$name", $groupName);
+
 
         foreach ($sets as $set) {
             $oaiRecord->addSet($set);
