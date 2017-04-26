@@ -103,6 +103,9 @@ class SubjectProvider implements RIFCSProvider
                     $result = $solrResult->getDocs();
                     $subjectFacet = $solrResult->getFacetField('search_label_s');
                     $top_response = $result[0];
+                    $resolved_value = $top_response->label[0];
+                    $resolved_uri = $top_response->iri[0];
+                    $resolved_type = $top_response->type[0];
                     $values = $top_response->toArray();
                     $new_value =  array_key_exists('notation_s', $values) ? $top_response->notation_s : $value;
                     $positive_hit = self::checkResult($top_response, $subject, $new_value, $numFound);
@@ -110,11 +113,7 @@ class SubjectProvider implements RIFCSProvider
                 }
 
                 if (in_array(strtolower($type), self::$RESOLVABLE) && $positive_hit && !array_key_exists($new_value, $subjectsResolved)) {
-                    $resolved_uri = $top_response->iri[0];
-                    $resolved_type = $top_response->type[0];
-                    $resolved_value = $top_response->label[0];
                     $score = $top_response->score;
-
                     $subjectsResolved[$new_value] = array('type' => $resolved_type, 'value' => $new_value, 'resolved' => $resolved_value, 'uri' => $resolved_uri);
                     if (array_key_exists('broader_labels_ss', $values)) {
                         array_key_exists('broader_notations_ss', $values) ? $index = $top_response->broader_notations_ss : $index = $top_response->broader_labels_ss;
@@ -127,11 +126,12 @@ class SubjectProvider implements RIFCSProvider
                             );
                         }
                     }
-
-                } else if (!$positive_hit || !in_array(strtolower($type), self::$RESOLVABLE)) {
+                } else if (!$positive_hit &&  $numFound > 1) {
+                    //multiple matches found
+                    $subjectsResolved[$value] = array('type' => $resolved_type, 'value' => $value, 'resolved' => $resolved_value, 'uri' => $resolved_uri  );
+                }else if (!$positive_hit || !in_array(strtolower($type), self::$RESOLVABLE)) {
                     //no match or a very loose match was found so it is not a gcmd vocab
-                    if((strtolower($type) =='gcmd' || strtolower($type) == 'anzsrc-for' || strtolower($type) == 'anzsrc-seo') AND $numFound < 2 ) $type = 'local';
-
+                    if((strtolower($type) =='gcmd' || strtolower($type) == 'anzsrc-for' || strtolower($type) == 'anzsrc-seo')) $type = 'local';
                     $uri= $subject['uri']? $subject['uri'] : " ";
                     $subjectsResolved[$value] = array('type' => $type, 'value' => $value, 'resolved' => $value, 'uri' => $uri );
                 }
@@ -206,24 +206,20 @@ class SubjectProvider implements RIFCSProvider
             return ($type_match OR $notation_match) AND $value_match ? true : false;
         }
 
-        // if we have a direct value string check the resolved value and number of exact hits if multiple hits then don't match
-        if (strtoupper($value) == strtoupper($resolved->label[0]) && $numFound > 1)  return false;
+        // if we have a direct value string check the resolved value and number of exact hits and defined type - if multiple hits or local type is local then don't match
+        if (strtoupper($value) == strtoupper($resolved->label[0]) && ($numFound > 1 || $type == 'local'))  return false;
 
         // if this is a concatenated gcmd value strip off the final subject value to check resolved value
         if ($resolved->type[0] == 'gcmd' && self::isMultiValue($subject['value']))
             $value = self::getNarrowestConcept($subject['value']);
 
-
-
         // if we have a direct value string check the resolved value
         if (strtoupper($value) == strtoupper($resolved->label[0]))  return true;
 
-        // determine threshold of appropriate match for all other cases
-        if ($resolved->score < 0.3) {
-            return false;
-        }
+        //if we have a direct hit on the notation of a vocab
+        if (strtoupper($value) == strtoupper($notation_value))  return true;
 
-        return true;
+        return false;
     }
 
     /**

@@ -337,8 +337,10 @@ class Doi_api
             $sharedSecret = $_SERVER["PHP_AUTH_PW"];
         }
 
+        $config = Config::get('database.dois');
+
         $clientRepository = new ClientRepository(
-            $this->dois_db->hostname, 'dbs_dois', $this->dois_db->username, $this->dois_db->password
+            $config['hostname'], $config['database'], $config['username'], $this->dois_db->password
         );
 
         $client = $clientRepository->getByAppID($appID);
@@ -360,7 +362,7 @@ class Doi_api
         }
 
             $doiRepository = new DoiRepository(
-                $this->dois_db->hostname, 'dbs_dois', $this->dois_db->username, $this->dois_db->password
+                $config['hostname'], $config['database'], $config['username'], $config['password']
             );
 
             $call = $this->params['identifier'];
@@ -834,11 +836,9 @@ class Doi_api
 
     private function getClientModel($app_id)
     {
+        $config = Config::get('database.dois');
         $clientRepository = new ClientRepository(
-            $this->dois_db->hostname,
-            'dbs_dois',
-            $this->dois_db->username,
-            $this->dois_db->password
+            $config['hostname'], $config['database'], $config['username'], $config['password']
         );
         $client = $clientRepository->getByAppID($this->ci->input->get('app_id'));
         return $client;

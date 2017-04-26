@@ -11,7 +11,9 @@ use ANDS\DOI\Model\Doi;
 use ANDS\DOI\Repository\ClientRepository;
 use ANDS\DOI\Repository\DoiRepository;
 use ANDS\Util\Config;
+use Carbon\Carbon;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Input\InputArgument;
@@ -22,6 +24,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class DOISyncCommand extends Command
 {
+    private $output;
     protected function configure()
     {
         $this
@@ -43,6 +46,8 @@ class DOISyncCommand extends Command
     {
         initEloquent();
         ini_set('memory_limit','512M');
+
+        $this->output = $output;
 
         $command = $input->getArgument("what");
 
@@ -73,12 +78,33 @@ class DOISyncCommand extends Command
             $clients = [ $client ];
         }
 
+        $data = [];
+        $progressBar = new ProgressBar($output, count($clients));
         foreach ($clients as $client) {
             $stat = $this->getStat($client);
-            $display = collect($stat)->filter(function($item, $key) {
-                return strpos($key, 'count') !== false;
-            })->toArray();
-            $this->displayStat($client, $display, $output);
+            $data[] = [
+                'client' => $client,
+                'stat' => $stat
+            ];
+            $progressBar->advance(1);
+//            $display = collect($stat)->filter(function($item, $key) {
+//                return strpos($key, 'count') !== false;
+//            })->toArray();
+//            $this->displayStat($client, $display, $output);
+        }
+        $progressBar->finish();
+
+        // count_db_missing
+        $hasMissingDB = collect($data)->filter(function($data) {
+             return $data['stat']['count_db_missing'] > 0;
+        })->toArray();
+
+        if (count($hasMissingDB) > 0) {
+            foreach ($hasMissingDB as $missing) {
+                $client = $missing['client'];
+                $stat = $missing['stat'];
+                $this->log("$client->client_name ($client->client_id) has {$stat['count_db_missing']} missing in db");
+            }
         }
     }
 
@@ -105,63 +131,25 @@ class DOISyncCommand extends Command
 
         $this->displayStat($client, $display, $output);
 
-        if ($stat['count_datacite_missing'] == 0) {
-            $output->writeln("There are no missing DOI on datacite. Aborting");
-            return;
-        }
-
         $output->writeln("There are {$stat['count_datacite_missing']} missing DOI on datacite");
-
-        $doiModel = new Doi;
-        $doiModel->setConnection('dois');
-
-        $diff = $stat['datacite_missing'];
-        $output->writeln("Listing Missing Datacite: ");
-        foreach ($diff as $id) {
-            $doi = $doiModel->where('doi_id', $id)->first();
-            if (!$doi) {
-                $output->writeln("<error>$id does not exist</error>");
-                continue;
-            }
-            $output->writeln("$id - $doi->status - $doi->updated_when");
+        $output->writeln("There are {$stat['count_db_missing']} missing DOI in database");
+        if ($stat['count_datacite_missing'] == 0) {
+            $output->writeln("There are no missing DOI on datacite");
         }
-
-        $helper = $this->getHelper('question');
-        $question = new ConfirmationQuestion('Proceed to fix? [y|N] : ', false);
-        if (!$helper->ask($input, $output, $question)) {
-            $output->writeln("Aborting.");
+        if ($stat['count_db_missing'] == 0) {
+            $output->writeln("There are no missing DOI on datacite");
+        }
+        if ($stat['count_datacite_missing'] == 0 && $stat['count_db_missing'] == 0) {
+            $output->writeln("Aborting");
             return;
         }
 
-        $output->writeln("Proceeding to fix {$stat['count_datacite_missing']} DOIs.");
+        if ($stat['count_datacite_missing']) {
+            $this->mintMissingDOIs($client, $stat, $input, $output);
+        }
 
-        $config = Config::get('database');
-        $clientRepository = new ClientRepository(
-            $config['dois']['hostname'], $config['dois']['database'], $config['dois']['username'], $config['dois']['password']
-        );
-        $doiRepository = new DoiRepository(
-            $config['dois']['hostname'], $config['dois']['database'], $config['dois']['username'], $config['dois']['password']
-        );
-        $dataciteClient = $this->getDataciteClient($client);
-        $doiService = new DOIServiceProvider($clientRepository, $doiRepository, $dataciteClient);
-        $doiService->setAuthenticatedClient($client);
-
-        foreach ($diff as $id) {
-            $doi = $doiRepository->getByID($id);
-            if (!$doi) {
-                $output->writeln("<error>$id does not exist</error>");
-                continue;
-            }
-
-            $output->writeln("Minting $id");
-            $output->writeln("URL: ". $doi->url);
-            $result = $dataciteClient->mint($id, $doi->url, $doi->datacite_xml);
-            if ($result === true) {
-                $output->writeln("Success minting $id");
-            } else {
-                $output->writeln("<error>Failed minting $id</error>");
-                $output->writeln("<error>".array_first($dataciteClient->getErrors())."</error>");
-            }
+        if ($stat['count_db_missing']) {
+            $this->fetchMissingDOIs($client, $stat, $input, $output);
         }
 
     }
@@ -200,7 +188,7 @@ class DOISyncCommand extends Command
 
         $databaseDOIs = $doiModel
             ->where('client_id', $client->client_id)
-            ->whereIn('status', ['ACTIVE', 'INACTIVE'])
+            ->whereIn('status', ['ACTIVE', 'INACTIVE', 'REQUESTED'])
             ->lists('doi_id')
             ->map(function($item) {
                 return strtoupper($item);
@@ -210,12 +198,14 @@ class DOISyncCommand extends Command
 
         $dataciteClient = $this->getDataciteClient($client);
 
-        $allDataciteMintedDOIs = $dataciteClient->get("");
+        $allDataciteMintedDOIs = trim($dataciteClient->get(""));
         $allDataciteMintedDOIs = explode("\n", $allDataciteMintedDOIs);
 
         $allDataciteMintedDOIs = collect($allDataciteMintedDOIs)
             ->filter(function($item) {
                 return strpos($item, "10.5072") === false;
+            })->filter(function($item) {
+                return trim($item) != "";
             })->toArray();
 
         $difference = array_unique(array_merge(
@@ -263,6 +253,151 @@ class DOISyncCommand extends Command
         );
         $dataciteClient->setDataciteUrl($config['base_url']);
         return $dataciteClient;
+    }
+
+    private function mintMissingDOIs(Client $client, $stat, InputInterface $input, OutputInterface $output)
+    {
+        $doiModel = new Doi;
+        $doiModel->setConnection('dois');
+
+        $diff = $stat['datacite_missing'];
+        $output->writeln("Listing Missing Datacite: ");
+        foreach ($diff as $id) {
+            $doi = $doiModel->where('doi_id', $id)->first();
+            if (!$doi) {
+                $output->writeln("<error>$id does not exist</error>");
+                continue;
+            }
+            $output->writeln("$id - $doi->status - $doi->updated_when");
+        }
+
+        $helper = $this->getHelper('question');
+        $question = new ConfirmationQuestion('Proceed to fix? [y|N] : ', false);
+        if (!$helper->ask($input, $output, $question)) {
+            $output->writeln("Aborting.");
+            return;
+        }
+
+        $output->writeln("Proceeding to fix {$stat['count_datacite_missing']} DOIs.");
+
+        $config = Config::get('database');
+        $clientRepository = new ClientRepository(
+            $config['dois']['hostname'], $config['dois']['database'], $config['dois']['username'], $config['dois']['password']
+        );
+        $doiRepository = new DoiRepository(
+            $config['dois']['hostname'], $config['dois']['database'], $config['dois']['username'], $config['dois']['password']
+        );
+
+        $dataciteClient = $this->getDataciteClient($client);
+        $doiService = new DOIServiceProvider($clientRepository, $doiRepository, $dataciteClient);
+        $doiService->setAuthenticatedClient($client);
+
+        foreach ($diff as $id) {
+            $doi = $doiRepository->getByID($id);
+            if (!$doi) {
+                $output->writeln("<error>$id does not exist</error>");
+                continue;
+            }
+
+            $output->writeln("Minting $id");
+            $output->writeln("URL: ". $doi->url);
+            $result = $dataciteClient->mint($id, $doi->url, $doi->datacite_xml);
+            if ($result === true) {
+                $output->writeln("Success minting $id");
+            } else {
+                $output->writeln("<error>Failed minting $id</error>");
+                $output->writeln("<error>".array_first($dataciteClient->getErrors())."</error>");
+            }
+        }
+    }
+
+    private function fetchMissingDOIs(Client $client, $stat, InputInterface $input, OutputInterface $output)
+    {
+        $diff = $stat['db_missing'];
+        $output->writeln("Listing Missing Datacite: ");
+        foreach ($diff as $id) {
+            $output->writeln("$id");
+        }
+
+//        $helper = $this->getHelper('question');
+//        $question = new ConfirmationQuestion('Proceed to fix? [y|N] : ', false);
+//        if (!$helper->ask($input, $output, $question)) {
+//            $output->writeln("Aborting.");
+//            return;
+//        }
+
+        foreach ($diff as $id) {
+            $this->addMissingDOI($id, $client);
+        }
+    }
+
+    private function addMissingDOI($id, Client $client)
+    {
+        $this->log("Fixing $id");
+        $dataciteClient = $this->getDataciteClient($client);
+        $url = $dataciteClient->get($id);
+
+        $xml = $dataciteClient->request($dataciteClient->getDataciteUrl() . 'metadata/'. $id);
+        if (!$xml || $xml == "dataset inactive") {
+            $this->log("<error>Failed $id No XML found or dataset inactive</error>");
+            return;
+        }
+        $status = "ACTIVE";
+
+        $metadata = json_decode(file_get_contents("https://api.datacite.org/works/$id"), true);
+        if (is_array_empty($metadata['data'])) {
+            $this->log("$id No Metadata found");
+        }
+
+        date_default_timezone_set('UTC');
+        $updated_when = Carbon::createFromTimestamp(1)->format("Y-m-d H:i:s");
+        $created_when = Carbon::createFromTimestamp(1)->format("Y-m-d H:i:s");
+
+        if (array_key_exists('attributes', $metadata['data'])) {
+            $updated_when = Carbon::parse($metadata['data']['attributes']['updated'])->format("Y-m-d H:i:s");
+            $created_when = Carbon::parse($metadata['data']['attributes']['deposited'])->format("Y-m-d H:i:s");
+        }
+
+        if (!$url) {
+            $this->log("<info>$id No URL found. Adding to RESERVED state</info>");
+            $status = "RESERVED";
+        }
+
+        $doi = new Doi;
+        $doi->setConnection('dois');
+
+        try {
+            $doiXML = new \DOMDocument();
+            $doiXML->loadXML($xml);
+            $publisher = $doiXML->getElementsByTagName('publisher');
+            $publication_year = $doiXML->getElementsByTagName('publicationYear');
+        } catch (\Exception $e) {
+            $this->log("<error>Error loading XML: {$e->getMessage()}</error>");
+            return;
+        }
+
+        $attributes = [
+            'doi_id' => $id,
+            'publisher' => $publisher->item(0)->nodeValue,
+            'publication_year' => $publication_year->item(0)->nodeValue,
+            'status' => $status,
+            'url' => $url,
+            'identifier_type' => 'DOI',
+            'client_id' => $client->client_id,
+            'created_who' => 'SYSTEM',
+            'datacite_xml' => $xml,
+            'updated_when' => $updated_when,
+            'created_when' => $created_when
+        ];
+        $doi->setRawAttributes($attributes);
+        $doi->save();
+
+        $this->log("<info>Added $id to the database</info>");
+    }
+
+    public function log($message)
+    {
+        $this->output->writeln($message);
     }
 
 

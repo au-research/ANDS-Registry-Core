@@ -23,7 +23,7 @@ class ObjectHandler extends Handler{
         'indent' => 'on',
         'rows' => 20,
     );
-    private $valid_methods = array('core', 'descriptions', 'relationships', 'subjects', 'spatial', 'temporal', 'citations', 'dates', 'relatedInfo', 'identifiers', 'rights', 'contact', 'directaccess', 'logo', 'tags', 'existenceDates', 'identifiermatch', 'suggest', 'connectiontrees', 'scholix');
+    private $valid_methods = array('core', 'descriptions', 'relationships', 'subjects', 'spatial', 'temporal', 'citations', 'dates', 'relatedInfo', 'identifiers', 'rights', 'contact', 'directaccess', 'logo', 'tags', 'existenceDates', 'identifiermatch', 'suggest', 'connectiontrees');
 
     private $valid_filters = array('q', 'fq', 'fl', 'sort', 'start', 'rows', 'int_ref_id', 'facet_field', 'facet_mincount', 'facet');
 
@@ -158,7 +158,10 @@ class ObjectHandler extends Handler{
                 }
             } else {
 
-                acl_enforce("REGISTRY_USER");
+                // enforce if not run from cli
+                if (php_sapi_name() != "cli") {
+                    acl_enforce("REGISTRY_USER");
+                }
 
                 //special case
                 if ($m1 == 'solr_index') {
@@ -176,8 +179,9 @@ class ObjectHandler extends Handler{
 
                     return $result;
                 } elseif ($m1 == 'sync') {
+                    // TODO: only do PUT and from Trusted IP only
                     $ro = $resource['ro'];
-                    return $ro->sync();
+                    return $this->syncRecordById($ro->id);
                 } else if($m1 == 'relations_index') {
                     $ro = $resource['ro'];
 
@@ -463,6 +467,36 @@ class ObjectHandler extends Handler{
         $resource['default_params'] = $this->default_params;
 
         return $resource;
+    }
+
+    private function syncRecordById($id)
+    {
+        $record = RegistryObjectsRepository::getRecordByID($id);
+
+        if (!RegistryObjectsRepository::isPublishedStatus($record->status)) {
+             return "Record $record->title($record->id) is NOT PUBLISHED";
+        }
+
+        $importTask = new ImportTask;
+        $importTask->init([
+            'name' => 'ImportTask',
+            'params' => http_build_query([
+                'ds_id' => $record->datasource->data_source_id,
+                'pipeline' => 'SyncWorkflow'
+            ])
+        ]);
+
+        $importTask
+            ->setCI($this->ci)
+            ->initialiseTask()
+            ->skipLoadingPayload()
+            ->enableRunAllSubTask()
+            ->setTaskData('importedRecords', [$record->id])
+            ->setTaskData('targetStatus','PUBLISHED');
+
+        $importTask->run();
+
+        return $importTask->toArray();
     }
 
 }

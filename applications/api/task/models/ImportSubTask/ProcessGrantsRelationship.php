@@ -16,6 +16,12 @@ class ProcessGrantsRelationship extends ImportSubTask
 
     public function run_task()
     {
+        $targetStatus = $this->parent()->getTaskData('targetStatus');
+        if (!RegistryObjectsRepository::isPublishedStatus($targetStatus)) {
+            $this->log("Target status is ". $targetStatus.' does not process grants network');
+            return;
+        }
+
         // importedRecords should already be ordered by ProcessRelationship
         $importedRecords = $this->parent()->getTaskData("importedRecords");
         $total = count($importedRecords);
