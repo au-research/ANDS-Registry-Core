@@ -8,6 +8,7 @@ use ANDS\DataSource;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\RegistryObject;
 use ANDS\RegistryObjectAttribute;
+use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\XMLUtil;
 use Carbon\Carbon;
 use MinhD\OAIPMH\Interfaces\OAIRepository;
@@ -17,6 +18,7 @@ use MinhD\OAIPMH\Set;
 class OAIRecordRepository implements OAIRepository
 {
     public $dateFormat = "Y-m-d\\Th:m:s\\Z";
+    protected $oaiIdentifierPrefix = "oai:ands.org.au:";
 
     public function identify()
     {
@@ -48,7 +50,7 @@ class OAIRecordRepository implements OAIRepository
         foreach ($dataSources as $ds) {
 
             // name with dashes instead of space
-            $title = htmlspecialchars($ds->title, ENT_XML1);;
+            $title = htmlspecialchars($ds->title, ENT_XML1);
             $name = str_replace(" ", "-", $title);
             $sets[] = new Set("datasource:$name", $ds->title);
 
@@ -97,24 +99,15 @@ class OAIRecordRepository implements OAIRepository
         $result = [];
         foreach ($records as $record) {
             $oaiRecord = new Record(
-                "oai:ands.org.au:{$record->id}",
+                $this->oaiIdentifierPrefix.$record->id,
                 DatesProvider::getCreatedDate($record, $this->getDateFormat())
             );
 
             // set
-            $oaiRecord->addSet(new Set("class:{$record->class}", $record->class));
+            $oaiRecord = $this->addSets($oaiRecord, $record);
 
             // metadata TODO metadataPrefix
-            if ($metadataFormat == 'rif') {
-                $metadata = "<registryObject />";
-                $recordMetadata = MetadataProvider::getSelective($record, ['recordData']);
-                if (array_key_exists('recordData', $recordMetadata)) {
-                    $metadata = XMLUtil::unwrapRegistryObject($recordMetadata['recordData']);
-                }
-                $oaiRecord->setMetadata($metadata);
-            } elseif ($metadataFormat == "oai_dc") {
-                // TODO DCI Provider?
-            }
+            $oaiRecord = $this->addMetadata($oaiRecord, $record, $metadataFormat);
 
             $result[] = $oaiRecord;
         }
@@ -139,7 +132,66 @@ class OAIRecordRepository implements OAIRepository
 
     public function getRecord($metadataFormat, $identifier)
     {
-        // TODO: Implement getRecord() method.
+        if ($metadataFormat == "scholix") {
+            // TODO: Scholix
+        }
+
+        $id = str_replace($this->oaiIdentifierPrefix, "", $identifier);
+        $record = RegistryObjectsRepository::getRecordByID($id);
+
+        if (!$record) {
+            return null;
+        }
+
+        $oaiRecord = new Record($identifier, DatesProvider::getCreatedDate($record, $this->getDateFormat()));
+
+        $oaiRecord = $this->addSets($oaiRecord, $record);
+        $oaiRecord = $this->addMetadata($oaiRecord, $record, $metadataFormat);
+
+        return $oaiRecord;
+    }
+
+    private function addSets(Record $oaiRecord, RegistryObject $record)
+    {
+        $dataSource = $record->datasource;
+        $escapedDSTitle = htmlspecialchars($dataSource->title, ENT_XML1);
+        $group = $record->group;
+
+        $sets = [
+            new Set("class:{$record->class}", $record->class),
+            new Set("datasource:". $dataSource->data_source_id, $dataSource->title),
+        ];
+
+        // TODO: group
+
+        // data source backward compat
+        $name = str_replace(" ", "-", $dataSource->title);
+        $sets[] = new Set("datasource:$name", $dataSource->title);
+
+        // group backward compat
+        $name = str_replace(" ", "-", $group);
+        $name = urlencode($name);
+        $sets[] = new Set("group:$name", $group);
+
+        foreach ($sets as $set) {
+            $oaiRecord->addSet($set);
+        }
+        return $oaiRecord;
+    }
+
+    private function addMetadata($oaiRecord, $record, $metadataFormat)
+    {
+        if ($metadataFormat == 'rif') {
+            $metadata = "<registryObject />";
+            $recordMetadata = MetadataProvider::getSelective($record, ['recordData']);
+            if (array_key_exists('recordData', $recordMetadata)) {
+                $metadata = XMLUtil::unwrapRegistryObject($recordMetadata['recordData']);
+            }
+            $oaiRecord->setMetadata($metadata);
+        } elseif ($metadataFormat == "oai_dc") {
+            // TODO DCI Provider?
+        }
+        return $oaiRecord;
     }
 
     public function listRecordsByToken($token)
