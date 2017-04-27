@@ -17,6 +17,9 @@ class Registry_api
     private $params;
     private $version = "1.0";
 
+    protected $providesOwnResponse = false;
+    public $outputFormat = "application/xml";
+
     public function __construct()
     {
         $this->ci = &get_instance();
@@ -47,7 +50,7 @@ class Registry_api
                 if (!class_exists($class_name)) {
                     throw new Exception("Method " . $this->params['submodule'] . " is not supported (Version = ".$this->version.")");
                 }
-                $handler = new $class_name($this->params);
+                $handler = new $class_name($this->params, $this);
                 return $handler->handle();
             } catch (Exception $e) {
                 throw new Exception($e->getMessage());
@@ -55,6 +58,16 @@ class Registry_api
         } else {
             return "Method " . $this->params['submodule'] . " is not supported";
         }
+    }
+
+    public function providesOwnResponse()
+    {
+        $this->providesOwnResponse = true;
+    }
+
+    public function isProvidingOwnResponse()
+    {
+        return $this->providesOwnResponse;
     }
 
     /**

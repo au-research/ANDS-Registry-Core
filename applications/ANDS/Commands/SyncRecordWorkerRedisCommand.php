@@ -125,6 +125,18 @@ class SyncRecordWorkerRedisCommand extends Command
         ));
         $redisQueue = new RedisQueue($redisClient, $input->getOption('queue'));
         $notSyncedIDs = $notSynced->pluck('registry_object_id');
+//        $notSyncedIDs = [];
+//
+//        $solrClient = new SolrClient(Config::get('app.solr_url'));
+//        $solrClient->setCore('portal');
+//        $result = $solrClient->search([
+//            'q' => '-data_source_id:*',
+//            'rows' => 2000
+//        ])->getDocs();
+//        foreach ($result as $doc) {
+//            $notSyncedIDs[] = $doc->id;
+//        }
+
         foreach ($notSyncedIDs as $id) {
             $redisQueue->sendJob(
                 json_encode([
