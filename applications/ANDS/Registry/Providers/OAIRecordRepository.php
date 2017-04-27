@@ -7,6 +7,7 @@ namespace ANDS\Registry\Providers;
 use ANDS\DataSource;
 use ANDS\Registry\Group;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
+use ANDS\Registry\Providers\Scholix\Scholix;
 use ANDS\RegistryObject;
 use ANDS\RegistryObjectAttribute;
 use ANDS\Repository\RegistryObjectsRepository;
@@ -19,7 +20,7 @@ use MinhD\OAIPMH\Set;
 class OAIRecordRepository implements OAIRepository
 {
     public $dateFormat = "Y-m-d\\Th:m:s\\Z";
-    protected $oaiIdentifierPrefix = "oai:ands.org.au:";
+    protected $oaiIdentifierPrefix = "oai:ands.org.au::";
 
     public function identify()
     {
@@ -90,6 +91,11 @@ class OAIRecordRepository implements OAIRepository
                 'metadataPrefix' => 'oai_dc',
                 'schema' => "http://www.openarchives.org/OAI/2.0/oai_dc.xsd",
                 'metadataNamespace' => 'http://www.openarchives.org/OAI/2.0/oai_dc/'
+            ],
+            [
+                'metadataPrefix' => 'scholix',
+                'schema' => 'https://raw.githubusercontent.com/scholix/schema/master/xsd/scholix.xsd',
+                'metadataNamespace' => 'http://www.scholix.org'
             ]
         ];
 
@@ -99,7 +105,7 @@ class OAIRecordRepository implements OAIRepository
     public function listRecords($metadataFormat = null, $set = null, $options)
     {
         if ($metadataFormat == "scholix") {
-            // TODO
+            return $this->listScholixRecords($set, $options);
         }
 
         $registryObjects = $this->getRegistryObjects($options);
@@ -143,7 +149,7 @@ class OAIRecordRepository implements OAIRepository
     public function getRecord($metadataFormat, $identifier)
     {
         if ($metadataFormat == "scholix") {
-            // TODO: Scholix
+            return $this->getScholixRecord($identifier);
         }
 
         $id = str_replace($this->oaiIdentifierPrefix, "", $identifier);
@@ -174,7 +180,9 @@ class OAIRecordRepository implements OAIRepository
 
         // group by id
         $group = Group::where('title', $groupName)->first();
-        $sets[] = new Set("group:".$group->id, $group);
+        if ($group) {
+            $sets[] = new Set("group:".$group->id, $group);
+        }
 
         // data source backward compat
         $name = str_replace(" ", "-", $escapedDSTitle);
@@ -184,7 +192,6 @@ class OAIRecordRepository implements OAIRepository
         $name = str_replace(" ", "-", $groupName);
         $name = urlencode($name);
         $sets[] = new Set("group:$name", $groupName);
-
 
         foreach ($sets as $set) {
             $oaiRecord->addSet($set);
@@ -266,5 +273,61 @@ class OAIRecordRepository implements OAIRepository
             'records' => $records,
             'total' => $total
         ];
+    }
+
+    private function listScholixRecords($set = null, $options)
+    {
+        $limit = $options['limit'];
+        $offset = $options['offset'];
+
+        $records = Scholix::take($limit)->skip($offset);
+
+        if ($options['set']) {
+            $set = $options['set'];
+            $set = explode(':', $set);
+            if ($set[0] == "class") {
+                $records = $records->where('class', $set[1]);
+            }
+        }
+
+        $total = $records->count();
+
+        $result = [];
+        foreach ($records->get() as $record) {
+            $oaiRecord = new Record(
+                $record->scholix_identifier,
+                Carbon::parse($record->created_by)->format($this->getDateFormat())
+            );
+
+            // TODO: Set
+
+            // metadata
+            $oaiRecord->setMetadata($record->data);
+
+            $result[] = $oaiRecord;
+        }
+
+        return [
+            'total' => $total,
+            'records' => $result,
+            'limit' => $options['limit'],
+            'offset' => $options['offset']
+        ];
+    }
+
+    private function getScholixRecord($identifier)
+    {
+        $record = Scholix::where('scholix_identifier', $identifier)->first();
+
+        if (!$record) {
+            return null;
+        }
+
+        $oaiRecord = new Record($identifier, Carbon::parse($record->created_at)->format($this->getDateFormat()));
+
+        // TODO: Sets
+        $oaiRecord->setMetadata($record->data);
+
+        return $oaiRecord;
     }
 }
