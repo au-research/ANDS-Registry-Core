@@ -5,6 +5,7 @@
 require __DIR__.'/vendor/autoload.php';
 
 restore_error_handler();
+date_default_timezone_set('UTC');
 
 use Symfony\Component\Console\Application;
 
@@ -18,6 +19,5 @@ $application->add(new \ANDS\Commands\RegistryObject\RegistryObjectSyncCommand())
 $application->add(new \ANDS\Commands\RegistryObject\RegistryObjectProcessCommand());
 $application->add(new \ANDS\Commands\SyncRecordWorkerRedisCommand());
 $application->add(new \ANDS\Commands\Registry\GroupsCommand());
-
 
 $application->run();

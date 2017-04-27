@@ -8,18 +8,21 @@ class OaiHandler extends Handler
 {
     public function handle()
     {
-        $provider = new ServiceProvider(
-            new OAIRecordRepository()
-        );
+
 
         $this->getParentAPI()->providesOwnResponse();
 
         $options = $_GET;
+
+        $provider = new ServiceProvider(
+            new OAIRecordRepository()
+        );
+
         $provider->setOptions($options);
         try {
             $response = $provider->get()->getResponse();
         } catch (\Exception $e) {
-            dd($e->getTraceAsString());
+            dd($e->getTrace());
         }
 
 
