@@ -126,13 +126,9 @@ class SubjectProvider implements RIFCSProvider
                             );
                         }
                     }
-                } else if (!$positive_hit &&  $numFound > 1) {
-                    //multiple matches found so we can't determine what hit to assign
-                    $subjectsResolved[$value] = array('type' => 'local', 'value' => $value, 'resolved' => $resolved_value, 'uri' => $uri  );
                 }else if (!$positive_hit || !in_array(strtolower($type), self::$RESOLVABLE)) {
                     //no match or a very loose match was found so it is not a gcmd vocab
-                    if((strtolower($type) =='gcmd' || strtolower($type) == 'anzsrc-for' || strtolower($type) == 'anzsrc-seo')) $type = 'local';
-
+                    if((strtolower($type) =='gcmd' || strtolower($type) == 'anzsrc-for' || strtolower($type) == 'anzsrc-seo' || strtolower($type) == 'anzsrc')) $type = 'local';
                     $subjectsResolved[$value] = array('type' => $type, 'value' => $value, 'resolved' => $value, 'uri' => $uri );
                 }
             }
