@@ -53,8 +53,13 @@
         "symfony/console": "^3.2",
         "minhd/solr-client": "~0.1.7",
         "elasticsearch/elasticsearch": "~2.0",
+        "minhd/oai-pmh" : "dev-master",
         "javibravo/simpleue" : "dev-master"
     },
+
+    "repositories": [
+        { "type": "vcs", "url": "https://github.com/minhd/oai-pmh" }
+    ],
 
     "require-dev": {
         "phpunit/phpunit": "4.8.*"

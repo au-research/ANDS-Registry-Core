@@ -4,7 +4,9 @@
 namespace ANDS\Registry\Providers;
 
 
+use ANDS\API\Task\ImportSubTask\ProcessDelete;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
+use ANDS\Registry\Providers\Scholix\Scholix;
 use ANDS\Registry\Providers\Scholix\ScholixDocument;
 use ANDS\Registry\Relation;
 use ANDS\RegistryObject;
@@ -41,7 +43,7 @@ class ScholixProvider implements RegistryContentProvider
         }
 
         $types = collect($relationships)->map(function($item) {
-            return $item->prop('to_related_info_type') ?: $item->prop('to_type');
+            return $item->prop('to_type') ?: $item->prop('to_related_info_type');
         })->toArray();
 
         if (!in_array('publication', $types)) {
@@ -66,6 +68,35 @@ class ScholixProvider implements RegistryContentProvider
             self::$scholixableAttr,
             self::isScholixable($record, $relationships)
         );
+
+        $scholixDocuments = self::get($record);
+        $links = $scholixDocuments->getLinks();
+        foreach ($links as $link) {
+            $id = $scholixDocuments->getLinkIdentifier($link);
+            $xml = $scholixDocuments->json2xml($link['link']);
+            $exist = Scholix::where('scholix_identifier', $id)->first();
+
+            if ($exist) {
+                // update
+                $exist->data = $xml;
+                $exist->hash = md5($xml);
+                $exist->save();
+                continue;
+            }
+
+            // create
+            $scholix = new Scholix;
+            $scholix->setRawAttributes([
+                'scholix_identifier' => $id,
+                'data' => $xml,
+                'registry_object_id' => $record->id,
+                'registry_object_data_source_id' => $record->data_source_id,
+                'registry_object_group' => $record->group,
+                'hash' => md5($xml),
+                'registry_object_class' => $record->class
+            ]);
+            $scholix->save();
+        }
 
         return;
     }
@@ -255,6 +286,9 @@ class ScholixProvider implements RegistryContentProvider
     {
         $relationType = $publication->prop('relation_type');
         $relationOrigin = $publication->prop('relation_origin');
+        if (is_array($relationOrigin)) {
+            $relationOrigin = implode(" ", $relationOrigin);
+        }
 
         $relationships = [];
 

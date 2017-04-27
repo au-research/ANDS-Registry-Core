@@ -58,7 +58,7 @@ class Registry_api
                 if (!class_exists($class_name)) {
                     throw new Exception("Method " . $this->params['submodule'] . " is not supported (Version = ".$this->version.")");
                 }
-                $handler = new $class_name($this->params);
+                $handler = new $class_name($this->params, $this);
                 return $handler->handle();
             } catch (Exception $e) {
                 throw new Exception($e->getMessage());

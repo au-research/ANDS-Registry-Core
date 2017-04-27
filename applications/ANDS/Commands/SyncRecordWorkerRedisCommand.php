@@ -7,6 +7,7 @@ namespace ANDS\Commands;
 use ANDS\RegistryObject;
 use ANDS\Task\SyncRecordTask;
 use ANDS\Util\Config;
+use Illuminate\Support\Facades\Input;
 use MinhD\SolrClient\SolrClient;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -124,6 +125,18 @@ class SyncRecordWorkerRedisCommand extends Command
         ));
         $redisQueue = new RedisQueue($redisClient, $input->getOption('queue'));
         $notSyncedIDs = $notSynced->pluck('registry_object_id');
+//        $notSyncedIDs = [];
+//
+//        $solrClient = new SolrClient(Config::get('app.solr_url'));
+//        $solrClient->setCore('portal');
+//        $result = $solrClient->search([
+//            'q' => '-data_source_id:*',
+//            'rows' => 2000
+//        ])->getDocs();
+//        foreach ($result as $doc) {
+//            $notSyncedIDs[] = $doc->id;
+//        }
+
         foreach ($notSyncedIDs as $id) {
             $redisQueue->sendJob(
                 json_encode([
@@ -166,7 +179,24 @@ class SyncRecordWorkerRedisCommand extends Command
         $output->writeln("There are {$diffRightCount} index that needs removal");
 
         $helper = $this->getHelper('question');
-        $question = new ConfirmationQuestion('Proceed to fix? [y|N] : ', false);
+        $question = new ConfirmationQuestion("Proceed to remove {$diffRightCount} index? [y|N] : ", false);
+        if (!$helper->ask($input, $output, $question)) {
+            $output->writeln("Aborting.");
+            return;
+        }
+
+        // chunk at 200 each
+        $chunks = collect($diffRight)->chunk(200);
+        $total = count($chunks);
+        foreach ($chunks as $index => $chunk) {
+            $query = "id:(". implode(' OR ', $chunk->toArray()). ")";
+            $solrClient->removeByQuery($query);
+            $i = $index + 1;
+            $output->writeln("Processed $i/$total");
+        }
+
+        $helper = $this->getHelper('question');
+        $question = new ConfirmationQuestion("Proceed to fix {$diffLeftCount} unindexed records ? [y|N] : ", false);
         if (!$helper->ask($input, $output, $question)) {
             $output->writeln("Aborting.");
             return;
