@@ -6,6 +6,7 @@ use ANDS\API\Task\ImportTask;
 use ANDS\DataSource;
 use ANDS\RegistryObject;
 use ANDS\RegistryObjectAttribute;
+use ANDS\RegistryObject\Links;
 use ANDS\RegistryObject\Metadata;
 use ANDS\RegistryObject\Identifier;
 use ANDS\RegistryObject\Relationship;
@@ -69,6 +70,9 @@ class RegistryObjectsRepository
             //delete relationship
             Relationship::where('registry_object_id', $record->registry_object_id)->delete();
 
+            //delete links
+            Links::where('registry_object_id', $record->registry_object_id)->delete();
+
             // delete record
             $record->delete();
 
@@ -90,6 +94,9 @@ class RegistryObjectsRepository
 
         // delete metadata
         Metadata::where('registry_object_id', $id)->delete();
+
+        //delete links
+        Links::where('registry_object_id', $id)->delete();
 
         static::deleteIdentifierRelationships($id);
     }

@@ -53,7 +53,7 @@
         </xsl:copy>
     </xsl:template>
 
-     <xsl:template match="@dateModified | @dateAccessioned | @target | @rightsUri | accessRights/@type | licence/@type">
+     <xsl:template match="@dateModified | @dateAccessioned | @target | @rightsUri | accessRights/@type | licence/@type | contributor/@seq">
         <xsl:if test=". != ''">
                 <xsl:copy-of select="."/>
         </xsl:if>
