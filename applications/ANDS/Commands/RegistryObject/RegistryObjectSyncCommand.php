@@ -1,8 +1,7 @@
 <?php
 
 
-namespace ANDS\Commands;
-
+namespace ANDS\Commands\RegistryObject;
 
 use ANDS\RegistryObject;
 use ANDS\RegistryObjectAttribute;

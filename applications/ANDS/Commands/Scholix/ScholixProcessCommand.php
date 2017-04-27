@@ -1,7 +1,7 @@
 <?php
 
 
-namespace ANDS\Commands;
+namespace ANDS\Commands\Scholix;
 
 
 use ANDS\Registry\Providers\ScholixProvider;
@@ -11,6 +11,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ScholixProcessCommand extends Command
@@ -24,6 +25,13 @@ class ScholixProcessCommand extends Command
 
             ->addArgument('what', InputArgument::REQUIRED, 'identify|process')
             ->addArgument('id', InputArgument::OPTIONAL, 'id of the record')
+            ->addOption(
+                'force',
+                'f',
+                InputOption::VALUE_REQUIRED,
+                'Force process on all',
+                false
+            )
         ;
     }
 
@@ -85,11 +93,15 @@ class ScholixProcessCommand extends Command
         if (!$id) {
             $unchecked = RegistryObject::where('class', 'collection')
                 ->whereIn('type', ['dataset', 'collection'])
-                ->where('status', 'PUBLISHED')
-                ->whereDoesntHave('registryObjectAttributes', function($query){
+                ->where('status', 'PUBLISHED');
+
+            if ($input->getOption('force') === false) {
+                $unchecked = $unchecked
+                    ->whereDoesntHave('registryObjectAttributes', function($query){
                     return $query
                         ->where('attribute', 'scholixable');
                 });
+            }
 
             $progressBar = new ProgressBar($output, $unchecked->count());
             foreach ($unchecked->get() as $record) {

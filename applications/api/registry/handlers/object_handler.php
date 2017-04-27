@@ -158,7 +158,10 @@ class ObjectHandler extends Handler{
                 }
             } else {
 
-                acl_enforce("REGISTRY_USER");
+                // enforce if not run from cli
+                if (php_sapi_name() != "cli") {
+                    acl_enforce("REGISTRY_USER");
+                }
 
                 //special case
                 if ($m1 == 'solr_index') {
