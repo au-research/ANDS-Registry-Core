@@ -23,3 +23,6 @@ CREATE TABLE `scholix` (
   UNIQUE KEY `id_UNIQUE` (`id`),
   UNIQUE KEY `scholix_identifier_UNIQUE` (`scholix_identifier`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+ALTER TABLE `registry_objects` MODIFY `title` VARCHAR(512);
+ALTER TABLE `registry_objects` MODIFY `slug` VARCHAR(512);
