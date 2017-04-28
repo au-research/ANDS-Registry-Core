@@ -4,6 +4,7 @@
 namespace ANDS\Commands\Scholix;
 
 
+use ANDS\Registry\Providers\Scholix\Scholix;
 use ANDS\Registry\Providers\ScholixProvider;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
@@ -47,6 +48,10 @@ class ScholixProcessCommand extends Command
 
         if ($command == "process") {
             $this->process($input, $output);
+        }
+
+        if ($command == "clean") {
+            $this->clean($input, $output);
         }
     }
 
@@ -122,6 +127,17 @@ class ScholixProcessCommand extends Command
         } else {
             $output->writeln("This record NOT is scholixable");
         }
+    }
+
+    private function clean(InputInterface $input, OutputInterface $output)
+    {
+        foreach (Scholix::all() as $scholix) {
+            $record = RegistryObject::find($scholix->registry_object_id);
+            if (!$record || !$record->isPublishedStatus()) {
+                $output->writeln("Deleted {$scholix->id} because {$scholix->registry_object_id} is DELETED");
+            }
+        }
+        $output->writeln("Finished");
     }
 
 }
