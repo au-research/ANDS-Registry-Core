@@ -94,7 +94,10 @@ class ProcessCoreMetadata extends ImportSubTask
              * Process Scholixable records
              * TODO: Move to it's own ImportSubTask
              */
-            ScholixProvider::process($record);
+            if ($this->parent()->getTaskData("targetStatus") == "PUBLISHED") {
+                ScholixProvider::process($record);
+            }
+
 
             $this->updateProgress($index, $total, "Processed ($index/$total) $ro->title($roID)");
             unset($ro);
