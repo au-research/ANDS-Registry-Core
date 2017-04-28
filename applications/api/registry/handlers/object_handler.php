@@ -4,6 +4,7 @@ use ANDS\API\Task\FixRelationshipTask;
 use ANDS\API\Task\ImportTask;
 use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\Repository\RegistryObjectsRepository;
+use ANDS\Util\Config;
 use \Exception as Exception;
 use \XSLTProcessor as XSLTProcessor;
 
@@ -158,111 +159,27 @@ class ObjectHandler extends Handler{
                 }
             } else {
 
-                // enforce if not run from cli
-                if (php_sapi_name() != "cli") {
-                    acl_enforce("REGISTRY_USER");
+                // middleware
+                $whitelist = Config::get('app.api_whitelist_ip');
+                if (!$whitelist) {
+                    throw new Exception("Whitelist IP not configured properly. This operation is unsafe.");
+                }
+                $ip = $this->getIPAddress();
+                if (!in_array($ip, $whitelist)) {
+                    throw new Exception("IP: $ip is not whitelist for this behavior");
                 }
 
-                //special case
-                if ($m1 == 'solr_index') {
-                    $ro = $resource['ro'];
-                    $ro->sync();
-                    return $ro->indexable_json();
-                } elseif ($m1 == 'grants_structure') {
-                    $this->ci->load->library('solr');
-                    $ro = $resource['ro'];
-                    $result = [
-                        'id' => $ro->id,
-                        'title' => $ro->title,
-                        'childs' => $ro->getGrantsStructureSOLR()
-                    ];
-
-                    return $result;
-                } elseif ($m1 == 'sync') {
-                    // TODO: only do PUT and from Trusted IP only
+                if ($m1 == "sync") {
                     $ro = $resource['ro'];
                     return $this->syncRecordById($ro->id);
-                } else if($m1 == 'relations_index') {
-                    $ro = $resource['ro'];
-
-                    $importTask = new ImportTask;
-                    $importTask->init([
-                        "name" => "Get Relationship Index for $ro->id",
-                        'params' => http_build_query([
-                            'targetStatus' => 'PUBLISHED',
-                            'ds_id' => $ro->data_source_id,
-                            'runAll' => 1,
-                            'pipeline' => 'UpdateRelationshipWorkflow'
-                        ])
-                    ])->skipLoadingPayload()->initialiseTask();
-                    $task = $importTask->getTaskByName("IndexRelationship");
-
-                    $record = RegistryObjectsRepository::getRecordByID($ro->id);
-                    $relationships = RelationshipProvider::getMergedRelationships($record);
-                    $index = $task->getRelationshipIndex($relationships);
-
-                    return $index;
-
-                } else if ($m1 == 'fixRelationship') {
-
-                    $ro = $resource['ro'];
-
-                    $task = new ImportTask;
-                    $task->init([
-                        "name" => "Fix Relationship for $ro->id",
-                       'params' => http_build_query([
-                           'targetStatus' => 'PUBLISHED',
-                           'ds_id' => $ro->data_source_id,
-                           'runAll' => 1,
-                           'pipeline' => 'UpdateRelationshipWorkflow'
-                       ])
-                    ])->skipLoadingPayload()->initialiseTask();
-
-                    $task->setTaskData('importedRecords', [$ro->id]);
-                    $task->run();
-
-                    return $task->toArray();
-
-                } else if ($m1 == 'relatedObjects') {
-                    $ro = $resource['ro'];
-                    $record = RegistryObjectsRepository::getRecordByID($ro->id);
-                    return RelationshipProvider::get($record);
-                } else if ($m1 == 'relatedGrantsNetwork') {
-                    $ro = $resource['ro'];
-                    $record = RegistryObjectsRepository::getRecordByID($ro->id);
-                    RelationshipProvider::process($record);
-                    return RelationshipProvider::getImplicitRelationship($record);
-                } else if ($m1 == 'relatedObjectsIndex') {
-                    $this->ci->benchmark->mark('start');
-                    $ro = $resource['ro'];
-                    $relatedObjects = $ro->getAllRelatedObjects();
-                    return $relatedObjects;
-                } else if ($m1 == 'updatePortalIndex') {
-                    $ro = $resource['ro'];
-                    $includes = explode(',', $this->ci->input->get('includes'));
-                    $index = $ro->getPortalRelationshipIndex($includes);
-                    return $index;
-                } else if ($m1 == 'updateRelationsIndex') {
-                    $this->ci->benchmark->mark('start');
-                    $ro = $resource['ro'];
-                    $includes = explode(',', $this->ci->input->get('includes'));
-                    $index = $ro->getRelationshipIndex($includes);
-
-                    $this->ci->load->library('solr');
-                    $this->ci->solr->init()->setCore('relations');
-                    $add = $this->ci->solr->add_json(json_encode($index), true);
-                    $commit = $this->ci->solr->commit();
-
-                    $this->ci->benchmark->mark('end');
-                    $took = $this->ci->benchmark->elapsed_time('start', 'end');
-
-                    return [
-                        'took' => $took,
-                        'size' => sizeof($index),
-                        'add' => json_decode($add, true),
-                        'commit' => json_decode($commit, true)
-                    ];
+                } elseif ($m1 == "scholix") {
+                    $r = $this->ro_handle($m1, $resource);
+                    if (!is_array_empty($r)) {
+                        $result[$m1] = $r;
+                    }
+                    return $result;
                 }
+
             }
 
             if ($benchmark) {
@@ -272,6 +189,27 @@ class ObjectHandler extends Handler{
         }
 
         return $result;
+    }
+
+    /**
+     * @return string
+     */
+    private function getIPAddress()
+    {
+        if (isset($_SERVER["HTTP_X_FORWARDED_FOR"])) {
+            return $_SERVER["HTTP_X_FORWARDED_FOR"];
+        }
+
+        if (isset($_SERVER["HTTP_CLIENT_IP"])) {
+            return $_SERVER["HTTP_CLIENT_IP"];
+        }
+
+        if (isset($_SERVER["REMOTE_ADDR"])) {
+            return $_SERVER["REMOTE_ADDR"];
+        }
+
+        // Run by command line??
+        return "127.0.0.1";
     }
 
     /**
