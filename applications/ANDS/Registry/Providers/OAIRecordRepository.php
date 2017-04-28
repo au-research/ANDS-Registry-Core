@@ -286,7 +286,11 @@ class OAIRecordRepository implements OAIRepository
             $set = $options['set'];
             $set = explode(':', $set);
             if ($set[0] == "class") {
-                $records = $records->where('class', $set[1]);
+                $records = $records->where('registry_object_class', $set[1]);
+            } elseif ($set[0] == "group") {
+                $records = $records->where('registry_object_group', $set[1]);
+            } elseif ($set[0] == "datasource") {
+                $records = $records->where('registry_object_data_source_id', $set[1]);
             }
         }
 
@@ -325,7 +329,19 @@ class OAIRecordRepository implements OAIRepository
 
         $oaiRecord = new Record($identifier, Carbon::parse($record->created_at)->format($this->getDateFormat()));
 
-        // TODO: Sets
+        // set
+        $group = Group::where('title', $record->registry_object_group)->first();
+        $ro = RegistryObject::find($record->registry_object_id);
+        $dataSource = DataSource::find($record->registry_object_data_source_id);
+        $sets = [
+            new Set("class:". $ro->class, $ro->class),
+            new Set("group:". $group->id, $group->title),
+            new Set("datasource:". $dataSource->data_source_id, $dataSource->title)
+        ];
+        foreach ($sets as $set) {
+            $oaiRecord->addSet($set);
+        }
+
         $oaiRecord->setMetadata($record->data);
 
         return $oaiRecord;
