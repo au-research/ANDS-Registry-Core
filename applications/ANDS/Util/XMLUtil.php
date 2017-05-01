@@ -13,6 +13,10 @@ if (!defined("RIFCS_NAMESPACE")) {
     define('RIFCS_NAMESPACE', "http://ands.org.au/standards/rif-cs/registryObjects");
 }
 
+if (!defined("NL")) {
+    define('NL',"\n");
+}
+
 class XMLUtil
 {
 

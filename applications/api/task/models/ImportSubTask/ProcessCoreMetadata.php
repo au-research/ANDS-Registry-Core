@@ -6,6 +6,7 @@ namespace ANDS\API\Task\ImportSubTask;
 
 use ANDS\Registry\Group;
 use ANDS\Registry\Providers\ScholixProvider;
+use ANDS\Registry\Providers\TitleProvider;
 use ANDS\RegistryObject;
 use ANDS\Util\XMLUtil;
 
@@ -77,7 +78,10 @@ class ProcessCoreMetadata extends ImportSubTask
                 $this->parent()->batchID);
             
             $record->status = $this->parent()->getTaskData("targetStatus");
-            
+
+            // process Title
+            TitleProvider::process($record);
+
             $record->save();
 
             // titles and slug require the ro object
@@ -85,9 +89,11 @@ class ProcessCoreMetadata extends ImportSubTask
                 'registry/registry_object/registry_objects', 'ro'
             );
             $ro = $this->parent()->getCI()->ro->getByID($roID);
-            $ro->updateTitles();
+
+            // TODO: SlugProvider::process($record);
             $ro->generateSlug();
 
+            // TODO: Remove CodeIgniter RO dependency
             $ro->save();
 
             /**
