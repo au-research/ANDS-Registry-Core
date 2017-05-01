@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "906ce8e6038c0334020d05945e932af9",
+    "content-hash": "ae9ae2d0353a3ca441f0a0ab0b6f8516",
     "packages": [
         {
             "name": "au-research/ands-doi-service",
-            "version": "0.1.10",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "https://github.com/au-research/ANDS-DOI-Service.git",
-                "reference": "c75f811dd26a1231da7292d76b00014d7503ec61"
+                "reference": "7e74d8517e546c598c49b9ba63ad8ac208bd41e6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/au-research/ANDS-DOI-Service/zipball/c75f811dd26a1231da7292d76b00014d7503ec61",
-                "reference": "c75f811dd26a1231da7292d76b00014d7503ec61",
+                "url": "https://api.github.com/repos/au-research/ANDS-DOI-Service/zipball/7e74d8517e546c598c49b9ba63ad8ac208bd41e6",
+                "reference": "7e74d8517e546c598c49b9ba63ad8ac208bd41e6",
                 "shasum": ""
             },
             "require": {
@@ -43,7 +43,7 @@
                     "email": "minh.nguyen@ands.org.au"
                 }
             ],
-            "time": "2016-12-06T00:09:28+00:00"
+            "time": "2017-05-01 01:55:35"
         },
         {
             "name": "doctrine/inflector",
@@ -759,12 +759,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/minhd/oai-pmh.git",
-                "reference": "7acb6d5cdbc7f60b62ac8a742610af96355a8a09"
+                "reference": "1d50fabc739d8c2e3aa03c02d5b6d6d061386472"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/minhd/oai-pmh/zipball/7acb6d5cdbc7f60b62ac8a742610af96355a8a09",
-                "reference": "7acb6d5cdbc7f60b62ac8a742610af96355a8a09",
+                "url": "https://api.github.com/repos/minhd/oai-pmh/zipball/1d50fabc739d8c2e3aa03c02d5b6d6d061386472",
+                "reference": "1d50fabc739d8c2e3aa03c02d5b6d6d061386472",
                 "shasum": ""
             },
             "require": {
@@ -796,7 +796,7 @@
                 "source": "https://github.com/minhd/oai-pmh/tree/master",
                 "issues": "https://github.com/minhd/oai-pmh/issues"
             },
-            "time": "2017-03-31 06:10:50"
+            "time": "2017-04-27 00:58:29"
         },
         {
             "name": "minhd/solr-client",
@@ -2789,6 +2789,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
+        "au-research/ands-doi-service": 20,
         "minhd/oai-pmh": 20,
         "javibravo/simpleue": 20
     },

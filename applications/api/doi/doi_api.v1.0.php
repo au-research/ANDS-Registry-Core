@@ -331,6 +331,7 @@ class Doi_api
         $this->providesOwnResponse = true;
         $client = 'unknown';
         $arrayFormater = new ArrayFormatter();
+        $dataCiteResponseCode = '200';
 
         if (isset($_SERVER['PHP_AUTH_USER'])) {
             $appID = $_SERVER['PHP_AUTH_USER'];
@@ -518,6 +519,7 @@ class Doi_api
 
             if (!$validDoi) {
                 $responselog['responsecode'] = 'MT017';
+                $dataCiteResponseCode = "404";
                 $response = "[doi] DOI prefix is not allowed";
             }
             if (!$clientDoi && !$docall) {
@@ -529,7 +531,7 @@ class Doi_api
 
             $dataCiteMessages =$dataciteClient->getMessages()? $dataciteClient->getMessages(): array();
 
-            $httpCode = isset($dataCiteMessages[0])? explode(":",($dataCiteMessages[0])): Array(0=>"HttpCode",1=>"200");
+            $httpCode = isset($dataCiteMessages[0])? explode(":",($dataCiteMessages[0])): Array(0=>"HttpCode",1=>$dataCiteResponseCode);
 
             if(!isset($responselog['responsecode'])) $responselog['responsecode'] = 'MT000';
 
