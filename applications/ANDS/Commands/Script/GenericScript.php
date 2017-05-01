@@ -10,15 +10,17 @@ class GenericScript implements GenericScriptRunnable
 {
     private $command;
     private $input;
+    private $output;
 
     /**
      * GenericScript constructor.
      * @param $command
      */
-    public function __construct($command, $input)
+    public function __construct($command, $input, $output)
     {
         $this->command = $command;
         $this->input = $input;
+        $this->output = $output;
     }
 
     public function log($message, $wrapper = null)
@@ -37,6 +39,14 @@ class GenericScript implements GenericScriptRunnable
     public function run()
     {
         // TODO: Implement run() method.
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOutput()
+    {
+        return $this->output;
     }
 }
 

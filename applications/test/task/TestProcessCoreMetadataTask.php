@@ -29,6 +29,18 @@ class TestProcessCoreMetadataTask extends UnitTest
     }
 
     /** @test **/
+    public function test_it_should_process_core_2()
+    {
+        $record = RegistryObject::where('key', 'http://research.unisa.edu.au/codddllection/96136')->first();
+        $task = $this->getProcessCoreMetadataTask();
+        $this->runPrerequisite($task->parent());
+        $task->parent()->setTaskData("importedRecords", [$record->id]);
+        $task->run();
+        dd($task);
+        $this->assertTrue(true);
+    }
+
+    /** @test **/
     public function test_it_should_populate_title_and_slug()
     {
         $task = $this->getProcessCoreMetadataTask();

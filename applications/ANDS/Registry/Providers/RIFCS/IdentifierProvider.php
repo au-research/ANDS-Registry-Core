@@ -1,8 +1,9 @@
 <?php
 
 
-namespace ANDS\Registry\Providers;
+namespace ANDS\Registry\Providers\RIFCS;
 
+use ANDS\Registry\Providers\RIFCSProvider;
 use ANDS\RegistryObject;
 use ANDS\RegistryObject\Identifier;
 use ANDS\Util\XMLUtil;
@@ -10,23 +11,23 @@ use ANDS\Util\XMLUtil;
 
 /**
  * Class IdentifierProvider
- * TODO: refactor into RIFCSProvider
+ *
  * @package ANDS\Registry\Providers
  */
-class IdentifierProvider
+class IdentifierProvider implements RIFCSProvider
 {
     /**
      * Add all Identifiers from rifcs
+     *
      * @param RegistryObject $record
+     * @return array
      */
     public static function process(RegistryObject $record)
     {
         static::deleteAllIdentifiers($record);
         $identifiers = static::processIdentifiers($record);
         return $identifiers;
-
     }
-
 
     /**
      * Delete Identifiers
@@ -36,7 +37,8 @@ class IdentifierProvider
      */
     public static function deleteAllIdentifiers(RegistryObject $record)
     {
-        Identifier::where('registry_object_id', $record->registry_object_id)->delete();
+        Identifier::where('registry_object_id',
+            $record->registry_object_id)->delete();
     }
 
 
@@ -44,6 +46,7 @@ class IdentifierProvider
      * Create Identifiers from current RIFCS
      * TODO: Refactor to use self::get()
      * @param RegistryObject $record
+     * @return array
      */
     public static function processIdentifiers(RegistryObject $record)
     {
@@ -68,6 +71,14 @@ class IdentifierProvider
         return $identifiers;
     }
 
+    /**
+     * Get all identifiers from RIFCS
+     * registryObject/:class/identifier
+     *
+     * @param RegistryObject $record
+     * @param null $xml
+     * @return array
+     */
     public static function get(RegistryObject $record, $xml = null)
     {
         if (!$xml) {
@@ -90,8 +101,18 @@ class IdentifierProvider
         return $identifiers;
     }
 
-    public static function getCitationMetadataIdentifiers(RegistryObject $record, $xml = null)
-    {
+    /**
+     * Get all identifiers from RIFCS
+     * registryObject/:class/citationInfo/citationMetadata/identifier
+     *
+     * @param RegistryObject $record
+     * @param null $xml
+     * @return array
+     */
+    public static function getCitationMetadataIdentifiers(
+        RegistryObject $record,
+        $xml = null
+    ) {
         if (!$xml) {
             $xml = $record->getCurrentData()->data;
         }

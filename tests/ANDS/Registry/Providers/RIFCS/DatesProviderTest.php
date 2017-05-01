@@ -5,18 +5,28 @@ namespace ANDS\Providers\RIFCS;
 
 
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
+use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 
 class DatesProviderTest extends \RegistryTestClass
 {
-    protected $requiredKeys = [
-        "AUTCollectionToTestSearchFields37"
-    ];
+
+    /** @test **/
+    public function it_should_get_the_correct_pub_date()
+    {
+        $key = "AUTestingRecords2ScholixRecords44";
+        $this->ensureKeyExist($key);
+        $record = RegistryObject::where('key', $key)->first();
+        $publicationDate = DatesProvider::getPublicationDate($record);
+        $this->assertEquals("2001-03-05", $publicationDate);
+    }
 
     /** @test **/
     public function it_should_get_the_correct_publication_date()
     {
-        $record = RegistryObjectsRepository::getPublishedByKey("AUTCollectionToTestSearchFields37");
+        $key = "AUTCollectionToTestSearchFields37";
+        $this->ensureKeyExist($key);
+        $record = RegistryObjectsRepository::getPublishedByKey($key);
         $publicationDate = DatesProvider::getPublicationDate($record);
         $this->assertEquals("2001-12-12", $publicationDate);
     }

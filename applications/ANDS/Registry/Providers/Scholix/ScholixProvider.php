@@ -6,6 +6,7 @@ namespace ANDS\Registry\Providers;
 
 use ANDS\API\Task\ImportSubTask\ProcessDelete;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
+use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 use ANDS\Registry\Providers\Scholix\Scholix;
 use ANDS\Registry\Providers\Scholix\ScholixDocument;
 use ANDS\Registry\Relation;
@@ -149,7 +150,13 @@ class ScholixProvider implements RegistryContentProvider
         foreach ($relatedPublications as $publication) {
             if ($to = $publication->to()) {
                 // toIdentifiers
-                $toIdentifiers = IdentifierProvider::get($to);
+                $toIdentifiers = array_merge(
+                    IdentifierProvider::get($to),
+                    IdentifierProvider::getCitationMetadataIdentifiers($to)
+                );
+
+                // should be unique
+                $toIdentifiers = collect($toIdentifiers)->unique()->toArray();
 
                 if (count($toIdentifiers) == 0) {
                     $targets[] = [
@@ -273,6 +280,7 @@ class ScholixProvider implements RegistryContentProvider
 
             return false;
         })->toArray();
+
         return $relationships;
     }
 
@@ -404,7 +412,7 @@ class ScholixProvider implements RegistryContentProvider
          */
         $creators = collect($data['relationships'])->filter(function($item) {
 
-            $validRelations = ['hasPrincipalInvestigator', 'hasAuthor', 'coInvestigator', 'isOwnedBy', 'hasCollector'];
+            $validRelations = ['hasPrincipalInvestigator', 'hasAuthor', 'coInvestigator', 'isOwnedBy', 'hasCollector', "author"];
 
             if ($item->isReverse()) {
                 return in_array(getReverseRelationshipString($item->prop('relation_type')), $validRelations) && ($item->prop('to_class') == "party");

@@ -218,7 +218,8 @@ def open_db_connection(params):
             host=params['database_host'],
             user=params['database_user'],
             passwd=params['database_password'],
-            db=params['database_name'])
+            db=params['database_name'],
+            charset='utf8')
     except Exception as e:
         print("Database Exception:", e)
         sys.exit(1)
