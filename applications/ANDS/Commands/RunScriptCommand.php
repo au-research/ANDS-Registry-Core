@@ -5,6 +5,7 @@ namespace ANDS\Commands;
 
 
 use ANDS\Commands\Script\ProcessGroups;
+use ANDS\Commands\Script\ProcessScholix;
 use ANDS\Commands\Script\ProcessTitles;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -15,7 +16,8 @@ class RunScriptCommand extends ANDSCommand
 {
     protected $scripts = [
         "processGroups" => ProcessGroups::class,
-        "processTitles" => ProcessTitles::class
+        "processTitles" => ProcessTitles::class,
+        "processScholix" => ProcessScholix::class
     ];
 
     protected function configure()
@@ -46,7 +48,7 @@ class RunScriptCommand extends ANDSCommand
             return;
         }
 
-        $script = new $this->scripts[$input->getArgument("what")]($this, $input);
+        $script = new $this->scripts[$input->getArgument("what")]($this, $input, $output);
         $script->run();
     }
 }
