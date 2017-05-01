@@ -39,7 +39,7 @@ class ProcessCoreMetadata extends ImportSubTask
         $total = count($importedRecords);
         debug("Processing Core Metadata for $total records");
         foreach ($importedRecords as $index => $roID) {
-            // $this->log('Processing (updated) record: ' . $roID);
+//             $this->log('Processing (updated) record: ' . $roID);
 
             $record = RegistryObject::find($roID);
             $recordData = $record->getCurrentData();
@@ -60,11 +60,12 @@ class ProcessCoreMetadata extends ImportSubTask
                     $record->group = (string)$registryObjectElement['group'];
 
                     // added group if not exists
-                    $exist = Group::where('title', $group)->first();
+                    $groupTitle = $group;
+                    $exist = Group::where('title', $groupTitle)->first();
                     if (!$exist) {
                         $group = new Group;
-                        $group->title = $title;
-                        $group->slug = str_slug($title);
+                        $group->title = $groupTitle;
+                        $group->slug = str_slug($groupTitle);
                         $group->save();
                     }
 
