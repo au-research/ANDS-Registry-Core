@@ -64,7 +64,7 @@ class ScholixProviderTest extends RegistryTestClass
     public function it_should_get_the_right_identifier()
     {
         $partyRecord = RegistryObjectsRepository::getPublishedByKey("AUTestingRecords2ScholixGroupRecord1");
-        $partyRecordIdentifiers = \ANDS\Registry\Providers\IdentifierProvider::get($partyRecord);
+        $partyRecordIdentifiers = \ANDS\Registry\Providers\RIFCS\IdentifierProvider::get($partyRecord);
 
         $shouldHave = [
             "AUTestingRecords2ScholixRecords16",
@@ -130,13 +130,13 @@ class ScholixProviderTest extends RegistryTestClass
         $sourcesIdentifiers = collect($links)->pluck('link')->pluck('source')->pluck('identifier')->flatten();
 
         // each identifier has a source
-        $identifiers = collect(\ANDS\Registry\Providers\IdentifierProvider::get($record))->flatten();
+        $identifiers = collect(\ANDS\Registry\Providers\RIFCS\IdentifierProvider::get($record))->flatten();
         foreach ($identifiers as $identifier) {
             $this->assertContains($identifier, $sourcesIdentifiers);
         }
 
         // each citationMetadata identifier also has a source
-        $citationIdentifiers = \ANDS\Registry\Providers\IdentifierProvider::getCitationMetadataIdentifiers($record);
+        $citationIdentifiers = \ANDS\Registry\Providers\RIFCS\IdentifierProvider::getCitationMetadataIdentifiers($record);
         $citationIdentifiers = collect($citationIdentifiers)->flatten();
         foreach ($citationIdentifiers as $identifier) {
             $this->assertContains($identifier, $sourcesIdentifiers);

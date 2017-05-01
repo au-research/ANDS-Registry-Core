@@ -13,7 +13,6 @@ $application = new Application();
 
 $application->add(new \ANDS\Commands\ConceptsCommand());
 $application->add(new \ANDS\Commands\RegistryObject\RegistryObjectGetCommand());
-$application->add(new \ANDS\Commands\Scholix\ScholixProcessCommand());
 $application->add(new \ANDS\Commands\DOISyncCommand());
 $application->add(new \ANDS\Commands\RegistryObject\RegistryObjectSyncCommand());
 $application->add(new \ANDS\Commands\RegistryObject\RegistryObjectProcessCommand());
