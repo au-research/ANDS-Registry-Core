@@ -54,11 +54,19 @@ class DatesProvider implements RIFCSProvider
          */
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class . '/ro:citationInfo/ro:citationMetadata/ro:date') AS $date) {
+
             $value = (string) $date;
             $type = (string) $date['type'];
             if (in_array($type, ['publicationDate', 'issued_date', 'created'])) {
                 return self::formatDate($value, $format);
             }
+        }
+
+        // first citationMetadata/date found
+        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+            'ro:registryObject/ro:' . $record->class . '/ro:citationInfo/ro:citationMetadata/ro:date') AS $date) {
+            $value = (string) $date;
+            return self::formatDate($value, $format);
         }
 
         /**
