@@ -211,6 +211,7 @@ class Doi_api
             }
         }
 
+
         // past this point, an app ID must be provided to continue
         if (!$appID) {
             $response = [
@@ -223,6 +224,7 @@ class Doi_api
 
         // constructing the client and checking if the client exists and authorised
         $client = $clientRepository->getByAppID($appID);
+
 
         if(!$client){
             $response = [
@@ -290,6 +292,7 @@ class Doi_api
 
         // log is done using ArrayFormatter
         $arrayFormater = new ArrayFormatter();
+
 
         // do the logging
         $this->doilog(
@@ -378,7 +381,7 @@ class Doi_api
 
             // set to the default DOI Service in global config
             $dataciteClient->setDataciteUrl($config['base_url']);
-        
+
             // construct the DOIServiceProvider to ensure this client is registered to use the service
             $doiService = new DOIServiceProvider($clientRepository, $doiRepository, $dataciteClient);
 
@@ -524,21 +527,31 @@ class Doi_api
 
             if ($docall) $response = $dataciteClient->request($dataciteClient->getDataciteUrl() . $call, $requestBody, $customRequest);
 
+            $dataCiteMessages =$dataciteClient->getMessages()? $dataciteClient->getMessages(): array();
 
-        $responselog['doi'] = $doi;
-        $responselog['result'] = $result;
-        $responselog['client_id'] = $client->client_id;
-        $responselog['app_id'] = $appID;
-        $responselog['message'] = json_encode($response, true);
+            $httpCode = isset($dataCiteMessages[0])? explode(":",($dataCiteMessages[0])): Array(0=>"HttpCode",1=>"200");
+
+            if(!isset($responselog['responsecode'])) $responselog['responsecode'] = 'MT000';
+
+            $responselog['doi'] = $doi;
+            $responselog['result'] = $result;
+            $responselog['client_id'] = $client->client_id;
+            $responselog['app_id'] = $appID;
+            $responselog['dataCiteHTTPCode'] = $httpCode[1];
+            $responselog['message'] = json_encode($response, true);
+
 
         // do the logging
-       if($log) $this->doilog(
+        if($log) $this->doilog(
             $arrayFormater->format($responselog),
             'doi_' . ($manual ? 'm_' : '') . $responselog['activity'],
             $client
         );
 
-       return $response;
+        //set the http response code to what has been returned from DataCite
+        http_response_code($httpCode[1]);
+
+        return $response;
 
     }
 
