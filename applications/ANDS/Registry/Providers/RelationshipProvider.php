@@ -6,6 +6,7 @@ namespace ANDS\Registry\Providers;
 
 use ANDS\RecordData;
 use ANDS\Registry\Connections;
+use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 use ANDS\RegistryObject\Identifier;
 use ANDS\RegistryObject;
 use ANDS\RegistryObject\ImplicitRelationship;

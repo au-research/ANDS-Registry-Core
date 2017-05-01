@@ -6,6 +6,7 @@ namespace ANDS\Registry\Providers;
 
 use ANDS\API\Task\ImportSubTask\ProcessDelete;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
+use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 use ANDS\Registry\Providers\Scholix\Scholix;
 use ANDS\Registry\Providers\Scholix\ScholixDocument;
 use ANDS\Registry\Relation;
