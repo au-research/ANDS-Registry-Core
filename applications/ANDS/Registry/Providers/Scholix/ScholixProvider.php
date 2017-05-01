@@ -404,7 +404,7 @@ class ScholixProvider implements RegistryContentProvider
          */
         $creators = collect($data['relationships'])->filter(function($item) {
 
-            $validRelations = ['hasPrincipalInvestigator', 'hasAuthor', 'coInvestigator', 'isOwnedBy', 'hasCollector'];
+            $validRelations = ['hasPrincipalInvestigator', 'hasAuthor', 'coInvestigator', 'isOwnedBy', 'hasCollector', "author"];
 
             if ($item->isReverse()) {
                 return in_array(getReverseRelationshipString($item->prop('relation_type')), $validRelations) && ($item->prop('to_class') == "party");
