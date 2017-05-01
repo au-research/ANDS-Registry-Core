@@ -98,8 +98,6 @@ class OAIRecordRepository implements OAIRepository
                 'metadataNamespace' => 'http://www.scholix.org'
             ]
         ];
-
-        // TODO: scholix
     }
 
     public function listRecords($metadataFormat = null, $set = null, $options)
@@ -122,7 +120,6 @@ class OAIRecordRepository implements OAIRepository
             // set
             $oaiRecord = $this->addSets($oaiRecord, $record);
 
-            // metadata TODO metadataPrefix
             $oaiRecord = $this->addMetadata($oaiRecord, $record, $metadataFormat);
 
             $result[] = $oaiRecord;
@@ -244,8 +241,6 @@ class OAIRecordRepository implements OAIRepository
             'limit' => $options['limit'],
             'offset' => $options['offset']
         ];
-
-        // TODO: scholix
     }
 
     private function getRegistryObjects($options)
@@ -275,6 +270,14 @@ class OAIRecordRepository implements OAIRepository
         ];
     }
 
+    /**
+     * List Scholixable records
+     * TODO: Remove $set param
+     *
+     * @param null $set
+     * @param $options
+     * @return array
+     */
     private function listScholixRecords($set = null, $options)
     {
         $limit = $options['limit'];
@@ -282,6 +285,7 @@ class OAIRecordRepository implements OAIRepository
 
         $records = Scholix::take($limit)->skip($offset);
 
+        // TODO: Refactor listRecords scholix sets
         if ($options['set']) {
             $set = $options['set'];
             $set = explode(':', $set);
@@ -302,10 +306,7 @@ class OAIRecordRepository implements OAIRepository
                 $record->scholix_identifier,
                 Carbon::parse($record->created_by)->format($this->getDateFormat())
             );
-
-            // TODO: Set
-
-            // metadata
+            $oaiRecord = $this->addScholixSets($oaiRecord, $record);
             $oaiRecord->setMetadata($record->data);
 
             $result[] = $oaiRecord;
@@ -327,23 +328,30 @@ class OAIRecordRepository implements OAIRepository
             return null;
         }
 
-        $oaiRecord = new Record($identifier, Carbon::parse($record->created_at)->format($this->getDateFormat()));
+        $oaiRecord = new Record(
+            $identifier,
+            Carbon::parse($record->created_at)->format($this->getDateFormat())
+        );
+        $oaiRecord = $this->addScholixSets($oaiRecord, $record);
+        $oaiRecord->setMetadata($record->data);
 
-        // set
-        $group = Group::where('title', $record->registry_object_group)->first();
-        $ro = RegistryObject::find($record->registry_object_id);
-        $dataSource = DataSource::find($record->registry_object_data_source_id);
+        return $oaiRecord;
+    }
+
+    private function addScholixSets(Record $oaiRecord, Scholix $record)
+    {
+//        $group = Group::where('title', $record->registry_object_group)->first();
+//        $dataSource = DataSource::find($record->registry_object_data_source_id)->first();
+        $class = $record->getAttribute("registry_object_class");
+        $dataSourceID = $record->getAttribute("registry_object_data_source_id");
         $sets = [
-            new Set("class:". $ro->class, $ro->class),
-            new Set("group:". $group->id, $group->title),
-            new Set("datasource:". $dataSource->data_source_id, $dataSource->title)
+            new Set("class:". $class, $class),
+//            new Set("group:". $group->id, $group->title),
+            new Set("datasource:". $dataSourceID, $dataSourceID)
         ];
         foreach ($sets as $set) {
             $oaiRecord->addSet($set);
         }
-
-        $oaiRecord->setMetadata($record->data);
-
         return $oaiRecord;
     }
 }
