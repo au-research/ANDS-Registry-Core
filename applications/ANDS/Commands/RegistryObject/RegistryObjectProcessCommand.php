@@ -10,6 +10,7 @@ use ANDS\Registry\Providers\QualityMetadataProvider;
 use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\Registry\Providers\RIFCS\SubjectProvider;
 use ANDS\Registry\Providers\ScholixProvider;
+use ANDS\Registry\Providers\TitleProvider;
 use ANDS\Repository\RegistryObjectsRepository;
 use ReflectionMethod;
 use Symfony\Component\Console\Input\InputArgument;
@@ -23,7 +24,8 @@ class RegistryObjectProcessCommand extends ANDSCommand
         'subject' => SubjectProvider::class,
         'quality' => QualityMetadataProvider::class,
         'links' => LinkProvider::class,
-        'relationship' => RelationshipProvider::class
+        'relationship' => RelationshipProvider::class,
+        'title' => TitleProvider::class
     ];
 
     protected function configure()

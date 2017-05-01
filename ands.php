@@ -19,5 +19,6 @@ $application->add(new \ANDS\Commands\RegistryObject\RegistryObjectSyncCommand())
 $application->add(new \ANDS\Commands\RegistryObject\RegistryObjectProcessCommand());
 $application->add(new \ANDS\Commands\SyncRecordWorkerRedisCommand());
 $application->add(new \ANDS\Commands\Registry\GroupsCommand());
+$application->add(new \ANDS\Commands\RunScriptCommand());
 
 $application->run();
