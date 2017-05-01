@@ -41,7 +41,12 @@
         "symfony/stopwatch": "^3.1",
         "monolog/monolog": "^1.19",
         "jaybizzle/crawler-detect": "1.*",
-        "vlucas/phpdotenv": "^2.4"
+        "vlucas/phpdotenv": "^2.4",
+        "symfony/console": "^3.2",
+        "minhd/solr-client": "~0.1.7",
+        "elasticsearch/elasticsearch": "~2.0",
+        "minhd/oai-pmh" : "dev-master",
+        "javibravo/simpleue" : "dev-master"
     },
 
     "require-dev": {
