@@ -149,7 +149,10 @@ class ScholixProvider implements RegistryContentProvider
         foreach ($relatedPublications as $publication) {
             if ($to = $publication->to()) {
                 // toIdentifiers
-                $toIdentifiers = IdentifierProvider::get($to);
+                $toIdentifiers = array_merge(
+                    IdentifierProvider::get($to),
+                    IdentifierProvider::getCitationMetadataIdentifiers($to)
+                );
 
                 if (count($toIdentifiers) == 0) {
                     $targets[] = [
@@ -273,6 +276,7 @@ class ScholixProvider implements RegistryContentProvider
 
             return false;
         })->toArray();
+
         return $relationships;
     }
 
