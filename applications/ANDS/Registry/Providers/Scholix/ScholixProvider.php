@@ -155,6 +155,9 @@ class ScholixProvider implements RegistryContentProvider
                     IdentifierProvider::getCitationMetadataIdentifiers($to)
                 );
 
+                // should be unique
+                $toIdentifiers = collect($toIdentifiers)->unique()->toArray();
+
                 if (count($toIdentifiers) == 0) {
                     $targets[] = [
                         'relationship' => $publication,
