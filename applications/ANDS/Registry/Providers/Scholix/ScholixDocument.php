@@ -207,7 +207,7 @@ class ScholixDocument
             }
         }
 
-        if (array_key_exists('publicationDate', $link['target'])) {
+        if (array_key_exists('publicationDate', $link['source'])) {
             $str .= "<publicationDate>" . $link['source']['publicationDate'] . "</publicationDate>";
         }
 
