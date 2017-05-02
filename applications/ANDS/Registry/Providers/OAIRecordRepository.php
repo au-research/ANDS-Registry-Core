@@ -321,7 +321,7 @@ class OAIRecordRepository implements OAIRepository
         if (array_key_exists('until', $options) && $options['until']) {
             $records = $records->where(
                 'updated_at', '<',
-                    Carbon::parse($options['from'])->toDateTimeString()
+                    Carbon::parse($options['until'])->toDateTimeString()
             );
         }
 
