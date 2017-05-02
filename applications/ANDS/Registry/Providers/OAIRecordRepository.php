@@ -14,6 +14,7 @@ use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\XMLUtil;
 use Carbon\Carbon;
 use MinhD\OAIPMH\Exception\BadArgumentException;
+use MinhD\OAIPMH\Exception\CannotDisseminateFormat;
 use MinhD\OAIPMH\Exception\IdDoesNotExistException;
 use MinhD\OAIPMH\Interfaces\OAIRepository;
 use MinhD\OAIPMH\Record;
@@ -170,6 +171,14 @@ class OAIRecordRepository implements OAIRepository
 
         $id = str_replace($this->oaiIdentifierPrefix, "", $identifier);
         $record = RegistryObjectsRepository::getRecordByID($id);
+
+        if (!$record) {
+            // try to see if it's a scholix record
+            $scholixRecord = Scholix::where('scholix_identifier', $identifier)->first();
+            if ($scholixRecord) {
+                throw new CannotDisseminateFormat();
+            }
+        }
 
         if (!$record) {
             return null;
@@ -398,6 +407,15 @@ class OAIRecordRepository implements OAIRepository
     private function getScholixRecord($identifier)
     {
         $record = Scholix::where('scholix_identifier', $identifier)->first();
+
+        if (!$record) {
+            // try to see if it's a registry object record
+            $id = str_replace($this->oaiIdentifierPrefix, "", $identifier);
+            $registryObjectRecord = RegistryObjectsRepository::getRecordByID($id);
+            if ($registryObjectRecord) {
+                throw new CannotDisseminateFormat();
+            }
+        }
 
         if (!$record) {
             return null;
