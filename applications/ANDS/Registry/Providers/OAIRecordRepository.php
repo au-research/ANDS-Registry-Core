@@ -279,7 +279,7 @@ class OAIRecordRepository implements OAIRepository
         foreach ($records['records'] as $record) {
             $oaiRecord = new Record(
                 $record->scholix_identifier,
-                Carbon::parse($record->created_by)->format($this->getDateFormat())
+                Carbon::parse($record->updated_at)->format($this->getDateFormat())
             );
             $oaiRecord = $this->addScholixSets($oaiRecord, $record);
             $result[] = $oaiRecord;
@@ -297,7 +297,8 @@ class OAIRecordRepository implements OAIRepository
     {
         $records = Scholix::limit($options['limit'])->offset($options['offset']);
 
-        if (array_key_exists('set', $options)) {
+        // set
+        if (array_key_exists('set', $options) && $options['set']) {
             $set = $options['set'];
             $set = explode(':', $set);
 
@@ -308,10 +309,29 @@ class OAIRecordRepository implements OAIRepository
             }
         }
 
-        // TODO: from, until
+        // from
+        if (array_key_exists('from', $options) && $options['from']) {
+            $records = $records->where(
+                'updated_at', '>',
+                    Carbon::parse($options['from'])->toDateTimeString()
+            );
+        }
+
+        // until
+        if (array_key_exists('until', $options) && $options['until']) {
+            $records = $records->where(
+                'updated_at', '<',
+                    Carbon::parse($options['from'])->toDateTimeString()
+            );
+        }
+
+        $count = $records->count();
+        if ($count == 0) {
+            $count = Scholix::count();
+        }
 
         return [
-            'total' => $records->count(),
+            'total' => $count,
             'records' => $records->get()
         ];
     }
@@ -352,31 +372,14 @@ class OAIRecordRepository implements OAIRepository
      */
     private function listScholixRecords($options)
     {
-        $limit = $options['limit'];
-        $offset = $options['offset'];
 
-        $records = Scholix::take($limit)->skip($offset);
-
-        // TODO: Refactor listRecords scholix sets
-        if ($options['set']) {
-            $set = $options['set'];
-            $set = explode(':', $set);
-            if ($set[0] == "class") {
-                $records = $records->where('registry_object_class', $set[1]);
-            } elseif ($set[0] == "group") {
-                $records = $records->where('registry_object_group', $set[1]);
-            } elseif ($set[0] == "datasource") {
-                $records = $records->where('registry_object_data_source_id', $set[1]);
-            }
-        }
-
-        $total = Scholix::count();
+        $records = $this->getScholixRecords($options);
 
         $result = [];
-        foreach ($records->get() as $record) {
+        foreach ($records['records'] as $record) {
             $oaiRecord = new Record(
                 $record->scholix_identifier,
-                Carbon::parse($record->created_by)->format($this->getDateFormat())
+                Carbon::parse($record->updated_at)->format($this->getDateFormat())
             );
             $oaiRecord = $this->addScholixSets($oaiRecord, $record);
             $oaiRecord->setMetadata($record->data);
@@ -385,7 +388,7 @@ class OAIRecordRepository implements OAIRepository
         }
 
         return [
-            'total' => $total,
+            'total' => $records['total'],
             'records' => $result,
             'limit' => $options['limit'],
             'offset' => $options['offset']
