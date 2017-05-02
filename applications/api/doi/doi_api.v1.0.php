@@ -211,6 +211,7 @@ class Doi_api
             }
         }
 
+
         // past this point, an app ID must be provided to continue
         if (!$appID) {
             $response = [
@@ -223,6 +224,7 @@ class Doi_api
 
         // constructing the client and checking if the client exists and authorised
         $client = $clientRepository->getByAppID($appID);
+
 
         if(!$client){
             $response = [
@@ -291,6 +293,7 @@ class Doi_api
         // log is done using ArrayFormatter
         $arrayFormater = new ArrayFormatter();
 
+
         // do the logging
         $this->doilog(
             $arrayFormater->format($doiService->getResponse()),
@@ -328,6 +331,7 @@ class Doi_api
         $this->providesOwnResponse = true;
         $client = 'unknown';
         $arrayFormater = new ArrayFormatter();
+        $dataCiteResponseCode = '200';
 
         if (isset($_SERVER['PHP_AUTH_USER'])) {
             $appID = $_SERVER['PHP_AUTH_USER'];
@@ -337,8 +341,10 @@ class Doi_api
             $sharedSecret = $_SERVER["PHP_AUTH_PW"];
         }
 
+        $config = Config::get('database.dois');
+
         $clientRepository = new ClientRepository(
-            $this->dois_db->hostname, 'dbs_dois', $this->dois_db->username, $this->dois_db->password
+            $config['hostname'], $config['database'], $config['username'], $this->dois_db->password
         );
 
         $client = $clientRepository->getByAppID($appID);
@@ -347,20 +353,22 @@ class Doi_api
         if (!$appID || !$sharedSecret) {
             $response = "An Authentication object was not found in the SecurityContext";
             $result = "An Authentication object was not found in the SecurityContext";
-            $responselog = ['responsecode' => 'MT009','doi'=>'','activity' => 'authenticate','result'=>$result,'message'=>json_encode($response, true)];
+            $responselog = ['responsecode' => 'MT009','doi'=>'','activity' => 'authenticate','result'=>$result,'dataCiteHTTPCode'=>"401",'message'=>json_encode($response, true)];
             $this->doilog($arrayFormater->format($responselog),'doi_' . $responselog['activity']);
+            http_response_code("401");
             return $result;
           }
         if(!$client){
             $response = "Bad credentials";
             $result = "Bad credentials";
-            $responselog = ['responsecode' => 'MT009','doi'=>'','activity' => 'authenticate','result'=>$result,'message'=>json_encode($response, true)];
+            $responselog = ['responsecode' => 'MT009','doi'=>'','activity' => 'authenticate','result'=>$result,'dataCiteHTTPCode'=>"401",'message'=>json_encode($response, true)];
             $this->doilog($arrayFormater->format($responselog),'doi_' . $responselog['activity']);
+            http_response_code("401");
             return $result;
         }
 
             $doiRepository = new DoiRepository(
-                $this->dois_db->hostname, 'dbs_dois', $this->dois_db->username, $this->dois_db->password
+                $config['hostname'], $config['database'], $config['username'], $config['password']
             );
 
             $call = $this->params['identifier'];
@@ -376,7 +384,7 @@ class Doi_api
 
             // set to the default DOI Service in global config
             $dataciteClient->setDataciteUrl($config['base_url']);
-        
+
             // construct the DOIServiceProvider to ensure this client is registered to use the service
             $doiService = new DOIServiceProvider($clientRepository, $doiRepository, $dataciteClient);
 
@@ -391,8 +399,9 @@ class Doi_api
             if (!$result) {
                 $response = "Bad credentials";
                 $result = "Bad credentials";
-                $responselog = ['responsecode' => 'MT009','doi'=>'','activity' => 'authenticate','result'=>$result,'message'=>json_encode($response, true)];
+                $responselog = ['responsecode' => 'MT009','doi'=>'','activity' => 'authenticate','result'=>$result,'dataCiteHTTPCode'=>"401",'message'=>json_encode($response, true)];
                 $this->doilog($arrayFormater->format($responselog),'doi_' . ($manual ? 'm_' : '') . $responselog['activity'],$client);
+                http_response_code("401");
                 return $result;
             }
 
@@ -445,6 +454,8 @@ class Doi_api
                     $responselog = ['responsecode' => 'MT011', 'activity' => strtoupper("DEACTIVATE")];
                     $call .= '/' . $doi;
                     $response = "DOI doesn't exist";
+                    $dataCiteResponseCode = "404";
+
                 }elseif ((!$doiObject || $doiObject->status=='RESERVED_INACTIVE') && $this->getPostedXML() != '') {
                     if (!$validXml) {
                         $responselog = ['responsecode' => 'MT006', 'activity' => strtoupper("RESERVE")];
@@ -497,7 +508,7 @@ class Doi_api
                     if ($validDomain) {
                         $doiRepository->doiUpdate($doiObject, array('status' => 'ACTIVE', 'url' => $this->getPostedUrl()));
                     } else {
-                        $responselog = ['responsecode' => 'MT014'];
+                        $responselog = ['responsecode' => 'MT014','activity' => strtoupper("UPDATE")];
                     }
                     $docall = true;
                 } elseif ($_SERVER['REQUEST_METHOD'] == 'GET') {
@@ -513,30 +524,42 @@ class Doi_api
 
             if (!$validDoi) {
                 $responselog['responsecode'] = 'MT017';
+                $dataCiteResponseCode = "404";
                 $response = "[doi] DOI prefix is not allowed";
             }
             if (!$clientDoi && !$docall) {
                 $responselog['responsecode'] = 'MT008';
+                $dataCiteResponseCode = "403";
                 $response = "cannot access dataset which belongs to another party";
             }
 
             if ($docall) $response = $dataciteClient->request($dataciteClient->getDataciteUrl() . $call, $requestBody, $customRequest);
 
+            $dataCiteMessages =$dataciteClient->getMessages()? $dataciteClient->getMessages(): array();
 
-        $responselog['doi'] = $doi;
-        $responselog['result'] = $result;
-        $responselog['client_id'] = $client->client_id;
-        $responselog['app_id'] = $appID;
-        $responselog['message'] = json_encode($response, true);
+            $httpCode = isset($dataCiteMessages[0])? explode(":",($dataCiteMessages[0])): Array(0=>"HttpCode",1=>$dataCiteResponseCode);
+
+            if(!isset($responselog['responsecode'])) $responselog['responsecode'] = 'MT000';
+
+            $responselog['doi'] = $doi;
+            $responselog['result'] = $result;
+            $responselog['client_id'] = $client->client_id;
+            $responselog['app_id'] = $appID;
+            $responselog['dataCiteHTTPCode'] = $httpCode[1];
+            $responselog['message'] = json_encode($response, true);
+
 
         // do the logging
-       if($log) $this->doilog(
+        if($log) $this->doilog(
             $arrayFormater->format($responselog),
             'doi_' . ($manual ? 'm_' : '') . $responselog['activity'],
             $client
         );
 
-       return $response;
+        //set the http response code to what has been returned from DataCite
+        http_response_code($httpCode[1]);
+
+        return $response;
 
     }
 
@@ -834,11 +857,9 @@ class Doi_api
 
     private function getClientModel($app_id)
     {
+        $config = Config::get('database.dois');
         $clientRepository = new ClientRepository(
-            $this->dois_db->hostname,
-            'dbs_dois',
-            $this->dois_db->username,
-            $this->dois_db->password
+            $config['hostname'], $config['database'], $config['username'], $config['password']
         );
         $client = $clientRepository->getByAppID($this->ci->input->get('app_id'));
         return $client;
