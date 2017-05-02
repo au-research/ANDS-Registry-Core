@@ -13,6 +13,8 @@ use ANDS\RegistryObjectAttribute;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\XMLUtil;
 use Carbon\Carbon;
+use MinhD\OAIPMH\Exception\BadArgumentException;
+use MinhD\OAIPMH\Exception\IdDoesNotExistException;
 use MinhD\OAIPMH\Interfaces\OAIRepository;
 use MinhD\OAIPMH\Record;
 use MinhD\OAIPMH\Set;
@@ -21,6 +23,23 @@ class OAIRecordRepository implements OAIRepository
 {
     public $dateFormat = "Y-m-d\\Th:m:s\\Z";
     protected $oaiIdentifierPrefix = "oai:ands.org.au::";
+    protected $formats = [
+        "rifcs" => [
+            'metadataPrefix' => 'rif',
+            'schema' => "http://services.ands.org.au/documentation/rifcs/1.3/schema/registryObjects.xsd",
+            'metadataNamespace' => 'http://ands.org.au/standards/rif-cs/registryObjects'
+        ],
+        "oai_dc" => [
+            'metadataPrefix' => 'oai_dc',
+            'schema' => "http://www.openarchives.org/OAI/2.0/oai_dc.xsd",
+            'metadataNamespace' => 'http://www.openarchives.org/OAI/2.0/oai_dc/'
+        ],
+        "scholix" => [
+            'metadataPrefix' => 'scholix',
+            'schema' => 'https://raw.githubusercontent.com/scholix/schema/master/xsd/scholix.xsd',
+            'metadataNamespace' => 'http://www.scholix.org'
+        ]
+    ];
 
     public function identify()
     {
@@ -28,13 +47,18 @@ class OAIRecordRepository implements OAIRepository
         $earliestDate = Carbon::createFromTimestamp($min)->format($this->getDateFormat());
         return [
             'repositoryName' => 'Australian National Data Services (ANDS)',
-            'baseURL' => baseUrl(),
+            'baseURL' => $this->getBaseUrl(),
             'protocolVersion' => '2.0',
             'adminEmail' => 'services@ands.org.au',
             'earliestDateStamp' => $earliestDate,
             'deletedRecord' => 'transient',
             'granularity' => 'YYYY-MM-DDThh:mm:ssZ'
         ];
+    }
+
+    public function getBaseUrl()
+    {
+        return baseUrl("api/registry/oai");
     }
 
     public function listSets($limit = 0, $offset = 0)
@@ -80,30 +104,25 @@ class OAIRecordRepository implements OAIRepository
 
     public function listMetadataFormats($identifier = null)
     {
-        return [
-            [
-                'metadataPrefix' => 'rif',
-                'schema' => "http://services.ands.org.au/documentation/rifcs/1.3/schema/registryObjects.xsd",
-                'metadataNamespace' => 'http://ands.org.au/standards/rif-cs/registryObjects
-'
-            ],
-            [
-                'metadataPrefix' => 'oai_dc',
-                'schema' => "http://www.openarchives.org/OAI/2.0/oai_dc.xsd",
-                'metadataNamespace' => 'http://www.openarchives.org/OAI/2.0/oai_dc/'
-            ],
-            [
-                'metadataPrefix' => 'scholix',
-                'schema' => 'https://raw.githubusercontent.com/scholix/schema/master/xsd/scholix.xsd',
-                'metadataNamespace' => 'http://www.scholix.org'
-            ]
-        ];
+        if ($identifier) {
+            if(Scholix::where('scholix_identifier', $identifier)->first()) {
+                return [ $this->formats["scholix"] ];
+            };
+
+            $id = str_replace($this->oaiIdentifierPrefix, "", $identifier);
+            if (RegistryObject::find($id)) {
+                return [ $this->formats["rifcs"], $this->formats['oai_dc'] ];
+            }
+
+            throw new IdDoesNotExistException();
+        }
+        return $this->formats;
     }
 
-    public function listRecords($metadataFormat = null, $set = null, $options)
+    public function listRecords($options)
     {
-        if ($metadataFormat == "scholix") {
-            return $this->listScholixRecords($set, $options);
+        if ($options['metadataPrefix'] == "scholix") {
+            return $this->listScholixRecords($options);
         }
 
         $registryObjects = $this->getRegistryObjects($options);
@@ -120,7 +139,7 @@ class OAIRecordRepository implements OAIRepository
             // set
             $oaiRecord = $this->addSets($oaiRecord, $record);
 
-            $oaiRecord = $this->addMetadata($oaiRecord, $record, $metadataFormat);
+            $oaiRecord = $this->addMetadata($oaiRecord, $record, $options['metadataPrefix']);
 
             $result[] = $oaiRecord;
         }
@@ -216,30 +235,84 @@ class OAIRecordRepository implements OAIRepository
         // TODO: Implement listRecordsByToken() method.
     }
 
-    public function listIdentifiers($metadataPrefix = null, $options)
+    public function listIdentifiers($options)
     {
-        // rif
-        $registryObjects = $this->getRegistryObjects($options);
+        if ($options['metadataPrefix'] == "rif") {
+            $registryObjects = $this->getRegistryObjects($options);
+            $result = [];
 
+            foreach ($registryObjects['records'] as $record) {
+                $oaiRecord = new Record(
+                    "oai:ands.org.au:{$record->id}",
+                    DatesProvider::getCreatedDate($record, $this->getDateFormat())
+                );
+
+                // set
+                $oaiRecord->addSet(new Set("class:{$record->class}", $record->class));
+
+                $result[] = $oaiRecord;
+            }
+
+            return [
+                'total' => $registryObjects['total'],
+                'records' => $result,
+                'limit' => $options['limit'],
+                'offset' => $options['offset']
+            ];
+        }
+
+        if ($options['metadataPrefix'] == "scholix") {
+            return $this->listIdentifiersScholix($options);
+
+        }
+
+        throw new BadArgumentException("Unknown metadataPrefix {$options['metadataPrefix']}");
+
+    }
+
+    private function listIdentifiersScholix($options)
+    {
         $result = [];
 
-        foreach ($registryObjects['records'] as $record) {
+        $records = $this->getScholixRecords($options);
+
+        foreach ($records['records'] as $record) {
             $oaiRecord = new Record(
-                "oai:ands.org.au:{$record->id}",
-                DatesProvider::getCreatedDate($record, $this->getDateFormat())
+                $record->scholix_identifier,
+                Carbon::parse($record->created_by)->format($this->getDateFormat())
             );
-
-            // set
-            $oaiRecord->addSet(new Set("class:{$record->class}", $record->class));
-
+            $oaiRecord = $this->addScholixSets($oaiRecord, $record);
             $result[] = $oaiRecord;
         }
 
         return [
-            'total' => $registryObjects['total'],
+            'total' => $records['total'],
             'records' => $result,
             'limit' => $options['limit'],
             'offset' => $options['offset']
+        ];
+    }
+
+    private function getScholixRecords($options)
+    {
+        $records = Scholix::limit($options['limit'])->offset($options['offset']);
+
+        if (array_key_exists('set', $options)) {
+            $set = $options['set'];
+            $set = explode(':', $set);
+
+            if ($set[0] == "datasource") {
+                $records = $records->where('registry_object_data_source_id', $set[1]);
+            } else {
+                throw new BadArgumentException();
+            }
+        }
+
+        // TODO: from, until
+
+        return [
+            'total' => $records->count(),
+            'records' => $records->get()
         ];
     }
 
@@ -274,11 +347,10 @@ class OAIRecordRepository implements OAIRepository
      * List Scholixable records
      * TODO: Remove $set param
      *
-     * @param null $set
      * @param $options
      * @return array
      */
-    private function listScholixRecords($set = null, $options)
+    private function listScholixRecords($options)
     {
         $limit = $options['limit'];
         $offset = $options['offset'];
@@ -298,7 +370,7 @@ class OAIRecordRepository implements OAIRepository
             }
         }
 
-        $total = $records->count();
+        $total = Scholix::count();
 
         $result = [];
         foreach ($records->get() as $record) {
@@ -342,10 +414,10 @@ class OAIRecordRepository implements OAIRepository
     {
 //        $group = Group::where('title', $record->registry_object_group)->first();
 //        $dataSource = DataSource::find($record->registry_object_data_source_id)->first();
-        $class = $record->getAttribute("registry_object_class");
+//        $class = $record->getAttribute("registry_object_class");
         $dataSourceID = $record->getAttribute("registry_object_data_source_id");
         $sets = [
-            new Set("class:". $class, $class),
+//            new Set("class:". $class, $class),
 //            new Set("group:". $group->id, $group->title),
             new Set("datasource:". $dataSourceID, $dataSourceID)
         ];
