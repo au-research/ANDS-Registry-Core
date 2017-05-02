@@ -72,18 +72,36 @@ class ScholixProvider implements RegistryContentProvider
 //        );
         $scholixDocuments = self::get($record);
         $links = $scholixDocuments->getLinks();
+
+        $report = [
+            'total' => count($links),
+            'updated' => [],
+            'created' => [],
+            'unchanged' => []
+        ];
+
         foreach ($links as $link) {
             $id = $scholixDocuments->getLinkIdentifier($link);
             $xml = $scholixDocuments->json2xml($link['link']);
             $exist = Scholix::where('scholix_identifier', $id)->first();
 
             if ($exist) {
+                // report
+                if ($exist->hash != md5($xml)) {
+                    $report['updated'][] = $id;
+                } else {
+                    $report['unchanged'][] = $id;
+                }
+
                 // update
                 $exist->data = $xml;
                 $exist->hash = md5($xml);
                 $exist->save();
+
                 continue;
             }
+
+            $report['created'][] = $id;
 
             // create
             $scholix = new Scholix;
@@ -99,7 +117,7 @@ class ScholixProvider implements RegistryContentProvider
             $scholix->save();
         }
 
-        return;
+        return $report;
     }
 
     /**
