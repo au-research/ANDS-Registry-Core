@@ -508,7 +508,7 @@ class Doi_api
                     if ($validDomain) {
                         $doiRepository->doiUpdate($doiObject, array('status' => 'ACTIVE', 'url' => $this->getPostedUrl()));
                     } else {
-                        $responselog = ['responsecode' => 'MT014'];
+                        $responselog = ['responsecode' => 'MT014','activity' => strtoupper("UPDATE")];
                     }
                     $docall = true;
                 } elseif ($_SERVER['REQUEST_METHOD'] == 'GET') {
