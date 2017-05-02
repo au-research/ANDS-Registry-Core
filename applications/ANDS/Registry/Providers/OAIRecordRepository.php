@@ -25,7 +25,7 @@ class OAIRecordRepository implements OAIRepository
     public $dateFormat = "Y-m-d\\Th:m:s\\Z";
     protected $oaiIdentifierPrefix = "oai:ands.org.au::";
     protected $formats = [
-        "rifcs" => [
+        "rif" => [
             'metadataPrefix' => 'rif',
             'schema' => "http://services.ands.org.au/documentation/rifcs/1.3/schema/registryObjects.xsd",
             'metadataNamespace' => 'http://ands.org.au/standards/rif-cs/registryObjects'
@@ -112,7 +112,7 @@ class OAIRecordRepository implements OAIRepository
 
             $id = str_replace($this->oaiIdentifierPrefix, "", $identifier);
             if (RegistryObject::find($id)) {
-                return [ $this->formats["rifcs"], $this->formats['oai_dc'] ];
+                return [ $this->formats["rif"], $this->formats['oai_dc'] ];
             }
 
             throw new IdDoesNotExistException();
@@ -122,7 +122,13 @@ class OAIRecordRepository implements OAIRepository
 
     public function listRecords($options)
     {
-        if ($options['metadataPrefix'] == "scholix") {
+        $metadataPrefix = $options['metadataPrefix'];
+
+        if (!in_array($metadataPrefix, array_keys($this->formats))) {
+            throw new BadArgumentException();
+        }
+
+        if ($metadataPrefix == "scholix") {
             return $this->listScholixRecords($options);
         }
 
@@ -165,6 +171,10 @@ class OAIRecordRepository implements OAIRepository
 
     public function getRecord($metadataFormat, $identifier)
     {
+        if (!in_array($metadataFormat, array_keys($this->formats))) {
+            throw new BadArgumentException();
+        }
+
         if ($metadataFormat == "scholix") {
             return $this->getScholixRecord($identifier);
         }
