@@ -524,6 +524,7 @@ class Doi_api
             }
             if (!$clientDoi && !$docall) {
                 $responselog['responsecode'] = 'MT008';
+                $dataCiteResponseCode = "404";
                 $response = "cannot access dataset which belongs to another party";
             }
 
