@@ -504,13 +504,13 @@ function titleCase($title)
         if($count>1){
             $words[$key] = '';
             for ($i = 0; $i < $count; ++$i) {
-                $words[$key] .= ucwords($a[$i])." ";
+                $words[$key] .= mb_ucwords($a[$i])." ";
             }
 
         } else {
-            $word = strtolower($word);
+            $word = mb_strtolower($word);
             if ($key == 0 or !in_array($word, $smallwordsarray))
-                $words[$key] = ucwords($word);
+                $words[$key] = mb_ucwords($word);
             else
                 $words[$key] = $word;
         }
@@ -520,6 +520,11 @@ function titleCase($title)
 
     return $newtitle;
 
+}
+
+function mb_ucwords($str)
+{
+    return mb_convert_case($str, MB_CASE_TITLE, "UTF-8");
 }
 
 function getIdentifierURL($type, $identifier) {
