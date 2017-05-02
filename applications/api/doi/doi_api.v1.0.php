@@ -353,15 +353,17 @@ class Doi_api
         if (!$appID || !$sharedSecret) {
             $response = "An Authentication object was not found in the SecurityContext";
             $result = "An Authentication object was not found in the SecurityContext";
-            $responselog = ['responsecode' => 'MT009','doi'=>'','activity' => 'authenticate','result'=>$result,'message'=>json_encode($response, true)];
+            $responselog = ['responsecode' => 'MT009','doi'=>'','activity' => 'authenticate','result'=>$result,'dataCiteHTTPCode'=>"401",'message'=>json_encode($response, true)];
             $this->doilog($arrayFormater->format($responselog),'doi_' . $responselog['activity']);
+            http_response_code("401");
             return $result;
           }
         if(!$client){
             $response = "Bad credentials";
             $result = "Bad credentials";
-            $responselog = ['responsecode' => 'MT009','doi'=>'','activity' => 'authenticate','result'=>$result,'message'=>json_encode($response, true)];
+            $responselog = ['responsecode' => 'MT009','doi'=>'','activity' => 'authenticate','result'=>$result,'dataCiteHTTPCode'=>"401",'message'=>json_encode($response, true)];
             $this->doilog($arrayFormater->format($responselog),'doi_' . $responselog['activity']);
+            http_response_code("401");
             return $result;
         }
 
@@ -397,8 +399,9 @@ class Doi_api
             if (!$result) {
                 $response = "Bad credentials";
                 $result = "Bad credentials";
-                $responselog = ['responsecode' => 'MT009','doi'=>'','activity' => 'authenticate','result'=>$result,'message'=>json_encode($response, true)];
+                $responselog = ['responsecode' => 'MT009','doi'=>'','activity' => 'authenticate','result'=>$result,'dataCiteHTTPCode'=>"401",'message'=>json_encode($response, true)];
                 $this->doilog($arrayFormater->format($responselog),'doi_' . ($manual ? 'm_' : '') . $responselog['activity'],$client);
+                http_response_code("401");
                 return $result;
             }
 
@@ -524,7 +527,7 @@ class Doi_api
             }
             if (!$clientDoi && !$docall) {
                 $responselog['responsecode'] = 'MT008';
-                $dataCiteResponseCode = "404";
+                $dataCiteResponseCode = "403";
                 $response = "cannot access dataset which belongs to another party";
             }
 
