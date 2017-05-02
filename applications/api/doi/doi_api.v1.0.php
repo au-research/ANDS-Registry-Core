@@ -454,6 +454,8 @@ class Doi_api
                     $responselog = ['responsecode' => 'MT011', 'activity' => strtoupper("DEACTIVATE")];
                     $call .= '/' . $doi;
                     $response = "DOI doesn't exist";
+                    $dataCiteResponseCode = "404";
+
                 }elseif ((!$doiObject || $doiObject->status=='RESERVED_INACTIVE') && $this->getPostedXML() != '') {
                     if (!$validXml) {
                         $responselog = ['responsecode' => 'MT006', 'activity' => strtoupper("RESERVE")];
