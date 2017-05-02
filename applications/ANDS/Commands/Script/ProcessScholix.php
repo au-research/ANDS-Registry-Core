@@ -42,12 +42,24 @@ class ProcessScholix extends GenericScript implements GenericScriptRunnable
             ->whereIn('type', ['dataset', 'collection'])
             ->where('status', 'PUBLISHED');
 
+        $reports = [];
         $progressBar = new ProgressBar($this->getOutput(), $unchecked->count());
         foreach ($unchecked->get() as $record) {
             $progressBar->advance(1);
-            ScholixProvider::process($record);
+            $reports[$record->id] = ScholixProvider::process($record);
         }
         $progressBar->finish();
+
+        $this->log("\n");
+        $total = collect($reports)->pluck('total')->sum();
+        $totalUnchanged = collect($reports)->pluck('unchanged')->flatten()->count();
+        $totalUpdated = collect($reports)->pluck('updated')->flatten()->count();
+        $totalCreated = collect($reports)->pluck('created')->flatten()->count();
+        $this->log("Total Scholix Documents: $total");
+        $this->log("Total Unchanged: ". $totalUnchanged);
+        $this->log("Total Updated: ". $totalUpdated);
+        $this->log("Total Created: ". $totalCreated);
+
         return;
     }
 
