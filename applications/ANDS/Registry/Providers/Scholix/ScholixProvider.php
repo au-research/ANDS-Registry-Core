@@ -70,6 +70,18 @@ class ScholixProvider implements RegistryContentProvider
 //            self::$scholixableAttr,
 //            self::isScholixable($record, $relationships)
 //        );
+
+        // determine Scholixable
+        if (!self::isScholixable($record)) {
+            return [
+                'total' => 0,
+                'updated' => [],
+                'created' => [],
+                'unchanged' => [],
+            ];
+        }
+
+        // scholixable, proceed to create links
         $scholixDocuments = self::get($record);
         $links = $scholixDocuments->getLinks();
 
