@@ -179,6 +179,7 @@ class ScholixProvider implements RegistryContentProvider
         $targets = [];
         foreach ($relatedPublications as $publication) {
             if ($to = $publication->to()) {
+
                 // toIdentifiers
                 $toIdentifiers = array_merge(
                     IdentifierProvider::get($to),
