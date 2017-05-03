@@ -9,13 +9,23 @@ use ANDS\Repository\RegistryObjectsRepository;
 
 class ProcessScholix extends ImportSubTask
 {
-    protected $requireImportedRecords = true;
     protected $title = "PROCESSING SCHOLIX METADATA";
 
     public function run_task()
     {
-        $importedRecords = $this->parent()->getTaskData("importedRecords");
-        $total = count($importedRecords);
+        $importedRecords = $this->parent()->getTaskData("importedRecords") ? $this->parent()->getTaskData("importedRecords") : [];
+
+        $affectedRecords = $this->parent()->getTaskData("affectedRecords") ? $this->parent()->getTaskData("affectedRecords") : [];
+
+        $totalRecords = array_merge($importedRecords, $affectedRecords);
+        $totalRecords = array_values(array_unique($totalRecords));
+
+        $total = count($totalRecords);
+
+        if ($total == 0) {
+            $this->log("No records needed to have scholix generated");
+            return;
+        }
 
         $targetStatus = $this->parent()->getTaskData('targetStatus');
         if (!RegistryObjectsRepository::isPublishedStatus($targetStatus)) {
@@ -23,7 +33,7 @@ class ProcessScholix extends ImportSubTask
             return;
         }
 
-        foreach ($importedRecords as $index => $roID) {
+        foreach ($totalRecords as $index => $roID) {
             $record = RegistryObjectsRepository::getRecordByID($roID);
             if (!$record) {
                 $this->log("No record with ID $roID found");
