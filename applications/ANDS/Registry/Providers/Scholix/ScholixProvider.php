@@ -92,8 +92,10 @@ class ScholixProvider implements RegistryContentProvider
             'unchanged' => []
         ];
 
+        $new = [];
         foreach ($links as $link) {
             $id = $scholixDocuments->getLinkIdentifier($link);
+            $new[] = $id;
             $xml = $scholixDocuments->json2xml($link['link']);
             $exist = Scholix::where('scholix_identifier', $id)->first();
 
@@ -129,6 +131,12 @@ class ScholixProvider implements RegistryContentProvider
             $scholix->save();
         }
 
+        // delete existing links that are not generated (removed relationships)
+        $exist = Scholix::where('registry_object_id', $record->id)
+            ->pluck('scholix_identifier')->toArray();
+        $shouldBeDeleted = array_diff($exist, $new);
+        Scholix::whereIn('scholix_identifier', $shouldBeDeleted)->delete();
+        
         return $report;
     }
 
