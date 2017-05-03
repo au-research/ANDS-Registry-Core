@@ -37,9 +37,8 @@ class ProcessCoreMetadata extends ImportSubTask
         }
 
         $total = count($importedRecords);
-        debug("Processing Core Metadata for $total records");
+
         foreach ($importedRecords as $index => $roID) {
-//             $this->log('Processing (updated) record: ' . $roID);
 
             $record = RegistryObject::find($roID);
             $recordData = $record->getCurrentData();
@@ -109,7 +108,6 @@ class ProcessCoreMetadata extends ImportSubTask
             $this->updateProgress($index, $total, "Processed ($index/$total) $ro->title($roID)");
             unset($ro);
         }
-        debug("Finished Processing Core Metadata for $total records");
     }
 
 
