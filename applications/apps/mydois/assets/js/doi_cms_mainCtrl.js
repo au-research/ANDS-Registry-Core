@@ -39,10 +39,15 @@
                     if (vm.client.client_id < 10) {
                         doi_client_id = 0+""+vm.client.client_id;
                     }
+                    if(vm.client.datacite_prefix=="10.5072/"){
+                        var test_str = "TEST_DOI_";
+                    }else{
+                        var test_str = "";
+                    }
                     vm.editxml = false;
                     vm.response = false;
                     vm.newdoi_url = '';
-                    vm.newdoi_id = vm.client.datacite_prefix + doi_client_id +'/'+ vm.uniqid();
+                    vm.newdoi_id = vm.client.datacite_prefix + doi_client_id +'/'+ test_str + vm.uniqid();
                     vm.newdoixml = APIDOIService.getBlankDataciteXML(vm.newdoi_id);
                     break;
             }
