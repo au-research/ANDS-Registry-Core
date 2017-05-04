@@ -268,7 +268,8 @@ class Doi_api
             case "mint":
                  $doiService->mint(
                     $this->ci->input->get('url'),
-                    $this->getPostedXML()
+                    $this->getPostedXML(),
+                    $manual
                 );
                 break;
             case "update":
