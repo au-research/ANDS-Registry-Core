@@ -11,10 +11,12 @@
 	<?php echo anchor('mydois/list_trusted', 'List Trusted Clients', array('class'=>'current')); ?>
 </div>
 <div class="container-fluid" id="main-content">
+	<div id='result_msg'>result</div>
 	<div class="row-fluid">
 		<!-- <div class="span2">&nbsp;</div> -->
 		<div class="span12">
 			<div id="trusted_clients">Loading...</div>
+
 		</div>
 		<!-- <div class="span3"></div> -->
 	</div>
@@ -164,6 +166,7 @@
 		<a href="#" class="btn hide" data-dismiss="modal">Close</a>
 	</div>
 </div>
+
 <script type="text/x-mustache" id="trusted_clients-template">
 <div class="widget-box">
 	<div class="widget-title">
