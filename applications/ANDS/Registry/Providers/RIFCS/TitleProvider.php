@@ -64,11 +64,11 @@ class TitleProvider implements RIFCSProvider
             $first = collect($names)->first();
             $displayTitle = $first['value'];
 
-            // first found name
-            $displayTitle = is_array($displayTitle) ? $displayTitle[0] : $displayTitle;
-
             // first found namePart
             $displayTitle = is_array($displayTitle) && array_key_exists('value', $displayTitle) ? $displayTitle['value'] : $displayTitle;
+
+            // first found name
+            $displayTitle = is_array($displayTitle) ? $displayTitle[0] : $displayTitle;
 
             $listTitle = $displayTitle;
         }
