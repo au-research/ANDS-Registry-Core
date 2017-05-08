@@ -17,9 +17,12 @@ class UserDataSuggestor
      */
     public function __construct()
     {
+        $url = env('ELASTICSEARCH_URL', 'http://localhost:9200');
+        $url = rtrim($url, '/');
+
         $this->client = ClientBuilder::create()
             ->setHosts(
-                [ env('ELASTICSEARCH_URL') ]
+                [ $url ]
             )->build();
     }
 
