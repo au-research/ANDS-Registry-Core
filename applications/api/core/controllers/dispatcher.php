@@ -250,10 +250,7 @@ class Dispatcher extends MX_Controller
             }
 
         } catch (Exception $e) {
-            $message = $e->getMessage();
-            if ($message == "") {
-                $message = $e->getTrace();
-            }
+            $message = get_exception_msg($e);
             $this->formatter->error($message);
             return;
         }
