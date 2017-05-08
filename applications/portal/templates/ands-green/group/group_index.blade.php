@@ -13,7 +13,7 @@
                </div>
            </div>
            <div class="row">
-            @include('includes/contributors-list-thumbnail');
+            @include('includes/contributors-list-thumbnail')
            </div>
        </div>
     </section>
