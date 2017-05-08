@@ -40,10 +40,10 @@ class TitleProvider implements RIFCSProvider
         });
 
         //get the value of the first namePart
-        $name['value'] = collect($name['value'])->get('value');
+        $displayTitle = is_array($name['value']) ? collect($name['value'])->get('value') : $name['value'];
 
-        $displayTitle = $name['value'];
         $listTitle = $displayTitle;
+
 
         // special rules for party
         if ($record->class === "party") {
