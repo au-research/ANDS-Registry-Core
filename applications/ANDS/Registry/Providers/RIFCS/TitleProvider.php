@@ -38,8 +38,11 @@ class TitleProvider implements RIFCSProvider
         $name = collect($names)->first(function ($key, $item) {
             return $item['@attributes']['type'] == 'primary';
         });
-        $name['value'] = collect($name['value'])->flatten()->all();
-        $displayTitle = is_array($name['value']) && count($name['value']) ? $name['value'][0] : null;
+
+        //get the value of the first namePart
+        $name['value'] = collect($name['value'])->get('value');
+
+        $displayTitle = $name['value'];
         $listTitle = $displayTitle;
 
         // special rules for party
