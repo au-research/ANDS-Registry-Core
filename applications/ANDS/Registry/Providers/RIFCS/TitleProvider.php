@@ -55,6 +55,9 @@ class TitleProvider implements RIFCSProvider
 
         // take the first primary found
         $name = collect($names)->first(function ($key, $item) {
+            if (!array_key_exists('@attributes', $item)) {
+                return false;
+            }
             return $item['@attributes']['type'] == 'primary';
         });
 
@@ -101,6 +104,9 @@ class TitleProvider implements RIFCSProvider
 
             // first found name
             $displayTitle = is_array($displayTitle) ? $displayTitle[0] : $displayTitle;
+
+            // first found name value
+            $displayTitle = is_array($displayTitle) && array_key_exists('value', $displayTitle) ? $displayTitle['value'] : $displayTitle;
 
             $listTitle = $displayTitle;
         }
