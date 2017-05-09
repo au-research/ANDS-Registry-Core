@@ -254,6 +254,7 @@ class ImportTask extends Task
                     "ProcessRelationships",
                     "ProcessGrantsRelationship",
                     "PopulateAffectedList",
+                    "ProcessScholix",
                     "ProcessAffectedRelationships",
                     "ProcessQualityMetadata",
                     "IndexPortal",
@@ -275,6 +276,7 @@ class ImportTask extends Task
                     "ProcessRelationships",
                     "ProcessGrantsRelationship",
                     "PopulateAffectedList",
+                    "ProcessScholix",
                     "ProcessAffectedRelationships",
                     "ProcessQualityMetadata",
                     "IndexPortal",
@@ -288,6 +290,7 @@ class ImportTask extends Task
                     "ProcessRelationships",
                     "ProcessGrantsRelationship",
                     "PopulateAffectedList",
+                    "ProcessScholix",
                     "ProcessAffectedRelationships",
                     "IndexRelationship"
                 ];
@@ -298,6 +301,7 @@ class ImportTask extends Task
                     "ProcessIdentifiers",
                     "ProcessRelationships",
                     "ProcessGrantsRelationship",
+                    "ProcessScholix",
                     "ProcessQualityMetadata",
                     "IndexPortal",
                     "IndexRelationship"
@@ -331,6 +335,7 @@ class ImportTask extends Task
                     "ProcessQualityMetadata",
                     "IndexPortal",
                     "PopulateAffectedList",
+                    "ProcessScholix",
                     "ProcessAffectedRelationships",
                     "IndexRelationship",
                     "FinishImport",

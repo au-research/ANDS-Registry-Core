@@ -3,7 +3,7 @@
 
 namespace ANDS\Test;
 
-use ANDS\Registry\Providers\IdentifierProvider;
+use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 use ANDS\RegistryObject;
 use ANDS\RegistryObject\Identifier;
 use ANDS\Repository\RegistryObjectsRepository;

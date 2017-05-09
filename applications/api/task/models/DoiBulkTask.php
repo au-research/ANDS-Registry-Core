@@ -129,19 +129,20 @@ class DoiBulkTask extends Task
      */
     public function initializeTask()
     {
-        $doisDB = $this->ci->load->database('dois', true);
+        $dbconf = Config::get('database.dois');
+
         $clientRepository = new ClientRepository(
-            $doisDB->hostname,
-            'dbs_dois',
-            $doisDB->username,
-            $doisDB->password
+            $dbconf['hostname'],
+            $dbconf['database'],
+            $dbconf['username'],
+            $dbconf['password']
         );
 
         $doiRepository = new DoiRepository(
-            $doisDB->hostname,
-            'dbs_dois',
-            $doisDB->username,
-            $doisDB->password
+            $dbconf['hostname'],
+            $dbconf['database'],
+            $dbconf['username'],
+            $dbconf['password']
         );
 
         $bulkRequest = BulkRequest::find($this->bulkID);

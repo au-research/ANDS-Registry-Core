@@ -110,7 +110,19 @@ class ConceptsCommand extends Command
 
         $type = $input->getOption('vocab_type');
 
-        $concepts_source = file_get_contents($source);
+        if($type == "anzsrc-for" || $type == "anzsrc-seo"){
+
+            $source = "https://vocabs.ands.org.au/vocabs/services/vocabs/".$type."/tree-raw";
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $source);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $concepts_source = curl_exec($ch);
+            curl_close($ch);
+
+        }else {
+
+            $concepts_source = file_get_contents($source);
+        }
 
         $concepts_array = json_decode($concepts_source, true);
 
@@ -118,10 +130,9 @@ class ConceptsCommand extends Command
         $broader_iri = array();
         $broader_notation = array();
 
-        $this->generate_solr($concepts_array, $broader,$broader_iri, $broader_notation, $type);
+        $this->generate_solr($concepts_array['message'], $broader,$broader_iri, $broader_notation, $type);
 
         $output->writeln('You have indexed concepts of a ' . $type . ' vocabulary from ' . $source . ".");
 
     }
-
 }

@@ -48,6 +48,7 @@ $(document).on('click', '#add_confirm', function(){
 			if(data.errorMessages){
 				$('#result_msg').html(data.errorMessages).addClass('label label-important');
 				thisButton.button('reset');
+				$('#edit_trusted_client_modal').modal('hide');
 			}else{
 				listTrustedClients();
 				$('#edit_trusted_client_form')[0].reset();

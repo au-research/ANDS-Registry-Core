@@ -87,7 +87,7 @@ class SubjectProvider implements RIFCSProvider
             $type = $subject["type"];
             $value = (string)($subject['value']);
             $positive_hit = false;
-
+            $uri= $subject['uri']? $subject['uri'] : " ";
             if (!array_key_exists((string)$value, $subjectsResolved)) {
                 $search_value = self::formatSearchString($value,strtolower($type));
                     $solrResult = $solrClient->search([
@@ -101,14 +101,14 @@ class SubjectProvider implements RIFCSProvider
                 $numFound = isset($subjectFacet[strtolower($value)]) ?  $subjectFacet[strtolower($value)] : 0;
                 if ($solrResult->getNumFound() > 0) {
                     $result = $solrResult->getDocs();
-                    $subjectFacet = $solrResult->getFacetField('search_label_s');
                     $top_response = $result[0];
                     $resolved_value = $top_response->label[0];
                     $resolved_uri = $top_response->iri[0];
                     $resolved_type = $top_response->type[0];
                     $values = $top_response->toArray();
                     $new_value =  array_key_exists('notation_s', $values) ? $top_response->notation_s : $value;
-                    $positive_hit = self::checkResult($top_response, $subject, $new_value, $numFound);
+                    $returned_notation = array_key_exists('notation_s', $values) ? $top_response->notation_s : "";
+                    $positive_hit = self::checkResult($top_response, $subject, $returned_notation, $numFound);
                     if(self::isMultiValue($new_value) && (strtolower($type)=='gcmd'||$type=='local')) $new_value = self::getNarrowestConcept($new_value);
                 }
 
@@ -126,13 +126,9 @@ class SubjectProvider implements RIFCSProvider
                             );
                         }
                     }
-                } else if (!$positive_hit &&  $numFound > 1) {
-                    //multiple matches found
-                    $subjectsResolved[$value] = array('type' => $resolved_type, 'value' => $value, 'resolved' => $resolved_value, 'uri' => $resolved_uri  );
                 }else if (!$positive_hit || !in_array(strtolower($type), self::$RESOLVABLE)) {
                     //no match or a very loose match was found so it is not a gcmd vocab
-                    if((strtolower($type) =='gcmd' || strtolower($type) == 'anzsrc-for' || strtolower($type) == 'anzsrc-seo')) $type = 'local';
-                    $uri= $subject['uri']? $subject['uri'] : " ";
+                    if((strtolower($type) =='gcmd' || strtolower($type) == 'anzsrc-for' || strtolower($type) == 'anzsrc-seo' || strtolower($type) == 'anzsrc')) $type = 'local';
                     $subjectsResolved[$value] = array('type' => $type, 'value' => $value, 'resolved' => $value, 'uri' => $uri );
                 }
             }
@@ -168,9 +164,12 @@ class SubjectProvider implements RIFCSProvider
 
 
         //determine the actual final term of a gcmd value
-
         if(self::isMultiValue($string) && ($type=='gcmd'||$type=='local'))
             return 'search_label_s:("' . strtolower(self::getNarrowestConcept($string)) . '") ^5 + search_labels_string_s:' . $search_string . ' OR "' . $search_string . '"';
+
+        //if the provided type is anzsrc-for or anzsrc-seo then specifiy the type in the query so that duplicate values from the wrong type are not returned
+        if($type == "anzsrc-for" || $type == "anzsrc-seo")
+            return 'type:'.$type.' AND (search_label_s:("' . strtolower($label_string) . '") ^5 + notation_s:"' . $search_string . '" ^5 + "'.$search_string.'")';
 
         // quote the search string so solr reserved characters don't break the solr query
             return 'search_label_s:("' . strtolower($label_string) . '") ^5 + notation_s:"' . $search_string . '" ^5 + "'.$search_string.'"' ;
@@ -206,8 +205,8 @@ class SubjectProvider implements RIFCSProvider
             return ($type_match OR $notation_match) AND $value_match ? true : false;
         }
 
-        // if we have a direct value string check the resolved value and number of exact hits if multiple hits then don't match
-        if (strtoupper($value) == strtoupper($resolved->label[0]) && $numFound > 1)  return false;
+        // if we have a direct value string check the resolved value and number of exact hits and defined type - if multiple hits or local type is local then don't match
+        if (strtoupper($value) == strtoupper($resolved->label[0]) && ($numFound > 1 || $type == 'local'))  return false;
 
         // if this is a concatenated gcmd value strip off the final subject value to check resolved value
         if ($resolved->type[0] == 'gcmd' && self::isMultiValue($subject['value']))

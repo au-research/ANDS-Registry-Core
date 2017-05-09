@@ -2,7 +2,7 @@
 
 
 namespace ANDS\API\Task\ImportSubTask;
-use ANDS\Registry\Providers\IdentifierProvider;
+use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 use ANDS\Repository\RegistryObjectsRepository;
 
 /**

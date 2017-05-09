@@ -15,6 +15,7 @@ class Relation
     private $properties = [];
     private $from = null;
     private $to = null;
+    protected $multiValued = ['relation_type', 'relation_origin'];
 
     /**
      * @param $key
@@ -23,20 +24,37 @@ class Relation
      */
     public function setProperty($key, $value)
     {
-        if ($this->hasProperty($key)) {
-            if (is_array($this->getProperty($key))) {
-                if (!in_array($value, $this->properties[$key])) {
-                    array_push($this->properties[$key], $value);
-                }
-            } elseif ($this->properties[$key] != $value) {
-                $this->properties[$key] = [
-                    $this->properties[$key],
-                    $value
-                ];
-            }
-        } else {
+        if (!$this->hasProperty($key)) {
             $this->properties[$key] = $value;
+            return $this;
         }
+
+        // deal with multiValued field
+        if (in_array($key, $this->multiValued)) {
+            if (is_array($this->getProperty($key))) {
+                array_push($this->properties[$key], $value);
+                return $this;
+            }
+            $this->properties[$key] = [
+                $this->properties[$key], $value
+            ];
+            return $this;
+        }
+
+        // normal fields
+        if (is_array($this->getProperty($key)) && !in_array($value, $this->properties[$key])) {
+            array_push($this->properties[$key], $value);
+            return $this;
+        }
+
+        if ($this->properties[$key] != $value) {
+            $this->properties[$key] = [
+                $this->properties[$key],
+                $value
+            ];
+            return $this;
+        }
+
         return $this;
     }
 
@@ -109,7 +127,13 @@ class Relation
         $validMultiValued = ['relation_type', 'relation_origin'];
         foreach ($row as $key => $value) {
             if (in_array($key, $validMultiValued)) {
-                $this->setProperty($key, $value);
+                if (is_array($value)) {
+                    foreach ($value as $val) {
+                        $this->setProperty($key, $val);
+                    }
+                } else {
+                    $this->setProperty($key, $value);
+                }
             }
         }
         return $this;
@@ -312,6 +336,15 @@ class Relation
 
     public function isReverse()
     {
-        return strpos($this->prop('relation_origin'), "REVERSE") !== false;
+        $origins = $this->prop('relation_origin');
+        if (!is_array($origins)) {
+            return strpos($this->prop('relation_origin'), "REVERSE") !== false;
+        }
+        foreach ($origins as $origin) {
+            if (strpos($origin, "REVERSE")) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -1,11 +1,11 @@
 <?php
 
 
-namespace ANDS\Commands;
+namespace ANDS\Commands\RegistryObject;
 
 
 use ANDS\API\Task\ImportSubTask\IndexRelationship;
-use ANDS\Registry\Providers\IdentifierProvider;
+use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\Repository\RegistryObjectsRepository;
 use Exception;

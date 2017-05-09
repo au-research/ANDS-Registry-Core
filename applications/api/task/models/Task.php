@@ -87,7 +87,11 @@ class Task
         try {
             $this->run_task();
         } catch (Exception $e) {
-            $this->stoppedWithError($e->getMessage());
+            $message = $e->getMessage();
+            if (!$message) {
+                $message = implode(" ", array_first($e->getTrace())['args']);
+            }
+            $this->stoppedWithError($message);
         }
 
         $event = $stopwatch->stop($this->getName());
