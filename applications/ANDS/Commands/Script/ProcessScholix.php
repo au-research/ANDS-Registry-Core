@@ -7,6 +7,7 @@ namespace ANDS\Commands\Script;
 use ANDS\Registry\Providers\Scholix\Scholix;
 use ANDS\Registry\Providers\ScholixProvider;
 use ANDS\RegistryObject;
+use ANDS\Repository\RegistryObjectsRepository;
 use Symfony\Component\Console\Helper\ProgressBar;
 
 class ProcessScholix extends GenericScript implements GenericScriptRunnable
@@ -44,7 +45,11 @@ class ProcessScholix extends GenericScript implements GenericScriptRunnable
 
         $reports = [];
         $progressBar = new ProgressBar($this->getOutput(), $unchecked->count());
-        foreach ($unchecked->get() as $record) {
+        foreach ($unchecked->pluck('registry_object_id') as $id) {
+            $record = RegistryObjectsRepository::getRecordByID($id);
+            if ($record == null) {
+                continue;
+            }
             $progressBar->advance(1);
             $reports[$record->id] = ScholixProvider::process($record);
         }
