@@ -5,9 +5,16 @@ use \Exception as Exception;
 class Handler {
     public $params;
     public $ci;
+    private $parentAPI;
 
-    function __construct($params = false) {
+    function __construct($params = false, $parentAPI = null) {
         $this->params = $params;
+        $this->parentAPI = $parentAPI;
         $this->ci =& get_instance();
+    }
+
+    public function getParentAPI()
+    {
+        return $this->parentAPI;
     }
 }

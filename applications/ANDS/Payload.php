@@ -108,6 +108,7 @@ class Payload
      * @param $dataSourceID
      * @param $batchID
      * @param $content
+     * @throws \Exception
      */
     public static function write($dataSourceID, $batchID, $content)
     {
@@ -115,12 +116,22 @@ class Payload
         $harvestedContentDir = rtrim($harvestedContentDir, '/') . '/';
         $directory = $harvestedContentDir.$dataSourceID;
         if (!is_dir($directory)) {
-            mkdir($directory);
-            chmod($directory, 0775);
+            try {
+                mkdir($directory, 0775, true);
+            } catch (\Exception $e) {
+                $message = get_exception_msg($e);
+                throw new \Exception("Failure creating $directory: $message");
+            }
         }
         $file = $harvestedContentDir.$dataSourceID.'/'.$batchID.'.xml';
-        file_put_contents($file, $content);
-        chmod($file, 0775);
+        try {
+            file_put_contents($file, $content);
+            chmod($file, 0775);
+        } catch (\Exception $e) {
+            $message = get_exception_msg($e);
+            throw new \Exception("Failure putting content into $file : $message");
+        }
+
     }
 
 }

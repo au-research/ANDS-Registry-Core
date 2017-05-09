@@ -268,7 +268,8 @@ class Doi_api
             case "mint":
                  $doiService->mint(
                     $this->ci->input->get('url'),
-                    $this->getPostedXML()
+                    $this->getPostedXML(),
+                    $manual
                 );
                 break;
             case "update":
@@ -356,6 +357,9 @@ class Doi_api
             $responselog = ['responsecode' => 'MT009','doi'=>'','activity' => 'authenticate','result'=>$result,'dataCiteHTTPCode'=>"401",'message'=>json_encode($response, true)];
             $this->doilog($arrayFormater->format($responselog),'doi_' . $responselog['activity']);
             http_response_code("401");
+            header('WWW-Authenticate: Basic realm="ands"');
+            header('HTTP/1.0 401 Unauthorized');
+            exit;
             return $result;
           }
         if(!$client){

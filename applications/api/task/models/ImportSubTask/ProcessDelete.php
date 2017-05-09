@@ -3,6 +3,7 @@
 
 namespace ANDS\API\Task\ImportSubTask;
 
+use ANDS\Registry\Providers\Scholix\Scholix;
 use ANDS\RegistryObject;
 use ANDS\RegistryObject\IdentifierRelationship;
 use ANDS\Repository\RegistryObjectsRepository;
@@ -106,6 +107,9 @@ class ProcessDelete extends ImportSubTask
 
             //delete links
             Links::where('registry_object_id', $record->registry_object_id)->delete();
+
+            // delete scholix documents
+            Scholix::where('registry_object_id', $record->registry_object_id)->delete();
 
             $portalQuery .= " id:$record->registry_object_id";
             $fromRelationQuery .= " from_id:$record->registry_object_id";

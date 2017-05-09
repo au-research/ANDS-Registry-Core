@@ -8,6 +8,15 @@ use \Transforms as Transforms;
 use \DOMDocument as DOMDocument;
 use \Exception as Exception;
 
+if (!defined("RIFCS_NAMESPACE")) {
+    define('EXTRIF_NAMESPACE', "http://ands.org.au/standards/rif-cs/extendedRegistryObjects");
+    define('RIFCS_NAMESPACE', "http://ands.org.au/standards/rif-cs/registryObjects");
+}
+
+if (!defined("NL")) {
+    define('NL',"\n");
+}
+
 class XMLUtil
 {
 

@@ -12,6 +12,7 @@ class ScholixDocument
     public $properties = [];
     public $links = [];
     public $record;
+    protected $linkIDPrefix = "oai:ands.org.au::";
 
     public function addLink($link)
     {
@@ -85,7 +86,7 @@ class ScholixDocument
         $xml = "";
 
         foreach ($this->links as $index => $link) {
-            $identifier = "oai:ands.org.au::" . $this->record->registry_object_id. "-".($index+1);
+            $identifier = $this->getLinkIdentifier($link);
             $date = Carbon::now()->format('Y-m-d\TH:i:s\Z');
             $dataSource = "dataSource:".$this->record->datasource->slug;
             $group = str_replace(" ", "0x20", $this->record->group);
@@ -103,6 +104,16 @@ class ScholixDocument
             $xml .= "</record>";
         }
         return $xml;
+    }
+
+    public function getLinkIdentifier($link)
+    {
+        $prefix = $this->linkIDPrefix;
+        $sourceID = $link['link']['source']['identifier'][0]['identifier'];
+        $targetID = $link['link']['target']['identifier'][0]['identifier'];
+
+        $identifier = $prefix . base64_encode($sourceID . $targetID);
+        return $identifier;
     }
 
     public function toXML($wrapper = "links")
@@ -124,9 +135,7 @@ class ScholixDocument
 
     public function json2xml($link)
     {
-        $str = "<link xmlns=\"http://www.scholix.org\"
- xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"
- xsi:schemaLocation=\"http://www.scholix.org file:/Users/sandro/Desktop/scholix1.xsd\">";
+        $str = "<link>";
 
         $str .= "<publicationDate>".$link['publicationDate']."</publicationDate>";
 
@@ -198,7 +207,7 @@ class ScholixDocument
             }
         }
 
-        if (array_key_exists('publicationDate', $link['target'])) {
+        if (array_key_exists('publicationDate', $link['source'])) {
             $str .= "<publicationDate>" . $link['source']['publicationDate'] . "</publicationDate>";
         }
 

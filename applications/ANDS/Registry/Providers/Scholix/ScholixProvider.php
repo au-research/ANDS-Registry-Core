@@ -4,7 +4,10 @@
 namespace ANDS\Registry\Providers;
 
 
+use ANDS\API\Task\ImportSubTask\ProcessDelete;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
+use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
+use ANDS\Registry\Providers\Scholix\Scholix;
 use ANDS\Registry\Providers\Scholix\ScholixDocument;
 use ANDS\Registry\Relation;
 use ANDS\RegistryObject;
@@ -41,7 +44,7 @@ class ScholixProvider implements RegistryContentProvider
         }
 
         $types = collect($relationships)->map(function($item) {
-            return $item->prop('to_related_info_type') ?: $item->prop('to_type');
+            return $item->prop('to_type') ?: $item->prop('to_related_info_type');
         })->toArray();
 
         if (!in_array('publication', $types)) {
@@ -59,15 +62,82 @@ class ScholixProvider implements RegistryContentProvider
      */
     public static function process(RegistryObject $record)
     {
-        $record->deleteRegistryObjectAttribute(self::$scholixableAttr);
+        // Don't store scholixable anymore
+//        $record->deleteRegistryObjectAttribute(self::$scholixableAttr);
+//
+//        $relationships = RelationshipProvider::getMergedRelationships($record);
+//        $record->setRegistryObjectAttribute(
+//            self::$scholixableAttr,
+//            self::isScholixable($record, $relationships)
+//        );
 
-        $relationships = RelationshipProvider::getMergedRelationships($record);
-        $record->setRegistryObjectAttribute(
-            self::$scholixableAttr,
-            self::isScholixable($record, $relationships)
-        );
+        // determine Scholixable
+        if (!self::isScholixable($record)) {
+            return [
+                'total' => 0,
+                'updated' => [],
+                'created' => [],
+                'unchanged' => [],
+            ];
+        }
 
-        return;
+        // scholixable, proceed to create links
+        $scholixDocuments = self::get($record);
+        $links = $scholixDocuments->getLinks();
+
+        $report = [
+            'total' => count($links),
+            'updated' => [],
+            'created' => [],
+            'unchanged' => []
+        ];
+
+        $new = [];
+        foreach ($links as $link) {
+            $id = $scholixDocuments->getLinkIdentifier($link);
+            $new[] = $id;
+            $xml = $scholixDocuments->json2xml($link['link']);
+            $exist = Scholix::where('scholix_identifier', $id)->first();
+
+            if ($exist) {
+                // report
+                if ($exist->hash != md5($xml)) {
+                    $report['updated'][] = $id;
+                } else {
+                    $report['unchanged'][] = $id;
+                }
+
+                // update
+                $exist->data = $xml;
+                $exist->hash = md5($xml);
+                $exist->save();
+
+                continue;
+            }
+
+            $report['created'][] = $id;
+
+            // create
+            $scholix = new Scholix;
+            $scholix->setRawAttributes([
+                'scholix_identifier' => $id,
+                'data' => $xml,
+                'registry_object_id' => $record->id,
+                'registry_object_data_source_id' => $record->data_source_id,
+                'registry_object_group' => $record->group,
+                'hash' => md5($xml),
+                'registry_object_class' => $record->class
+            ]);
+            $scholix->save();
+        }
+
+        // delete existing links that are not generated (removed relationships)
+        $exist = Scholix::where('registry_object_id', $record->id)
+            ->pluck('scholix_identifier')->toArray();
+        $shouldBeDeleted = array_diff($exist, $new);
+        Scholix::whereIn('scholix_identifier', $shouldBeDeleted)->delete();
+
+        return $report;
     }
 
     /**
@@ -117,8 +187,15 @@ class ScholixProvider implements RegistryContentProvider
         $targets = [];
         foreach ($relatedPublications as $publication) {
             if ($to = $publication->to()) {
+
                 // toIdentifiers
-                $toIdentifiers = IdentifierProvider::get($to);
+                $toIdentifiers = array_merge(
+                    IdentifierProvider::get($to),
+                    IdentifierProvider::getCitationMetadataIdentifiers($to)
+                );
+
+                // should be unique
+                $toIdentifiers = collect($toIdentifiers)->unique()->toArray();
 
                 if (count($toIdentifiers) == 0) {
                     $targets[] = [
@@ -242,6 +319,7 @@ class ScholixProvider implements RegistryContentProvider
 
             return false;
         })->toArray();
+
         return $relationships;
     }
 
@@ -255,6 +333,9 @@ class ScholixProvider implements RegistryContentProvider
     {
         $relationType = $publication->prop('relation_type');
         $relationOrigin = $publication->prop('relation_origin');
+        if (is_array($relationOrigin)) {
+            $relationOrigin = implode(" ", $relationOrigin);
+        }
 
         $relationships = [];
 
@@ -370,7 +451,7 @@ class ScholixProvider implements RegistryContentProvider
          */
         $creators = collect($data['relationships'])->filter(function($item) {
 
-            $validRelations = ['hasPrincipalInvestigator', 'hasAuthor', 'coInvestigator', 'isOwnedBy', 'hasCollector'];
+            $validRelations = ['hasPrincipalInvestigator', 'hasAuthor', 'coInvestigator', 'isOwnedBy', 'hasCollector', "author"];
 
             if ($item->isReverse()) {
                 return in_array(getReverseRelationshipString($item->prop('relation_type')), $validRelations) && ($item->prop('to_class') == "party");

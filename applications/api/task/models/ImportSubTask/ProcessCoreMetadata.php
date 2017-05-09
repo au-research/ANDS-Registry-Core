@@ -4,7 +4,9 @@
 namespace ANDS\API\Task\ImportSubTask;
 
 
+use ANDS\Registry\Group;
 use ANDS\Registry\Providers\ScholixProvider;
+use ANDS\Registry\Providers\TitleProvider;
 use ANDS\RegistryObject;
 use ANDS\Util\XMLUtil;
 
@@ -35,9 +37,8 @@ class ProcessCoreMetadata extends ImportSubTask
         }
 
         $total = count($importedRecords);
-        debug("Processing Core Metadata for $total records");
+
         foreach ($importedRecords as $index => $roID) {
-            // $this->log('Processing (updated) record: ' . $roID);
 
             $record = RegistryObject::find($roID);
             $recordData = $record->getCurrentData();
@@ -54,7 +55,19 @@ class ProcessCoreMetadata extends ImportSubTask
                     $element = array_first($element);
                     $record->class = $class;
                     $record->type = (string)$element['type'];
+                    $group = (string)$registryObjectElement['group'];
                     $record->group = (string)$registryObjectElement['group'];
+
+                    // added group if not exists
+                    $groupTitle = $group;
+                    $exist = Group::where('title', $groupTitle)->first();
+                    if (!$exist) {
+                        $group = new Group;
+                        $group->title = $groupTitle;
+                        $group->slug = str_slug($groupTitle);
+                        $group->save();
+                    }
+
                     $record->save();
                     break;
                 }
@@ -65,7 +78,10 @@ class ProcessCoreMetadata extends ImportSubTask
                 $this->parent()->batchID);
             
             $record->status = $this->parent()->getTaskData("targetStatus");
-            
+
+            // process Title
+            TitleProvider::process($record);
+
             $record->save();
 
             // titles and slug require the ro object
@@ -73,21 +89,25 @@ class ProcessCoreMetadata extends ImportSubTask
                 'registry/registry_object/registry_objects', 'ro'
             );
             $ro = $this->parent()->getCI()->ro->getByID($roID);
-            $ro->updateTitles();
+
+            // TODO: SlugProvider::process($record);
             $ro->generateSlug();
 
+            // TODO: Remove CodeIgniter RO dependency
             $ro->save();
 
             /**
              * Process Scholixable records
              * TODO: Move to it's own ImportSubTask
              */
-            ScholixProvider::process($record);
+            if ($this->parent()->getTaskData("targetStatus") == "PUBLISHED") {
+                ScholixProvider::process($record);
+            }
+
 
             $this->updateProgress($index, $total, "Processed ($index/$total) $ro->title($roID)");
             unset($ro);
         }
-        debug("Finished Processing Core Metadata for $total records");
     }
 
 

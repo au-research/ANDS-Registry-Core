@@ -9,6 +9,7 @@ class _mydois extends CI_Model
 	private $DOI_SERVICE_BASE_URI = null;
 	private $DOIS_DATACENTRE_NAME_PREFIX = null;
 	private $DOIS_DATACENTRE_NAME_MIDDLE = null;
+    private $DOIS_DATACENTRE_PASSWORD = null;
 
 	function __construct(){
 		parent::__construct();
@@ -19,6 +20,7 @@ class _mydois extends CI_Model
 		$this->DOIS_DATACENTRE_NAME_PREFIX = $config['name_prefix'];
 		$this->DOIS_DATACENTRE_NAME_MIDDLE = $config['name_middle'];
 		$this->DOIS_DATACENTRE_PREFIXS = $config['prefixs'];
+        $this->DOIS_DATACENTRE_PASSWORD = $config['password'];
 		$this->gDefaultBaseUrl = get_config_item('default_base_url');
 	}
 
@@ -146,8 +148,9 @@ class _mydois extends CI_Model
 		<contactEmail>'.$client_contact_email.'</contactEmail>
 		</datacentre>';
 
-		$authstr =  $this->_CI->config->item('gDOIS_DATACENTRE_NAME_PREFIX').":".$this->_CI->config->item('gDOIS_DATACITE_PASSWORD');
-		$context  = array('Content-Type: application/xml;charset=UTF-8','Authorization: Basic '.base64_encode($authstr));		
+		$authstr =  $this->DOIS_DATACENTRE_NAME_PREFIX.":".$this->DOIS_DATACENTRE_PASSWORD;
+		$context  = array('Content-Type: application/xml;charset=UTF-8','Authorization: Basic '.base64_encode($authstr));
+
 		$requestURI = $this->DOI_SERVICE_BASE_URI."datacentre";	
 
 	
@@ -158,7 +161,6 @@ class _mydois extends CI_Model
 		curl_setopt($newch, CURLOPT_HTTPHEADER,$context);
 		curl_setopt($newch, CURLOPT_POSTFIELDS,$outxml);
 		$result = curl_exec($newch);
-		$curlinfo = curl_getinfo($newch);
 		curl_close($newch);
 
 		$result_array = array();
@@ -166,7 +168,7 @@ class _mydois extends CI_Model
 		{
 			$resultXML = $result;
 		}else{
-			$result_array['errorMessages'] = "Error whilst attempting to fetch from URI: " . $this->DOI_SERVICE_BASE_URI;
+			$result_array['errorMessages'] = "Error whilst attempting to put to URI: " . $this->DOI_SERVICE_BASE_URI . "<br/><em> $client_name </em>has not been updated";
 		}
 		return $result_array;		
 	}
