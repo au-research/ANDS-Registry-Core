@@ -35,6 +35,11 @@ class TitleProvider implements RIFCSProvider
         $displayTitle = $titles['displayTitle'];
         $listTitle = $titles['listTitle'];
 
+        // don't save blank title
+        if ($displayTitle == "") {
+            return;
+        }
+
         // saving
         $record->title = $displayTitle;
         $record->setRegistryObjectAttribute('list_title', $listTitle);
@@ -148,7 +153,11 @@ class TitleProvider implements RIFCSProvider
      */
     public static function getRaw(RegistryObject $record)
     {
-        $xml = $record->getCurrentData()->data;
+        $currentData = $record->getCurrentData();
+        if (!$currentData) {
+            return [];
+        }
+        $xml = $currentData->data;
         return self::getRawForXML($xml, $record->class);
     }
 
