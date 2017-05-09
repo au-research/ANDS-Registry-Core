@@ -30,6 +30,25 @@ class TitleProvider implements RIFCSProvider
         // get the raw ones
         $names = self::getRaw($record);
 
+        $titles = self::getTitlesFromRaw($names, $record->class);
+
+        $displayTitle = $titles['displayTitle'];
+        $listTitle = $titles['listTitle'];
+
+        // saving
+        $record->title = $displayTitle;
+        $record->setRegistryObjectAttribute('list_title', $listTitle);
+
+        $record->save();
+    }
+
+    /**
+     * @param $names
+     * @param $recordClass
+     * @return array
+     */
+    public static function getTitlesFromRaw($names, $recordClass)
+    {
         // get Titles
         $displayTitle = null;
         $listTitle = null;
@@ -39,14 +58,18 @@ class TitleProvider implements RIFCSProvider
             return $item['@attributes']['type'] == 'primary';
         });
 
+
         //get the value of the first namePart
-        $displayTitle = is_array($name['value']) ? collect($name['value'])->get('value') : $name['value'];
+        $displayTitle = $name['value'];
+        if (is_array($displayTitle)) {
+            $firstNamePart = collect($displayTitle)->first();
+            $displayTitle = $firstNamePart['value'];
+        }
 
         $listTitle = $displayTitle;
 
-
         // special rules for party
-        if ($record->class === "party") {
+        if ($recordClass === "party") {
             $displayTitle = self::constructTitleByOrder(
                 $names,
                 self::$partyNamePartOrder
@@ -78,11 +101,10 @@ class TitleProvider implements RIFCSProvider
             "...");
         $listTitle = mb_strimwidth($listTitle, 0, self::$maxLength, "...");
 
-        // saving
-        $record->title = $displayTitle;
-        $record->setRegistryObjectAttribute('list_title', $listTitle);
-
-        $record->save();
+        return [
+            'listTitle' => $listTitle,
+            'displayTitle' => $displayTitle
+        ];
     }
 
     /**
