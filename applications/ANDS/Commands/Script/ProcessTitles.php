@@ -59,7 +59,7 @@ class ProcessTitles extends GenericScript implements GenericScriptRunnable
 
     private function longerThan200()
     {
-        $registryObjects = RegistryObject::whereRaw('LENGTH(title) > 200');
+        $registryObjects = RegistryObject::where('status', 'PUBLISHED')->whereRaw('LENGTH(title) > 200');
         $this->log("Processing {$registryObjects->count()} records");
         foreach ($registryObjects->get() as $ro) {
             $this->updateTitle($ro);
