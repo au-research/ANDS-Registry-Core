@@ -8,7 +8,7 @@ use ANDS\RegistryObject;
 
 class ProcessTitles extends GenericScript implements GenericScriptRunnable
 {
-    protected $availableParams = ["all", "255"];
+    protected $availableParams = ["published", "255", "all"];
     public function run()
     {
         $params = $this->getInput()->getOption('params');
@@ -26,10 +26,25 @@ class ProcessTitles extends GenericScript implements GenericScriptRunnable
                 $this->log("Processing titles longer than 255");
                 $this->longerThan255();
                 break;
+            case "all":
+                $this->log("Processing titles for ALL records");
+                $this->processAll();
+                break;
             default:
                 $this->log("Undefined params. Provided $params");
                 break;
         }
+    }
+
+    private function processAll()
+    {
+        $registryObjects = RegistryObject::all();
+        $total = count($registryObjects);
+        $this->log("Processing {$total} records");
+        foreach ($registryObjects as $ro) {
+            $this->updateTitle($ro);
+        }
+        $this->log("Done", "info");
     }
 
     private function processPublished()
@@ -54,6 +69,7 @@ class ProcessTitles extends GenericScript implements GenericScriptRunnable
 
     private function updateTitle(RegistryObject $ro)
     {
+        $this->log("Proccessing $ro->id");
         $old = $ro->title;
         TitleProvider::process($ro);
         $new = $ro->title;
