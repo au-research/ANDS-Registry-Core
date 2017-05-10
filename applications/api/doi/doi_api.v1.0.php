@@ -225,6 +225,10 @@ class Doi_api
         // constructing the client and checking if the client exists and authorised
         $client = $clientRepository->getByAppID($appID);
 
+        // try to get a client based on TEST
+        if (!$client) {
+            $client = $clientRepository->getByAppID(str_replace("TEST", "", $appID));
+        }
 
         if(!$client){
             $response = [
