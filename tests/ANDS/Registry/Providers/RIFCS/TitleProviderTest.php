@@ -7,7 +7,7 @@ use ANDS\Registry\Providers\TitleProvider;
 class TitleProviderTest extends \RegistryTestClass
 {
     /** @test **/
-    public function it_should_get_the_first_primary()
+    public function it_should_get_the_first_primary_non_name_part()
     {
         $rawNames = [
             ['@attributes' => ['type' => 'non-primary'], 'value' => 'non'],
@@ -70,5 +70,46 @@ class TitleProviderTest extends \RegistryTestClass
         $titles = TitleProvider::getTitlesFromRaw($rawNames, 'collection');
         $this->assertEquals("non", $titles['listTitle']);
         $this->assertEquals("non", $titles['displayTitle']);
+    }
+
+    /** @test **/
+    public function it_should_get_first_primary_namePart_found_for_party()
+    {
+        $rawNames = [
+            [
+                'value' => [
+                    [
+                        '@attributes' => ['type' => 'superior'],
+                        'value' => '(AUTestingRecords)Reverse Relationships Internal Related Info "isManagerOf"'
+                    ],
+                    [
+                        '@attributes' => ['type' => 'subordinate'],
+                        'value' => 'UTS:eResearch IT Services Group'
+                    ]
+                ],
+                '@attributes' => ['type' => 'primary']
+            ],
+        ];
+
+        $titles = TitleProvider::getTitlesFromRaw($rawNames, 'party');
+        $this->assertEquals('(AUTestingRecords)Reverse Relationships Internal Related Info "isManagerOf"', $titles['listTitle']);
+        $this->assertEquals('(AUTestingRecords)Reverse Relationships Internal Related Info "isManagerOf"', $titles['displayTitle']);
+    }
+
+    /** @test **/
+    public function it_should_get_primary_single_namePart()
+    {
+        $rawNames = [
+            [
+                '@attributes' => ['type' => 'primary'],
+                'value' => [
+                    '@attributes' => ['type' => 'primary'],
+                    'value' => 'Primary'
+                ]
+            ]
+        ];
+        $titles = TitleProvider::getTitlesFromRaw($rawNames, 'party');
+        $this->assertEquals('Primary', $titles['listTitle']);
+        $this->assertEquals('Primary', $titles['displayTitle']);
     }
 }

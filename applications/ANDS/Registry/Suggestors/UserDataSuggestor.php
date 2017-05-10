@@ -10,7 +10,7 @@ use Elasticsearch\ClientBuilder;
 
 class UserDataSuggestor
 {
-    private $client;
+    private $client = null;
 
     /**
      * UserDataSuggestor constructor.
@@ -24,6 +24,7 @@ class UserDataSuggestor
             ->setHosts(
                 [ $url ]
             )->build();
+
     }
 
     /**
@@ -35,6 +36,10 @@ class UserDataSuggestor
      */
     public function suggestByView(RegistryObject $record)
     {
+        if ($this->client === null) {
+            return [];
+        }
+
         // find all IPs that view this record,
         // TODO except current IP
 
@@ -64,7 +69,14 @@ class UserDataSuggestor
             ]
         ];
 
-        $response = $this->client->search($params);
+        try {
+            $response = $this->client->search($params);
+        } catch (\Exception $e) {
+            // log error
+            monolog(self::class ." : ". get_exception_msg($e), "error", "error");
+            return [];
+        }
+
 
         // get all the ips that view this record
         $ips = collect($response['aggregations']['ip_viewed']['buckets'])->pluck('key')->toArray();

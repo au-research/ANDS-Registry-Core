@@ -58,28 +58,37 @@ class TitleProvider implements RIFCSProvider
             return $item['@attributes']['type'] == 'primary';
         });
 
+        $displayTitle = is_string($name['value']) ? $name['value'] : null;
 
-        //get the value of the first namePart
-        $displayTitle = $name['value'];
-        if (is_array($displayTitle)) {
-            $firstNamePart = collect($displayTitle)->first();
-            $displayTitle = $firstNamePart['value'];
+        // if it has a namePart
+        if (is_array($name['value'])) {
+            if (array_key_exists('value', $name['value']) && is_string($name['value']['value'])) {
+                $displayTitle = $name['value']['value'];
+            } else {
+                $firstNamePart = collect($name['value'])->first();
+                $displayTitle = $firstNamePart['value'];
+            }
         }
 
         $listTitle = $displayTitle;
 
         // special rules for party
         if ($recordClass === "party") {
-            $displayTitle = self::constructTitleByOrder(
+
+            // make sure it's not empty
+            $title = self::constructTitleByOrder(
                 $names,
                 self::$partyNamePartOrder
             );
 
-            $listTitle = self::constructTitleByOrder(
-                $names,
-                self::$partyNamePartOrder,
-                $suffix = true
-            );
+            if ($title) {
+                $displayTitle = $title;
+                $listTitle = self::constructTitleByOrder(
+                    $names,
+                    self::$partyNamePartOrder,
+                    $suffix = true
+                );
+            }
         }
 
         // if none is found, get the first name
@@ -96,6 +105,8 @@ class TitleProvider implements RIFCSProvider
             $listTitle = $displayTitle;
         }
 
+        $displayTitle = trim($displayTitle);
+
         // truncate to length
         $displayTitle = mb_strimwidth($displayTitle, 0, self::$maxLength,
             "...");
@@ -109,7 +120,6 @@ class TitleProvider implements RIFCSProvider
 
     /**
      * Get all available titles for a given record
-     * TODO: UnitTest
      *
      * @param RegistryObject $record
      * @return array
