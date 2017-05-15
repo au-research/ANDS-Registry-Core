@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "ae9ae2d0353a3ca441f0a0ab0b6f8516",
+    "content-hash": "2ab9f9d3e45c5ed7eef5e68adde0e9f2",
     "packages": [
         {
             "name": "au-research/ands-doi-service",
-            "version": "dev-develop",
+            "version": "dev-feature/CC-1985-client-authentication",
             "source": {
                 "type": "git",
                 "url": "https://github.com/au-research/ANDS-DOI-Service.git",
-                "reference": "7e74d8517e546c598c49b9ba63ad8ac208bd41e6"
+                "reference": "0f783f2fcfee629781d881d3c4fe6887da4e5611"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/au-research/ANDS-DOI-Service/zipball/7e74d8517e546c598c49b9ba63ad8ac208bd41e6",
-                "reference": "7e74d8517e546c598c49b9ba63ad8ac208bd41e6",
+                "url": "https://api.github.com/repos/au-research/ANDS-DOI-Service/zipball/0f783f2fcfee629781d881d3c4fe6887da4e5611",
+                "reference": "0f783f2fcfee629781d881d3c4fe6887da4e5611",
                 "shasum": ""
             },
             "require": {
@@ -43,7 +43,7 @@
                     "email": "minh.nguyen@ands.org.au"
                 }
             ],
-            "time": "2017-05-01 01:55:35"
+            "time": "2017-05-15 02:31:36"
         },
         {
             "name": "doctrine/inflector",
