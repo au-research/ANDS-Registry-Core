@@ -5,6 +5,7 @@ namespace ANDS\Commands;
 
 
 use ANDS\RegistryObject;
+use ANDS\RegistryObjectAttribute;
 use ANDS\Task\SyncRecordTask;
 use ANDS\Util\Config;
 use Illuminate\Support\Facades\Input;
@@ -79,6 +80,17 @@ class SyncRecordWorkerRedisCommand extends Command
             $this->identifyIndex($input, $output);
         }
 
+        if ($command == "wipe") {
+            $this->wipe($input, $output);
+        }
+
+    }
+
+    private function wipe(InputInterface $input, OutputInterface $output)
+    {
+        // delete all indexed_portal_at
+        RegistryObjectAttribute::where('attribute', 'indexed_portal_at')->delete();
+        $output->writeln("Done");
     }
 
     private function process(InputInterface $input, OutputInterface $output)

@@ -1,4 +1,6 @@
-<?php if (!defined('BASEPATH')) exit('No direct script access allowed');
+<?php use ANDS\DOI\Repository\ClientRepository;
+
+if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 
 class _mydois extends CI_Model
@@ -11,6 +13,9 @@ class _mydois extends CI_Model
 	private $DOIS_DATACENTRE_NAME_MIDDLE = null;
     private $DOIS_DATACENTRE_PASSWORD = null;
 
+    /** @var ClientRepository */
+    private $clientRepository;
+
 	function __construct(){
 		parent::__construct();
 		$this->_CI =& get_instance();
@@ -22,6 +27,14 @@ class _mydois extends CI_Model
 		$this->DOIS_DATACENTRE_PREFIXS = $config['prefixs'];
         $this->DOIS_DATACENTRE_PASSWORD = $config['password'];
 		$this->gDefaultBaseUrl = get_config_item('default_base_url');
+
+        $database = \ANDS\Util\Config::get('database.dois');
+        $this->clientRepository = new ClientRepository(
+            $database['hostname'],
+            $database['database'],
+            $database['username'],
+            $database['password']
+        );
 	}
 
 	function getTrustedClients(){
@@ -47,38 +60,26 @@ class _mydois extends CI_Model
 		$mode='';
 		$app_id = sha1($shared_secret.$client_name);
 
-		$client_name = urldecode($client_name);
-		$client_contact_name = urldecode($client_contact_name);
-		$client_contact_email = urldecode($client_contact_email);
-		$domainList = urldecode($domainList);
-		$datacite_prefix = urldecode($datacite_prefix);
-
-
 		//need to add the client to our db and then obtain their client-id:
-		$clientdata = array(
-               'ip_address' =>  $ip,
-               'app_id' => $app_id,
-               'client_name'  => $client_name, 
-               'client_contact_name'    => $client_contact_name,  
-               'client_contact_email'    => $client_contact_email,
-               'datacite_prefix'    => $datacite_prefix,
-               'shared_secret' => $shared_secret                                     
-            	);
-		$this->doi_db->insert('doi_client', $clientdata); 
+        $client = $this->clientRepository->create([
+            'ip_address' => $ip,
+            'app_id' => $app_id,
+            'client_name' => urldecode($client_name),
+            'client_contact_name' => urldecode($client_contact_name),
+            'client_contact_email' => urldecode($client_contact_email),
+            'datacite_prefix' => urldecode($datacite_prefix),
+            'shared_secret' => $shared_secret
+        ]);
 
-		$query = $this->doi_db->query("SELECT MAX(client_id) as client_id FROM doi_client");
+		$client_id = $client->client_id;
 
-		$client_id = $query->result_array();
-		$client_id = $client_id[0]['client_id'];
-		$clientDomains= explode(",",$domainList);
-
-		foreach($clientDomains as $aDomain){
-			$domainData = array(
-				'client_id' => $client_id,
-				'client_domain' => $aDomain);
-			$this->doi_db->insert('doi_client_domains', $domainData); 
-		}
-
+        foreach (explode(",",$domainList) as $aDomain) {
+            $domainData = array(
+                'client_id' => $client_id,
+                'client_domain' => $aDomain
+            );
+            $this->doi_db->insert('doi_client_domains', $domainData);
+        }
 
 		if($client_id<10){$client_id = "-".$client_id;}
 
@@ -116,12 +117,11 @@ class _mydois extends CI_Model
                'client_contact_email'    => $client_contact_email,
                'datacite_prefix'    => $datacite_prefix, 
                'shared_secret' => $shared_secret                     
-            	);
+        );
 
 		$this->doi_db->where('client_id', $client_id); 
-		$this->doi_db->update('doi_client', $clientdata); 
+		$this->doi_db->update('doi_client', $clientdata);
 
-		
 		if($client_id<10){$client_id = "-".$client_id;}
 
 		return $this->mdsDatacentreUpdate($client_name, $client_contact_name, $client_contact_email, $domainList, $datacite_prefix,$client_id);
@@ -149,18 +149,23 @@ class _mydois extends CI_Model
 		</datacentre>';
 
 		$authstr =  $this->DOIS_DATACENTRE_NAME_PREFIX.":".$this->DOIS_DATACENTRE_PASSWORD;
-		$context  = array('Content-Type: application/xml;charset=UTF-8','Authorization: Basic '.base64_encode($authstr));
+		$context = [
+            'Content-Type: application/xml;charset=UTF-8',
+            'Authorization: Basic '.base64_encode($authstr)
+        ];
 
-		$requestURI = $this->DOI_SERVICE_BASE_URI."datacentre";	
+		$requestURI = $this->DOI_SERVICE_BASE_URI."datacentre";
 
-	
-		$newch = curl_init();
+        $newch = curl_init();
 		curl_setopt($newch, CURLOPT_URL, $requestURI);
 		curl_setopt($newch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($newch, CURLOPT_CUSTOMREQUEST, "PUT");			
+		curl_setopt($newch, CURLOPT_CUSTOMREQUEST, "PUT");
 		curl_setopt($newch, CURLOPT_HTTPHEADER,$context);
 		curl_setopt($newch, CURLOPT_POSTFIELDS,$outxml);
 		$result = curl_exec($newch);
+
+        $outputINFO = curl_getinfo($newch);
+
 		curl_close($newch);
 
 		$result_array = array();
@@ -184,14 +189,12 @@ class _mydois extends CI_Model
 	}
 
 	function removeTrustedClient($client_id){
-
 		$tables = array('doi_client_domains', 'doi_client');
 		$this->doi_db->where('client_id', $client_id);
 		$this->doi_db->delete($tables);
 		return $client_id;
 	}
 
-	
 	function getTrustedClient($client_id)
 	{
 		$query = $this->doi_db->query("SELECT * FROM doi_client WHERE client_id = ".$client_id);
