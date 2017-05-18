@@ -144,9 +144,11 @@
                     </year>
                 </publication-date>
             </xsl:if>
-            <xsl:if test="ro:collection/ro:identifier[text()!='']">
+            <xsl:if test="ro:collection/ro:identifier[text()!=''] |
+             ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[text()!='']">
                 <work-external-identifiers>
-                    <xsl:apply-templates select="ro:collection/ro:identifier[text()!='']"/>
+                    <xsl:apply-templates select="ro:collection/ro:identifier[text()!=''] |
+                    ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[text()!='']"/>
                 </work-external-identifiers>
             </xsl:if>
             <url><xsl:value-of select="$rda_url"/></url>
