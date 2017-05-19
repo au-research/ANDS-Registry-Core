@@ -662,17 +662,37 @@ class Doi_api
                 $requestBody, $customRequest);
         }
 
-        $dataCiteMessages = $dataciteClient->getMessages() ? $dataciteClient->getMessages() : array();
 
         if (!isset($responselog['responsecode'])) {
             $responselog['responsecode'] = 'MT000';
+        }
+
+
+        $DataciteResponses = $dataciteClient->getMessages() ? $dataciteClient->getMessages() : array();
+
+        if(isset($DataciteResponses['messages'])) {
+            foreach ($DataciteResponses['messages'] as $amessage) {
+                if (isset($amessage['endpoint'])) {
+                    $responselog['datacite.'.$amessage['endpoint'].'.httpcode'] = $amessage['httpcode'];
+                    $responselog['datacite.'.$amessage['endpoint'].'.output'] = $amessage['output'];
+                    $responselog['datacite.'.$amessage['endpoint'].'.url'] = $amessage['url'];
+                }
+
+            }
+        }
+        if(isset($DataciteResponses['errors'])) {
+            foreach ($DataciteResponses['errors'] as $error) {
+                if (isset($amessage['endpoint'])) {
+                    $responselog['datacite.error'] = $error;
+                }
+
+            }
         }
 
         $responselog['doi'] = $doi;
         $responselog['result'] = $result;
         $responselog['client_id'] = $client->client_id;
         $responselog['app_id'] = $appID;
-        $responselog['datacite_responses'] = $dataCiteMessages;
         $responselog['message'] = json_encode($response, true);
 
 
