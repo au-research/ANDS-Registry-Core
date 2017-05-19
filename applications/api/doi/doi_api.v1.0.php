@@ -670,20 +670,12 @@ class Doi_api
 
         $DataciteResponses = $dataciteClient->getMessages() ? $dataciteClient->getMessages() : array();
 
-        if(isset($DataciteResponses['messages'])) {
-            foreach ($DataciteResponses['messages'] as $amessage) {
+         if(isset($DataciteResponses)) {
+            foreach ($DataciteResponses as $amessage) {
                 if (isset($amessage['endpoint'])) {
                     $responselog['datacite.'.$amessage['endpoint'].'.httpcode'] = $amessage['httpcode'];
                     $responselog['datacite.'.$amessage['endpoint'].'.output'] = $amessage['output'];
                     $responselog['datacite.'.$amessage['endpoint'].'.url'] = $amessage['url'];
-                }
-
-            }
-        }
-        if(isset($DataciteResponses['errors'])) {
-            foreach ($DataciteResponses['errors'] as $error) {
-                if (isset($amessage['endpoint'])) {
-                    $responselog['datacite.error'] = $error;
                 }
 
             }
