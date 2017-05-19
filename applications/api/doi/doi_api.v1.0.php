@@ -707,7 +707,7 @@ class Doi_api
 
         //set the http response code to what has been returned from DataCite
         $responsehttp = '';
-        foreach($dataCiteMessages as $dataCiteMessage){
+        foreach($DataciteResponses as $dataCiteMessage){
             if(isset($dataCiteMessage['httpcode'])) $responsehttp = $dataCiteMessage['httpcode'];
         }
 
