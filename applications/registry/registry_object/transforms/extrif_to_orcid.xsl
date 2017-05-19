@@ -144,17 +144,13 @@
                     </year>
                 </publication-date>
             </xsl:if>
-            <xsl:if test="//ro:identifier[text()!='']">
+            <xsl:if test="ro:collection/ro:identifier[text()!=''] |
+             ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[text()!='']">
                 <work-external-identifiers>
-                    <xsl:apply-templates select="//ro:identifier[text()!='']"/>
+                    <xsl:apply-templates select="ro:collection/ro:identifier[text()!=''] |
+                    ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[text()!='']"/>
                 </work-external-identifiers>
             </xsl:if>
-            <!-- <xsl:variable name="sourceUrl">
-                <xsl:call-template name="getSourceURL"/>
-            </xsl:variable>
-            <xsl:if test="$sourceUrl != ''">
-                <url><xsl:value-of select="$sourceUrl"/></url>
-            </xsl:if> -->
             <url><xsl:value-of select="$rda_url"/></url>
             <xsl:if test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:contributor">
                 <work-contributors>
@@ -162,9 +158,7 @@
                 </work-contributors>
             </xsl:if>          
         </orcid-work>
-    </xsl:template> 
-
-
+    </xsl:template>
 
     <xsl:template match="extRif:displayTitle">
         <title> <xsl:value-of select="."/></title>
@@ -239,46 +233,6 @@
         </xsl:choose>
     </xsl:template>
 
-    <xsl:template name="getSourceURL">
-        <xsl:choose>
-            <xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='doi']">
-                <xsl:value-of select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='doi']"/>
-            </xsl:when>
-            <xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='doi']">
-                <xsl:value-of select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='doi']"/>
-            </xsl:when>
-            <xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='doi']">
-                <xsl:value-of select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='doi']"/>
-            </xsl:when>
-            <xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='handle']">
-                <xsl:value-of select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='handle']"/>
-            </xsl:when>
-            <xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='uri']">
-                <xsl:value-of select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='uri']"/>
-            </xsl:when>
-            <xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='purl']">
-                <xsl:value-of select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='purl']"/>
-            </xsl:when>         
-            <xsl:when test="ro:collection/ro:identifier[@type='doi']">
-                <xsl:value-of select="ro:collection/ro:identifier[@type='doi']"/>
-            </xsl:when>
-            <xsl:when test="ro:collection/ro:identifier[@type='handle']">
-                <xsl:value-of select="ro:collection/ro:identifier[@type='handle']"/>
-            </xsl:when>
-            <xsl:when test="ro:collection/ro:identifier[@type='uri']">
-                <xsl:value-of select="ro:collection/ro:identifier[@type='uri']"/>
-            </xsl:when>
-            <xsl:when test="ro:collection/ro:identifier[@type='purl']">
-                <xsl:value-of select="ro:collection/ro:identifier[@type='purl']"/>
-            </xsl:when>
-            <xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:url">
-                <xsl:value-of select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:url"/>
-            </xsl:when>
-            <xsl:when test="ro:collection/ro:location/ro:address/ro:electronic[@type='url']">
-                <xsl:value-of select="ro:collection/ro:location/ro:address/ro:electronic[@type='url']"/>
-            </xsl:when>
-        </xsl:choose>
-    </xsl:template>
    
     <xsl:template match="ro:contributor">
       <contributor>
