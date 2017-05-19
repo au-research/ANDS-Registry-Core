@@ -304,7 +304,7 @@ class Doi_api
 
         $ANDSDOIResponse = $arrayFormater->format($doiService->getResponse());
 
-        $DataciteResponse = ['datacite_responses' => $doiService->getDataCiteResponse()];
+        $DataciteResponse = [$doiService->getDataCiteResponse()];
 
         $logResponse = array_merge($ANDSDOIResponse, $DataciteResponse);
 
