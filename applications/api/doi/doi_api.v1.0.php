@@ -304,9 +304,31 @@ class Doi_api
 
         $ANDSDOIResponse = $arrayFormater->format($doiService->getResponse());
 
-        $DataciteResponse = [$doiService->getDataCiteResponse()];
+        $DataciteResponses = $doiService->getDataCiteResponse();
+
+        $DataciteResponse = array();
+        if(isset($DataciteResponses['messages'])) {
+            foreach ($DataciteResponses['messages'] as $amessage) {
+                if (isset($amessage['endpoint'])) {
+                    $DataciteResponse['datacite.'.$amessage['endpoint'].'.httpcode'] = $amessage['httpcode'];
+                    $DataciteResponse['datacite.'.$amessage['endpoint'].'.output'] = $amessage['output'];
+                    $DataciteResponse['datacite.'.$amessage['endpoint'].'.url'] = $amessage['url'];
+                }
+
+            }
+        }
+        if(isset($DataciteResponses['errors'])) {
+            foreach ($DataciteResponses['errors'] as $error) {
+                if (isset($amessage['endpoint'])) {
+                    $DataciteResponse['datacite.error'] = $error;
+                }
+
+            }
+        }
 
         $logResponse = array_merge($ANDSDOIResponse, $DataciteResponse);
+
+        dd($logResponse);
 
         $this->doilog(
             $logResponse,
