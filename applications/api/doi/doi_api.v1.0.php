@@ -306,8 +306,6 @@ class Doi_api
 
         $DataciteResponse = ['datacite' => $doiService->getDataCiteResponse()];
 
-        dd($doiService->getDataCiteResponse());
-
         $logResponse = array_merge($ANDSDOIResponse, $DataciteResponse);
 
         $this->doilog(
