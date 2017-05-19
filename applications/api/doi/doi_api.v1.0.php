@@ -296,8 +296,17 @@ class Doi_api
 
 
         // do the logging
+
+        $ANDSDOIResponse = $arrayFormater->format($doiService->getResponse());
+
+        $DataciteResponse = ['datacite' => $doiService->getDataCiteResponse()];
+
+        dd($doiService->getDataCiteResponse());
+
+        $logResponse = array_merge($ANDSDOIResponse, $DataciteResponse);
+
         $this->doilog(
-            $arrayFormater->format($doiService->getResponse()),
+            $logResponse,
             'doi_' . ($manual ? 'm_' : '') . $method,
             $client
         );
