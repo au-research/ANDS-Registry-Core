@@ -328,8 +328,6 @@ class Doi_api
 
         $logResponse = array_merge($ANDSDOIResponse, $DataciteResponse);
 
-        dd($logResponse);
-
         $this->doilog(
             $logResponse,
             'doi_' . ($manual ? 'm_' : '') . $method,
