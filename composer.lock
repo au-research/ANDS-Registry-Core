@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/au-research/ANDS-DOI-Service.git",
-                "reference": "7e74d8517e546c598c49b9ba63ad8ac208bd41e6"
+                "reference": "0476c3b98a0e4de78192805334ab40c1de4998f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/au-research/ANDS-DOI-Service/zipball/7e74d8517e546c598c49b9ba63ad8ac208bd41e6",
-                "reference": "7e74d8517e546c598c49b9ba63ad8ac208bd41e6",
+                "url": "https://api.github.com/repos/au-research/ANDS-DOI-Service/zipball/0476c3b98a0e4de78192805334ab40c1de4998f0",
+                "reference": "0476c3b98a0e4de78192805334ab40c1de4998f0",
                 "shasum": ""
             },
             "require": {
@@ -43,7 +43,7 @@
                     "email": "minh.nguyen@ands.org.au"
                 }
             ],
-            "time": "2017-05-01 01:55:35"
+            "time": "2017-05-15 06:23:08"
         },
         {
             "name": "doctrine/inflector",
