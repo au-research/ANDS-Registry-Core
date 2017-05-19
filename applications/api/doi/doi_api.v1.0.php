@@ -304,7 +304,7 @@ class Doi_api
 
         $ANDSDOIResponse = $arrayFormater->format($doiService->getResponse());
 
-        $DataciteResponse = ['datacite' => $doiService->getDataCiteResponse()];
+        $DataciteResponse = ['datacite_responses' => $doiService->getDataCiteResponse()];
 
         $logResponse = array_merge($ANDSDOIResponse, $DataciteResponse);
 
@@ -644,12 +644,6 @@ class Doi_api
 
         $dataCiteMessages = $dataciteClient->getMessages() ? $dataciteClient->getMessages() : array();
 
-        $httpCode = isset($dataCiteMessages[0]) ? explode(":",
-            ($dataCiteMessages[0])) : Array(
-            0 => "HttpCode",
-            1 => $dataCiteResponseCode
-        );
-
         if (!isset($responselog['responsecode'])) {
             $responselog['responsecode'] = 'MT000';
         }
@@ -658,7 +652,7 @@ class Doi_api
         $responselog['result'] = $result;
         $responselog['client_id'] = $client->client_id;
         $responselog['app_id'] = $appID;
-        $responselog['dataCiteHTTPCode'] = $httpCode[1];
+        $responselog['datacite_responses'] = $dataCiteMessages;
         $responselog['message'] = json_encode($response, true);
 
 
@@ -672,7 +666,12 @@ class Doi_api
         }
 
         //set the http response code to what has been returned from DataCite
-        http_response_code($httpCode[1]);
+        $responsehttp = '';
+        foreach($dataCiteMessages as $dataCiteMessage){
+            if(isset($dataCiteMessage['httpcode'])) $responsehttp = $dataCiteMessage['httpcode'];
+        }
+
+        http_response_code($responsehttp);
 
         return $response;
 
