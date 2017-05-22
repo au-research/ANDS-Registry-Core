@@ -1,0 +1,1 @@
+ALTER TABLE doi_client ADD COLUMN datacite_symbol varchar(255) after datacite_prefix;
