@@ -35,6 +35,11 @@ class TitleProvider implements RIFCSProvider
         $displayTitle = $titles['displayTitle'];
         $listTitle = $titles['listTitle'];
 
+        // don't save blank title
+        if ($displayTitle == "") {
+            return;
+        }
+
         // saving
         $record->title = $displayTitle;
         $record->setRegistryObjectAttribute('list_title', $listTitle);
@@ -55,6 +60,9 @@ class TitleProvider implements RIFCSProvider
 
         // take the first primary found
         $name = collect($names)->first(function ($key, $item) {
+            if (!array_key_exists('@attributes', $item)) {
+                return false;
+            }
             return $item['@attributes']['type'] == 'primary';
         });
 
@@ -102,6 +110,9 @@ class TitleProvider implements RIFCSProvider
             // first found name
             $displayTitle = is_array($displayTitle) ? $displayTitle[0] : $displayTitle;
 
+            // first found name value
+            $displayTitle = is_array($displayTitle) && array_key_exists('value', $displayTitle) ? $displayTitle['value'] : $displayTitle;
+
             $listTitle = $displayTitle;
         }
 
@@ -142,7 +153,11 @@ class TitleProvider implements RIFCSProvider
      */
     public static function getRaw(RegistryObject $record)
     {
-        $xml = $record->getCurrentData()->data;
+        $currentData = $record->getCurrentData();
+        if (!$currentData) {
+            return [];
+        }
+        $xml = $currentData->data;
         return self::getRawForXML($xml, $record->class);
     }
 

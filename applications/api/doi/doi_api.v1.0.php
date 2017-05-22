@@ -239,8 +239,12 @@ class Doi_api
         // constructing the client and checking if the client exists and authorised
         $client = $clientRepository->getByAppID($appID);
 
-        // preflight check client via appID existence
+        // try to get a client based on TEST
         if (!$client) {
+            $client = $clientRepository->getByAppID(str_replace("TEST", "", $appID));
+        }
+
+        if(!$client){
             $response = [
                 'responsecode' => 'MT009',
                 'verbosemessage' => 'You are not authorised to use this service. No client found with AppID: ' . $appID
