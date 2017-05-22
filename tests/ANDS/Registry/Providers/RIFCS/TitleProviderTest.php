@@ -112,4 +112,23 @@ class TitleProviderTest extends \RegistryTestClass
         $this->assertEquals('Primary', $titles['listTitle']);
         $this->assertEquals('Primary', $titles['displayTitle']);
     }
+
+    /** @test **/
+    public function it_should_find_first_name_part_without_attribute()
+    {
+        $rawNames = [
+            [
+                'value' => [
+                    [
+                        '@attributes' => ['type' => 'full'],
+                        'value' => 'Fish'
+                    ]
+                ]
+            ]
+        ];
+        $titles = TitleProvider::getTitlesFromRaw($rawNames, 'collection');
+        $this->assertEquals('Fish', $titles['listTitle']);
+        $this->assertEquals('Fish', $titles['displayTitle']);
+        $this->assertTrue(true);
+    }
 }
