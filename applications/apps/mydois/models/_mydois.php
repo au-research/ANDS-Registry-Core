@@ -134,7 +134,11 @@ class _mydois extends CI_Model
 		//{
 		//	$symbol= $this->DOIS_DATACENTRE_NAME_PREFIX.".CENTRE-0"; //make sure we only hit the test datacenter config for non production domains
 		//}else{
-			$symbol= $this->DOIS_DATACENTRE_NAME_PREFIX.".".$this->DOIS_DATACENTRE_NAME_MIDDLE.$client_id;
+
+        $client = $this->clientRepository->getByID($client_id);
+
+        $symbol= $client->datacite_symbol;
+
 		//}
 
 		//create the datacite datacentre xml
