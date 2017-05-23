@@ -230,6 +230,11 @@ class TitleProvider implements RIFCSProvider
             return $item['@attributes']['type'] == 'primary';
         });
 
+        // if no primary is found, take the first name regardless
+        if ($name === null) {
+            $name = $names->first();
+        }
+
         // add up the part on order
         $nameParts = collect($name['value']);
         foreach ($order as $o) {
