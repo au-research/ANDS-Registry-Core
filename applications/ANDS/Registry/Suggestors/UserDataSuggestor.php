@@ -56,14 +56,15 @@ class UserDataSuggestor
                             ['match' => ['doc.@fields.record.id' => $id]],
                             ['match' => ['doc.@fields.event' => 'portal_view']],
                         ],
-                        'minimum_should_match' => 1
+//                        'minimum_should_match' => 1
                     ]
                 ],
                 'aggs' => [
                     'ip_viewed' => [
                         'terms' => [
-                            'field' => 'doc.@fields.user.ip.raw'
-                        ]
+                            'field' => 'doc.@fields.user.ip.raw',
+                            'size' => 2147483647
+                        ],
                     ]
                 ]
             ]
@@ -73,10 +74,10 @@ class UserDataSuggestor
             $response = $this->client->search($params);
         } catch (\Exception $e) {
             // log error
+            dd(get_exception_msg($e));
             monolog(self::class ." : ". get_exception_msg($e), "error", "error");
             return [];
         }
-
 
         // get all the ips that view this record
         $ips = collect($response['aggregations']['ip_viewed']['buckets'])->pluck('key')->toArray();
@@ -113,7 +114,8 @@ class UserDataSuggestor
                         'aggs' => [
                             'records_viewed' => [
                                 'terms' => [
-                                    'field' => 'doc.@fields.record.id.raw'
+                                    'field' => 'doc.@fields.record.key.raw',
+                                    'size' => 100
                                 ]
                             ]
                         ]
@@ -140,29 +142,25 @@ class UserDataSuggestor
 
         // sort
         $sorted = collect($recordOccurences)->sort()->reverse();
+//dd(count($sorted));
+
+        // get first 100
+        $sorted = $sorted->take(100);
+
+        // filter out the ones that actually exists
+        $ids = $sorted->keys()->toArray();
+        $exists = RegistryObject::whereIn('key', $ids)->where('status', 'PUBLISHED')->get();
 
         // format
         $result = [];
-        foreach ($sorted as $id => $score) {
-            $record = RegistryObjectsRepository::getRecordByID($id);
-
-            // filter out record that doesn't exists
-            if (!$record) {
-                continue;
-            }
-
-            // filter out record that is non published
-            if (!RegistryObjectsRepository::isPublishedStatus($record->status)) {
-                continue;
-            }
-
+        foreach ($exists as $record) {
             $result[] = [
                 'id' => $record->id,
                 'title' => $record->title,
                 'key' => $record->key,
                 'slug' => $record->slug,
                 'RDAUrl' => baseUrl($record->slug. '/'. $record->id),
-                'score' => $score
+                'score' => $sorted->get($record->key)
             ];
         }
 
@@ -172,7 +170,11 @@ class UserDataSuggestor
         $result = collect($result)->map(function($item) use ($highest){
             $item['score'] = round($item['score'] / $highest, 5);
             return $item;
-        })->toArray();
+        });
+
+        $result = $result->sortBy('score')->reverse();
+
+        $result = array_values($result->toArray());
 
         return $result;
     }
