@@ -87,21 +87,22 @@ class RelationshipProvider
         }
 
         // duplicate of the related
-        $currentResult = $result;
-        foreach ($currentResult as $key => $related) {
-            if ($to = $related->to()) {
-                $duplicates = $to->getDuplicateRecords();
-                foreach ($duplicates as $duplicate) {
-                    $swappedRelation = $related->switchToRecord($duplicate);
-                    $swappedKey = $swappedRelation->getUniqueID();
-                    if (array_key_exists($swappedKey, $result)) {
-                        $result[$swappedKey]->mergeWith($swappedRelation->getProperties());
-                    } else {
-                        $result[$swappedKey] = $swappedRelation;
-                    }
-                }
-            }
-        }
+        // Removed as of CC-1986. Added the duplicate index to the query instead of the index TODO: Code Review and Remove the following
+//        $currentResult = $result;
+//        foreach ($currentResult as $key => $related) {
+//            if ($to = $related->to()) {
+//                $duplicates = $to->getDuplicateRecords();
+//                foreach ($duplicates as $duplicate) {
+//                    $swappedRelation = $related->switchToRecord($duplicate);
+//                    $swappedKey = $swappedRelation->getUniqueID();
+//                    if (array_key_exists($swappedKey, $result)) {
+//                        $result[$swappedKey]->mergeWith($swappedRelation->getProperties());
+//                    } else {
+//                        $result[$swappedKey] = $swappedRelation;
+//                    }
+//                }
+//            }
+//        }
 
         if ($includeDuplicates != true) {
             return $result;

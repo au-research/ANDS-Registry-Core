@@ -16,15 +16,24 @@ class Relationships extends ROHandler {
      */
     public function handle() {
 
+        // get my duplicates and search for their relationships too
+        $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($this->ro->id);
+        $duplicates = $record->getDuplicateRecords()->pluck('registry_object_id')->toArray();
+        $ids = [ $this->ro->id ];
+        if (count($duplicates) > 0) {
+            $ids = array_merge($ids, $duplicates);
+        }
+        $idQuery = implode(' OR ', $ids);
+
         $result = array(
-            'data' => $this->getRelatedFromIndex('data'),
-            'publications' => $this->getRelatedFromIndex('publications'),
-            'programs'=> $this->getRelatedFromIndex('programs'),
-            'grants_projects' => $this->getRelatedFromIndex('grants_projects'),
-            'services' => $this->getRelatedFromIndex('services'),
-            'websites' => $this->getRelatedFromIndex('websites'),
-            'researchers' => $this->getRelatedFromIndex('researchers'),
-            'organisations' => $this->getRelatedFromIndex('organisations')
+            'data' => $this->getRelatedFromIndex('data', $idQuery),
+            'publications' => $this->getRelatedFromIndex('publications', $idQuery),
+            'programs'=> $this->getRelatedFromIndex('programs', $idQuery),
+            'grants_projects' => $this->getRelatedFromIndex('grants_projects', $idQuery),
+            'services' => $this->getRelatedFromIndex('services', $idQuery),
+            'websites' => $this->getRelatedFromIndex('websites', $idQuery),
+            'researchers' => $this->getRelatedFromIndex('researchers', $idQuery),
+            'organisations' => $this->getRelatedFromIndex('organisations', $idQuery)
         );
 
         return $result;
@@ -32,17 +41,22 @@ class Relationships extends ROHandler {
 
     /**
      * @param $type
+     * @param null $idQuery
      * @return array
      */
-    private function getRelatedFromIndex($type)
+    private function getRelatedFromIndex($type, $idQuery = null)
     {
         $ci =& get_instance();
         $ci->load->library('solr');
-        $ci->solr
+
+       if ($idQuery === null) {
+           $idQuery = $this->ro->id;
+       }
+       $ci->solr
             ->init()
             ->setCore('relations')
             ->setOpt('rows', 5)
-            ->setOpt('fq', '+from_id:'.$this->ro->id);
+            ->setOpt('fq', "+from_id:({$idQuery})");
         switch ($type) {
             case "data":
                 $ci->solr->setOpt('fq', '+to_class:collection');
