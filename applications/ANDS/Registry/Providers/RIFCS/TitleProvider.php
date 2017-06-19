@@ -74,7 +74,7 @@ class TitleProvider implements RIFCSProvider
                 $displayTitle = $name['value']['value'];
             } else {
                 $firstNamePart = collect($name['value'])->first();
-                $displayTitle = $firstNamePart['value'];
+                $displayTitle = is_string($firstNamePart) ? $firstNamePart : $firstNamePart['value'];
             }
         }
 
