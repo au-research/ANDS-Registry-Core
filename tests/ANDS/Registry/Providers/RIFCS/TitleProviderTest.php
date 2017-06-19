@@ -131,4 +131,69 @@ class TitleProviderTest extends \RegistryTestClass
         $this->assertEquals('Fish', $titles['displayTitle']);
         $this->assertTrue(true);
     }
+
+    /** @test **/
+    public function it_should_find_first_name_part_without_ttr()
+    {
+        $rawNames = [
+            [
+                'value' => [
+                    'Thing',
+                    [
+                        '@attributes' => ['type' => 'full'],
+                        'value' => 'Fish'
+                    ]
+                ],
+                '@attributes' => [
+                    'type' => 'primary'
+                ]
+            ]
+        ];
+        $titles = TitleProvider::getTitlesFromRaw($rawNames, 'collection');
+        $this->assertEquals('Thing', $titles['listTitle']);
+        $this->assertEquals('Thing', $titles['displayTitle']);
+        $this->assertTrue(true);
+    }
+
+    /** @test **/
+    public function it_should_find_first_name_part_without_attr_without_primary()
+    {
+        $rawNames = [
+            [
+                'value' => [
+                    'Thing',
+                    [
+                        '@attributes' => ['type' => 'full'],
+                        'value' => 'Fish'
+                    ]
+                ]
+            ]
+        ];
+
+        $titles = TitleProvider::getTitlesFromRaw($rawNames, 'collection');
+        $this->assertEquals('Thing', $titles['listTitle']);
+        $this->assertEquals('Thing', $titles['displayTitle']);
+        $this->assertTrue(true);
+    }
+
+    /** @test **/
+    public function it_should_find_first_name_part_without_attr_without_primary_reverse()
+    {
+        $rawNames = [
+            [
+                'value' => [
+                    [
+                        '@attributes' => ['type' => 'full'],
+                        'value' => 'Fish'
+                    ],
+                    'Thing'
+                ]
+            ]
+        ];
+
+        $titles = TitleProvider::getTitlesFromRaw($rawNames, 'collection');
+        $this->assertEquals('Fish', $titles['listTitle']);
+        $this->assertEquals('Fish', $titles['displayTitle']);
+        $this->assertTrue(true);
+    }
 }
