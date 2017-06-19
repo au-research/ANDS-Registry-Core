@@ -149,16 +149,12 @@ class Suggest extends ROHandler {
             ->setOpt('fq', '+to_class:collection');
 
         $solrResult = $ci->solr->executeSearch(true);
-
         $result = [];
-
         if ($solrResult && array_key_exists('response', $solrResult) && $solrResult['response']['numFound'] > 0) {
-            $result['count'] = $solrResult['response']['numFound'];
             foreach ($solrResult['response']['docs'] as $doc) {
-                $results[] = $doc['to_id'];
+                $result[] = $doc['to_id'];
             }
         }
-
         return $result;
     }
 }
