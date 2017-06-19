@@ -29,8 +29,8 @@ class TitleProvider implements RIFCSProvider
     {
         // get the raw ones
         $names = self::getRaw($record);
-
         $titles = self::getTitlesFromRaw($names, $record->class);
+
 
         $displayTitle = $titles['displayTitle'];
         $listTitle = $titles['listTitle'];
@@ -57,8 +57,8 @@ class TitleProvider implements RIFCSProvider
         // get Titles
         $displayTitle = null;
         $listTitle = null;
-
         // take the first primary found
+
         $name = collect($names)->first(function ($key, $item) {
             if (!array_key_exists('@attributes', $item)) {
                 return false;

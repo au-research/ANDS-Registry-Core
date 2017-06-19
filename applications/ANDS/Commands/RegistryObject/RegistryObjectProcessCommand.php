@@ -8,6 +8,7 @@ use ANDS\Commands\ANDSCommand;
 use ANDS\Registry\Providers\LinkProvider;
 use ANDS\Registry\Providers\QualityMetadataProvider;
 use ANDS\Registry\Providers\RelationshipProvider;
+use ANDS\Registry\Providers\RIFCS\CoreMetadataProvider;
 use ANDS\Registry\Providers\RIFCS\SubjectProvider;
 use ANDS\Registry\Providers\ScholixProvider;
 use ANDS\Registry\Providers\TitleProvider;
@@ -25,7 +26,8 @@ class RegistryObjectProcessCommand extends ANDSCommand
         'quality' => QualityMetadataProvider::class,
         'links' => LinkProvider::class,
         'relationship' => RelationshipProvider::class,
-        'title' => TitleProvider::class
+        'title' => TitleProvider::class,
+        'core' => CoreMetadataProvider::class
     ];
 
     protected function configure()

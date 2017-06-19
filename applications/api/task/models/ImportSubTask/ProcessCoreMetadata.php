@@ -5,6 +5,7 @@ namespace ANDS\API\Task\ImportSubTask;
 
 
 use ANDS\Registry\Group;
+use ANDS\Registry\Providers\RIFCS\CoreMetadataProvider;
 use ANDS\Registry\Providers\ScholixProvider;
 use ANDS\Registry\Providers\TitleProvider;
 use ANDS\RegistryObject;
@@ -41,37 +42,9 @@ class ProcessCoreMetadata extends ImportSubTask
         foreach ($importedRecords as $index => $roID) {
 
             $record = RegistryObject::find($roID);
-            $recordData = $record->getCurrentData();
 
-            // determine class, type and group in the record data
-            $classes = ['collection', 'party', 'service', 'activity'];
-            foreach ($classes as $class) {
-                $registryObjectsElement = XMLUtil::getSimpleXMLFromString($recordData->data);
-                $element = $registryObjectsElement->xpath('//ro:registryObject/ro:' . $class);
-                $registryObjectElement = array_first(
-                    $registryObjectsElement->xpath('//ro:registryObject')
-                );
-                if (count($element) > 0) {
-                    $element = array_first($element);
-                    $record->class = $class;
-                    $record->type = (string)$element['type'];
-                    $group = (string)$registryObjectElement['group'];
-                    $record->group = (string)$registryObjectElement['group'];
-
-                    // added group if not exists
-                    $groupTitle = $group;
-                    $exist = Group::where('title', $groupTitle)->first();
-                    if (!$exist) {
-                        $group = new Group;
-                        $group->title = $groupTitle;
-                        $group->slug = str_slug($groupTitle);
-                        $group->save();
-                    }
-
-                    $record->save();
-                    break;
-                }
-            }
+            // ProcessCoreMetadata, class, group, type, ANDS\Group get set
+            CoreMetadataProvider::process($record);
 
             //determine harvest_id
             $record->setRegistryObjectAttribute('harvest_id',
@@ -81,7 +54,6 @@ class ProcessCoreMetadata extends ImportSubTask
 
             // process Title
             TitleProvider::process($record);
-
             $record->save();
 
             // titles and slug require the ro object
@@ -103,7 +75,6 @@ class ProcessCoreMetadata extends ImportSubTask
             if ($this->parent()->getTaskData("targetStatus") == "PUBLISHED") {
                 ScholixProvider::process($record);
             }
-
 
             $this->updateProgress($index, $total, "Processed ($index/$total) $ro->title($roID)");
             unset($ro);
