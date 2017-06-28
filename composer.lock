@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "867bd2c8d9eb4ba23f4702762b3f2781",
+    "content-hash": "d678286fb890c39dffa94bf8846ccb37",
     "packages": [
         {
             "name": "au-research/ands-doi-service",
@@ -800,21 +800,21 @@
         },
         {
             "name": "minhd/solr-client",
-            "version": "0.1.8",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/minhd/php-solr-client.git",
-                "reference": "c275ce31cb3ca9270904791543d747e895ddeb98"
+                "reference": "dbc2ac25472a850f128faec19ae767d775fdf692"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/minhd/php-solr-client/zipball/c275ce31cb3ca9270904791543d747e895ddeb98",
-                "reference": "c275ce31cb3ca9270904791543d747e895ddeb98",
+                "url": "https://api.github.com/repos/minhd/php-solr-client/zipball/dbc2ac25472a850f128faec19ae767d775fdf692",
+                "reference": "dbc2ac25472a850f128faec19ae767d775fdf692",
                 "shasum": ""
             },
             "require": {
                 "guzzlehttp/guzzle": "^6.2",
-                "illuminate/support": "^5.2.0",
+                "illuminate/support": "^5.2",
                 "php": "~5.5|~7.0",
                 "symfony/console": "^3.1",
                 "symfony/filesystem": "^3.1",
@@ -853,7 +853,7 @@
                 "generator",
                 "psr"
             ],
-            "time": "2017-03-03T23:23:08+00:00"
+            "time": "2017-06-28 01:13:58"
         },
         {
             "name": "monolog/monolog",
@@ -2790,6 +2790,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "au-research/ands-doi-service": 20,
+        "minhd/solr-client": 20,
         "minhd/oai-pmh": 20,
         "javibravo/simpleue": 20
     },
