@@ -197,6 +197,16 @@ class DatasourcesHandler extends Handler
             'slug' => url_title($this->getInput('title'))
         ]);
 
+        $attributes = [
+            'provider_type'=>'rif',
+            'uri'=>'http://',
+            'harvest_method'=>'GETHarvester'
+        ];
+
+        foreach ($attributes as $key => $value) {
+            $dataSource->setDataSourceAttribute($key, $value);
+        }
+
         return $dataSource;
     }
 
