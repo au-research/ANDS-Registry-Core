@@ -20,11 +20,15 @@ class UserDataSuggestor
         $url = env('ELASTICSEARCH_URL', 'http://localhost:9200');
         $url = rtrim($url, '/');
 
-        $this->client = ClientBuilder::create()
-            ->setHosts(
-                [ $url ]
-            )->build();
-
+        $headers = @get_headers($url);
+        if(!$headers || $headers[0] == 'HTTP/1.1 404 Not Found') {
+            $this->client = null;
+        } else {
+            $this->client = ClientBuilder::create()
+                ->setHosts(
+                    [ $url ]
+                )->build();
+        }
     }
 
     /**
