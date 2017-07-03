@@ -90,6 +90,12 @@
         </xsl:choose>
     </xsl:template>
 
+    <xsl:template match="ro:relatedobject">
+        <xsl:element name="relatedObject">
+            <xsl:apply-templates select="@* | node()" />
+        </xsl:element>
+    </xsl:template>
+
     <xsl:template match="relatedInfo">
         <xsl:choose>
             <xsl:when test="identifier/@type !='' or identifier/text() != '' or @type != '' or format/identifier != '' or format/identifier/@type != '' or title/text() !='' or notes/text() != ''">

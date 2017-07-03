@@ -39,7 +39,7 @@ $(document).on('click', '#mint_confirm', function(){
         contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
 	});
 
-	if($('#csv_file').val()!="") {
+	if($('#csv_file').length > 0 && $('#csv_file').val()!="") {
 		data = new FormData();
 		data.append( 'file', $('#csv_file')[0].files[0] );
 		mint_url = apps_url+'pids/upload_csv';
