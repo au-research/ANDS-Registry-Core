@@ -194,6 +194,9 @@ class SubjectProvider implements RIFCSProvider
 
         if(strtolower($subject['type'])=='local' && is_numeric($subject['value'])) return false;
 
+        //if we have resolved a local string type to a language code then do not provide a match
+
+        if(strtolower($subject['type'])=='local' && strtolower($resolved->type[0])=='iso639-3')  return false;
 
         // if this could be a numeric notation preceding a resolved value - strip off the notation and check the resolved value
         // if the resolved type is the same as the supplied type disregard any discrepancy in the supplied numeric notation

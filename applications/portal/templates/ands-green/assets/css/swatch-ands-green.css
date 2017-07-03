@@ -4,7 +4,7 @@
   color: #4c4c4c;
 }
 .swatch-white h1, .swatch-white h2, .swatch-white h3, .swatch-white h4, .swatch-white h5, .swatch-white h6, [class*="swatch-"] .swatch-white h1, [class*="swatch-"] .swatch-white h2, [class*="swatch-"] .swatch-white h3, [class*="swatch-"] .swatch-white h4, [class*="swatch-"] .swatch-white h5, [class*="swatch-"] .swatch-white h6 {
-  color: #1c1c1c;
+  color: #424242;
 }
 .swatch-white h1 small, .swatch-white h2 small, .swatch-white h3 small, .swatch-white h4 small, .swatch-white h5 small, .swatch-white h6 small, [class*="swatch-"] .swatch-white h1 small, [class*="swatch-"] .swatch-white h2 small, [class*="swatch-"] .swatch-white h3 small, [class*="swatch-"] .swatch-white h4 small, [class*="swatch-"] .swatch-white h5 small, [class*="swatch-"] .swatch-white h6 small {
   color: rgba(28, 28, 28, 0.8);

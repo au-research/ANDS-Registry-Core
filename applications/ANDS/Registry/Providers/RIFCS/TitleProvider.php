@@ -29,8 +29,8 @@ class TitleProvider implements RIFCSProvider
     {
         // get the raw ones
         $names = self::getRaw($record);
-
         $titles = self::getTitlesFromRaw($names, $record->class);
+
 
         $displayTitle = $titles['displayTitle'];
         $listTitle = $titles['listTitle'];
@@ -57,8 +57,8 @@ class TitleProvider implements RIFCSProvider
         // get Titles
         $displayTitle = null;
         $listTitle = null;
-
         // take the first primary found
+
         $name = collect($names)->first(function ($key, $item) {
             if (!array_key_exists('@attributes', $item)) {
                 return false;
@@ -74,7 +74,7 @@ class TitleProvider implements RIFCSProvider
                 $displayTitle = $name['value']['value'];
             } else {
                 $firstNamePart = collect($name['value'])->first();
-                $displayTitle = $firstNamePart['value'];
+                $displayTitle = is_string($firstNamePart) ? $firstNamePart : $firstNamePart['value'];
             }
         }
 
@@ -229,6 +229,11 @@ class TitleProvider implements RIFCSProvider
         $name = $names->first(function ($key, $item) {
             return $item['@attributes']['type'] == 'primary';
         });
+
+        // if no primary is found, take the first name regardless
+        if ($name === null) {
+            $name = $names->first();
+        }
 
         // add up the part on order
         $nameParts = collect($name['value']);

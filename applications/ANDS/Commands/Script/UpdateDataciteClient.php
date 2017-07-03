@@ -5,12 +5,15 @@ namespace ANDS\Commands\Script;
 
 
 use ANDS\DOI\Model\Client;
+use ANDS\DOI\Model\Doi;
 use ANDS\DOI\Repository\ClientRepository;
 use ANDS\Util\Config;
+use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Helper\TableCell;
 
 class UpdateDataciteClient extends GenericScript implements GenericScriptRunnable
 {
-    protected $availableParams = ["all", ":id"];
+    protected $availableParams = ["all", ":id", "mint-report"];
 
     /** @var ClientRepository */
     private $clientRepository;
@@ -36,10 +39,60 @@ class UpdateDataciteClient extends GenericScript implements GenericScriptRunnabl
                 $this->log("Processing all clients. (Not implemented)");
                 $this->processAllClients();
                 break;
+            case "mint-report-all":
+                $this->log("Mint report.");
+                $this->mintReport('all');
+                break;
+            case "mint-report-non-test":
+                $this->log("Mint report.");
+                $this->mintReport('non-test');
+                break;
             default:
                 $this->processAClient($params);
                 break;
         }
+    }
+
+    private function mintReport($clientFilter)
+    {
+        initEloquent();
+
+        $clientModel = new Client();
+        $clientModel->setConnection('dois');
+
+        $doiModel = new Doi();
+        $doiModel->setConnection('dois');
+
+        switch($clientFilter) {
+            case "non-test":
+                $clients = $clientModel->where('client_name', 'not like', 'Test%')->get();
+                break;
+            default:
+                $clients = $clientModel->all();
+        }
+
+        $result = [];
+        foreach ($clients as $client) {
+            $testMinted = $doiModel
+                ->where('client_id', $client->client_id)
+                ->where('doi_id', 'LIKE', '%10.5072%')
+                ->where('status', 'ACTIVE')
+                ->count();
+            $productionMinted = $doiModel
+                ->where('client_id', $client->client_id)
+                ->where('doi_id', 'NOT LIKE', '%10.5072%')
+                ->where('status', 'ACTIVE')
+                ->count();
+            $result[] = [$client->client_name . " ($client->client_id)", $productionMinted, $testMinted];
+        }
+
+        $table = new Table($this->getOutput());
+
+        $table->setHeaders(
+            [ new TableCell("name"), new TableCell('production'), new TableCell('test') ]
+        )
+            ->setRows($result)
+            ->render();
     }
 
     private function processAllClients()

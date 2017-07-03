@@ -9,16 +9,12 @@ use ANDS\Repository\RegistryObjectsRepository;
 
 class SubjectsProviderTest extends \RegistryTestClass
 {
-    protected $requiredKeys = [
-//        "AUTCollectionToTestSearchFields37",
-//        "AODN/073fde5a-bff3-1c1f-e053-08114f8c5588",
-       "1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn"
-    ];
-
     /** @test **/
    public function it_should_get_the_subjects()
     {
-        $record = RegistryObjectsRepository::getPublishedByKey("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
+        $key = "1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn";
+        $this->ensureKeyExist($key);
+        $record = RegistryObjectsRepository::getPublishedByKey($key);
         $subjects = SubjectProvider::getSubjects($record);
         //print_r($subjects);
         $this->assertArraySubset(['21' => ['type' => 'local','value' => 'localSubject','uri' => '']], $subjects);
@@ -27,7 +23,9 @@ class SubjectsProviderTest extends \RegistryTestClass
     /** @test **/
     public function it_should_get_the_resolved_subjects()
     {
-        $record = RegistryObjectsRepository::getPublishedByKey("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
+        $key = "1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn";
+        $this->ensureKeyExist($key);
+        $record = RegistryObjectsRepository::getPublishedByKey($key);
         $resolved_subjects = SubjectProvider::processSubjects($record);
       //  print_r($resolved_subjects);
         $this->assertArraySubset(['03'=>
@@ -39,7 +37,9 @@ class SubjectsProviderTest extends \RegistryTestClass
     /** @test **/
     public function it_should_get_the_non_notation_subjects()
     {
-        $record = RegistryObjectsRepository::getPublishedByKey("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
+        $key = "1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn";
+        $this->ensureKeyExist($key);
+        $record = RegistryObjectsRepository::getPublishedByKey($key);
         $resolved_subjects = SubjectProvider::processSubjects($record);
        // dd($resolved_subjects);
         $this->assertArraySubset(['Solar Radiation'=>
@@ -52,8 +52,9 @@ class SubjectsProviderTest extends \RegistryTestClass
     /** @test **/
     public function it_should_get_the_notation_value_string_subjects()
     {
-        $this->ensureKeyExist("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
-        $record = RegistryObjectsRepository::getPublishedByKey("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
+        $key = "1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn";
+        $this->ensureKeyExist($key);
+        $record = RegistryObjectsRepository::getPublishedByKey($key);
         $resolved_subjects = SubjectProvider::processSubjects($record);
         $this->assertArraySubset(['1108' =>
            ['type' => 'anzsrc-for',
@@ -65,8 +66,9 @@ class SubjectsProviderTest extends \RegistryTestClass
     /** @test **/
      public function it_should_not_get_the_local_notation_mismatch_value_string_subjects()
       {
-          $this->ensureKeyExist("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
-          $record = RegistryObjectsRepository::getPublishedByKey("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
+          $key = "1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn";
+          $this->ensureKeyExist($key);
+          $record = RegistryObjectsRepository::getPublishedByKey($key);
           $resolved_subjects = SubjectProvider::processSubjects($record);
          // print_r($resolved_subjects);
           $this->assertArraySubset(['1301 Medical Virology' =>
@@ -79,9 +81,9 @@ class SubjectsProviderTest extends \RegistryTestClass
     /** @test **/
     public function it_should_resolve_the_iso639_notation()
     {
-
-        $this->ensureKeyExist("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
-        $record = RegistryObjectsRepository::getPublishedByKey("1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn");
+        $key = "1CRE9ad2CNJUaTtV571LDcrGL3E14lIWNqrNrvGT8fE8ZXUVUMwn";
+        $this->ensureKeyExist($key);
+        $record = RegistryObjectsRepository::getPublishedByKey($key);
 
         $resolved_subjects = SubjectProvider::processSubjects($record);
        // print_r($resolved_subjects);
@@ -106,5 +108,16 @@ class SubjectsProviderTest extends \RegistryTestClass
         $multi_value = "Earth Science | Atmosphere | Aerosols | Aerosol Backscatter";
         $result = SubjectProvider::getNarrowestConcept($multi_value);
         $this->assertEquals($result,"Aerosol Backscatter");
+    }
+
+    /** @test **/
+    public function it_should_process_subjects_correctly()
+    {
+        $key = "http://purl.org/au-research/grants/nhmrc/1089698";
+        $this->ensureKeyExist($key);
+        $record = RegistryObjectsRepository::getPublishedByKey($key);
+
+        $resolved_subjects = SubjectProvider::processSubjects($record);
+        $this->assertTrue(is_array($resolved_subjects));
     }
 }

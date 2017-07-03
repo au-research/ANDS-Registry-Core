@@ -17,12 +17,20 @@ class Core extends ROHandler {
             $result[$f] = $attr;
         }
 
+        // TODO: TitleProvider::getAlternativeNames(record)
         $alt_title = array();
         if($this->xml) {
             foreach($this->xml->{$this->ro->class}->name as $name) {
                 $type = (string) $name['type'];
                 if (($type=='abbreviated' || $type=='alternative') && $name->namePart) {
-                    $alt_title[] = (string) $name->namePart;
+                    $altName = [];
+                    foreach ($name->children()->namePart as $namePart) {
+                        $altName[] = trim((string) $namePart);
+                    }
+                    if (!empty($altName)) {
+                        $altName = implode(" ", $altName);
+                        $alt_title[] = $altName;
+                    }
                 }
             }
         }
