@@ -6,6 +6,7 @@ namespace ANDS\Registry\Suggestors;
 
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
+use Carbon\Carbon;
 use Elasticsearch\ClientBuilder;
 
 class UserDataSuggestor
@@ -46,9 +47,7 @@ class UserDataSuggestor
 
         // find all IPs that view this record,
         // TODO except current IP
-
         $id = $record->id;
-
         $params = [
             'index' => 'portal-*',
             'type' => 'portal',
@@ -59,15 +58,26 @@ class UserDataSuggestor
                         'must' => [
                             ['match' => ['doc.@fields.record.id' => $id]],
                             ['match' => ['doc.@fields.event' => 'portal_view']],
+
+                            // last 12 months
+                            [
+                                'range' => [
+                                'doc.@timestamp' =>
+                                    [
+                                        'gte' => Carbon::now()->addYear(-1)->timestamp,
+                                        'lte' => Carbon::now()->timestamp,
+                                        'format' => 'epoch_second'
+                                    ]
+                                ]
+                            ]
                         ],
-//                        'minimum_should_match' => 1
                     ]
                 ],
                 'aggs' => [
                     'ip_viewed' => [
                         'terms' => [
                             'field' => 'doc.@fields.user.ip.raw',
-                            'size' => 2147483647
+                            'size' => 500
                         ],
                     ]
                 ]
