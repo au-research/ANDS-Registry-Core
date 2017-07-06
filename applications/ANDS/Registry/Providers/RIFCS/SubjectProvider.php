@@ -90,7 +90,7 @@ class SubjectProvider implements RIFCSProvider
             $uri= $subject['uri']? $subject['uri'] : " ";
             if (!array_key_exists((string)$value, $subjectsResolved)) {
                 $search_value = self::formatSearchString($value,strtolower($type));
-                    $solrResult = $solrClient->search([
+                $solrResult = $solrClient->search([
                     'q' => $search_value,
                     'fl' => '* , score',
                     'sort' => 'score desc',
@@ -156,25 +156,24 @@ class SubjectProvider implements RIFCSProvider
             return $string;
         }
 
-        // determine if the string has &gt; divider and convert to | or strip special characters in the subject query string
+        // determine if the string has &gt; divider and convert to |
         $search_string = str_replace("&gt;", "|", $search_string);
-        $search_string = str_replace("&", "", $search_string);
-        $search_string = str_replace("(", "", $search_string);
-        $search_string = str_replace(")", "", $search_string);
-        $search_string = str_replace(":", "", $search_string);
-        $search_string = str_replace(";", "", $search_string);
 
+        // escape special characters
+        $match = ['\\', '&', '!', '(', ')', '{', '}', '[', ']', '^', '~', '*', '?', ':', '/', '||'];
+        $replace = ['\\\\', '&', '\\!', '\\(', '\\)', '\\{', '\\}', '\\[', '\\]', '\\^', '\\~', '\\*', '\\?', '\\:', '\\/', '\\||'];
+        $search_string = str_replace($match, $replace, $search_string);
 
         //determine the actual final term of a gcmd value
         if(self::isMultiValue($string) && ($type=='gcmd'||$type=='local'))
-            return 'search_label_s:("' . strtolower(self::getNarrowestConcept($string)) . '") ^5 + search_labels_string_s:' . $search_string . ' OR "' . $search_string . '"';
+            return 'search_label_s:("' . mb_strtolower(self::getNarrowestConcept($string)) . '") ^5 + search_labels_string_s:' . $search_string . ' OR "' . $search_string . '"';
 
         //if the provided type is anzsrc-for or anzsrc-seo then specifiy the type in the query so that duplicate values from the wrong type are not returned
         if($type == "anzsrc-for" || $type == "anzsrc-seo")
             return 'type:'.$type.' AND (search_label_s:("' . strtolower($label_string) . '") ^5 + notation_s:"' . $search_string . '" ^5 + "'.$search_string.'")';
 
         // quote the search string so solr reserved characters don't break the solr query
-            return 'search_label_s:("' . strtolower($label_string) . '") ^5 + notation_s:"' . $search_string . '" ^5 + "'.$search_string.'"' ;
+            return 'search_label_s:("' . mb_strtolower($label_string) . '") ^5 + notation_s:"' . $search_string . '" ^5 + "'.$search_string.'"' ;
     }
 
     /**
