@@ -113,11 +113,16 @@ class SubjectsProviderTest extends \RegistryTestClass
     /** @test **/
     public function it_should_process_subjects_correctly()
     {
-        $key = "http://purl.org/au-research/grants/nhmrc/1089698";
+//        $key = "CEL/IMOS/a681fdba-c6d9-44ab-90b9-113b0ed03536";
+//        $key = "IMOS/a681fdba-c6d9-44ab-90b9-113b0ed03536";
+//        $key = "IMOS/5f4c0250-20cc-4e9e-b71f-073e848fe9b7";
+        $key = "k1lZPQvetu44OSGXCu1z2gOKrduo553fXf5CVqHfLCapkHdN25cU";
+//        $key = "bbbbbk1lZPQvetu44OSGXCu1z2gOKrduo553fXf5CVqHfLCapkHdN25cU";
         $this->ensureKeyExist($key);
         $record = RegistryObjectsRepository::getPublishedByKey($key);
 
         $resolved_subjects = SubjectProvider::processSubjects($record);
+        dd($resolved_subjects);
         $this->assertTrue(is_array($resolved_subjects));
     }
 }
