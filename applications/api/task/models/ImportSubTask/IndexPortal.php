@@ -47,7 +47,7 @@ class IndexPortal extends ImportSubTask
         foreach ($importedRecords as $index=>$roID) {
             $ro = $this->parent()->getCI()->ro->getByID($roID);
             $record = RegistryObjectsRepository::getRecordByID($roID);
-
+            $portalIndex = [];
             // index without relationship data
             try {
                 $portalIndex = $ro->indexable_json(null, []);
