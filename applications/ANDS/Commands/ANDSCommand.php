@@ -35,4 +35,19 @@ class ANDSCommand extends Command
         $this->output->writeln($message);
         return;
     }
+
+    public function isQuite()
+    {
+        return $this->output->isQuite();
+    }
+
+    public function isVerbose()
+    {
+        return $this->output->isVerbose();
+    }
+
+    public function isDebug()
+    {
+        return $this->output->isDebug();
+    }
 }
