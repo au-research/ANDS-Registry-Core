@@ -5,10 +5,12 @@ namespace ANDS\Commands;
 
 
 use ANDS\RegistryObject;
+use Elasticsearch\ClientBuilder;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 class ExportCommand extends ANDSCommand
 {
@@ -38,20 +40,97 @@ class ExportCommand extends ANDSCommand
 
         $what = $input->getArgument("what");
 
+        $stopwatch = new Stopwatch();
+        $stopwatch->start('execute');
         if ($what == "registry") {
             $this->exportRegistry();
-            return;
         }
 
         if ($what == "logs") {
             $this->exportLogs();
-            return;
         }
+        $event = $stopwatch->stop('execute');
+
+        $this->log("Task completed. duration: {$event->getDuration()}. Memory Usage: {$event->getMemory()}");
     }
 
     private function exportLogs()
     {
-        return;
+        $dest = $this->options['path'];
+        $batch = $this->options['batch'];
+
+        if (!file_exists($dest)) {
+            $this->log("Creating directory $dest");
+            mkdir($dest, 0775, true);
+        }
+
+        if (!is_writable($dest)) {
+            $this->log("$dest not writable", "error");
+            return;
+        }
+
+        // default format
+        $scope = $this->options['scope'];
+
+        // TODO default scope is portal_search
+        $scope = "portal_search";
+
+        $url = env('ELASTICSEARCH_URL', 'http://localhost:9200');
+        $url = rtrim($url, '/');
+
+        $this->log("Exporting $scope events from $url. writing to $dest");
+
+        $this->client = ClientBuilder::create()
+            ->setHosts(
+                [ $url ]
+            )->build();
+
+        $params = [
+            'index' => 'portal-*',
+            'body' => [
+                '_source' => ["doc.@fields.filters", "doc.@fields.user.user_agent", "doc.@timestamp"],
+                'size' => 1000,
+                "sort" =>  [ "_doc" ],
+                'query' => [
+                    'match' => [
+                        'doc.@fields.event' => [
+                            'query' => 'portal_search'
+                        ],
+                    ]
+                ]
+            ],
+            "scroll" => "1d"
+        ];
+
+        $response = $this->client->search($params);
+        $docs = $response['hits']['hits'];
+        $total = $response['hits']['total'];
+
+        // write the first response
+        $content = json_encode($docs);
+        $path = $dest . md5($content).".json";
+        file_put_contents($path, $content);
+
+        $sofar = count($docs);
+        $this->log("($sofar/$total) $path");
+        while (array_key_exists("_scroll_id", $response) && count($docs) > 0) {
+            $response = $this->client->scroll([
+                "scroll" => "1d",
+                "scroll_id" => $response["_scroll_id"]
+            ]);
+            $docs = $response['hits']['hits'];
+            $total = $response['hits']['total'];
+
+            // write
+            $content = json_encode($docs);
+            $path = $dest . md5($content).".json";
+            file_put_contents($path, $content);
+
+            $sofar += count($docs);
+            $this->log("($sofar/$total) $path");
+        }
+
+
     }
 
     private function exportRegistry()
