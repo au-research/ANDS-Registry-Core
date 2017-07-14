@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 ANDS Research Data Registry follows a quarterly release cycle
 
-## Unreleased
+## [Unreleased](https://github.com/au-research/ANDS-ResearchData-Registry/compare/master...develop)
 * Added a command to export logs and rifcs to flat files 
 * Fixed an indexing issue with `portalIndex` variable declaration
 
