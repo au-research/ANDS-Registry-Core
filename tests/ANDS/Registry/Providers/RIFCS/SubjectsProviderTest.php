@@ -122,7 +122,7 @@ class SubjectsProviderTest extends \RegistryTestClass
         $record = RegistryObjectsRepository::getPublishedByKey($key);
 
         $resolved_subjects = SubjectProvider::processSubjects($record);
-        dd($resolved_subjects);
+//        dd($resolved_subjects);
         $this->assertTrue(is_array($resolved_subjects));
     }
 }
