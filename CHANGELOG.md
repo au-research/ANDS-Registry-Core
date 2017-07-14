@@ -10,6 +10,7 @@ ANDS Research Data Registry follows a quarterly release cycle
 ## Release 24 -  2017-07-05
 ### Added
 * Enhance CMD DOI request events to capture more transaction information
+
 ### Changed
 * Fix the issue with the display of some special characters in RDA
 * Update subject resolution in RDA such that only language codes with correct correct types (ISO 639) are resolved to their string names
@@ -24,6 +25,7 @@ ANDS Research Data Registry follows a quarterly release cycle
     * Using record view events to infer relationships between collections.
 Excluding datasets from Similar datasets if they are already displayed in the record view (ie. Related datasets)
 * Implement OAI-PMH export of Scholix metadata records
+
 ### Changed
 * Enhance RDA link checker to handle URLs that contain UTF-8 encoded characters
 * Fix an issue with My DOIs admin interface where changes to a clients configuration does not propagate to DataCite.
@@ -31,6 +33,7 @@ Excluding datasets from Similar datasets if they are already displayed in the re
 
 ## Release 23 - 2017-04-11
 This release is focused on the migration of ANDS services infrastructure to a new service provider with some minor changes to the Research Vocabularies Australia
+
 ### Changed
 * Performance Enhancement and Bugfixes
 
