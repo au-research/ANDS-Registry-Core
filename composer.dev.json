@@ -50,7 +50,8 @@
         "minhd/solr-client": "~0.1.7",
         "elasticsearch/elasticsearch": "~2.0",
         "minhd/oai-pmh": "dev-master",
-        "javibravo/simpleue": "dev-master"
+        "javibravo/simpleue": "dev-master",
+        "cebe/markdown": "~1.1.1"
     },
     "repositories": [
         {
