@@ -238,6 +238,9 @@ class Auth extends CI_Controller {
             $changelogPath = dirname(__FILE__) . './../../CHANGELOG.md';
             $content = file_get_contents($changelogPath);
             $parser = new \cebe\markdown\GithubMarkdown();
+            $parser->html5 = true;
+            $parser->enableNewlines = true;
+
             $changelog =  $parser->parse($content);
             $data['changelog'] = $changelog;
         } catch (Exception $e) {

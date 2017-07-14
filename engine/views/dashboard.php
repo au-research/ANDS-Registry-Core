@@ -51,7 +51,9 @@ else
 					<a href="<?php echo portal_url();?>" style="margin-top:5px;" class="btn btn-info pull-right" target="_blank">
 					<i class="icon-globe icon icon-white"></i> Visit Research Data Australia</a>
 				</div>
-				<?php echo $changelog; ?>
+                <div class="box-content markdown-content">
+                    <?php echo $changelog; ?>
+                </div>
 			</div>
 		</div>
 
