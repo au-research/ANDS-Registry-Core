@@ -6,6 +6,7 @@ ANDS Research Data Registry follows a quarterly release cycle
 ## [Unreleased](https://github.com/au-research/ANDS-ResearchData-Registry/compare/master...develop)
 * Added a command to export logs and rifcs to flat files 
 * Fixed an indexing issue with `portalIndex` variable declaration
+* Added `CHANGELOG.md` and display in Registry Dashboard
 
 ## Release 24 -  2017-07-05
 ### Added
