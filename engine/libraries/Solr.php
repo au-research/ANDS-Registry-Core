@@ -461,8 +461,7 @@ class Solr
                     break;
                 case 'temporal':
                     $date = explode('-', $value);
-                    $this->setOpt('fq', '+earliest_year:[' . $date[0] . ' TO *]');
-                    $this->setOpt('fq', '+latest_year:[* TO ' . $date[1] . ']');
+                    $this->setOpt('fq', '+(earliest_year:[' . $date[0] . ' TO *] OR latest_year:[* TO ' . $date[1] . '])');
                     break;
                 case 'year_from':
                     if ($value != '')
