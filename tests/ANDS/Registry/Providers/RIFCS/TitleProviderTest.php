@@ -218,8 +218,8 @@ class TitleProviderTest extends \RegistryTestClass
             ]
         ];
         $titles = TitleProvider::getTitlesFromRaw($rawNames, 'party');
-        $this->assertEquals('SUPERIOR - SUBORDINATE', $titles['displayTitle']);
-        $this->assertEquals('SUPERIOR - SUBORDINATE', $titles['listTitle']);
+        $this->assertEquals('SUPERIOR : SUBORDINATE', $titles['displayTitle']);
+        $this->assertEquals('SUPERIOR : SUBORDINATE', $titles['listTitle']);
         $this->assertTrue(true);
     }
 }
