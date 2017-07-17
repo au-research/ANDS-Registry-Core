@@ -83,7 +83,7 @@ class TitleProviderTest extends \RegistryTestClass
                         'value' => '(AUTestingRecords)Reverse Relationships Internal Related Info "isManagerOf"'
                     ],
                     [
-                        '@attributes' => ['type' => 'subordinate'],
+                        '@attributes' => ['type' => 'alternative'],
                         'value' => 'UTS:eResearch IT Services Group'
                     ]
                 ],
@@ -194,6 +194,32 @@ class TitleProviderTest extends \RegistryTestClass
         $titles = TitleProvider::getTitlesFromRaw($rawNames, 'collection');
         $this->assertEquals('Fish', $titles['listTitle']);
         $this->assertEquals('Fish', $titles['displayTitle']);
+        $this->assertTrue(true);
+    }
+
+    /** @test **/
+    public function it_should_join_superior_and_subordinate_names()
+    {
+        $rawNames = [
+            [
+                'value' => [
+                    [
+                        '@attributes' => ['type' => 'superior'],
+                        'value' => 'SUPERIOR'
+                    ],
+                    [
+                        '@attributes' => ['type' => 'subordinate'],
+                        'value' => 'SUBORDINATE'
+                    ]
+                ],
+                '@attributes' => [
+                    'type' => 'primary'
+                ]
+            ]
+        ];
+        $titles = TitleProvider::getTitlesFromRaw($rawNames, 'party');
+        $this->assertEquals('SUPERIOR - SUBORDINATE', $titles['displayTitle']);
+        $this->assertEquals('SUPERIOR - SUBORDINATE', $titles['listTitle']);
         $this->assertTrue(true);
     }
 }
