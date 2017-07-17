@@ -7,11 +7,12 @@ ANDS Research Data Registry follows a quarterly release cycle
 * Added a command to export logs and rifcs to flat files 
 * Fixed an indexing issue with `portalIndex` variable declaration
 * Added `CHANGELOG.md` and display in Registry Dashboard
+* Business Logic for displaying superior and subordinate titles
+* Updated Temporal Search logic to be inclusive of earliest and latest year
 
 ## Release 24 -  2017-07-05
 ### Added
 * Enhance CMD DOI request events to capture more transaction information
-* Business Logic for displaying superior and subordinate titles
 
 ### Changed
 * Fix the issue with the display of some special characters in RDA
@@ -19,7 +20,6 @@ ANDS Research Data Registry follows a quarterly release cycle
 * Implement a fix to prevent duplicate records from displaying as additional related objects in an Activity view page
 * Fix a validation error bug when editing a record with more than 30 `relatedObjects/relatedInfo`
 * Implement a fix to the the DOI manual minting service to ensure updates are processed only when both URL and XML pass validation
-* Updated Temporal Search logic to be inclusive of earliest and latest year
 
 ## Release 23.1 - 2017-05-10
 ### Added
