@@ -154,7 +154,7 @@ class TitleProvider implements RIFCSProvider
 
 
         if ($superiorName && $subordinateName) {
-            return $superiorName['value'] . ' - '. $subordinateName['value'];
+            return $superiorName['value'] . ' : '. $subordinateName['value'];
         }
 
         return null;
