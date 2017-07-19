@@ -14893,7 +14893,12 @@ angular.module('uiGmapgoogle-maps.extensions')
       };
     });
 
-}(angular));;angular.module('record_components',['profile_components'])
+  if (typeof module !== 'undefined') {
+    module.exports = 'lz-string';
+  }
+
+}(angular));
+;angular.module('record_components',['profile_components'])
 
 .factory('record_factory', function($http){
 	return{
@@ -15249,7 +15254,7 @@ app.config(function(uiGmapGoogleMapApiProvider) {
 				case 'anzsrc': return 'ANZSRC'; break;
 				case 'apt': return 'Australian Pictorial Thesaurus'; break;
 				case 'gcmd': return 'GCMD Keyword'; break;
-                case 'iso639-3': return 'iso639-3 Language'; break;
+				case 'iso639-3': return 'iso639-3 Language'; break;
 				case 'lcsh': return 'LCSH'; break;
 				case 'keywords': return 'Keyword'; break;
 				case 'refine': return 'Keyword'; break;
@@ -16508,12 +16513,13 @@ app.directive('focusMe', function($timeout, $parse) {
                     if(!doc.hide) {
                         search_factory.get_matching_records(doc.id).then(function(data){
                             if (doc && !doc.hide) {
-                                doc.identifiermatch = data.message.identifiermatch;
-                                if(doc && !doc.hide) {
-                                    angular.forEach(doc.identifiermatch, function(idd){
-                                        $scope.hidedoc(idd.registry_object_id);
-                                    });
-                                }
+                                console.log(doc)
+                               // doc.identifiermatch = data.message.identifiermatch;
+                               // if(doc && !doc.hide) {
+                               //     angular.forEach(doc.identifiermatch, function(idd){
+                                //        $scope.hidedoc(idd.registry_object_id);
+                                 //   });
+                               // }
                             }
                         });
                     }
@@ -17050,7 +17056,7 @@ app.directive('focusMe', function($timeout, $parse) {
         };
 
         $scope.clearSubject = function() {
-            var fields_array = ['anzsrc-for', 'anzsrc-seo', 'anzsrc', 'keywords', 'scot', 'pont', 'psychit', 'apt', 'gcmd', 'lcsh', 'iso639-3'];
+            var fields_array = ['anzsrc-for', 'anzsrc-seo', 'anzsrc', 'keywords', 'scot', 'pont', 'psychit', 'apt', 'gcmd', 'lcsh','iso639-3'];
             angular.forEach(fields_array, function(ss){
                 delete $scope.prefilters[ss];
             });
@@ -17062,7 +17068,7 @@ app.directive('focusMe', function($timeout, $parse) {
             var ret = 0;
             var fields_array = [];
             if(type=='subject') {
-                fields_array = ['anzsrc-for', 'anzsrc-seo', 'anzsrc', 'keywords', 'scot', 'pont', 'psychit', 'apt', 'gcmd', 'lcsh', 'iso639-3'];
+                fields_array = ['anzsrc-for', 'anzsrc-seo', 'anzsrc', 'keywords', 'scot', 'pont', 'psychit', 'apt', 'gcmd', 'lcsh','iso639-3'];
                 angular.forEach(fields_array, function(ss){
                     ret = $scope.prefilters[ss] ? 1 : ret;
                 });

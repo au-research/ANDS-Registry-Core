@@ -3896,65 +3896,71 @@ CHECKS.ie6 = {
     isotopeInit();
 
 
-
     //styling for the about page
+    // CC-2040. Remove the counter $odometer plugin because it uses waypoint
+    // $('.counter').each(function() {
     //
-    //
+    //     var $counter = $(this);
+    //     var $odometer = $counter.find('.odometer-counter');
+    //     if($odometer.length > 0 ) {
+    //         var od = new Odometer({
+    //             el: $odometer[0],
+    //             value: $odometer.text(),
+    //             format: $counter.attr('data-format')
+    //         });
+    //         console.log(od);
+    //         $counter.waypoint(function() {
+    //             window.setTimeout(function() {
+    //                 $odometer.html( $counter.attr( 'data-count' ) );
+    //             }, 1500);
+    //         },{
+    //             triggerOnce: true,
+    //             offset: 'bottom-in-view'
+    //         });
+    //     }
+    // });
 
-
+    // CC-2040. just set the value instead of using $counter plugin
     $('.counter').each(function() {
-
-        var $counter = $(this);
-        var $odometer = $counter.find('.odometer-counter');
-        if($odometer.length > 0 ) {
-            var od = new Odometer({
-                el: $odometer[0],
-                value: $odometer.text(),
-                format: $counter.attr('data-format')
-            });
-            console.log(od);
-            $counter.waypoint(function() {
-                window.setTimeout(function() {
-                    $odometer.html( $counter.attr( 'data-count' ) );
-                }, 1500);
-            },{
-                triggerOnce: true,
-                offset: 'bottom-in-view'
-            });
-        }
+       $(this).find('.odometer-counter').html($(this).attr('data-count'));
     });
 
 
 
-
 // Init On scroll animations
-    function onScrollInit( items, trigger ) {
-        items.each( function() {
-            var osElement = $(this),
-                osAnimationClass = osElement.attr('data-os-animation'),
-                osAnimationDelay = osElement.attr('data-os-animation-delay');
+//     function onScrollInit( items, trigger ) {
+//         items.each( function() {
+//             var osElement = $(this),
+//                 osAnimationClass = osElement.attr('data-os-animation'),
+//                 osAnimationDelay = osElement.attr('data-os-animation-delay');
+//
+//             osElement.css({
+//                 '-webkit-animation-delay':  osAnimationDelay,
+//                 '-moz-animation-delay':     osAnimationDelay,
+//                 'animation-delay':          osAnimationDelay
+//             });
+//
+//             var osTrigger = ( trigger ) ? trigger : osElement;
+//
+//             osTrigger.waypoint(function() {
+//                 osElement.addClass('animated').addClass(osAnimationClass);
+//             },{
+//                 triggerOnce: true,
+//                 offset: '90%'
+//             });
+//         });
+//     }
 
-            osElement.css({
-                '-webkit-animation-delay':  osAnimationDelay,
-                '-moz-animation-delay':     osAnimationDelay,
-                'animation-delay':          osAnimationDelay
-            });
+    // CC-2040 remove onScrollInit
+    // onScrollInit( $('.os-animation') );
+    // onScrollInit( $( '.staff-os-animation' ), $('.staff-list-container') );
+    // onScrollInit( $( '.recent-simple-os-animation' ), $('.recent-simple-os-container') );
 
-            var osTrigger = ( trigger ) ? trigger : osElement;
-
-            osTrigger.waypoint(function() {
-                osElement.addClass('animated').addClass(osAnimationClass);
-            },{
-                triggerOnce: true,
-                offset: '90%'
-            });
-        });
-    }
-
-    onScrollInit( $('.os-animation') );
-    onScrollInit( $( '.staff-os-animation' ), $('.staff-list-container') );
-    onScrollInit( $( '.recent-simple-os-animation' ), $('.recent-simple-os-container') );
-
+    // CC-2040. Instead of animating the opacity onScrollInit, just display them
+    window.setTimeout(function() {
+        $('.os-animation, .staff-os-animation, .staff-list-container, .recent-simple-os-animation, .recent-simple-os-container')
+            .css("opacity", "1");
+    }, 50);
 
     function createCookie(name,value,days) {
         if (days) {
