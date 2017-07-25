@@ -86,6 +86,8 @@ class SubjectProvider implements RIFCSProvider
      * Resolve the given subjects
      * Hit the SOLR concepts core and determine the list of resolved subjects
      * based on the subjects provided
+     * TODO clean up logic and build resolveSubject($value, $type) for even finer unit
+     * TODO Cache result at resolveSubject end
      *
      * @param $subjects
      * @return array
