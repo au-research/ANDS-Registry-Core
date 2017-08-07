@@ -1,20 +1,21 @@
 <?php
 
 use ANDS\Registry\Providers\ScholixProvider;
+use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 
 class ScholixProviderTest extends RegistryTestClass
 {
     protected $requiredKeys = [
-        "AUTestingRecordsu/collection/enmasse/1248",
-        "AUTCollectionToTestSearchFields37",
-        "AUTestingRecordsQualityLevelsCollection8_demo",
-        "AUTestingRecordsQualityLevelsParty7_demo",
-        "AUTestingRecords2ScholixRecords16",
-        "AUTestingRecords2ScholixRecords14",
-        "AUTestingRecords2ScholixRecords15",
-        "AUTestingRecords2ScholixRecords18",
-        "AUTestingRecords2ScholixGroupRecord1",
+//        "AUTestingRecordsu/collection/enmasse/1248",
+//        "AUTCollectionToTestSearchFields37",
+//        "AUTestingRecordsQualityLevelsCollection8_demo",
+//        "AUTestingRecordsQualityLevelsParty7_demo",
+//        "AUTestingRecords2ScholixRecords16",
+//        "AUTestingRecords2ScholixRecords14",
+//        "AUTestingRecords2ScholixRecords15",
+//        "AUTestingRecords2ScholixRecords18",
+//        "AUTestingRecords2ScholixGroupRecord1",
     ];
 
     /** @test **/
