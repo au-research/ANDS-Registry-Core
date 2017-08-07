@@ -3,12 +3,14 @@
 
 namespace ANDS\Commands\Script;
 
+use ANDS\Registry\Providers\RIFCS\CoreMetadataProvider;
 use ANDS\Registry\Providers\TitleProvider;
 use ANDS\RegistryObject;
+use ANDS\Repository\RegistryObjectsRepository;
 
 class ProcessTitles extends GenericScript implements GenericScriptRunnable
 {
-    protected $availableParams = ["published", "200", "all"];
+    protected $availableParams = ["published", "200", "all", "null"];
     public function run()
     {
         $params = $this->getInput()->getOption('params');
@@ -29,6 +31,10 @@ class ProcessTitles extends GenericScript implements GenericScriptRunnable
             case "all":
                 $this->log("Processing titles for ALL records");
                 $this->processAll();
+                break;
+            case "null":
+                $this->log("Processing all records where title is NULL");
+                $this->processNull();
                 break;
             default:
                 $this->log("Undefined params. Provided $params");
@@ -53,6 +59,18 @@ class ProcessTitles extends GenericScript implements GenericScriptRunnable
         $this->log("Processing {$registryObjects->count()} records");
         foreach ($registryObjects->get() as $ro) {
             $this->updateTitle($ro);
+        }
+        $this->log("Done", "info");
+    }
+
+    private function processNull()
+    {
+        $registryObjects = RegistryObject::whereNull("title")->pluck('registry_object_id');
+        $this->log("Processing {$registryObjects->count()} records");
+        foreach ($registryObjects as $id) {
+            $record = RegistryObjectsRepository::getRecordByID($id);
+            CoreMetadataProvider::process($record);
+            $this->updateTitle($record);
         }
         $this->log("Done", "info");
     }
