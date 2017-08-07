@@ -68,14 +68,6 @@ class ProcessCoreMetadata extends ImportSubTask
             // TODO: Remove CodeIgniter RO dependency
             $ro->save();
 
-            /**
-             * Process Scholixable records
-             * TODO: Move to it's own ImportSubTask
-             */
-            if ($this->parent()->getTaskData("targetStatus") == "PUBLISHED") {
-                ScholixProvider::process($record);
-            }
-
             $this->updateProgress($index, $total, "Processed ($index/$total) $ro->title($roID)");
             unset($ro);
         }
