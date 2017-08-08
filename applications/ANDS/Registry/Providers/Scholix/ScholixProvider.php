@@ -324,7 +324,7 @@ class ScholixProvider implements RegistryContentProvider
             ]
         ];
 
-        $creators = self::getSourceCreators($record, $data);
+        $creators = self::getSourceCreators($record);
         if (count($creators) > 0) {
             $source['creator'] = $creators;
         }

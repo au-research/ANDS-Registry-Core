@@ -149,6 +149,17 @@ class ScholixProviderTest extends RegistryTestClass
         $record = $this->ensureKeyExist("AUTestingRecords2ScholixRecords55");
         $scholix = ScholixProvider::get($record);
         $this->assertNotEmpty($scholix->getLinks());
+
+        $electronicUrls = \ANDS\Registry\Providers\RIFCS\LocationProvider::getElectronicUrl($record);
+        $url = array_pop($electronicUrls);
+
+        // first source
+        $links = $scholix->getLinks();
+        $this->assertEquals(
+          $url,
+          $links[0]['link']['source']['identifier'][0]['identifier']
+        );
+
     }
 
 }
