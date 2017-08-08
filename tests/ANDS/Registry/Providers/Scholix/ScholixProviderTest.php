@@ -133,4 +133,22 @@ class ScholixProviderTest extends RegistryTestClass
         }
     }
 
+    /** (AUTestingRecords2) Simple Scholix Source Collection With No supported identifiers, 1 relatedObject principalInvestigator creator, 1 relatedInfo hasCollector creator and 5 x RelatedInfo Publication with no supported identifiers. 1x relatedObject collection type pub with no identifier. Source is related to party via relatedObject which has the same name as group attribute. Publisher id should be that of the related party.
+     * @test
+     **/
+    public function it_should_AUTestingRecords2ScholixRecords60()
+    {
+        $record = $this->ensureKeyExist("AUTestingRecords2ScholixRecords60");
+        $scholix = ScholixProvider::get($record);
+        $this->assertNotEmpty($scholix->getLinks());
+    }
+
+    /** @test **/
+    public function it_should_AUTestingRecords2ScholixRecords55()
+    {
+        $record = $this->ensureKeyExist("AUTestingRecords2ScholixRecords55");
+        $scholix = ScholixProvider::get($record);
+        $this->assertNotEmpty($scholix->getLinks());
+    }
+
 }

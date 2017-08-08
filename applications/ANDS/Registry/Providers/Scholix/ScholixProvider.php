@@ -7,6 +7,7 @@ namespace ANDS\Registry\Providers;
 use ANDS\API\Task\ImportSubTask\ProcessDelete;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
+use ANDS\Registry\Providers\RIFCS\LocationProvider;
 use ANDS\Registry\Providers\Scholix\Scholix;
 use ANDS\Registry\Providers\Scholix\ScholixDocument;
 use ANDS\Registry\Relation;
@@ -17,6 +18,8 @@ use ANDS\Util\XMLUtil;
 class ScholixProvider implements RegistryContentProvider
 {
     protected static $scholixableAttr = "scholixable";
+    protected static $validSourceIdentifierTypes = ["ark","doi","handle","purl","uri ","url"];
+    protected static $validTargetIdentifierTypes = ['ark','doi','eissn','handle','isbn','issn','pubMedId','purl','uri','url'];
 
     /**
      * if the record is a collection
@@ -62,15 +65,6 @@ class ScholixProvider implements RegistryContentProvider
      */
     public static function process(RegistryObject $record)
     {
-        // Don't store scholixable anymore
-//        $record->deleteRegistryObjectAttribute(self::$scholixableAttr);
-//
-//        $relationships = RelationshipProvider::getMergedRelationships($record);
-//        $record->setRegistryObjectAttribute(
-//            self::$scholixableAttr,
-//            self::isScholixable($record, $relationships)
-//        );
-
         // determine Scholixable
         if (!self::isScholixable($record)) {
             return [
@@ -194,6 +188,11 @@ class ScholixProvider implements RegistryContentProvider
                     IdentifierProvider::getCitationMetadataIdentifiers($to)
                 );
 
+                // only go for valid target identifiers type
+                $toIdentifiers = collect($toIdentifiers)->filter(function($item) {
+                    return in_array($item['type'], self::$validTargetIdentifierTypes);
+                })->toArray();
+
                 // should be unique
                 $toIdentifiers = collect($toIdentifiers)->unique()->toArray();
 
@@ -226,7 +225,9 @@ class ScholixProvider implements RegistryContentProvider
         );
 
         //unique
-        $identifiers = collect($identifiers)->unique()->toArray();
+        $identifiers = collect($identifiers)->filter(function($item){
+            return in_array($item['type'], self::$validSourceIdentifierTypes);
+        })->unique()->toArray();
 
         foreach ($identifiers as $identifier) {
             $identifierlink = $commonLinkMetadata;
@@ -243,6 +244,24 @@ class ScholixProvider implements RegistryContentProvider
         }
 
         // return the ScholixDocument if there's enough links
+        if (count($doc->toArray()) > 0) {
+            return $doc;
+        }
+
+        // second option, use collection/location/address/electronic[@type='url'] if no identifiers found
+        $urls = LocationProvider::getElectronicUrl($record, $data['recordData']);
+        if (count($urls) > 0) {
+            $url = array_pop($urls);
+            $electronicUrlLink = $commonLinkMetadata;
+            $electronicUrlLink['source'] = self::getElectronicUrlSource($record, $url);
+            foreach ($targets as $target) {
+                $electronicUrlLink['relationship'] = self::getRelationships($target['relationship']);
+                $electronicUrlLink['target'] = $target['target'];
+                $doc->addLink($electronicUrlLink);
+            }
+        }
+
+        // return if there's enough links
         if (count($doc->toArray()) > 0) {
             return $doc;
         }
@@ -268,7 +287,33 @@ class ScholixProvider implements RegistryContentProvider
         $source = [
             'identifier' => [
                 [
-                    'identifier' => baseUrl('view?key=') . $record->key,                          'schema' => 'Research Data Australia'
+                    'identifier' => baseUrl('view?key=') . $record->key,
+                    'schema' => 'Research Data Australia'
+                ]
+            ],
+            'title' => $record->title,
+            'objectType' => $record->type,
+            'publicationDate' => DatesProvider::getPublicationDate($record),
+            'publisher' => [
+                'name' => $record->group
+            ]
+        ];
+
+        $creators = self::getSourceCreators($record, $data);
+        if (count($creators) > 0) {
+            $source['creator'] = $creators;
+        }
+
+        return $source;
+    }
+
+    public static function getElectronicUrlSource(RegistryObject $record, $url)
+    {
+        $source = [
+            'identifier' => [
+                [
+                    'identifier' => $url,
+                    'schema' => 'Research Data Australia'
                 ]
             ],
             'title' => $record->title,
@@ -397,6 +442,7 @@ class ScholixProvider implements RegistryContentProvider
                 ];
             }
         )->toArray();
+
 
         return $identifiers;
     }
