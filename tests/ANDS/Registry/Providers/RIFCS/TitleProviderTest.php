@@ -3,6 +3,8 @@
 namespace ANDS\Registry\Providers\RIFCS;
 
 use ANDS\Registry\Providers\TitleProvider;
+use ANDS\RegistryObject;
+use ANDS\Repository\RegistryObjectsRepository;
 
 class TitleProviderTest extends \RegistryTestClass
 {
@@ -232,4 +234,5 @@ class TitleProviderTest extends \RegistryTestClass
         $titles = TitleProvider::getTitlesFromRaw($rawNames, 'Collection');
         $this->assertEquals('Kuerschner', $titles['listTitle']);
     }
+
 }
