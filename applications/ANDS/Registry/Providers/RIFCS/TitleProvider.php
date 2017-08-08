@@ -63,7 +63,7 @@ class TitleProvider implements RIFCSProvider
             if (!array_key_exists('@attributes', $item)) {
                 return false;
             }
-            return $item['@attributes']['type'] == 'primary';
+            return array_key_exists('type', $item['@attributes']) && $item['@attributes']['type'] == 'primary';
         });
 
         $displayTitle = is_string($name['value']) ? $name['value'] : null;
@@ -146,10 +146,10 @@ class TitleProvider implements RIFCSProvider
             return $item['@attributes']['type'] == 'primary';
         });
         $superiorName =  collect($firstPrimaryName['value'])->first(function($key, $item) {
-            return $item['@attributes']['type'] == 'superior';
+            return is_array($item) && array_key_exists('@attributes', $item) && $item['@attributes']['type'] == 'superior';
         });
         $subordinateName = collect($firstPrimaryName['value'])->first(function($key, $item) {
-            return $item['@attributes']['type'] == 'subordinate';
+            return is_array($item) && array_key_exists('@attributes', $item) && $item['@attributes']['type'] == 'subordinate';
         });
 
 
