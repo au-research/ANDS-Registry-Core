@@ -163,11 +163,36 @@ class ScholixProviderTest extends RegistryTestClass
     }
 
     /** @test **/
-    public function it_should_AUTestingRecords2ScholixRecords62()
+    public function it_should_have_the_right_identifier_type()
     {
-        $record = $this->ensureKeyExist("AUTestingRecords2ScholixRecords62");
-        $scholix = ScholixProvider::get($record);
-        $this->assertNotEmpty($scholix->getLinks());
+        $keys = [
+//            "AUTestingRecords2ScholixRecords57",
+//            "AUTestingRecords2ScholixRecords62",
+            "AUTestingRecords2ScholixRecords60",
+        ];
+        foreach ($keys as $key) {
+            $record = RegistryObjectsRepository::getPublishedByKey($key);
+            if (!$record) {
+                continue;
+            }
+            $scholix = ScholixProvider::get($record);
+
+            $this->assertNotEmpty($scholix->getLinks());
+
+            // test source identifier
+            $sourceIdentiferTypes = collect($scholix->getLinks())
+                ->pluck('link')->pluck('source')->pluck('identifier')->flatten(1)->pluck('schema');
+            foreach ($sourceIdentiferTypes as $type) {
+                $this->assertContains($type, array_merge(ScholixProvider::$validSourceIdentifierTypes, ["Research Data Australia"]));
+            }
+
+            // test target identifier
+            $targetIdentifierTypes = collect($scholix->getLinks())
+                ->pluck('link')->pluck('target')->pluck('identifier')->flatten(1)->pluck('schema');
+            foreach ($targetIdentifierTypes as $type) {
+                $this->assertContains($type, array_merge(ScholixProvider::$validTargetIdentifierTypes, ["Research Data Australia"]));
+            }
+        }
     }
 
 }

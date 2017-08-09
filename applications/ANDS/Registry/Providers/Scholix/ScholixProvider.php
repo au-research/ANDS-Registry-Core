@@ -18,8 +18,8 @@ use ANDS\Util\XMLUtil;
 class ScholixProvider implements RegistryContentProvider
 {
     protected static $scholixableAttr = "scholixable";
-    protected static $validSourceIdentifierTypes = ["ark","doi","handle","purl","uri ","url"];
-    protected static $validTargetIdentifierTypes = ['ark','doi','eissn','handle','isbn','issn','pubMedId','purl','uri','url'];
+    public static $validSourceIdentifierTypes = ["ark","doi","handle","purl","uri ","url"];
+    public static $validTargetIdentifierTypes = ['ark','doi','eissn','handle','isbn','issn','pubMedId','purl','uri','url'];
 
     /**
      * if the record is a collection
@@ -364,6 +364,13 @@ class ScholixProvider implements RegistryContentProvider
             }
 
             return false;
+        })->filter(function($item){
+            // remove item with non valid identifier types
+            $identiferType = $item->prop('to_identifier_type');
+            if ($identiferType && !in_array($identiferType, self::$validTargetIdentifierTypes)) {
+                return false;
+            }
+            return true;
         })->toArray();
 
         return $relationships;
