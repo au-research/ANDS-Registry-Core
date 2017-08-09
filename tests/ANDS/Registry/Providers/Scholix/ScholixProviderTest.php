@@ -162,4 +162,12 @@ class ScholixProviderTest extends RegistryTestClass
 
     }
 
+    /** @test **/
+    public function it_should_AUTestingRecords2ScholixRecords62()
+    {
+        $record = $this->ensureKeyExist("AUTestingRecords2ScholixRecords62");
+        $scholix = ScholixProvider::get($record);
+        $this->assertNotEmpty($scholix->getLinks());
+    }
+
 }
