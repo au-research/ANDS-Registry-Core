@@ -251,13 +251,14 @@ class ScholixProvider implements RegistryContentProvider
         // second option, use collection/location/address/electronic[@type='url'] if no identifiers found
         $urls = LocationProvider::getElectronicUrl($record, $data['recordData']);
         if (count($urls) > 0) {
-            $url = array_pop($urls);
-            $electronicUrlLink = $commonLinkMetadata;
-            $electronicUrlLink['source'] = self::getElectronicUrlSource($record, $url);
-            foreach ($targets as $target) {
-                $electronicUrlLink['relationship'] = self::getRelationships($target['relationship']);
-                $electronicUrlLink['target'] = $target['target'];
-                $doc->addLink($electronicUrlLink);
+            foreach ($urls as $url) {
+                $electronicUrlLink = $commonLinkMetadata;
+                $electronicUrlLink['source'] = self::getElectronicUrlSource($record, $url);
+                foreach ($targets as $target) {
+                    $electronicUrlLink['relationship'] = self::getRelationships($target['relationship']);
+                    $electronicUrlLink['target'] = $target['target'];
+                    $doc->addLink($electronicUrlLink);
+                }
             }
         }
 
@@ -313,7 +314,7 @@ class ScholixProvider implements RegistryContentProvider
             'identifier' => [
                 [
                     'identifier' => $url,
-                    'schema' => 'Research Data Australia'
+                    'schema' => 'url'
                 ]
             ],
             'title' => $record->title,
