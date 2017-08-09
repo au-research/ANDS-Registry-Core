@@ -289,7 +289,7 @@ class ScholixProvider implements RegistryContentProvider
             'identifier' => [
                 [
                     'identifier' => baseUrl('view?key=') . $record->key,
-                    'schema' => 'Research Data Australia'
+                    'schema' => 'url'
                 ]
             ],
             'title' => $record->title,
