@@ -18,7 +18,7 @@ use ANDS\Util\XMLUtil;
 class ScholixProvider implements RegistryContentProvider
 {
     protected static $scholixableAttr = "scholixable";
-    public static $validSourceIdentifierTypes = ["ark","doi","handle","purl","uri ","url"];
+    public static $validSourceIdentifierTypes = ["ark","doi","handle","purl","uri","url"];
     public static $validTargetIdentifierTypes = ['ark','doi','eissn','handle','isbn','issn','pubMedId','purl','uri','url'];
 
     /**

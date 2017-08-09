@@ -166,8 +166,9 @@ class ScholixProviderTest extends RegistryTestClass
     public function it_should_have_the_right_identifier_type()
     {
         $keys = [
-//            "AUTestingRecords2ScholixRecords57",
-//            "AUTestingRecords2ScholixRecords62",
+            "AUTestingRecords2ScholixRecords57",
+            "AUTestingRecords2ScholixRecords59",
+            "AUTestingRecords2ScholixRecords62",
             "AUTestingRecords2ScholixRecords60",
         ];
         foreach ($keys as $key) {
