@@ -173,8 +173,10 @@ class ScholixProvider implements RegistryContentProvider
             'linkProvider' => [
                 'name' => 'Australian National Data Service',
                 'identifier' => [
-                    ['identifier' =>  'http://nla.gov.au/nla.party-1508909',
-                    'schema' => 'AU-ANL:PEAU']
+                    [
+                        'identifier' =>  'http://nla.gov.au/nla.party-1508909',
+                        'schema' => 'url'
+                    ]
                 ],
                 'objectType' => $record->type,
                 'title' => $record->title
@@ -474,7 +476,6 @@ class ScholixProvider implements RegistryContentProvider
                 ];
             }
         )->toArray();
-
 
         return $identifiers;
     }
