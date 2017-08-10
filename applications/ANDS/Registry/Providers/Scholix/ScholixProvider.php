@@ -18,8 +18,26 @@ use ANDS\Util\XMLUtil;
 class ScholixProvider implements RegistryContentProvider
 {
     protected static $scholixableAttr = "scholixable";
-    public static $validSourceIdentifierTypes = ["ark","doi","handle","purl","uri","url"];
-    public static $validTargetIdentifierTypes = ['ark','doi','eissn','handle','isbn','issn','pubMedId','purl','uri','url'];
+    public static $validSourceIdentifierTypes = [
+        "ark" => 'ark',
+        "doi" => 'doi',
+        "handle" => 'hdl',
+        "purl" => 'purl',
+        "uri" => 'url',
+        "url" => 'url'
+    ];
+    public static $validTargetIdentifierTypes = [
+        "ark" => 'ark',
+        "doi" => 'doi',
+        'eissn' => 'issn',
+        "handle" => 'hdl',
+        'isbn' => 'isbn',
+        'issn' => 'issn',
+        'pubMedId' => 'pubmed',
+        "purl" => 'purl',
+        "uri" => 'url',
+        "url" => 'url'
+    ];
 
     /**
      * if the record is a collection
@@ -190,11 +208,14 @@ class ScholixProvider implements RegistryContentProvider
 
                 // only go for valid target identifiers type
                 $toIdentifiers = collect($toIdentifiers)->filter(function($item) {
-                    return in_array($item['type'], self::$validTargetIdentifierTypes);
+                    return in_array($item['type'], array_keys(self::$validTargetIdentifierTypes));
                 })->toArray();
 
-                // should be unique
-                $toIdentifiers = collect($toIdentifiers)->unique()->toArray();
+                // should be unique and format properly
+                $toIdentifiers = collect($toIdentifiers)->unique()->map(function($item) {
+                    $item['type'] = self::$validTargetIdentifierTypes[$item['type']];
+                    return $item;
+                })->toArray();
 
                 if (count($toIdentifiers) == 0) {
                     $targets[] = [
@@ -224,10 +245,13 @@ class ScholixProvider implements RegistryContentProvider
             IdentifierProvider::getCitationMetadataIdentifiers($record, $data['recordData'])
         );
 
-        //unique
+        //unique and format
         $identifiers = collect($identifiers)->filter(function($item){
-            return in_array($item['type'], self::$validSourceIdentifierTypes);
-        })->unique()->toArray();
+            return in_array($item['type'], array_keys(self::$validSourceIdentifierTypes));
+        })->unique()->map(function($item) {
+            $item['type'] = self::$validSourceIdentifierTypes[$item['type']];
+            return $item;
+        })->toArray();
 
         foreach ($identifiers as $identifier) {
             $identifierlink = $commonLinkMetadata;
@@ -367,7 +391,7 @@ class ScholixProvider implements RegistryContentProvider
         })->filter(function($item){
             // remove item with non valid identifier types
             $identiferType = $item->prop('to_identifier_type');
-            if ($identiferType && !in_array($identiferType, self::$validTargetIdentifierTypes)) {
+            if ($identiferType && !in_array($identiferType, array_keys(self::$validTargetIdentifierTypes))) {
                 return false;
             }
             return true;
@@ -575,10 +599,14 @@ class ScholixProvider implements RegistryContentProvider
 
     public static function getTargetMetadataRelatedInfo($publication)
     {
+        $identifierType = $publication->prop('to_identifier_type');
+        $identifierType = self::$validTargetIdentifierTypes[$identifierType];
         $target = [
             'identifier' => [
-                ['identifier' => $publication->prop('to_identifier'),
-                'schema' => $publication->prop('to_identifier_type')]
+                [
+                    'identifier' => $publication->prop('to_identifier'),
+                    'schema' => $identifierType
+                ]
             ],
             'objectType' => 'literature'
         ];
