@@ -21,5 +21,7 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
         if ($record === null) {
             $this->markTestSkipped("The record with $key is not available. Skipping tests...");
         }
+
+        return $record;
     }
 }
