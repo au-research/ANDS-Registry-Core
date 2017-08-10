@@ -184,14 +184,14 @@ class ScholixProviderTest extends RegistryTestClass
             $sourceIdentiferTypes = collect($scholix->getLinks())
                 ->pluck('link')->pluck('source')->pluck('identifier')->flatten(1)->pluck('schema');
             foreach ($sourceIdentiferTypes as $type) {
-                $this->assertContains($type, array_merge(ScholixProvider::$validSourceIdentifierTypes, ["Research Data Australia"]));
+                $this->assertContains($type, ScholixProvider::$validSourceIdentifierTypes);
             }
 
             // test target identifier
             $targetIdentifierTypes = collect($scholix->getLinks())
                 ->pluck('link')->pluck('target')->pluck('identifier')->flatten(1)->pluck('schema');
             foreach ($targetIdentifierTypes as $type) {
-                $this->assertContains($type, array_merge(ScholixProvider::$validTargetIdentifierTypes, ["Research Data Australia"]));
+                $this->assertContains($type, ScholixProvider::$validTargetIdentifierTypes);
             }
         }
     }
