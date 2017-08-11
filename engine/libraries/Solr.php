@@ -355,6 +355,13 @@ class Solr
         // Whether to break equal-scored records using the maximum of individual score components (~0.0) or sum (~1.0)
         $this->setOpt('tie', '0.1');
 
+        // Temporal clean up
+        if (array_key_exists('year_from', $filters) && array_key_exists('year_to', $filters)) {
+            $filters['temporal'] = $filters['year_from'] . '-' . $filters['year_to'];
+            unset($filters['year_from']);
+            unset($filters['year_to']);
+        }
+
         // map each of the user-supplied filters to it's corresponding SOLR parameter
         foreach ($filters as $key => $value) {
             if (!is_array($value) && $key != 'q') {
