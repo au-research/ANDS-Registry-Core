@@ -148,6 +148,7 @@ class ScholixProvider implements RegistryContentProvider
             ->pluck('scholix_identifier')->toArray();
         $shouldBeDeleted = array_diff($exist, $new);
         Scholix::whereIn('scholix_identifier', $shouldBeDeleted)->delete();
+        $report['deleted'][] = $shouldBeDeleted;
 
         return $report;
     }

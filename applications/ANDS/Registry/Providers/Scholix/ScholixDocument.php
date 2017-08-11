@@ -6,6 +6,7 @@ namespace ANDS\Registry\Providers\Scholix;
 
 use ANDS\API\Task\ImportSubTask\ProcessDelete;
 use Carbon\Carbon;
+use Ramsey\Uuid\Uuid;
 
 class ScholixDocument
 {
@@ -112,7 +113,10 @@ class ScholixDocument
         $sourceID = $link['link']['source']['identifier'][0]['identifier'];
         $targetID = $link['link']['target']['identifier'][0]['identifier'];
 
-        $identifier = $prefix . base64_encode($sourceID . $targetID);
+        $namespace = Uuid::uuid5(Uuid::NAMESPACE_URL, "https://researchdata.ands.org.au")->toString();
+        $uuid5 = Uuid::uuid5($namespace, $sourceID . $targetID)->toString();
+
+        $identifier = $prefix . $uuid5;
         return $identifier;
     }
 
