@@ -471,7 +471,7 @@ class Solr
                     $from = $date[0];
                     $to = $date[1];
 
-                    $this->setOpt('fq', "+(earliest_year:[$from TO $to] OR latest_year:[$from TO $to]) OR (earliest_year:[ * TO $to] AND latest_year:[$from TO *])");
+                    $this->setOpt('fq', "+((earliest_year:[$from TO $to] OR latest_year:[$from TO $to]) OR (earliest_year:[ * TO $to] AND latest_year:[$from TO *]))");
 //                    $this->setOpt('fq', "+(earliest_year:[$from TO *] AND latest_year:[* TO $to]) OR (earliest_year:[$from TO *] AND earliest_year:[* TO $to]) OR (latest_year:[* TO $to] AND latest_year:[$from TO *])");
                     break;
                 case 'year_from':
