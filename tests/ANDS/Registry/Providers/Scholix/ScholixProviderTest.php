@@ -53,7 +53,7 @@ class ScholixProviderTest extends RegistryTestClass
     /** @test **/
     public function it_should_get_the_right_identifier()
     {
-        $partyRecord = RegistryObjectsRepository::getPublishedByKey("AUTestingRecords2ScholixGroupRecord1");
+        $partyRecord = $this->ensureKeyExist("AUTestingRecords2ScholixGroupRecord1");
         $partyRecordIdentifiers = \ANDS\Registry\Providers\RIFCS\IdentifierProvider::get($partyRecord);
 
         $shouldHave = [
