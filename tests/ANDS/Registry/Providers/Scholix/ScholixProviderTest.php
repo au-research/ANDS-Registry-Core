@@ -133,4 +133,67 @@ class ScholixProviderTest extends RegistryTestClass
         }
     }
 
+    /** (AUTestingRecords2) Simple Scholix Source Collection With No supported identifiers, 1 relatedObject principalInvestigator creator, 1 relatedInfo hasCollector creator and 5 x RelatedInfo Publication with no supported identifiers. 1x relatedObject collection type pub with no identifier. Source is related to party via relatedObject which has the same name as group attribute. Publisher id should be that of the related party.
+     * @test
+     **/
+    public function it_should_AUTestingRecords2ScholixRecords60()
+    {
+        $record = $this->ensureKeyExist("AUTestingRecords2ScholixRecords60");
+        $scholix = ScholixProvider::get($record);
+        $this->assertNotEmpty($scholix->getLinks());
+    }
+
+    /** @test **/
+    public function it_should_AUTestingRecords2ScholixRecords55()
+    {
+        $record = $this->ensureKeyExist("AUTestingRecords2ScholixRecords55");
+        $scholix = ScholixProvider::get($record);
+        $this->assertNotEmpty($scholix->getLinks());
+
+        $electronicUrls = \ANDS\Registry\Providers\RIFCS\LocationProvider::getElectronicUrl($record);
+        $url = array_pop($electronicUrls);
+
+        // first source
+        $links = $scholix->getLinks();
+        $this->assertEquals(
+          $url,
+          $links[0]['link']['source']['identifier'][0]['identifier']
+        );
+
+    }
+
+    /** @test **/
+    public function it_should_have_the_right_identifier_type()
+    {
+        $keys = [
+            "AUTestingRecords2ScholixRecords57",
+            "AUTestingRecords2ScholixRecords59",
+            "AUTestingRecords2ScholixRecords62",
+            "AUTestingRecords2ScholixRecords60",
+        ];
+        foreach ($keys as $key) {
+            $record = RegistryObjectsRepository::getPublishedByKey($key);
+            if (!$record) {
+                continue;
+            }
+            $scholix = ScholixProvider::get($record);
+
+            $this->assertNotEmpty($scholix->getLinks());
+
+            // test source identifier
+            $sourceIdentiferTypes = collect($scholix->getLinks())
+                ->pluck('link')->pluck('source')->pluck('identifier')->flatten(1)->pluck('schema');
+            foreach ($sourceIdentiferTypes as $type) {
+                $this->assertContains($type, array_values(ScholixProvider::$validSourceIdentifierTypes));
+            }
+
+            // test target identifier
+            $targetIdentifierTypes = collect($scholix->getLinks())
+                ->pluck('link')->pluck('target')->pluck('identifier')->flatten(1)->pluck('schema');
+            foreach ($targetIdentifierTypes as $type) {
+                $this->assertContains($type, array_values(ScholixProvider::$validTargetIdentifierTypes));
+            }
+        }
+    }
+
 }
