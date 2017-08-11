@@ -54,7 +54,8 @@
         "minhd/solr-client": "dev-master",
         "elasticsearch/elasticsearch": "~2.0",
         "minhd/oai-pmh" : "dev-master",
-        "javibravo/simpleue" : "dev-master"
+        "javibravo/simpleue" : "dev-master",
+        "ramsey/uuid": "^3.7"
     },
 
     "repositories": [
