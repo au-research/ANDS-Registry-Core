@@ -258,7 +258,7 @@ class TitleProvider implements RIFCSProvider
 
         // take the first primary found
         $name = $names->first(function ($key, $item) {
-            return $item['@attributes']['type'] == 'primary';
+            return array_key_exists('@attributes', $item) && $item['@attributes']['type'] == 'primary';
         });
 
         // if no primary is found, take the first name regardless
