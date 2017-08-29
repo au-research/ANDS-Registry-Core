@@ -44,23 +44,6 @@ class Directaccess extends ROHandler
             }
         }
 
-        if ($this->xml->{$this->ro->class}->relatedInfo) {
-            foreach ($this->xml->{$this->ro->class}->relatedInfo as $relatedInfo) {
-                $type = (string)$relatedInfo['type'];
-                if ($type == 'service' && in_array($relatedInfo->relation['type'], $relationshipTypeArray) && $relatedInfo->relation->url != '') {
-                    $download[] = Array(
-                        'access_type' => 'viaService',
-                        'contact_type' => 'url',
-                        'access_value' => (string)$relatedInfo->relation->url,
-                        'title' => (string)$relatedInfo->title,
-                        'mediaType' => '',
-                        'byteSize' => '',
-                        'notes' => (string)$relatedInfo->relation->description
-                    );
-                }
-            }
-        }
-
         if ($this->xml && $this->gXPath->evaluate("count(//ro:location/ro:address/ro:electronic)") > 0) {
             if ($this->gXPath->evaluate("count(//ro:location/ro:address/ro:electronic[@type='url'])") > 0) {
                 $query = "//ro:location/ro:address/ro:electronic[@type='url']";
