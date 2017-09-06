@@ -48,10 +48,10 @@ class ServiceDiscoveryTest extends \RegistryTestClass
     }
 
     public function test_get_links_as_json(){
-        $links = ServiceDiscovery::getServiceLinksForDatasource(12);
+        $ro_ids = array(919,931,925);
+        $links = ServiceDiscovery::getServiceByRegistryObjectIds($ro_ids);
         $json = ServiceDiscovery::getLinkasJson($links);
-        print($json);
-
+        var_dump(json_decode($json));
     }
 
 }

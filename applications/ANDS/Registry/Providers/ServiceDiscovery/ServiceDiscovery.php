@@ -6,7 +6,7 @@ namespace ANDS\Registry\Providers\ServiceDiscovery;
 
 
 use ANDS\RegistryObject;
-use ANDS\Util\XMLUtil;
+use ANDS\RegistryObject\Identifier;
 use ANDS\RegistryObject\Links;
 
 class ServiceDiscovery {
@@ -47,15 +47,28 @@ class ServiceDiscovery {
         $linksArray = array();
         foreach($links as $link){
             $url = $link->link;
-            if(!isset($linksArray[$url])){
-                $linksArray[$url] = array("url" => $url, "registry_object_keys" => array());
-            }
+            $type = $link->link_type;
+
             $ro = RegistryObject::where('registry_object_id', $link->registry_object_id)->first();
-            if($ro->status == 'PUBLISHED' and !isset($linksArray[$url]["registry_object_keys"][$ro->key])){
-                array_push($linksArray[$url]["registry_object_keys"], $ro->key);
+            if($ro->status == 'PUBLISHED' and $ro->class == 'collection' and
+                !isset($linksArray[$url]["related_object_keys"][$ro->key])){
+                if(!isset($linksArray[$url.'####'.$type])){
+                    $linksArray[$url.'####'.$type] = array("url" => $url, "type" => $type,
+                        "related_collection_keys" => array(), "related_collection_uuids" => array());
+                }
+
+                array_push($linksArray[$url.'####'.$type]["related_collection_keys"], $ro->key);
+
+                $uuids = Identifier::where('registry_object_id',
+                    $link->registry_object_id)->where('identifier_type', 'global')->get();
+                foreach($uuids as $uuid) {
+                    if(!isset($linksArray[$url.'####'.$type]["related_collection_uuids"][$uuid->identifier])){
+                        array_push($linksArray[$url.'####'.$type]["related_collection_uuids"], $uuid->identifier);
+                    }
+                }
             }
         }
-        return json_encode($linksArray);
+        return json_encode(array("services"=>$linksArray));
     }
 
 }
