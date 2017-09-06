@@ -38,4 +38,13 @@ class RelationshipProviderTest extends \RegistryTestClass
         $funder = GrantsConnectionsProvider::create()->getFunder($record);
         // TODO: verify funder exists, this one has a relatedInfo (reverse) isFundedBy a party
     }
+
+    public function test_it_should_find_affected_records()
+    {
+        $record = $this->ensureIDExist(1169851);
+        $affectedRecords = RelationshipProvider::getAffectedIDsFromIDs([$record->id], [$record->key]);
+        dd(count($affectedRecords));
+    }
+
+
 }

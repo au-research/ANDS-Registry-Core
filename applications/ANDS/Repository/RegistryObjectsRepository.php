@@ -321,4 +321,32 @@ class RegistryObjectsRepository
 
         return $query->get();
     }
+
+    public static function getPublishedBy($filters)
+    {
+        $query = RegistryObject::where('status', 'PUBLISHED');
+
+        if (array_key_exists('limit', $filters)) {
+            $query = $query->limit($filters['limit']);
+            unset($filters['limit']);
+        }
+
+        if (array_key_exists('offset', $filters)) {
+            $query = $query->offset($filters['offset']);
+            unset($filters['offset']);
+        }
+
+        foreach ($filters as $key => $value) {
+            if ($value != "*") {
+                $query = $query->where($key, $value);
+            }
+        }
+
+        return $query->get();
+    }
+
+    public static function getPublishedRecords($limit, $offset)
+    {
+        return RegistryObject::limit($limit, $offset)->get();
+    }
 }
