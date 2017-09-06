@@ -498,12 +498,14 @@ function alphasort_byattr_title($a, $b) {
 }
 
 function monolog($message, $logger = "activity", $type = "info", $allowBot = false) {
-	$CI =& get_instance();
-	if (!class_exists('ANDSLogging')) {
-        $CI->load->library('ANDSLogging');
-    }
+    if (function_exists('get_instance')) {
+        $CI =& get_instance();
+        if (!class_exists('ANDSLogging')) {
+            $CI->load->library('ANDSLogging');
+        }
 
-    \ANDSLogging::log($message, $logger, $type, $allowBot);
+        \ANDSLogging::log($message, $logger, $type, $allowBot);
+    }
 }
 
 function debug($message, $type = "debug") {
@@ -528,6 +530,9 @@ function debug($message, $type = "debug") {
 }
 
 function ulog($message, $logger="activity", $type = "info") {
+    if (!function_exists('get_instance')) {
+        return;
+    }
 	$CI =& get_instance();
 
     //check if the logging class is loaded, if not, load it

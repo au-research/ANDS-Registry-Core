@@ -662,6 +662,7 @@ class RelationshipProvider
             ->setFilter('to_id', array_merge($ids, $directAndReverse))
             ->setFilter('relation_type', ['isPartOf', 'isFundedBy', 'isOutputOf'])
             ->setFilter('from_class', 'collection')
+            ->setFilter('to_class', 'collection')
             ->setLimit(0)
             ->get();
 
