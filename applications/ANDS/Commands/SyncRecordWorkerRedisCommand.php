@@ -113,20 +113,20 @@ class SyncRecordWorkerRedisCommand extends Command
 
     private function identify(InputInterface $input, OutputInterface $output)
     {
-        $notSynced = RegistryObject::where('status', 'PUBLISHED')
-            ->whereHas('registryObjectAttributes', function($query){
-                return $query
-                    ->where('attribute', 'indexed_portal_at');
-            }, '<', 1);
-        $notSyncedCount = $notSynced->count();
-        $output->writeln("There are {$notSyncedCount} un-synced records");
-
-        $helper = $this->getHelper('question');
-        $question = new ConfirmationQuestion('Proceed to fix? [y|N] : ', false);
-        if (!$helper->ask($input, $output, $question)) {
-            $output->writeln("Aborting.");
-            return;
-        }
+//        $notSynced = RegistryObject::where('status', 'PUBLISHED')
+//            ->whereHas('registryObjectAttributes', function($query){
+//                return $query
+//                    ->where('attribute', 'indexed_portal_at');
+//            }, '<', 1);
+//        $notSyncedCount = $notSynced->count();
+//        $output->writeln("There are {$notSyncedCount} un-synced records");
+//
+//        $helper = $this->getHelper('question');
+//        $question = new ConfirmationQuestion('Proceed to fix? [y|N] : ', false);
+//        if (!$helper->ask($input, $output, $question)) {
+//            $output->writeln("Aborting.");
+//            return;
+//        }
 
         // write to ands.task-queue
         $redisClient = new Client(array(
@@ -136,18 +136,25 @@ class SyncRecordWorkerRedisCommand extends Command
             'schema' => 'tcp'
         ));
         $redisQueue = new RedisQueue($redisClient, $input->getOption('queue'));
-        $notSyncedIDs = $notSynced->pluck('registry_object_id');
-//        $notSyncedIDs = [];
-//
+//        $notSyncedIDs = $notSynced->pluck('registry_object_id');
+        $notSyncedIDs = [];
+
+        $dataSourceID = 96;
+        $DBIDs = RegistryObject::where('data_source_id', $dataSourceID)->where('status', 'PUBLISHED')->pluck('registry_object_id')->toArray();
+        $output->writeln("Found ". count($DBIDs) . " PUBLISHED records for data source $dataSourceID in the database");
+        $solrIDs = [];
 //        $solrClient = new SolrClient(Config::get('app.solr_url'));
 //        $solrClient->setCore('portal');
 //        $result = $solrClient->search([
-//            'q' => '-data_source_id:*',
-//            'rows' => 2000
+//            'q' => "data_source_id:$dataSourceID",
+//            'rows' => 20000,
+//            'fl' => 'id'
 //        ])->getDocs();
 //        foreach ($result as $doc) {
-//            $notSyncedIDs[] = $doc->id;
+//            $solrIDs[] = $doc->id;
 //        }
+
+        $notSyncedIDs = array_diff($DBIDs, $solrIDs);
 
         foreach ($notSyncedIDs as $id) {
             $redisQueue->sendJob(

@@ -132,7 +132,7 @@
                 </div>
                 <h1 style="color:#ffffff">Datasets</h1>
             </div>
-            <div class="col-md-6 text-center element-medium-top element-medium-bottom">
+            <div class="col-md-6 text-center not-condensed os-animation animated fadeInUp element-medium-top element-medium-bottom">
                 <div class="counter bordered text-default element-short-top element-short-bottom os-animation"
                      data-count="{{count($contributors)}}" data-format="(,ddd)" data-os-animation="fadeIn"
                      data-os-animation-delay="0s" style="color:#ffffff">

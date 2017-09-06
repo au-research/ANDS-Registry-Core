@@ -47,11 +47,13 @@ else
 		<div class="span7">
 			<div class="box">
 				<div class="box-header clearfix">
-					<h1><?php echo $site_title; ?></h1>	
+					<h1><?php echo $site_title; ?></h1>
 					<a href="<?php echo portal_url();?>" style="margin-top:5px;" class="btn btn-info pull-right" target="_blank">
 					<i class="icon-globe icon icon-white"></i> Visit Research Data Australia</a>
 				</div>
-				<?php echo $news_content; ?>
+                <div class="box-content markdown-content">
+                    <?php echo $changelog; ?>
+                </div>
 			</div>
 		</div>
 

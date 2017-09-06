@@ -203,42 +203,51 @@ class Auth extends CI_Controller {
 	
 	public function dashboard()
 	{
-		$data['title'] = 'ANDS Online Services Home';
-		$data['js_lib'] = array('core');
-		$data['scripts'] = array();
-		$data['available_organisations'] = array();
-		$data['group_vocabs'] = array();
-		if($this->user->loggedIn()) 
-		{
-			if(sizeof($this->user->affiliations())>0){
-				$data['hasAffiliation']=true;
-			}else $data['hasAffiliation']=false;
-			
-			if (mod_enabled('vocab_service'))
-			{
-				$this->load->model('apps/vocab_service/vocab_services','vocab');
-				$data['group_vocabs']=$this->vocab->getGroupVocabs();
-				//$data['owned_vocabs']=$this->vocab->getOwnedVocabs(false);
-				$this->load->model($this->config->item('authentication_class'), 'auth');
-				$data['available_organisations'] = $this->auth->getAllOrganisationalRoles();
-				asort($data['available_organisations']);
-			}
+		if (!$this->user->loggedIn()) {
+            redirect('auth/login');
+        }
 
-			if (mod_enabled('registry'))
-			{
-				$db = $this->load->database( 'registry', TRUE );
-				$this->db = $db;
+        $data = [
+            'title' => 'ANDS Research Data Registry - Dashboard',
+            'js_lib' => ['core'],
+            'scripts' => []
+        ];
 
-				$this->load->model('data_source/data_sources','ds');
-				$data['data_sources']=$this->ds->getOwnedDataSources(false, true);
-			}
+        $data['hasAffiliation'] = count($this->user->affiliations()) > 0 ? true : false;
 
-			$this->load->view('dashboard', $data);
-		}
-		else 
-		{
-			redirect('auth/login');
-		}
+        $data['available_organisations'] = [];
+        $data['group_vocabs'] = [];
+        if (mod_enabled('vocab_service')) {
+            $this->load->model('apps/vocab_service/vocab_services','vocab');
+            $data['group_vocabs']=$this->vocab->getGroupVocabs();
+            //$data['owned_vocabs']=$this->vocab->getOwnedVocabs(false);
+            $this->load->model($this->config->item('authentication_class'), 'auth');
+            $data['available_organisations'] = $this->auth->getAllOrganisationalRoles();
+            asort($data['available_organisations']);
+        }
+
+        if (mod_enabled('registry')) {
+            $db = $this->load->database( 'registry', TRUE );
+            $this->db = $db;
+            $this->load->model('data_source/data_sources','ds');
+            $data['data_sources']=$this->ds->getOwnedDataSources(false, true);
+        }
+
+        // CC-2042. CHANGELOG display on dashboard
+        try {
+            $changelogPath = dirname(__FILE__) . './../../CHANGELOG.md';
+            $content = file_get_contents($changelogPath);
+            $parser = new \cebe\markdown\GithubMarkdown();
+            $parser->html5 = true;
+            $parser->enableNewlines = true;
+
+            $changelog =  $parser->parse($content);
+            $data['changelog'] = $changelog;
+        } catch (Exception $e) {
+            $data['changelog'] = "No Change Log found";
+        }
+
+        $this->load->view('dashboard', $data);
 	}
 
 	public function getRecentlyUpdatedRecords()

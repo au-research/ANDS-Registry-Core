@@ -5,6 +5,7 @@ namespace ANDS\Commands;
 
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -34,5 +35,28 @@ class ANDSCommand extends Command
         }
         $this->output->writeln($message);
         return;
+    }
+
+    public function table($rows, $headers = [])
+    {
+        $table = new Table($this->output);
+        $table->setHeaders($headers)
+            ->setRows($rows)
+            ->render();
+    }
+
+    public function isQuite()
+    {
+        return $this->output->isQuite();
+    }
+
+    public function isVerbose()
+    {
+        return $this->output->isVerbose();
+    }
+
+    public function isDebug()
+    {
+        return $this->output->isDebug();
     }
 }
