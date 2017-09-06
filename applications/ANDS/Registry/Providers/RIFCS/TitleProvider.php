@@ -57,13 +57,13 @@ class TitleProvider implements RIFCSProvider
         // get Titles
         $displayTitle = null;
         $listTitle = null;
-        // take the first primary found
 
+        // take the first primary found
         $name = collect($names)->first(function ($key, $item) {
             if (!array_key_exists('@attributes', $item)) {
                 return false;
             }
-            return $item['@attributes']['type'] == 'primary';
+            return array_key_exists('type', $item['@attributes']) && $item['@attributes']['type'] == 'primary';
         });
 
         $displayTitle = is_string($name['value']) ? $name['value'] : null;
@@ -83,11 +83,16 @@ class TitleProvider implements RIFCSProvider
         // special rules for party
         if ($recordClass === "party") {
 
+            // superior - subordinate special rule CC-2039
+            $title = self::superiorAndSubordinateName($names);
+
             // make sure it's not empty
-            $title = self::constructTitleByOrder(
-                $names,
-                self::$partyNamePartOrder
-            );
+            if ($title === null) {
+                $title = self::constructTitleByOrder(
+                    $names,
+                    self::$partyNamePartOrder
+                );
+            }
 
             if ($title) {
                 $displayTitle = $title;
@@ -96,6 +101,9 @@ class TitleProvider implements RIFCSProvider
                     self::$partyNamePartOrder,
                     $suffix = true
                 );
+                if (!$listTitle) {
+                    $listTitle = $displayTitle;
+                }
             }
         }
 
@@ -127,6 +135,29 @@ class TitleProvider implements RIFCSProvider
             'listTitle' => $listTitle,
             'displayTitle' => $displayTitle
         ];
+    }
+
+    public static function superiorAndSubordinateName($names)
+    {
+        $firstPrimaryName = collect($names)->first(function ($key, $item) {
+            if (!array_key_exists('@attributes', $item)) {
+                return false;
+            }
+            return $item['@attributes']['type'] == 'primary';
+        });
+        $superiorName =  collect($firstPrimaryName['value'])->first(function($key, $item) {
+            return is_array($item) && array_key_exists('@attributes', $item) && $item['@attributes']['type'] == 'superior';
+        });
+        $subordinateName = collect($firstPrimaryName['value'])->first(function($key, $item) {
+            return is_array($item) && array_key_exists('@attributes', $item) && $item['@attributes']['type'] == 'subordinate';
+        });
+
+
+        if ($superiorName && $subordinateName) {
+            return $superiorName['value'] . ' : '. $subordinateName['value'];
+        }
+
+        return null;
     }
 
     /**
@@ -227,7 +258,7 @@ class TitleProvider implements RIFCSProvider
 
         // take the first primary found
         $name = $names->first(function ($key, $item) {
-            return $item['@attributes']['type'] == 'primary';
+            return array_key_exists('@attributes', $item) && $item['@attributes']['type'] == 'primary';
         });
 
         // if no primary is found, take the first name regardless

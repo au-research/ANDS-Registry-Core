@@ -7,6 +7,7 @@ namespace ANDS\Commands;
 use ANDS\Commands\Script\ProcessGroups;
 use ANDS\Commands\Script\ProcessScholix;
 use ANDS\Commands\Script\ProcessTitles;
+use ANDS\Commands\Script\ReportScript;
 use ANDS\Commands\Script\UpdateDataciteClient;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -19,7 +20,8 @@ class RunScriptCommand extends ANDSCommand
         "processGroups" => ProcessGroups::class,
         "processTitles" => ProcessTitles::class,
         "processScholix" => ProcessScholix::class,
-        "updateDataciteClient" => UpdateDataCiteClient::class
+        "updateDataciteClient" => UpdateDataCiteClient::class,
+        "report" => ReportScript::class
     ];
 
     protected function configure()

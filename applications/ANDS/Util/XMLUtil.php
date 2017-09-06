@@ -3,7 +3,7 @@
 
 namespace ANDS\Util;
 
-include_once("applications/registry/registry_object/models/_transforms.php");
+include_once(dirname(__FILE__)."./../../registry/registry_object/models/_transforms.php");
 use \Transforms as Transforms;
 use \DOMDocument as DOMDocument;
 use \Exception as Exception;

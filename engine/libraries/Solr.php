@@ -355,6 +355,13 @@ class Solr
         // Whether to break equal-scored records using the maximum of individual score components (~0.0) or sum (~1.0)
         $this->setOpt('tie', '0.1');
 
+        // Temporal clean up
+        if (array_key_exists('year_from', $filters) && array_key_exists('year_to', $filters)) {
+            $filters['temporal'] = $filters['year_from'] . '-' . $filters['year_to'];
+            unset($filters['year_from']);
+            unset($filters['year_to']);
+        }
+
         // map each of the user-supplied filters to it's corresponding SOLR parameter
         foreach ($filters as $key => $value) {
             if (!is_array($value) && $key != 'q') {
@@ -461,8 +468,11 @@ class Solr
                     break;
                 case 'temporal':
                     $date = explode('-', $value);
-                    $this->setOpt('fq', '+earliest_year:[' . $date[0] . ' TO *]');
-                    $this->setOpt('fq', '+latest_year:[* TO ' . $date[1] . ']');
+                    $from = $date[0];
+                    $to = $date[1];
+
+                    $this->setOpt('fq', "+((earliest_year:[$from TO $to] OR latest_year:[$from TO $to]) OR (earliest_year:[ * TO $to] AND latest_year:[$from TO *]))");
+//                    $this->setOpt('fq', "+(earliest_year:[$from TO *] AND latest_year:[* TO $to]) OR (earliest_year:[$from TO *] AND earliest_year:[* TO $to]) OR (latest_year:[* TO $to] AND latest_year:[$from TO *])");
                     break;
                 case 'year_from':
                     if ($value != '')

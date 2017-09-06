@@ -7,6 +7,7 @@ namespace ANDS\Registry\Providers;
 use ANDS\API\Task\ImportSubTask\ProcessDelete;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
+use ANDS\Registry\Providers\RIFCS\LocationProvider;
 use ANDS\Registry\Providers\Scholix\Scholix;
 use ANDS\Registry\Providers\Scholix\ScholixDocument;
 use ANDS\Registry\Relation;
@@ -17,6 +18,26 @@ use ANDS\Util\XMLUtil;
 class ScholixProvider implements RegistryContentProvider
 {
     protected static $scholixableAttr = "scholixable";
+    public static $validSourceIdentifierTypes = [
+        "ark" => 'ark',
+        "doi" => 'doi',
+        "handle" => 'hdl',
+        "purl" => 'purl',
+        "uri" => 'url',
+        "url" => 'url'
+    ];
+    public static $validTargetIdentifierTypes = [
+        "ark" => 'ark',
+        "doi" => 'doi',
+        'eissn' => 'issn',
+        "handle" => 'hdl',
+        'isbn' => 'isbn',
+        'issn' => 'issn',
+        'pubMedId' => 'pubmed',
+        "purl" => 'purl',
+        "uri" => 'url',
+        "url" => 'url'
+    ];
 
     /**
      * if the record is a collection
@@ -62,15 +83,6 @@ class ScholixProvider implements RegistryContentProvider
      */
     public static function process(RegistryObject $record)
     {
-        // Don't store scholixable anymore
-//        $record->deleteRegistryObjectAttribute(self::$scholixableAttr);
-//
-//        $relationships = RelationshipProvider::getMergedRelationships($record);
-//        $record->setRegistryObjectAttribute(
-//            self::$scholixableAttr,
-//            self::isScholixable($record, $relationships)
-//        );
-
         // determine Scholixable
         if (!self::isScholixable($record)) {
             return [
@@ -136,6 +148,7 @@ class ScholixProvider implements RegistryContentProvider
             ->pluck('scholix_identifier')->toArray();
         $shouldBeDeleted = array_diff($exist, $new);
         Scholix::whereIn('scholix_identifier', $shouldBeDeleted)->delete();
+        $report['deleted'][] = $shouldBeDeleted;
 
         return $report;
     }
@@ -161,8 +174,10 @@ class ScholixProvider implements RegistryContentProvider
             'linkProvider' => [
                 'name' => 'Australian National Data Service',
                 'identifier' => [
-                    ['identifier' =>  'http://nla.gov.au/nla.party-1508909',
-                    'schema' => 'AU-ANL:PEAU']
+                    [
+                        'identifier' =>  'http://nla.gov.au/nla.party-1508909',
+                        'schema' => 'url'
+                    ]
                 ],
                 'objectType' => $record->type,
                 'title' => $record->title
@@ -194,8 +209,16 @@ class ScholixProvider implements RegistryContentProvider
                     IdentifierProvider::getCitationMetadataIdentifiers($to)
                 );
 
-                // should be unique
-                $toIdentifiers = collect($toIdentifiers)->unique()->toArray();
+                // only go for valid target identifiers type
+                $toIdentifiers = collect($toIdentifiers)->filter(function($item) {
+                    return in_array($item['type'], array_keys(self::$validTargetIdentifierTypes));
+                })->toArray();
+
+                // should be unique and format properly
+                $toIdentifiers = collect($toIdentifiers)->unique()->map(function($item) {
+                    $item['type'] = self::$validTargetIdentifierTypes[$item['type']];
+                    return $item;
+                })->toArray();
 
                 if (count($toIdentifiers) == 0) {
                     $targets[] = [
@@ -225,8 +248,13 @@ class ScholixProvider implements RegistryContentProvider
             IdentifierProvider::getCitationMetadataIdentifiers($record, $data['recordData'])
         );
 
-        //unique
-        $identifiers = collect($identifiers)->unique()->toArray();
+        //unique and format
+        $identifiers = collect($identifiers)->filter(function($item){
+            return in_array($item['type'], array_keys(self::$validSourceIdentifierTypes));
+        })->unique()->map(function($item) {
+            $item['type'] = self::$validSourceIdentifierTypes[$item['type']];
+            return $item;
+        })->toArray();
 
         foreach ($identifiers as $identifier) {
             $identifierlink = $commonLinkMetadata;
@@ -243,6 +271,25 @@ class ScholixProvider implements RegistryContentProvider
         }
 
         // return the ScholixDocument if there's enough links
+        if (count($doc->toArray()) > 0) {
+            return $doc;
+        }
+
+        // second option, use collection/location/address/electronic[@type='url'] if no identifiers found
+        $urls = LocationProvider::getElectronicUrl($record, $data['recordData']);
+        if (count($urls) > 0) {
+            foreach ($urls as $url) {
+                $electronicUrlLink = $commonLinkMetadata;
+                $electronicUrlLink['source'] = self::getElectronicUrlSource($record, $url);
+                foreach ($targets as $target) {
+                    $electronicUrlLink['relationship'] = self::getRelationships($target['relationship']);
+                    $electronicUrlLink['target'] = $target['target'];
+                    $doc->addLink($electronicUrlLink);
+                }
+            }
+        }
+
+        // return if there's enough links
         if (count($doc->toArray()) > 0) {
             return $doc;
         }
@@ -268,7 +315,8 @@ class ScholixProvider implements RegistryContentProvider
         $source = [
             'identifier' => [
                 [
-                    'identifier' => baseUrl('view?key=') . $record->key,                          'schema' => 'Research Data Australia'
+                    'identifier' => baseUrl('view?key=') . $record->key,
+                    'schema' => 'url'
                 ]
             ],
             'title' => $record->title,
@@ -280,6 +328,31 @@ class ScholixProvider implements RegistryContentProvider
         ];
 
         $creators = self::getSourceCreators($record, $data);
+        if (count($creators) > 0) {
+            $source['creator'] = $creators;
+        }
+
+        return $source;
+    }
+
+    public static function getElectronicUrlSource(RegistryObject $record, $url)
+    {
+        $source = [
+            'identifier' => [
+                [
+                    'identifier' => $url,
+                    'schema' => 'url'
+                ]
+            ],
+            'title' => $record->title,
+            'objectType' => $record->type,
+            'publicationDate' => DatesProvider::getPublicationDate($record),
+            'publisher' => [
+                'name' => $record->group
+            ]
+        ];
+
+        $creators = self::getSourceCreators($record);
         if (count($creators) > 0) {
             $source['creator'] = $creators;
         }
@@ -318,6 +391,13 @@ class ScholixProvider implements RegistryContentProvider
             }
 
             return false;
+        })->filter(function($item){
+            // remove item with non valid identifier types
+            $identiferType = $item->prop('to_identifier_type');
+            if ($identiferType && !in_array($identiferType, array_keys(self::$validTargetIdentifierTypes))) {
+                return false;
+            }
+            return true;
         })->toArray();
 
         return $relationships;
@@ -521,10 +601,14 @@ class ScholixProvider implements RegistryContentProvider
 
     public static function getTargetMetadataRelatedInfo($publication)
     {
+        $identifierType = $publication->prop('to_identifier_type');
+        $identifierType = self::$validTargetIdentifierTypes[$identifierType];
         $target = [
             'identifier' => [
-                ['identifier' => $publication->prop('to_identifier'),
-                'schema' => $publication->prop('to_identifier_type')]
+                [
+                    'identifier' => $publication->prop('to_identifier'),
+                    'schema' => $identifierType
+                ]
             ],
             'objectType' => 'literature'
         ];
@@ -564,7 +648,7 @@ class ScholixProvider implements RegistryContentProvider
             $identifiers = [
                 [
                     'identifier' => baseUrl('view?key=') . $record->key,
-                    'schema' => 'Research Data Australia'
+                    'schema' => 'url'
                 ]
             ];
         }

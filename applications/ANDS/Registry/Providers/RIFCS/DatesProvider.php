@@ -84,6 +84,17 @@ class DatesProvider implements RIFCSProvider
         }
 
         /**
+         * registryObject/collection@dateModified
+         */
+        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+            'ro:registryObject/ro:' . $record->class) AS $object) {
+
+            if ($dateModified = (string) $object['dateModified']) {
+                return self::formatDate($dateModified, $format);
+            }
+        }
+
+        /**
          * registryObject/Collection@dateAccessioned
          */
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
@@ -114,7 +125,7 @@ class DatesProvider implements RIFCSProvider
 
     /**
      * Return the date value in the given format
-     *
+     * Format is Y or Y-m or Y-m-d
      * @param $value
      * @param $format
      * @return string
@@ -123,6 +134,10 @@ class DatesProvider implements RIFCSProvider
     {
         // if it comes in as the year, just return the year
         if (self::validateDate($value, 'Y')) {
+            return $value;
+        }
+
+        if (self::validateDate($value, 'Y-m')) {
             return $value;
         }
 
@@ -145,6 +160,13 @@ class DatesProvider implements RIFCSProvider
             && ($timestamp >= ~PHP_INT_MAX);
     }
 
+    /**
+     * Validate if the date is of a format
+     *
+     * @param $date
+     * @param string $format
+     * @return bool
+     */
     public static function validateDate($date, $format = 'Y-m-d')
     {
         $d = DateTime::createFromFormat($format, $date);

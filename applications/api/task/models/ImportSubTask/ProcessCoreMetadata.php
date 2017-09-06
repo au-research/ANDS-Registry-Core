@@ -44,7 +44,20 @@ class ProcessCoreMetadata extends ImportSubTask
             $record = RegistryObject::find($roID);
 
             // ProcessCoreMetadata, class, group, type, ANDS\Group get set
-            CoreMetadataProvider::process($record);
+            try {
+                CoreMetadataProvider::process($record);
+            } catch (\Exception $e) {
+                $this->addError("Failed CoreMetadataProvider process on record $roID: ". get_exception_msg($e));
+                continue;
+            }
+
+            // process Title
+            try {
+                TitleProvider::process($record);
+            } catch (\Exception $e) {
+                $this->addError("Failed Title processing on record $roID: ". get_exception_msg($e));
+                continue;
+            }
 
             //determine harvest_id
             $record->setRegistryObjectAttribute('harvest_id',
@@ -52,8 +65,6 @@ class ProcessCoreMetadata extends ImportSubTask
             
             $record->status = $this->parent()->getTaskData("targetStatus");
 
-            // process Title
-            TitleProvider::process($record);
             $record->save();
 
             // titles and slug require the ro object
@@ -67,14 +78,6 @@ class ProcessCoreMetadata extends ImportSubTask
 
             // TODO: Remove CodeIgniter RO dependency
             $ro->save();
-
-            /**
-             * Process Scholixable records
-             * TODO: Move to it's own ImportSubTask
-             */
-            if ($this->parent()->getTaskData("targetStatus") == "PUBLISHED") {
-                ScholixProvider::process($record);
-            }
 
             $this->updateProgress($index, $total, "Processed ($index/$total) $ro->title($roID)");
             unset($ro);
