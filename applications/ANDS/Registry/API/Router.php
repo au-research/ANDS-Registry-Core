@@ -61,6 +61,24 @@ class Router
             $requestMethod = $_SERVER['REQUEST_METHOD'];
         }
 
+        if ($match = $this->getMatch($url, $requestMethod)) {
+            return $this->callAction($match['callback'], $match['params']);
+        }
+
+        // no match
+        return "No route match $url";
+    }
+
+    public function getMatch($url = null, $requestMethod = null)
+    {
+        if (!$url) {
+            $url = $_SERVER['REQUEST_URI'];
+        }
+
+        if (!$requestMethod) {
+            $requestMethod = $_SERVER['REQUEST_METHOD'];
+        }
+
         foreach ($this->routes as $method => $matches) {
             $requestMethod = strtolower($requestMethod);
             if ($requestMethod != $method) {
@@ -78,12 +96,17 @@ class Router
 
                 if (preg_match($pattern, $url, $params)) {
                     array_shift($params);
-                    return $this->callAction($callback, $params);
+                    return [
+                        'pattern' => $pattern,
+                        'url' => $url,
+                        'params' => $params,
+                        'callback' => $callback
+                    ];
                 }
             }
         }
         // no match
-        return "No route match $url";
+        return null;
     }
 
     public function callAction($callback, $params)

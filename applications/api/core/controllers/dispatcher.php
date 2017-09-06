@@ -1,4 +1,6 @@
-<?php if (!defined('BASEPATH')) {
+<?php use ANDS\Registry\API\Router;
+
+if (!defined('BASEPATH')) {
     exit('No direct script access allowed');
 }
 

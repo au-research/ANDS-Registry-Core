@@ -3,6 +3,7 @@
 namespace ANDS\Registry\API\Controller;
 
 
+use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 
 class RecordsController implements RestfulController
@@ -16,6 +17,23 @@ class RecordsController implements RestfulController
             'data_source_id' => request('data_source_id', "*"),
             'class' => request('class', '*')
         ]);
+    }
+
+    public function resolve()
+    {
+        if ($key = request('key', null)) {
+            return RegistryObjectsRepository::getPublishedByKey($key);
+        }
+
+        if ($slug = request('slug', null)) {
+            return RegistryObject::where('slug', $slug)->where('status', 'PUBLISHED')->get();
+        }
+
+        if ($title = request('title', null)) {
+            return RegistryObject::where('title', $title)->where('status', 'PUBLISHED')->get();
+        }
+
+        return null;
     }
 
     public function show($id = null)
