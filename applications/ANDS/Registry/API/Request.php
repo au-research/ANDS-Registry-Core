@@ -9,12 +9,21 @@ class Request
         return array_key_exists($key, $_GET) ? $_GET[$key] : null;
     }
 
+    public static function post($key)
+    {
+        return array_key_exists($key, $_POST) ? $_POST[$key] : null;
+    }
+
     public static function value($key, $default = null)
     {
-        $value = self::get($key);
-        if ($value) {
+        if ($value = self::get($key)) {
             return $value;
         }
+
+        if ($value = self::post($key)) {
+            return $value;
+        }
+
         return $default;
     }
 }
