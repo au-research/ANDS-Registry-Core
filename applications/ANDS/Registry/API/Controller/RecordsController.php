@@ -20,7 +20,8 @@ class RecordsController implements RestfulController
             'class' => request('class', '*'),
 
             // additional fields
-            'identifier' => request('identifier', '*')
+            'identifier' => request('identifier', '*'),
+            'link' => request('link', '*')
         ]);
     }
 
