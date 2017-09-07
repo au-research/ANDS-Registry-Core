@@ -338,8 +338,8 @@ class RegistryObjectsRepository
         }
 
         // identifier
-        if (array_key_exists('identifier', $filters)) {
-            $identifierQuery = Identifier::where('identifier', $filters['identifier']);
+        if (array_key_exists('identifier', $filters) && $filters['identifier'] != "*") {
+            $identifierQuery = Identifier::where('identifier', 'like', '%'.$filters['identifier'].'%');
             if (array_key_exists('identifier_type', $filters)) {
                 $identifierQuery = Identifier::where('identifier_type', $filters['identifier_type']);
                 unset($filters['identifier_type']);
@@ -347,6 +347,14 @@ class RegistryObjectsRepository
             $ids = $identifierQuery->pluck('registry_object_id');
             $query = $query->whereIn('registry_object_id', $ids);
             unset($filters['identifier']);
+        }
+
+        // link
+        if (array_key_exists('link', $filters) && $filters['link'] != "*") {
+            $linkQuery = Links::where('link', 'like', '%'.$filters['link'].'%');
+            $ids = $linkQuery->pluck('registry_object_id');
+            $query = $query->whereIn('registry_object_id', $ids);
+            unset($filters['link']);
         }
 
         // core attributes
