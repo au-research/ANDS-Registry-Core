@@ -12,46 +12,45 @@ class ServiceDiscoveryTest extends \RegistryTestClass
     public function test_get_links_for_datasource() {
 
         $links = ServiceDiscovery::getServiceLinksForDatasource(12);
-        
         $this->assertEquals(80, count($links));
     }
 
-
     /** @test **/
     public function test_get_links_for_record() {
-        // $collectionkey = 'AUTestingRecords3RelatedCollectionDatasetRelObj1';
-        $collectionkey = 'NEII/34b50bab-8124-4c78-a1d1-a0a83601ec56';
-        $record = RegistryObjectsRepository::getPublishedByKey($collectionkey);
+     $collectionkey = 'AODN/71127e4d-9f14-4c57-9845-1dce0b541d8d';
+    //$collectionkey = 'AIMS/e4cdfaf2-bbb1-44c7-8a07-cf9ffdab747f';
+    $record = RegistryObjectsRepository::getPublishedByKey($collectionkey);
 
-        $links = ServiceDiscovery::getServiceLinksForRegistryObject($record);
+    $links = ServiceDiscovery::getServiceLinksForRegistryObject($record);
 
-        $this->assertEquals(8, count($links));
+    $this->assertEquals(11, count($links));
     }
 
 
     /** @test **/
     public function test_get_links_for_record_ids() {
-        $ro_ids = array(919,931,925);
+        $ro_ids = array(336,357,366);
         $links = ServiceDiscovery::getServiceByRegistryObjectIds($ro_ids);
 
-        $this->assertEquals(18, count($links));
+        $this->assertEquals(13, count($links));
     }
 
     /** @test **/
     public function test_ge_record_via_link(){
-        $url = "http://maps.eatlas.org.au/maps/ows?service=wms&version=1.1.1&request=GetCapabilities";
+        $url = "http://imosmest.aodn.org.au:80/geonetwork/srv/en/metadata.show";
 
-        $links = ServiceDiscovery::getRegistryObjectsBylinks($url);
-
-        $this->assertEquals(4, count($links));
+        $links = ServiceDiscovery::getServicesBylinks($url);
+        $json = ServiceDiscovery::getLinkasJson($links);
+        //echo($json);
+        $this->assertEquals(8, count($links));
 
     }
-
+    /** @test **/
     public function test_get_links_as_json(){
         $ro_ids = array(919,931,925);
         $links = ServiceDiscovery::getServiceByRegistryObjectIds($ro_ids);
         $json = ServiceDiscovery::getLinkasJson($links);
-        var_dump(json_decode($json));
+        //echo($json);
     }
 
 }
