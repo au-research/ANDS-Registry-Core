@@ -13,7 +13,7 @@ class RecordsRelationshipController
         $relationships = RelationshipProvider::getMergedRelationships($record);
 
         // filters
-        $validFilters = ['to_class', 'to_type', 'relation_type', 'relation_origin'];
+        $validFilters = ['to_class', 'to_type', 'relation_type', 'relation_origin', 'to_group', 'to_data_source_id', 'to_id', 'to_key', 'to_title'];
         foreach ($validFilters as $filter) {
             if ($value = request($filter)) {
                 $relationships = collect($relationships)->filter(function($item) use ($value, $filter) {
@@ -23,7 +23,7 @@ class RecordsRelationshipController
         }
 
         // format the response
-        return $relationships->map(function($item) {
+        return collect($relationships)->map(function($item) {
             return $item->format();
         });
     }
