@@ -12,10 +12,15 @@ class RecordsController implements RestfulController
     public function index()
     {
         return RegistryObjectsRepository::getPublishedBy([
+
+            // normal fields
             'limit' => request('limit', 10),
             'offset' => request('offset', 0),
             'data_source_id' => request('data_source_id', "*"),
-            'class' => request('class', '*')
+            'class' => request('class', '*'),
+
+            // additional fields
+            'identifier' => request('identifier', '*')
         ]);
     }
 
