@@ -111,15 +111,20 @@ class Router
 
     public function callAction($callback, $params)
     {
-        if (is_string($callback)) {
-            // attempt to find a controller
-            $split = explode('@', $callback);
-            $controller = $split[0];
-            $method = $split[1];
-            $controller = $this->getControllerClass($controller);
-            return call_user_func_array([$controller, $method], array_values($params));
+        try {
+            if (is_string($callback)) {
+                // attempt to find a controller
+                $split = explode('@', $callback);
+                $controller = $split[0];
+                $method = $split[1];
+                $controller = $this->getControllerClass($controller);
+                return call_user_func_array([$controller, $method], array_values($params));
+            }
+            return call_user_func_array($callback, array_values($params));
+        } catch (\Exception $e) {
+            throw new \Exception(get_exception_msg($e));
         }
-        return call_user_func_array($callback, array_values($params));
+
     }
 
     public function getControllerClass($controller)
