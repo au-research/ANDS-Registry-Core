@@ -11,10 +11,20 @@ class RecordsRelationshipController
     {
         $record = RegistryObjectsRepository::getRecordByID($id);
         $relationships = RelationshipProvider::getMergedRelationships($record);
-        $result = [];
-        foreach ($relationships as $key=>$relation) {
-            $result[$key] = $relation->format();
+
+        // filters
+        $validFilters = ['to_class', 'to_type', 'relation_type', 'relation_origin'];
+        foreach ($validFilters as $filter) {
+            if ($value = request($filter)) {
+                $relationships = collect($relationships)->filter(function($item) use ($value, $filter) {
+                    return $item->prop($filter) == $value;
+                });
+            }
         }
-        return $result;
+
+        // format the response
+        return $relationships->map(function($item) {
+            return $item->format();
+        });
     }
 }
