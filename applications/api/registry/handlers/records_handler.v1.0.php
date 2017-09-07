@@ -16,6 +16,7 @@ class RecordsHandler extends Handler {
         $router->resource('records', 'RecordsController');
         $router->get('records/(\w+)/relationships', 'RecordsRelationshipController@index');
         $router->get('records/(\w+)/links', 'RecordsLinksController@index');
+        $router->get('records/(\w+)/identifiers', 'RecordsIdentifiersController@index');
 //        dd($router->getMatch());
         return $this->format($router->execute());
     }
