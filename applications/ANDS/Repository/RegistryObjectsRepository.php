@@ -326,6 +326,7 @@ class RegistryObjectsRepository
     {
         $query = RegistryObject::where('status', 'PUBLISHED');
 
+        // limit and offset
         if (array_key_exists('limit', $filters)) {
             $query = $query->limit($filters['limit']);
             unset($filters['limit']);
@@ -336,11 +337,26 @@ class RegistryObjectsRepository
             unset($filters['offset']);
         }
 
+        // identifier
+        if (array_key_exists('identifier', $filters)) {
+            $identifierQuery = Identifier::where('identifier', $filters['identifier']);
+            if (array_key_exists('identifier_type', $filters)) {
+                $identifierQuery = Identifier::where('identifier_type', $filters['identifier_type']);
+                unset($filters['identifier_type']);
+            }
+            $ids = $identifierQuery->pluck('registry_object_id');
+            $query = $query->whereIn('registry_object_id', $ids);
+            unset($filters['identifier']);
+        }
+
+        // core attributes
         foreach ($filters as $key => $value) {
             if ($value != "*") {
                 $query = $query->where($key, $value);
             }
         }
+
+
 
         return $query->get();
     }
