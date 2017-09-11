@@ -98,18 +98,28 @@ class ServiceDiscovery {
                 }
             }
         }
-        $serviceLinks = array();
-        $relations = array();
+
+        // format
+        $links = [];
         foreach($linksArray as $url => $serviceLink){
-            $relations = array();
-            foreach($serviceLink as $key =>$serviceRelation){
-                $relations[] = array("key"=>$key, "identifiers"=>$serviceRelation["related_collection_uuids"], "types"=>$serviceRelation["relation_types"], "full_url"=>$serviceRelation["full_urls"]);
+
+            $relations = [];
+            foreach ($serviceLink as $key => $serviceRelation) {
+                $relations[] = [
+                    "key" => $key,
+                    "identifiers" => $serviceRelation["related_collection_uuids"],
+                    "types" => $serviceRelation["relation_types"],
+                    "full_url" => $serviceRelation["full_urls"]
+                ];
             }
-            $serviceLinks[] = array("url"=>$url, "related"=>$relations);
+
+            $links[] = [
+                "url" => $url,
+                "relations" => $relations
+            ];
         }
 
-
-        return json_encode($serviceLinks);
+        return $links;
     }
 
     private static function getBaseUrl($url){
