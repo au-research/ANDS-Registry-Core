@@ -11,18 +11,17 @@ class RecordsController implements RestfulController
 
     public function index()
     {
-        return RegistryObjectsRepository::getPublishedBy([
-
-            // normal fields
+        $filters = [
             'limit' => request('limit', 10),
-            'offset' => request('offset', 0),
-            'data_source_id' => request('data_source_id', "*"),
-            'class' => request('class', '*'),
-
-            // additional fields
-            'identifier' => request('identifier', '*'),
-            'link' => request('link', '*')
-        ]);
+            'offset' => request('offset', 0)
+        ];
+        $validFilters = [
+            'data_source_id', 'class', 'key', 'type', 'title', 'slug', 'group'
+        ];
+        foreach ($validFilters as $filter) {
+            $filters[$filter] = request($filter, '*');
+        }
+        return RegistryObjectsRepository::getPublishedBy($filters);
     }
 
     public function resolve()
@@ -50,7 +49,7 @@ class RecordsController implements RestfulController
 
     public function update($id = null)
     {
-        // update an object
+        // TODO: Implement update() method.
     }
 
     public function delete($id = null)

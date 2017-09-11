@@ -360,11 +360,9 @@ class RegistryObjectsRepository
         // core attributes
         foreach ($filters as $key => $value) {
             if ($value != "*") {
-                $query = $query->where($key, $value);
+                $query = $query->where($key, 'like', '%'.$value.'%');
             }
         }
-
-
 
         return $query->get();
     }
