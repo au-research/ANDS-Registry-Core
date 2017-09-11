@@ -98,9 +98,18 @@ class ServiceDiscovery {
                 }
             }
         }
+        $serviceLinks = array();
+        $relations = array();
+        foreach($linksArray as $url => $serviceLink){
+            $relations = array();
+            foreach($serviceLink as $key =>$serviceRelation){
+                $relations[] = array("key"=>$key, "identifiers"=>$serviceRelation["related_collection_uuids"], "types"=>$serviceRelation["relation_types"], "full_url"=>$serviceRelation["full_urls"]);
+            }
+            $serviceLinks[] = array("url"=>$url, "related"=>$relations);
+        }
 
-        // TODO: format these links
-        return $linksArray;
+
+        return json_encode($serviceLinks);
     }
 
     private static function getBaseUrl($url){
@@ -116,7 +125,7 @@ class ServiceDiscovery {
     }
 
     private static function isServiceLink($link){
-        $supported_services = array("wms", "wfs", "ogc", "wcs", "wps");
+        $supported_services = array("wms", "wfs", "ogc", "wcs", "wps", "thredds");
         $supported_types = array("identifier_uri_link", "electronic", "relatedInfo");
         $supported = false;
 
