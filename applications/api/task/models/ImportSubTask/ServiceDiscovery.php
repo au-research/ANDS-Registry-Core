@@ -17,21 +17,29 @@ class ServiceDiscovery extends ImportSubTask
     {
         // TODO: check for DataSource for flag
 
-        // TODO: check only for collection, can be optimised
-        $importedRecords = $this->parent()->getTaskData("importedRecords");
-        $ids = [];
-        foreach ($importedRecords  as $index => $roID) {
-            $record = RegistryObjectsRepository::getRecordByID($roID);
-            if (strtolower($record->class) === "collection") {
-                $ids[] = $record->id;
-            }
+        // only deal with collection records
+        $ids = $this->parent()->getTaskData("imported_collection_ids");
+        if (!$ids || count($ids) == 0) {
+            $this->log("No imported collection ids found");
+            return;
         }
 
+        // Generate the services in the right format
+        $this->log("Generating services links for " . count($ids) . " records");
         $links = ServiceDiscoveryProvider::getServiceByRegistryObjectIds($ids);
         $links = ServiceDiscoveryProvider::processLinks($links);
         $links = ServiceDiscoveryProvider::formatLinks($links);
+        $this->log("Generated " . count($links) . " links");
 
-        dd($links);
-        // TODO: save the links
+        // TODO: save the links, update with correct acronym
+        $acronym = "IMOS";
+        $batchID = $this->parent()->getTaskData("batchID");
+        $directoryPath = "/var/ands/data/{$acronym}";
+        if (!is_dir($directoryPath)) {
+            mkdir($directoryPath, 0775, true);
+        }
+        $filePath = "{$directoryPath}/services_{$batchID}.json";
+        $this->log("Writing link to {$filePath}");
+        file_put_contents($filePath, json_encode($links, true));
     }
 }
