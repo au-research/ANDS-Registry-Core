@@ -29,9 +29,9 @@ class ServiceDiscovery extends ImportSubTask
 
         $links = ServiceDiscoveryProvider::getServiceByRegistryObjectIds($ids);
         $links = ServiceDiscoveryProvider::processLinks($links);
-
         $links = ServiceDiscoveryProvider::formatLinks($links);
 
+        dd($links);
         // TODO: save the links
     }
 }
