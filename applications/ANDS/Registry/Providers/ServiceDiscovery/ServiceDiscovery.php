@@ -60,11 +60,12 @@ class ServiceDiscovery {
             }
         }
 
-        return static::getLinkasJson($resultLinks);
+        return $resultLinks;
+
+//        return static::getLinkasJson($resultLinks);
     }
 
-
-    public static function getLinkasJson($links){
+    public static function formatLinks($links){
         $url = null;
         $linksArray = array();
         foreach($links as $link){
@@ -97,7 +98,9 @@ class ServiceDiscovery {
                 }
             }
         }
-        return json_encode(array("services"=>$linksArray));
+
+        // TODO: format these links
+        return $linksArray;
     }
 
     private static function getBaseUrl($url){

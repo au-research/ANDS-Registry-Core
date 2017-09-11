@@ -338,6 +338,7 @@ class ImportTask extends Task
                     "ProcessScholix",
                     "ProcessAffectedRelationships",
                     "IndexRelationship",
+                    "ServiceDiscovery",
                     "FinishImport",
                     "ScheduleHarvest",
                 ];
