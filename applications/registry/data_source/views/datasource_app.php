@@ -84,6 +84,16 @@
 							</select>
 						</div>
 					</div>
+					<div class="control-group">
+						<label class="control-label" name="title">Acronym</label>
+						<div class="controls">
+							<select name="record_owner">
+								<?php foreach($this->user->affiliations() as $a):?>
+									<option value="<?php echo $a;?>"><?php echo $a;?></option>
+								<?php endforeach;?>
+							</select>
+						</div>
+					</div>
 				</form>
 				<div class="alert alert-error" ng-show="error">
 					{{error}}
@@ -528,6 +538,7 @@
 						<dl class="dl-horizontal dl-wide">
 							<dt>Key</dt><dd>{{ds.key}}</dd>
 							<dt>Title</dt><dd>{{ds.title}}</dd>
+							<dt>Acronym</dt><dd>{{ds.acronym}}</dd>
 							<dt>Record Owner</dt><dd>{{ds.record_owner}}</dd>
 							<span ng-show="ds.contact_name"><dt>Contact Name</dt><dd>{{ds.contact_name}}</dd></span>
 							<span ng-show="ds.contact_email"><dt>Contact Email</dt><dd>{{ds.contact_email}}</dd></span>
@@ -574,6 +585,7 @@
 							<span ng-show="ds.uri"><dt>URI</dt><dd>{{ds.uri}}</dd></span>
 							<span ng-show="ds.provider_type"><dt>Provider Type</dt><dd>{{ds.provider_type}}</dd></span>
 							<span ng-show="ds.harvest_method"><dt>Harvest Method</dt><dd>{{ds.harvest_method}}</dd></span>
+							<span ng-show="ds.service_discovery_enables"><dt>Enable service discovery</dt><dd>{{ds.harvest_method}}</dd></span>
 							<span ng-show="ds.advanced_harvest_mode"><dt>Advanced Harvest Mode</dt><dd>{{ds.advanced_harvest_mode}}</dd></span>
 							<span ng-show="ds.harvest_date"><dt>Harvest Date</dt><dd>{{ds.harvest_date}}</dd></span>
 							<span ng-show="ds.oai_set"><dt>OAI-PMH Set</dt><dd>{{ds.oai_set}}</dd></span>
@@ -632,6 +644,12 @@
 									<label class="control-label">Title</label>
 									<div class="controls">
 										<input type="text" class="input-xlarge" name="title" ng-model="ds.title">
+									</div>
+								</div>
+								<div class="control-group">
+									<label class="control-label">Acronym</label>
+									<div class="controls">
+										<input type="text" class="input-xlarge" name="acronym" ng-model="ds.acronym">
 									</div>
 								</div>
 								<?php if ($this->user->hasFunction('REGISTRY_SUPERUSER')):?>
@@ -828,8 +846,14 @@
 										<input type="text" class="input-xxlarge" name="uri" ng-model="ds.uri">
 									</div>
 								</div>
-
-
+								<?php if ($this->user->hasFunction('REGISTRY_SUPERUSER')): ?>
+								<div class="control-group">
+									<label class="control-label" for="service_discovery_enabled">Enable Service Discovery</label>
+									<div class="controls">
+										<input type="checkbox" for="service_discovery_enabled" ng-model="ds.service_discovery_enabled">
+									</div>
+								</div>
+								<?php endif; ?>
                                 <div class="control-group" ng-show="ds.harvest_method=='CSWHarvester'" id="user_defined_params">
                                     <label class="control-label" for="user_defined_params">Harvest Params</label>
                                     <div class="controls">
@@ -865,7 +889,6 @@
 										<input type="text" class="input-normal" name="oai_set" ng-model="ds.oai_set">
 									</div>
 								</div>
-	
 
 								<div class="control-group">
 									<label class="control-label" for="provider_type" ng-show="ds.harvest_method=='PMHHarvester'">Metadata Prefix</label>
