@@ -47,9 +47,9 @@ class _data_source {
 	const MAX_NAME_LEN = 32;
 	const MAX_VALUE_LEN = 255;
 
-	public $stockAttributes = array('title'=>'','record_owner'=>'','contact_name'=>' ', 'contact_email'=>' ', 'provider_type'=>RIFCS_SCHEME,'notes'=>'');
+	public $stockAttributes = array('title'=>'','record_owner'=>'','contact_name'=>' ', 'contact_email'=>' ', 'provider_type'=>RIFCS_SCHEME,'notes'=>'','acronym'=>'');
 	public $extendedAttributes = array('allow_reverse_internal_links'=>DB_TRUE,'allow_reverse_external_links'=>DB_TRUE,'manual_publish'=>DB_FALSE,'qa_flag'=>DB_TRUE,'create_primary_relationships'=>DB_FALSE,'assessment_notify_email_addr'=>'','created'=>'','updated'=>'', 'export_dci'=>DB_FALSE, 'crosswalks'=>'');
-	public $harvesterParams = array('provider_type'=>'rif','uri'=>'http://','harvest_method'=>'GETHarvester','harvest_date'=>'','oai_set'=>'','advanced_harvest_mode'=>'STANDARD','harvest_frequency'=>'', 'metadataPrefix'=>'', 'xsl_file'=>'', 'user_defined_params' => '');
+	public $harvesterParams = array('service_discovery_enabled'=>DB_FALSE,'provider_type'=>'rif','uri'=>'http://','harvest_method'=>'GETHarvester','harvest_date'=>'','oai_set'=>'','advanced_harvest_mode'=>'STANDARD','harvest_frequency'=>'', 'metadataPrefix'=>'', 'xsl_file'=>'', 'user_defined_params' => '');
 	public $primaryRelationship = array('primary_key_1','primary_key_2','collection_rel_1','collection_rel_2','activity_rel_1','activity_rel_2','party_rel_1','party_rel_2','service_rel_1','service_rel_2');
 	
 	function __construct($id = NULL, $core_attributes_only = FALSE)

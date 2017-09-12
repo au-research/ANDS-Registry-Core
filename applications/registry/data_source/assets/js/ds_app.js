@@ -181,7 +181,7 @@ function SettingsCtrl($scope, $routeParams, ds_factory) {
 	});
 
 	$scope.process_values = function() {
-		var flags = ['manual_publish', 'allow_reverse_internal_links', 'allow_reverse_external_links', 'create_primary_relationships', 'qa_flag', 'export_dci'];
+		var flags = ['manual_publish', 'allow_reverse_internal_links', 'allow_reverse_external_links', 'create_primary_relationships', 'qa_flag', 'export_dci', 'service_discovery_enabled'];
 		$.each($scope.ds, function(i){
 			if($.inArray(i, flags) > -1){
 				if((this=='t' || this=='1') && i!='id') {
@@ -260,7 +260,7 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 	}
 
 	$scope.process_values = function() {
-		var flags = ['manual_publish', 'allow_reverse_internal_links', 'allow_reverse_external_links', 'create_primary_relationships', 'qa_flag', 'export_dci'];
+		var flags = ['manual_publish', 'allow_reverse_internal_links', 'allow_reverse_external_links', 'create_primary_relationships', 'qa_flag', 'export_dci', 'service_discovery_enabled'];
 		$.each($scope.ds, function(i){
 			if($.inArray(i, flags) > -1){
 				if((this=='t' || this=='1') && i!='id') {
