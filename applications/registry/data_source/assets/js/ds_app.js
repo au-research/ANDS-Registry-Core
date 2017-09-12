@@ -213,7 +213,6 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
         {name:'version', value:'2.0.2'},
         {name:'namespace', value:'xmlns(csw=http://www.opengis.net/cat/csw)'},
         {name:'resultType', value:'results'},
-        {name:'outputFormat', value:'application/xml'},
         {name:'typeNames', value:'csw:Record'},
         {name:'elementSetName', value:'full'},
         {name:'constraintLanguage', value:'CQL_TEXT'},
