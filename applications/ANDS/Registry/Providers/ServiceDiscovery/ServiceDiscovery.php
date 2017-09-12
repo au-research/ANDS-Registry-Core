@@ -107,6 +107,7 @@ class ServiceDiscovery {
             foreach ($serviceLink as $key => $serviceRelation) {
                 $relations[] = [
                     "key" => $key,
+                    "uuid" => $serviceRelation["related_collection_uuids"][0],
                     "identifiers" => $serviceRelation["related_collection_uuids"],
                     "types" => $serviceRelation["relation_types"],
                     "full_url" => $serviceRelation["full_urls"]
@@ -135,7 +136,14 @@ class ServiceDiscovery {
     }
 
     private static function isServiceLink($link){
-        $supported_services = array("wms", "wfs", "ogc", "wcs", "wps", "thredds");
+        $supported_services = [
+            "wms",
+            "wfs",
+            "ogc",
+            "wcs",
+            "wps"
+        //    ,"thredds"
+        ];
         $supported_types = array("identifier_uri_link", "electronic", "relatedInfo");
         $supported = false;
 
