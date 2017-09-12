@@ -19,13 +19,13 @@ class TestServiceDiscovery extends UnitTest
         $importTask->init([
             'name' => 'ImportTask',
             'params' => http_build_query([
-                'ds_id' => 209,
+                'ds_id' => 50,
                 'batch_id' => 'TESTBATCHID'
             ])
-        ])->initialiseTask();
+        ])->skipLoadingPayload()->initialiseTask();
 
         // all IMOS records
-        $ids = RegistryObject::where('data_source_id', 8)
+        $ids = RegistryObject::where('data_source_id', 50)
             ->where('class', 'collection')->pluck('registry_object_id');
         if (count($ids) == 0) {
             return;
@@ -35,7 +35,9 @@ class TestServiceDiscovery extends UnitTest
             ->setTaskData('importedRecords', $ids)
             ->setTaskData('imported_collection_ids', $ids);
         $task = $importTask->getTaskByName("ServiceDiscovery");
-        $task->run();
+//        $task->run();
+//
+//        dd($task->getMessage());
 
         // TODO: test file generation
     }

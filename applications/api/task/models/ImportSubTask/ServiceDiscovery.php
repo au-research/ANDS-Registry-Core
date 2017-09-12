@@ -11,11 +11,18 @@ use ANDS\Repository\RegistryObjectsRepository;
 class ServiceDiscovery extends ImportSubTask
 {
     protected $requireImportedRecords = true;
+    protected $requireDataSource = true;
+    protected $requirePayload = false;
     protected $title = "SERVICE DISCOVERY";
 
     public function run_task()
     {
-        // TODO: check for DataSource for flag
+        $dataSource = $this->getDataSource();
+        $flag = $dataSource->getDataSourceAttributeValue('service_discovery_enabled');
+        if (!$flag || $flag == "0") {
+            $this->log("Data source service discovery is disabled for {$dataSource->title} ({$dataSource->id})");
+            return;
+        }
 
         // only deal with collection records
         $ids = $this->parent()->getTaskData("imported_collection_ids");
@@ -31,8 +38,7 @@ class ServiceDiscovery extends ImportSubTask
         $links = ServiceDiscoveryProvider::formatLinks($links);
         $this->log("Generated " . count($links) . " links");
 
-        // TODO: save the links, update with correct acronym
-        $acronym = "IMOS";
+        $acronym = $dataSource->acronym ? : "ACRONYM";
         $batchID = $this->parent()->getTaskData("batchID");
         $directoryPath = "/var/ands/data/{$acronym}";
         if (!is_dir($directoryPath)) {
