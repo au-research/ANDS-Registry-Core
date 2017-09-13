@@ -78,9 +78,12 @@ class ServiceDiscovery {
                 }
 
                 if(!isset($linksArray[$url][$ro->key])){
-                    $linksArray[$url][$ro->key] = array("relation_types" => array(),
-                                                        "full_urls" => array(),
-                                                        "related_collection_uuids" => array());
+                    $linksArray[$url][$ro->key] = array(
+                        "title" => $ro->title,
+                        "relation_types" => array(),
+                        "full_urls" => array(),
+                        "related_collection_uuids" => array()
+                    );
                 }
 
                 if(!in_array($link->link_type, $linksArray[$url][$ro->key]["relation_types"])){
@@ -108,6 +111,7 @@ class ServiceDiscovery {
             foreach ($serviceLink as $key => $serviceRelation) {
                 $relations[] = [
                     "key" => $key,
+                    "title" => $serviceRelation["title"],
                     "uuid" => $serviceRelation["related_collection_uuids"][0],
                     "identifiers" => $serviceRelation["related_collection_uuids"],
                     "types" => $serviceRelation["relation_types"],
