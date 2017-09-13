@@ -46,7 +46,7 @@ class ServiceDiscovery {
      */
     public static function processLinks($incompleteLinks){
         $baseUrls = [];
-        $resultLinks = null;
+        $resultLinks = [];
         foreach($incompleteLinks as $link) {
             $url = static::getBaseUrl($link->link);
             if($url != "" && !in_array($url, $baseUrls) && static::isServiceLink($link)) {
@@ -104,6 +104,7 @@ class ServiceDiscovery {
         foreach($linksArray as $url => $serviceLink){
 
             $relations = [];
+            $fullURLs = [];
             foreach ($serviceLink as $key => $serviceRelation) {
                 $relations[] = [
                     "key" => $key,
@@ -112,11 +113,13 @@ class ServiceDiscovery {
                     "types" => $serviceRelation["relation_types"],
                     "full_url" => $serviceRelation["full_urls"]
                 ];
+                $fullURLs = array_merge($fullURLs, $serviceRelation["full_urls"]);
             }
 
             $links[] = [
                 "url" => $url,
-                "relations" => $relations
+                "relations" => $relations,
+                "full_urls" => array_values(array_unique($fullURLs))
             ];
         }
 
