@@ -35,6 +35,10 @@ class ServiceDiscovery extends ImportSubTask
         $this->log("Generating services links for " . count($ids) . " records");
         $links = ServiceDiscoveryProvider::getServiceByRegistryObjectIds($ids);
         $links = ServiceDiscoveryProvider::processLinks($links);
+        if (count($links) == 0) {
+            $this->log("No links found");
+            return;
+        }
         $links = ServiceDiscoveryProvider::formatLinks($links);
         $this->log("Generated " . count($links) . " links");
 
