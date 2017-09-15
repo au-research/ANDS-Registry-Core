@@ -28,7 +28,6 @@ class ServiceDiscovery {
     public static function getServiceByRegistryObjectIds($ro_ids){
 
         $links = Links::wherein('registry_object_id', $ro_ids)->get();
-        //dd($links);
         return $links;
     }
     
@@ -79,11 +78,12 @@ class ServiceDiscovery {
 
                 if(!isset($linksArray[$url][$ro->key])){
                     $linksArray[$url][$ro->key] = array(
+                        "key" => $ro->key,
                         "title" => $ro->title,
                         "relation_types" => array(),
+                        "relation"=>array(),
                         "full_urls" => array(),
-                        "related_collection_uuids" => array()
-                    );
+                        "related_collection_uuids" => array());
                 }
 
                 if(!in_array($link->link_type, $linksArray[$url][$ro->key]["relation_types"])){
@@ -92,6 +92,9 @@ class ServiceDiscovery {
                 if(!in_array($link->link, $linksArray[$url][$ro->key]["full_urls"])){
                     array_push($linksArray[$url][$ro->key]["full_urls"], $link->link);
                 }
+
+                array_push($linksArray[$url][$ro->key]["relation"], array("type"=>$link->link_type, "full_url"=>$link->link));
+
                 $uuids = Identifier::where('registry_object_id',
                     $link->registry_object_id)->where('identifier_type', 'global')->get();
                 foreach($uuids as $uuid) {
@@ -115,7 +118,7 @@ class ServiceDiscovery {
                     "uuid" => $serviceRelation["related_collection_uuids"][0],
                     "identifiers" => $serviceRelation["related_collection_uuids"],
                     "types" => $serviceRelation["relation_types"],
-                    "full_url" => $serviceRelation["full_urls"]
+                    "relation" => $serviceRelation["relation"]
                 ];
                 $fullURLs = array_merge($fullURLs, $serviceRelation["full_urls"]);
             }
