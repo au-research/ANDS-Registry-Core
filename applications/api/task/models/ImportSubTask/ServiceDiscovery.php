@@ -51,5 +51,6 @@ class ServiceDiscovery extends ImportSubTask
         $filePath = "{$directoryPath}/services_{$batchID}.json";
         $this->log("Writing link to {$filePath}");
         file_put_contents($filePath, json_encode($links, true));
+        $this->parent()->setTaskData('services_links', $filePath);
     }
 }
