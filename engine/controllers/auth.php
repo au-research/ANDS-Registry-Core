@@ -233,9 +233,9 @@ class Auth extends CI_Controller {
             $data['data_sources']=$this->ds->getOwnedDataSources(false, true);
         }
 
-        // CC-2042. CHANGELOG display on dashboard
+        // CC-2042. NEWS display on dashboard
         try {
-            $changelogPath = dirname(__FILE__) . './../../CHANGELOG.md';
+            $changelogPath = dirname(__FILE__) . './../../NEWS.md';
             $content = file_get_contents($changelogPath);
             $parser = new \cebe\markdown\GithubMarkdown();
             $parser->html5 = true;
