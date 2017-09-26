@@ -541,7 +541,8 @@ class RelationshipProvider
             return [];
         }
 
-        $identifierValues = collect($identifiers)->pluck('value');
+        $identifierValues = collect($identifiers)->pluck('value')
+            ->unique()->toArray();
 
         // directly related
         $relations = $provider

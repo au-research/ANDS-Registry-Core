@@ -301,10 +301,12 @@ class ImportTask extends Task
                     "ProcessIdentifiers",
                     "ProcessRelationships",
                     "ProcessGrantsRelationship",
+//                    "PopulateAffectedList",
+//                    "ProcessAffectedRelationships",
                     "ProcessScholix",
                     "ProcessQualityMetadata",
                     "IndexPortal",
-                    "IndexRelationship"
+                    "IndexRelationship",
                 ];
                 break;
             case "ErrorWorkflow":
