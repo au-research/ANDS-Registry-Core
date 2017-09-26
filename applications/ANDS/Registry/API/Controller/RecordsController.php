@@ -2,7 +2,6 @@
 
 namespace ANDS\Registry\API\Controller;
 
-
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 
@@ -15,15 +14,25 @@ class RecordsController implements RestfulController
             'limit' => request('limit', 10),
             'offset' => request('offset', 0)
         ];
+
+        // maybe use as global valid filtering for registry object in general?
         $validFilters = [
-            'data_source_id', 'class', 'key', 'type', 'title', 'slug', 'group'
+            'data_source_id', 'class', 'key', 'type', 'title', 'slug', 'group',
+            'identifier', 'link'
         ];
+
         foreach ($validFilters as $filter) {
             $filters[$filter] = request($filter, '*');
         }
+
         return RegistryObjectsRepository::getPublishedBy($filters);
     }
 
+    /**
+     * TODO deprecate in favor of index() filter instead
+     *
+     * @return RegistryObject|null
+     */
     public function resolve()
     {
         if ($key = request('key', null)) {
