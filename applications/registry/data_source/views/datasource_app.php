@@ -84,16 +84,6 @@
 							</select>
 						</div>
 					</div>
-					<div class="control-group">
-						<label class="control-label" name="title">Acronym</label>
-						<div class="controls">
-							<select name="record_owner">
-								<?php foreach($this->user->affiliations() as $a):?>
-									<option value="<?php echo $a;?>"><?php echo $a;?></option>
-								<?php endforeach;?>
-							</select>
-						</div>
-					</div>
 				</form>
 				<div class="alert alert-error" ng-show="error">
 					{{error}}
