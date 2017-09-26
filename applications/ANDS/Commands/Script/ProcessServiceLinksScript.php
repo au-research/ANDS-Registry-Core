@@ -26,7 +26,7 @@ class ProcessServiceLinksScript extends GenericScript
             ->where('data_source_id', $dataSourceID)
             ->where('class', 'collection')->pluck('registry_object_id');
 
-        $this->log("Generating services links for " . count($ids) . " collection records for {$dataSource->name} ($dataSource->id)");
+        $this->log("Generating services links for " . count($ids) . " collection records for {$dataSource->title} ($dataSource->id)");
         $links = ServiceDiscoveryProvider::getServiceByRegistryObjectIds($ids);
         $links = ServiceDiscoveryProvider::processLinks($links);
         $links = ServiceDiscoveryProvider::formatLinks($links);

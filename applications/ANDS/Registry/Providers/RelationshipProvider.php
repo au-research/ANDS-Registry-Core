@@ -714,7 +714,9 @@ class RelationshipProvider
             ->get();
 
         foreach ($relations as $relation) {
-            $affectedIDs[] = (int)$relation->prop('from_id');
+            if ($relation->hasProperty('to_id')) {
+                $affectedIDs[] = (int) $relation->prop('to_id');
+            }
         }
 
         // Optimisation, convert $ids to list of identifiers
