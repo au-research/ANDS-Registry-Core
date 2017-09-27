@@ -39,13 +39,12 @@ class Registry_object extends MX_Controller
         if ($id) {
             $ro = $this->ro->getByID($id, null, $useCache);
             if ($ro && $ro->prop['status'] == 'OK') {
-                if ($ro->prop['core']['slug']) {
-                    //it's ok
-                } else {
-                    if (!$slug || $slug != $ro->prop['core']['slug']) {
-                        redirect($ro->prop['core']['slug'] . '/' . $id);
-                    }
+
+                // CC-2103. found via id, redirect to {slug}/{id}
+                if (!$slug || $slug != $ro->prop['core']['slug']) {
+                    redirect($ro->prop['core']['slug'] . '/' . $id);
                 }
+
             } elseif ($slug) {
                 // view/{slug}/{id} where {id} not found, attempt to resolve slug
                 $ro = $this->ro->getBySlug($slug, null, $useCache);
