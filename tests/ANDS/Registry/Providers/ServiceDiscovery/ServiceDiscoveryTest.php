@@ -11,8 +11,8 @@ class ServiceDiscoveryTest extends \RegistryTestClass
     /** @test **/
     public function test_get_links_for_datasource() {
 
-        $links = ServiceDiscovery::getServiceLinksForDatasource(11);
-        $this->assertEquals(1628, count($links));
+        $links = ServiceDiscovery::getServiceLinksForDatasource(52);
+        $this->assertEquals(1756, count($links));
         $links = ServiceDiscovery::processLinks($links);
         $links = ServiceDiscovery::formatLinks($links);
         echo(json_encode($links));
@@ -21,22 +21,31 @@ class ServiceDiscoveryTest extends \RegistryTestClass
 
 //    /** @test **/
 //    public function test_get_links_for_record() {
-//     $collectionkey = 'AODN/71127e4d-9f14-4c57-9845-1dce0b541d8d';
+//     $collectionkey = 'AIMS/0419a746-ddc1-44d2-86e7-e5c402473956';
 //    //$collectionkey = 'AIMS/e4cdfaf2-bbb1-44c7-8a07-cf9ffdab747f';
 //    $record = RegistryObjectsRepository::getPublishedByKey($collectionkey);
 //
 //    $links = ServiceDiscovery::getServiceLinksForRegistryObject($record);
 //
-//    $this->assertEquals(11, count($links));
+//    $this->assertEquals(6, count($links));
+//
+//        $links = ServiceDiscovery::processLinks($links);
+//       $links = ServiceDiscovery::formatLinks($links);
+//        echo(json_encode($links));
 //    }
 //
 //
 //    /** @test **/
 //    public function test_get_links_for_record_ids() {
-//        $ro_ids = array(336,357,366);
+//        $ro_ids = array(72321);
 //        $links = ServiceDiscovery::getServiceByRegistryObjectIds($ro_ids);
 //
-//        $this->assertEquals(13, count($links));
+//        $this->assertEquals(5, count($links));
+//        //echo(json_encode($links));
+//        $links = ServiceDiscovery::processLinks($links);
+//        //echo(json_encode($links));
+//        $links = ServiceDiscovery::formatLinks($links);
+//        echo(json_encode($links));
 //    }
 //
 //    /** @test **/
