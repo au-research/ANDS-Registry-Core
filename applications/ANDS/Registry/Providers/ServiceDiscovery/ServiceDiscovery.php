@@ -67,6 +67,7 @@ class ServiceDiscovery {
     public static function formatLinks($links){
         $url = null;
         $linksArray = array();
+        $allSubjects = array();
         foreach($links as $link){
             $url = static::getBaseUrl($link->link);
             $ro = RegistryObject::where('registry_object_id', $link->registry_object_id)->first();
@@ -75,6 +76,9 @@ class ServiceDiscovery {
                 if(!isset($linksArray[$url])){
                     $linksArray[$url] = array();
                 }
+
+                $subjects = \ANDS\Registry\Providers\RIFCS\SubjectProvider::getSubjects($ro);
+                $allSubjects = static::unique_multidim_array(array_merge($allSubjects, $subjects), "value");
 
                 if(!isset($linksArray[$url][$ro->key])){
                     $linksArray[$url][$ro->key] = array(
@@ -93,15 +97,12 @@ class ServiceDiscovery {
                     array_push($linksArray[$url][$ro->key]["full_urls"], $link->link);
                 }
 
-                array_push($linksArray[$url][$ro->key]["relation"], array("type"=>$link->link_type, "full_url"=>$link->link));
+                $relType = static::getRelitionType($link->link_type);
+                array_push($linksArray[$url][$ro->key]["relation"], array("type"=>$relType, "full_url"=>$link->link));
 
-                $uuids = Identifier::where('registry_object_id',
-                    $link->registry_object_id)->where('identifier_type', 'global')->get();
-                foreach($uuids as $uuid) {
-                    if(!in_array($uuid->identifier, $linksArray[$url][$ro->key]["related_collection_uuids"])){
-                        array_push($linksArray[$url][$ro->key]["related_collection_uuids"], $uuid->identifier);
-                    }
-                }
+                $identifiers = Identifier::where('registry_object_id',
+                    $link->registry_object_id)->get();
+                $linksArray[$url][$ro->key]["related_collection_id"] = static::getPreferredIdentifier($identifiers);
             }
         }
 
@@ -115,8 +116,7 @@ class ServiceDiscovery {
                 $relations[] = [
                     "key" => $key,
                     "title" => $serviceRelation["title"],
-                    "uuid" => $serviceRelation["related_collection_uuids"][0],
-                    "identifiers" => $serviceRelation["related_collection_uuids"],
+                    "identifier" => $serviceRelation["related_collection_id"],
                     "types" => $serviceRelation["relation_types"],
                     "relation" => $serviceRelation["relation"]
                 ];
@@ -126,11 +126,47 @@ class ServiceDiscovery {
             $links[] = [
                 "url" => $url,
                 "relations" => $relations,
-                "full_urls" => array_values(array_unique($fullURLs))
+                "full_urls" => array_values(array_unique($fullURLs)),
+                "subjects" => $allSubjects
             ];
         }
 
         return $links;
+    }
+//sourced from http://php.net/manual/en/function.array-unique.php
+    private static function unique_multidim_array($array, $key) {
+        $temp_array = array();
+        $i = 0;
+        $key_array = array();
+
+        foreach($array as $val) {
+            if (!in_array($val[$key], $key_array)) {
+                $key_array[$i] = $val[$key];
+                $temp_array[$i] = $val;
+            }
+            $i++;
+        }
+        return $temp_array;
+    }
+
+
+    private static function getPreferredIdentifier($identifiers)
+    {
+
+        if(sizeof($identifiers) === 0)
+            return array();
+
+        foreach ($identifiers as $id) {
+            if ($id->identifier_type === "global")
+                return array("type" => $id->identifier_type, "identifier" => $id->identifier);
+        }
+
+        foreach ($identifiers as $id) {
+            if ($id->identifier_type === "local")
+                return array("type" => $id->identifier_type, "identifier" => $id->identifier);
+        }
+
+        return array("type"=>$identifiers[0]->identifier_type, "identifier"=>$identifiers[0]->identifier);
     }
 
     private static function getBaseUrl($url){
@@ -151,8 +187,10 @@ class ServiceDiscovery {
             "wfs",
             "ogc",
             "wcs",
-            "wps"
-        //    ,"thredds"
+            "wps",
+            "thredds"
+           // "geonetwork",
+          //  "geoserver"
         ];
         $supported_types = array("identifier_uri_link", "electronic", "relatedInfo");
         $supported = false;
@@ -170,5 +208,26 @@ class ServiceDiscovery {
         return false;
 
     }
+
+    private static function getRelitionType($link_type){
+
+    if(strpos($link_type, "relatedInfo_relation_") === 0){
+        $tokens = explode("_", $link_type);
+        $type = $tokens[2];
+        if($type != ""){
+            return getReverseRelationshipString($type);
+        }
+    }
+
+    switch ($link_type) {
+        case "electronic_url":
+            return "makesAvailable";
+            break;
+        default:
+            return "hasAssociationWith";
+    }
+
+}
+
 
 }
