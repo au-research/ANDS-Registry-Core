@@ -549,6 +549,11 @@ class Sync_extension extends ExtensionBase{
         //default values if none present
         if(!isset($json['license_class'])) $json['license_class'] = 'unknown';
 
+        // access methods
+        $accessMethods = \ANDS\Registry\Providers\RIFCS\AccessProvider::get($record);
+        $methods = array_keys($accessMethods);
+        $json['access_methods_ss'] = $methods;
+
         //lowercase all facet-able values
         $lowercase = array('type', 'license_class', 'access_rights', 'activity_status');
         foreach ($lowercase as $l) {

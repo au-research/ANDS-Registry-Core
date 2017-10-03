@@ -201,6 +201,7 @@
 
     <div facet-search facets="facets" type="group" ng-if="showFacet('group')"></div>
     <div facet-search facets="facets" type="access_rights" ng-if="showFacet('access_rights')"></div>
+    <div facet-search facets="facets" type="access_methods_ss"></div>
     <div facet-search facets="facets" type="license_class" ng-if="showFacet('license_class')"></div>
     <div facet-search facets="facets" type="administering_institution" ng-if="showFacet('administering_institution')"></div>
     <div facet-search facets="facets" type="funders" ng-if="showFacet('funders')"></div>
