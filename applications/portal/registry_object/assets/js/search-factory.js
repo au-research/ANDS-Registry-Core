@@ -133,7 +133,7 @@
                 {'name': 'help', 'display': '<i class="fa fa-question-circle"></i> Help'}
             ],
 
-            collection_facet_order: ['group', 'access_rights', 'license_class', 'type'],
+            collection_facet_order: ['group', 'access_rights', 'access_methods_ss','license_class', 'type'],
             activity_facet_order: ['type', 'activity_status', 'funding_scheme', 'administering_institution', 'funders'],
 
             ingest: function (hash) {
@@ -239,7 +239,6 @@
                         value: facets[item]
                     });
                 });
-
                 return orderedfacets;
             },
 

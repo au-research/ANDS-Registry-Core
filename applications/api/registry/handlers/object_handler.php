@@ -178,6 +178,9 @@ class ObjectHandler extends Handler{
                         $result[$m1] = $r;
                     }
                     return $result;
+                } elseif ($m1 == "index") {
+                    $ro = $resource['ro'];
+                    return $this->indexRecordById($ro->id);
                 }
 
             }
@@ -435,6 +438,42 @@ class ObjectHandler extends Handler{
         $importTask->run();
 
         return $importTask->toArray();
+    }
+
+    private function indexRecordById($id)
+    {
+        $record = RegistryObjectsRepository::getRecordByID($id);
+
+        if (!RegistryObjectsRepository::isPublishedStatus($record->status)) {
+            return "Record $record->title($record->id) is NOT PUBLISHED";
+        }
+
+        $importTask = new ImportTask;
+        $importTask->init([
+            'name' => 'ImportTask',
+            'params' => http_build_query([
+                'ds_id' => $record->datasource->data_source_id
+            ])
+        ]);
+
+        $importTask
+            ->setCI($this->ci)
+            ->initialiseTask()
+            ->skipLoadingPayload()
+            ->enableRunAllSubTask()
+            ->setTaskData('importedRecords', [$record->id])
+            ->setTaskData('targetStatus','PUBLISHED');
+
+        $subtask = $importTask->getTaskByName("IndexPortal");
+        $subtask->run();
+
+        $ro = $this->ci->ro->getByID($id);
+        $portalIndex = $ro->indexable_json(null, []);
+
+        return [
+            'index' => $portalIndex,
+            'task' => $subtask->getMessage()
+        ];
     }
 
 }

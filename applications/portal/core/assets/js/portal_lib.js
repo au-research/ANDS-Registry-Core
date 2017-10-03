@@ -15264,6 +15264,7 @@ app.config(function(uiGmapGoogleMapApiProvider) {
 				case 'completion_to': return 'Completion To'; break;
 				case 'completion_from': return 'Completion From'; break;
 				case 'spatial': return 'Location'; break;
+				case 'access_methods_ss': return 'Access Methods'; break;
 				default: return text;
 			}
 		}
@@ -16513,7 +16514,7 @@ app.directive('focusMe', function($timeout, $parse) {
                     if(!doc.hide) {
                         search_factory.get_matching_records(doc.id).then(function(data){
                             if (doc && !doc.hide) {
-                                console.log(doc)
+                                // console.log(doc)
                                // doc.identifiermatch = data.message.identifiermatch;
                                // if(doc && !doc.hide) {
                                //     angular.forEach(doc.identifiermatch, function(idd){
@@ -16734,7 +16735,7 @@ app.directive('focusMe', function($timeout, $parse) {
         $scope.showFacet = function(facet) {
             var allowed = [];
             if ($scope.filters['class']=='collection') {
-                allowed = ['subjects', 'group', 'access_rights', 'license_class', 'temporal', 'spatial'];
+                allowed = ['subjects', 'group', 'access_rights', 'license_class', 'temporal', 'spatial', 'access_methods_ss'];
             } else if($scope.filters['class']=='activity') {
                 allowed = ['type', 'activity_status', 'subjects', 'administering_institution', 'funders', 'funding_scheme', 'commencement_to', 'commencement_from', 'completion_to', 'completion_from', 'funding_amount'];
             } else {
@@ -17524,7 +17525,7 @@ app.directive('focusMe', function($timeout, $parse) {
                 {'name': 'help', 'display': '<i class="fa fa-question-circle"></i> Help'}
             ],
 
-            collection_facet_order: ['group', 'access_rights', 'license_class', 'type'],
+            collection_facet_order: ['group', 'access_rights', 'access_methods_ss','license_class', 'type'],
             activity_facet_order: ['type', 'activity_status', 'funding_scheme', 'administering_institution', 'funders'],
 
             ingest: function (hash) {
@@ -17630,7 +17631,6 @@ app.directive('focusMe', function($timeout, $parse) {
                         value: facets[item]
                     });
                 });
-
                 return orderedfacets;
             },
 

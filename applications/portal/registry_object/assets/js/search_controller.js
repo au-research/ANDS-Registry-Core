@@ -340,7 +340,7 @@
                     if(!doc.hide) {
                         search_factory.get_matching_records(doc.id).then(function(data){
                             if (doc && !doc.hide) {
-                                console.log(doc)
+                                // console.log(doc)
                                // doc.identifiermatch = data.message.identifiermatch;
                                // if(doc && !doc.hide) {
                                //     angular.forEach(doc.identifiermatch, function(idd){
@@ -561,7 +561,7 @@
         $scope.showFacet = function(facet) {
             var allowed = [];
             if ($scope.filters['class']=='collection') {
-                allowed = ['subjects', 'group', 'access_rights', 'license_class', 'temporal', 'spatial'];
+                allowed = ['subjects', 'group', 'access_rights', 'license_class', 'temporal', 'spatial', 'access_methods_ss'];
             } else if($scope.filters['class']=='activity') {
                 allowed = ['type', 'activity_status', 'subjects', 'administering_institution', 'funders', 'funding_scheme', 'commencement_to', 'commencement_from', 'completion_to', 'completion_from', 'funding_amount'];
             } else {
