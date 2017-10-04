@@ -187,4 +187,20 @@ class AccessProviderTest extends \RegistryTestClass
         }
     }
 
+    public function test_contact_custodian()
+    {
+        $keys = [
+            "AUTPROV VPRS 7742d2",
+            "AUTPROV VPRS 7742",
+            "AUTala.org.au/dr6006",
+        ];
+
+        foreach ($keys as $key) {
+            $record = $this->ensureKeyExist($key);
+            $actual = AccessProvider::getContactCustodian($record, MetadataProvider::get($record));
+            $this->assertNotEmpty($actual);
+        }
+    }
+
+
 }
