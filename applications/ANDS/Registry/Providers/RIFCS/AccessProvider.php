@@ -12,7 +12,7 @@ use ANDS\Util\XMLUtil;
 
 class AccessProvider implements RIFCSProvider
 {
-    protected static $methods = ["directDownload", "landingPage", "OGC:WMS", "OGC:WCS", "OGC:WFS", "GeoServer", "THREDDS", "THREDDS:WCS", "THREDDS:WMS", "THREDDS:OPeNDAP", "contactCustodian", "other"];
+    protected static $methods = ["directDownload", "landingPage", "OGC:WMS", "OGC:WCS", "OGC:WFS", "GeoServer", "THREDDS", "THREDDS:WCS", "THREDDS:WMS", "THREDDS:OPeNDAP"];
 
     /**
      * Process all the available methods
@@ -38,6 +38,18 @@ class AccessProvider implements RIFCSProvider
                 $result[$method] = $accessMethod;
             }
         }
+
+        // does not contain any access
+        if (empty($result)) {
+            if ($contactCustodian = static::getContactCustodian($record, $data)) {
+                $result['contactCustodian'] = $contactCustodian;
+            }
+
+            if ($other = static::getOther($record, $data)) {
+                $result['other'] = $other;
+            }
+        }
+
         return $result;
     }
 
@@ -591,17 +603,63 @@ class AccessProvider implements RIFCSProvider
 
     /**
      * When the collection does not contain an access URL, but does contain:
-    Collection/location/address/electronic/@email ,OR
-    Collection/location/address/physical/@streetAddress
-    Collection/location/address/physical/@PostalAddress
+     * Collection/location/address/electronic/@email ,OR
+     * Collection/location/address/physical/@streetAddress
+     * Collection/location/address/physical/@PostalAddress
+     * ONLY IF no access url and no related service
      *
      * @param RegistryObject $record
-     * @return null
+     * @param $data
+     * @return array
      */
-    public static function getContactCustodian(RegistryObject $record)
+    public static function getContactCustodian(RegistryObject $record, $data)
     {
-        // TODO: implement & test
-        return null;
+        $result = [];
+
+        // check for no access url
+        $urls = [];
+        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+            'ro:registryObject/ro:' . $record->class . '/ro:location/ro:address/ro:electronic') AS $loc) {
+            $type = (string)$loc['type'];
+            $value = (string)$loc->value;
+            if ($type == "url") {
+                $urls[] = $value;
+            }
+        }
+
+        if (count($urls) > 0) {
+            return [];
+        }
+
+        // check for no service
+        /* @var $relation Relation */
+        $services = [];
+        foreach ($data['relationships'] as $relation) {
+            if ($relation->prop("to_class") == "service" || $relation->prop("to_related_info_type") == "service") {
+                $services[] = $relation;
+            }
+        }
+        if (count($services) > 0) {
+            return [];
+        }
+
+        // Collection/location/address/electronic/@email
+        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+            'ro:registryObject/ro:' . $record->class . '/ro:location/ro:address/ro:electronic') AS $loc) {
+            $type = (string)$loc['type'];
+            $value = (string)$loc->value;
+            if (in_array($type, ['email'])) {
+                $result[] = (new Access($value))->setNotes("Contact Custodian");
+            }
+        }
+
+        // Collection/location/address/physical/@streetAddress OR Collection/location/address/physical/@PostalAddress
+        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+            'ro:registryObject/ro:' . $record->class . '/ro:location/ro:address/ro:physical') AS $loc) {
+            $value = (string)$loc->value;
+            $result[] = (new Access($value))->setNotes("Contact Custodian");
+        }
+        return $result;
     }
 
     /**
@@ -610,11 +668,46 @@ class AccessProvider implements RIFCSProvider
      * OR When the collection is related to via a service registry object AND relation @type="isSupportedBy" | "presents" | “makesAvailable” AND relation/url != null AND we cannot determine the service type.
      *
      * @param RegistryObject $record
-     * @return null
+     * @return array
      */
-    public static function getOther(RegistryObject $record)
+    public static function getOther(RegistryObject $record, $data)
     {
-        // TODO: implement & test
-        return null;
+        $result = [];
+        // location/address/electronic @type="url"
+        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+            'ro:registryObject/ro:' . $record->class . '/ro:location/ro:address/ro:electronic') AS $loc) {
+            $type = (string)$loc['type'];
+            $value = (string)$loc->value;
+            if (in_array($type, ['url'])) {
+                $result[] = (new Access($value))->setNotes("Contact Custodian");
+            }
+        }
+
+        /* @var $relation Relation */
+        foreach ($data["relationships"] as $relation) {
+            $relationURL = $relation->prop("relation_url");
+            if (!$relationURL) continue;
+
+            // relatedObject | relatedInfo = service AND relation @type="supports" | "isPresentedBy" AND relation/url != null
+            if (
+                ($relation->prop("to_class") == "service" || $relation->prop("to_related_info_type") == "service")
+                && ($relation->prop("relation_type") == "supports" || $relation->prop("relation_type") == "isPresentedBy")
+                && $relationURL
+            ) {
+                $result[] = new Access($relationURL);
+                continue;
+            }
+
+            // When the collection is related to via a service registry object AND relation @type="isSupportedBy" | "presents" | “makesAvailable” AND relation/url != null
+            if (
+                $relation->prop("to_class") == "service"
+                && in_array($relation->prop('relation_type'), ["isSupportedBy", "presents", "makesAvailable"])
+                && $relationURL
+            ) {
+                $result[] = new Access($relationURL);
+                continue;
+            }
+        }
+        return $result;
     }
 }
