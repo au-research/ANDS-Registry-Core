@@ -12,7 +12,7 @@ use ANDS\Util\XMLUtil;
 
 class AccessProvider implements RIFCSProvider
 {
-    protected static $methods = ["directDownload", "landingPage", "OGC:WMS", "OGC:WCS", "OGC:WFS", "GeoServer", "THREDDS", "THREDDS:WCS", "THREDDS:WMS", "THREDDS:OPeNDAP"];
+    protected static $methods = ["directDownload", "landingPage", "OGC:WMS", "OGC:WCS", "OGC:WFS", "OGC:WPS", "GeoServer", "THREDDS", "THREDDS:WCS", "THREDDS:WMS", "THREDDS:OPeNDAP"];
 
     /**
      * Process all the available methods
@@ -80,6 +80,8 @@ class AccessProvider implements RIFCSProvider
                 return static::getOGCWMS($record, $data);
             case "OGC:WCS":
                 return static::getOGCWCS($record, $data);
+            case "OGC:WPS":
+                return static::getOGCWPS($record, $data);
             case "THREDDS:WMS":
                 return static::getTHREDDSWMS($record, $data);
             case "THREDDS:OPeNDAP":
@@ -219,6 +221,43 @@ class AccessProvider implements RIFCSProvider
             if (
                 $relation->prop("to_class") == "service"
                 && str_contains(strtolower($relation->prop("relation_url")), "wms")
+                && in_array($relation->prop("relation_type"), ["isSupportedBy", "presents", "makesAvailable"])
+            ) {
+                $result[] = new Access($relation->prop('relation_url'));
+            }
+        }
+
+        return $result;
+    }
+
+    public static function getOGCWPS(RegistryObject $record, $data)
+    {
+        $result = [];
+
+        // location/address/electronic @type="url" AND the URL contains ‘wms’
+        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+            'ro:registryObject/ro:' . $record->class . '/ro:location/ro:address/ro:electronic') AS $loc) {
+            $type = (string)$loc['type'];
+            $value = (string)$loc->value;
+            if ($type == "url" && str_contains(strtolower($value), "wps")) {
+                $result[] = new Access($value);
+            }
+        }
+
+        // relationships
+        /* @var $relation Relation */
+        foreach ($data["relationships"] as $relation) {
+            if (
+                ($relation->prop("to_class") == "service" || $relation->prop("to_related_info_type") == "service")
+                && str_contains(strtolower($relation->prop("relation_url")), "wps")
+                && in_array($relation->prop("relation_type"), ["supports", "isPresentedBy"])
+            ) {
+                $result[] = new Access($relation->prop('relation_url'));
+            }
+
+            if (
+                $relation->prop("to_class") == "service"
+                && str_contains(strtolower($relation->prop("relation_url")), "wps")
                 && in_array($relation->prop("relation_type"), ["isSupportedBy", "presents", "makesAvailable"])
             ) {
                 $result[] = new Access($relation->prop('relation_url'));
