@@ -15,8 +15,8 @@ class ServiceDiscoveryTest extends \RegistryTestClass
         $this->assertEquals(1756, count($links));
         $links = ServiceDiscovery::processLinks($links);
         $links = ServiceDiscovery::formatLinks($links);
-        echo(json_encode($links));
 
+        $this->assertNotEmpty($links);``
     }
 
 //    /** @test **/
