@@ -58,6 +58,8 @@ class AccessProviderTest extends \RegistryTestClass
         $this->assertNotEmpty($actual);
     }
 
+
+
     /** @test */
     public function test_ogc_wcs()
     {
@@ -211,6 +213,19 @@ class AccessProviderTest extends \RegistryTestClass
         foreach ($keys as $key) {
             $record = $this->ensureKeyExist($key);
             $actual = AccessProvider::getOther($record, MetadataProvider::get($record));
+            $this->assertNotEmpty($actual);
+        }
+    }
+
+    public function test_ogcwps()
+    {
+        $keys = [
+            "AuTb931b8b1ba754fd666df3b7512a2cab293f4eaa3abc"
+        ];
+
+        foreach ($keys as $key) {
+            $record = $this->ensureKeyExist($key);
+            $actual = AccessProvider::getOGCWPS($record, MetadataProvider::get($record));
             $this->assertNotEmpty($actual);
         }
     }
