@@ -15264,7 +15264,7 @@ app.config(function(uiGmapGoogleMapApiProvider) {
 				case 'completion_to': return 'Completion To'; break;
 				case 'completion_from': return 'Completion From'; break;
 				case 'spatial': return 'Location'; break;
-				case 'access_methods_ss': return 'Access Methods'; break;
+				case 'access_methods_ss': return 'Access Method'; break;
 				default: return text;
 			}
 		}
@@ -15319,6 +15319,27 @@ app.config(function(uiGmapGoogleMapApiProvider) {
 	.filter('toTitleCase', function($log){
 		return function(str){
 			return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+		}
+	})
+	.filter('formatFacet', function () {
+		return function (str) {
+			switch (str) {
+				case 'OGC:WFS': return 'OGC Web Feature Service'; break;
+				case 'OGC:WMS': return 'OGC Web Map Service'; break;
+				case 'OGC:WCS': return 'OGC Web Coverage Service'; break;
+                case 'OGC:WPS': return 'OGC Web Processing Service'; break;
+                case 'landingPage': return 'Landing Page'; break;
+				case 'directDownload': return 'Direct Download'; break;
+				case 'GeoServer': return 'GeoServer'; break;
+				case 'THREDDS': return 'THREDDS'; break;
+                case 'THREDDS:WCS': return 'THREDDS Web Coverage Service'; break;
+                case 'THREDDS:WMS': return 'THREDDS Web Map Service'; break;
+                case 'THREDDS:OPeNDAP': return 'THREDDS OPeNDAP'; break;
+                case 'contactCustodian': return 'Contact Custodian'; break;
+				default:
+					return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+					break;
+			}
 		}
 	})
 	.filter('getLabelFor', function($log){
@@ -16930,6 +16951,7 @@ app.directive('focusMe', function($timeout, $parse) {
             delete $scope.prefilters2[name];
             search_factory.search_no_record($scope.prefilters2).then(function(data){
                 $scope.prefacets2 = search_factory.construct_facets(data, $scope.prefilters['class']);
+                console.log($scope.prefacets2);
             });
 
             $scope.presearch();
@@ -17486,6 +17508,7 @@ app.directive('focusMe', function($timeout, $parse) {
                 {'name': 'subject', 'display': 'Subject'},
                 {'name': 'group', 'display': 'Data Provider'},
                 {'name': 'access_rights', 'display': 'Access'},
+                {'name': 'access_methods_ss', 'display': 'Access Method'},
                 {'name': 'license_class', 'display': 'Licence'},
                 {'name': 'temporal', 'display': 'Time Period'},
                 {'name': 'spatial', 'display': 'Location'},
