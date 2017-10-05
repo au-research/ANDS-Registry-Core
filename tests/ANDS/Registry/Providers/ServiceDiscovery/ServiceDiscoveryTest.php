@@ -16,7 +16,7 @@ class ServiceDiscoveryTest extends \RegistryTestClass
         $links = ServiceDiscovery::processLinks($links);
         $links = ServiceDiscovery::formatLinks($links);
 
-        $this->assertNotEmpty($links);``
+        $this->assertNotEmpty($links);
     }
 
 //    /** @test **/
