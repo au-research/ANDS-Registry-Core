@@ -756,6 +756,7 @@
             delete $scope.prefilters2[name];
             search_factory.search_no_record($scope.prefilters2).then(function(data){
                 $scope.prefacets2 = search_factory.construct_facets(data, $scope.prefilters['class']);
+                console.log($scope.prefacets2);
             });
 
             $scope.presearch();

@@ -3,12 +3,12 @@
     <ul class="listy">
         <li ng-repeat="item in facet.value | limitTo:5" ng-if="facet.name!='access_rights' && facet.name!='license_class'">
             <input type="checkbox" ng-checked="isFacet(facet.name, item.name)" ng-click="toggleFilter(facet.name, item.name, true)">
-                <a href="" title="[[ item.name ]]" xtip="[[ item.name ]]" ng-click="toggleFilter(facet.name, item.name, true)" ng-if="facet.name!='group' && facet.name!='administering_institution' && facet.name!='funders' && facet.name!='funding_scheme' && facet.name!='license_class' && facet.name!='access_rights'">[[item.name | toTitleCase | truncate:30]] <small>[[item.value]]</small></a>
+                <a href="" title="[[ item.name ]]" xtip="[[ item.name ]]" ng-click="toggleFilter(facet.name, item.name, true)" ng-if="facet.name!='group' && facet.name!='administering_institution' && facet.name!='funders' && facet.name!='funding_scheme' && facet.name!='license_class' && facet.name!='access_rights'">[[item.name | formatFacet | truncate:30]] <small>[[item.value]]</small></a>
                 <a href="" title="[[ item.name ]]" xtip="[[ item.name ]]" ng-click="toggleFilter(facet.name, item.name, true)" ng-if="facet.name=='group' || facet.name=='administering_institution' || facet.name=='funders' || facet.name=='funding_scheme'">[[item.name | truncate:30]] <small>[[item.value]]</small></a>
         </li>
         <li ng-repeat="item in facet.value | sortObjectBy:'name' | limitTo:5" ng-if="facet.name=='access_rights' || facet.name=='license_class'">
             <input type="checkbox" ng-checked="isFacet(facet.name, item.name)" ng-click="toggleFilter(facet.name, item.name, true)">
-            <a href="" title="[[ item.name ]]" xtip="[[ item.name ]]" ng-click="toggleFilter(facet.name, item.name, true)" >[[item.name  | toTitleCase |  truncate:30]] <small>[[item.value]]</small></a>
+            <a href="" title="[[ item.name ]]" xtip="[[ item.name ]]" ng-click="toggleFilter(facet.name, item.name, true)" >[[item.name  | formatFacet |  truncate:30]] <small>[[item.value]]</small></a>
         </li>
         <li ng-if="facet.value.length > 5 || filterExists(facet.name)"><a href="" ng-click="advanced(facet.name)">View More</a></li>
     </ul>
