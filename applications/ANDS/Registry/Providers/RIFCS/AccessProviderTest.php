@@ -202,5 +202,18 @@ class AccessProviderTest extends \RegistryTestClass
         }
     }
 
+    public function test_other()
+    {
+        $keys = [
+            "NEII/a927dd64-8998-47b1-ab5b-6f97bf626fc0"
+        ];
+
+        foreach ($keys as $key) {
+            $record = $this->ensureKeyExist($key);
+            $actual = AccessProvider::getOther($record, MetadataProvider::get($record));
+            $this->assertNotEmpty($actual);
+        }
+    }
+
 
 }
