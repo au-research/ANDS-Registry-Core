@@ -15324,17 +15324,17 @@ app.config(function(uiGmapGoogleMapApiProvider) {
 	.filter('formatFacet', function () {
 		return function (str) {
 			switch (str) {
-				case 'OGC:WFS': return 'OGC Web Feature Service'; break;
-				case 'OGC:WMS': return 'OGC Web Map Service'; break;
-				case 'OGC:WCS': return 'OGC Web Coverage Service'; break;
-                case 'OGC:WPS': return 'OGC Web Processing Service'; break;
+				case 'OGC:WFS': case 'ogc:wfs': return 'OGC Web Feature Service'; break;
+				case 'OGC:WMS': case 'ogc:wms': return 'OGC Web Map Service'; break;
+				case 'OGC:WCS': case 'ogc:wcs': return 'OGC Web Coverage Service'; break;
+                case 'OGC:WPS': case 'ogc:wps': return 'OGC Web Processing Service'; break;
                 case 'landingPage': return 'Landing Page'; break;
 				case 'directDownload': return 'Direct Download'; break;
 				case 'GeoServer': return 'GeoServer'; break;
-				case 'THREDDS': return 'THREDDS'; break;
-                case 'THREDDS:WCS': return 'THREDDS Web Coverage Service'; break;
-                case 'THREDDS:WMS': return 'THREDDS Web Map Service'; break;
-                case 'THREDDS:OPeNDAP': return 'THREDDS OPeNDAP'; break;
+				case 'THREDDS': case 'thredds': return 'THREDDS'; break;
+                case 'THREDDS:WCS': case 'thredds:wcs': return 'THREDDS Web Coverage Service'; break;
+                case 'THREDDS:WMS': case 'thredds:wms':return 'THREDDS Web Map Service'; break;
+                case 'THREDDS:OPeNDAP': case 'thredds:opendap':return 'THREDDS OPeNDAP'; break;
                 case 'contactCustodian': return 'Contact Custodian'; break;
 				default:
 					return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
@@ -16759,6 +16759,8 @@ app.directive('focusMe', function($timeout, $parse) {
                 allowed = ['subjects', 'group', 'access_rights', 'license_class', 'temporal', 'spatial', 'access_methods_ss'];
             } else if($scope.filters['class']=='activity') {
                 allowed = ['type', 'activity_status', 'subjects', 'administering_institution', 'funders', 'funding_scheme', 'commencement_to', 'commencement_from', 'completion_to', 'completion_from', 'funding_amount'];
+            } else if ($scope.filters['class'] == 'service') {
+                allowed = ['type' ,'subjects', 'group', 'spatial'];
             } else {
                 allowed = ['type' ,'subjects', 'group'];
             }
@@ -17530,6 +17532,7 @@ app.directive('focusMe', function($timeout, $parse) {
                 {'name': 'type', 'display': 'Type'},
                 {'name': 'subject', 'display': 'Subject'},
                 {'name': 'group', 'display': 'Data Provider'},
+                {'name': 'spatial', 'display': 'Location'},
                 {'name': 'review', 'display': 'Review'},
                 {'name': 'help', 'display': '<i class="fa fa-question-circle"></i> Help'}
             ],

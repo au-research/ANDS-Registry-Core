@@ -116,6 +116,7 @@
                 {'name': 'type', 'display': 'Type'},
                 {'name': 'subject', 'display': 'Subject'},
                 {'name': 'group', 'display': 'Data Provider'},
+                {'name': 'spatial', 'display': 'Location'},
                 {'name': 'review', 'display': 'Review'},
                 {'name': 'help', 'display': '<i class="fa fa-question-circle"></i> Help'}
             ],

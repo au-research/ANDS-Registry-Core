@@ -564,6 +564,8 @@
                 allowed = ['subjects', 'group', 'access_rights', 'license_class', 'temporal', 'spatial', 'access_methods_ss'];
             } else if($scope.filters['class']=='activity') {
                 allowed = ['type', 'activity_status', 'subjects', 'administering_institution', 'funders', 'funding_scheme', 'commencement_to', 'commencement_from', 'completion_to', 'completion_from', 'funding_amount'];
+            } else if ($scope.filters['class'] == 'service') {
+                allowed = ['type' ,'subjects', 'group', 'spatial'];
             } else {
                 allowed = ['type' ,'subjects', 'group'];
             }
