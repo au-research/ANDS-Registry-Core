@@ -29,6 +29,8 @@ return [
         'database' => env('DB_DATABASE_PORTAL', 'dbs_portal')
     ],
     'pids' => [
-        'database' => env('DB_DATABASE_PIDS', 'dbs_pids')
+        'database' => env('DB_DATABASE_PIDS', 'dbs_pids'),
+        'username' => env('DB_PIDS_USERNAME', 'piduser'),
+        'password' => env('DB_PIDS_PASSWORD', '')
     ]
 ];
