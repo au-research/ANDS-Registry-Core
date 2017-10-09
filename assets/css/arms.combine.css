@@ -9582,6 +9582,25 @@ h1 small {
 h1 {
   text-shadow: 2px 2px 1px #ffffff;
 }
+.markdown-content {
+  overflow: auto;
+  max-height: 600px;
+}
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3 {
+  border-bottom: 1px solid #eaecef;
+  padding-bottom: 0.3em;
+}
+.markdown-content h1 {
+  font-size: 22px;
+}
+.markdown-content h2 {
+  font-size: 18px;
+}
+.markdown-content h3 {
+  font-size: 16px;
+}
 .box {
   border: 1px solid #adadad;
   padding: 10px;

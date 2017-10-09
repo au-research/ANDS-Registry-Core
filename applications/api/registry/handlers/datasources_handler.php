@@ -198,9 +198,31 @@ class DatasourcesHandler extends Handler
         ]);
 
         $attributes = [
-            'provider_type'=>'rif',
-            'uri'=>'http://',
-            'harvest_method'=>'GETHarvester'
+            'provider_type' => 'rif',
+            'uri' => 'http://',
+            'harvest_method'=>'GETHarvester',
+            'allow_reverse_internal_links' => DB_TRUE,
+            'allow_reverse_external_links' => DB_TRUE,
+            'manual_publish' => DB_FALSE,
+            'qa_flag' => DB_TRUE,
+            'create_primary_relationships' => DB_FALSE,
+            'assessment_notify_email_addr' => '',
+            'created' => '',
+            'updated' => '',
+            'export_dci' => DB_FALSE,
+            'crosswalks' => '',
+            'title' => $this->getInput('title'),
+            'record_owner' => $this->getInput('record_owner'),
+            'contact_name'=>' ',
+            'contact_email'=>' ',
+            'notes'=>'',
+            'harvest_date' => '',
+            'oai_set' => '',
+            'advanced_harvest_mode' => 'STANDARD',
+            'harvest_frequency' => '',
+            'metadataPrefix' => '',
+            'xsl_file' => '',
+            'user_defined_params' => ''
         ];
 
         foreach ($attributes as $key => $value) {

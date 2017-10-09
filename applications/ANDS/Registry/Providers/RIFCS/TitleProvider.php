@@ -63,7 +63,7 @@ class TitleProvider implements RIFCSProvider
             if (!array_key_exists('@attributes', $item)) {
                 return false;
             }
-            return $item['@attributes']['type'] == 'primary';
+            return array_key_exists('type', $item['@attributes']) && $item['@attributes']['type'] == 'primary';
         });
 
         $displayTitle = is_string($name['value']) ? $name['value'] : null;
@@ -258,7 +258,7 @@ class TitleProvider implements RIFCSProvider
 
         // take the first primary found
         $name = $names->first(function ($key, $item) {
-            return $item['@attributes']['type'] == 'primary';
+            return array_key_exists('@attributes', $item) && $item['@attributes']['type'] == 'primary';
         });
 
         // if no primary is found, take the first name regardless

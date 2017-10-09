@@ -24,7 +24,7 @@ class Revisions_extension extends ExtensionBase
 		foreach($result->result_array() AS $r)
 		{
 			$time = date("F j, Y, g:i a", $r['timestamp']);
-			if($r['current'] == TRUE) $r['current'] = ' (current version)';
+			if($r['current'] === 'TRUE') $r['current'] = ' (current version)';
 			else $r['current'] = '';
 			$revisions[$time] = $r;
 		}

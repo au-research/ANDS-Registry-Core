@@ -10,8 +10,8 @@ class RelationshipProviderTest extends \RegistryTestClass
 {
     protected $requiredKeys = [
         // these records exist in demo
-        "Collection31_demo",
-        "Collection346"
+//        "Collection31_demo",
+//        "Collection346"
     ];
 
     /** @test **/
@@ -38,4 +38,13 @@ class RelationshipProviderTest extends \RegistryTestClass
         $funder = GrantsConnectionsProvider::create()->getFunder($record);
         // TODO: verify funder exists, this one has a relatedInfo (reverse) isFundedBy a party
     }
+
+    public function test_it_should_find_affected_records()
+    {
+        $record = $this->ensureIDExist(86321);
+        $affectedRecords = RelationshipProvider::getAffectedIDsFromIDs([$record->id], [$record->key]);
+        dd(count($affectedRecords));
+    }
+
+
 }

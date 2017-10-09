@@ -181,7 +181,7 @@ function SettingsCtrl($scope, $routeParams, ds_factory) {
 	});
 
 	$scope.process_values = function() {
-		var flags = ['manual_publish', 'allow_reverse_internal_links', 'allow_reverse_external_links', 'create_primary_relationships', 'qa_flag', 'export_dci'];
+		var flags = ['manual_publish', 'allow_reverse_internal_links', 'allow_reverse_external_links', 'create_primary_relationships', 'qa_flag', 'export_dci', 'service_discovery_enabled'];
 		$.each($scope.ds, function(i){
 			if($.inArray(i, flags) > -1){
 				if((this=='t' || this=='1') && i!='id') {
@@ -213,7 +213,6 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
         {name:'version', value:'2.0.2'},
         {name:'namespace', value:'xmlns(csw=http://www.opengis.net/cat/csw)'},
         {name:'resultType', value:'results'},
-        {name:'outputFormat', value:'application/xml'},
         {name:'typeNames', value:'csw:Record'},
         {name:'elementSetName', value:'full'},
         {name:'constraintLanguage', value:'CQL_TEXT'},
@@ -260,7 +259,7 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 	}
 
 	$scope.process_values = function() {
-		var flags = ['manual_publish', 'allow_reverse_internal_links', 'allow_reverse_external_links', 'create_primary_relationships', 'qa_flag', 'export_dci'];
+		var flags = ['manual_publish', 'allow_reverse_internal_links', 'allow_reverse_external_links', 'create_primary_relationships', 'qa_flag', 'export_dci', 'service_discovery_enabled'];
 		$.each($scope.ds, function(i){
 			if($.inArray(i, flags) > -1){
 				if((this=='t' || this=='1') && i!='id') {

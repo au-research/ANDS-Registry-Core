@@ -30,7 +30,7 @@ class RegistryObjectSyncCommand extends Command
         $this
             ->setName('ro:sync')
             ->setDescription('Sync a record')
-            ->setHelp("This command allows you to interrogate a registry object")
+            ->setHelp("This command allows you to sync a record")
             ->setDefinition(
                 new InputDefinition([
                     new InputOption(

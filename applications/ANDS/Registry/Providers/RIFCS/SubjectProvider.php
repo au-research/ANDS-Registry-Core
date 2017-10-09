@@ -22,6 +22,7 @@ class SubjectProvider implements RIFCSProvider
 {
     public static $RESOLVABLE = ['anzsrc', 'anzsrc-for', 'anzsrc-seo',
         'gcmd', 'iso639-3','local'];
+    public static $delimiter = ['|', '&gt;', '>'];
 
     public static function process(RegistryObject $record)
     {
@@ -45,7 +46,8 @@ class SubjectProvider implements RIFCSProvider
     /**
      * get subjects
      *
-     * @param $record
+     * @param RegistryObject $record
+     * @param null $data
      * @return array
      */
     public static function getSubjects(
@@ -77,17 +79,32 @@ class SubjectProvider implements RIFCSProvider
     public static function processSubjects(RegistryObject $record)
     {
         $subjects = self::getSubjects($record);
+        return self::resolveSubjects($subjects);
+    }
 
+    /**
+     * Resolve the given subjects
+     * Hit the SOLR concepts core and determine the list of resolved subjects
+     * based on the subjects provided
+     * TODO clean up logic and build resolveSubject($value, $type) for even finer unit
+     * TODO Cache result at resolveSubject end
+     *
+     * @param $subjects
+     * @return array
+     */
+    public static function resolveSubjects($subjects)
+    {
         $solrClient = new SolrClient(Config::get('app.solr_url'));
         $solrClient->setCore('concepts');
+
         $subjectsResolved = array();
 
         foreach ($subjects AS $subject) {
 
             $type = $subject["type"];
-            $value = (string)($subject['value']);
+            $value = (string) ($subject['value']);
             $positive_hit = false;
-            $uri= $subject['uri']? $subject['uri'] : " ";
+            $uri = array_key_exists('uri', $subject) ? $subject['uri'] : " ";
             if (!array_key_exists((string)$value, $subjectsResolved)) {
                 $search_value = self::formatSearchString($value,strtolower($type));
                 $solrResult = $solrClient->search([
@@ -185,7 +202,6 @@ class SubjectProvider implements RIFCSProvider
 
     public static function checkResult($resolved, $subject,$notation_value, $numFound)
     {
-
         $value = $subject['value'];
         $type = strtolower($subject['type']);
 
@@ -213,8 +229,10 @@ class SubjectProvider implements RIFCSProvider
         if (strtoupper($value) == strtoupper($resolved->label[0]) && ($numFound > 1 || $type == 'local'))  return false;
 
         // if this is a concatenated gcmd value strip off the final subject value to check resolved value
-        if ($resolved->type[0] == 'gcmd' && self::isMultiValue($subject['value']))
+        if ($resolved->type[0] == 'gcmd' && self::isMultiValue($subject['value'])) {
             $value = self::getNarrowestConcept($subject['value']);
+        }
+
 
         // if we have a direct value string check the resolved value
         if (strtoupper($value) == strtoupper($resolved->label[0]))  return true;
@@ -233,12 +251,12 @@ class SubjectProvider implements RIFCSProvider
      */
     public static function isMultiValue($string)
     {
-
-        $multi_value = explode("|", $string);
-        if (count($multi_value) > 1)  return true;
-
-        $multi_value = explode("&gt;",$string);
-        if (count($multi_value) > 1) return true;
+        foreach (self::$delimiter as $delim) {
+            $multi_value = explode($delim, $string);
+            if (count($multi_value) > 1) {
+                return true;
+            }
+        }
 
         return false;
     }
@@ -251,15 +269,14 @@ class SubjectProvider implements RIFCSProvider
      */
     public static function getNarrowestConcept($string)
     {
-
-        $multi_value = explode("|", $string);
-        if (count($multi_value) > 1)  return trim(array_pop($multi_value));
-
-        $multi_value = explode("&gt;",$string);
-        if (count($multi_value) > 1) return trim(array_pop($multi_value));
+        foreach (self::$delimiter as $delim) {
+            $multi_value = explode($delim, $string);
+            if (count($multi_value) > 1) {
+                return trim(array_pop($multi_value));
+            }
+        }
 
         return $string;
-
     }
 }
 ?>

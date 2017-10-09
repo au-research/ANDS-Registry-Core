@@ -47,11 +47,13 @@ else
 		<div class="span7">
 			<div class="box">
 				<div class="box-header clearfix">
-					<h1><?php echo $site_title; ?></h1>	
+					<h1><?php echo $site_title; ?></h1>
 					<a href="<?php echo portal_url();?>" style="margin-top:5px;" class="btn btn-info pull-right" target="_blank">
 					<i class="icon-globe icon icon-white"></i> Visit Research Data Australia</a>
 				</div>
-				<?php echo $news_content; ?>
+                <div class="box-content markdown-content">
+                    <?php echo $changelog; ?>
+                </div>
 			</div>
 		</div>
 
@@ -123,11 +125,12 @@ else
 								}
 								else
 								{
-									echo '<br/><small><span class="label label-success"> &nbsp; ! &nbsp;</span> <strong> New Data Publishers </strong> <br/>
-										<p>If your institution does not already <a target="_blank" href="'.portal_url('home/contributors').'">contribute to Research Data Australia</a> (at the institutional level), 
-										you may wish to use the <a href="'.registry_url('publish_my_data').'"><b>Publish My Data self-service tool</b></a>.</p>
-										<p><small><em>Note:</em> Publish My Data self-service is intended for use by researchers at organisations where there is no formal data archiving service and where ANDS has no distributed services in place. 
-										Please first check for processes within your institution before using the self-service facility.</small></p></small><br/>';
+								//	echo '<br/><small><span class="label label-success"> &nbsp; ! &nbsp;</span> <strong> New Data Publishers </strong> <br/>
+								//		<p>If your institution does not already <a target="_blank" href="'.portal_url('contributors').'">contribute to Research Data Australia</a> (at the institutional level),
+								//		you may wish to use the <a href="'.registry_url('publish_my_data').'"><b>Publish My Data self-service tool</b></a>.</p>
+								//		<p><small><em>Note:</em> Publish My Data self-service is intended for use by researchers at organisations where there is no formal data archiving service and where ANDS has no distributed services in place.
+								//		Please first check for processes within your institution before using the self-service facility.</small></p></small><br/>';
+									echo '<p>If you would like to contribute to Research Data Australia, please contact <a href="mailto:services@ands.org.au">services@ands.org.au</a>.</p>';
 								}
 							}
 							elseif(sizeof($data_sources)>0){

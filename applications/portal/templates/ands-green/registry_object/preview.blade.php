@@ -34,6 +34,7 @@
 	@if($ro->core['class']=='party')
 		@include('registry_object/contents/contact-info')
 	@endif
+    @include('registry_object/contents/access-preview')
 <!-- ||$ro->identifiers -->
 	@if($showMore)
         <h4>More data related to {{$ro->core['title']}}</h4>

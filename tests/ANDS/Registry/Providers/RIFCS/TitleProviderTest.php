@@ -224,4 +224,15 @@ class TitleProviderTest extends \RegistryTestClass
         $this->assertEquals('SUPERIOR : SUBORDINATE', $titles['listTitle']);
         $this->assertTrue(true);
     }
+
+    /** @test **/
+    public function it_should_get_primary_title()
+    {
+        $rawNames = [
+            ['value' => 'Kuerschner', '@attributes' => ['value' => 'primary']]
+        ];
+        $titles = TitleProvider::getTitlesFromRaw($rawNames, 'Collection');
+        $this->assertEquals('Kuerschner', $titles['listTitle']);
+    }
+
 }

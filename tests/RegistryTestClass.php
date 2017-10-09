@@ -19,7 +19,17 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
     {
         $record = RegistryObjectsRepository::getPublishedByKey($key);
         if ($record === null) {
-            $this->markTestSkipped("The record with $key is not available. Skipping tests...");
+            $this->markTestSkipped("The record with key: $key is not available. Skipping tests...");
+        }
+
+        return $record;
+    }
+
+    public function ensureIDExist($id)
+    {
+        $record = RegistryObjectsRepository::getRecordByID($id);
+        if ($record === null) {
+            $this->markTestSkipped("The record with id: $id is not available. Skipping tests...");
         }
 
         return $record;
