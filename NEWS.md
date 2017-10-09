@@ -1,3 +1,23 @@
+## Release 25
+Release 25 of ANDS Online Services is scheduled for implementation on  11 October 2017. This release implements a number of Research Data Australia, Research Vocabularies Australia and ANDS Registry bug fixes and enhancement requests received through the ANDS Service Desk.
+
+*Research Data Australia*
+
+* Correct the display title for party records with both 'superior' and 'subordinate' primary name parts
+* Update the Temporal search filter behaviour to be inclusive
+* Remove unnecessary javascript causing unexpected scroll behaviour
+* Fix issue where access points for collections are being duplicated under the Go To Data Provider button on the view page
+* Ensure RDA URLs with only the ID are resolved to the full URL
+
+*Research Vocabularies Australia*
+
+* Correctly display related entity URLs and identifiers in the related entity preview popout on the vocabulary view page
+* Clean-up of existing Sesame repository on re-import of a vocabulary version
+
+*ANDS Registry*
+
+* Display a user-friendly version of the development changelog on the Online Services Homepage
+
 ## Release 24
 Release 24 of ANDS Online Services is scheduled for implementation on **5 July 2017 from 8:00am to 12pm**. During the implementation, the following services will be unavailable:
 
