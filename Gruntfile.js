@@ -84,7 +84,7 @@ module.exports = function(grunt){
 		watch: {
 			core: {
 				files: ['<%= yeoman.assets %>/sass/{,*/}*.{scss,sass}', '<%= yeoman.assets %>/less/{,*/}*.{less,less}'],
-				tasks: ['compass:core', 'concat:coreStyles', 'cssmin'],
+				tasks: ['compass:core', 'less:core', 'concat:coreStyles', 'cssmin'],
 				options:{nospawn:true}
 			}
 		}

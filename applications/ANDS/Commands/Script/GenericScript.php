@@ -4,6 +4,7 @@
 namespace ANDS\Commands\Script;
 
 
+use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\Input;
 
 class GenericScript implements GenericScriptRunnable
@@ -21,6 +22,14 @@ class GenericScript implements GenericScriptRunnable
         $this->command = $command;
         $this->input = $input;
         $this->output = $output;
+    }
+
+    public function table($rows, $headers = [])
+    {
+        $table = new Table($this->output);
+        $table->setHeaders($headers)
+            ->setRows($rows)
+            ->render();
     }
 
     public function log($message, $wrapper = null)

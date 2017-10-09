@@ -292,6 +292,25 @@ class TestIndexRelationshipTask extends UnitTest
 
     }
 
+    /** @test **/
+    public function test_it_should_update_relationship_of_a_record_2() {
+        $importTask = new ImportTask();
+        $importTask->init([
+            'params' => http_build_query([
+                'ds_id' => 58,
+                'targetStatus' => 'PUBLISHED'
+            ])
+        ])->skipLoadingPayload();
+        $importTask->initialiseTask();
+
+
+        $importTask->setTaskData('importedRecords', [72320]);
+        $indexRelation = $importTask->getTaskByName("IndexRelationship");
+        $indexRelation->run();
+
+        dd($indexRelation->getMessage());
+    }
+
     private function deleteRecords()
     {
         $dataSource = DataSourceRepository::getByKey("AUTEST1");

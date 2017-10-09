@@ -55,6 +55,7 @@
         "elasticsearch/elasticsearch": "~2.0",
         "minhd/oai-pmh" : "dev-master",
         "javibravo/simpleue" : "dev-master",
+        "cebe/markdown": "~1.1.1",
         "ramsey/uuid": "^3.7"
     },
 

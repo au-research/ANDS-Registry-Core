@@ -58,6 +58,7 @@ class IndexRelationship extends ImportSubTask
 
             $allRelationships = RelationshipProvider::getMergedRelationships($record);
 
+
             // save relations_count
             $record->setRegistryObjectAttribute('relations_count', count($allRelationships));
 
@@ -166,8 +167,6 @@ class IndexRelationship extends ImportSubTask
                 $value = ["set" => $value];
             }
         }
-
-
 
         $result = $this->parent()->getCI()->solr->add_json(json_encode([$updateDoc]));
         $result = json_decode($result, true);

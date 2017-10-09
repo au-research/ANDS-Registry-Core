@@ -321,4 +321,54 @@ class RegistryObjectsRepository
 
         return $query->get();
     }
+
+    public static function getPublishedBy($filters)
+    {
+        $query = RegistryObject::where('status', 'PUBLISHED');
+
+        // limit and offset
+        if (array_key_exists('limit', $filters)) {
+            $query = $query->limit($filters['limit']);
+            unset($filters['limit']);
+        }
+
+        if (array_key_exists('offset', $filters)) {
+            $query = $query->offset($filters['offset']);
+            unset($filters['offset']);
+        }
+
+        // identifier
+        if (array_key_exists('identifier', $filters) && $filters['identifier'] != "*") {
+            $identifierQuery = Identifier::where('identifier', 'like', '%'.$filters['identifier'].'%');
+            if (array_key_exists('identifier_type', $filters)) {
+                $identifierQuery = Identifier::where('identifier_type', $filters['identifier_type']);
+                unset($filters['identifier_type']);
+            }
+            $ids = $identifierQuery->pluck('registry_object_id');
+            $query = $query->whereIn('registry_object_id', $ids);
+            unset($filters['identifier']);
+        }
+
+        // link
+        if (array_key_exists('link', $filters) && $filters['link'] != "*") {
+            $linkQuery = Links::where('link', 'like', '%'.$filters['link'].'%');
+            $ids = $linkQuery->pluck('registry_object_id');
+            $query = $query->whereIn('registry_object_id', $ids);
+            unset($filters['link']);
+        }
+
+        // core attributes
+        foreach ($filters as $key => $value) {
+            if ($value != "*") {
+                $query = $query->where($key, 'like', '%'.$value.'%');
+            }
+        }
+
+        return $query->get();
+    }
+
+    public static function getPublishedRecords($limit, $offset)
+    {
+        return RegistryObject::limit($limit, $offset)->get();
+    }
 }

@@ -118,6 +118,7 @@ class Import extends MX_Controller {
 	private function import_via_path($id, $batch) {
 		if(!$batch) throw new Exception('Batch ID expected');
 		$dir = get_config_item('harvested_contents_path');
+		$dir = rtrim($dir, '/') . '/';
 		if(!$dir) throw new Exception('Harvested Contents Path not configured');
 
 		//getting the harvest_id
@@ -360,6 +361,7 @@ class Import extends MX_Controller {
 		if(!$id) throw new Exception('Data source ID expected');
 		if(!$batch) throw new Exception('Batch ID expected');
 		$dir = get_config_item('harvested_contents_path');
+		$dir = rtrim($dir, '/') . '/';
 		if(!$dir) throw new Exeption('Harvested Contents Path not configured');
 
 		$result = array();
@@ -391,6 +393,7 @@ class Import extends MX_Controller {
 		if(!$id) throw new Exception('Data source ID expected');
 		if(!$batch) throw new Exception('Batch ID expected');
 		$dir = get_config_item('harvested_contents_path');
+		$dir = rtrim($dir, '/') . '/';
 		if(!$dir) throw new Exeption('Harvested Contents Path not configured');
 
 		$this->load->library('importer');
@@ -552,6 +555,7 @@ class Import extends MX_Controller {
 	public function list_files($id=false) {
 		if(!$id) throw new Exception('Data Source ID required');
 		$dir = get_config_item('harvested_contents_path');
+		$dir = rtrim($dir, '/') . '/';
 		if(!$dir) throw new Exception('Harvested Contents Path not configured');
 
 		if($this->input->get('path')){
@@ -566,6 +570,7 @@ class Import extends MX_Controller {
 		}
 
 		$path = $dir.$id;
+		
 		if(!is_dir($path)) throw new Exception('Datasource does not have any harvested path');
 		$batches = array();
 		foreach(scandir($path) as $f){

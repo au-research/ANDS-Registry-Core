@@ -541,7 +541,8 @@ class RelationshipProvider
             return [];
         }
 
-        $identifierValues = collect($identifiers)->pluck('value');
+        $identifierValues = collect($identifiers)->pluck('value')
+            ->unique()->toArray();
 
         // directly related
         $relations = $provider
@@ -662,6 +663,7 @@ class RelationshipProvider
             ->setFilter('to_id', array_merge($ids, $directAndReverse))
             ->setFilter('relation_type', ['isPartOf', 'isFundedBy', 'isOutputOf'])
             ->setFilter('from_class', 'collection')
+            ->setFilter('to_class', 'collection')
             ->setLimit(0)
             ->get();
 
@@ -713,7 +715,9 @@ class RelationshipProvider
             ->get();
 
         foreach ($relations as $relation) {
-            $affectedIDs[] = (int)$relation->prop('from_id');
+            if ($relation->hasProperty('to_id')) {
+                $affectedIDs[] = (int) $relation->prop('to_id');
+            }
         }
 
         // Optimisation, convert $ids to list of identifiers

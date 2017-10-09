@@ -22,6 +22,17 @@ class DataSource extends Model
         return $this->hasMany(DataSourceAttribute::class, "data_source_id", "data_source_id");
     }
 
+    /**
+     * Eloquent Accessor
+     * usage: $this->id will return $this->data_source_id
+     *
+     * @return mixed
+     */
+    public function getIdAttribute()
+    {
+        return $this->data_source_id;
+    }
+
     public function attributes()
     {
         return $this->dataSourceAttributes()->get()->map(function($item){
