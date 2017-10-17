@@ -104,6 +104,7 @@ angular.module('portal-filters', [])
 	.filter('formatFacet', function () {
 		return function (str) {
 			switch (str) {
+				case 'OGC:WMTS': case 'ogc:wmts': return 'OGC Web Map Tile Service'; break;
 				case 'OGC:WFS': case 'ogc:wfs': return 'OGC Web Feature Service'; break;
 				case 'OGC:WMS': case 'ogc:wms': return 'OGC Web Map Service'; break;
 				case 'OGC:WCS': case 'ogc:wcs': return 'OGC Web Coverage Service'; break;
