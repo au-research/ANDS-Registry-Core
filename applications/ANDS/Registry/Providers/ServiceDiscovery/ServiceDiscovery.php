@@ -188,7 +188,7 @@ class ServiceDiscovery {
             "ogc",
             "wcs",
             "wps",
-            "thredds"
+            "wmts"
            // "geonetwork",
           //  "geoserver"
         ];
