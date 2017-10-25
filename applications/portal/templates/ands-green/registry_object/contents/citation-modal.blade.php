@@ -52,7 +52,7 @@
                     <a title="Export to EndNote Web" href="{{ base_url('registry_object/export/endnote_web/'.$ro->core['id']).'?source=portal_view' }}" target="_blank">EndNote Web</a>
                 </div>
                 <div class="btn-group btn-link" style="padding-left:40px">
-                    <a title="EndNote Help" href="http://services.ands.org.au/documentation/EndNoteHelp" target="_blank">EndNote Help</a>
+                    <a title="EndNote Help" href="https://documentation.ands.org.au/display/DOC/How+to+Export+to+EndNote" target="_blank">EndNote Help</a>
                 </div>
             </div>
         </div>
