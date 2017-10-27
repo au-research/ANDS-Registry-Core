@@ -32,7 +32,7 @@ class DOISyncCommand extends Command
             ->setDescription('Sync DOI with Datacite')
             ->setHelp("This command allows you to sync local DOI with remote Datacite server")
 
-            ->addArgument('what', InputArgument::REQUIRED, 'identify|process')
+            ->addArgument('what', InputArgument::REQUIRED, 'identify|process|checkWrongDoiInXML|processWrongDOI')
             ->addArgument('id', InputArgument::OPTIONAL, 'id of the record')
         ;
     }
@@ -59,6 +59,13 @@ class DOISyncCommand extends Command
             $this->process($input, $output);
         }
 
+        if ($command == "checkWrongDoiInXML") {
+            $this->checkWrongDoiInXML($input, $output);
+        }
+
+        if ($command == "processWrongDOI") {
+            $this->processWrongDOI($input, $output);
+        }
         return;
     }
 
@@ -96,7 +103,7 @@ class DOISyncCommand extends Command
 
         // count_db_missing
         $hasMissingDB = collect($data)->filter(function($data) {
-             return $data['stat']['count_db_missing'] > 0;
+            return $data['stat']['count_db_missing'] > 0;
         })->toArray();
 
         if (count($hasMissingDB) > 0) {
@@ -311,6 +318,7 @@ class DOISyncCommand extends Command
         }
     }
 
+
     private function fetchMissingDOIs(Client $client, $stat, InputInterface $input, OutputInterface $output)
     {
         $diff = $stat['db_missing'];
@@ -393,6 +401,146 @@ class DOISyncCommand extends Command
         $doi->save();
 
         $this->log("<info>Added $id to the database</info>");
+    }
+
+    /**
+     * Update the xml for a client with the correct DOI identifier
+     *
+     * @param Client $client
+     * @return array
+     */
+    private function processWrongDOI(InputInterface $input, OutputInterface $output){
+
+        $doiModel = new Doi;
+        $doiModel->setConnection('dois');
+
+        $id = $input->getArgument('id');
+        if((string)$id=="0") $id="00";
+        if (!$id) {
+            $output->writeln("<warning>Need a client ID to start processing</warning>");
+            return;
+        }
+
+        $clientModel = new Client;
+        $clientModel->setConnection('dois');
+
+        $client = $clientModel->find($id);
+
+        $output->writeln("Processing wrong doi in xml updates for $client->client_name ($client->client_id)");
+
+        $stat = $this->getWrongDOIStat($client);
+        $output->writeln("$client->client_name ($client->client_id) has ".$stat['count_db']. " DOIs to update");
+        if($stat['count_db']>0) {
+            $wrongDOIs = $stat['dois'];
+            
+            $config = Config::get('database');
+
+            $clientRepository = new ClientRepository(
+                $config['dois']['hostname'], $config['dois']['database'], $config['dois']['username'], $config['dois']['password']
+            );
+            $doiRepository = new DoiRepository(
+                $config['dois']['hostname'], $config['dois']['database'], $config['dois']['username'], $config['dois']['password']
+            );
+
+            $dataciteClient = $this->getDataciteClient($client);
+            $doiService = new DOIServiceProvider($clientRepository, $doiRepository, $dataciteClient);
+            $doiService->setAuthenticatedClient($client);
+
+            $helper = $this->getHelper('question');
+            $question = new ConfirmationQuestion('Proceed to fix? [y|N] : ', false);
+            if (!$helper->ask($input, $output, $question)) {
+                $output->writeln("Aborting.");
+                return;
+            }
+
+            $output->writeln("Proceeding to fix {$stat['count_db']} DOIs.");
+
+            foreach ($wrongDOIs as $id) {
+                $doi = $doiRepository->getByID($id);
+                if (!$doi) {
+                    $output->writeln("<error>$id does not exist</error>");
+                    continue;
+                }
+                $output->writeln("$id - $doi->status - $doi->updated_when");
+                $update = $doiService->update($doi->doi_id, $url = NULL, $doi->datacite_xml);
+                if(!$update){
+                    $output->writeln($doi->doi_id." not updated successfully");
+                }
+            }
+        }
+    }
+
+    /**
+     * Get the lists of DOIs that have a DOI identifier in the latest xml which is incorrect
+     *
+     * @param
+     * @return array
+     */
+    private function checkWrongDoiInXML(InputInterface $input, OutputInterface $output){
+
+        $clientModel = new Client;
+        $clientModel->setConnection('dois');
+
+        $clients = $clientModel->get();
+
+        if ($id = $input->getArgument('id')) {
+            $client = $clientModel->find($id);
+            if (!$client) {
+                $output->writeln("<error>Error client $id not found</error>");
+                die();
+            }
+            $clients = [ $client ];
+        }
+
+        $data = [];
+        $progressBar = new ProgressBar($output, count($clients));
+        foreach ($clients as $client) {
+            $stat = $this->getWrongDOIStat($client);
+
+            $data[] = [
+                'client' => $client,
+                'stat' => $stat
+            ];
+            $progressBar->advance(1);
+        }
+        $progressBar->finish();
+        $hasWrongDoi = collect($data)->filter(function($data) {
+            return $data['stat']['count_db'] > 0;
+        })->toArray();
+
+        if (count($hasWrongDoi) > 0) {
+            foreach ($hasWrongDoi as $wrong) {
+                $client = $wrong['client'];
+                $stat = $wrong['stat'];
+                $this->log("$client->client_name ($client->client_id) has {$stat['count_db']} wrong DOIs in xml");
+            }
+        }
+
+
+    }
+
+    private function getWrongDOIStat(Client $client)
+    {
+        $doiModel = new Doi;
+        $doiModel->setConnection('dois');
+        $dois = Array();
+
+        $databaseDOIs = $doiModel
+            ->where('client_id', $client->client_id)
+            ->whereIn('status', ['ACTIVE', 'INACTIVE'])
+            ->lists('doi_id','datacite_xml','client_id')
+            ->filter(function($item,$xml) {
+                return strpos($xml,$item) === false;
+            })->all();
+
+        foreach($databaseDOIs as $key=>$value){
+            $dois[] = $value;
+        }
+
+        return [
+            'count_db' => count($databaseDOIs),
+            'dois' => $dois
+        ];
     }
 
     public function log($message)
