@@ -530,11 +530,14 @@ Y2  - '.date("Y-m-d")."
         if (!$contributors) {
             $relationshipTypeArray = array(
                 'hasPrincipalInvestigator',
+                'isPrincipalInvestigatorOf',
                 'principalInvestigator',
                 'author',
                 'coInvestigator',
                 'isOwnedBy',
-                'hasCollector'
+                'isOwnerOf',
+                'hasCollector',
+                'isCollectorOf'
             );
             $classArray = array('party');
             $authors = $this->ro->getRelatedObjectsIndex($classArray, $relationshipTypeArray);
