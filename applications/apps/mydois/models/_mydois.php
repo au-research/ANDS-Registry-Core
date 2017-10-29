@@ -122,7 +122,7 @@ class _mydois extends CI_Model
 		$this->doi_db->where('client_id', $client_id); 
 		$this->doi_db->update('doi_client', $clientdata);
 
-		if($client_id<10){$client_id = "-".$client_id;}
+		//if($client_id<10){$client_id = "-".$client_id;}
 
 		return $this->mdsDatacentreUpdate($client_name, $client_contact_name, $client_contact_email, $domainList, $datacite_prefix,$client_id);
 	}
