@@ -51,7 +51,7 @@ class SubjectSuggestor
         $query = $this->getSuggestorQuery($subjectValues);
         $searchResult = $this->solr->search([
             'q' => $query,
-            'rows' => 100,
+            'rows' => 50,
             'start' => 0,
             'fl' => 'id, title, key, slug, score'
         ]);
@@ -95,6 +95,9 @@ class SubjectSuggestor
     public function getSuggestorQuery($subjectValues)
     {
         $field = "subject_value_resolved_search";
+        $subjectValues = collect($subjectValues)->map(function($item) {
+            return "\"{$item}\"";
+        })->toArray();
         $query = implode(" ", $subjectValues);
         $query = escapeSolrValue($query);
         return "+{$field}:({$query})";
