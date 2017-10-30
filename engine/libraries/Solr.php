@@ -476,11 +476,11 @@ class Solr
                     break;
                 case 'year_from':
                     if ($value != '')
-                        $this->setOpt('fq', 'earliest_year:[' . $value . ' TO *]');
+                        $this->setOpt('fq', "+((earliest_year:[$value TO *] OR latest_year:[$value TO *]) OR (earliest_year:[* TO *] AND latest_year:[$value TO *]))");
                     break;
                 case 'year_to':
                     if ($value != '')
-                        $this->setOpt('fq', 'latest_year:[* TO ' . $value . ']');
+                        $this->setOpt('fq', "+((earliest_year:[* TO $value] OR latest_year:[* TO $value]) OR (earliest_year:[ * TO $value] AND latest_year:[* TO *]))");
                     break;
                 case 'license_class':
                     if (is_array($value)) {
