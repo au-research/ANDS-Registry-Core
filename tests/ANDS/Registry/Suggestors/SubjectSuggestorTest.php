@@ -6,6 +6,7 @@ namespace ANDS\Registry\Suggestors;
 class SubjectSuggestorTest extends \RegistryTestClass
 {
 
+    /** @test */
     public function test_basic_suggestor_passing()
     {
         $record = $this->ensureKeyExist("AODN/8f520751-7483-435a-b701-c6b1ec6f3a2b");
@@ -26,7 +27,7 @@ class SubjectSuggestorTest extends \RegistryTestClass
                 'EARTH SCIENCE',
                 'SCIENCE'
             ]),
-            "+subject_value_resolved_search:(EARTH SCIENCE SCIENCE)"
+            "+subject_value_resolved_search:(\"EARTH SCIENCE\" \"SCIENCE\")"
         );
 
         // escape solr values properly
@@ -35,7 +36,7 @@ class SubjectSuggestorTest extends \RegistryTestClass
                 'EARTH SCIENCE',
                 'EARTH SCIENCE | BIOLOGICAL CLASSIFICATION | PLANTS | ANGIOSPERMS (FLOWERING PLANTS) | MONOCOTS | SEAGRASS'
             ]),
-            "+subject_value_resolved_search:(EARTH SCIENCE EARTH SCIENCE \| BIOLOGICAL CLASSIFICATION \| PLANTS \| ANGIOSPERMS \(FLOWERING PLANTS\) \| MONOCOTS \| SEAGRASS)"
+            "+subject_value_resolved_search:(\"EARTH SCIENCE\" \"EARTH SCIENCE \| BIOLOGICAL CLASSIFICATION \| PLANTS \| ANGIOSPERMS \(FLOWERING PLANTS\) \| MONOCOTS \| SEAGRASS\")"
         );
     }
 }
