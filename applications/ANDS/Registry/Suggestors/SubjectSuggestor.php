@@ -94,12 +94,11 @@ class SubjectSuggestor
      */
     public function getSuggestorQuery($subjectValues)
     {
-        $field = "subject_value_resolved_search";
-        $subjectValues = collect($subjectValues)->map(function($item) {
-            return "\"{$item}\"";
+        $field = "subject_value_unresolved";
+        $subjectValues = collect($subjectValues)->map(function($item) use ($field){
+            $escaped = escapeSolrValue($item);
+            return "({$field}:\"{$escaped}\")";
         })->toArray();
-        $query = implode(" ", $subjectValues);
-        $query = escapeSolrValue($query);
-        return "+{$field}:({$query})";
+        return implode(" OR ", $subjectValues);
     }
 }
