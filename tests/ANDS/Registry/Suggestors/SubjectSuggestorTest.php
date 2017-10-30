@@ -27,7 +27,7 @@ class SubjectSuggestorTest extends \RegistryTestClass
                 'EARTH SCIENCE',
                 'SCIENCE'
             ]),
-            "+subject_value_resolved_search:(\"EARTH SCIENCE\" \"SCIENCE\")"
+            "(subject_value_unresolved:\"EARTH SCIENCE\") OR (subject_value_unresolved:\"SCIENCE\")"
         );
 
         // escape solr values properly
@@ -36,7 +36,7 @@ class SubjectSuggestorTest extends \RegistryTestClass
                 'EARTH SCIENCE',
                 'EARTH SCIENCE | BIOLOGICAL CLASSIFICATION | PLANTS | ANGIOSPERMS (FLOWERING PLANTS) | MONOCOTS | SEAGRASS'
             ]),
-            "+subject_value_resolved_search:(\"EARTH SCIENCE\" \"EARTH SCIENCE \| BIOLOGICAL CLASSIFICATION \| PLANTS \| ANGIOSPERMS \(FLOWERING PLANTS\) \| MONOCOTS \| SEAGRASS\")"
+            "(subject_value_unresolved:\"EARTH SCIENCE\") OR (subject_value_unresolved:\"EARTH SCIENCE \| BIOLOGICAL CLASSIFICATION \| PLANTS \| ANGIOSPERMS \(FLOWERING PLANTS\) \| MONOCOTS \| SEAGRASS\")"
         );
     }
 }
