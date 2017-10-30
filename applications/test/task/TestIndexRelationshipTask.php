@@ -5,6 +5,7 @@ namespace ANDS\Test;
 
 
 use ANDS\API\Task\ImportTask;
+use ANDS\API\Task\TaskManager;
 use ANDS\DataSource;
 use ANDS\Payload;
 use ANDS\Registry\Importer;
@@ -90,6 +91,22 @@ class TestIndexRelationshipTask extends UnitTest
 //        dd($indexRelationshipTask->getRelationshipIndex($relationships));
 //        dd(RelationshipProvider::getIdentifierRelationship($record));
 //        dd(RelationshipProvider::getAffectedIDsFromIDs([798088]));
+    }
+
+    /** @test */
+    public function test_sample_test()
+    {
+        $obj = TaskManager::create($this->ci->db, $this->ci)->getTask(52185);
+        $task = TaskManager::create($this->ci->db, $this->ci)->getTaskObject($obj);
+        $task->setDb($this->ci->db)->setCI($this->ci);
+        $task->initialiseTask();
+
+        $ids = RelationshipProvider::getAffectedIDsFromIDs($task->getTaskData("importedRecords"), $keys = RegistryObject::whereIn('registry_object_id', $task->getTaskData("importedRecords"))
+            ->get()->pluck('key')->toArray());
+
+        $indexRelationshipTask = $task->getTaskByName("IndexRelationship");
+        $indexRelationshipTask->run();
+        dd($indexRelationshipTask->getMessage());
     }
 
     /** @test **/

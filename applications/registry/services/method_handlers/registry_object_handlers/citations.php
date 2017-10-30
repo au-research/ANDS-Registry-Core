@@ -528,6 +528,11 @@ Y2  - '.date("Y-m-d")."
         }
 
         if (!$contributors) {
+            /*
+             * We do query the "relations" core for related parties.
+             * We do index reverse relationships BUT without the mirrored (reversed) relationship type
+             * adding the reversed types to the query ensures that the party is found in either ways in the index
+             */
             $relationshipTypeArray = array(
                 'hasPrincipalInvestigator',
                 'isPrincipalInvestigatorOf',

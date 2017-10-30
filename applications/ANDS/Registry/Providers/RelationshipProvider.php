@@ -606,7 +606,6 @@ class RelationshipProvider
 
         }
 
-
         // find directly affected
         $stdProvider = Connections::getStandardProvider();
 
@@ -735,7 +734,7 @@ class RelationshipProvider
         }
 
         $affectedIDs = array_filter($affectedIDs, function($item) use ($ids){
-            return !in_array($item, $ids);
+            return $item && !in_array($item, $ids);
         });
 
 
