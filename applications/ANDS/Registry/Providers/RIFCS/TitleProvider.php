@@ -131,10 +131,54 @@ class TitleProvider implements RIFCSProvider
             "...");
         $listTitle = mb_strimwidth($listTitle, 0, self::$maxLength, "...");
 
-        return [
+        // return values
+        $result = [
             'listTitle' => $listTitle,
             'displayTitle' => $displayTitle
         ];
+
+        // alternative titles
+        $alt = collect($names)->filter(function ($item, $key) {
+            if (!array_key_exists('@attributes', $item)) {
+                return false;
+            }
+            return array_key_exists('type', $item['@attributes'])
+                && (
+                    $item['@attributes']['type'] == 'alternative'
+                    || $item['@attributes']['type'] == 'abbreviated'
+                );
+        });
+
+        if (count($alt) == 0) {
+            return $result;
+        }
+
+        // construct alt titles
+        $result['alternativeTitles'] = self::getAltTitles($alt);
+
+        return $result;
+    }
+
+    /**
+     * Given a list of raw names that is pre-determined to be abbreviated or aka
+     * Return the formatted version in a list
+     *
+     * @param $altRawTitles
+     * @return static
+     */
+    public static function getAltTitles($altRawTitles)
+    {
+        return collect($altRawTitles)->map(function($item){
+            $ordered = self::constructTitleByOrder([$item], self::$partyNamePartOrder);
+            if ($ordered) {
+                return $ordered;
+            }
+            if (array_key_exists('value', $item) && is_string($item['value'])) {
+                return $item['value'];
+            }
+
+            return "";
+        })->toArray();
     }
 
     public static function superiorAndSubordinateName($names)
@@ -168,9 +212,14 @@ class TitleProvider implements RIFCSProvider
      */
     public static function get(RegistryObject $record)
     {
+        // get the raw ones
+        $names = self::getRaw($record);
+        $titles = self::getTitlesFromRaw($names, $record->class);
+
         return [
-            "display_title" => $record->title,
-            "list_title" => $record->getRegistryObjectAttributeValue("list_title"),
+            "display_title" => $titles['displayTitle'],
+            "list_title" => $titles['listTitle'],
+            "alt_titles" => array_key_exists("alternativeTitles", $titles) ? array_values($titles['alternativeTitles']) : [],
             "raw" => self::getRaw($record)
         ];
     }
