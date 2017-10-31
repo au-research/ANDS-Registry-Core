@@ -2,14 +2,7 @@
     <h4>Related Publications</h4>
     <ul class="list-unstyled">
         @foreach($related['publications']['docs'] as $col)
-            {{--Display citation itemprop for collection with related identifier not DOI--}}
             <li>
-            <span
-                    @if($ro->core['class'] == 'collection' && $col['relation_identifier_type'] == 'doi')
-                    itemprop="citation"
-                    @endif
-            >
-
                 <i class="fa fa-book icon-portal"></i>
                 <small>{{ $col['display_relationship'] }} </small>
 
@@ -58,9 +51,6 @@
                 @endforeach
                 @endif
 
-
-                {{--Close the span for the itemprop--}}
-            </span>
             </li>
         @endforeach
     </ul>

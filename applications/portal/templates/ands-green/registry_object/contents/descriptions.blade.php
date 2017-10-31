@@ -31,13 +31,7 @@
                             @if($showHeading)
 							<h4>{{readable($currentHeading)}}</h4>
                             @endif
-                            <?php if($desc['type']=='full'||$desc['type']=='brief'){ ?>
-                                <span itemprop="description">
-                            <?php } ?>
 							{{$description ? $description : ''}}
-                                    <?php if($desc['type']=='full'||$desc['type']=='brief'){ ?>
-                                    </span>
-                            <?php } ?>
 						</div>
 						
 					@endif
