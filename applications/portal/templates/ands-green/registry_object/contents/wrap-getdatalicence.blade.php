@@ -75,15 +75,13 @@
             foreach($display_order as $order){
                 foreach ($ro->rights as $right) {
                     if($right['type']=='licence' && $right['type']==$order){
-                        $itemprop = 'itemprop="license"';
-                        if((isset($right['value']) &&trim($right['value'])!='')||(isset($right['rightsUri']) && $right['rightsUri']!=''))
-                            $licence_content .= '<p '.$itemprop.'>';
+                         if((isset($right['value']) &&trim($right['value'])!='')||(isset($right['rightsUri']) && $right['rightsUri']!=''))
+                            $licence_content .= '<p>';
                         if(isset($right['value']) && trim($right['value'])!=''){
                             $description = html_entity_decode($right['value']);
                             if(strip_tags($description) == $description)
                                 $description = nl2br($description);
                             $licence_content .= $description.'<br />';
-
                         }
                         if(isset($right['rightsUri']) && $right['rightsUri']!='')
                             $licence_content .= '<a href="'.$right['rightsUri'].'">'.$right['rightsUri'].'</a><br />';
@@ -97,7 +95,6 @@
                             if(strip_tags($description) == $description)
                                 $description = nl2br($description);
                             $licence_content .= $description.'<br />';
-
                         }
                         if(isset($right['rightsUri']) && $right['rightsUri']!='')
                             $licence_content .= '<a href="'.$right['rightsUri'].'">'.$right['rightsUri'].'</a><br />';

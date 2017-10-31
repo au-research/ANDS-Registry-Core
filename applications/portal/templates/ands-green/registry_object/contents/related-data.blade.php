@@ -4,11 +4,6 @@
         @foreach($related['data']['docs'] as $col)
             @if(isset($col['to_id']))
                 <li>
-                <span
-                        @if($ro->core['class'] == 'collection')
-                        itemprop="isBasedOnUrl"
-                        @endif
-                >
                     <i class="fa fa-folder-open icon-portal"></i>
                     <small>{{ $col['display_relationship'] }}</small>
                     <a href="<?php echo base_url()?>{{$col['to_id']}}/{{$col['to_id']}}"
@@ -23,7 +18,6 @@
                        >
                         {{$col['to_title']}}
                     </a>
-                </span>
                 </li>
             @endif
         @endforeach

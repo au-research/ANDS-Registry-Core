@@ -18,10 +18,8 @@
                     @endif
                     <?php
                     echo '<li>' . $col['type'] . " : ";
-                    $itemprop ='';
-                    if($col['type']='doi'||$col['type']=='purl'||$col['type']=='uri'||$col['type']=='handle'||$col['type']=='url') $itemprop = 'itemprop="url"';
                     if (isset($col['identifier']['href']) && $col['identifier']['href'] != '') {
-                        echo '<a href="' . $col['identifier']['href'] . '" '.$itemprop.' title="'.$hover_text.'" target="_blank">' . $col['value'] . '</a>';
+                        echo '<a href="' . $col['identifier']['href'] . '" title="'.$hover_text.'" target="_blank">' . $col['value'] . '</a>';
                     } else {
                         echo $col['value'];
                     }

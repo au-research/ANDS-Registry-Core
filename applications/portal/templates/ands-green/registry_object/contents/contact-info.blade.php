@@ -19,7 +19,7 @@
             $contactInfo .=  '<p>Fax: '.$contact['contact_value'].'</p>';
         }
         elseif($contact['contact_value']!=''){
-            $contactInfo .= '<span itemprop="contentLocation">'.html_entity_decode($contact['contact_value'])."<br /></span>";
+            $contactInfo .= html_entity_decode($contact['contact_value'])."<br />";
         }
     ?>
     @endforeach
