@@ -4,6 +4,7 @@
 namespace ANDS\Commands;
 
 
+use ANDS\Commands\Script\NLAPullBack;
 use ANDS\Commands\Script\ProcessGroups;
 use ANDS\Commands\Script\ProcessScholix;
 use ANDS\Commands\Script\ProcessServiceLinksScript;
@@ -23,7 +24,8 @@ class RunScriptCommand extends ANDSCommand
         "processScholix" => ProcessScholix::class,
         "updateDataciteClient" => UpdateDataCiteClient::class,
         "report" => ReportScript::class,
-        "processServiceLinks" => ProcessServiceLinksScript::class
+        "processServiceLinks" => ProcessServiceLinksScript::class,
+        "nlaPullBack" => NLAPullBack::class
     ];
 
     protected function configure()
