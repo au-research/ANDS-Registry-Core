@@ -49,7 +49,7 @@ class SubjectSuggestor
         // do the search and grabbing only the required information
         $query = $this->getSuggestorQuery($subjectValues);
         $searchResult = $this->solr->search([
-            'q' => "-id:{$record->id} AND $query",
+            'q' => "-id:{$record->id} +class:collection $query",
             'rows' => 50,
             'start' => 0,
             'fl' => 'id, title, key, slug, score'
