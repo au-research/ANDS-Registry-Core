@@ -213,8 +213,6 @@ class nlaPullback extends MX_Controller
 		$this->nlaPartyDataSourceKey = $this->config->item('nlaPartyDataSourceKey'.$this->mode); 
 		$this->nlaServiceURI = $this->config->item('nlaServiceURI'.$this->mode);
 
-
-
 		if (!$this->nlaPartyDataSourceKey)
 		{
 			echo "Not configured for NLA pullback - check your config options. Aborting..." .NL;

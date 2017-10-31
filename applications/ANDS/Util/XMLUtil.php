@@ -17,6 +17,10 @@ if (!defined("NL")) {
     define('NL',"\n");
 }
 
+if (!defined("REGISTRY_APP_PATH")) {
+    define('REGISTRY_APP_PATH', 'applications/registry/');
+}
+
 class XMLUtil
 {
 
