@@ -152,8 +152,11 @@ class ObjectHandler extends Handler{
                                 $result[$m1] = $r;
                             }
                         } catch (Exception $e) {
-                            $result[$m1] = $e->getMessage();
-                            dd($e);
+                            // soft error
+                            $result[$m1] = [];
+
+                            // TODO: log the error and action on them
+                            monolog(get_exception_msg($e), 'error', 'error');
                         }
                         break;
                 }

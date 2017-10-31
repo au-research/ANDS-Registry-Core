@@ -42,7 +42,6 @@ class SubjectSuggestor
     {
         $subjects = SubjectProvider::getSubjects($record);
         $subjectValues = collect($subjects)->pluck("value")->toArray();
-
         if (count($subjectValues) === 0) {
             return [];
         }
@@ -50,7 +49,7 @@ class SubjectSuggestor
         // do the search and grabbing only the required information
         $query = $this->getSuggestorQuery($subjectValues);
         $searchResult = $this->solr->search([
-            'q' => $query,
+            'q' => "-id:{$record->id} AND $query",
             'rows' => 50,
             'start' => 0,
             'fl' => 'id, title, key, slug, score'
