@@ -61,13 +61,15 @@ class RecordsController implements RestfulController
         // TODO: Implement update() method.
     }
 
-    public function delete($id = null)
+    public function destroy($id = null)
     {
         // TODO: Implement delete() method.
     }
 
-    public function store()
+    public function add()
     {
-        // TODO: Implement store() method.
+        // TODO: Implement add() method.
     }
+
+
 }

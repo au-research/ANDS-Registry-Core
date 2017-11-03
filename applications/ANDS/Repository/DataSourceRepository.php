@@ -23,6 +23,39 @@ class DataSourceRepository
     }
 
     /**
+     * Return a data source by id, slug, title and key
+     *
+     * @param $any
+     * @return DataSource
+     * @throws \Exception
+     */
+    public static function getByAny($any)
+    {
+        $dataSource = DataSource::find($any);
+
+        if (!$dataSource) {
+            $dataSource = DataSource::where('slug', $any)
+                ->get()->first();
+        }
+
+        if (!$dataSource) {
+            $dataSource = DataSource::where('title', $any)
+                ->get()->first();
+        }
+
+        if (!$dataSource) {
+            $dataSource = DataSource::where('key', $any)
+                ->get()->first();
+        }
+
+        if (!$dataSource) {
+            throw new \Exception("DataSource with identifier (id|slug) $any not found");
+        }
+
+        return $dataSource;
+    }
+
+    /**
      * Create a new blank data source
      *
      * @param $key
