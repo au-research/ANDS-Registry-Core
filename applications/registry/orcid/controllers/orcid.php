@@ -26,7 +26,11 @@ class Orcid extends MX_Controller {
 	function login(){
 		$data['title'] = 'Login to ORCID';
 		$data['js_lib'] = array('core');
-		$data['link'] = $this->config->item('gORCID_SERVICE_BASE_URI').'oauth/authorize?client_id='.$this->config->item('gORCID_CLIENT_ID').'&response_type=code&scope=/orcid-profile/read-limited /orcid-works/create&redirect_uri=';
+
+		https://sandbox.orcid.org/oauth/authorize?client_id=[Your client ID]&response_type=code&scope=/read-limited&redirect_uri=[Your landing page]
+
+
+		$data['link'] = $this->config->item('gORCID_SERVICE_BASE_URI').'oauth/authorize?client_id='.$this->config->item('gORCID_CLIENT_ID').'&response_type=code&scope=/authenticate /read-limited /activities/update&redirect_uri=';
 		$data['link'].=registry_url('orcid/auth');
 		$this->load->view('login_orcid', $data);
 	}
@@ -45,7 +49,7 @@ class Orcid extends MX_Controller {
 				$this->orcid_api->set_orcid_id($data['orcid']);
 				$bio = $this->orcid_api->get_full();
 				$bio = json_decode($bio, true);
-				$orcid_id = $bio['orcid-profile']['orcid-identifier']['path'];
+				$orcid_id = $bio['path'];
 				$this->orcid_api->log($orcid_id);
 				$this->wiz($bio);
 			}else{
@@ -95,13 +99,8 @@ class Orcid extends MX_Controller {
     xsi:schemaLocation="http://www.orcid.org/ns/orcid https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.1.xsd"
     xmlns="http://www.orcid.org/ns/orcid">
 <message-version>1.1</message-version>
-<orcid-profile>
-  <orcid-activities>
-    <orcid-works> 
       '.$xml.'
-    </orcid-works>
-  </orcid-activities>
-</orcid-profile>
+
 </orcid-message>';
 		$this->load->library('Orcid_api');
 		$result = $this->orcid_api->append_works($xml);
@@ -169,18 +168,17 @@ class Orcid extends MX_Controller {
 		$data['title'] = 'Import Your Work';
 
 		//collect bio stuff
-		$data['bio'] = $bio['orcid-profile'];
-		$orcid_id = $data['bio']['orcid-identifier']['path'];
+
+		$data['bio'] = $bio;
 
 		//scripts
 		$data['scripts'] = array('orcid_app');
 		$data['js_lib'] = array('core','prettyprint', 'angular');
 
-		$data['bio'] = $bio['orcid-profile'];
-		$data['orcid_id'] = $data['bio']['orcid-identifier']['path'];
-		$data['first_name'] = $data['bio']['orcid-bio']['personal-details']['given-names']['value'];
-		$data['last_name'] = $data['bio']['orcid-bio']['personal-details']['family-name']['value'];
 
+		$data['orcid_id'] = $bio['path'];
+		$data['first_name'] = $bio['person']['name']['given-names']['value'];
+		$data['last_name'] = $bio['person']['name']['family-name']['value'];
 		$this->load->view('orcid_app', $data);
 	}
 
@@ -267,26 +265,24 @@ class Orcid extends MX_Controller {
 		
 
 		$result = array();
-
-		//imported
-		$imported = $this->ro->getByAttribute('imported_by_orcid', $data['orcid_id']);
-		$imported_ids = array();
-		if($imported && is_array($imported)){
-			foreach ($imported as $i) {
-				$result['works'][] = array(
-					'type' => 'imported',
-					'id'=>$i->id,
-					'title'=>$i->title,
-					'key'=>$i->key,
-					'url'=>portal_url($i->slug),
-					'imported'=>true,
-					'in_orcid' => false
+		
+		initEloquent();
+		$orcidRecord = \ANDS\ORCID\ORCIDRecord::find($this->orcid_api->get_orcid_id());
+		$orcidExports = $orcidRecord->exports;
+		foreach($orcidExports as $oe){
+			$oe->load('registryObject');
+			$result['works'][] = array(
+				'type' => 'imported',
+				'id'=>$oe->registryObject->registry_object_id,
+				'title'=>$oe->registryObject->title,
+				'key'=>$oe->registryObject->key,
+				'url'=>portal_url($oe->registryObject->slug),
+				'imported'=>true,
+				'in_orcid' => false
 				);
-				$imported_ids[] = $i->id;
-			}
+			$imported_ids[] = $oe->registryObject->registry_object_id;
 		}
 		
-
 		//suggested
 		foreach($suggested_collections as $s) {
 			$result['works'][] = array(
@@ -324,14 +320,14 @@ class Orcid extends MX_Controller {
 
 		// var_dump($bio);
 
-		$data['bio'] = $bio['orcid-profile'];
+		$data['bio'] = $bio;
 		$data['title']='Import Your Work';
 		$data['scripts']=array('orcid_wiz');
 		$data['js_lib']=array('core','prettyprint', 'bootstro');
 
-		$orcid_id = $data['bio']['orcid-identifier']['path'];
-		$first_name = $data['bio']['orcid-bio']['personal-details']['given-names']['value'];
-		$last_name = $data['bio']['orcid-bio']['personal-details']['family-name']['value'];
+		$orcid_id = $bio['path'];
+		$first_name = $bio['person']['name']['given-names']['value'];
+		$last_name = $bio['personal']['name']['family-name']['value'];
 		$name = $first_name.' '.$last_name;
 
 		$suggested_collections = array();
@@ -394,7 +390,22 @@ class Orcid extends MX_Controller {
 			}
 		}
 
-		$data['imported'] = $this->ro->getByAttribute('imported_by_orcid', $orcid_id);
+		initEloquent();
+		$orcidRecord = \ANDS\ORCID\ORCIDRecord::find($this->orcid_api->get_orcid_id());
+		$orcidExports = $orcidRecord->exports;
+		foreach($orcidExports as $oe){
+			$oe->load('registryObject');
+			$data['imported'][] = array(
+				'type' => 'imported',
+				'id'=>$oe->registryObject->registry_object_id,
+				'title'=>$oe->registryObject->title,
+				'key'=>$oe->registryObject->key,
+				'url'=>portal_url($oe->registryObject->slug),
+				'imported'=>true,
+				'in_orcid' => false
+			);
+		}
+
 		// echo sizeof($suggested_collections);
 		
 		$data['tip'] = 'The Suggested Datasets section will list any datasets from Research Data Australia, which are either directly related to your ORCID ID or are related to a researcher matching your surname.';
@@ -405,26 +416,31 @@ class Orcid extends MX_Controller {
 		$this->load->view('orcid_wiz', $data);
 	}
 
+	
 	function imported($orcid_id){
-		$this->load->model('registry_object/registry_objects', 'ro');
-		$imported = $this->ro->getByAttribute('imported_by_orcid', $orcid_id);
+		initEloquent();
+		$orcidRecord = \ANDS\ORCID\ORCIDRecord::find($orcid_id);
+		$orcidExports = $orcidRecord->exports;
 		$im = array();
-		if(sizeof($imported)>0){
-			foreach($imported as $ro){
-				array_push(
-					$im, array(
-						'id'=>$ro->registry_object_id,
-						'title'=>$ro->title,
-						'slug'=>$ro->slug
-					)
-				);
-			}
+		foreach($orcidExports as $oe){
+			$oe->load('registryObject');
+			array_push(
+				$im, array(
+					'id'=>$oe->registryObject->registry_object_id,
+					'title'=>$oe->registryObject->title,
+					'slug'=>$oe->registryObject->slug
+				)
+			);
 		}
 		$data = array();
 		$data['imported'] = $im;
-
-		if(sizeof($imported)==0) $data['no_result'] = "No collections have been imported";
+		if(sizeof($orcidExports)==0) $data['no_result'] = "No collections have been imported";
 		echo json_encode($data);
+	}
+	
+	function loadrecord($identifier){
+		$this->load->library('Orcid_api', 'orcid');
+		$or = $this->orcid_api->getORCIDRecord($identifier);
 	}
 }
 	
