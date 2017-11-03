@@ -15,7 +15,7 @@ class DataSource extends Model
     protected $table = "data_sources";
     protected $primaryKey = "data_source_id";
     public $timestamps = false;
-    protected $fillable = ['key', 'slug', 'title', 'record_owner'];
+    protected $fillable = ['key', 'slug', 'title', 'record_owner', 'acronym'];
 
     public function dataSourceAttributes()
     {
@@ -86,6 +86,11 @@ class DataSource extends Model
         }
 
         return null;
+    }
+
+    public function removeDataSourceAttribute($key)
+    {
+        return DataSourceAttribute::where('data_source_id', $this->data_source_id)->where('attribute', $key)->delete();
     }
 
     public function getHarvest($harvest_id){
