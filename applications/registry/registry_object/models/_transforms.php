@@ -180,7 +180,7 @@ class Transforms {
 		if (is_null(self::$extrif_to_orcid_transformer))
 		{
 			$orcid_xsl = new DomDocument();
-			$orcid_xsl->load(REGISTRY_APP_PATH.'registry_object/transforms/extrif_to_orcid.xsl');
+			$orcid_xsl->load(REGISTRY_APP_PATH.'registry_object/transforms/extrif_to_orcid_2_0.xsl');
 			$orcidProc = new XSLTProcessor();
 			$orcidProc->importStyleSheet($orcid_xsl);
 			self::$extrif_to_orcid_transformer = $orcidProc;

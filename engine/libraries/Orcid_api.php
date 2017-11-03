@@ -4,6 +4,10 @@
  * ORCID class for use globally
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
  */
+use ANDS\ORCID\ORCIDExport as ORCIDExport;
+use ANDS\ORCID\ORCIDRecord as ORCIDRecord;
+
+
 class Orcid_api {
 
 	private $api_uri = null;
@@ -13,6 +17,7 @@ class Orcid_api {
     private $redirect_uri = null;
     private $access_token = null;
     private $orcid_id = null;
+    private $pub_api_url = null;
 
     private $db;
     private $log_table = 'logs';
@@ -29,6 +34,7 @@ class Orcid_api {
 
     function init(){
         $this->service_uri = $this->CI->config->item('gORCID_SERVICE_BASE_URI');
+        $this->pub_api_url = $this->CI->config->item('gORCID_PUB_API_URI');
         $this->api_uri = $this->CI->config->item('gORCID_API_URI');
         $this->client_id = $this->CI->config->item('gORCID_CLIENT_ID');
         $this->client_secret = $this->CI->config->item('gORCID_CLIENT_SECRET');
@@ -49,7 +55,7 @@ class Orcid_api {
             'redirect_uri'=>$this->redirect_uri
         );
         $post_string = http_build_query($post_array);
-        $url = $this->api_uri.'oauth/token';
+        $url = $this->service_uri.'oauth/token';
         $data = curl_post($url, $post_string, array('Accept: application/json'));
         return $data;
     }
@@ -107,26 +113,43 @@ class Orcid_api {
      * @return object_xml         
      */
     function get_full(){
-        $opts = array(
-            'method'=>'GET',
-            'header'=>'Accept: application/orcid+json'
-        );
-        $header = array("Accept:application/orcid+json; charset=utf-8");
+
+        $orcidRecord = ORCIDRecord::find($this->get_orcid_id());
+
         if(!$this->get_orcid_id() && !$this->get_access_token()){
             return false;
         }else{
-            $url = $this->api_uri.'v1.1/'.$this->get_orcid_id().'/orcid-profile/';
-            // $context = stream_context_create($opts);
-            if($this->get_access_token()) $url.='?access_token='.$this->get_access_token();
-            // $result = @file_get_contents($url.'s', true, $context);
-            // $result = curl_post($url,'', array('header'=>'Accept: application/orcid+json'));
-            $result = curl_file_get_contents($url, $header);
+            $headers = array();
+            $headers[] = "method:GET";
+            $headers[] = "Accept:application/orcid+json; charset=utf-8";
+            $headers[] = "Authorization: Bearer". $this->get_access_token();
+
+            $url = $this->api_uri.$this->get_orcid_id().'/record';
+
+            $curl = curl_init($url);
+
+            curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "GET");
+
+            $result = curl_file_get_contents($url, $headers);
+
             $re = json_decode($result, true);
-            if(isset($re['error'])){
-                return false;
-            }else{
-                return $result;
+
+            if(isset($resultArray['response-code']) and $resultArray['response-code'] == 404){
+                return $resultArray['developer-message'];
             }
+
+            if($orcidRecord == null){
+                $orcidRecord = new ORCIDRecord;
+                $orcidRecord->orcid_id = $this->get_orcid_id();
+                $orcidRecord->record_data = $result;
+                $orcidRecord->save();
+            }else{
+                $orcidRecord->saveRecord($result);
+            }
+
+            return $result;
+
         }
     }
 
@@ -139,7 +162,10 @@ class Orcid_api {
         if(!$this->get_orcid_id() && !$this->get_access_token()){
             return false;
         }
-        $url = $this->api_uri.'v1.1/'.$this->get_orcid_id().'/orcid-works/';
+        $url = $this->api_uri.$this->get_orcid_id().'/work/';
+        curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-Type: text/xml'));
+
+
         $url.='?access_token='.$this->get_access_token();
         $data = curl_post($url, $xml);
         if(trim($data)==''){
@@ -147,5 +173,56 @@ class Orcid_api {
         }else return $data;
     }
 
+
+
+    private function loadOrcidRecord($identifier)
+    {
+
+        $lookup_endpoint = $this->pub_api_url.$identifier.'/record';
+        $orcidRecord = ORCIDRecord::find($identifier);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $lookup_endpoint);
+
+        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array( 'Content-Type: application/json'));
+        $result = curl_exec($ch);
+        curl_close($ch);
+        $resultArray = json_decode($result, true);
+
+        if(isset($resultArray['response-code']) and $resultArray['response-code'] == 404){
+            return $resultArray['developer-message'];
+        }
+
+        if($orcidRecord == null){
+            $orcidRecord = new ORCIDRecord;
+            $orcidRecord->orcid_id = $identifier;
+            $orcidRecord->record_data = $result;
+            $orcidRecord->save();
+        }else{
+            $orcidRecord->saveRecord($result);
+        }
+        return $orcidRecord;
+
+    }
+
+
+    public function getORCIDRecord($identifier)
+    {
+        $orcidRecord = ORCIDRecord::find($identifier);
+        $oneDayAgo = new DateTime('1 minute ago');
+        if($orcidRecord === null || $orcidRecord->updated_at <= $oneDayAgo)
+        {
+            $orcidRecord = $this->loadOrcidRecord($identifier);
+        }
+        return $orcidRecord;
+    }
+
+
+    
+    
+    
     
 }
