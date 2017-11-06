@@ -7,6 +7,7 @@ namespace ANDS\Registry;
 use ANDS\DataSource;
 use ANDS\Payload;
 use ANDS\API\Task\ImportTask;
+use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 
 /**
@@ -115,6 +116,55 @@ class Importer
         $importTask->sendToBackground();
 
         $importTask->run();
+
+        return $importTask;
+    }
+
+    public static function instantSyncRecord(RegistryObject $record, $customParams = [])
+    {
+        $importTask = new ImportTask();
+        $importTask->init([
+            'name' => "Manual Sync Record $record->title($record->id)",
+            'params' => http_build_query([
+                'ds_id' => $record->datasource->data_source_id,
+                'pipeline' => 'SyncWorkflow'
+            ])
+        ])->skipLoadingPayload()->enableRunAllSubTask()->initialiseTask();
+        $importTask->setTaskData("importedRecords", [$record->id]);
+
+        $importTask->setCI($ci =& get_instance());
+        $importTask->setDb($ci->db);
+        $importTask->sendToBackground();
+
+        $importTask->run();
+        return $importTask;
+    }
+
+    public static function syncDataSource(DataSource $dataSource, $background = true)
+    {
+        $importTask = new ImportTask();
+        $importTask->init([
+            'name' => "Manual Sync DataSource {$dataSource->meaningfulTitle}",
+            'params' => http_build_query([
+                'ds_id' => $dataSource->id,
+                'pipeline' => 'SyncWorkflow'
+            ])
+        ])->skipLoadingPayload()->initialiseTask();
+
+        $ids = RegistryObject::where('data_source_id', $dataSource->id)
+            ->where('status', 'PUBLISHED')
+            ->pluck('registry_object_id')
+            ->toArray();
+
+        $importTask->setTaskData("importedRecords", $ids);
+
+        $importTask->setCI($ci =& get_instance());
+        $importTask->setDb($ci->db);
+        $importTask->sendToBackground();
+
+        if ($background === false) {
+            $importTask->run();
+        }
 
         return $importTask;
     }
