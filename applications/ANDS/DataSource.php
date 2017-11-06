@@ -5,7 +5,9 @@ namespace ANDS;
 
 
 
+use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\NotifyUtil;
+use ANDS\Util\SolrIndex;
 use Illuminate\Database\Eloquent\Model;
 use ANDS\DataSource\Harvest as Harvest;
 use ANDS\DataSource\DataSourceLog as DataSourceLog;
@@ -43,6 +45,11 @@ class DataSource extends Model
     public function harvest()
     {
         return $this->hasOne(Harvest::class, "data_source_id", "data_source_id");
+    }
+
+    public function registryObjects()
+    {
+        return $this->hasMany(RegistryObject::class, "data_source_id", "data_source_id");
     }
 
     /**
@@ -139,6 +146,82 @@ class DataSource extends Model
     {
         $this->harvest->status = "STOPPED";
         $this->harvest->save();
+    }
+
+    public function getMeaningfulTitleAttribute()
+    {
+        return "{$this->title} ({$this->data_source_id}) ";
+    }
+
+    public function recount() {
+        try {
+            $this->calculateCounts();
+        } catch (\Exception $e) {
+            throw new \Exception("Failed to recount {$this->meaningfulTitle}: ". get_exception_msg($e));
+        }
+    }
+
+    public function calculateCounts ()
+    {
+        // count_CLASS
+        foreach (RegistryObject::$classes as $class) {
+            $count = RegistryObject::where('data_source_id', $this->data_source_id)
+                ->where('class', $class)->count();
+            $this->setDataSourceAttribute("count_$class", $count);
+//            var_dump($class, $count);
+        }
+
+        // count_STATUS
+        foreach (RegistryObject::$statuses as $status) {
+            $count = RegistryObject::where('data_source_id', $this->data_source_id)
+                ->where('status', $status)->count();
+            $this->setDataSourceAttribute("count_$status", $count);
+        }
+
+        // count_QL
+        foreach (RegistryObject::$levels as $level) {
+            $count = RegistryObject::where('data_source_id', $this->data_source_id)
+                    ->whereHas('registryObjectAttributes', function($query) use ($level){
+                        return $query
+                            ->where('attribute', 'quality_level')
+                            ->where('value', $level);
+                    })->count();
+            $this->setDataSourceAttribute("count_level_$level", $count);
+        }
+
+        // count_INDEXED
+        $facets = SolrIndex::getFacets('data_source_id');
+        $this->setDataSourceAttribute("count_INDEXED",
+            array_key_exists($this->data_source_id, $facets) ? $facets[$this->data_source_id] : 0
+        );
+    }
+
+    public function getCountsAttribute()
+    {
+        $result = [];
+
+        // class
+        foreach (RegistryObject::$classes as $class) {
+            $result["count_$class"] = (int) $this->getDataSourceAttributeValue("count_$class");
+        }
+
+        // status
+        foreach (RegistryObject::$statuses as $status) {
+            $result["count_$status"] = (int) $this->getDataSourceAttributeValue("count_$status");
+        }
+
+        // ql
+        foreach (RegistryObject::$levels as $level) {
+            $result["count_level_$level"] = (int) $this->getDataSourceAttributeValue("count_level_$level");
+        }
+
+        // indexed
+        $result["count_INDEXED"] = (int) $this->getDataSourceAttributeValue("count_INDEXED");
+
+        // missing
+        $result["count_MISSING"] = (int) $result['count_PUBLISHED'] - $result['count_INDEXED'];
+
+        return $result;
     }
 
 }

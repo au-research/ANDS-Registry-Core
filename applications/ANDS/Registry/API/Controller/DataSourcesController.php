@@ -8,6 +8,7 @@ use ANDS\DataSource\Harvest;
 use ANDS\DataSourceAttribute;
 use ANDS\Registry\API\Middleware\IPRestrictionMiddleware;
 use ANDS\Registry\API\Request;
+use ANDS\Registry\Importer;
 use ANDS\RegistryObject;
 use ANDS\Repository\DataSourceRepository;
 use ANDS\Repository\RegistryObjectsRepository;
@@ -15,9 +16,32 @@ use ANDS\Repository\RegistryObjectsRepository;
 class DataSourcesController extends HTTPController implements RestfulController
 {
 
+    protected $withs = ['counts'];
+
     public function index()
     {
-        return DataSource::all();
+        $dataSources = DataSource::all();
+
+        // with
+        $withs = array_intersect(
+            $this->withs,
+            explode(',', Request::get('with'))
+        );
+        if (count($withs) > 0) {
+            $dataSources = collect($dataSources)->map(function($ds) use ($withs){
+                return $ds->append($withs);
+            });
+        }
+
+        // action
+        $action = Request::get('action');
+        if ($action == "recount") {
+            $dataSources->each(function($ds) {
+                $ds->recount();
+            });
+        }
+
+        return $dataSources;
     }
 
     public function show($any = null)
@@ -25,7 +49,28 @@ class DataSourcesController extends HTTPController implements RestfulController
         $dataSource = DataSourceRepository::getByAny($any);
         $dataSource->load('harvest');
         $dataSource->load('dataSourceAttributes');
+
+        // with
+        $withs = array_intersect(
+            $this->withs,
+            explode(',', Request::get('with'))
+        );
+        $dataSource->setAppends($withs);
+
+        // action
+        $action = Request::get('action');
+        if ($action == "recount") {
+            $dataSource->recount();
+        }
+
         return $dataSource;
+    }
+
+    public function sync($any = null)
+    {
+        $dataSource = DataSourceRepository::getByAny($any);
+        $task = Importer::syncDataSource($dataSource, $background = true);
+        return $task->toArray();
     }
 
     public function update($any = null)

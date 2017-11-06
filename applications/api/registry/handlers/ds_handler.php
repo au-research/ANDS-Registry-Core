@@ -52,6 +52,9 @@ class DsHandler extends Handler
         $router->resource("ds/(\w+)/records", 'DataSourcesRecordsController');
         $router->route(['delete'], 'ds/(\w+)/records', 'DataSourcesRecordsController@delete');
 
+        // sync
+        $router->route(['get', 'put', 'post'], 'ds/(\w+)/sync', 'DataSourcesController@sync');
+
         return $this->format($router->execute());
     }
 

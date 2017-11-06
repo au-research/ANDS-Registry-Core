@@ -12,12 +12,15 @@
     function APIDataSourceService(APIService) {
         return {
             getDataSources: function() {
-                return APIService.get('registry/datasource/', {
-                    includes: 'count'
+                return APIService.get('registry/ds/', {
+                    with: 'counts'
                 });
             },
+            syncDataSource: function(id) {
+                return APIService.get('registry/ds/'+id+'/sync', {})
+            },
             getDataSource: function(id) {
-                return APIService.get('registry/datasource/'+id, {})
+                return APIService.get('registry/ds/'+id, {})
             }
         }
 
