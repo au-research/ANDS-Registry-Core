@@ -15,4 +15,16 @@ class Harvest extends Model
         return json_encode($this->message);
     }
 
+    public function reschedule()
+    {
+        $this->status = "SCHEDULED";
+        return $this;
+    }
+
+    public function stop()
+    {
+        $this->status = "STOPPED";
+        return $this;
+    }
+
 }
