@@ -10,17 +10,20 @@
         .service('APIDataSourceService', APIDataSourceService);
 
     function APIDataSourceService(APIService) {
+
+        var resource = 'registry/datasources/';
+
         return {
             getDataSources: function() {
-                return APIService.get('registry/ds/', {
+                return APIService.get(resource, {
                     with: 'counts'
                 });
             },
             syncDataSource: function(id) {
-                return APIService.get('registry/ds/'+id+'/sync', {})
+                return APIService.get(resource + id +'/sync', {})
             },
             getDataSource: function(id) {
-                return APIService.get('registry/ds/'+id, {})
+                return APIService.get(resource + id, {})
             }
         }
 

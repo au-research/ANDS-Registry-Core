@@ -120,13 +120,19 @@ class Importer
         return $importTask;
     }
 
-    public static function instantSyncRecord(RegistryObject $record, $customParams = [])
+    public static function instantSyncRecord(RegistryObject $record)
+    {
+        return static::syncRecord($record, false);
+    }
+
+    public static function syncRecord(RegistryObject $record, $background = true)
     {
         $importTask = new ImportTask();
         $importTask->init([
             'name' => "Manual Sync Record $record->title($record->id)",
             'params' => http_build_query([
                 'ds_id' => $record->datasource->data_source_id,
+                'targetStatus' => 'PUBLISHED',
                 'pipeline' => 'SyncWorkflow'
             ])
         ])->skipLoadingPayload()->enableRunAllSubTask()->initialiseTask();
@@ -136,7 +142,10 @@ class Importer
         $importTask->setDb($ci->db);
         $importTask->sendToBackground();
 
-        $importTask->run();
+        if (!$background) {
+            $importTask->run();
+        }
+
         return $importTask;
     }
 
@@ -147,6 +156,7 @@ class Importer
             'name' => "Manual Sync DataSource {$dataSource->meaningfulTitle}",
             'params' => http_build_query([
                 'ds_id' => $dataSource->id,
+                'targetStatus' => 'PUBLISHED',
                 'pipeline' => 'SyncWorkflow'
             ])
         ])->skipLoadingPayload()->initialiseTask();
