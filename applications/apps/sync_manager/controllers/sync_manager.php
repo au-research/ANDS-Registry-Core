@@ -33,7 +33,7 @@ class Sync_manager extends MX_Controller
             'angular-bootstrap/ui-bootstrap-tpls.min.js',
         );
 
-        $data['js_lib'] = array( 'core', 'APIService', 'APITaskService', 'APIDataSourceService');
+        $data['js_lib'] = array( 'core', 'APIService', 'APITaskService', 'APIDataSourceService', 'APIRegistryObjectService');
         $this->load->view('sync_manager_view', $data);
     }
 }

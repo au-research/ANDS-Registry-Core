@@ -8,6 +8,6 @@ interface  RestfulController
     public function index();
     public function show();
     public function update();
-    public function delete();
-    public function store();
+    public function destroy();
+    public function add();
 }
