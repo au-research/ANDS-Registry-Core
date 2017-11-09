@@ -48,7 +48,7 @@ function IndexCtrl($scope, works) {
 	$scope.orcid = {
 		orcid_id:$('#orcid_id').text(),
 		first_name:$('#first_name').text(),
-		last_name:$('#last_name').text()
+		last_name:$('#last_name').text(),
 	};
 
 	//Overwrite the import button to only open the modal if it's not disabled
@@ -136,11 +136,11 @@ function IndexCtrl($scope, works) {
 			ids.push(this.id);
 		});
 		works.import_works(ids).then(function(data){
-			if(data!=1){
-				window.location = base_url+'/orcid/login';
-			} else {
+			//if(data!=1){
+			//	window.location = base_url+'/orcid/login';
+			//} else {
 				$scope.import_stg = 'complete';
-			}
+			//}
 		});
 	}
 }

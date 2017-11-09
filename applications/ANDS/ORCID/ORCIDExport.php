@@ -10,8 +10,7 @@ class ORCIDExport extends Model
 {
     protected $table = "orcid_exports";
     protected $primaryKey = "id";
-    protected $fillable = ['registry_object_id', 'orcid_id', 'put_code', 'data', 'created_at', 'updated_at'];
-    public $timestamps = false;
+    protected $fillable = ['registry_object_id', 'orcid_id', 'put_code', 'response', 'data', 'created_at', 'updated_at'];
 
     public static function getTableName()
     {
@@ -23,19 +22,28 @@ class ORCIDExport extends Model
         return $this->hasOne(RegistryObject::class, 'registry_object_id', 'registry_object_id');
     }
 
-    public function saveData($registry_object_id, $orcid_id, $put_code, $data) {
+    public function saveData($registry_object_id, $orcid_id, $put_code, $data, $response) {
         $this->registry_object_id = $registry_object_id;
         $this->orcid_id = $orcid_id;
         $this->put_code = $put_code;
         $this->data = $data;
-        $this->created_at = now();
-        $this->updated_at = now();
+        $this->response = $response;
+        $this->created_at = time();
+        $this->updated_at = time();
+        $this->save();
         return $this;
     }
 
-    public function updateData($data) {
+    public function getPutCode(){
+        return $this->put_code;
+    }
+
+    public function updateData($put_code, $data, $response) {
+        $this->put_code = $put_code;
         $this->data = $data;
-        $this->updated_at = now();
+        $this->response = $response;
+        $this->updated_at = time();
+        $this->save();
         return $this;
     }
 

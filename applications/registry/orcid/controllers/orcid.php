@@ -14,9 +14,9 @@ class Orcid extends MX_Controller {
 	function index(){
 		$this->load->library('Orcid_api', 'orcid');
 		if($access_token = $this->orcid_api->get_access_token()){
-			$bio = $this->orcid_api->get_full();
+			$bio = $this->orcid_api->getORCIDRecord($this->orcid_api->get_orcid_id());
 			if(!$bio) redirect(registry_url('orcid'));
-			$bio = json_decode($bio, true);
+			$bio = json_decode($bio['record_data'], true);
 			$this->wiz($bio);
 		}else{
 			redirect(registry_url('orcid/login'));
@@ -45,8 +45,9 @@ class Orcid extends MX_Controller {
 			$code = $this->input->get('code');
 			$data = json_decode($this->orcid_api->oauth($code),true);
 			if(isset($data['access_token'])){
-				$this->orcid_api->set_access_token($data['access_token']);
 				$this->orcid_api->set_orcid_id($data['orcid']);
+				$this->orcid_api->set_access_token($data['access_token']);
+				$this->orcid_api->set_refresh_token($data['refresh_token']);
 				$bio = $this->orcid_api->get_full();
 				$bio = json_decode($bio, true);
 				$orcid_id = $bio['path'];
@@ -84,79 +85,12 @@ class Orcid extends MX_Controller {
 			$data = json_decode($data, true);
 			$ro_ids = $data['ro_ids'];
 		}
-		$this->load->model('registry_object/registry_objects', 'ro');
-		$xml = '';
+		$result[] = null;
 		foreach($ro_ids as $id){
-			$ro = $this->ro->getByID($id);
-			if($ro){
-				$xml .= $ro->transformToORCID();
+			$this->load->library('Orcid_api');
+			$result[] = $this->orcid_api->append_work_by_ro_id($id);
 			}
-			unset($ro);
-		}
-		$xml = '<?xml version="1.0" encoding="UTF-8"?>
-<orcid-message
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.orcid.org/ns/orcid https://github.com/ORCID/ORCID-Source/blob/master/orcid-model/src/main/resources/orcid-message-1.1.xsd"
-    xmlns="http://www.orcid.org/ns/orcid">
-<message-version>1.1</message-version>
-      '.$xml.'
-
-</orcid-message>';
-		$this->load->library('Orcid_api');
-		$result = $this->orcid_api->append_works($xml);
-		if($result==1){
-			foreach($ro_ids as $id){
-				$ro = $this->ro->getByID($id);
-				$ro->setAttribute('imported_by_orcid', $this->orcid_api->get_orcid_id());
-				$ro->save();
-				unset($ro);
-			}
-		}
-		echo $result;
-	}
-
-	/**
-	 * returns the orcid xml
-	 * @param array(ro_id)
-	 * @return xml 
-	 */
-	function get_orcid_xml(){
-		$ro_ids = $this->input->post('ro_ids');
-		$this->load->model('registry_object/registry_objects', 'ro');
-		$xml = '';
-		foreach($ro_ids as $id){
-			$ro = $this->ro->getByID($id);
-			if($ro){
-				$xml .= $ro->transformToORCID();
-			}
-		}
-		
-	echo '<?xml version="1.0" encoding="UTF-8"?>
-<orcid-message
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.orcid.org/ns/orcid http://orcid.github.com/ORCID-Parent/schemas/orcid-message/1.0.7/orcid-message-1.0.7.xsd"
-    xmlns="http://www.orcid.org/ns/orcid">
-<message-version>1.0.7</message-version>
-<orcid-profile>
-  <orcid-activities>
-    <orcid-works> 
-      '.$xml.'
-    </orcid-works>
-  </orcid-activities>
-</orcid-profile>
-</orcid-message>';
-// echo $msg;
-	}
-
-	/**
-	 * Push an orcid xml to append to the orcid works profile
-	 * @return true 
-	 */
-	function push_orcid_xml(){
-		$this->load->library('Orcid_api');
-		$xml = $this->input->post('xml');
-		$result = $this->orcid_api->append_works($xml);
-		echo $result;
+		print json_encode($result);
 	}
 
 	/**
@@ -176,9 +110,10 @@ class Orcid extends MX_Controller {
 		$data['js_lib'] = array('core','prettyprint', 'angular');
 
 
-		$data['orcid_id'] = $bio['path'];
+		$data['orcid_id'] = $bio['orcid-identifier']['path'];
 		$data['first_name'] = $bio['person']['name']['given-names']['value'];
 		$data['last_name'] = $bio['person']['name']['family-name']['value'];
+
 		$this->load->view('orcid_app', $data);
 	}
 
@@ -268,6 +203,7 @@ class Orcid extends MX_Controller {
 		
 		initEloquent();
 		$orcidRecord = \ANDS\ORCID\ORCIDRecord::find($this->orcid_api->get_orcid_id());
+
 		$orcidExports = $orcidRecord->exports;
 		foreach($orcidExports as $oe){
 			$oe->load('registryObject');
@@ -277,8 +213,12 @@ class Orcid extends MX_Controller {
 				'title'=>$oe->registryObject->title,
 				'key'=>$oe->registryObject->key,
 				'url'=>portal_url($oe->registryObject->slug),
+				'put_code'=>$oe->put_code,
+				'date_created'=>$oe->date_created,
+				'date_updated'=>$oe->date_updated,
+				'response'=>$oe->repsonse,
 				'imported'=>true,
-				'in_orcid' => false
+				'in_orcid' => true
 				);
 			$imported_ids[] = $oe->registryObject->registry_object_id;
 		}
@@ -296,18 +236,18 @@ class Orcid extends MX_Controller {
 			);
 		}
 
-		$bio = json_decode($this->orcid_api->get_full(), true);
-		if($bio && isset($bio['orcid-profile']['orcid-activities']['orcid-works']['orcid-work'])){
-			$works = $bio['orcid-profile']['orcid-activities']['orcid-works']['orcid-work'];
-			foreach($works as $w){
-				$title = $w['work-title']['title']['value'];
-				foreach($result['works'] as &$s) {
-					if($title==$s['title']) {
-						$s['in_orcid'] = true;
-					}
-				}
-			}
-		}
+//		$bio = json_decode($this->orcid_api->get_full(), true);
+//		if($bio && isset($bio['orcid-profile']['orcid-activities']['orcid-works']['orcid-work'])){
+//			$works = $bio['orcid-profile']['orcid-activities']['orcid-works']['orcid-work'];
+//			foreach($works as $w){
+//				$title = $w['work-title']['title']['value'];
+//				foreach($result['works'] as &$s) {
+//					if($title==$s['title']) {
+//						$s['in_orcid'] = true;
+//					}
+//				}
+//			}
+//		}
 
 		echo json_encode($result);
 	}
@@ -400,6 +340,10 @@ class Orcid extends MX_Controller {
 				'id'=>$oe->registryObject->registry_object_id,
 				'title'=>$oe->registryObject->title,
 				'key'=>$oe->registryObject->key,
+				'put_code'=>$oe->put_code,
+				'date_created'=>$oe->date_created,
+				'date_updated'=>$oe->date_updated,
+				'response'=>$oe->repsonse,
 				'url'=>portal_url($oe->registryObject->slug),
 				'imported'=>true,
 				'in_orcid' => false
@@ -428,7 +372,11 @@ class Orcid extends MX_Controller {
 				$im, array(
 					'id'=>$oe->registryObject->registry_object_id,
 					'title'=>$oe->registryObject->title,
-					'slug'=>$oe->registryObject->slug
+					'slug'=>$oe->registryObject->slug,
+					'put_code'=>$oe->put_code,
+					'date_created'=>$oe->date_created,
+					'date_updated'=>$oe->date_updated,
+					'response'=>$oe->repsonse
 				)
 			);
 		}
@@ -441,6 +389,7 @@ class Orcid extends MX_Controller {
 	function loadrecord($identifier){
 		$this->load->library('Orcid_api', 'orcid');
 		$or = $this->orcid_api->getORCIDRecord($identifier);
+		return $or;
 	}
 }
 	
