@@ -3,8 +3,9 @@
 <xsl:stylesheet xmlns:ro="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:common="http://www.orcid.org/ns/common" xmlns:work="http://www.orcid.org/ns/work" xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" exclude-result-prefixes="work common ro extRif">
 <xsl:param name="base_url"/>
 <xsl:param name="rda_url"/>
+    <xsl:param name="put_code" select="''"/>
 <!-- http://support.orcid.org/knowledgebase/articles/118795-->
-    <xsl:output indent="yes" omit-xml-declaration="yes"/>
+    <xsl:output indent="yes" omit-xml-declaration="no"/>
     <xsl:strip-space elements="*"/>
 
     <xsl:template match="/">
@@ -12,7 +13,17 @@
     </xsl:template>   
     
     <xsl:template match="ro:registryObject">
-        <work:work>
+        <work:work xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xmlns:common="http://www.orcid.org/ns/common" 
+            xmlns:work="http://www.orcid.org/ns/work" xsi:schemaLocation="http://www.orcid.org/ns/common 
+            https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/common_2.0/common-2.0.xsd 
+            http://www.orcid.org/ns/work 
+            https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/work-2.0.xsd">
+            <xsl:if test="$put_code != ''">
+            <xsl:attribute name="put-code">
+                <xsl:value-of select="$put_code"/>
+            </xsl:attribute>
+            </xsl:if>
             <work:title>
                 <xsl:apply-templates select="extRif:extendedMetadata/extRif:displayTitle"/>
                 <xsl:if test="ro:collection/ro:name[@type='alternative']">
@@ -138,7 +149,7 @@
                 <xsl:call-template name="getCreatedDate"/>
             </xsl:variable>
             <xsl:if test="$createdDate != ''">
-                <common:publication-date>
+                <common:publication-date xmlns:common="http://www.orcid.org/ns/common">
                     <common:year>
                         <xsl:value-of select="$createdDate"/>
                     </common:year>
@@ -146,7 +157,7 @@
             </xsl:if>
             <xsl:if test="ro:collection/ro:identifier[text()!=''] |
              ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[text()!='']">
-                <common:external-ids>
+                <common:external-ids xmlns:common="http://www.orcid.org/ns/common">
                     <xsl:apply-templates select="ro:collection/ro:identifier[text()!=''] |
                     ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[text()!='']"/>
                 </common:external-ids>
@@ -161,15 +172,15 @@
     </xsl:template>
 
     <xsl:template match="extRif:displayTitle">
-        <common:title> <xsl:value-of select="."/></common:title>
+        <common:title xmlns:common="http://www.orcid.org/ns/common"> <xsl:value-of select="."/></common:title>
     </xsl:template>
 
     <xsl:template match="ro:name[@type='alternative']">
-        <common:subtitle> <xsl:value-of select="."/></common:subtitle>
+        <common:subtitle xmlns:common="http://www.orcid.org/ns/common"> <xsl:value-of select="."/></common:subtitle>
     </xsl:template>
 
     <xsl:template match="ro:identifier">
-        <common:external-id>
+        <common:external-id xmlns:common="http://www.orcid.org/ns/common">
             <common:external-id-type>
                 <xsl:choose>
                     <xsl:when test="(@type='arxiv') 
@@ -200,6 +211,7 @@
                 <!-- http://support.orcid.org/knowledgebase/articles/118807 -->
             </common:external-id-type>
           <common:external-id-value><xsl:value-of select="."/></common:external-id-value>
+          <common:external-id-relationship>self</common:external-id-relationship>
         </common:external-id>
     </xsl:template>
 
@@ -252,10 +264,8 @@
                 <xsl:otherwise>additional</xsl:otherwise>
             </xsl:choose>
         </work:contributor-sequence>
-        <work:contributor-role>
-            author
-            <!-- author,  assignee,  editor,  chair-or-translator,  co-investigator,  co-inventor,  graduate-student,  other-inventor,  principal-investigator,  postdoctoral-researcher,  support-staff-->
-        </work:contributor-role>
+            <!-- author, assignee, editor, chair-or-translator, co-investigator, co-inventor, graduate-student, other-inventor, principal-investigator, postdoctoral-researcher, support-staff-->
+        <work:contributor-role>author</work:contributor-role>
         </work:contributor-attributes>
       </work:contributor>
     </xsl:template>

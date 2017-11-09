@@ -335,7 +335,7 @@ class Transforms_Extension extends ExtensionBase
         }
 	}
 
-	function transformToORCID()
+	function transformToORCID($put_code = '')
 	{
 		try{
 			$xslt_processor = Transforms::get_extrif_to_orcid_transformer();
@@ -343,6 +343,9 @@ class Transforms_Extension extends ExtensionBase
 			$dom->loadXML($this->ro->getExtRif(), LIBXML_NOENT);
 			$xslt_processor->setParameter('','dateProvided', date("Y-m-d"));
 			$xslt_processor->setParameter('','rda_url', portal_url($this->ro->slug));
+            if($put_code != ''){
+                $xslt_processor->setParameter('','put_code', $put_code);
+            }
 			return $xslt_processor->transformToXML($dom);
 		} catch (Exception $e) {
 			echo "UNABLE TO TRANSFORM" . BR;	
