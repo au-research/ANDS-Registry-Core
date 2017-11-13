@@ -1,7 +1,7 @@
 <?php $this->load->view('header'); ?>
 <div ng-app="orcid_app">
 	<div class="content-header">
-		<h1>Import Your Datasets to <img style="margin: -13px 0 0 1px;" src="<?php echo asset_url('img/orcid_tagline_small.png'); ?>"/></h1>
+		<h1><?php echo $first_name; ?> <?php echo $last_name; ?> (<?php echo $orcid_id; ?>) Import Your Datasets to <img style="margin: -13px 0 0 1px;" src="<?php echo asset_url('img/orcid_tagline_small.png'); ?>"/></h1>
 	</div>
 	<span class="hide" id="orcid_id"><?php echo $orcid_id; ?></span>
 	<span class="hide" id="first_name"><?php echo $first_name; ?></span>

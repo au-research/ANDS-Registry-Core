@@ -11,14 +11,15 @@ class ORCIDRecord extends Model
     protected $table = "orcid_records";
     public $incrementing = false;
     protected $primaryKey = "orcid_id";
-    protected $fillable = ['orcid_id', 'record_data', 'created_at', 'updated_at', 'access_token', 'refresh_token'];
+    protected $fillable = ['orcid_id', 'full_name', 'record_data', 'created_at', 'updated_at', 'access_token', 'refresh_token'];
 
     public static function getTableName()
     {
         return static::table;
     }
 
-    public function saveRecord($record_data) {
+    public function saveRecord($full_name, $record_data) {
+        $this->full_name = $full_name;
         $this->record_data = $record_data;
         $this->updated_at = time();
         $this->save();

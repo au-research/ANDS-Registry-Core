@@ -140,6 +140,7 @@ function IndexCtrl($scope, works) {
 			//	window.location = base_url+'/orcid/login';
 			//} else {
 				$scope.import_stg = 'complete';
+				$scope.refresh();
 			//}
 		});
 	}

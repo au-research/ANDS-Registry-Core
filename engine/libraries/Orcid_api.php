@@ -172,9 +172,6 @@ class Orcid_api
 
         $this->ORCIDRecord = $this->getORCIDRecord($this->get_orcid_id());
 
-        if ($this->ORCIDRecord->response_code !== 200) {
-            return $this->ORCIDRecord->response;
-        }
         return $this->ORCIDRecord->record_data;
     }
 
@@ -242,6 +239,13 @@ class Orcid_api
 
 
         $success = false;
+
+//        if ($response_info['http_code'] === 401){
+//            redirect(registry_url('orcid/login'));
+//            exit();
+//        }
+
+
         if ($response_info['http_code'] === 200 or $response_info['http_code'] == 201) {
             $success = true;
             $response_header = http_parse_headers($header);
@@ -269,8 +273,8 @@ class Orcid_api
             'key' => $orcidImport->registryObject->key,
             'url' => portal_url($orcidImport->registryObject->slug),
             'put_code' => $orcidImport->put_code,
-            'date_created' => $orcidImport->date_created,
-            'date_updated' => $orcidImport->date_updated,
+            'date_created' => $orcidImport->created_at,
+            'date_updated' => $orcidImport->updated_at,
             'response' => $orcidImport->repsonse,
             'imported' => ($put_code == '') ? false : true
         );
@@ -304,12 +308,23 @@ class Orcid_api
         if ($this->ORCIDRecord == null) {
             $this->ORCIDRecord = new ORCIDRecord;
             $this->ORCIDRecord->orcid_id = $identifier;
+            $this->ORCIDRecord->full_name = $this->getFullNameFromResult($resultArray);
             $this->ORCIDRecord->record_data = $result;
             $this->ORCIDRecord->save();
         } else {
-            $this->ORCIDRecord->saveRecord($result);
+            $this->ORCIDRecord->saveRecord($this->getFullNameFromResult($resultArray), $result);
         }
         return $this->ORCIDRecord;
+
+    }
+
+    public function getFullNameFromResult($bio)
+    {
+        $first_name = $bio['person']['name']['given-names']['value'];
+        $last_name = $bio['person']['name']['family-name']['value'];
+        $credit_name = "";//$bio['person']['name']['credit-name']['value'];
+
+        return $first_name . " " . $last_name;
 
     }
 
