@@ -85,11 +85,12 @@ class Orcid extends MX_Controller {
 			$data = json_decode($data, true);
 			$ro_ids = $data['ro_ids'];
 		}
-		$result[] = null;
+
+		$result = [];
 		foreach($ro_ids as $id){
 			$this->load->library('Orcid_api');
 			$result[] = $this->orcid_api->append_work_by_ro_id($id);
-			}
+		}
 		print json_encode($result);
 	}
 
@@ -108,8 +109,6 @@ class Orcid extends MX_Controller {
 		//scripts
 		$data['scripts'] = array('orcid_app');
 		$data['js_lib'] = array('core','prettyprint', 'angular');
-
-
 		$data['orcid_id'] = $bio['orcid-identifier']['path'];
 		$data['first_name'] = $bio['person']['name']['given-names']['value'];
 		$data['last_name'] = $bio['person']['name']['family-name']['value'];
