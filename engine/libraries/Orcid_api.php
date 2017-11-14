@@ -4,8 +4,8 @@
  * ORCID class for use globally
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
  */
-use ANDS\ORCID\ORCIDExport as ORCIDExport;
-use ANDS\ORCID\ORCIDRecord as ORCIDRecord;
+use ANDS\Registry\Providers\ORCID\ORCIDExport as ORCIDExport;
+use ANDS\Registry\Providers\ORCID\ORCIDRecord as ORCIDRecord;
 
 
 if (!function_exists('http_parse_headers')) {

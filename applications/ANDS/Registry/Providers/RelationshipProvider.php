@@ -14,7 +14,7 @@ use ANDS\Repository\DataSourceRepository;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\RegistryObject\Relationship;
 use ANDS\RegistryObject\IdentifierRelationship;
-use ANDS\ORCID\ORCIDRecord;
+use ANDS\Registry\Providers\ORCID\ORCIDRecord;
 use ANDS\Util\XMLUtil;
 
 

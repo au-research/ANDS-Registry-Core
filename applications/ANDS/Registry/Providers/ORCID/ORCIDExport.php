@@ -1,6 +1,6 @@
 <?php
 
-namespace ANDS\ORCID;
+namespace ANDS\Registry\Providers\ORCID;
 
 use ANDS\RegistryObject;
 use Illuminate\Database\Eloquent\Model;
@@ -20,6 +20,11 @@ class ORCIDExport extends Model
     public function registryObject()
     {
         return $this->hasOne(RegistryObject::class, 'registry_object_id', 'registry_object_id');
+    }
+
+    public function getInOrcidAttribute()
+    {
+        return $this->put_code ? true : false;
     }
 
     public function saveData($registry_object_id, $orcid_id, $put_code, $data, $response) {
