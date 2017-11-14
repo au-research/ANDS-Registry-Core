@@ -98,6 +98,8 @@ class ORCIDController extends HTTPController {
 
         // item url
         foreach ($works as &$work) {
+            // id is used globally in the front end
+            $work['id'] = $work['registry_object_id'];
             $work['url'] = portal_url($work['slug']. '/'. $work['registry_object_id']);
         }
 

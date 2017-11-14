@@ -13,14 +13,22 @@
 			<div class="span8">
 				<div class="widget-box">
 					<div class="widget-title">
-						<span class="icon" tip="The Suggested Datasets section will list any datasets from Research Data Australia, which are either directly related to your ORCID ID or are related to a researcher matching your surname."><i class="icon icon-question-sign"></i></span>
+						<span
+                            class="icon"
+                            tip="The Suggested Datasets section will list any datasets from Research Data Australia, which are either directly related to your ORCID ID or are related to a researcher matching your surname.">
+                            <i class="icon icon-question-sign"></i>
+                        </span>
 						<h5>Suggested Datasets</h5>
 					</div>
 					<div class="widget-content">
 						<label class="checkbox" ng-repeat="item in filteredWorks = (works| filter:{type:'suggested'})">
-							<input type="checkbox" ng-model="item.to_import"/> <a href="{{item.url}}" target="_blank">{{item.title}}</a> <span class="label label-info" ng-show="item.imported && item.in_orcid">Imported</span>
+							<input type="checkbox" ng-model="item.to_import"/>
+                            <a href="{{item.url}}" target="_blank">{{item.title}}</a>
+                            <span class="label label-info" ng-show="item.in_orcid">Imported</span>
 						</label>
-						<div class="alert alert-info" ng-hide="filteredWorks.length">There are no suggested datasets, please use the search functions to look for works</div>
+						<div class="alert alert-info" ng-hide="filteredWorks.length">
+                            There are no suggested datasets, please use the search functions to look for works
+                        </div>
 					</div>
 				</div>
 
@@ -93,7 +101,11 @@
 			<p><b>({{to_import.length}}) works have been selected for import to your ORCID profile.</b></p>
 			<p>Please review your selected works and ensure they are appropriate before continuing with the import</p>
 			<div class="well">
-				<p ng-repeat="item in to_import"><a href="" ng-click="item.to_import=!item.to_import"><i class="icon icon-minus-sign"></i></a> {{item.title}}</p>
+				<p ng-repeat="item in to_import">
+                    <a href="" ng-click="item.to_import=!item.to_import">
+                        <i class="icon icon-minus-sign"></i>
+                    </a> {{item.title}}
+                </p>
 				<p ng-show="to_import.length==0">No works are selected for import</p>
 			</div>
 			<hr>
