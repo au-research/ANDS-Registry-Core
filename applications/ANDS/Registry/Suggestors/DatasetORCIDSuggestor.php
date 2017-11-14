@@ -44,7 +44,7 @@ class DatasetORCIDSuggestor
         $bio = $orcid->bio;
         $surname = $bio['person']['name']['family-name']['value'];
 
-        $partyIDs = [86702];
+        $partyIDs = [];
         // TODO: like query is slow, consider using SOLR?
         $sameName = RegistryObject::where('status', 'PUBLISHED')
             ->where('title', 'like', "%$surname%")

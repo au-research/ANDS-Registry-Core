@@ -6,20 +6,34 @@ use ANDS\Authenticator\ORCIDAuthenticator;
 use ANDS\Registry\API\Middleware\ValidORCIDSessionMiddleware;
 use ANDS\Registry\API\Request;
 use ANDS\Registry\Providers\ORCID\ORCIDExport;
-use ANDS\Registry\Providers\ORCID\ORCIDExportRepository;
 use ANDS\Registry\Providers\ORCID\ORCIDProvider;
 use ANDS\Registry\Providers\ORCID\ORCIDRecord;
 use ANDS\Registry\Suggestors\DatasetORCIDSuggestor;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\ORCIDAPI;
 
+/**
+ * Class ORCIDController
+ * Routed from orcids_handler.php
+ * @package ANDS\Registry\API\Controller
+ */
 class ORCIDController extends HTTPController {
 
+    /**
+     * GET api/registry/orcids/:id/
+     * @param null $id
+     * @return mixed
+     */
     public function show($id = null)
     {
         return ORCIDRecord::find($id);
     }
 
+    /**
+     * GET api/registry/orcids/:id/suggested
+     * @param null $id
+     * @return array
+     */
     public function suggestedDatasets($id = null)
     {
         $orcid = ORCIDRecord::find($id);
@@ -28,6 +42,11 @@ class ORCIDController extends HTTPController {
         return $suggestions;
     }
 
+    /**
+     * GET api/registry/orcids/:id/exports
+     * @param null $id
+     * @return mixed
+     */
     public function exports($id = null)
     {
         $orcid = ORCIDRecord::find($id);
@@ -35,6 +54,7 @@ class ORCIDController extends HTTPController {
     }
 
     /**
+     * GET api/registry/orcids/:id/works
      * Return all works
      * including suggested and already imported
      * TODO: refactor business logic to a dedicated class
@@ -51,7 +71,7 @@ class ORCIDController extends HTTPController {
 
         $works = [];
 
-        // get all suggestions
+        // get all suggestions, mark them
         $suggestor = new DatasetORCIDSuggestor();
         $suggestions = $suggestor->suggest($orcid);
         $exportIDs = $orcid->exports->pluck('registry_object_id')->toArray();
@@ -100,21 +120,26 @@ class ORCIDController extends HTTPController {
         $orcid->load('exports');
 
         foreach ($ids as $id) {
+
             $record = RegistryObjectsRepository::getRecordByID($id);
             if (!$record) {
-                return;
+                continue;
             }
+
             $xml = ORCIDProvider::getORCIDXML($record, $orcid);
 
-            // if we have an existing, update the data
             $existing = ORCIDExport::where('orcid_id', $orcid->orcid_id)
                 ->where('registry_object_id', $record->id)
                 ->where('orcid_id', $orcid->orcid_id)
                 ->first();
 
             if ($existing) {
+                // if we have an existing, update the data, then sync
+                $existing->data = $xml;
+                $existing->save();
                 ORCIDAPI::sync($existing);
             } else {
+                // make a new one, then sync
                 $export = ORCIDExport::create([
                     'registry_object_id' => $record->id,
                     'orcid_id' => $orcid->orcid_id,

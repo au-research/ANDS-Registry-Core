@@ -1,9 +1,10 @@
 <?php
 namespace ANDS\Registry\Providers\ORCID;
 
-
-use ANDS\Registry\Providers\ORCID\ORCIDRecord;
-
+/**
+ * Class ORCIDRecordsRepository
+ * @package ANDS\Registry\Providers\ORCID
+ */
 class ORCIDRecordsRepository
 {
     /**
@@ -27,9 +28,9 @@ class ORCIDRecordsRepository
                 'access_token' => $data['access_token'],
                 'refresh_token' => $data['refresh_token']
             ]);
-            $orcid->populateRecordData();
         }
 
+        $orcid->populateRecordData();
         return $orcid;
     }
 

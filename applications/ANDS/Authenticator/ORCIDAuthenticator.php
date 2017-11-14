@@ -1,11 +1,9 @@
 <?php
 namespace ANDS\Authenticator;
 
-
 use ANDS\Registry\Providers\ORCID\ORCIDRecord;
 use ANDS\Registry\Providers\ORCID\ORCIDRecordsRepository;
 use ANDS\Util\Config;
-use Elasticsearch\Common\Exceptions\BadRequest400Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 
@@ -16,6 +14,10 @@ class ORCIDAuthenticator
     protected static $SESSION_REFRESH_TOKEN = 'ORCID_REFRESH_TOKEN';
     protected static $scope = "/authenticate /read-limited /activities/update";
 
+    /**
+     * Returns the configuration
+     * @return mixed
+     */
     public static function getConfig()
     {
         return Config::get('orcid');
@@ -65,7 +67,7 @@ class ORCIDAuthenticator
     }
 
     /**
-     * Get the current
+     * Get the current access token
      * @return mixed
      * @throws \Exception
      */
@@ -78,6 +80,11 @@ class ORCIDAuthenticator
         return $_SESSION[static::$SESSION_ACCESS_TOKEN];
     }
 
+    /**
+     * Get the current refresh token
+     * @return mixed
+     * @throws \Exception
+     */
     public static function getORCIDRefreshToken()
     {
         if (!static::isLoggedIn()) {
@@ -87,6 +94,12 @@ class ORCIDAuthenticator
         return $_SESSION[static::$SESSION_REFRESH_TOKEN];
     }
 
+    /**
+     * Returns the URL to authenticate with ORCID
+     *
+     * @param string $redirect
+     * @return string
+     */
     public static function getOauthLink($redirect = "")
     {
         $config = self::getConfig();
@@ -100,14 +113,20 @@ class ORCIDAuthenticator
             . $redirect;
     }
 
+    /**
+     * Authenticate via authorisation code
+     * This code is returned via oauthlink
+     * Creates a new ORCIDRecord if not exists and sign them to the session
+     *
+     * @param $code
+     * @return mixed
+     * @throws \Exception
+     */
     public static function oauth($code)
     {
         $config = self::getConfig();
 
-        $client = new Client([
-            'base_uri' => $config['service_url'],
-            'timeout'  => 30.0
-        ]);
+        $client = self::getServiceClient();
 
         $data = null;
         try {
@@ -126,6 +145,8 @@ class ORCIDAuthenticator
                 throw new \Exception($content['error_description']);
             }
         }
+
+        // error handling?
         $content = json_decode($data->getBody()->getContents(), true);
         $orcid = ORCIDRecordsRepository::firstOrCreate($content['orcid'], $content);
 
@@ -135,6 +156,12 @@ class ORCIDAuthenticator
         return $orcid;
     }
 
+    /**
+     * Returns the ORCIDRecord that currently logs in
+     *
+     * @return ORCIDRecord
+     * @throws \Exception
+     */
     public static function getSession()
     {
         $orcidID = $_SESSION[self::$SESSION_ORCID_ID];
@@ -147,6 +174,7 @@ class ORCIDAuthenticator
 
     /**
      * Destroy current session
+     * Logout functionality
      */
     public static function destroySession()
     {
@@ -158,6 +186,12 @@ class ORCIDAuthenticator
         unset($_SESSION[self::$SESSION_REFRESH_TOKEN]);
     }
 
+    /**
+     * Returns a client to talk to the service url
+     * mainly use for authentication purpose
+     *
+     * @return Client
+     */
     public static function getServiceClient()
     {
         $config = self::getConfig();
