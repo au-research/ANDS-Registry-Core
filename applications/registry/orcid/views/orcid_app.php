@@ -76,6 +76,9 @@
 						<div class="alert alert-info" ng-hide="filteredWorks.length">You have not imported any works from Research Data Australia!</div>
 					</div>
 				</div>
+                <div class="pull-right">
+                    <a href="{{ base_url }}logout">Sign Out</a>
+                </div>
 			</div>
 		</div>
 	</div>

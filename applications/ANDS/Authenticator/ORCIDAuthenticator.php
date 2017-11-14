@@ -15,7 +15,6 @@ class ORCIDAuthenticator
     protected static $SESSION_ACCESS_TOKEN = 'ORCID_ACCESS_TOKEN';
     protected static $SESSION_REFRESH_TOKEN = 'ORCID_REFRESH_TOKEN';
     protected static $scope = "/authenticate /read-limited /activities/update";
-    private static $config = null;
 
     public static function getConfig()
     {
@@ -23,8 +22,7 @@ class ORCIDAuthenticator
     }
 
     /**
-     * If the user is logged in
-     *
+     * Check if there's an existing session
      */
     public static function isLoggedIn()
     {
@@ -39,6 +37,11 @@ class ORCIDAuthenticator
         return false;
     }
 
+    /**
+     * Set the current logged in session as an ORCIDRecord user
+     *
+     * @param ORCIDRecord $orcid
+     */
     public static function setORCIDSession(ORCIDRecord $orcid)
     {
         $_SESSION[self::$SESSION_ORCID_ID] = $orcid->orcid_id;
@@ -46,6 +49,12 @@ class ORCIDAuthenticator
         $_SESSION[self::$SESSION_REFRESH_TOKEN] = $orcid->refresh_token;
     }
 
+    /**
+     * Get the current orcid ID session
+     *
+     * @return mixed
+     * @throws \Exception
+     */
     public static function getOrcidID()
     {
         if (!static::isLoggedIn()) {
@@ -55,6 +64,11 @@ class ORCIDAuthenticator
         return $_SESSION[static::$SESSION_ORCID_ID];
     }
 
+    /**
+     * Get the current
+     * @return mixed
+     * @throws \Exception
+     */
     public static function getOrcidAccessToken()
     {
         if (!static::isLoggedIn()) {
@@ -129,6 +143,19 @@ class ORCIDAuthenticator
             throw new \Exception("ORCID $orcidID not found");
         }
         return $orcid;
+    }
+
+    /**
+     * Destroy current session
+     */
+    public static function destroySession()
+    {
+        if (session_status() === PHP_SESSION_NONE){
+            session_start();
+        }
+        unset($_SESSION[self::$SESSION_ORCID_ID]);
+        unset($_SESSION[self::$SESSION_ACCESS_TOKEN]);
+        unset($_SESSION[self::$SESSION_REFRESH_TOKEN]);
     }
 
 
