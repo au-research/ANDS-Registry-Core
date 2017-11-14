@@ -30,7 +30,13 @@ class ORCIDRecordsRepository
             ]);
         }
 
+        // update the ORCID access token and refresh token
+        $orcid->access_token = $data['access_token'];
+        $orcid->refresh_token = $data['refresh_token'];
+        
+        $orcid->save();
         $orcid->populateRecordData();
+
         return $orcid;
     }
 
