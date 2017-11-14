@@ -28,6 +28,9 @@ class ORCIDAuthenticator
      */
     public static function isLoggedIn()
     {
+        if (session_status() === PHP_SESSION_NONE){
+            session_start();
+        }
         // check session for orcid_id
         if (array_key_exists(static::$SESSION_ORCID_ID, $_SESSION)) {
             return true;
@@ -49,7 +52,7 @@ class ORCIDAuthenticator
             throw new \Exception("User is not Logged In");
         }
 
-        return $_SESSION[static::$ORCID_ID_NAME];
+        return $_SESSION[static::$SESSION_ORCID_ID];
     }
 
     public static function getOauthLink($redirect = "")

@@ -11,6 +11,7 @@ class ORCIDExport extends Model
     protected $table = "orcid_exports";
     protected $primaryKey = "id";
     protected $fillable = ['registry_object_id', 'orcid_id', 'put_code', 'response', 'data', 'created_at', 'updated_at'];
+    protected $appends = ['in_orcid'];
 
     public static function getTableName()
     {

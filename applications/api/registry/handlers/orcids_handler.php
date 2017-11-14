@@ -16,6 +16,7 @@ class OrcidsHandler extends Handler {
         $router->get('orcids/(.*)/suggested', 'ORCIDController@suggestedDatasets');
         $router->get('orcids/(.*)/exports', 'ORCIDController@exports');
         $router->get('orcids/(.*)/works', 'ORCIDController@works');
+        $router->route(['put', 'post'], 'orcids/(.*)/works', 'ORCIDController@import');
         $router->get('orcids/(.*)', 'ORCIDController@show');
 
         //        dd($router->getMatch());

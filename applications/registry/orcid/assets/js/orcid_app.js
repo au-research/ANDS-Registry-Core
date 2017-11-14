@@ -16,18 +16,16 @@ angular.module('orcid_app', ['portal-filters'])
 	//Factory
 	.factory('works', function($http){
 		return {
-			getWorks: function(id) {
-				return $http.get(api_url + 'registry/orcids/' + id + '/works')
+			getWorks: function(orcid_id) {
+				return $http.get(api_url + 'registry/orcids/' + orcid_id + '/works')
 					.then(function(response) {return response.data})
 			},
-			getWorks2: function(data) {
-				return $http.post(base_url+'/orcid/orcid_works', {data:data}).then(function(response) {return response.data});
+			importWorks: function(orcid_id, ids) {
+				return $http.post(api_url + 'registry/orcids/' + orcid_id + '/works', {ids: ids})
+					.then(function(response) {return response.data})
 			},
 			search: function(filters) {
 				return $http.post(base_url+'/services/registry/post_solr_search', {filters:filters}).then(function(response) {return response.data});
-			},
-			import_works: function(ro_ids) {
-				return $http.post(base_url+'/orcid/import_to_orcid', {ro_ids:ro_ids}).then(function(response) {return response.data});
 			}
 		}
 	})
@@ -114,6 +112,15 @@ function IndexCtrl($scope, works) {
 		$scope.import_stg = 'ready';
 	}
 
+	$scope.alreadyImported = function(id) {
+		var importedIDs = $scope.works.filter(function(item) {
+			return item.in_orcid;
+		}).map(function(item) {
+			return item.registry_object_id
+		});
+		return importedIDs.indexOf(id) >= 0;
+	};
+
 	/**
 	 * Generic SOLR search for collections
 	 * @return search_result
@@ -138,13 +145,10 @@ function IndexCtrl($scope, works) {
 		$.each($scope.to_import, function(){
 			ids.push(this.id);
 		});
-		works.import_works(ids).then(function(data){
-			//if(data!=1){
-			//	window.location = base_url+'/orcid/login';
-			//} else {
-				$scope.import_stg = 'complete';
-				$scope.refresh();
-			//}
+		works.importWorks($scope.orcid.id, ids).then(function(data){
+			console.log(data);
+			$scope.import_stg = 'complete';
+			$scope.refresh();
 		});
 	}
 }

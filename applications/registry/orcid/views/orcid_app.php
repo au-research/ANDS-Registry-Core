@@ -41,7 +41,7 @@
 									<input type="checkbox" ng-model="doc.to_import" />
 								</div>
 								<div style="margin-left:25px;">
-									<h5><a href="<?php echo portal_url()?>{{doc.slug}}">{{doc.title}}</a><span class="label label-info pull-right" style="margin-right:15px;" ng-show="imported_ids.indexOf(doc.id)!=-1">Imported</span></h5>
+									<h5><a href="<?php echo portal_url()?>{{doc.slug}}/{{doc.id}}">{{doc.title}}</a><span class="label label-info pull-right" style="margin-right:15px;" ng-show="alreadyImported(doc.id)">Imported</span></h5>
 									<p>{{doc.description | removeHtml}}</p>
 								</div>
 								<div class="clearfix"></div>

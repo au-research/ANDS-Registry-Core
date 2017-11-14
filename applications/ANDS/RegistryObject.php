@@ -289,4 +289,14 @@ class RegistryObject extends Model
         return $this->duplicateRecordIds;
         
     }
+
+
+    /**
+     * $this->portalUrl
+     * $this->portal_url
+     */
+    public function getPortalUrlAttribute()
+    {
+        return portal_url($this->slug.'/'.$this->registry_object_id);
+    }
 }

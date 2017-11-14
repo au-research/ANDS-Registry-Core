@@ -2,11 +2,16 @@
 namespace ANDS\Registry\API\Controller;
 
 
+use ANDS\Authenticator\ORCIDAuthenticator;
+use ANDS\Registry\API\Middleware\ValidORCIDSessionMiddleware;
+use ANDS\Registry\API\Request;
 use ANDS\Registry\Providers\ORCID\ORCIDExportRepository;
+use ANDS\Registry\Providers\ORCID\ORCIDProvider;
 use ANDS\Registry\Providers\ORCID\ORCIDRecord;
 use ANDS\Registry\Suggestors\DatasetORCIDSuggestor;
+use ANDS\Repository\RegistryObjectsRepository;
 
-class ORCIDController {
+class ORCIDController extends HTTPController {
 
     public function show($id = null)
     {
@@ -37,6 +42,8 @@ class ORCIDController {
      */
     public function works($id = null)
     {
+        $this->middlewares([ValidORCIDSessionMiddleware::class]);
+
         $orcid = ORCIDRecord::find($id);
         $orcid->load('exports');
 
@@ -73,5 +80,34 @@ class ORCIDController {
         }
 
         return $works;
+    }
+
+
+    /**
+     * PUT|POST api/registry/orcids/:id/works
+     */
+    public function import()
+    {
+        $this->middlewares([ValidORCIDSessionMiddleware::class]);
+
+        $ids = Request::value('ids', []);
+        $orcidID = ORCIDAuthenticator::getOrcidID();
+
+        // TODO: check orcid ID existence
+        $orcid = ORCIDRecord::find($orcidID);
+        $orcid->load('exports');
+
+        foreach ($ids as $id) {
+            $record = RegistryObjectsRepository::getRecordByID($id);
+            if (!$record) {
+                return;
+            }
+            $xml = ORCIDProvider::getORCIDXML($record, $orcid);
+            // TODO: post xml?
+        }
+
+        // reload all exports
+        $orcid->load('exports');
+        return $orcid->exports;
     }
 }
