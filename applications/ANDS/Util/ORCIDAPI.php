@@ -35,6 +35,8 @@ class ORCIDAPI
                     'headers' => [ 'Content-type' => 'application/vnd.orcid+xml' ],
                     'body' => $xml
                 ]);
+                $export->response = null;
+                $export->save();
             } catch (RequestException $e) {
                 $export->response = $e->getResponse()->getBody()->getContents();
                 $export->save();
@@ -51,6 +53,7 @@ class ORCIDAPI
             ]);
             $location = array_pop($data->getHeader("Location"));
             $putCode = array_pop(explode('/', $location));
+            $export->response = null;
             $export->put_code = $putCode;
             $export->save();
         } catch (RequestException $e) {
