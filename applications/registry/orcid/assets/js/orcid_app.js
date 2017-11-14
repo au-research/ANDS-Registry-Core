@@ -16,7 +16,11 @@ angular.module('orcid_app', ['portal-filters'])
 	//Factory
 	.factory('works', function($http){
 		return {
-			getWorks: function(data) {
+			getWorks: function(id) {
+				return $http.get(api_url + 'registry/orcids/' + id + '/works')
+					.then(function(response) {return response.data})
+			},
+			getWorks2: function(data) {
 				return $http.post(base_url+'/orcid/orcid_works', {data:data}).then(function(response) {return response.data});
 			},
 			search: function(filters) {
@@ -46,9 +50,7 @@ function IndexCtrl($scope, works) {
 	$scope.import_stg = 'ready';
 
 	$scope.orcid = {
-		orcid_id:$('#orcid_id').text(),
-		first_name:$('#first_name').text(),
-		last_name:$('#last_name').text(),
+		id:$('#orcid_id').text()
 	};
 
 	//Overwrite the import button to only open the modal if it's not disabled
@@ -61,10 +63,10 @@ function IndexCtrl($scope, works) {
 	});
 
 	//Refresh functions refreshes the works, populates the imported_ids 
-	$scope.refresh = function(){
+	$scope.refresh = function (){
 		$scope.imported_ids = [];
-		works.getWorks($scope.orcid).then(function(data){
-			$scope.works = data.works;
+		works.getWorks($scope.orcid.id).then(function(data){
+			$scope.works = data;
 			if($scope.works){
 				$.each($scope.works, function(){
 					if(this.type=='imported' && this.in_orcid){
@@ -73,7 +75,8 @@ function IndexCtrl($scope, works) {
 				});
 			}
 		});
-	}
+	};
+
 	//run once
 	$scope.refresh();
 

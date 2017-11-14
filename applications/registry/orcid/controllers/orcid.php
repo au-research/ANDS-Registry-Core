@@ -1,4 +1,9 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php use ANDS\Authenticator\ORCIDAuthenticator;
+use ANDS\Registry\API\Request;
+use ANDS\Registry\Providers\ORCID\ORCIDRecord;
+use ANDS\Util\ORCIDAPI;
+
+if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 //mod_enforce('mydois');
 
 /**
@@ -12,6 +17,16 @@ class Orcid extends MX_Controller {
 	 * @return view 
 	 */
 	function index(){
+        session_start();
+	    if (!ORCIDAuthenticator::isLoggedIn()) {
+            redirect(registry_url('orcid/login'));
+        }
+
+        // is logged in, obtain bio and open the wizard
+        $bio = ORCIDAPI::getBio();
+        $this->wiz($bio);
+
+	    return;
 		$this->load->library('Orcid_api', 'orcid');
 		if($access_token = $this->orcid_api->get_access_token()){
 			$bio = $this->orcid_api->getORCIDRecord($this->orcid_api->get_orcid_id());
@@ -23,23 +38,42 @@ class Orcid extends MX_Controller {
 		}
 	}
 
-	function login(){
-		$data['title'] = 'Login to ORCID';
-		$data['js_lib'] = array('core');
+	public function login() {
+        session_start();
+	    $data = [
+	        'title' => 'Login to ORCID',
+            'js_lib' => ['core'],
+            'link' => ORCIDAuthenticator::getOauthLink(registry_url('orcid/auth'))
+        ];
 
-		https://sandbox.orcid.org/oauth/authorize?client_id=[Your client ID]&response_type=code&scope=/read-limited&redirect_uri=[Your landing page]
-
-
-		$data['link'] = $this->config->item('gORCID_SERVICE_BASE_URI').'oauth/authorize?client_id='.$this->config->item('gORCID_CLIENT_ID').'&response_type=code&scope=/authenticate /read-limited /activities/update&redirect_uri=';
-		$data['link'].=registry_url('orcid/auth');
-		$this->load->view('login_orcid', $data);
+	    $this->load->view('login_orcid', $data);
 	}
 
-	/**
-	 * REDIRECT URI set to this method, process the user and provide the relevant view
-	 * @return view 
-	 */
-	function auth(){
+    /**
+     * REDIRECT URI set to this method, process the user and provide the relevant view
+     * @return view
+     * @throws Exception
+     */
+	public function auth() {
+        session_start();
+
+	    // see if there's any error
+        if (Request::get('error')) {
+            throw new Exception(Request::get('error_description'));
+        }
+
+        if (!Request::get('code')) {
+            throw new Exception("No valid code returned from ORCID");
+        }
+
+        if (ORCIDAuthenticator::isLoggedIn()) {
+            $orcid = ORCIDAuthenticator::getSession();
+            $this->wiz($orcid);
+            return;
+        }
+
+        return;
+
 		$this->load->library('Orcid_api', 'orcid');
 		if($this->input->get('code')){
 			$code = $this->input->get('code');
@@ -94,26 +128,35 @@ class Orcid extends MX_Controller {
 		print json_encode($result);
 	}
 
-	/**
-	 * [wiz description]
-	 * @param  orcid_bio $bio
-	 * @return view
-	 */
-	function wiz($bio) {
-		$data['title'] = 'Import Your Work';
+    /**
+     * [wiz description]
+     * @param ORCIDRecord $orcid
+     * @return view
+     * @internal param orcid_bio $bio
+     */
+	function wiz(ORCIDRecord $orcid) {
 
-		//collect bio stuff
-
-		$data['bio'] = $bio;
-
-		//scripts
-		$data['scripts'] = array('orcid_app');
-		$data['js_lib'] = array('core','prettyprint', 'angular');
-		$data['orcid_id'] = $bio['orcid-identifier']['path'];
-		$data['first_name'] = $bio['person']['name']['given-names']['value'];
-		$data['last_name'] = $bio['person']['name']['family-name']['value'];
-
-		$this->load->view('orcid_app', $data);
+	    $this->load->view('orcid_app', [
+            'title' => 'Import Your Work',
+            'scripts' => ['orcid_app'],
+            'js_lib' => ['core','prettyprint', 'angular'],
+            'orcid' => $orcid
+        ]);
+//
+//		$data['title'] = 'Import Your Work';
+//
+//		//collect bio stuff
+//
+//		$data['bio'] = $bio;
+//
+//		//scripts
+//		$data['scripts'] = array('orcid_app');
+//		$data['js_lib'] = array('core','prettyprint', 'angular');
+//		$data['orcid_id'] = $bio['orcid-identifier']['path'];
+//		$data['first_name'] = $bio['person']['name']['given-names']['value'];
+//		$data['last_name'] = $bio['person']['name']['family-name']['value'];
+//
+//		$this->load->view('orcid_app', $data);
 	}
 
 	function orcid_works() {
@@ -201,7 +244,7 @@ class Orcid extends MX_Controller {
 		$result = array();
 		
 		initEloquent();
-		$orcidRecord = \ANDS\ORCID\ORCIDRecord::find($this->orcid_api->get_orcid_id());
+		$orcidRecord = ORCIDRecord::find($this->orcid_api->get_orcid_id());
 
 		$orcidExports = $orcidRecord->exports;
 		foreach($orcidExports as $oe){
@@ -330,7 +373,7 @@ class Orcid extends MX_Controller {
 		}
 
 		initEloquent();
-		$orcidRecord = \ANDS\ORCID\ORCIDRecord::find($this->orcid_api->get_orcid_id());
+		$orcidRecord = ORCIDRecord::find($this->orcid_api->get_orcid_id());
 		$orcidExports = $orcidRecord->exports;
 		foreach($orcidExports as $oe){
 			$oe->load('registryObject');
@@ -362,7 +405,7 @@ class Orcid extends MX_Controller {
 	
 	function imported($orcid_id){
 		initEloquent();
-		$orcidRecord = \ANDS\ORCID\ORCIDRecord::find($orcid_id);
+		$orcidRecord = ORCIDRecord::find($orcid_id);
 		$orcidExports = $orcidRecord->exports;
 		$im = array();
 		foreach($orcidExports as $oe){
