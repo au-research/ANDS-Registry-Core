@@ -5,8 +5,11 @@ use ANDS\Registry\Providers\RegistryContentProvider;
 use ANDS\RegistryObject;
 use ANDS\Util\XMLUtil;
 use DOMDocument;
-use Transforms;
 
+/**
+ * Class ORCIDProvider
+ * @package ANDS\Registry\Providers\ORCID
+ */
 class ORCIDProvider implements RegistryContentProvider
 {
 
@@ -34,6 +37,7 @@ class ORCIDProvider implements RegistryContentProvider
 
     /**
      * Return the ORCID XML format for the provided record
+     * TODO: replace XSLT with a DOM builder
      *
      * @param RegistryObject $record
      * @param ORCIDRecord $orcid
