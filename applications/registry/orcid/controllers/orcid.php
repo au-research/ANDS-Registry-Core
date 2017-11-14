@@ -14,11 +14,11 @@ class Orcid extends MX_Controller {
 
 	/**
 	 * Base Method, requires the user to login
-	 * @return view 
+	 * @return void
 	 */
-	function index(){
-        session_start();
-	    if (!ORCIDAuthenticator::isLoggedIn()) {
+	function index()
+    {
+        if (!ORCIDAuthenticator::isLoggedIn()) {
             redirect(registry_url('orcid/login'));
         }
 
@@ -26,36 +26,24 @@ class Orcid extends MX_Controller {
         $bio = ORCIDAPI::getBio();
         $this->wiz($bio);
 
-	    return;
-		$this->load->library('Orcid_api', 'orcid');
-		if($access_token = $this->orcid_api->get_access_token()){
-			$bio = $this->orcid_api->getORCIDRecord($this->orcid_api->get_orcid_id());
-			if(!$bio) redirect(registry_url('orcid'));
-			$bio = json_decode($bio['record_data'], true);
-			$this->wiz($bio);
-		}else{
-			redirect(registry_url('orcid/login'));
-		}
-	}
+        return;
+    }
 
-	public function login() {
-        session_start();
-	    $data = [
-	        'title' => 'Login to ORCID',
+    public function login()
+    {
+        $this->load->view('login_orcid', [
+            'title' => 'Login to ORCID',
             'js_lib' => ['core'],
             'link' => ORCIDAuthenticator::getOauthLink(registry_url('orcid/auth'))
-        ];
-
-	    $this->load->view('login_orcid', $data);
-	}
+        ]);
+    }
 
     /**
      * REDIRECT URI set to this method, process the user and provide the relevant view
-     * @return view
+     * @return void
      * @throws Exception
      */
 	public function auth() {
-        session_start();
 
 	    // see if there's any error
         if (Request::get('error')) {
@@ -72,43 +60,9 @@ class Orcid extends MX_Controller {
             return;
         }
 
+        $orcid = ORCIDAuthenticator::oauth(Request::get('code'));
+        $this->wiz($orcid);
         return;
-
-		$this->load->library('Orcid_api', 'orcid');
-		if($this->input->get('code')){
-			$code = $this->input->get('code');
-			$data = json_decode($this->orcid_api->oauth($code),true);
-			if(isset($data['access_token'])){
-				$this->orcid_api->set_orcid_id($data['orcid']);
-				$this->orcid_api->set_access_token($data['access_token']);
-				$this->orcid_api->set_refresh_token($data['refresh_token']);
-				$bio = $this->orcid_api->get_full();
-				$bio = json_decode($bio, true);
-				$orcid_id = $bio['path'];
-				$this->orcid_api->log($orcid_id);
-				$this->wiz($bio);
-			}else{
-
-				if($access_token = $this->orcid_api->get_access_token()){
-					// var_dump($this->orcid_api->get_orcid_id());
-					$bio = $this->orcid_api->get_full();
-					if(!$bio) redirect(registry_url('orcid'));
-					$bio = json_decode($bio, true);
-					$this->wiz($bio);
-				}else{
-					redirect(registry_url('orcid/login'));
-				}
-			}
-		}else{
-			if($access_token = $this->orcid_api->get_access_token()){
-				$bio = $this->orcid_api->get_full();
-				if(!$bio) redirect(registry_url('orcid'));
-				$bio = json_decode($bio, true);
-				$this->wiz($bio);
-			}else{
-				redirect(registry_url('orcid/login'));
-			}
-		}
 	}
 
 	function import_to_orcid(){
@@ -292,114 +246,6 @@ class Orcid extends MX_Controller {
 //		}
 
 		echo json_encode($result);
-	}
-
-	/**
-	 * The wizard?
-	 * @return view 
-	 */
-	function wiz_dep($bio){
-
-		// var_dump($bio);
-
-		$data['bio'] = $bio;
-		$data['title']='Import Your Work';
-		$data['scripts']=array('orcid_wiz');
-		$data['js_lib']=array('core','prettyprint', 'bootstro');
-
-		$orcid_id = $bio['path'];
-		$first_name = $bio['person']['name']['given-names']['value'];
-		$last_name = $bio['personal']['name']['family-name']['value'];
-		$name = $first_name.' '.$last_name;
-
-		$suggested_collections = array();
-
-		$this->load->model('registry_object/registry_objects', 'ro');
-		$this->load->library('solr');
-
-		//find parties of similar names
-		$this->solr->setOpt('fq', '+class:party');
-		$this->solr->setOpt('fq', '+display_title:('.$last_name.')');
-		$this->solr->executeSearch();
-
-		$already_checked = array();
-
-		if($this->solr->getNumFound() > 0){
-			$result = $this->solr->getResult();
-			// echo json_encode($result);
-			foreach($result->{'docs'} as $d){
-				if(!in_array($d->{'id'}, $already_checked)){
-					$ro = $this->ro->getByID($d->{'id'});
-					$connections = $ro->getConnections(true,'collection');
-					// var_dump($connections[0]['collection']);
-					if(isset($connections[0]['collection']) && sizeof($connections[0]['collection']) > 0) {
-						$suggested_collections=array_merge($suggested_collections, $connections[0]['collection']);
-					}
-					array_push($already_checked, $d->{'id'});
-					unset($ro);
-				}
-			}
-		}
-
-		//find parties that have the same orcid_id
-		$this->solr->clearOpt('fq');
-		$this->solr->setOpt('fq', '+class:party');
-		$this->solr->setOpt('fq', '+identifier_value:("'.$orcid_id.'")');
-		$this->solr->executeSearch();
-		if($this->solr->getNumFound() > 0){
-			$result = $this->solr->getResult();
-			foreach($result->{'docs'} as $d){
-				if(!in_array($d->{'id'}, $already_checked)){
-					$ro = $this->ro->getByID($d->{'id'});
-					$ro = $this->ro->getByID($d->{'id'});
-					$connections = $ro->getConnections(true,'collection');
-					if(isset($connections[0]['collection']) && sizeof($connections[0]['collection']) > 0) {
-						$suggested_collections=array_merge($suggested_collections, $connections[0]['collection']);
-					}
-					array_push($already_checked, $d->{'id'});
-					unset($ro);
-				}
-			}
-		}
-
-		//find collection that has a relatedInfo/identifier like the orcid_id
-		$relatedByRelatedInfoIdentifier = $this->ro->getByRelatedInfoIdentifier($orcid_id);
-		if ( is_array($relatedByRelatedInfoIdentifier) && sizeof($relatedByRelatedInfoIdentifier) > 0 ) {
-			foreach ( $relatedByRelatedInfoIdentifier as $ro_id) {
-				if( !in_array($ro_id, $already_checked) ) {
-					array_push($already_checked, $ro_id);
-				}
-			}
-		}
-
-		initEloquent();
-		$orcidRecord = ORCIDRecord::find($this->orcid_api->get_orcid_id());
-		$orcidExports = $orcidRecord->exports;
-		foreach($orcidExports as $oe){
-			$oe->load('registryObject');
-			$data['imported'][] = array(
-				'type' => 'imported',
-				'id'=>$oe->registryObject->registry_object_id,
-				'title'=>$oe->registryObject->title,
-				'key'=>$oe->registryObject->key,
-				'put_code'=>$oe->put_code,
-				'date_created'=>$oe->date_created,
-				'date_updated'=>$oe->date_updated,
-				'response'=>$oe->repsonse,
-				'url'=>portal_url($oe->registryObject->slug),
-				'imported'=>true,
-				'in_orcid' => false
-			);
-		}
-
-		// echo sizeof($suggested_collections);
-		
-		$data['tip'] = 'The Suggested Datasets section will list any datasets from Research Data Australia, which are either directly related to your ORCID ID or are related to a researcher matching your surname.';
-
-		$data['name'] = $name;
-		$data['orcid_id'] = $orcid_id;
-		$data['suggested_collections'] = $suggested_collections;
-		$this->load->view('orcid_wiz', $data);
 	}
 
 	

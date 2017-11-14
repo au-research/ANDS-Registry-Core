@@ -5,6 +5,7 @@ namespace ANDS\Registry\API\Controller;
 use ANDS\Authenticator\ORCIDAuthenticator;
 use ANDS\Registry\API\Middleware\ValidORCIDSessionMiddleware;
 use ANDS\Registry\API\Request;
+use ANDS\Registry\Providers\ORCID\ORCIDExport;
 use ANDS\Registry\Providers\ORCID\ORCIDExportRepository;
 use ANDS\Registry\Providers\ORCID\ORCIDProvider;
 use ANDS\Registry\Providers\ORCID\ORCIDRecord;
@@ -103,7 +104,18 @@ class ORCIDController extends HTTPController {
                 return;
             }
             $xml = ORCIDProvider::getORCIDXML($record, $orcid);
-            // TODO: post xml?
+
+            // if we have an existing, update the data
+            $existing = ORCIDExport::where('orcid_id', $orcid->orcid_id)->where('registry_object_id', $record->id)->first();
+            if (!$existing) {
+                ORCIDExport::create([
+                    'registry_object_id' => $record->id,
+                    'orcid_id' => $orcid->orcid_id,
+                    'data' => $xml
+                ]);
+            } else {
+                $existing->save();
+            }
         }
 
         // reload all exports

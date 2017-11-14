@@ -3,6 +3,7 @@
 namespace ANDS\Registry\Providers\ORCID;
 
 use ANDS\RegistryObject;
+use ANDS\Util\ORCIDAPI;
 use Illuminate\Database\Eloquent\Model;
 
 
@@ -21,6 +22,17 @@ class ORCIDExport extends Model
     public function registryObject()
     {
         return $this->hasOne(RegistryObject::class, 'registry_object_id', 'registry_object_id');
+    }
+
+    public function save(array $options = [])
+    {
+        ORCIDAPI::sync($this);
+        return parent::save($options);
+    }
+
+    public function record()
+    {
+        return $this->hasOne(ORCIDRecord::class, 'orcid_id', 'orcid_id');
     }
 
     public function getInOrcidAttribute()

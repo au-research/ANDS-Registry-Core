@@ -55,6 +55,24 @@ class ORCIDAuthenticator
         return $_SESSION[static::$SESSION_ORCID_ID];
     }
 
+    public static function getOrcidAccessToken()
+    {
+        if (!static::isLoggedIn()) {
+            throw new \Exception("User is not Logged In");
+        }
+
+        return $_SESSION[static::$SESSION_ACCESS_TOKEN];
+    }
+
+    public static function getORCIDRefreshToken()
+    {
+        if (!static::isLoggedIn()) {
+            throw new \Exception("User is not Logged In");
+        }
+
+        return $_SESSION[static::$SESSION_REFRESH_TOKEN];
+    }
+
     public static function getOauthLink($redirect = "")
     {
         $config = self::getConfig();
@@ -112,4 +130,6 @@ class ORCIDAuthenticator
         }
         return $orcid;
     }
+
+
 }
