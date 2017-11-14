@@ -24,12 +24,6 @@ class ORCIDExport extends Model
         return $this->hasOne(RegistryObject::class, 'registry_object_id', 'registry_object_id');
     }
 
-    public function save(array $options = [])
-    {
-        ORCIDAPI::sync($this);
-        return parent::save($options);
-    }
-
     public function record()
     {
         return $this->hasOne(ORCIDRecord::class, 'orcid_id', 'orcid_id');
