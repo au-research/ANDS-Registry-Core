@@ -11,6 +11,7 @@ use ANDS\Registry\Providers\ORCID\ORCIDProvider;
 use ANDS\Registry\Providers\ORCID\ORCIDRecord;
 use ANDS\Registry\Suggestors\DatasetORCIDSuggestor;
 use ANDS\Repository\RegistryObjectsRepository;
+use ANDS\Util\ORCIDAPI;
 
 class ORCIDController extends HTTPController {
 
@@ -108,13 +109,14 @@ class ORCIDController extends HTTPController {
             // if we have an existing, update the data
             $existing = ORCIDExport::where('orcid_id', $orcid->orcid_id)->where('registry_object_id', $record->id)->first();
             if (!$existing) {
-                ORCIDExport::create([
+                $export = ORCIDExport::create([
                     'registry_object_id' => $record->id,
                     'orcid_id' => $orcid->orcid_id,
                     'data' => $xml
                 ]);
+                ORCIDAPI::sync($export);
             } else {
-                $existing->save();
+                ORCIDAPI::sync($existing);
             }
         }
 
