@@ -23,15 +23,15 @@ foreach($ro->subjects as $col){
                     @if(isset($col['resolved']) && $col['subject']!='')
                         @if($col['type']=='anzsrc-for' || $col['type']=='anzsrc-seo'|| $col['type']=='iso639-3')
                             <a href="{{base_url().'search/#!/'.$col['type'].'='.$col['subject'].$classSearchComp}}">
-                                <span itemprop="about keywords">{{ titleCase($col['resolved']) }}</span>
+                                {{ titleCase($col['resolved']) }}
                             </a> |
                         @elseif($col['type']=='gcmd')
-                            <a href="{{base_url().'search/#!/'.$col['type'].'='.$col['resolved'].$classSearchComp}}"><span  itemprop="about keywords">{{ $col['subject'] }}</span></a> |
+                            <a href="{{base_url().'search/#!/'.$col['type'].'='.$col['resolved'].$classSearchComp}}">{{ $col['subject'] }}</a> |
                         @else
-                            <a href="{{base_url().'search/#!/subject_value_resolved='.rawurlencode($col['resolved']).$classSearchComp}}" ><span  itemprop="about keywords">{{$col['resolved']}}</span></a> |
+                            <a href="{{base_url().'search/#!/subject_value_resolved='.rawurlencode($col['resolved']).$classSearchComp}}" >{{$col['resolved']}}</a> |
                         @endif
                     @elseif($col['subject']!='')
-                    <a href="{{base_url().'search/#!/subject_value='.rawurlencode($col['subject']).$classSearchComp}}"><span  itemprop="about keywords">{{$col['subject']}}</span></a> |
+                    <a href="{{base_url().'search/#!/subject_value='.rawurlencode($col['subject']).$classSearchComp}}">{{$col['subject']}}</a> |
                     @endif
                 @endforeach
             </div>

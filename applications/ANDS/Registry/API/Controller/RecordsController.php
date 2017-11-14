@@ -2,10 +2,12 @@
 
 namespace ANDS\Registry\API\Controller;
 
+use ANDS\Registry\API\Middleware\IPRestrictionMiddleware;
+use ANDS\Registry\Importer;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 
-class RecordsController implements RestfulController
+class RecordsController extends HTTPController implements RestfulController
 {
 
     public function index()
@@ -56,18 +58,29 @@ class RecordsController implements RestfulController
         return $record;
     }
 
+    public function sync($id = null)
+    {
+        $this->middlewares([IPRestrictionMiddleware::class]);
+
+        $record = RegistryObjectsRepository::getRecordByID($id);
+        $task = Importer::instantSyncRecord($record);
+        return $task->toArray();
+    }
+
     public function update($id = null)
     {
         // TODO: Implement update() method.
     }
 
-    public function delete($id = null)
+    public function destroy($id = null)
     {
         // TODO: Implement delete() method.
     }
 
-    public function store()
+    public function add()
     {
-        // TODO: Implement store() method.
+        // TODO: Implement add() method.
     }
+
+
 }

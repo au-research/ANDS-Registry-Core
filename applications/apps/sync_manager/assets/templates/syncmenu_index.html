@@ -32,7 +32,7 @@
                     <table class="table table-bordered data-table">
                         <thead>
                         <tr>
-                            <th ng-click="predicate = 'id';reverse=!reverse">ID</th>
+                            <th ng-click="predicate = 'data_source_id';reverse=!reverse">ID</th>
                             <th ng-click="predicate = 'title';reverse=!reverse">Title</th>
                             <th>Sync Status</th>
                             <th ng-click="predicate = 'count_PUBLISHED';reverse=!reverse">Total Published</th>
@@ -42,24 +42,24 @@
                         </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="ds in datasources | orderBy:predicate:reverse | filter: filters.title " ng-show="ds.count_PUBLISHED > 0">
-                                <td>{{ ds.id }}</td>
+                            <tr ng-repeat="ds in datasources | orderBy:predicate:reverse | filter: filters.title " ng-show="ds.count_PUBLISHED >= 0">
+                                <td>{{ ds.data_source_id }}</td>
                                 <td>{{ ds.title }}</td>
                                 <td style="min-width:250px">
                                     <progress animate="false">
                                         <bar ng-click="predicate = 'count_INDEXED';reverse=!reverse" value="ds.count_INDEXED / ds.count_PUBLISHED * 100" type="success">
-                                            {{ ds.count_INDEXED | number}} Indexed
+                                            {{ ds.counts.count_INDEXED | number}} Indexed
                                         </bar>
                                         <bar ng-click="predicate = 'count_MISSING';reverse=!reverse" value="ds.count_MISSING / ds.count_PUBLISHED * 100" type="danger">
-                                            {{ ds.count_MISSING | number }} Missing
+                                            {{ ds.counts.count_MISSING | number }} Missing
                                         </bar>
                                     </progress>
                                 </td>
-                                <td>{{ ds.count_PUBLISHED | number }}</td>
+                                <td>{{ ds.counts.count_PUBLISHED | number }}</td>
                                 <!--<td>{{ ds.count_INDEXED | number }}</td>-->
                                 <!--<td>{{ ds.count_MISSING | number }}</td>-->
                                 <td>
-                                    <div class="btn-group">
+                                    <!--div class="btn-group">
                                         <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">Queue <span class="caret"></span></button>
                                         <ul class="dropdown-menu">
                                             <li><a href="" ng-click="addTask('index', 'ds', ds.id)">Index</a></li>
@@ -72,7 +72,8 @@
                                             <li><a href="" ng-click="addTask('sync', 'ds', ds.id)">Full Sync</a></li>
                                             <li><a href="" ng-click="addTask('sync_missing', 'ds', ds.id)">Sync Missing</a></li>
                                         </ul>
-                                    </div>
+                                    </div-->
+                                    <button class="btn btn-default" ng-click="syncDS(ds.data_source_id)">Sync</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -93,7 +94,7 @@
                         <span ng-if="syncing">Loading...</span>
                     </form>
                     <hr>
-                    <div class="btn-group">
+                    <!--div class="btn-group">
                         <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">Mass Queue <span class="caret"></span></button>
                         <ul class="dropdown-menu">
                             <li><a href="" ng-click="addTask('index', 'all')">Index All</a></li>
@@ -102,7 +103,7 @@
                             <li><a href="" ng-click="addTask('sync', 'all')">Sync All</a></li>
                             <li><a href="" ng-click="addTask('addRelationships', 'all')">Fix Relationship and Index All</a></li>
                         </ul>
-                    </div>
+                    </div-->
                 </div>
             </div>
 

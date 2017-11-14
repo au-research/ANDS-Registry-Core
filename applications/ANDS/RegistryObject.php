@@ -18,6 +18,17 @@ class RegistryObject extends Model
     public $duplicateRecordIds = null;
     public $identifiers = null;
 
+    public static $classes = ['collection', 'service', 'party', 'activity'];
+    public static $statuses = [
+        "MORE_WORK_REQUIRED",
+        "DRAFT",
+        "SUBMITTED_FOR_ASSESSMENT",
+        "ASSESSMENT_IN_PROGRESS",
+        "APPROVED",
+        "PUBLISHED"
+    ];
+    public static $levels = [1,2,3,4];
+
     /**
      * Eloquent Accessor
      * usage: $this->id will return $this->registry_object_id

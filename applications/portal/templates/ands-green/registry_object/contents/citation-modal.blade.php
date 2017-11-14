@@ -31,7 +31,7 @@
                             <dd>
                                 {{$citation['contributors']}}
                                 ({{$citation['date']}}): {{$citation['title']}}.
-                                <span itemprop="publisher">{{$citation['publisher']}}</span>.
+                                {{$citation['publisher']}}.
                                 @if(isset($citation['identifierResolved']['href']))
                                 <br /><a href="{{$citation['identifierResolved']['href']}}">{{$citation['identifier']}}</a>
                                 @else

@@ -174,6 +174,9 @@ $base_url = str_replace('/apps','/registry',base_url());
         <?php elseif($lib=='APIDataSourceService'): ?>
             <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/services/APIDataSourceService.js', 'base') ?>"></script>
 
+        <?php elseif($lib=='APIRegistryObjectService'): ?>
+            <script type="text/javascript" src="<?php echo asset_url('lib/angularmod/services/APIRegistryObjectService.js', 'base') ?>"></script>
+
         <?php elseif($lib=='xmlToJson'): ?>
             <script type="text/javascript" src="<?php echo asset_url('lib/xmlToJson.js', 'base') ?>"></script>
 
