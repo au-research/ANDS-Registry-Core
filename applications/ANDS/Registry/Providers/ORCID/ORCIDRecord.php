@@ -24,7 +24,6 @@ class ORCIDRecord extends Model
      */
     public function populateRecordData()
     {
-        dd('populating');
         $bio = ORCIDAPI::getBio($this);
         $this->record_data = json_encode($bio, true);
         $this->save();
