@@ -43,7 +43,7 @@
                     "email": "minh.nguyen@ands.org.au"
                 }
             ],
-            "time": "2017-06-27 01:03:40"
+            "time": "2017-06-27T01:03:40+00:00"
         },
         {
             "name": "cebe/markdown",
@@ -766,7 +766,7 @@
                 "sqs",
                 "task"
             ],
-            "time": "2017-08-07 19:19:23"
+            "time": "2017-08-07T19:19:23+00:00"
         },
         {
             "name": "jaybizzle/crawler-detect",
@@ -860,7 +860,7 @@
                 "source": "https://github.com/minhd/oai-pmh/tree/master",
                 "issues": "https://github.com/minhd/oai-pmh/issues"
             },
-            "time": "2017-05-02 23:07:00"
+            "time": "2017-05-02T23:07:00+00:00"
         },
         {
             "name": "minhd/solr-client",
@@ -868,12 +868,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/minhd/php-solr-client.git",
-                "reference": "ae33043b5469fabe8a08b942541590cdc12d87bf"
+                "reference": "4ac4ddc1dcafad95449c7920bb49ebcab3ade0cf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/minhd/php-solr-client/zipball/ae33043b5469fabe8a08b942541590cdc12d87bf",
-                "reference": "ae33043b5469fabe8a08b942541590cdc12d87bf",
+                "url": "https://api.github.com/repos/minhd/php-solr-client/zipball/4ac4ddc1dcafad95449c7920bb49ebcab3ade0cf",
+                "reference": "4ac4ddc1dcafad95449c7920bb49ebcab3ade0cf",
                 "shasum": ""
             },
             "require": {
@@ -917,7 +917,7 @@
                 "generator",
                 "psr"
             ],
-            "time": "2017-06-30 02:29:02"
+            "time": "2017-10-31T00:26:25+00:00"
         },
         {
             "name": "monolog/monolog",

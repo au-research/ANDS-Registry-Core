@@ -33,14 +33,12 @@ if($ro->core['class']=='service'){
                 $title = substr($title,0,35)."...";
             }
             $preText='';
-            $itemprop='';
             if($access['access_type']=='directDownload')
             {
                 $preText='Download data <br/>';
             }
             elseif($access['access_type']=='landingPage'){
                 $preText='Access data via landing page </br >';
-                $itemprop = ' itemprop="distribution"';
             }elseif($access['access_type']=='viaService'){
                 $preText='Access data online via tools </br >';
             }
@@ -53,11 +51,11 @@ if($ro->core['class']=='service'){
             ?>
 
             @if(isset($access['access_value']['href']))
-            <a class="btn btn-info btn-icon-right btn-block element-no-bottom element-no-top" href="{{trim($access['access_value']['href'])}}" ng-click="$event.preventDefault();access($event)" {{$tip}} title="{{$access['notes']}}" <?=$itemprop?>>
+            <a class="btn btn-info btn-icon-right btn-block element-no-bottom element-no-top" href="{{trim($access['access_value']['href'])}}" ng-click="$event.preventDefault();access($event)" {{$tip}} title="{{$access['notes']}}">
             <span>{{$access['mediaType']}}</span>
             <?=$preText;?><?=$title?></a>
             @elseif(isset($access['access_value']))
-            <a class="btn btn-info btn-icon-right btn-block element-no-bottom element-no-top" href="{{trim($access['access_value'])}}" ng-click="$event.preventDefault();access($event)" {{$tip}} title="{{$access['notes']}}" <?=$itemprop?>>
+            <a class="btn btn-info btn-icon-right btn-block element-no-bottom element-no-top" href="{{trim($access['access_value'])}}" ng-click="$event.preventDefault();access($event)" {{$tip}} title="{{$access['notes']}}">
                 <span>{{$access['mediaType']}}</span>
                 <?=$preText;?><?=$title?></a>
             @endif

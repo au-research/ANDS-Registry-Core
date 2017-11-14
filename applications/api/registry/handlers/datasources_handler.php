@@ -10,6 +10,7 @@ use ANDS\DataSource\DataSourceLog;
 use ANDS\DataSource\Harvest;
 use ANDS\DataSourceAttribute;
 use ANDS\Payload;
+use ANDS\Registry\API\Router;
 use ANDS\Registry\Importer;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
@@ -25,21 +26,69 @@ class DatasourcesHandler extends Handler
 {
     private $input = [];
 
+
+
+    public function handle()
+    {
+        $this->getParentAPI()->providesOwnResponse();
+        $this->getParentAPI()->outputFormat = "application/json";
+
+        $router = new Router('/api/registry/');
+
+        // RESOURCE ds/:id
+        $router->resource('datasources', 'DataSourcesController');
+
+        // RESOURCE ds/:id/attributes
+        $router->resource('datasources/(\w+)/attributes', 'DataSourcesAttributesController');
+
+        // GET ds/:id/log
+        $router->get('datasources/(\w+)/log', 'DataSourcesLogController@index');
+
+        // GET ds/:id/harvest
+        $router->get('datasources/(\w+)/harvest', 'DataSourcesHarvestController@index');
+
+        // PUT|POST ds/:id/harvest
+        $router->route(['put', 'post'], 'datasources/(\w+)/harvest', 'DataSourcesHarvestController@triggerHarvest');
+
+        // DELETE ds/:id/harvest
+        $router->route(['delete'], 'datasources/(\w+)/harvest', 'DataSourcesHarvestController@stopHarvest');
+
+        // PUT ds/:id/services
+        $router->route(['put', 'post'], 'datasources/(\w+)/services', 'DataSourcesServiceController@index');
+
+        // standard resources
+        $router->resource('datasources/(\w+)/records', 'DataSourcesRecordsController');
+        $router->route(['delete'], 'datasources/(\w+)/records', 'DataSourcesRecordsController@delete');
+
+        // sync
+        $router->route(['get', 'put', 'post'], 'datasources/(\w+)/sync', 'DataSourcesController@sync');
+
+        return $this->format($router->execute());
+    }
+
+    public function format($data)
+    {
+        return json_encode($data);
+    }
+
+    // 6/11/2017: BELOW THIS LINE SHOULD BE DEPRECATED...
+    // TODO: REMOVE DEPRECATED CODE
+
     /**
      * DatasourceHandler constructor.
      * @param bool $params
      */
-    public function __construct($params)
-    {
-        parent::__construct($params);
-        initEloquent();
-    }
+//    public function __construct($params)
+//    {
+//        parent::__construct($params);
+//        initEloquent();
+//    }
 
     /**
      * @return array
      * @throws Exception
      */
-    public function handle()
+    public function handle_deprecated()
     {
         $this->middleware();
 

@@ -39,7 +39,8 @@
         }
 
         function handleError(error) {
-            $log.error(error);
+            $log.error(error.data.data, error);
+            return error;
         }
     }
 })();

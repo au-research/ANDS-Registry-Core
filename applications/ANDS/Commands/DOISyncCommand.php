@@ -523,6 +523,7 @@ class DOISyncCommand extends Command
     {
         $doiModel = new Doi;
         $doiModel->setConnection('dois');
+        $prod_doi = "10.422";
         $dois = Array();
 
         $databaseDOIs = $doiModel
@@ -531,6 +532,9 @@ class DOISyncCommand extends Command
             ->lists('doi_id','datacite_xml','client_id')
             ->filter(function($item,$xml) {
                 return strpos($xml,$item) === false;
+            })
+            ->filter(function($item,$prod_doi) {
+                return strpos($prod_doi,$item) === true;
             })->all();
 
         foreach($databaseDOIs as $key=>$value){
