@@ -25,14 +25,19 @@
             </xsl:attribute>
             </xsl:if>
             <work:title>
-                <xsl:apply-templates select="extRif:extendedMetadata/extRif:displayTitle"/>
+                <xsl:if test="$title != ''">
+                    <common:title xmlns:common="http://www.orcid.org/ns/common">
+                        <xsl:value-of select="$title"/>
+                    </common:title>
+                </xsl:if>
                 <xsl:if test="ro:collection/ro:name[@type='alternative']">
                     <xsl:apply-templates select="ro:collection/ro:name[@type='alternative']"/>
                 </xsl:if>
             </work:title>
-            <xsl:if test="extRif:extendedMetadata/extRif:dci_description">
+
+            <xsl:if test="$description != ''">
                 <work:short-description>
-                    <xsl:apply-templates select="extRif:extendedMetadata/extRif:dci_description"/>
+                    <xsl:value-of select="$description"/>
                 </work:short-description>
             </xsl:if>
             <xsl:if test="ro:collection/ro:citationInfo/ro:fullCitation">
@@ -169,10 +174,6 @@
                 </work:contributors>
             </xsl:if>          
         </work:work>
-    </xsl:template>
-
-    <xsl:template match="extRif:displayTitle">
-        <common:title xmlns:common="http://www.orcid.org/ns/common"> <xsl:value-of select="."/></common:title>
     </xsl:template>
 
     <xsl:template match="ro:name[@type='alternative']">
