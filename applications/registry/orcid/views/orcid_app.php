@@ -77,7 +77,7 @@
 					</div>
 				</div>
                 <div class="pull-right">
-                    <a href="{{ base_url }}logout">Sign Out</a>
+                    <a href="<?php echo registry_url('orcid/logout')?>">Sign Out</a>
                 </div>
 			</div>
 		</div>
