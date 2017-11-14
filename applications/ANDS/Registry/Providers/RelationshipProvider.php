@@ -14,6 +14,7 @@ use ANDS\Repository\DataSourceRepository;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\RegistryObject\Relationship;
 use ANDS\RegistryObject\IdentifierRelationship;
+use ANDS\Registry\Providers\ORCID\ORCIDRecord;
 use ANDS\Util\XMLUtil;
 
 
@@ -359,6 +360,12 @@ class RelationshipProvider
                 }
                 foreach ($related_info->identifier as $i) {
                     $identifiers_div .= getResolvedLinkForIdentifier((string)$i['type'], trim((string)$i));
+                    if( $related_info_title == '' and (string)$i['type'] == 'orcid' and trim((string)$i) != '')
+                    {
+                        $orcidRecord = ORCIDRecord::find((string)$i);
+
+                        $related_info_title = $orcidRecord->full_name;
+                    }
                     $identifier_count++;
                 }
                 $identifiers_div = "<h5>Identifier" . ($identifier_count > 1 ? 's' : '') . ": </h5>" . $identifiers_div;

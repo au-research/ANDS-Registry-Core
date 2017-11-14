@@ -45,6 +45,13 @@ class Request
             $inputs = array_merge($inputs, $result);
         }
 
+        if (strpos($contentType, "application/json") !== false) {
+            $inputs = array_merge(
+                $inputs,
+                json_decode(file_get_contents("php://input"), true)
+            );
+        }
+
         if (strpos($contentType, "multipart/form-data") !== false) {
             throw new \Exception("multipart/form-data is not supported. Use x-www-form-urlencoded instead");
         }
