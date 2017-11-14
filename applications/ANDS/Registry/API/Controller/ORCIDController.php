@@ -107,16 +107,20 @@ class ORCIDController extends HTTPController {
             $xml = ORCIDProvider::getORCIDXML($record, $orcid);
 
             // if we have an existing, update the data
-            $existing = ORCIDExport::where('orcid_id', $orcid->orcid_id)->where('registry_object_id', $record->id)->first();
-            if (!$existing) {
+            $existing = ORCIDExport::where('orcid_id', $orcid->orcid_id)
+                ->where('registry_object_id', $record->id)
+                ->where('orcid_id', $orcid->orcid_id)
+                ->first();
+
+            if ($existing) {
+                ORCIDAPI::sync($existing);
+            } else {
                 $export = ORCIDExport::create([
                     'registry_object_id' => $record->id,
                     'orcid_id' => $orcid->orcid_id,
                     'data' => $xml
                 ]);
                 ORCIDAPI::sync($export);
-            } else {
-                ORCIDAPI::sync($existing);
             }
         }
 

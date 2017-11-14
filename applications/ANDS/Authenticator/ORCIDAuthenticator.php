@@ -158,5 +158,14 @@ class ORCIDAuthenticator
         unset($_SESSION[self::$SESSION_REFRESH_TOKEN]);
     }
 
+    public static function getServiceClient()
+    {
+        $config = self::getConfig();
+        $client = new Client([
+            'base_uri' => $config['service_url'],
+            'timeout'  => 30.0
+        ]);
+        return $client;
+    }
 
 }

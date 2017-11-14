@@ -46,7 +46,7 @@ class ORCIDProvider implements RegistryContentProvider
 
         // check if this is an update
         $existing = $orcid->exports->filter(function ($item) use ($record) {
-            return $item->registry_object_id == $record->registry_object_id && $item->in_orcid;
+            return $item->registry_object_id === $record->registry_object_id && $item->in_orcid;
         })->first();
 
         // TODO: description as attribute DescriptionProvider
@@ -60,6 +60,7 @@ class ORCIDProvider implements RegistryContentProvider
         if ($existing) {
             $processor->setParameter('', 'put_code', $existing->put_code);
         }
-        return $processor->transformToXML($dom);
+        $xml = $processor->transformToXML($dom);
+        return $xml;
     }
 }
