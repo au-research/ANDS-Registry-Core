@@ -1,11 +1,9 @@
 <?php $this->load->view('header'); ?>
 <div ng-app="orcid_app">
 	<div class="content-header">
-		<h1>Import Your Datasets to <img style="margin: -13px 0 0 1px;" src="<?php echo asset_url('img/orcid_tagline_small.png'); ?>"/></h1>
+		<h1><?php echo $orcid->full_name; ?> (<?php echo $orcid->orcid_id; ?>) Import Your Datasets to <img style="margin: -13px 0 0 1px;" src="<?php echo asset_url('img/orcid_tagline_small.png'); ?>"/></h1>
 	</div>
-	<span class="hide" id="orcid_id"><?php echo $orcid_id; ?></span>
-	<span class="hide" id="first_name"><?php echo $first_name; ?></span>
-	<span class="hide" id="last_name"><?php echo $last_name; ?></span>
+	<span class="hide" id="orcid_id"><?php echo $orcid->orcid_id; ?></span>
 	<div ng-view></div>
 	<div class="container_clear"></div>
 </div>
@@ -43,7 +41,7 @@
 									<input type="checkbox" ng-model="doc.to_import" />
 								</div>
 								<div style="margin-left:25px;">
-									<h5><a href="<?php echo portal_url()?>{{doc.slug}}">{{doc.title}}</a><span class="label label-info pull-right" style="margin-right:15px;" ng-show="imported_ids.indexOf(doc.id)!=-1">Imported</span></h5>
+									<h5><a href="<?php echo portal_url()?>{{doc.slug}}/{{doc.id}}">{{doc.title}}</a><span class="label label-info pull-right" style="margin-right:15px;" ng-show="alreadyImported(doc.id)">Imported</span></h5>
 									<p>{{doc.description | removeHtml}}</p>
 								</div>
 								<div class="clearfix"></div>
@@ -73,7 +71,7 @@
 					<div class="widget-title"><h5>Datasets already imported from Research Data Australia</h5></div>
 					<div class="widget-content">
 						<ul>
-							<li ng-repeat="item in filteredWorks = (works | filter:{type:'imported'} | filter:{imported:true} | filter:{in_orcid:true})"> <a href="{{item.url}}" target="_blank">{{item.title}}</a></li>
+							<li ng-repeat="item in filteredWorks = (works | filter:{in_orcid:true})"> <a href="{{item.url}}" target="_blank">{{item.title}}</a></li>
 						</ul>
 						<div class="alert alert-info" ng-hide="filteredWorks.length">You have not imported any works from Research Data Australia!</div>
 					</div>

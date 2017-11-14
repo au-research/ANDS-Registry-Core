@@ -55,6 +55,5 @@ class TestRegistryObjectModel extends UnitTest
     {
 
     }
-
-
+    
 }

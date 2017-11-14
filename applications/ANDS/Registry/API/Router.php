@@ -95,7 +95,7 @@ class Router
 
                 // ensure last / for matching
                 $url = rtrim($url, '/') . '/';
-
+                // var_dump($pattern, $url);
                 if (preg_match($pattern, $url, $params)) {
                     array_shift($params);
                     return [

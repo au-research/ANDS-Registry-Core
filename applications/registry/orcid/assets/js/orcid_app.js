@@ -16,14 +16,16 @@ angular.module('orcid_app', ['portal-filters'])
 	//Factory
 	.factory('works', function($http){
 		return {
-			getWorks: function(data) {
-				return $http.post(base_url+'/orcid/orcid_works', {data:data}).then(function(response) {return response.data});
+			getWorks: function(orcid_id) {
+				return $http.get(api_url + 'registry/orcids/' + orcid_id + '/works')
+					.then(function(response) {return response.data})
+			},
+			importWorks: function(orcid_id, ids) {
+				return $http.post(api_url + 'registry/orcids/' + orcid_id + '/works', {ids: ids})
+					.then(function(response) {return response.data})
 			},
 			search: function(filters) {
 				return $http.post(base_url+'/services/registry/post_solr_search', {filters:filters}).then(function(response) {return response.data});
-			},
-			import_works: function(ro_ids) {
-				return $http.post(base_url+'/orcid/import_to_orcid', {ro_ids:ro_ids}).then(function(response) {return response.data});
 			}
 		}
 	})
@@ -46,9 +48,7 @@ function IndexCtrl($scope, works) {
 	$scope.import_stg = 'ready';
 
 	$scope.orcid = {
-		orcid_id:$('#orcid_id').text(),
-		first_name:$('#first_name').text(),
-		last_name:$('#last_name').text()
+		id:$('#orcid_id').text()
 	};
 
 	//Overwrite the import button to only open the modal if it's not disabled
@@ -61,10 +61,10 @@ function IndexCtrl($scope, works) {
 	});
 
 	//Refresh functions refreshes the works, populates the imported_ids 
-	$scope.refresh = function(){
+	$scope.refresh = function (){
 		$scope.imported_ids = [];
-		works.getWorks($scope.orcid).then(function(data){
-			$scope.works = data.works;
+		works.getWorks($scope.orcid.id).then(function(data){
+			$scope.works = data;
 			if($scope.works){
 				$.each($scope.works, function(){
 					if(this.type=='imported' && this.in_orcid){
@@ -73,7 +73,8 @@ function IndexCtrl($scope, works) {
 				});
 			}
 		});
-	}
+	};
+
 	//run once
 	$scope.refresh();
 
@@ -111,6 +112,15 @@ function IndexCtrl($scope, works) {
 		$scope.import_stg = 'ready';
 	}
 
+	$scope.alreadyImported = function(id) {
+		var importedIDs = $scope.works.filter(function(item) {
+			return item.in_orcid;
+		}).map(function(item) {
+			return item.registry_object_id
+		});
+		return importedIDs.indexOf(id) >= 0;
+	};
+
 	/**
 	 * Generic SOLR search for collections
 	 * @return search_result
@@ -135,12 +145,10 @@ function IndexCtrl($scope, works) {
 		$.each($scope.to_import, function(){
 			ids.push(this.id);
 		});
-		works.import_works(ids).then(function(data){
-			if(data!=1){
-				window.location = base_url+'/orcid/login';
-			} else {
-				$scope.import_stg = 'complete';
-			}
+		works.importWorks($scope.orcid.id, ids).then(function(data){
+			console.log(data);
+			$scope.import_stg = 'complete';
+			$scope.refresh();
 		});
 	}
 }
