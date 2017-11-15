@@ -297,6 +297,6 @@ class RegistryObject extends Model
      */
     public function getPortalUrlAttribute()
     {
-        return portal_url($this->slug.'/'.$this->registry_object_id);
+        return baseUrl($this->slug.'/'.$this->registry_object_id);
     }
 }

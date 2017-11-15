@@ -150,9 +150,6 @@
                     <xsl:otherwise>other</xsl:otherwise>
                 </xsl:choose>
             </work:type>
-            <xsl:variable name="createdDate">
-                <xsl:call-template name="getCreatedDate"/>
-            </xsl:variable>
             <xsl:if test="$createdDate != ''">
                 <common:publication-date xmlns:common="http://www.orcid.org/ns/common">
                     <common:year>
@@ -220,33 +217,6 @@
         <xsl:value-of select="."/><xsl:text>, </xsl:text>
     </xsl:template>
 
-    <xsl:template name="getCreatedDate">
-        <xsl:choose>
-            <xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:date[@type='created']">
-                <xsl:value-of select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:date[@type='created']"/>
-            </xsl:when>
-            <xsl:when test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:date[@type='issued']">
-                <xsl:value-of select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:date[@type='issued']"/>
-            </xsl:when>
-            <xsl:when test="ro:collection/ro:dates[@type='created']">
-                <xsl:value-of select="substring(ro:collection/ro:dates[@type='created']/ro:date,1,4)"/>
-            </xsl:when>
-            <xsl:when test="ro:collection/ro:dates[@type='dc.created']">
-                <xsl:value-of select="substring(ro:collection/ro:dates[@type='dc.created']/ro:date,1,4)"/>
-            </xsl:when>
-            <xsl:when test="ro:collection/ro:location/@dateFrom">
-                <xsl:value-of select="substring(ro:collection/ro:location/@dateFrom,1,4)"/>
-            </xsl:when>
-            <xsl:when test="ro:collection/ro:coverage/ro:temporal/ro:date[@type= 'dateFrom']">
-                <xsl:value-of select="substring(ro:collection/ro:coverage/ro:temporal/ro:date[@type= 'dateFrom']/text() ,1,4)"/>
-            </xsl:when>        
-            <xsl:when test="ro:collection/@dateModified">
-                <xsl:value-of select="substring(ro:collection/@dateModified,1,4)"/>
-            </xsl:when>
-        </xsl:choose>
-    </xsl:template>
-
-   
     <xsl:template match="ro:contributor">
       <work:contributor>
         <work:credit-name>
