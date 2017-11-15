@@ -2,6 +2,7 @@
 namespace ANDS\Registry\Providers\ORCID;
 use ANDS\Registry\Providers\MetadataProvider;
 use ANDS\Registry\Providers\RegistryContentProvider;
+use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\RegistryObject;
 use ANDS\Util\XMLUtil;
 use DOMDocument;
@@ -58,6 +59,7 @@ class ORCIDProvider implements RegistryContentProvider
         $dom = new DOMDocument();
         $dom->loadXML($xml, LIBXML_NOENT);
         $processor->setParameter('','dateProvided', date("Y-m-d"));
+        $processor->setParameter('','createdDate', DatesProvider::getPublicationDate($record, $data));
         $processor->setParameter('','rda_url', $record->portalUrl);
         $processor->setParameter('', 'title', $record->title);
         $processor->setParameter('', 'description', '');
