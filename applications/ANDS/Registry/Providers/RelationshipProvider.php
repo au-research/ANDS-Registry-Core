@@ -74,36 +74,20 @@ class RelationshipProvider
     public static function getMergedRelationships(RegistryObject $record, $includeDuplicates = true)
     {
         $allRelationships = static::get($record);
-        $allRelationships = collect($allRelationships)->flatten(1)->values()->all();
+
         $result = [];
-        foreach ($allRelationships as $relation) {
+        foreach ($allRelationships as $type => $relations) {
 
-            $key = $relation->getUniqueID();
+            foreach ($relations as $key => $relation) {
 
-            if (array_key_exists($key, $result)) {
-                $result[$key]->mergeWith($relation->getProperties());
-            } else {
-                $result[$key] = $relation;
+                if (!array_key_exists($key, $result)) {
+                    $result[$key] = $relation;
+                    continue;
+                }
+                // exist, merge them
+                $result[$key] = $result[$key]->mergeWith($relation->getProperties());
             }
         }
-
-        // duplicate of the related
-        // Removed as of CC-1986. Added the duplicate index to the query instead of the index TODO: Code Review and Remove the following
-//        $currentResult = $result;
-//        foreach ($currentResult as $key => $related) {
-//            if ($to = $related->to()) {
-//                $duplicates = $to->getDuplicateRecords();
-//                foreach ($duplicates as $duplicate) {
-//                    $swappedRelation = $related->switchToRecord($duplicate);
-//                    $swappedKey = $swappedRelation->getUniqueID();
-//                    if (array_key_exists($swappedKey, $result)) {
-//                        $result[$swappedKey]->mergeWith($swappedRelation->getProperties());
-//                    } else {
-//                        $result[$swappedKey] = $swappedRelation;
-//                    }
-//                }
-//            }
-//        }
 
         if ($includeDuplicates != true) {
             return $result;
@@ -795,5 +779,5 @@ class RelationshipProvider
     {
         return Identifier::whereIn('identifier', $identifiers)->get()->pluck('registry_object_id')->unique()->toArray();
     }
-    
+
 }
