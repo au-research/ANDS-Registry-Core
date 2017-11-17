@@ -20,6 +20,20 @@ class ORCIDAPI
         return $content;
     }
 
+    /**
+     * Get the record data by ORCIDID
+     * @return array
+     */
+    public static function getRecord($orcidID)
+    {
+        try {
+            $data = self::getPublicClient()->get($orcidID);
+            return json_decode($data->getBody()->getContents(), true);
+        } catch (RequestException $e) {
+            return null;
+        }
+    }
+
     public static function sync(ORCIDExport $export)
     {
         $orcid = $export->record;
@@ -62,6 +76,9 @@ class ORCIDAPI
         }
     }
 
+    /**
+     * @return Client
+     */
     public static function getPublicClient()
     {
         $client = new Client([

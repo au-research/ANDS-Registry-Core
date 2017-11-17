@@ -1,4 +1,5 @@
 <?php use ANDS\Repository\RegistryObjectsRepository;
+      use ANDS\Registry\Providers\RelationshipProvider;
 
 if (!defined('BASEPATH')) exit('No direct script access allowed');
 
@@ -282,6 +283,12 @@ class Sync_extension extends ExtensionBase{
 		$json['related_info_search'] = '';
         foreach($gXPath->query('//ro:relatedInfo') as $node) {
             $json['related_info_search'] .= htmlspecialchars(trim($node->nodeValue));
+        }
+
+        // CC-2049. Index found relatedinfo titles as well
+        $relations = RelationshipProvider::getIdentifierRelationship($record);
+        foreach ($relations as $relation) {
+            $json['related_info_search'] .= " ". $relation->prop("relation_to_title")." ";
         }
 
 		//citation metadata text

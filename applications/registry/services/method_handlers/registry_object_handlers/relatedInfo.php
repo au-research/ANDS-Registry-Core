@@ -1,9 +1,12 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php 
+use ANDS\Registry\Providers\ORCID\ORCIDRecordsRepository;
+ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_ro_handler.php');
 
 /**
  * Related Info handler
  * @author Liz Woods <liz.woods@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
  * @param  string type
  * @return array
  */
@@ -23,12 +26,25 @@ class relatedInfo extends ROHandler {
                     $identifier['identifier_href']=$identifier_resolved;
                 }
                 if($relatedInfo->title!='' || $relatedInfo->identifier!='' || $relatedInfo->notes!='' ||(string) $relatedInfo->relation->description!='' || (string) $relatedInfo->relation->url!=''){
-                $result[] = array(
-                    'type' => $type,
-                    'title' =>  (string) $relatedInfo->title,
-                    'identifier' => $identifier,
-                    'relation' =>Array('relation_type'=>(string) $relatedInfo->relation['type'],'description'=>(string) $relatedInfo->relation->description,'url'=>(string) $relatedInfo->relation->url),
-                    'notes' => (string) $relatedInfo->notes
+
+                    // CC-2049. Attempt to resolve title for display for ORCID
+                    $title = (string) $relatedInfo->title;
+                    $isOrcidIdentifier = array_key_exists('identifier_type', $identifier) && $identifier['identifier_type'] == 'orcid';
+                    if ($title == "" && $type == "party" && $isOrcidIdentifier) {
+                        $orcid = ORCIDRecordsRepository::obtain($identifier['identifier_value']);
+                        $title = $orcid->full_name;
+                    }
+
+                    $result[] = array(
+                        'type' => $type,
+                        'title' =>  $title,
+                        'identifier' => $identifier,
+                        'relation' => [
+                            'relation_type'=>(string) $relatedInfo->relation['type'],
+                            'description'=>(string) $relatedInfo->relation->description,
+                            'url'=>(string) $relatedInfo->relation->url
+                        ],
+                        'notes' => (string) $relatedInfo->notes
                      );
                 }
             }
