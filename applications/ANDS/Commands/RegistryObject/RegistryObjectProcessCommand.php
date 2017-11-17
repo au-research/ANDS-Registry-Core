@@ -32,6 +32,10 @@ class RegistryObjectProcessCommand extends ANDSCommand
 
     protected function configure()
     {
+        // load the constants needed
+        define("BASEPATH", './');
+        require('./engine/config/constants.php');
+
         $this
             ->setName('ro:process')
             ->setDescription('Get something from ro')

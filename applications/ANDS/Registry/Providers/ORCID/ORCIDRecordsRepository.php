@@ -1,6 +1,9 @@
 <?php
 namespace ANDS\Registry\Providers\ORCID;
 
+use ANDS\Util\ORCIDAPI;
+
+
 /**
  * Class ORCIDRecordsRepository
  * @package ANDS\Registry\Providers\ORCID
@@ -38,6 +41,29 @@ class ORCIDRecordsRepository
         $orcid->populateRecordData();
 
         return $orcid;
+    }
+
+    public static function obtain($orcidID)
+    {
+        // check if it exists
+        $orcid = ORCIDRecord::find($orcidID);
+
+        if ($orcid) {
+            return $orcid;
+        }
+        // $orcidID = "123123123";
+
+        // obtain them
+        if ($data = ORCIDAPI::getRecord($orcidID)) {
+            $orcid = ORCIDRecord::create([
+                'orcid_id' => $orcidID,
+                'full_name' => $data['person']['name']['credit-name']['value']
+            ]);
+            $orcid->populateRecordData();
+            return $orcid;
+        };
+
+        return null;
     }
 
 }
