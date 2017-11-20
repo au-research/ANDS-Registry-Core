@@ -562,9 +562,16 @@
                         <textarea ng-model="rights._text" cols="30" rows="10" ng-readonly="readonly" style="width:237px" class="ng-valid ng-dirty"></textarea>
                     </div>
 
+                    <div class="input-prepend input-append" >
+                        <span class="add-on">lang</span>
+                        <input ng-readonly="readonly" type="text" placeholder="lang" ng-model="rights._attr.lang._value" class="ng-valid ng-dirty"/>
+                    </div>
+
                     <div class="input-prepend input-append">
                         <a ng-if="!readonly" href="" class="btn btn-warning" ng-click="remove(objectModel.resource[0].rightsList[0].rights, $index)"><i class="icon-remove icon-white"></i> Remove rights</a>
                     </div>
+
+
 
                 </div>
             </div>
