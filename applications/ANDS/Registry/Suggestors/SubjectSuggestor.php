@@ -46,6 +46,9 @@ class SubjectSuggestor
             return [];
         }
 
+        // CC-2068. Limit the number of subjects used for suggestion
+        $subjectValues = array_slice($subjectValues, 1000);
+
         // do the search and grabbing only the required information
         $query = $this->getSuggestorQuery($subjectValues);
         $searchResult = $this->solr->search([
