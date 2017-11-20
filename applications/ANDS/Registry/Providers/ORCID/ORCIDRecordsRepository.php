@@ -23,6 +23,8 @@ class ORCIDRecordsRepository
         $orcid = ORCIDRecord::find($orcidID);
 
         // create one with the provided data if none exist
+        // data[name] is passed along the authentication, can be refreshed using
+        // our business logic with populateFullName() if needed
         if (!$orcid) {
             $orcid = ORCIDRecord::create([
                 'orcid_id' => $data['orcid'],
@@ -52,20 +54,17 @@ class ORCIDRecordsRepository
     public static function obtain($orcidID)
     {
         // check if it exists
-        $orcid = ORCIDRecord::find($orcidID);
-
-        if ($orcid) {
+        if ($orcid = ORCIDRecord::find($orcidID)) {
             return $orcid;
         }
-        // $orcidID = "123123123";
 
         // obtain them
         if ($data = ORCIDAPI::getRecord($orcidID)) {
             $orcid = ORCIDRecord::create([
-                'orcid_id' => $orcidID,
-                'full_name' => $data['person']['name']['credit-name']['value']
+                'orcid_id' => $orcidID
             ]);
             $orcid->populateRecordData();
+            $orcid->populateFullName();
             return $orcid;
         };
 
