@@ -41,7 +41,19 @@
 
             <h5>Creator</h5>
             <div class="controls">
-
+                <div class="input-prepend input-append">
+                    <div class="btn-group" style="display:inline-block;" ng-show="!readonly">
+                        <span class="add-on">Name Type</span>
+                        <button class="btn dropdown-toggle" data-toggle="dropdown">
+                            {{ creator._attr.nameType._value ? creator._attr.nameType._value : 'Name Type'}} <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li ng-repeat="j in availableOptions['nameType']">
+                                <a href="" ng-click="setOption(creator, 'nameType', j)">{{ j }}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
                 <div class="input-prepend input-append">
                     <span class="add-on">Creator Name</span>
                     <input type="text" placeholder="Creator Name"  ng-model="creator.creatorName[0]._text" ng-readonly="readonly" style="width: 420px"/>
@@ -180,7 +192,19 @@
                         </div>
                         <input ng-readonly="readonly" type="text" ng-model="contributor.contributorName[0]._text" placeholder="Contributor Name" style="width: 420px;">
                     </div>
-
+                    <div class="input-prepend input-append">
+                        <div class="btn-group" style="display:inline-block;" ng-show="!readonly">
+                            <span class="add-on">Name Type</span>
+                            <button class="btn dropdown-toggle" data-toggle="dropdown">
+                                {{ contributor._attr.nameType._value ? contributor._attr.nameType._value : 'Name Type'}} <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li ng-repeat="j in availableOptions['nameType']">
+                                    <a href="" ng-click="setOption(contributor, 'nameType', j)">{{ j }}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                     <div class="input-prepend input-append"  style="display:inline-block">
                         <span class="add-on">Given Name</span>
                         <input type="text" placeholder="Contributor Given Name" ng-model="contributor.givenName[0]._text" ng-readonly="readonly"/>
