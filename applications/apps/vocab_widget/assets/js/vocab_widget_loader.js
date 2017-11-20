@@ -9,16 +9,16 @@ $(document).ready(function() {
 
   function narrowmode() {
     $("#rifcs-idtype").vocab_widget({mode:"narrow",
-	       			     mode_params:"http://purl.org/au-research/vocabulary/RIFCS/1.6.1/RIFCSIdentifierType",
-	       			     repository:"rifcs1.6.1",
+	       			     mode_params:"http://purl.org/au-research/vocabulary/RIFCS/RIFCSIdentifierType",
+	       			     repository:"rifcs-current",
 	       			     cache: false,
 	       			     fields: ['definition'],
 	       			     target_field: 'label'});
 
 
     $("#rifcs-idtype-input").vocab_widget({mode:"narrow",
-					   mode_params:"http://purl.org/au-research/vocabulary/RIFCS/1.6.1/RIFCSIdentifierType",
-					   repository:"rifcs1.6.1",
+					   mode_params:"http://purl.org/au-research/vocabulary/RIFCS/RIFCSIdentifierType",
+					   repository:"rifcs-current",
                        api_key:"my_api_key",
 					   cache: false,
 					   fields: ['label', 'definition', 'about'],
@@ -27,7 +27,7 @@ $(document).ready(function() {
 
   function collectionmode()
   {
-  	var collection_uri = "http://purl.org/au-research/vocabulary/RIFCS/1.6.1/RIFCS" +
+  	var collection_uri = "http://purl.org/au-research/vocabulary/RIFCS/RIFCS" +
   							$("#rifcs-relation-from").val() +
   							"To" +
   							$("#rifcs-relation-to").val() +
@@ -36,7 +36,7 @@ $(document).ready(function() {
   	$("#rifcs-relationtype").vocab_widget({
   	   mode:"collection",
 	   mode_params:collection_uri,
-	   repository:"rifcs1.6.1",
+	   repository:"rifcs-current",
 	   cache: false,
 	   fields: ['label'],
 	   target_field: 'label'});
@@ -50,7 +50,7 @@ $(document).ready(function() {
 
   function coremode() {
     var elem = $("#vocab-core");
-    var widget = elem.vocab_widget({repository:'rifcs', cache: false});
+    var widget = elem.vocab_widget({repository:'rifcs-current', cache: false});
     //set up some handlers
     elem.on('narrow.vocab.ands', function(event, data) {
       var list = elem.append('<ul />');
@@ -71,7 +71,7 @@ $(document).ready(function() {
 
     //now, perform the vocab lookup
     widget.vocab_widget('narrow',
-			'http://purl.org/au-research/vocabulary/RIFCS/1.4/RIFCSIdentifierType');
+			'http://purl.org/au-research/vocabulary/RIFCS/RIFCSIdentifierType');
   }
 
   function treemode() {
