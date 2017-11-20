@@ -47,7 +47,7 @@ class SubjectSuggestor
         }
 
         // CC-2068. Limit the number of subjects used for suggestion
-        $subjectValues = array_slice($subjectValues, 1000);
+        $subjectValues = array_slice($subjectValues, 0, 1000);
 
         // do the search and grabbing only the required information
         $query = $this->getSuggestorQuery($subjectValues);
