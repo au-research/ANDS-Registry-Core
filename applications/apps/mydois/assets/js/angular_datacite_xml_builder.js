@@ -45,11 +45,13 @@
                     'title': ['AlternativeTitle', 'Subtitle', 'TranslatedTitle','Other']
                 };
 
+                scope.availableOptions['nameType'] = ['Organizational', 'Personal'];
+
                 scope.availableOptions['contributorType'] = ['ContactPerson', 'DataCollector', 'DataCurator', 'DataManager', 'Distributor', 'Editor', 'HostingInstitution', 'Producer', 'ProjectLeader', 'ProjectManager', 'ProjectMember', 'RegistrationAgency', 'RegistrationAuthority', 'RelatedPerson', 'Researcher', 'ResearchGroup', 'RightsHolder', 'Sponsor', 'Supervisor', 'WorkPackageLeader', 'Other'];
 
                 scope.availableOptions['relatedIdentifierType'] = ['ARK', 'arXiv', 'bibcode', 'DOI', 'EAN13', 'EISSN', 'Handle', 'IGSN', 'ISBN', 'ISSN', 'ISTC', 'LISSN', 'LSID', 'PMID', 'PURL', 'UPC', 'URL', 'URN'];
 
-                scope.availableOptions['relationType'] = ['IsCitedBy', 'Cites', 'IsSupplementTo', 'IsSupplementedBy', 'IsContinuedBy', 'Continues', 'HasMetadata', 'IsMetadataFor', 'IsNewVersionOf', 'IsPreviousVersionOf', 'IsPartOf', 'HasPart', 'IsReferencedBy', 'References', 'IsDocumentedBy', 'Documents', 'IsCompiledBy', 'Compiles', 'IsVariantFormOf', 'IsOriginalFormOf', 'IsIdenticalTo', 'IsReviewedBy', 'Reviews', 'IsDerivedFrom', 'IsSourceOf'];
+                scope.availableOptions['relationType'] = ['IsCitedBy', 'Cites', 'IsSupplementTo', 'IsSupplementedBy', 'IsContinuedBy', 'Continues', 'HasMetadata', 'IsMetadataFor', 'IsNewVersionOf', 'IsPreviousVersionOf', 'IsPartOf', 'HasPart', 'IsReferencedBy', 'References', 'IsDocumentedBy', 'Documents', 'IsCompiledBy', 'Compiles', 'IsVariantFormOf', 'IsOriginalFormOf', 'IsIdenticalTo', 'IsReviewedBy', 'Reviews', 'IsDerivedFrom', 'IsSourceOf', 'IsDescribedBy', 'Describes', 'HasVersion', 'IsVersionOf', 'IsRequiredBy', 'Requires'];
 
                 scope.availableOptions['descriptionType'] = ['Abstract', 'Methods', 'SeriesInformation', 'TableOfContents', 'TechnicalInfo', 'Other'];
 
@@ -111,6 +113,17 @@
                     } else if (elem == 'polygonPoint') {
                         obj = {
                             'polygonPoint': [{}]
+                        }
+                    } else if (elem == 'geoLocationPolygon'){
+                        obj = {
+                            'geoLocationPolygon': [{
+                                'polygonPoint': [
+                                    {'pointLongitude':[{}], 'pointLatitude': [{}]},
+                                    {'pointLongitude':[{}], 'pointLatitude': [{}]},
+                                    {'pointLongitude':[{}], 'pointLatitude': [{}]},
+                                    {'pointLongitude':[{}], 'pointLatitude': [{}]}
+                                ]
+                            }]
                         }
                     }
                     if (!list) {
@@ -219,10 +232,28 @@
                     }
                 };
 
+
+                scope.addGeoLocationPolygon = function(parent) {
+
+                    console.log(parent);
+                    parent.push({
+                        'polygonPoint': [
+                            {'pointLongitude':[{}], 'pointLatitude': [{}]},
+                            {'pointLongitude':[{}], 'pointLatitude': [{}]},
+                            {'pointLongitude':[{}], 'pointLatitude': [{}]},
+                            {'pointLongitude':[{}], 'pointLatitude': [{}]}
+                        ]});
+                    console.log(parent);
+                };
+
+
                 scope.addGeoLocationPolygonPoint = function(parent) {
                     if (!parent.polygonPoint) parent.polygonPoint = [];
                     parent.polygonPoint.push({'pointLongitude':[{}], 'pointLatitude':[{}]});
                 };
+
+
+
 
                 scope.jsonToXml = function (json) {
                     if (json) {
@@ -235,7 +266,7 @@
                         var xsischemaLocation = json.resource[0]['_attr']['schemaLocation']['_value'];
 
                         //convert all schema level to 3
-                        var default_kernel = 'kernel-4';
+                        var default_kernel = 'kernel-4.1';
                         xmlns = xmlns.replace(/kernel-2.1/g, default_kernel).replace(/kernel-2.2/g, default_kernel).replace(/kernel-3/g, default_kernel);
                         xmlnsxsi = xmlnsxsi.replace(/kernel-2.1/g, default_kernel).replace(/kernel-2.2/g, default_kernel).replace(/kernel-3/g, default_kernel);
                         xsischemaLocation = xsischemaLocation.replace(/kernel-2.1/g, default_kernel).replace(/kernel-2.2/g, default_kernel).replace(/kernel-3/g, default_kernel);
@@ -409,9 +440,10 @@
                 scope.availableOptions = {
                     'title': ['AlternativeTitle', 'Subtitle', 'TranslatedTitle']
                 };
-                scope.availableOptions['titleType'] = ['AlternativeTitle', 'Subtitle', 'TranslatedTitle','Other'];
-                scope.availableOptions['dateType'] = ['Accepted', 'Available', 'Copyrighted', 'Collected', 'Created', 'Issued', 'Submitted', 'Updated', 'Valid'];
-                scope.availableOptions['resourceTypeGeneral'] = ['Audiovisual', 'Collection', 'Dataset', 'Event', 'Image', 'InteractiveResource', 'Model', 'PhysicalObject', 'Service', 'Software', 'Sound', 'Text', 'Workflow', 'Other'];
+                scope.availableOptions['nameType'] = ['Organizational', 'Personal'];
+                scope.availableOptions['titleType'] = ['AlternativeTitle', 'Subtitle', 'TranslatedTitle', 'Other'];
+                scope.availableOptions['dateType'] = ['Accepted', 'Available', 'Copyrighted', 'Collected', 'Created', 'Issued', 'Submitted', 'Updated', 'Valid', 'Other'];
+                scope.availableOptions['resourceTypeGeneral'] = ['Audiovisual', 'Collection', 'Dataset', 'DataPaper', 'Event', 'Image', 'InteractiveResource', 'Model', 'PhysicalObject', 'Service', 'Software', 'Sound', 'Text', 'Workflow', 'Other'];
                 scope.availableOptions['descriptionType'] = ['Abstract', 'Methods', 'SeriesInformation', 'TableOfContents', 'Other'];
 
 
