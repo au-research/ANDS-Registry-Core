@@ -29,6 +29,39 @@ class ORCIDRecord extends Model
     }
 
     /**
+     * Populate the full_name field
+     */
+    public function populateFullName()
+    {
+        $this->full_name = $this->getFullName();
+        $this->save();
+    }
+
+    /**
+     * Business Logic to get the full name of a given ORCIDRecord
+     *
+     * @return null|string
+     */
+    public function getFullName()
+    {
+        $bio = $this->bio;
+
+        // get credit-name if possible
+        if ($name = $bio['person']['name']['credit-name']['value']) {
+            return $name;
+        }
+
+        // get given-name then family-name
+        if ($givenName = $bio['person']['name']['given-names']['value']) {
+            $familyName = $bio['person']['name']['family-name']['value'];
+            return $givenName. " ".$familyName;
+        }
+
+        // TODO: aka name
+        return null;
+    }
+
+    /**
      * Override $this->record_data
      *
      * @return string
