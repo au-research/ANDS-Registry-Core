@@ -3,6 +3,8 @@
 
 namespace ANDS;
 
+use ANDS\Util\Config;
+
 
 /**
  * Class Payload
@@ -117,7 +119,8 @@ class Payload
         $directory = $harvestedContentDir.$dataSourceID;
         if (!is_dir($directory)) {
             try {
-                mkdir($directory, 0775, true);
+                mkdir($directory, 0755, true); // mkdir 0775 doesn't work
+                chmod($directory, 0775);
             } catch (\Exception $e) {
                 $message = get_exception_msg($e);
                 throw new \Exception("Failure creating $directory: $message");
@@ -131,7 +134,6 @@ class Payload
             $message = get_exception_msg($e);
             throw new \Exception("Failure putting content into $file : $message");
         }
-
     }
 
 }
