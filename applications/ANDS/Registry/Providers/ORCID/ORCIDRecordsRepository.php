@@ -3,7 +3,6 @@ namespace ANDS\Registry\Providers\ORCID;
 
 use ANDS\Util\ORCIDAPI;
 
-
 /**
  * Class ORCIDRecordsRepository
  * @package ANDS\Registry\Providers\ORCID
@@ -43,6 +42,13 @@ class ORCIDRecordsRepository
         return $orcid;
     }
 
+    /**
+     * obtain an ORCIDRecord 
+     * creates if not exists
+     * null if unobtainable
+     * 
+     * @return ORCIDRecord | null
+     */
     public static function obtain($orcidID)
     {
         // check if it exists
