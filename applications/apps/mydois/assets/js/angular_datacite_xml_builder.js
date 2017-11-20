@@ -432,7 +432,8 @@
                 'optiontype': '=',
                 'label': '=',
                 'custom': '=',
-                'readonly': '='
+                'readonly': '=',
+                'attribute' : '='
             },
             transclude: true,
             templateUrl: apps_url + 'assets/mydois/js/angular_datacite_twin_form.html',
@@ -440,23 +441,24 @@
                 scope.availableOptions = {
                     'title': ['AlternativeTitle', 'Subtitle', 'TranslatedTitle']
                 };
+                scope.attributeToChange = '';
                 scope.availableOptions['nameType'] = ['Organizational', 'Personal'];
                 scope.availableOptions['titleType'] = ['AlternativeTitle', 'Subtitle', 'TranslatedTitle', 'Other'];
                 scope.availableOptions['dateType'] = ['Accepted', 'Available', 'Copyrighted', 'Collected', 'Created', 'Issued', 'Submitted', 'Updated', 'Valid', 'Other'];
                 scope.availableOptions['resourceTypeGeneral'] = ['Audiovisual', 'Collection', 'Dataset', 'DataPaper', 'Event', 'Image', 'InteractiveResource', 'Model', 'PhysicalObject', 'Service', 'Software', 'Sound', 'Text', 'Workflow', 'Other'];
                 scope.availableOptions['descriptionType'] = ['Abstract', 'Methods', 'SeriesInformation', 'TableOfContents', 'Other'];
 
-
                 scope.remove = function () {
                     scope.list.splice(scope.index, '1');
                 };
+
                 scope.setOption = function (item, attr, value) {
                     if (!item) item = {};
                     if (!item._attr) item._attr = {};
                     if (!item._attr[attr]) item._attr[attr] = {};
                     item._attr[attr]._value = value;
-                }
-
+                };
+                
             }
         }
     }

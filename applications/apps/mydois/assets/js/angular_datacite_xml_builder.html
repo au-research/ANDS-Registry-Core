@@ -264,10 +264,11 @@
                 list="objectModel.resource[0].dates[0].date"
                 index="$index"
                 readonly="readonly"
-                optiontype="'dateType'"></datacite-twin-item-form>
+                optiontype="'dateType'"
+                attribute="'dateInformation'">
+            </datacite-twin-item-form>
             <a ng-if="!readonly" href="" class="btn btn-info" ng-click="add(objectModel.resource[0].dates[0], 'date')"><i class="icon-plus icon-white"></i> Add Date</a>
         </div>
-
         <div class="widget-content">
             <div class="control-group" ng-repeat="fundingReference in objectModel.resource[0].fundingReferences[0].fundingReference track by $index">
                 <h5>Funding Reference</h5>
