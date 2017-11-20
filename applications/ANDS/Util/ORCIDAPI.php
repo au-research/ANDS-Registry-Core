@@ -11,6 +11,12 @@ use GuzzleHttp\Psr7\Request;
 
 class ORCIDAPI
 {
+    /**
+     * Get the bio of a given ORCIDRecord
+     * TODO: check usage along with self::getRecord($orcidID)
+     * @param ORCIDRecord|null $orcid
+     * @return mixed
+     */
     public static function getBio(ORCIDRecord $orcid = null)
     {
         // TODO: if orcid is null, get one from current session
@@ -22,6 +28,7 @@ class ORCIDAPI
 
     /**
      * Get the record data by ORCIDID
+     * @param $orcidID
      * @return array
      */
     public static function getRecord($orcidID)
@@ -34,6 +41,14 @@ class ORCIDAPI
         }
     }
 
+    /**
+     * Sync an ORCIDExport to ORCID
+     * Creates if it doesn't exist, populate own PUTCode
+     * Updates it with the PUTCode
+     *
+     * TODO: check last update and/or check hash value
+     * @param ORCIDExport $export
+     */
     public static function sync(ORCIDExport $export)
     {
         $orcid = $export->record;
@@ -77,6 +92,9 @@ class ORCIDAPI
     }
 
     /**
+     * Get a public client
+     * use for getting public metadata
+     *
      * @return Client
      */
     public static function getPublicClient()
@@ -89,6 +107,12 @@ class ORCIDAPI
         return $client;
     }
 
+    /**
+     * Get a member client with authentication Bearer
+     *
+     * @param $orcidID
+     * @return Client
+     */
     public static function getMemberClient($orcidID)
     {
         $accessToken = ORCIDAuthenticator::getOrcidAccessToken();
