@@ -121,6 +121,7 @@ class ORCIDController extends HTTPController {
         $orcid = ORCIDRecord::find($orcidID);
         $orcid->load('exports');
 
+        $result = [];
         foreach ($ids as $id) {
 
             $record = RegistryObjectsRepository::getRecordByID($id);
@@ -140,6 +141,8 @@ class ORCIDController extends HTTPController {
                 $existing->data = $xml;
                 $existing->save();
                 ORCIDAPI::sync($existing);
+                $existing->load('registryObject');
+                $result[] = $existing;
             } else {
                 // make a new one, then sync
                 $export = ORCIDExport::create([
@@ -148,11 +151,12 @@ class ORCIDController extends HTTPController {
                     'data' => $xml
                 ]);
                 ORCIDAPI::sync($export);
+                $export->load('registryObject');
+                $result[] = $export;
             }
         }
 
         // reload all exports
-        $orcid->load('exports');
-        return $orcid->exports;
+        return $result;
     }
 }

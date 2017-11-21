@@ -30,6 +30,7 @@ class DatasetORCIDSuggestor
 
     /**
      * Return a list of suggested dataset for a particular ORCIDRecord
+     * TODO: performance?
      *
      * @param ORCIDRecord $orcid
      * @return array

@@ -74,6 +74,13 @@ class ORCIDRecord extends Model
         return json_decode($this->record_data, true);
     }
 
+    public function getUrlAttribute()
+    {
+        if ($this->bio['orcid-identifier']['uri']) {
+            return $this->bio['orcid-identifier']['uri'];
+        }
+    }
+
     /**
      * Eloquent Relationship for ORCIDExport
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
