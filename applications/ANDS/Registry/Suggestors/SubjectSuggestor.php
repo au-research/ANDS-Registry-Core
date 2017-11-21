@@ -52,7 +52,7 @@ class SubjectSuggestor
         // do the search and grabbing only the required information
         $query = $this->getSuggestorQuery($subjectValues);
         $searchResult = $this->solr->search([
-            'q' => "-id:{$record->id} +class:collection +$query",
+            'q' => "-id:{$record->id} +class:collection +($query)",
             'rows' => 50,
             'start' => 0,
             'fl' => 'id, title, key, slug, score'
@@ -101,6 +101,7 @@ class SubjectSuggestor
             $escaped = escapeSolrValue($item);
             return "({$field}:\"{$escaped}\")";
         })->toArray();
-        return implode(" OR ", $subjectValues);
+        $query = implode(" OR ", $subjectValues);
+        return $query;
     }
 }

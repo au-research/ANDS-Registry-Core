@@ -2,6 +2,7 @@
 require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_ro_handler.php');
 /**
 * Contacts handler
+ * TODO Refactor to ContactProvider
 * @author Liz Woods <liz.woods@ands.org.au>
 * @return array
 */
@@ -9,6 +10,15 @@ class Contact extends ROHandler {
 	function handle() {
 		$contacts = array();
 
+		// REFACTOR to contact provider
+        /**
+         * Should come in the form
+         * $contact = [
+         *  'email' => $email,
+         *  'address' => $address
+         *  ...
+         * ]
+         */
 
         $addresses = $this->gXPath->query("//ro:location/ro:address");
 
@@ -21,7 +31,7 @@ class Contact extends ROHandler {
 
                 $contacts[] =Array(
                     'contact_type' => 'email',
-                    'contact_value' => $contact->nodeValue
+                    'contact_value' => trim($contact->nodeValue)
                 );
             }
 
@@ -207,6 +217,12 @@ class Contact extends ROHandler {
                     'contact_value' => $contact->nodeValue
                 );
             }
+
+            // Fix API for HTML rendering
+            $contacts[] = [
+                'contact_type' => 'end',
+                'contact_value' => ''
+            ];
             
             
         }
