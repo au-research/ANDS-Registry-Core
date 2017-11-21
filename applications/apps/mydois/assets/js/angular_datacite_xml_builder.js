@@ -261,21 +261,11 @@
                 scope.jsonToXml = function (json) {
                     if (json) {
                         var xml = '';
+                        var xmlns = "http://datacite.org/schema/kernel-4";
+                        var xmlnsxsi = "http://www.w3.org/2001/XMLSchema-instance";
+                        var xsischemaLocation = "http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4.1/metadata.xsd";
                         xml += '<?xml version="1.0" encoding="utf-8"?>';
-
-                        //resource
-                        var xmlns = json.resource[0]['_attr']['xmlns']['_value'];
-                        var xmlnsxsi = json.resource[0]['_attr']['xmlns:xsi']['_value'];
-                        var xsischemaLocation = json.resource[0]['_attr']['schemaLocation']['_value'];
-
-                        //convert all schema level to 3
-                        var default_kernel = 'kernel-4.1';
-                        xmlns = xmlns.replace(/kernel-2.1/g, default_kernel).replace(/kernel-2.2/g, default_kernel).replace(/kernel-3/g, default_kernel);
-                        xmlnsxsi = xmlnsxsi.replace(/kernel-2.1/g, default_kernel).replace(/kernel-2.2/g, default_kernel).replace(/kernel-3/g, default_kernel);
-                        xsischemaLocation = xsischemaLocation.replace(/kernel-2.1/g, default_kernel).replace(/kernel-2.2/g, default_kernel).replace(/kernel-3/g, default_kernel);
-
                         xml += '<resource xmlns="' + xmlns + '" xmlns:xsi="' + xmlnsxsi + '" xsi:schemaLocation="' + xsischemaLocation + '">';
-
                         xml += '<identifier identifierType="' + json.resource[0].identifier[0]['_attr']['identifierType']['_value'] + '">' + json.resource[0].identifier[0]['_text'] + '</identifier>';
 
                         //single values
@@ -456,6 +446,7 @@
                 };
 
                 scope.setOption = function (item, attr, value) {
+                    console.log(item);
                     if (!item) item = {};
                     if (!item._attr) item._attr = {};
                     if (!item._attr[attr]) item._attr[attr] = {};
