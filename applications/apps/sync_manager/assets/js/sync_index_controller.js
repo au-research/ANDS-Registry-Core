@@ -20,6 +20,7 @@
         // function declaration
         $scope.refreshTasks = refreshTasks;
         $scope.refreshDataSources = refreshDataSources;
+        $scope.refreshCounts = refreshCounts;
         $scope.addTask = addTask;
         $scope.showTaskStatus = showTaskStatus;
         $scope.syncRo = syncRo;
@@ -207,6 +208,18 @@
                     ds.count_INDEXED = parseInt(ds.counts.count_INDEXED);
                     ds.count_MISSING = parseInt(ds.counts.count_MISSING);
                 });
+            });
+        }
+
+        /**
+         * Refresh the data sources count
+         * TODO: maybe it's not a good idea to refreshDataSources after this
+         * TODO: loading indicator since this is a long operation
+         */
+        function refreshCounts() {
+            $scope.datasources = [];
+            APIDataSourceService.refreshDataSourcesCount().then(function(data) {
+                refreshDataSources();
             });
         }
 
