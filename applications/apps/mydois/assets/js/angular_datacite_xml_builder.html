@@ -41,9 +41,21 @@
 
             <h5>Creator</h5>
             <div class="controls">
-
                 <div class="input-prepend input-append">
                     <span class="add-on">Creator Name</span>
+                    <div class="input-prepend input-append">
+                        <div class="btn-group" style="display:inline-block;" ng-show="!readonly">
+                            <span class="add-on">Name Type</span>
+                            <button class="btn dropdown-toggle" data-toggle="dropdown">
+                                {{ creator.creatorName[0]._attr.nameType._value ? creator.creatorName[0]._attr.nameType._value : 'Name Type'}} <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li ng-repeat="j in availableOptions['nameType']">
+                                    <a href="" ng-click="setOption(creator.creatorName[0], 'nameType', j)">{{ j }}</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                     <input type="text" placeholder="Creator Name"  ng-model="creator.creatorName[0]._text" ng-readonly="readonly" style="width: 420px"/>
                 </div>
                 <div class="input-prepend input-append">
@@ -178,9 +190,24 @@
                                 </li>
                             </ul>
                         </div>
-                        <input ng-readonly="readonly" type="text" ng-model="contributor.contributorName[0]._text" placeholder="Contributor Name" style="width: 420px;">
                     </div>
-
+                    <div class="input-prepend input-append">
+                        <span class="add-on">Contributor Name</span>
+                        <div class="input-prepend input-append">
+                            <div class="btn-group" style="display:inline-block;" ng-show="!readonly">
+                                <span class="add-on">Name Type</span>
+                                <button class="btn dropdown-toggle" data-toggle="dropdown">
+                                    {{ contributor.contributorName[0]._attr.nameType._value ? contributor.contributorName[0]._attr.nameType._value : 'Name Type'}} <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li ng-repeat="j in availableOptions['nameType']">
+                                        <a href="" ng-click="setOption(contributor.contributorName[0], 'nameType', j)">{{ j }}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <input type="text" placeholder="Contributor Name"  ng-model="contributor.contributorName[0]._text" ng-readonly="readonly" style="width: 420px"/>
+                    </div>
                     <div class="input-prepend input-append"  style="display:inline-block">
                         <span class="add-on">Given Name</span>
                         <input type="text" placeholder="Contributor Given Name" ng-model="contributor.givenName[0]._text" ng-readonly="readonly"/>
@@ -240,10 +267,11 @@
                 list="objectModel.resource[0].dates[0].date"
                 index="$index"
                 readonly="readonly"
-                optiontype="'dateType'"></datacite-twin-item-form>
+                optiontype="'dateType'"
+                attribute="'dateInformation'">
+            </datacite-twin-item-form>
             <a ng-if="!readonly" href="" class="btn btn-info" ng-click="add(objectModel.resource[0].dates[0], 'date')"><i class="icon-plus icon-white"></i> Add Date</a>
         </div>
-
         <div class="widget-content">
             <div class="control-group" ng-repeat="fundingReference in objectModel.resource[0].fundingReferences[0].fundingReference track by $index">
                 <h5>Funding Reference</h5>
@@ -304,6 +332,16 @@
                             <ul class="dropdown-menu">
                                 <li ng-repeat="j in availableOptions['relatedIdentifierType']">
                                     <a href="" ng-click="setOption(relatedIdentifier, 'relatedIdentifierType', j)">{{ j }}</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="btn-group" style="display:inline-block;" ng-show="!readonly">
+                            <button class="btn dropdown-toggle" data-toggle="dropdown">
+                                {{ relatedIdentifier._attr.resourceTypeGeneral._value ? relatedIdentifier._attr.resourceTypeGeneral._value : 'resourceTypeGeneral' }} <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li ng-repeat="j in availableOptions['resourceTypeGeneral']">
+                                    <a href="" ng-click="setOption(relatedIdentifier, 'resourceTypeGeneral', j)">{{ j }}</a>
                                 </li>
                             </ul>
                         </div>
@@ -416,30 +454,37 @@
                                ng-model="geoLocation.geoLocationBox[0].northBoundLatitude[0]._text"/>
                     </div>
 
-                    <h5>geoLocationPolygon</h5>
+                    <div ng-repeat="geoLocationPolygon in geoLocation.geoLocationPolygon track by $index" ng-init="polyIndex = $index">
+                        <h5>geoLocationPolygon</h5>
+                        <div class="input-prepend input-append"  style="display:inline-block">
+                            <span class="add-on">inPolygonPoint</span>
+                            <input ng-readonly="readonly" type="text" placeholder="inPolygonPoint" ng-model="geoLocationPolygon._attr.inPolygonPoint._value"/>
+                        </div>
+                        <div ng-repeat="polygonPoint in geoLocationPolygon.polygonPoint track by $index">
 
-                    <div ng-repeat="polygonPoint in geoLocation.geoLocationPolygon[0].polygonPoint track by $index">
-
-                        <label for="" class="control-label">polygonPoint</label>
-                        <div class="input-prepend input-append"  style="display:inline-block;">
-                            <span class="add-on">pointLongitude</span>
-                            <input ng-readonly="readonly" type="text" style="width:100px"
-                                   placeholder="pointLongitude"
-                                   ng-model="polygonPoint.pointLongitude[0]['_text']"/>
-                        </div>
-                        <div class="input-prepend input-append"  style="display:inline-block;">
-                            <span class="add-on">pointLatitude</span>
-                            <input ng-readonly="readonly" type="text" style="width:100px"
-                                   placeholder="pointLatitude"
-                                   ng-model="polygonPoint.pointLatitude[0]['_text']"/>
-                        </div>
-                        <div class="input-prepend input-append"  style="display:inline-block;">
-                            <a ng-if="!readonly && (!$first || !$last)" href="" class="btn btn-warning" ng-click="remove(geoLocation.geoLocationPolygon[0].polygonPoint, $index)"><i class="icon-remove icon-white"></i></a>
-                        </div>
-                        <div class="input-prepend input-append"  style="display:inline-block;">
-                            <a ng-if="!readonly && $last" class="btn btn-info" href="" ng-click="addGeoLocationPolygonPoint(geoLocation.geoLocationPolygon[0])"><i class="icon-plus icon-white"></i></a>
+                            <label for="" class="control-label">polygonPoint</label>
+                            <div class="input-prepend input-append"  style="display:inline-block;">
+                                <span class="add-on">pointLongitude</span>
+                                <input ng-readonly="readonly" type="text" style="width:100px"
+                                       placeholder="pointLongitude"
+                                       ng-model="polygonPoint.pointLongitude[0]['_text']"/>
+                            </div>
+                            <div class="input-prepend input-append"  style="display:inline-block;">
+                                <span class="add-on">pointLatitude</span>
+                                <input ng-readonly="readonly" type="text" style="width:100px"
+                                       placeholder="pointLatitude"
+                                       ng-model="polygonPoint.pointLatitude[0]['_text']"/>
+                            </div>
+                            <div class="input-prepend input-append"  style="display:inline-block;">
+                                <a ng-if="!readonly && (!$first || !$last)" href="" class="btn btn-warning" ng-click="remove(geoLocation.geoLocationPolygon[polyIndex].polygonPoint, $index)"><i class="icon-remove icon-white"></i></a>
+                            </div>
+                            <div class="input-prepend input-append"  style="display:inline-block;">
+                                <a ng-if="!readonly && $last" class="btn btn-info" href="" ng-click="addGeoLocationPolygonPoint(geoLocation.geoLocationPolygon[polyIndex])"><i class="icon-plus icon-white"></i></a>
+                            </div>
                         </div>
                     </div>
+
+                    <a ng-if="!readonly && $last" class="btn btn-info" href="" ng-click="addGeoLocationPolygon(geoLocation.geoLocationPolygon)"><i class="icon-plus icon-white"></i> Add geoLocationPolygon</a>
 
                     <a ng-if="!readonly" href="" class="btn btn-warning" ng-click="remove(objectModel.resource[0].geoLocations[0].geoLocation, $index)"><i class="icon-remove icon-white"></i> Remove geoLocation</a>
                 </div>
@@ -534,9 +579,16 @@
                         <textarea ng-model="rights._text" cols="30" rows="10" ng-readonly="readonly" style="width:237px" class="ng-valid ng-dirty"></textarea>
                     </div>
 
+                    <div class="input-prepend input-append" >
+                        <span class="add-on">lang</span>
+                        <input ng-readonly="readonly" type="text" placeholder="lang" ng-model="rights._attr.lang._value" class="ng-valid ng-dirty"/>
+                    </div>
+
                     <div class="input-prepend input-append">
                         <a ng-if="!readonly" href="" class="btn btn-warning" ng-click="remove(objectModel.resource[0].rightsList[0].rights, $index)"><i class="icon-remove icon-white"></i> Remove rights</a>
                     </div>
+
+
 
                 </div>
             </div>
