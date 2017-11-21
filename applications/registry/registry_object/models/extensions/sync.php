@@ -282,7 +282,7 @@ class Sync_extension extends ExtensionBase{
 		//related info text for searching
 		$json['related_info_search'] = '';
         foreach($gXPath->query('//ro:relatedInfo') as $node) {
-            $json['related_info_search'] .= htmlspecialchars(trim($node->nodeValue));
+            $json['related_info_search'] .= htmlspecialchars(trim($node->nodeValue)). " ";
         }
 
         // CC-2049. Index found relatedinfo titles as well
