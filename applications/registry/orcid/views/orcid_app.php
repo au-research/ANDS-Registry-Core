@@ -70,7 +70,7 @@
 			</div>
 			<div class="span4">
 				<div class="widget-box">
-					<a href="#myModal" role="button" data-toggle="modal" class="btn btn-primary btn-block btn-large import" ng-class="{true:'', false:'disabled', '':'hidden'}[import_available]">
+					<a href="#myModal" role="button" data-toggle="modal" class="btn btn-primary btn-block btn-large import" ng-class="{true:'', false:'disabled', '':'hidden'}[import_available]" ng-click="resetImported()">
 						Import Selected <span ng-show="to_import.length>0">{{to_import.length}}</span> Works
 					</a>
 				</div>
