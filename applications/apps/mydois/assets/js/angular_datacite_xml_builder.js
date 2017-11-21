@@ -214,7 +214,7 @@
 
                     if (scope.objectModel.resource[0].geoLocations) {
                         angular.forEach(scope.objectModel.resource[0].geoLocations[0].geoLocation, function(geoLocation, index){
-                            var fields = ['geoLocationPoint', 'geoLocationBox', 'geoLocationPolygon', 'geoLocationPlace'];
+                            var fields = ['geoLocationPlace','geoLocationPoint', 'geoLocationBox', 'geoLocationPolygon'];
                             var n = {};
                             angular.forEach(fields, function (fi) {
                                 if (!geoLocation[fi]) geoLocation[fi] = [{}];
