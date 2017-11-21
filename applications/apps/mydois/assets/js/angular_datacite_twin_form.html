@@ -16,6 +16,7 @@
     <input type="text" ng-model="item._text" placeholder="{{ label ? label : 'Value' }}" ng-readonly="readonly" style="{{ custom ? custom : 'width:210px' }}">
 
     <div class="btn-group" style="display:inline-block;" ng-if="attribute">
+        <span class="add-on">Date Information</span> <!-- add label for attributes -->
         <input  type="text" ng-change="setOption(item, attribute, attributeToChange)" ng-model="attributeToChange" placeholder="{{ attribute }}" ng-readonly="readonly" style="{{ custom ? custom : 'width:210px' }}">
     </div>
 
