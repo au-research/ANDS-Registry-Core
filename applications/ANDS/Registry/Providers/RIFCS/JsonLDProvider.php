@@ -9,6 +9,7 @@ use ANDS\RegistryObject;
 use ANDS\Registry\Providers\MetadataProvider;
 use ANDS\Registry\Providers\RIFCSProvider;
 use ANDS\Registry\Providers\RelationshipProvider;
+use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Util\Config;
 use MinhD\SolrClient\SolrClient;
 use MinhD\SolrClient\SolrSearchResult;
@@ -41,6 +42,10 @@ class JsonLDProvider implements RIFCSProvider
         $json_ld->accountablePerson = self::getAccountablePerson($record,$data);
         $json_ld->author = self::getAuthor($record,$data);
         $json_ld->creator = self::getCreator($record,$data);
+        $json_ld->citation = self::getCitation($record,$data);
+        $json_ld->dateCreated = self::getDateCreated($record,$data);
+        $json_ld->dateModified = self::getDateModified($record,$data);
+        $json_ld->datePublished = DatesProvider::getPublicationDate($record);
         $json_ld->alternateName = self::getAlternateName($record,$data);
         $json_ld->alternativeHeadline = self::getAlternateName($record,$data);
         $json_ld->version = self::getVersion($record,$data);
@@ -54,6 +59,91 @@ class JsonLDProvider implements RIFCSProvider
     public static function get(RegistryObject $record){
         return ;
     }
+
+
+    public static function getCitation(
+        RegistryObject $record,
+        $data = null
+    )
+    {
+    $citation = [];
+
+        $relationships = $data['relationships'];
+
+        foreach ($relationships as $relation) {
+            if (($relation->prop("to_class") == "collection" && $relation->prop("to_type")=="publication") || $relation->prop("to_related_info_type") == "publication"
+            ) {
+                if($relation->prop("to_title") != ""){
+                    $citation[] = array("@type"=>"CreativeWork","name"=>$relation->prop("to_title"),"url"=>self::base_url() ."view?key=".$relation->prop("to_key"));
+                }else{
+                    $identifier =array(
+                        "@type"=> "PropertyValue",
+                        "propertyID"=> $relation->prop("to_identifier_type"),
+                        "value"=> $relation->prop("to_identifier")
+                    );
+                    $citation[] = array("@type"=>"CreativeWork","name"=>$relation->prop("relation_to_title"),"identifier"=>$identifier);
+                }
+            }
+        }
+
+        return $citation;
+
+    }
+
+    public static function getDateCreated(
+        RegistryObject $record,
+        $data = null
+    )
+    {
+        $dateCreated = [];
+        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+            'ro:registryObject/ro:' . $record->class . '/ro:citationInfo/ro:citationMetadata/ro:date') AS $date) {
+            if((string)$date['type']=='created') {
+                $dateCreated[] = (string)$date;
+                return $dateCreated;
+            }
+        };
+
+        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+            'ro:registryObject/ro:' . $record->class . '/ro:dates') AS $date) {
+            if((string)$date['type']=='dc.created') {
+                $dateCreated[] = (string)$date->date;
+                return $dateCreated;
+            }
+        };
+
+       // $dateCreated[] = DatesProvider::getCreatedDate($record);
+        return $dateCreated;
+
+    }
+
+    public static function getDatePublished(
+        RegistryObject $record,
+        $data = null
+    )
+    {
+        $datePublished[] = DatesProvider::getPublicationDate($record);
+
+        return $datePublished;
+
+    }
+
+
+    public static function getDateModified(
+        RegistryObject $record,
+        $data = null
+    )
+    {
+        $dateModified = [];
+        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+            'ro:registryObject/ro:' . $record->class ) AS $recordAtt) {
+             if((string)$recordAtt['dateModified']!='')   $dateModified[] = (string)$recordAtt['dateModified'];
+        };
+
+        return $dateModified;
+
+    }
+
     public static function getCreator(
         RegistryObject $record,
         $data = null
@@ -74,8 +164,7 @@ class JsonLDProvider implements RIFCSProvider
 
         if(count($creator)>0) return $creator;
 
-        $relationships = RelationshipProvider::getMergedRelationships($record);
-
+        $relationships = $data['relationships'];
         foreach ($relationships as $relation) {
             foreach ($creatorArray as $creatorType)
             if (($relation->prop("to_class") == "party" || $relation->prop("to_related_info_type") == "party")
@@ -126,7 +215,7 @@ class JsonLDProvider implements RIFCSProvider
 
         if(count($author)>0) return $author;
 
-        $relationships = RelationshipProvider::getMergedRelationships($record);
+        $relationships = $data['relationships'];
 
         foreach ($relationships as $relation) {
             if (($relation->prop("to_class") == "party" || $relation->prop("to_related_info_type") == "party")
@@ -191,8 +280,8 @@ class JsonLDProvider implements RIFCSProvider
             $data = MetadataProvider::getSelective($record, ['recordData']);
         }
         $accountablePerson = [];
-        // TODO: fix RelationshipProvider getMerged for Reverse overriding direct relationships
-        $relationships = RelationshipProvider::getDirectRelationship($record);
+
+        $relationships = $data['relationships'];
 
         foreach ($relationships as $relation) {
             if ($relation->prop("to_class") == "party"
