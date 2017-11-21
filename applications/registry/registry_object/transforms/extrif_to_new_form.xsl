@@ -688,7 +688,7 @@
 					<div class="controls">
 						<span class="inputs_group">
 							<input type="text" class="inner_input" name="value" placeholder="Identifier" value="{ro:identifier/text()}" required=""/>
-							<input type="text" class="inner_input_type rifcs-type" vocab="RIFCSCitationIdentifierType" name="type" placeholder="Type" value="{ro:identifier/@type}"/>
+							<input type="text" class="inner_input_type rifcs-type" vocab="RIFCSIdentifierType" name="type" placeholder="Type" value="{ro:identifier/@type}"/>
 						</span>
 					</div>
 				</div>
@@ -1546,7 +1546,7 @@
 					<label class="control-label" for="Identifier">Identifier:</label>						
 					<span class="inputs_group">
 						<input type="text" class="inner_input input-large" name="identifier" placeholder="Identifier" value="{text()}" required=""/>
-						<input type="text" class="inner_input_type rifcs-type identifierType" vocab="RIFCSRelatedInformationIdentifierType" name="identifier_type" placeholder="Type" value="{@type}"/>
+						<input type="text" class="inner_input_type rifcs-type identifierType" vocab="RIFCSIdentifierType" name="identifier_type" placeholder="Type" value="{@type}"/>
 					</span>
 					<button class="btn btn-mini btn-danger remove"><i class="icon-remove icon-white"/></button>	
 				</div>
@@ -1561,7 +1561,7 @@
 				<label class="control-label" for="title"></label>						
 				<span class="inputs_group">
 					<input type="text" class="inner_input input-large" name="format_identifier" placeholder="Format Identifier" value="{text()}" required=""/>
-					<input type="text" class="inner_input_type rifcs-type" vocab="RIFCSRelatedInformationIdentifierType" name="format_identifier_type" placeholder="Type" value="{@type}"/>
+					<input type="text" class="inner_input_type rifcs-type" vocab="RIFCSIdentifierType" name="format_identifier_type" placeholder="Type" value="{@type}"/>
 				</span>
 				<button class="btn btn-mini btn-danger remove"><i class="icon-remove icon-white"/></button>	
 			</div>
@@ -1714,7 +1714,7 @@
 				<div class="controls">					
 					<span class="inputs_group">
 						<input type="text" class="inner_input input-large" name="identifier" placeholder="Identifier" value=""/>
-						<input type="text" class="inner_input_type rifcs-type identifierType" vocab="RIFCSRelatedInformationIdentifierType" name="identifier_type" placeholder="Type" value=""/>
+						<input type="text" class="inner_input_type rifcs-type identifierType" vocab="RIFCSIdentifierType" name="identifier_type" placeholder="Type" value=""/>
 					</span>
 					<button class="btn btn-mini btn-danger remove"><i class="icon-remove icon-white"/></button>	
 				</div>
@@ -1790,7 +1790,7 @@
 				<div class="controls">
 					<span class="inputs_group">
 						<input type="text" class="inner_input input-large" name="identifier" placeholder="Identifier" value="" required=""/>
-						<input type="text" class="inner_input_type rifcs-type identifierType" vocab="RIFCSRelatedInformationIdentifierType" name="identifier_type" placeholder="Identifier Type" value=""/>
+						<input type="text" class="inner_input_type rifcs-type identifierType" vocab="RIFCSIdentifierType" name="identifier_type" placeholder="Identifier Type" value=""/>
 					</span>
 
 				</div>
@@ -1845,7 +1845,7 @@
 			<label class="control-label" for="title"></label>						
 			<span class="inputs_group">
 				<input type="text" class="inner_input input-large" name="format_identifier" placeholder="Format Identifier" value="" required=""/>
-				<input type="text" class="inner_input_type rifcs-type" vocab="RIFCSRelatedInformationIdentifierType" name="format_identifier_type" placeholder="Type" value=""/>
+				<input type="text" class="inner_input_type rifcs-type" vocab="RIFCSIdentifierType" name="format_identifier_type" placeholder="Type" value=""/>
 			</span>
 			<button class="btn btn-mini btn-danger remove"><i class="icon-remove icon-white"/></button>	
 		</div>
@@ -2094,7 +2094,7 @@
 					<div class="controls">
 						<span class="inputs_group">
 							<input type="text" class="inner_input" name="value" placeholder="Identifier" value="" required=""/>
-							<input type="text" class="inner_input_type rifcs-type" vocab="RIFCSCitationIdentifierType" name="type" placeholder="Type" value=""/>
+							<input type="text" class="inner_input_type rifcs-type" vocab="RIFCSIdentifierType" name="type" placeholder="Type" value=""/>
 						</span>
 					</div>
 				</div>
