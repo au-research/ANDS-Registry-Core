@@ -453,13 +453,9 @@
                                placeholder="north"
                                ng-model="geoLocation.geoLocationBox[0].northBoundLatitude[0]._text"/>
                     </div>
-
                     <div ng-repeat="geoLocationPolygon in geoLocation.geoLocationPolygon track by $index" ng-init="polyIndex = $index">
                         <h5>geoLocationPolygon</h5>
-                        <div class="input-prepend input-append"  style="display:inline-block">
-                            <span class="add-on">inPolygonPoint</span>
-                            <input ng-readonly="readonly" type="text" placeholder="inPolygonPoint" ng-model="geoLocationPolygon._attr.inPolygonPoint._value"/>
-                        </div>
+
                         <div ng-repeat="polygonPoint in geoLocationPolygon.polygonPoint track by $index">
 
                             <label for="" class="control-label">polygonPoint</label>
@@ -481,10 +477,15 @@
                             <div class="input-prepend input-append"  style="display:inline-block;">
                                 <a ng-if="!readonly && $last" class="btn btn-info" href="" ng-click="addGeoLocationPolygonPoint(geoLocation.geoLocationPolygon[polyIndex])"><i class="icon-plus icon-white"></i></a>
                             </div>
+
+                        </div>
+                        <div class="input-prepend input-append"  style="display:inline-block">
+                            <span class="add-on">inPolygonPoint</span>
+                            <input ng-readonly="readonly" type="text" placeholder="inPolygonPoint" ng-model="geoLocationPolygon.inPolygonPoint[0]['_text']"/>
                         </div>
                     </div>
 
-                    <a ng-if="!readonly && $last" class="btn btn-info" href="" ng-click="addGeoLocationPolygon(geoLocation.geoLocationPolygon)"><i class="icon-plus icon-white"></i> Add geoLocationPolygon</a>
+                    <a ng-if="!readonly && $last" class="btn btn-info" href="" ng-click="add(geoLocation, 'geoLocationPolygon')"><i class="icon-plus icon-white"></i> Add geoLocationPolygon</a>
 
                     <a ng-if="!readonly" href="" class="btn btn-warning" ng-click="remove(objectModel.resource[0].geoLocations[0].geoLocation, $index)"><i class="icon-remove icon-white"></i> Remove geoLocation</a>
                 </div>
