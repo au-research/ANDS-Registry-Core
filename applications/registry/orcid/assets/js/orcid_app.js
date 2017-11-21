@@ -159,7 +159,7 @@ function IndexCtrl($scope, works) {
 		works.importWorks($scope.orcid.id, ids).then(function(data){
 			$scope.import_stg = 'complete';
 			$scope.importResult = data;
-			console.log($scope.importResult);
+
             $scope.importedResultCount = $scope.importResult.filter(function(item) {
                 return item.in_orcid;
             }).length;
@@ -171,6 +171,11 @@ function IndexCtrl($scope, works) {
             $scope.refresh();
 		});
 	};
+
+	$scope.resetImported = function () {
+		$scope.importResult = null;
+		$scope.import_stg = "ready";
+	}
 
 
 
