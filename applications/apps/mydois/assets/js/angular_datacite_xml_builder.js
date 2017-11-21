@@ -67,6 +67,7 @@
                 };
 
                 scope.add = function (list, elem) {
+                    console.log(list, elem);
                     var obj = [{}];
                     if (elem == 'creator') {
                         obj = {
@@ -95,7 +96,8 @@
                                     {'pointLongitude':[{}], 'pointLatitude': [{}]},
                                     {'pointLongitude':[{}], 'pointLatitude': [{}]},
                                     {'pointLongitude':[{}], 'pointLatitude': [{}]}
-                                ]
+                                ],
+                                'inPolygonPoint': [{}]
                             }]
                         }
                     } else if (elem == 'contributor') {
@@ -119,14 +121,13 @@
                         }
                     } else if (elem == 'geoLocationPolygon'){
                         obj = {
-                            'geoLocationPolygon': [{
-                                'polygonPoint': [
-                                    {'pointLongitude':[{}], 'pointLatitude': [{}]},
-                                    {'pointLongitude':[{}], 'pointLatitude': [{}]},
-                                    {'pointLongitude':[{}], 'pointLatitude': [{}]},
-                                    {'pointLongitude':[{}], 'pointLatitude': [{}]}
-                                ]
-                            }]
+                            'polygonPoint': [
+                                {'pointLongitude':[{}], 'pointLatitude': [{}]},
+                                {'pointLongitude':[{}], 'pointLatitude': [{}]},
+                                {'pointLongitude':[{}], 'pointLatitude': [{}]},
+                                {'pointLongitude':[{}], 'pointLatitude': [{}]}
+                            ],
+                            'inPolygonPoint': [{}]
                         }
                     }
                     if (!list) {
@@ -220,6 +221,9 @@
                                 if (!geoLocation[fi]) geoLocation[fi] = [{}];
                                 n[fi] = geoLocation[fi];
                             });
+                            angular.forEach(geoLocation.geoLocationPolygon, function(polygon, index) {
+                                if (!polygon['inPolygonPoint']) polygon['inPolygonPoint'] = [{}];
+                            });
                             angular.forEach(geoLocation.geoLocationPoint, function(point, index){
                                 if (!point['pointLongitude']) point['pointLongitude'] = [{}];
                                 if (!point['pointLatitude']) point['pointLatitude'] = [{}];
@@ -237,16 +241,14 @@
 
 
                 scope.addGeoLocationPolygon = function(parent) {
-
-                    console.log(parent);
                     parent.push({
                         'polygonPoint': [
                             {'pointLongitude':[{}], 'pointLatitude': [{}]},
                             {'pointLongitude':[{}], 'pointLatitude': [{}]},
                             {'pointLongitude':[{}], 'pointLatitude': [{}]},
-                            {'pointLongitude':[{}], 'pointLatitude': [{}]}
+                            {'pointLongitude':[{}], 'pointLatitude': [{}]},
+                            {'inPolygonPoint': {}}
                         ]});
-                    console.log(parent);
                 };
 
 
