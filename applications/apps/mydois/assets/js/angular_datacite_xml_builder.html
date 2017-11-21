@@ -333,6 +333,10 @@
                                 </li>
                             </ul>
                         </div>
+
+                        <input ng-readonly="readonly" type="text" ng-model="relatedIdentifier._text" placeholder="Related Identifier">
+                    </div>
+                    <div class="input-prepend input-append"  style="display:inline-block">
                         <span class="add-on">Resource Type General</span>
                         <div class="btn-group" style="display:inline-block;" ng-show="!readonly">
                             <button class="btn dropdown-toggle" data-toggle="dropdown">
@@ -344,10 +348,6 @@
                                 </li>
                             </ul>
                         </div>
-                        <input ng-readonly="readonly" type="text" ng-model="relatedIdentifier._text" placeholder="Related Identifier">
-                    </div>
-
-                    <div class="input-prepend input-append"  style="display:inline-block">
                         <span class="add-on">Relation Type</span>
                         <div class="btn-group" style="display:inline-block;" ng-show="!readonly">
                             <button class="btn dropdown-toggle" data-toggle="dropdown">
