@@ -335,9 +335,10 @@
                                 </li>
                             </ul>
                         </div>
+                        <span class="add-on">Resource Type General</span>
                         <div class="btn-group" style="display:inline-block;" ng-show="!readonly">
                             <button class="btn dropdown-toggle" data-toggle="dropdown">
-                                {{ relatedIdentifier._attr.resourceTypeGeneral._value ? relatedIdentifier._attr.resourceTypeGeneral._value : 'resourceTypeGeneral' }} <span class="caret"></span>
+                                {{ relatedIdentifier._attr.resourceTypeGeneral._value ? relatedIdentifier._attr.resourceTypeGeneral._value : 'Type' }} <span class="caret"></span>
                             </button>
                             <ul class="dropdown-menu">
                                 <li ng-repeat="j in availableOptions['resourceTypeGeneral']">
