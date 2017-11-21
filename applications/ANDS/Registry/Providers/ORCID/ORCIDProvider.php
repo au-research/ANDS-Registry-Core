@@ -58,8 +58,8 @@ class ORCIDProvider implements RegistryContentProvider
         $processor = XMLUtil::getORCIDTransformer();
         $dom = new DOMDocument();
         $dom->loadXML($xml, LIBXML_NOENT);
-        $processor->setParameter('','dateProvided', date("Y-m-d"));
-        $processor->setParameter('','createdDate', DatesProvider::getPublicationDate($record, $data));
+        $processor->setParameter('','dateProvided', date("Y"));
+        $processor->setParameter('','createdDate', DatesProvider::getPublicationDate($record, $data, 'Y'));
         $processor->setParameter('','rda_url', $record->portalUrl);
         $processor->setParameter('', 'title', $record->title);
         $processor->setParameter('', 'description', '');
