@@ -332,6 +332,16 @@
                                 </li>
                             </ul>
                         </div>
+                        <div class="btn-group" style="display:inline-block;" ng-show="!readonly">
+                            <button class="btn dropdown-toggle" data-toggle="dropdown">
+                                {{ relatedIdentifier._attr.resourceTypeGeneral._value ? relatedIdentifier._attr.resourceTypeGeneral._value : 'resourceTypeGeneral' }} <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li ng-repeat="j in availableOptions['resourceTypeGeneral']">
+                                    <a href="" ng-click="setOption(relatedIdentifier, 'resourceTypeGeneral', j)">{{ j }}</a>
+                                </li>
+                            </ul>
+                        </div>
                         <input ng-readonly="readonly" type="text" ng-model="relatedIdentifier._text" placeholder="Related Identifier">
                     </div>
 
@@ -443,6 +453,10 @@
 
                     <div ng-repeat="geoLocationPolygon in geoLocation.geoLocationPolygon track by $index" ng-init="polyIndex = $index">
                         <h5>geoLocationPolygon</h5>
+                        <div class="input-prepend input-append"  style="display:inline-block">
+                            <span class="add-on">inPolygonPoint</span>
+                            <input ng-readonly="readonly" type="text" placeholder="inPolygonPoint" ng-model="geoLocationPolygon._attr.inPolygonPoint._value"/>
+                        </div>
                         <div ng-repeat="polygonPoint in geoLocationPolygon.polygonPoint track by $index">
 
                             <label for="" class="control-label">polygonPoint</label>

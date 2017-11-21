@@ -57,6 +57,9 @@
 
                 scope.availableOptions['funderIdentifierType'] = ['ISNI', 'GRID', 'Crossref Funder ID', 'Other'];
 
+                scope.availableOptions['resourceTypeGeneral'] = ['Audiovisual', 'Collection', 'Dataset', 'DataPaper', 'Event', 'Image', 'InteractiveResource', 'Model', 'PhysicalObject', 'Service', 'Software', 'Sound', 'Text', 'Workflow', 'Other'];
+
+
                 scope.setOption = function (item, attr, value) {
                     if (!item._attr) item._attr = {};
                     if (!item._attr[attr]) item._attr[attr] = {};
@@ -458,7 +461,7 @@
                     if (!item._attr[attr]) item._attr[attr] = {};
                     item._attr[attr]._value = value;
                 };
-                
+
             }
         }
     }
