@@ -57,6 +57,7 @@ class SubjectSuggestor
             'start' => 0,
             'fl' => 'id, title, key, slug, score'
         ]);
+//        dd("-id:{$record->id} +class:collection +($query)");
 
         if ($searchResult->errored() || $searchResult->getNumFound() === 0) {
             return [];

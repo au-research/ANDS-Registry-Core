@@ -46,7 +46,7 @@ angular.module('orcid_app', ['portal-filters'])
 function IndexCtrl($scope, works) {
 
 	//Default Values
-	$scope.works = {};
+	$scope.works = false;
 	$scope.to_import = [];
 	$scope.import_available = false;
 	$scope.filters = {};
@@ -80,7 +80,7 @@ function IndexCtrl($scope, works) {
 	/**
 	 * Watch Expression on works and search result to update the import tag
 	 */
-	$scope.$watch('works', function(){
+	$scope.$watch('works', function(oldv, newv){
 		$scope.review();
 	}, true);
 
@@ -107,7 +107,7 @@ function IndexCtrl($scope, works) {
 				}
 			});
 		}
-		$scope.import_stg = 'ready';
+		//$scope.import_stg = 'ready';
 	};
 
     /**
@@ -117,6 +117,9 @@ function IndexCtrl($scope, works) {
      * @returns {boolean}
      */
 	$scope.alreadyImported = function(id) {
+		if (!$scope.works) {
+			return false;
+		}
 		var importedIDs = $scope.works.filter(function(item) {
 			return item.in_orcid;
 		}).map(function(item) {
@@ -144,14 +147,31 @@ function IndexCtrl($scope, works) {
 	 * Import the set of to_import works to ORCID, calling the import_works factory method
 	 * Increment import stages from idle->importing->complete, error is a stage
 	 */
+    $scope.importResult = null;
+    $scope.importedResultCount = 0;
+    $scope.failedResultCount = 0;
 	$scope.import = function() {
 		$scope.import_stg = 'importing';
+		$scope.importResult = null;
 		var ids = $scope.to_import.map(function(item) {
 			return item.id;
 		});
 		works.importWorks($scope.orcid.id, ids).then(function(data){
 			$scope.import_stg = 'complete';
-			$scope.refresh();
+			$scope.importResult = data;
+			console.log($scope.importResult);
+            $scope.importedResultCount = $scope.importResult.filter(function(item) {
+                return item.in_orcid;
+            }).length;
+
+            $scope.failedResultCount = $scope.importResult.filter(function(item) {
+                return !item.in_orcid;
+            }).length;
+
+            $scope.refresh();
 		});
-	}
+	};
+
+
+
 }
