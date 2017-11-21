@@ -22,6 +22,9 @@
             syncDataSource: function(id) {
                 return APIService.get(resource + id +'/sync', {})
             },
+            refreshDataSourcesCount: function () {
+                return APIService.get(resource, {'action': 'recount'})
+            },
             getDataSource: function(id) {
                 return APIService.get(resource + id, {})
             }
