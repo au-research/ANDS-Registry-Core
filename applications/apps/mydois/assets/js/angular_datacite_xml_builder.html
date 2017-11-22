@@ -478,9 +478,12 @@
                             </div>
 
                         </div>
-                        <div class="input-prepend input-append"  style="display:inline-block">
+                        <div class="input-prepend input-append"  style="display:block">
                             <span class="add-on">inPolygonPoint</span>
                             <input ng-readonly="readonly" type="text" placeholder="inPolygonPoint" ng-model="geoLocationPolygon.inPolygonPoint[0]['_text']"/>
+                        </div>
+                        <div class="input-prepend input-append"  style="display:inline-block">
+                            <a ng-if="!readonly" href="" class="btn btn-warning" ng-click="remove(geoLocation.geoLocationPolygon, polyIndex)"><i class="icon-remove icon-white"></i>Remove geoLocationPolygon</a>
                         </div>
                     </div>
 
