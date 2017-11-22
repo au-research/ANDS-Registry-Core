@@ -411,11 +411,11 @@
                 <div class="controls">
                     <h5>geoLocation</h5>
                     <div class="input-prepend input-append">
-                        <span class="add-on">geoLocation Place</span>
+                        <h5>geoLocation Place</h5>
                         <input ng-readonly="readonly" type="text" placeholder="geoLocation Place" ng-model="geoLocation.geoLocationPlace[0]._text"/>
 
                     </div>
-                    <label for="" class="">geoLocation Point</label>
+                    <h5>geoLocation Point</h5>
                     <div class="input-prepend input-append"  style="display:inline-block;">
 
                         <span class="add-on">pointLongitude</span>
@@ -426,7 +426,7 @@
                         <input ng-readonly="readonly" type="text" placeholder="pointLatitude"   style="width:100px" ng-model="geoLocation.geoLocationPoint[0].pointLatitude[0]._text"/>
                     </div>
 
-                    <h5>geoLocationBox</h5>
+                    <h5>geoLocation Box</h5>
 
                     <div class="input-prepend input-append"  style="display:inline-block;">
                         <span class="add-on">westBoundLongitude</span>
@@ -453,7 +453,7 @@
                                ng-model="geoLocation.geoLocationBox[0].northBoundLatitude[0]._text"/>
                     </div>
                     <div ng-repeat="geoLocationPolygon in geoLocation.geoLocationPolygon track by $index" ng-init="polyIndex = $index">
-                        <h5>geoLocationPolygon</h5>
+                        <h5>geoLocation Polygon</h5>
 
                         <div ng-repeat="polygonPoint in geoLocationPolygon.polygonPoint track by $index">
 
