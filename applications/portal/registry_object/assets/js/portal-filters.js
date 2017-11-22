@@ -58,13 +58,11 @@ angular.module('portal-filters', [])
 				case 'related_party_one_search' : return 'Related People' ; break;
 				case 'related_party_multi_search' : return 'Related Organisations' ; break;
 				case 'group_search' : return 'Data Provider' ; break;
-				case 'related_info_search' : return 'Related Data' ; break;
 				case 'related_activity_search' : return 'Related Project or Grant' ; break;
 				case 'related_service_search' : return 'Related Tool or Service' ; break;
 				case 'related_info_search' : return 'Related Resource' ; break;
 				case 'subject_value_resolved_search' : return 'Subject' ; break;
 				case 'description_value' : return 'Description' ; break;
-				case 'date_to' : return 'Dates' ; break;
 				case 'date_to' : return 'Dates' ; break;
 				case 'date_from' : return 'Coverage' ; break;
 				case 'citation_info_search' : return 'Citation ' ; break;
