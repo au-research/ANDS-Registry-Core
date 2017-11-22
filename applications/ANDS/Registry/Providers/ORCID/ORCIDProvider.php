@@ -61,6 +61,7 @@ class ORCIDProvider implements RegistryContentProvider
         $processor->setParameter('','dateProvided', date("Y"));
         $processor->setParameter('','createdDate', DatesProvider::getPublicationDate($record, $data, 'Y'));
         $processor->setParameter('','rda_url', $record->portalUrl);
+        $processor->setParameter('','rda_url_key', $record->portalUrlWithKey);
         $processor->setParameter('', 'title', $record->title);
         $processor->setParameter('', 'description', '');
         if ($existing) {
