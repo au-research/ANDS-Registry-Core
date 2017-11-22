@@ -75,13 +75,21 @@
                     </common:year>
                 </common:publication-date>
             </xsl:if>
-            <xsl:if test="ro:collection/ro:identifier[text()!=''] |
-             ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[text()!='']">
-                <common:external-ids xmlns:common="http://www.orcid.org/ns/common">
-                    <xsl:apply-templates select="ro:collection/ro:identifier[text()!=''] |
-                    ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[text()!='']"/>
-                </common:external-ids>
-            </xsl:if>
+
+            <common:external-ids xmlns:common="http://www.orcid.org/ns/common">
+                <!--view?key= as a permanent external-id-->
+                <common:external-id xmlns:common="http://www.orcid.org/ns/common">
+                    <common:external-id-type>other-id</common:external-id-type>
+                    <common:external-id-value><xsl:value-of select="$rda_url_key"/></common:external-id-value>
+                    <common:external-id-relationship>self</common:external-id-relationship>
+                </common:external-id>
+                <xsl:if test="ro:collection/ro:identifier[text()!=''] |
+         ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[text()!='']">
+                <xsl:apply-templates select="ro:collection/ro:identifier[text()!=''] |
+                ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[text()!='']"/>
+                </xsl:if>
+            </common:external-ids>
+
             <work:url><xsl:value-of select="$rda_url"/></work:url>
             <xsl:if test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:contributor">
                 <work:contributors>
