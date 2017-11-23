@@ -294,9 +294,19 @@ class RegistryObject extends Model
     /**
      * $this->portalUrl
      * $this->portal_url
+     * @return string
      */
     public function getPortalUrlAttribute()
     {
         return baseUrl($this->slug.'/'.$this->registry_object_id);
+    }
+
+    /**
+     * $this->portalUrlWithKey
+     * @return string
+     */
+    public function getPortalUrlWithKeyAttribute()
+    {
+        return baseUrl("view/?key={$this->key}");
     }
 }
