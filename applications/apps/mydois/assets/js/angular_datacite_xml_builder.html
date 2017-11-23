@@ -42,18 +42,18 @@
             <h5>Creator</h5>
             <div class="controls">
                 <div class="input-prepend input-append">
+                    <div class="btn-group" style="display:inline-block;" ng-show="!readonly">
+                        <span class="add-on">Name Type</span>
+                        <button class="btn dropdown-toggle" data-toggle="dropdown">
+                            {{ creator.creatorName[0]._attr.nameType._value ? creator.creatorName[0]._attr.nameType._value : 'Type'}} <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li ng-repeat="j in availableOptions['nameType']">
+                                <a href="" ng-click="setOption(creator.creatorName[0], 'nameType', j)">{{ j }}</a>
+                            </li>
+                        </ul>
+                    </div>
                     <span class="add-on">Creator Name</span>
-                        <div class="btn-group" style="display:inline-block;" ng-show="!readonly">
-                            <span class="add-on">Name Type</span>
-                            <button class="btn dropdown-toggle" data-toggle="dropdown">
-                                {{ creator.creatorName[0]._attr.nameType._value ? creator.creatorName[0]._attr.nameType._value : 'Type'}} <span class="caret"></span>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li ng-repeat="j in availableOptions['nameType']">
-                                    <a href="" ng-click="setOption(creator.creatorName[0], 'nameType', j)">{{ j }}</a>
-                                </li>
-                            </ul>
-                        </div>
                     <input type="text" placeholder="Creator Name"  ng-model="creator.creatorName[0]._text" ng-readonly="readonly" style="width: 420px"/>
                 </div>
                 <div class="input-prepend input-append">
@@ -190,12 +190,12 @@
                         </div>
                     </div>
                     <div class="input-prepend input-append">
-                        <span class="add-on">Contributor Name</span>
+
                         <div class="input-prepend input-append">
                             <div class="btn-group" style="display:inline-block;" ng-show="!readonly">
                                 <span class="add-on">Name Type</span>
                                 <button class="btn dropdown-toggle" data-toggle="dropdown">
-                                    {{ contributor.contributorName[0]._attr.nameType._value ? contributor.contributorName[0]._attr.nameType._value : 'Type'}} <span class="caret"></span>
+                                    {{ contributor.contributorName[0]._attr.nameType._value ? contributor.contributorName[0]._attr.nameType._value : 'Name Type'}} <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu">
                                     <li ng-repeat="j in availableOptions['nameType']">
@@ -203,8 +203,10 @@
                                     </li>
                                 </ul>
                             </div>
+                            <span class="add-on">Contributor Name</span>
+                            <input type="text" placeholder="Contributor Name"  ng-model="contributor.contributorName[0]._text" ng-readonly="readonly" style="width: 420px"/>
                         </div>
-                        <input type="text" placeholder="Contributor Name"  ng-model="contributor.contributorName[0]._text" ng-readonly="readonly" style="width: 420px"/>
+
                     </div>
                     <div class="input-prepend input-append"  style="display:inline-block">
                         <span class="add-on">Given Name</span>
