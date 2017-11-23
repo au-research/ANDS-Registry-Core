@@ -478,10 +478,23 @@
                             </div>
 
                         </div>
-                        <div class="input-prepend input-append"  style="display:block">
-                            <span class="add-on">inPolygonPoint</span>
-                            <input ng-readonly="readonly" type="text" placeholder="inPolygonPoint" ng-model="geoLocationPolygon.inPolygonPoint[0]['_text']"/>
+                        <div ng-repeat="inPolygonPoint in geoLocationPolygon.inPolygonPoint track by $index">
+                            <label for="" class="control-label">inPolygonPoint</label>
+                            <div class="input-prepend input-append"  style="display:inline-block;">
+                                <span class="add-on">pointLongitude</span>
+                                <input ng-readonly="readonly" type="text" style="width:100px"
+                                       placeholder="pointLongitude"
+                                       ng-model="inPolygonPoint.pointLongitude[0]['_text']"/>
+                            </div>
+                            <div class="input-prepend input-append"  style="display:inline-block;">
+                                <span class="add-on">pointLatitude</span>
+                                <input ng-readonly="readonly" type="text" style="width:100px"
+                                       placeholder="pointLatitude"
+                                       ng-model="inPolygonPoint.pointLatitude[0]['_text']"/>
+                            </div>
                         </div>
+
+
                         <div class="input-prepend input-append"  style="display:inline-block">
                             <a ng-if="!readonly" href="" class="btn btn-warning" ng-click="remove(geoLocation.geoLocationPolygon, polyIndex)"><i class="icon-remove icon-white"></i>Remove geoLocationPolygon</a>
                         </div>
