@@ -225,6 +225,19 @@
                                 if (!point['pointLongitude']) point['pointLongitude'] = [{}];
                                 if (!point['pointLatitude']) point['pointLatitude'] = [{}];
                             });
+                            angular.forEach(geoLocation.geoLocationPolygon, function(polygon, index){
+                                if (!polygon['polygonPoint']) {
+                                    polygon['polygonPoint'] = [
+                                        {'pointLongitude': [{}], 'pointLatitude': [{}]},
+                                        {'pointLongitude': [{}], 'pointLatitude': [{}]},
+                                        {'pointLongitude': [{}], 'pointLatitude': [{}]},
+                                        {'pointLongitude': [{}], 'pointLatitude': [{}]}
+                                    ];
+                                }
+                                if (!polygon['inPolygonPoint']) {
+                                    polygon['inPolygonPoint'] = [{'pointLongitude':[{}], 'pointLatitude': [{}]}];
+                                }
+                            });
                             angular.forEach(geoLocation.geoLocationBox, function(box, index){
                                 if (!box['westBoundLongitude']) box['westBoundLongitude'] = [{}];
                                 if (!box['eastBoundLongitude']) box['eastBoundLongitude'] = [{}];
