@@ -67,7 +67,6 @@
                 };
 
                 scope.add = function (list, elem) {
-                    console.log(list, elem);
                     var obj = [{}];
                     if (elem == 'creator') {
                         obj = {
@@ -97,7 +96,7 @@
                                     {'pointLongitude':[{}], 'pointLatitude': [{}]},
                                     {'pointLongitude':[{}], 'pointLatitude': [{}]}
                                 ],
-                                'inPolygonPoint': [{}]
+                                'inPolygonPoint': [{'pointLongitude':[{}], 'pointLatitude': [{}]}]
                             }]
                         }
                     } else if (elem == 'contributor') {
@@ -127,7 +126,7 @@
                                 {'pointLongitude':[{}], 'pointLatitude': [{}]},
                                 {'pointLongitude':[{}], 'pointLatitude': [{}]}
                             ],
-                            'inPolygonPoint': [{}]
+                            'inPolygonPoint': [{'pointLongitude':[{}], 'pointLatitude': [{}]}]
                         }
                     }
                     if (!list) {
@@ -139,6 +138,7 @@
                         }
                         scope.objectModel.resource[0][parent][0][elem].push(obj);
                     } else {
+
                         if (!list[elem]) list[elem] = [];
                         list[elem].push(obj);
                     }
@@ -221,13 +221,10 @@
                                 if (!geoLocation[fi]) geoLocation[fi] = [{}];
                                 n[fi] = geoLocation[fi];
                             });
-                            angular.forEach(geoLocation.geoLocationPolygon, function(polygon, index) {
-                                if (!polygon['inPolygonPoint']) polygon['inPolygonPoint'] = [{}];
-                            });
                             angular.forEach(geoLocation.geoLocationPoint, function(point, index){
                                 if (!point['pointLongitude']) point['pointLongitude'] = [{}];
                                 if (!point['pointLatitude']) point['pointLatitude'] = [{}];
-                            })
+                            });
                             angular.forEach(geoLocation.geoLocationBox, function(box, index){
                                 if (!box['westBoundLongitude']) box['westBoundLongitude'] = [{}];
                                 if (!box['eastBoundLongitude']) box['eastBoundLongitude'] = [{}];
@@ -238,20 +235,7 @@
                         });
                     }
                 };
-
-
-                scope.addGeoLocationPolygon = function(parent) {
-                    parent.push({
-                        'polygonPoint': [
-                            {'pointLongitude':[{}], 'pointLatitude': [{}]},
-                            {'pointLongitude':[{}], 'pointLatitude': [{}]},
-                            {'pointLongitude':[{}], 'pointLatitude': [{}]},
-                            {'pointLongitude':[{}], 'pointLatitude': [{}]},
-                            {'inPolygonPoint': {}}
-                        ]});
-                };
-
-
+                
                 scope.addGeoLocationPolygonPoint = function(parent) {
                     if (!parent.polygonPoint) parent.polygonPoint = [];
                     parent.polygonPoint.push({'pointLongitude':[{}], 'pointLatitude':[{}]});
@@ -366,15 +350,14 @@
                                         xml += "</" + subsubitemkey + ">";
                                     } else {
                                         // even deeper for polygonPoint!
-                                        if (subsubitemkey != 'polygonPoint') {
-                                        } else {
+                                        if (subsubitemkey == 'polygonPoint' || subsubitemkey == 'inPolygonPoint') {
                                             angular.forEach(subsubitem, function (point) {
-                                                xml += '<polygonPoint>';
+                                                xml += '<'+subsubitemkey+'>';
                                                 var longitude = point.pointLongitude[0]['_text'] ? point.pointLongitude[0]['_text']: "";
                                                 var lattitude = point.pointLatitude[0]['_text'] ? point.pointLatitude[0]['_text'] : "";
                                                 xml += '<pointLongitude>' + longitude + '</pointLongitude>';
                                                 xml += '<pointLatitude>' + lattitude + '</pointLatitude>';
-                                                xml += '</polygonPoint>';
+                                                xml += '</'+subsubitemkey+'>';
                                             });
                                         }
                                     }
@@ -428,7 +411,8 @@
                 'label': '=',
                 'custom': '=',
                 'readonly': '=',
-                'attribute' : '='
+                'attribute' : '=',
+                // 'attributeValue' : '=?'
             },
             transclude: true,
             templateUrl: apps_url + 'assets/mydois/js/angular_datacite_twin_form.html',
@@ -436,7 +420,8 @@
                 scope.availableOptions = {
                     'title': ['AlternativeTitle', 'Subtitle', 'TranslatedTitle']
                 };
-                scope.attributeToChange = '';
+
+
                 scope.availableOptions['nameType'] = ['Organizational', 'Personal'];
                 scope.availableOptions['titleType'] = ['AlternativeTitle', 'Subtitle', 'TranslatedTitle', 'Other'];
                 scope.availableOptions['dateType'] = ['Accepted', 'Available', 'Copyrighted', 'Collected', 'Created', 'Issued', 'Submitted', 'Updated', 'Valid', 'Other'];
@@ -448,13 +433,15 @@
                 };
 
                 scope.setOption = function (item, attr, value) {
-                    console.log(item);
                     if (!item) item = {};
                     if (!item._attr) item._attr = {};
                     if (!item._attr[attr]) item._attr[attr] = {};
                     item._attr[attr]._value = value;
                 };
 
+                if (scope.attribute) {
+                    scope.setOption(scope.item, scope.attribute, "");
+                }
             }
         }
     }
