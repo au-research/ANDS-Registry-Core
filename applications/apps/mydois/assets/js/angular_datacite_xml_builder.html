@@ -42,6 +42,7 @@
             <h5>Creator</h5>
             <div class="controls">
                 <div class="input-prepend input-append">
+                    <span class="add-on" ng-if="readonly && creator.creatorName[0]._attr.nameType._value"> {{ creator.creatorName[0]._attr.nameType._value }}</span>
                     <div class="btn-group" style="display:inline-block;" ng-show="!readonly">
                         <span class="add-on">Name Type</span>
                         <button class="btn dropdown-toggle" data-toggle="dropdown">
@@ -178,6 +179,7 @@
                 <div class="controls">
                     <div class="input-prepend input-append">
                         <span class="add-on">Contributor</span>
+                        <span class="add-on" ng-if="readonly && contributor._attr.contributorType._value"> {{ contributor._attr.contributorType._value }}</span>
                         <div class="btn-group" style="display:inline-block;" ng-show="!readonly">
                             <button class="btn dropdown-toggle" data-toggle="dropdown">
                                 {{ contributor._attr.contributorType._value ? contributor._attr.contributorType._value : 'Type'}} <span class="caret"></span>
@@ -192,6 +194,7 @@
                     <div class="input-prepend input-append">
 
                         <div class="input-prepend input-append">
+                            <span class="add-on" ng-if="readonly &&  contributor.contributorName[0]._attr.nameType._value"> {{  contributor.contributorName[0]._attr.nameType._value }}</span>
                             <div class="btn-group" style="display:inline-block;" ng-show="!readonly">
                                 <span class="add-on">Name Type</span>
                                 <button class="btn dropdown-toggle" data-toggle="dropdown">
@@ -283,6 +286,7 @@
 
                     <div class="input-prepend input-append" ng-repeat="funderIdentifier in fundingReference.funderIdentifier" style="display:inline-block">
                         <span class="add-on">Funder Identifier</span>
+                        <span class="add-on" ng-if="readonly &&  funderIdentifier._attr.funderIdentifierType._value"> {{  funderIdentifier._attr.funderIdentifierType._value }}</span>
                         <div class="btn-group" style="display:inline-block;" ng-show="!readonly">
                             <button class="btn dropdown-toggle" data-toggle="dropdown">
                                 {{ funderIdentifier._attr.funderIdentifierType._value ? funderIdentifier._attr.funderIdentifierType._value : 'Type' }} <span class="caret"></span>
@@ -325,6 +329,7 @@
 
                     <div class="input-prepend input-append"  style="display:inline-block">
                         <span class="add-on">Related Identifier</span>
+                        <span class="add-on" ng-if="readonly &&  relatedIdentifier._attr.relatedIdentifierType._value"> {{ relatedIdentifier._attr.relatedIdentifierType._value }}</span>
                         <div class="btn-group" style="display:inline-block;" ng-show="!readonly">
                             <button class="btn dropdown-toggle" data-toggle="dropdown">
                                 {{ relatedIdentifier._attr.relatedIdentifierType._value ? relatedIdentifier._attr.relatedIdentifierType._value : 'Type' }} <span class="caret"></span>
@@ -340,6 +345,7 @@
                     </div>
                     <div class="input-prepend input-append"  style="display:inline-block">
                         <span class="add-on">Resource Type General</span>
+                        <span class="add-on" ng-if="readonly && relatedIdentifier._attr.resourceTypeGeneral._value"> {{ relatedIdentifier._attr.resourceTypeGeneral._value }}</span>
                         <div class="btn-group" style="display:inline-block;" ng-show="!readonly">
                             <button class="btn dropdown-toggle" data-toggle="dropdown">
                                 {{ relatedIdentifier._attr.resourceTypeGeneral._value ? relatedIdentifier._attr.resourceTypeGeneral._value : 'Type' }} <span class="caret"></span>
@@ -351,6 +357,7 @@
                             </ul>
                         </div>
                         <span class="add-on">Relation Type</span>
+                        <span class="add-on" ng-if="readonly && relatedIdentifier._attr.relationType._value"> {{ relatedIdentifier._attr.relationType._value }}</span>
                         <div class="btn-group" style="display:inline-block;" ng-show="!readonly">
                             <button class="btn dropdown-toggle" data-toggle="dropdown">
                                 {{ relatedIdentifier._attr.relationType._value ? relatedIdentifier._attr.relationType._value : 'Type' }} <span class="caret"></span>
@@ -390,6 +397,7 @@
 
         <div class="widget-content">
             <div class="control-group" ng-repeat="description in objectModel.resource[0].descriptions[0].description track by $index">
+                <span class="add-on" ng-if="readonly && description._attr['descriptionType']['_value']"> {{ description._attr['descriptionType']['_value'] }}</span>
                 <div class="btn-group" ng-if="!readonly">
                     <button class="btn dropdown-toggle" data-toggle="dropdown">
                         {{ description._attr['descriptionType']['_value'] ? description._attr['descriptionType']['_value'] : 'Type' }} <span class="caret"></span>
