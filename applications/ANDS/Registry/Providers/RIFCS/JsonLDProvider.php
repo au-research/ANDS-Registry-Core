@@ -8,11 +8,11 @@ use ANDS\RecordData;
 use ANDS\RegistryObject;
 use ANDS\Registry\Providers\MetadataProvider;
 use ANDS\Registry\Providers\RIFCSProvider;
-use ANDS\Registry\Providers\RelationshipProvider;
+use ANDS\Registry\Providers\GrantsConnectionsProvider;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
+use ANDS\Registry\Providers\RIFCS\SubjectProvider;
+use ANDS\Registry\Providers\LinkProvider;
 use ANDS\Util\Config;
-use MinhD\SolrClient\SolrClient;
-use MinhD\SolrClient\SolrSearchResult;
 use ANDS\Util\XMLUtil;
 
 
@@ -33,25 +33,48 @@ class JsonLDProvider implements RIFCSProvider
         $base_url = Config::get('app.default_base_url');
 
         $data = MetadataProvider::get($record);
+        if(!$record->class=="collection" && !$record->class=="service") return null;
+        if($record->class=="collection" && !$record->type=="collection" && !$record->type=="dataset" && !$record->type=="software") return null;
+
         $json_ld = new JsonLDProvider();
         $json_ld->{'@context'} = "http://schema.org/";
         if($record->type=='dataset'|| $record->type=='collection') {
             $json_ld->{'@type'} = "Dataset";
+            $json_ld->distribution = self::getDistribution($record,$data);
+        }
+        if($record->type=='software'){
+            $json_ld->codeRepository = self::getCodeRepository($record,$data);
+            $json_ld->{'@type'} = "SoftwareSourceCode";
+        }
+        if($record->class=='service'){
+            $json_ld->{'@type'} = "Service";
         }
         $json_ld->name = $record->title;
         $json_ld->accountablePerson = self::getAccountablePerson($record,$data);
         $json_ld->author = self::getAuthor($record,$data);
         $json_ld->creator = self::getCreator($record,$data);
-        $json_ld->citation = self::getCitation($record,$data);
+        $json_ld->citation = self::getCitation($data);
         $json_ld->dateCreated = self::getDateCreated($record,$data);
         $json_ld->dateModified = self::getDateModified($record,$data);
         $json_ld->datePublished = DatesProvider::getPublicationDate($record);
         $json_ld->alternateName = self::getAlternateName($record,$data);
         $json_ld->alternativeHeadline = self::getAlternateName($record,$data);
-        $json_ld->version = self::getVersion($record,$data);
         $json_ld->description = self::getDescriptions($record,$data);
+        $json_ld->version = self::getVersion($record,$data);
+        $json_ld->fileFormat = self::getFileFormat($record,$data);
+        $json_ld->funder = self::getFunder($record);
+        $json_ld->hasPart = self::getRelated($data,"hasPart");
+        $json_ld->isBasedOn = self::getRelated($data,"isDerivedFrom");
+        $json_ld->isPartOf = self::getRelated($data,"isPartOf");
         $json_ld->sourceOrganization = array("@type"=>"Organization","name"=>$record->group);
         $json_ld->url = self::base_url() ."view?key=".$record->key;
+        $json_ld->identifier = self::getIdentifier($record,$data);
+        $json_ld->keywords = self::getKeywords($record);
+        $json_ld->license = self::getLicense($record,$data);
+        $json_ld->publisher = self::getPublisher($record,$data);
+        $json_ld->spatialCoverage = self::getSpatialCoverage($record,$data);
+        $json_ld->temporalCoverage = self::getTemporalCoverage($record,$data);
+        $json_ld->inLanguage = "en";
         $json_ld = (object) array_filter((array) $json_ld);
         return '<script type="application/ld+json">'.json_encode($json_ld).'<script>';
     }
@@ -60,9 +83,104 @@ class JsonLDProvider implements RIFCSProvider
         return ;
     }
 
+    public static function getIdentifier(
+        RegistryObject $record,
+        $data = null
+    ){
+        $identifiers = [];
+
+        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+            'ro:registryObject/ro:' . $record->class . '/ro:citationInfo/ro:citationMetadata/ro:identifier') AS $identifier) {
+            $identifier_url = LinkProvider::getResolvedLinkForIdentifier($identifier['type'],(string)$identifier);
+            if($identifier_url) {
+                $identifiers[] = $identifier_url;
+            }
+        };
+
+        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+            'ro:registryObject/ro:' . $record->class . '/ro:identifier') AS $identifier) {
+            $identifier_url = LinkProvider::getResolvedLinkForIdentifier($identifier['type'],(string)$identifier);
+            if($identifier_url) {
+                $identifiers[] = $identifier_url;
+            }
+         };
+        return $identifiers;
+    }
+
+    public static function getSpatialCoverage(
+        RegistryObject $record,
+        $data = null
+    ){
+        $coverages = [];
+
+        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+            'ro:registryObject/ro:' . $record->class . '/ro:coverage/ro:spatial') AS $coverage) {
+            $coverages[] = array("@type"=>"place","description"=>$coverage['type']." ".(string)$coverage);
+        };
+
+        return $coverages;
+    }
+
+    public static function getTemporalCoverage(
+        RegistryObject $record,
+        $data = null
+    ){
+        $coverages = [];
+
+        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+            'ro:registryObject/ro:' . $record->class . '/ro:coverage/ro:temporal/ro:date') AS $coverage) {
+            $coverages[] = $coverage['type']." ".(string)$coverage;
+        };
+
+        return $coverages;
+    }
+
+    public static function getPublisher(
+        RegistryObject $record,
+        $data = null
+    ){
+        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+            'ro:registryObject/ro:' . $record->class . '/ro:citationInfo/ro:citationMetadata/ro:publisher') AS $publisher) {
+
+            $publishers = array("@type"=>"Organization","name"=>(string)$publisher);
+            return $publishers;
+        };
+
+        $publishers = array("@type"=>"Organization","name"=>$record->group);
+
+        return $publishers;
+    }
+
+    public static function getLicense(
+        RegistryObject $record,
+        $data = null
+    ){
+        $licenses = [];
+
+        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+            'ro:registryObject/ro:' . $record->class . '/ro:rights/ro:licence') AS $license) {
+            $licenses[]= (string)$license;
+            $licenses[]= (string)$license['type'];
+            $licenses[]= (string)$license['rightsUri'];
+        };
+
+        return $licenses;
+    }
+
+    public static function getKeywords(
+        RegistryObject $record
+    ){
+        $keywords = "";
+
+        $subjects = SubjectProvider::processSubjects($record);
+        foreach($subjects as $subject){
+            $keywords .= ", ".$subject['resolved'];
+        }
+        return trim($keywords,",");
+    }
+
 
     public static function getCitation(
-        RegistryObject $record,
         $data = null
     )
     {
@@ -81,7 +199,7 @@ class JsonLDProvider implements RIFCSProvider
                         "propertyID"=> $relation->prop("to_identifier_type"),
                         "value"=> $relation->prop("to_identifier")
                     );
-                    $citation[] = array("@type"=>"CreativeWork","name"=>$relation->prop("relation_to_title"),"identifier"=>$identifier);
+                    $citation[] = array("@type"=>"CreativeWork","name"=>$relation->prop("relation_to_title"),"identifier"=>[$identifier]);
                 }
             }
         }
@@ -89,6 +207,48 @@ class JsonLDProvider implements RIFCSProvider
         return $citation;
 
     }
+
+    public static function getFunder(
+        RegistryObject $record
+    ){
+        $funders = [];
+        $provider = GrantsConnectionsProvider::create();
+        $unprocessed = $provider->getFunder($record);
+        if($unprocessed) {
+            $type = ($unprocessed->type=="group") ? "Organization" : "Person";
+            $funders[] = array("@type" => $type, "name"=>$unprocessed->title, "url"=>self::base_url() ."view?key=".$unprocessed->key);
+        }
+        return $funders;
+
+    }
+
+    public static function getRelated(
+        $data = null,
+        $relation_type = null
+    ){
+        $related = [];
+        $relationships = $data['relationships'];
+
+        foreach ($relationships as $relation) {
+            $relation_types = [];
+            if(is_array($relation->prop('relation_type'))){
+                $relation_types = $relation->prop('relation_type');
+            }else{
+                $relation_types[] = $relation->prop('relation_type');
+            }
+            if ( ($relation->prop("to_class") == "collection" || $relation->prop("to_related_info_type") == "collection")
+                && in_array($relation_type, $relation_types)) {
+                if($relation->prop("to_title") != ""){
+                    $related[] = array("@type"=>"CreativeWork","name"=>$relation->prop("to_title"),"url"=>self::base_url() ."view?key=".$relation->prop("to_key"));
+                }else{
+                    $related[] = array("@type"=>"CreativeWork","name"=>$relation->prop("relation_to_title"));
+                }
+            }
+        }
+        return $related;
+
+    }
+
 
     public static function getDateCreated(
         RegistryObject $record,
@@ -112,20 +272,53 @@ class JsonLDProvider implements RIFCSProvider
             }
         };
 
-       // $dateCreated[] = DatesProvider::getCreatedDate($record);
         return $dateCreated;
 
     }
 
-    public static function getDatePublished(
+    public static function getDistribution(
         RegistryObject $record,
         $data = null
     )
     {
-        $datePublished[] = DatesProvider::getPublicationDate($record);
+        $distribution = [];
+        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+            'ro:registryObject/ro:' . $record->class . '/ro:location/ro:address/ro:electronic') AS $distribute) {
+            if((string)$distribute['target']=='directDownload') {
+                $distribution[] = array("@type"=>"DataDownload","contentSize"=>(string)$distribute->byteSize,
+                    "URL"=>(string)$distribute->value,"fileFormat"=>(string)$distribute->mediaType,"description"=>(string)$distribute->notes);
+            }
+        };
+        return $distribution;
+    }
 
-        return $datePublished;
+    public static function getCodeRepository(
+        RegistryObject $record,
+        $data = null
+    )
+    {
+        $codeRepository = [];
+        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+            'ro:registryObject/ro:' . $record->class . '/ro:location/ro:address/ro:electronic') AS $repository) {
 
+            $codeRepository[] = (string)$repository->value;
+             };
+        return $codeRepository;
+    }
+
+    public static function getFileFormat(
+        RegistryObject $record,
+        $data = null
+    )
+    {
+        $fileFormat = [];
+        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+            'ro:registryObject/ro:' . $record->class . '/ro:location/ro:address/ro:electronic') AS $distribute) {
+            if((string)$distribute['target']=='directDownload') {
+                $fileFormat[] = (string)$distribute->mediaType;
+            }
+        };
+        return $fileFormat;
     }
 
 
@@ -158,8 +351,13 @@ class JsonLDProvider implements RIFCSProvider
 
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class . '/ro:citationInfo/ro:citationMetadata/ro:contributor') AS $contributor) {
-            $name = (array)$contributor;
-            $creator[]= array("@type"=>"Person","name"=>(implode(" ",$name['namePart'])));
+            $names = (array)$contributor;
+            if(is_array($names['namePart'])){
+                $name = implode(" ",$names['namePart']);
+            }else{
+                $name = $names['namePart'];
+            }
+            $creator[]= array("@type"=>"Person","name"=>$name);
         };
 
         if(count($creator)>0) return $creator;
@@ -179,12 +377,7 @@ class JsonLDProvider implements RIFCSProvider
                 if($relation->prop("to_title") != ""){
                     $creator[] = array("@type"=>$type,"name"=>$relation->prop("to_title"),"url"=>self::base_url() ."view?key=".$relation->prop("to_key"));
                 }else{
-                    $identifier =array(
-                        "@type"=> "PropertyValue",
-                        "propertyID"=> $relation->prop("to_identifier_type"),
-                        "value"=> $relation->prop("to_identifier")
-                    );
-                    $creator[] = array("@type"=>$type,"name"=>$relation->prop("relation_to_title"),"identifier"=>$identifier);
+                    $creator[] = array("@type"=>$type,"name"=>$relation->prop("relation_to_title"));
                 }
 
                 return $creator;
@@ -209,8 +402,13 @@ class JsonLDProvider implements RIFCSProvider
 
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class . '/ro:citationInfo/ro:citationMetadata/ro:contributor') AS $contributor) {
-            $name = (array)$contributor;
-            $author[]= array("@type"=>"Person","name"=>(implode(" ",$name['namePart'])));
+            $names = (array)$contributor;
+            if(is_array($names['namePart'])){
+                $name = implode(" ",$names['namePart']);
+            }else{
+                $name = $names['namePart'];
+            }
+            $author[]= array("@type"=>"Person","name"=>$name);
         };
 
         if(count($author)>0) return $author;
@@ -230,12 +428,7 @@ class JsonLDProvider implements RIFCSProvider
                 if($relation->prop("to_title") != ""){
                     $author[] = array("@type"=>$type,"name"=>$relation->prop("to_title"),"url"=>self::base_url() ."view?key=".$relation->prop("to_key"));
                 }else{
-                    $identifier =array(
-                        "@type"=> "PropertyValue",
-                        "propertyID"=> $relation->prop("to_identifier_type"),
-                        "value"=> $relation->prop("to_identifier")
-                    );
-                    $author[] = array("@type"=>$type,"name"=>$relation->prop("relation_to_title"),"identifier"=>$identifier);
+                    $author[] = array("@type"=>$type,"name"=>$relation->prop("relation_to_title"));
                 }
             }
         }
@@ -256,12 +449,7 @@ class JsonLDProvider implements RIFCSProvider
                 if($relation->prop("to_title") != ""){
                     $author[] = array("@type"=>$type,"name"=>$relation->prop("to_title"),"url"=>self::base_url() ."view?key=".$relation->prop("to_key"));
                 }else{
-                    $identifier =array(
-                        "@type"=> "PropertyValue",
-                        "propertyID"=> $relation->prop("to_identifier_type"),
-                        "value"=> $relation->prop("to_identifier")
-                    );
-                    $author[] = array("@type"=>$type,"name"=>$relation->prop("relation_to_title").$relation->prop('relation_type'),"identifier"=>$identifier);
+                    $author[] = array("@type"=>$type,"name"=>$relation->prop("relation_to_title").$relation->prop('relation_type'));
                 }
             }
         }
@@ -284,8 +472,13 @@ class JsonLDProvider implements RIFCSProvider
         $relationships = $data['relationships'];
 
         foreach ($relationships as $relation) {
-            if ($relation->prop("to_class") == "party"
-                && ($relation->prop("relation_type") == "isOwnedBy" || in_array("isOwnedBy", $relation->prop('relation_type')))
+            $relation_types = [];
+            if(is_array($relation->prop('relation_type'))){
+                $relation_types = $relation->prop('relation_type');
+            }else{
+                $relation_types[] = $relation->prop('relation_type');
+            }
+            if ($relation->prop("to_class") == "party" && in_array("isOwnedBy", $relation_types)
             ) {
                 $accountablePerson[] = array("@type"=>"Person","name"=>$relation->prop("to_title"));
             }
