@@ -22,6 +22,19 @@ class JsonLDProviderTest extends \RegistryTestClass
         echo $output;
     }
 
+    /** @test **/
+    public function it_should_output_json_encode_object_software()
+    {
+
+        $key = "GA/07275e06-056f-1579-e054-00144fdd4fa6";
+        $this->ensureKeyExist($key);
+        $record = RegistryObjectsRepository::getPublishedByKey($key);
+        RelationshipProvider::process($record);
+        //dd(RelationshipProvider::get($record));
+        $output = JsonLDProvider::process($record);
+        echo $output;
+    }
+
 
 
 
