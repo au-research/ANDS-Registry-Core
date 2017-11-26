@@ -59,6 +59,12 @@ class Orcid extends MX_Controller {
 
 	    // see if there's any error
         if (Request::get('error')) {
+
+            // user deny the auth
+            if (Request::get('error') == "access_denied") {
+                redirect(registry_url('orcid/login'));
+            }
+
             throw new Exception(Request::get('error_description'));
         }
 
