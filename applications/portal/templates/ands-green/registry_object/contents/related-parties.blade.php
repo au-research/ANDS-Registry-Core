@@ -1,15 +1,6 @@
 @if( $ro->core['class'] != 'party' && $ro->core['class'] !='group' )
     @if (is_array($related['researchers']) && sizeof($related['researchers']['docs']) > 0)
         @foreach($related['researchers']['docs'] as $col)
-            <?php
-            $hasRights = false;
-            if($ro->rights){
-                foreach($ro->rights as $right){
-                    if($right['type']=='rightsStatement') $hasRights=true;
-                }
-            }
-            ?>
-
             <a href="<?php echo base_url()?>{{$col['to_slug']}}/{{$col['to_id']}}"
                tip="{{ $col['display_description'] }}"
                class="ro_preview"
@@ -28,17 +19,6 @@
         @endif
     @elseif(is_array($related['organisations']) && sizeof($related['organisations']['docs']) > 0)
         @foreach($related['organisations']['docs'] as $col)
-
-            <?php
-            $hasRights = false;
-            if($ro->rights){
-                foreach($ro->rights as $right){
-                    if($right['type']=='rightsStatement') $hasRights=true;
-                }
-            }
-
-            ?>
-
             <a href="<?php echo base_url()?>{{$col['to_slug']}}/{{$col['to_id']}}"
                tip="{{ $col['display_description'] }}"
                class="ro_preview"
