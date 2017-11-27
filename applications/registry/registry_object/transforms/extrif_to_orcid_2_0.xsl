@@ -81,11 +81,23 @@
                     <xsl:otherwise>other</xsl:otherwise>
                 </xsl:choose>
             </work:type>
-            <xsl:if test="$createdDate != ''">
+            <xsl:if test="$publicationDate != ''">
                 <common:publication-date xmlns:common="http://www.orcid.org/ns/common">
-                    <common:year>
-                        <xsl:value-of select="$createdDate"/>
-                    </common:year>
+                    <xsl:if test="$publicationDateYear != ''">
+                        <common:year>
+                            <xsl:value-of select="$publicationDateYear"/>
+                        </common:year>
+                    </xsl:if>
+                    <xsl:if test="$publicationDateMonth != ''">
+                        <common:month>
+                            <xsl:value-of select="$publicationDateMonth"/>
+                        </common:month>
+                    </xsl:if>
+                    <xsl:if test="$publicationDateDay != ''">
+                        <common:day>
+                            <xsl:value-of select="$publicationDateDay"/>
+                        </common:day>
+                    </xsl:if>
                 </common:publication-date>
             </xsl:if>
 

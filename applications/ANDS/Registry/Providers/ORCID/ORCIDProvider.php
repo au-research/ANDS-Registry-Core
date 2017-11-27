@@ -67,12 +67,20 @@ class ORCIDProvider implements RegistryContentProvider
             $citationType = 'bibtex';
         }
 
+        $publicationDate = DatesProvider::getPublicationDate($record, $data);
+        $year = DatesProvider::formatDate($publicationDate, 'Y');
+        $month = DatesProvider::formatDate($publicationDate, 'm');
+        $day = DatesProvider::formatDate($publicationDate, 'd');
+
         // TODO: description as attribute DescriptionProvider
         $processor = XMLUtil::getORCIDTransformer();
         $dom = new DOMDocument();
         $dom->loadXML($xml, LIBXML_NOENT);
         $processor->setParameter('','dateProvided', date("Y"));
-        $processor->setParameter('','createdDate', DatesProvider::getPublicationDate($record, $data, 'Y'));
+        $processor->setParameter('','publicationDate', $publicationDate ?: '');
+        $processor->setParameter('','publicationDateYear', $year ?: '');
+        $processor->setParameter('','publicationDateMonth', $month ?: '');
+        $processor->setParameter('','publicationDateDay', $day ?: '');
         $processor->setParameter('','rda_url', $record->portalUrl);
         $processor->setParameter('','rda_url_key', $record->portalUrlWithKey);
         $processor->setParameter('', 'title', $record->title);
