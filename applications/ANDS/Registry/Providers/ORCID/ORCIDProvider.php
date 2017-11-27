@@ -2,6 +2,7 @@
 namespace ANDS\Registry\Providers\ORCID;
 use ANDS\Registry\Providers\MetadataProvider;
 use ANDS\Registry\Providers\RegistryContentProvider;
+use ANDS\Registry\Providers\RIFCS\CitationProvider;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\Providers\RIFCS\DescriptionProvider;
 use ANDS\RegistryObject;
@@ -58,6 +59,14 @@ class ORCIDProvider implements RegistryContentProvider
         $descriptions = DescriptionProvider::get($record);
         $shortDescription = $descriptions['primary_description'] ?: '';
 
+        $citations = CitationProvider::get($record);
+        $citationValue = $citations['full'];
+        $citationType = $citations['full_style'];
+        if (!$citationValue) {
+            $citationValue = $citations['bibtex'];
+            $citationType = 'bibtex';
+        }
+
         // TODO: description as attribute DescriptionProvider
         $processor = XMLUtil::getORCIDTransformer();
         $dom = new DOMDocument();
@@ -67,7 +76,9 @@ class ORCIDProvider implements RegistryContentProvider
         $processor->setParameter('','rda_url', $record->portalUrl);
         $processor->setParameter('','rda_url_key', $record->portalUrlWithKey);
         $processor->setParameter('', 'title', $record->title);
-        $processor->setParameter('', 'description', $shortDescription);
+        $processor->setParameter('', 'description', $shortDescription ?: '');
+        $processor->setParameter('', 'citationValue', $citationValue ?: '');
+        $processor->setParameter('', 'citationType', $citationType ?: '');
         if ($existing) {
             $processor->setParameter('', 'put_code', $existing->put_code);
         }

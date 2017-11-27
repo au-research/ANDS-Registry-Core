@@ -40,6 +40,19 @@
                     <xsl:value-of select="$description"/>
                 </work:short-description>
             </xsl:if>
+
+            <xsl:if test="$citationType != ''">
+                <work:citation-type>
+                    <xsl:value-of select="$citationType"/>
+                </work:citation-type>
+            </xsl:if>
+
+            <xsl:if test="$citationValue != ''">
+                <work:citation-value>
+                    <xsl:value-of select="$citationValue"/>
+                </work:citation-value>
+            </xsl:if>
+
             <xsl:if test="ro:collection/ro:citationInfo/ro:fullCitation">
                 <work:citation>
                     <work:citation-type>
