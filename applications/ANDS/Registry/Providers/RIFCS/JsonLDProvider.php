@@ -28,55 +28,62 @@ class JsonLDProvider implements RIFCSProvider
         return Config::get('app.default_base_url');
     }
 
-    public static function process(RegistryObject $record){
+    public static function process(RegistryObject $record)
+    {
 
         $base_url = Config::get('app.default_base_url');
 
         $data = MetadataProvider::get($record);
-        if(!$record->class=="collection" && !$record->class=="service") return null;
-        if($record->class=="collection" && !$record->type=="collection" && !$record->type=="dataset" && !$record->type=="software") return null;
+        if ($record->class <> "collection" && $record->class <> "service") return "";
+        if ($record->class == "collection" && $record->type <> "collection" && $record->type <> "dataset" && $record->type <> "software") return "";
 
         $json_ld = new JsonLDProvider();
         $json_ld->{'@context'} = "http://schema.org/";
-        if($record->type=='dataset'|| $record->type=='collection') {
+        if ($record->type == 'dataset' || $record->type == 'collection') {
             $json_ld->{'@type'} = "Dataset";
-            $json_ld->distribution = self::getDistribution($record,$data);
+            $json_ld->distribution = self::getDistribution($record, $data);
         }
-        if($record->type=='software'){
-            $json_ld->codeRepository = self::getCodeRepository($record,$data);
+        if ($record->type == 'software') {
+            $json_ld->codeRepository = self::getCodeRepository($record, $data);
             $json_ld->{'@type'} = "SoftwareSourceCode";
         }
-        if($record->class=='service'){
+        if ($record->class == 'service') {
             $json_ld->{'@type'} = "Service";
+            $json_ld->serviceType = $record->type;
+            $json_ld->provider = self::getProvider($record, $data);
+            $json_ld->termsOfService = self::getLicense($record, $data);
+        } elseif ($record->class == 'collection'){
+            $json_ld->accountablePerson = self::getAccountablePerson($record, $data);
+            $json_ld->author = self::getAuthor($record, $data);
+            $json_ld->creator = self::getCreator($record, $data);
+            $json_ld->citation = self::getCitation($data);
+            $json_ld->dateCreated = self::getDateCreated($record, $data);
+            $json_ld->dateModified = self::getDateModified($record, $data);
+            $json_ld->datePublished = DatesProvider::getPublicationDate($record);
+            $json_ld->alternativeHeadline = self::getAlternateName($record, $data);
+            $json_ld->version = self::getVersion($record, $data);
+            $json_ld->fileFormat = self::getFileFormat($record, $data);
+            $json_ld->funder = self::getFunder($record);
+            $json_ld->hasPart = self::getRelated($data, "hasPart");
+            $json_ld->isBasedOn = self::getRelated($data, "isDerivedFrom");
+            $json_ld->isPartOf = self::getRelated($data, "isPartOf");
+            $json_ld->sourceOrganization = array("@type" => "Organization", "name" => $record->group);
+            $json_ld->keywords = self::getKeywords($record);
+            $json_ld->license = self::getLicense($record, $data);
+            $json_ld->publisher = self::getPublisher($record, $data);
+            $json_ld->spatialCoverage = self::getSpatialCoverage($record, $data);
+            $json_ld->temporalCoverage = self::getTemporalCoverage($record, $data);
+            $json_ld->inLanguage = "en";
         }
+
         $json_ld->name = $record->title;
-        $json_ld->accountablePerson = self::getAccountablePerson($record,$data);
-        $json_ld->author = self::getAuthor($record,$data);
-        $json_ld->creator = self::getCreator($record,$data);
-        $json_ld->citation = self::getCitation($data);
-        $json_ld->dateCreated = self::getDateCreated($record,$data);
-        $json_ld->dateModified = self::getDateModified($record,$data);
-        $json_ld->datePublished = DatesProvider::getPublicationDate($record);
-        $json_ld->alternateName = self::getAlternateName($record,$data);
-        $json_ld->alternativeHeadline = self::getAlternateName($record,$data);
-        $json_ld->description = self::getDescriptions($record,$data);
-        $json_ld->version = self::getVersion($record,$data);
-        $json_ld->fileFormat = self::getFileFormat($record,$data);
-        $json_ld->funder = self::getFunder($record);
-        $json_ld->hasPart = self::getRelated($data,"hasPart");
-        $json_ld->isBasedOn = self::getRelated($data,"isDerivedFrom");
-        $json_ld->isPartOf = self::getRelated($data,"isPartOf");
-        $json_ld->sourceOrganization = array("@type"=>"Organization","name"=>$record->group);
-        $json_ld->url = self::base_url() ."view?key=".$record->key;
-        $json_ld->identifier = self::getIdentifier($record,$data);
-        $json_ld->keywords = self::getKeywords($record);
-        $json_ld->license = self::getLicense($record,$data);
-        $json_ld->publisher = self::getPublisher($record,$data);
-        $json_ld->spatialCoverage = self::getSpatialCoverage($record,$data);
-        $json_ld->temporalCoverage = self::getTemporalCoverage($record,$data);
-        $json_ld->inLanguage = "en";
+        $json_ld->description = self::getDescriptions($record, $data);
+        $json_ld->alternateName = self::getAlternateName($record, $data);
+        $json_ld->identifier = self::getIdentifier($record, $data);
+        $json_ld->url = self::base_url() . "view?key=" . $record->key;
+
         $json_ld = (object) array_filter((array) $json_ld);
-        return '<script type="application/ld+json">'.json_encode($json_ld).'<script>';
+        return '<script type="application/ld+json">'.json_encode($json_ld).'</script>';
     }
 
     public static function get(RegistryObject $record){
@@ -249,6 +256,48 @@ class JsonLDProvider implements RIFCSProvider
 
     }
 
+    public static function getProvider(
+        $record,
+        $data = null
+    ){
+        $related = [];
+        $relationships = $data['relationships'];
+        $provider_relationships = array("isOwnedBy", "isManagedBy");
+
+        foreach ($relationships as $relation) {
+            foreach ($provider_relationships as $provider_relationship) {
+                $relation_types = [];
+                if (is_array($relation->prop('relation_type'))) {
+                    $relation_types = $relation->prop('relation_type');
+                } else {
+                    $relation_types[] = $relation->prop('relation_type');
+                }
+                if (($relation->prop("to_class") == "party" || $relation->prop("to_related_info_type") == "party")
+                    && in_array($provider_relationship, $relation_types)
+                ) {
+                    if($relation->prop("to_type")=='group'|| $relation->prop("to_related_info_type")=='group'){
+                        $type = "Organization";
+                    } else{
+                        $type = "Person";
+                    }
+                    if ($relation->prop("to_title") != "") {
+                        $related[] = array("@type" => $type, "name" => $relation->prop("to_title"), "url" => self::base_url() . "view?key=" . $relation->prop("to_key"));
+                    } else {
+                        $related[] = array("@type" => $type, "name" => $relation->prop("relation_to_title"));
+                    }
+                }
+            }
+        }
+
+        if(count($related) > 0) return $related;
+
+        $related[] =array("@type" => "Organization", "name" => $record->group);
+
+        return $related;
+
+    }
+
+
 
     public static function getDateCreated(
         RegistryObject $record,
@@ -364,9 +413,14 @@ class JsonLDProvider implements RIFCSProvider
 
         $relationships = $data['relationships'];
         foreach ($relationships as $relation) {
+            if (is_array($relation->prop('relation_type'))) {
+                $relation_types = $relation->prop('relation_type');
+            } else {
+                $relation_types[] = $relation->prop('relation_type');
+            }
             foreach ($creatorArray as $creatorType)
             if (($relation->prop("to_class") == "party" || $relation->prop("to_related_info_type") == "party")
-                && ($relation->prop('relation_type') == $creatorType) || in_array($creatorType, $relation->prop('relation_type'))
+                && in_array($creatorType, $relation_types)
             ) {
                 if($relation->prop("to_type")=='group'|| $relation->prop("to_related_info_type")=='group'){
                     $type = "Organization";
@@ -416,19 +470,26 @@ class JsonLDProvider implements RIFCSProvider
         $relationships = $data['relationships'];
 
         foreach ($relationships as $relation) {
-            if (($relation->prop("to_class") == "party" || $relation->prop("to_related_info_type") == "party")
-                && (in_array($relation->prop('relation_type'),$authorArray) || count(array_intersect($authorArray, $relation->prop('relation_type')))>0)
-            ) {
-                if($relation->prop("to_type")=='group'|| $relation->prop("to_related_info_type")=='group'){
-                    $type = "Organization";
-                } else{
-                    $type = "Person";
-                }
+            if (is_array($relation->prop('relation_type'))) {
+                $relation_types = $relation->prop('relation_type');
+            } else {
+                $relation_types[] = $relation->prop('relation_type');
+            }
+            foreach($authorArray as $auth_type) {
+                if (($relation->prop("to_class") == "party" || $relation->prop("to_related_info_type") == "party")
+                    && (in_array($auth_type, $relation_types))
+                ) {
+                    if ($relation->prop("to_type") == 'group' || $relation->prop("to_related_info_type") == 'group') {
+                        $type = "Organization";
+                    } else {
+                        $type = "Person";
+                    }
 
-                if($relation->prop("to_title") != ""){
-                    $author[] = array("@type"=>$type,"name"=>$relation->prop("to_title"),"url"=>self::base_url() ."view?key=".$relation->prop("to_key"));
-                }else{
-                    $author[] = array("@type"=>$type,"name"=>$relation->prop("relation_to_title"));
+                    if ($relation->prop("to_title") != "") {
+                        $author[] = array("@type" => $type, "name" => $relation->prop("to_title"), "url" => self::base_url() . "view?key=" . $relation->prop("to_key"));
+                    } else {
+                        $author[] = array("@type" => $type, "name" => $relation->prop("relation_to_title"));
+                    }
                 }
             }
         }
@@ -436,9 +497,14 @@ class JsonLDProvider implements RIFCSProvider
         if(count($author)>0) return $author;
 
         foreach ($relationships as $relation) {
+            if (is_array($relation->prop('relation_type'))) {
+                $relation_types = $relation->prop('relation_type');
+            } else {
+                $relation_types[] = $relation->prop('relation_type');
+            }
             foreach($authorArray2 as $authorType)
             if (($relation->prop("to_class") == "party" || $relation->prop("to_related_info_type") == "party")
-                && (in_array($relation->prop('relation_type'),$authorArray2) || count(array_intersect($authorArray2, $relation->prop('relation_type')))>0)
+                && in_array($authorType,$relation_types)
             ) {
                 if($relation->prop("to_type")=='group'||$relation->prop("to_related_info_type")=='group'){
                     $type = "Organization";
