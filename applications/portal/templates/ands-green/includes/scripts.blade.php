@@ -119,3 +119,8 @@
 		<script src="{{asset_url('js/'.$script.'.js')}}"></script>
 	@endforeach
 @endif
+
+<?php if(isset($ro->jsonld[0])){
+    print($ro->jsonld[0]);
+}
+?>
