@@ -120,8 +120,7 @@
 	@endforeach
 @endif
 
-<?php
-if(isset($ro->jsonld[0])){ 
-    print($ro->jsonld[0]); 
-} 
+<?php if(isset($ro->jsonld[0])){
+    print($ro->jsonld[0]);
+}
 ?>
