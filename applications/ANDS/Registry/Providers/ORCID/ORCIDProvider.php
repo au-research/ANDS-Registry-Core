@@ -3,6 +3,7 @@ namespace ANDS\Registry\Providers\ORCID;
 use ANDS\Registry\Providers\MetadataProvider;
 use ANDS\Registry\Providers\RegistryContentProvider;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
+use ANDS\Registry\Providers\RIFCS\DescriptionProvider;
 use ANDS\RegistryObject;
 use ANDS\Util\XMLUtil;
 use DOMDocument;
@@ -54,6 +55,9 @@ class ORCIDProvider implements RegistryContentProvider
             return $item->registry_object_id === $record->registry_object_id && $item->in_orcid;
         })->first();
 
+        $descriptions = DescriptionProvider::get($record);
+        $shortDescription = $descriptions['primary_description'] ?: '';
+
         // TODO: description as attribute DescriptionProvider
         $processor = XMLUtil::getORCIDTransformer();
         $dom = new DOMDocument();
@@ -63,7 +67,7 @@ class ORCIDProvider implements RegistryContentProvider
         $processor->setParameter('','rda_url', $record->portalUrl);
         $processor->setParameter('','rda_url_key', $record->portalUrlWithKey);
         $processor->setParameter('', 'title', $record->title);
-        $processor->setParameter('', 'description', '');
+        $processor->setParameter('', 'description', $shortDescription);
         if ($existing) {
             $processor->setParameter('', 'put_code', $existing->put_code);
         }
