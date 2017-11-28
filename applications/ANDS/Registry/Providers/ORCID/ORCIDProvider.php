@@ -202,8 +202,18 @@ class ORCIDProvider implements RegistryContentProvider
             ];
         }
 
+        // first, additional mapping for sequence
+        $contributors = collect($contributors)->map(function($contributor) {
+           if ($seq = $contributor['contributor-attributes']['contributor-sequence']) {
+               $contributor['contributor-attributes']['contributor-sequence'] = $seq == 1 ? "first" : "additional";
+           }
+           return $contributor;
+        });
+
         return $contributors;
     }
+
+
 
     public static function getContributorRole($party)
     {

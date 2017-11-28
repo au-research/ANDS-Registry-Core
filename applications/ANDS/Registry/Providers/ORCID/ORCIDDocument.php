@@ -4,6 +4,7 @@
 namespace ANDS\Registry\Providers\ORCID;
 
 
+use ANDS\Util\XMLUtil;
 use DOMDocument;
 
 class ORCIDDocument
@@ -54,7 +55,7 @@ class ORCIDDocument
 
         // schema location
         $root->setAttributeNS('http://www.w3.org/2001/XMLSchema-instance',
-            'xsi:schemaLocation', implode(' ', $this->schemaLocations));
+            'xsi:schemaLocation', $this->schema());
 
         if ($this->get('put_code')) {
             $root->setAttribute('put-code', $this->get('put_code'));
@@ -141,6 +142,11 @@ class ORCIDDocument
         }
 
         return $this->dom->saveXML();
+    }
+
+    private function schema()
+    {
+        return implode(" ", $this->schemaLocations);
     }
 
     /**
