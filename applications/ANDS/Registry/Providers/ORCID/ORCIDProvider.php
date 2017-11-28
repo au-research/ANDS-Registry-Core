@@ -102,70 +102,7 @@ class ORCIDProvider implements RegistryContentProvider
      */
     public static function getORCIDXML(RegistryObject $record, ORCIDRecord $orcid)
     {
-        $data = MetadataProvider::get($record);
-
-        $doc = new ORCIDDocument();
-
-        // check if this is an update
-        $existing = $orcid->exports->filter(function ($item) use ($record) {
-            return $item->registry_object_id === $record->registry_object_id && $item->in_orcid;
-        })->first();
-        if ($existing) {
-            $doc->set('put_code', $existing->put_code);
-        }
-
-        $doc->set('title', $record->title);
-
-        // collect descriptions
-        $descriptions = DescriptionProvider::get($record);
-        if ($descriptions['primary_description']) {
-            $doc->set('short-description', $descriptions['primary_description']);
-        }
-
-        $doc->set('url', $record->portalUrl);
-
-        // collect citations
-        $citations = CitationProvider::get($record);
-        $citationValue = $citations['full'];
-        $citationType = $citations['full_style'];
-        if (!$citationValue) {
-            $citationValue = $citations['bibtex'];
-            $citationType = 'bibtex';
-        }
-
-        $doc->set('citation', [
-            'type' => $citationType,
-            'value' => $citationValue
-        ]);
-
-        // dates
-        $publicationDate = DatesProvider::getPublicationDate($record, $data);
-        if ($publicationDate) {
-            $doc->set('publication-date', [
-                'year' => DatesProvider::formatDate($publicationDate, 'Y'),
-                'month' => DatesProvider::formatDate($publicationDate, 'm'),
-                'day' => DatesProvider::formatDate($publicationDate, 'd')
-            ]);
-        }
-
-        // external-ids
-        $identifiers = IdentifierProvider::get($record);
-        if ($identifiers && count($identifiers) > 0) {
-
-            $identifiers = collect($identifiers)->map(function($item) {
-                if (!in_array($item['type'], self::$validExternalIDsIdentifierType)) {
-                    $item['type'] = 'other-id';
-                }
-                return $item;
-            })->toArray();
-            $doc->set('external-ids', $identifiers);
-        }
-
-        // contributors
-        if ($contributors = self::getContributors($record, $data)) {
-            $doc->set('contributors', $contributors);
-        }
-
+        $doc = self::getORCID($record, $orcid);
         return $doc->toXML();
     }
 
@@ -229,6 +166,107 @@ class ORCIDProvider implements RegistryContentProvider
             }
         }
         return "author";
+    }
+
+    public static function getORCID($record, $orcid)
+    {
+        $data = MetadataProvider::get($record);
+
+        $doc = new ORCIDDocument();
+
+        // check if this is an update
+        $existing = $orcid->exports->filter(function ($item) use ($record) {
+            return $item->registry_object_id === $record->registry_object_id && $item->in_orcid;
+        })->first();
+        if ($existing) {
+            $doc->set('put_code', $existing->put_code);
+        }
+
+        $doc->set('title', $record->title);
+
+        // type
+        switch ($record->type) {
+            case 'collection':
+            case 'dataset' :
+                $type = 'data-set';
+                break;
+            case 'publication':
+                $type = 'journal-article';
+                break;
+            default:
+                $type = 'other';
+                break;
+        }
+        $doc->set('work-type', $type);
+
+        // collect descriptions
+        $descriptions = DescriptionProvider::get($record);
+        if ($descriptions['primary_description']) {
+            $doc->set('short-description', $descriptions['primary_description']);
+        }
+
+        $doc->set('url', $record->portalUrl);
+
+        // collect citations
+        $citations = CitationProvider::get($record);
+        $citationValue = $citations['full'];
+
+        $citationType = self::getFullCitationStyle($citations['full_style']);
+        if (!$citationValue) {
+            $citationValue = $citations['bibtex'];
+            $citationType = 'bibtex';
+        }
+
+        $doc->set('citation', [
+            'type' => $citationType,
+            'value' => $citationValue
+        ]);
+
+        // dates
+        $publicationDate = DatesProvider::getPublicationDate($record, $data);
+        if ($publicationDate) {
+            $doc->set('publication-date', [
+                'year' => DatesProvider::formatDate($publicationDate, 'Y'),
+                'month' => DatesProvider::formatDate($publicationDate, 'm'),
+                'day' => DatesProvider::formatDate($publicationDate, 'd')
+            ]);
+        }
+
+        // external-ids
+        $identifiers = IdentifierProvider::get($record);
+        if ($identifiers && count($identifiers) > 0) {
+
+            $identifiers = collect($identifiers)->map(function($item) {
+                if (!in_array($item['type'], self::$validExternalIDsIdentifierType)) {
+                    $item['type'] = 'other-id';
+                }
+                return $item;
+            })->toArray();
+            $doc->set('external-ids', $identifiers);
+        }
+
+        // contributors
+        if ($contributors = self::getContributors($record, $data)) {
+            $doc->set('contributors', $contributors);
+        }
+
+        return $doc;
+    }
+
+    private static function getFullCitationStyle($full_style)
+    {
+        $mapping = [
+            'Harvard' => 'formatted-harvard',
+            'APA' => 'formatted-apa',
+            'MLA' => 'formatted-mla',
+            'Vancouver' => 'formatted-vancouver',
+            'IEEE' => 'formatted-ieee',
+            'Chicago' => 'formatted-chicago'
+        ];
+        if (array_key_exists($full_style, $mapping)) {
+            return $mapping[$full_style];
+        }
+        return 'formatted-unspecified';
     }
 
 }

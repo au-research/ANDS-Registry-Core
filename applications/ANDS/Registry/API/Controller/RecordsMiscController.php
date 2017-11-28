@@ -21,6 +21,12 @@ class RecordsMiscController
         $this->printXML($xml);
     }
 
+    public function orcidValidate($id)
+    {
+        $record = RegistryObjectsRepository::getRecordByID($id);
+        return ORCIDProvider::getORCID($record, new ORCIDRecord())->validate();
+    }
+
     private function printXML($xml)
     {
         header('Content-type: application/xml');
