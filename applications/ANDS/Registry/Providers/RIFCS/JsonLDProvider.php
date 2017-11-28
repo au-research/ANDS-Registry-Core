@@ -136,7 +136,14 @@ class JsonLDProvider implements RIFCSProvider
 
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class . '/ro:coverage/ro:temporal/ro:date') AS $coverage) {
-            $coverages[] = $coverage['type']." ".(string)$coverage;
+            if($coverage['type'] == 'dateFrom' ||  $coverage['type'] == 'dateTo'){
+                if($coverage['type']=='dateFrom') $type="startDate";
+                if($coverage['type']=='dateTo') $type="endDate";
+                $coverages[] = array("@type"=>'DateTime',$type =>(string)$coverage);
+            }else{
+                $coverages[] = (string)$coverage;
+            }
+
         };
 
         return $coverages;
