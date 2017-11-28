@@ -59,9 +59,14 @@ class CitationProvider implements RIFCSProvider
 
         $full = collect($citations)->filter(function($item) {
             if ($item['full']) {
-                return $item;
+                return true;
             }
             return false;
+        })->map(function($item){
+            return [
+                'value' => $item['full']['value'],
+                'style' => (string) $item['full']['style']
+            ];
         })->first();
 
         return [

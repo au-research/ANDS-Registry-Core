@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<!-- https://intranet.ands.org.au/display/TEAM/ANDS+Registry+-+RIF-CS+to+ORCID+V2.0+Crosswalk -->
 <xsl:stylesheet xmlns:ro="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:common="http://www.orcid.org/ns/common" xmlns:work="http://www.orcid.org/ns/work" xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" exclude-result-prefixes="work common ro extRif">
 <xsl:param name="base_url"/>
 <xsl:param name="rda_url"/>
@@ -81,6 +81,9 @@
                     <xsl:otherwise>other</xsl:otherwise>
                 </xsl:choose>
             </work:type>
+
+            <work:url><xsl:value-of select="$rda_url"/></work:url>
+
             <xsl:if test="$publicationDate != ''">
                 <common:publication-date xmlns:common="http://www.orcid.org/ns/common">
                     <xsl:if test="$publicationDateYear != ''">
@@ -115,7 +118,7 @@
                 </xsl:if>
             </common:external-ids>
 
-            <work:url><xsl:value-of select="$rda_url"/></work:url>
+
             <xsl:if test="ro:collection/ro:citationInfo/ro:citationMetadata/ro:contributor">
                 <work:contributors>
                     <xsl:apply-templates select="ro:collection/ro:citationInfo/ro:citationMetadata/ro:contributor"/>
