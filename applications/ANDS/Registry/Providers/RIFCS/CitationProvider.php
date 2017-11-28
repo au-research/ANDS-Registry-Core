@@ -108,9 +108,16 @@ class CitationProvider implements RIFCSProvider
                 if (!$contributor->namePart) {
                     continue;
                 }
-                foreach ($contributor->namePart as $namePart) {
-                    $name[] = (string) $namePart;
+
+                $order = ['given', 'family'];
+                foreach ($order as $o) {
+                    foreach ($contributor->namePart as $namePart) {
+                        if ((string) $namePart['type'] == $o) {
+                            $name[] = (string) $namePart;
+                        }
+                    }
                 }
+
                 $names[] = implode(" ", $name);
             }
         }
