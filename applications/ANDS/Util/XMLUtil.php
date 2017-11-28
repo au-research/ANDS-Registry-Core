@@ -212,6 +212,25 @@ class XMLUtil
         return $result;
     }
 
+    public function validateRemoteSchema($schema, $payload)
+    {
+        libxml_use_internal_errors(true);
+
+        try {
+            $xml = new \DOMDocument();
+            $xml->loadXML($payload);
+        } Catch (\Exception $e) {
+            $this->validationMessage = $e->getMessage();
+            return false;
+        }
+
+        $result = $xml->schemaValidate($schema);
+        foreach (libxml_get_errors() as $error) {
+            $this->validationMessage = $error->message;
+        }
+        return $result;
+    }
+
     /**
      * Returns a new instance of the class, to be able to use validationMessage
      * Mainly use when call validateSchemaVersion statically

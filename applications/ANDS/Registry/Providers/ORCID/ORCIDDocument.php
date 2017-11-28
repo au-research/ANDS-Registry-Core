@@ -61,19 +61,19 @@ class ORCIDDocument
             $root->setAttribute('put-code', $this->get('put_code'));
         }
 
-        // fill
-        $fillables = ['title', 'short-description', 'url'];
-        foreach ($fillables as $fillable) {
-            if ($this->get($fillable)) {
-                $root->appendChild(
-                    $this->dom->createElementNS(
-                        'http://www.orcid.org/ns/work',
-                        "work:$fillable",
-                        $this->get($fillable)
-                    )
-                );
-            }
-        }
+        $workTitle = $this->workElem('title');
+        $workTitle ->appendChild(
+            $this->commonElem('title', $this->get('title'))
+        );
+        $root->appendChild($workTitle);
+
+        $root->appendChild(
+            $this->dom->createElementNS(
+                'http://www.orcid.org/ns/work',
+                "work:short-description",
+                $this->get('short-description')
+            )
+        );
 
         // work:citation
         if ($citation = $this->get('citation')) {
@@ -84,6 +84,14 @@ class ORCIDDocument
             $citationDOM->appendChild($citationValueDOM);
             $root->appendChild($citationDOM);
         }
+
+        $root->appendChild(
+            $this->dom->createElementNS(
+                'http://www.orcid.org/ns/work',
+                "work:type",
+                $this->get('work-type')
+            )
+        );
 
         // common:publication-date
         if ($publicationDate = $this->get('publication-date')) {
@@ -104,13 +112,22 @@ class ORCIDDocument
         if ($externalIDs = $this->get('external-ids')) {
             $externalIDsDOM = $this->commonElem('external-ids');
             foreach ($externalIDs as $id) {
-                $externalIDsDOM
-                    ->appendChild($this->commonElem('external-id-type', $id['type']))
-                    ->appendChild($this->commonElem('external-id-value', $id['value']))
-                    ->appendChild($this->commonElem('external-id-relationship', 'self'));
+                $externalIDDOM = $this->commonElem('external-id');
+                $externalIDDOM->appendChild($this->commonElem('external-id-type', $id['type']));
+                $externalIDDOM->appendChild($this->commonElem('external-id-value', $id['value']));
+                $externalIDDOM->appendChild($this->commonElem('external-id-relationship', 'self'));
+                $externalIDsDOM->appendChild($externalIDDOM);
             }
             $root->appendChild($externalIDsDOM);
         }
+
+        $root->appendChild(
+            $this->dom->createElementNS(
+                'http://www.orcid.org/ns/work',
+                "work:url",
+                $this->get('url')
+            )
+        );
 
         // contributors
         if ($contributors = $this->get('contributors')) {
@@ -147,6 +164,16 @@ class ORCIDDocument
     private function schema()
     {
         return implode(" ", $this->schemaLocations);
+    }
+
+    public function validate()
+    {
+        $util = new XMLUtil();
+        $result = $util->validateRemoteSchema("https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/work-2.0.xsd", $this->toXML());
+        if (!$result) {
+            return $util->getValidationMessage();
+        }
+        return $result;
     }
 
     /**
