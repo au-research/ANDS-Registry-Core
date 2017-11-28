@@ -137,6 +137,10 @@ class DatesProvider implements RIFCSProvider
             return $value;
         }
 
+        if (self::validateDate($value, 'm-Y')) {
+            return $value;
+        }
+
         if (self::validateDate($value, 'Y-m')) {
             return $value;
         }
@@ -144,6 +148,7 @@ class DatesProvider implements RIFCSProvider
         if (self::isValidTimeStamp($value)) {
             return Carbon::createFromTimestamp($value)->format($format);
         }
+
         return (new Carbon($value))->format($format);
     }
 
@@ -169,8 +174,43 @@ class DatesProvider implements RIFCSProvider
      */
     public static function validateDate($date, $format = 'Y-m-d')
     {
-        $d = DateTime::createFromFormat($format, $date);
+        try {
+            $d = DateTime::createFromFormat($format, $date);
+            return $d && $d->format($format) === $date;
+        } catch (\Exception $e) {
+            // try again
+        }
+
+        $d = self::parseDate($date);
         return $d && $d->format($format) === $date;
+    }
+
+    public static function parseDate($date)
+    {
+        try {
+            return Carbon::parse($date);
+        } catch (\Exception $e) {
+            // not a parsable date
+        }
+
+        $formats = [
+            'Y-m-d',
+            'Y',
+            'Y-m',
+            'm-Y',
+            'd-m-Y'
+        ];
+
+        foreach ($formats as $format) {
+            try {
+                $parsed = Carbon::createFromFormat('m-Y', $date);
+                return $parsed;
+            } catch (\Exception $e) {
+                // not a parsable date
+            }
+        }
+
+        return null;
     }
 
 
