@@ -93,7 +93,7 @@ class CitationProvider implements RIFCSProvider
 
         $result = "@misc{";
         $result .= "title={".$record->title. "} ";
-        if ($date = Carbon::parse((string) $elem->date)) {
+        if ($date = DatesProvider::parseDate((string) $elem->date)) {
             $result .= "year={".$date->year. "} ";
         }
         if ($elem->identifier && $elem->identifier['type'] == 'doi') {
