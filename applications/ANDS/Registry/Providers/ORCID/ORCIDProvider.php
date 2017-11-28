@@ -124,6 +124,11 @@ class ORCIDProvider implements RegistryContentProvider
             ];
         }
 
+        // does not find more contributors if there's enough from citationMetadata
+        if (count($contributors) > 0) {
+            return $contributors;
+        }
+
         $validParty = collect($data['relationships'])->filter(function($item) {
             return $item->to() && $item->hasRelationTypes(self::$validContributorRelationTypes);
         });
