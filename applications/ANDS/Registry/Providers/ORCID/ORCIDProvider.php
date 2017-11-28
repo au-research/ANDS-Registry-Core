@@ -2,9 +2,12 @@
 namespace ANDS\Registry\Providers\ORCID;
 use ANDS\Registry\Providers\MetadataProvider;
 use ANDS\Registry\Providers\RegistryContentProvider;
+use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\Registry\Providers\RIFCS\CitationProvider;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\Providers\RIFCS\DescriptionProvider;
+use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
+use ANDS\Registry\Relation;
 use ANDS\RegistryObject;
 use ANDS\Util\XMLUtil;
 use DOMDocument;
@@ -15,6 +18,56 @@ use DOMDocument;
  */
 class ORCIDProvider implements RegistryContentProvider
 {
+    protected static $validExternalIDsIdentifierType = [
+        'agr',
+        'arxiv',
+        'asin',
+        'asin',
+        'authenticusid',
+        'bibcode',
+        'cba',
+        'cienciaiul',
+        'cit',
+        'ctx',
+        'doi',
+        'eid',
+        'ethos',
+        'grant_number',
+        'handle',
+        'hir',
+        'isbn',
+        'issn',
+        'jfm',
+        'jstor',
+        'kuid',
+        'lccn',
+        'lensid',
+        'mr',
+        'oclc',
+        'ol',
+        'osti',
+        'other',
+        'pat',
+        'pdb',
+        'pmc',
+        'pmid',
+        'rfc',
+        'rrid',
+        'source-work-id',
+        'ssrn',
+        'uri',
+        'urn',
+        'wosuid',
+        'zbl'
+    ];
+
+    protected static $validContributorRelationTypes = [
+        'hasPrincipalInvestigator',
+        'author',
+        'coInvestigator',
+        'isOwnedBy',
+        'hasCollector'
+    ];
 
     /**
      * Process the object and (optionally) store processed data
@@ -24,7 +77,7 @@ class ORCIDProvider implements RegistryContentProvider
      */
     public static function process(RegistryObject $record)
     {
-        // TODO: Implement process() method.
+        return;
     }
 
     /**
@@ -35,12 +88,13 @@ class ORCIDProvider implements RegistryContentProvider
      */
     public static function get(RegistryObject $record)
     {
-        // TODO: Implement get() method.
+        return [
+            'xml' => self::getORCIDXML($record, new ORCIDRecord())
+        ];
     }
 
     /**
-     * Return the ORCID XML format for the provided record
-     * TODO: replace XSLT with a DOM builder
+     * Getting the ORCID in XML format
      *
      * @param RegistryObject $record
      * @param ORCIDRecord $orcid
@@ -48,17 +102,29 @@ class ORCIDProvider implements RegistryContentProvider
      */
     public static function getORCIDXML(RegistryObject $record, ORCIDRecord $orcid)
     {
-        $data = MetadataProvider::getSelective($record, ['recordData']);
-        $xml = $data['recordData'];
+        $data = MetadataProvider::get($record);
+
+        $doc = new ORCIDDocument();
 
         // check if this is an update
         $existing = $orcid->exports->filter(function ($item) use ($record) {
             return $item->registry_object_id === $record->registry_object_id && $item->in_orcid;
         })->first();
+        if ($existing) {
+            $doc->set('put_code', $existing->put_code);
+        }
 
+        $doc->set('title', $record->title);
+
+        // collect descriptions
         $descriptions = DescriptionProvider::get($record);
-        $shortDescription = $descriptions['primary_description'] ?: '';
+        if ($descriptions['primary_description']) {
+            $doc->set('short-description', $descriptions['primary_description']);
+        }
 
+        $doc->set('url', $record->portalUrl);
+
+        // collect citations
         $citations = CitationProvider::get($record);
         $citationValue = $citations['full'];
         $citationType = $citations['full_style'];
@@ -67,30 +133,92 @@ class ORCIDProvider implements RegistryContentProvider
             $citationType = 'bibtex';
         }
 
-        $publicationDate = DatesProvider::getPublicationDate($record, $data);
-        $year = DatesProvider::formatDate($publicationDate, 'Y');
-        $month = DatesProvider::formatDate($publicationDate, 'm');
-        $day = DatesProvider::formatDate($publicationDate, 'd');
+        $doc->set('citation', [
+            'type' => $citationType,
+            'value' => $citationValue
+        ]);
 
-        // TODO: description as attribute DescriptionProvider
-        $processor = XMLUtil::getORCIDTransformer();
-        $dom = new DOMDocument();
-        $dom->loadXML($xml, LIBXML_NOENT);
-        $processor->setParameter('','dateProvided', date("Y"));
-        $processor->setParameter('','publicationDate', $publicationDate ?: '');
-        $processor->setParameter('','publicationDateYear', $year ?: '');
-        $processor->setParameter('','publicationDateMonth', $month ?: '');
-        $processor->setParameter('','publicationDateDay', $day ?: '');
-        $processor->setParameter('','rda_url', $record->portalUrl);
-        $processor->setParameter('','rda_url_key', $record->portalUrlWithKey);
-        $processor->setParameter('', 'title', $record->title);
-        $processor->setParameter('', 'description', $shortDescription ?: '');
-        $processor->setParameter('', 'citationValue', $citationValue ?: '');
-        $processor->setParameter('', 'citationType', $citationType ?: '');
-        if ($existing) {
-            $processor->setParameter('', 'put_code', $existing->put_code);
+        // dates
+        $publicationDate = DatesProvider::getPublicationDate($record, $data);
+        if ($publicationDate) {
+            $doc->set('publication-date', [
+                'year' => DatesProvider::formatDate($publicationDate, 'Y'),
+                'month' => DatesProvider::formatDate($publicationDate, 'm'),
+                'day' => DatesProvider::formatDate($publicationDate, 'd')
+            ]);
         }
-        $xml = $processor->transformToXML($dom);
-        return $xml;
+
+        // external-ids
+        $identifiers = IdentifierProvider::get($record);
+        if ($identifiers && count($identifiers) > 0) {
+
+            $identifiers = collect($identifiers)->map(function($item) {
+                if (!in_array($item['type'], self::$validExternalIDsIdentifierType)) {
+                    $item['type'] = 'other-id';
+                }
+                return $item;
+            })->toArray();
+            $doc->set('external-ids', $identifiers);
+        }
+
+        // contributors
+        if ($contributors = self::getContributors($record, $data)) {
+            $doc->set('contributors', $contributors);
+        }
+
+        return $doc->toXML();
     }
+
+    private static function getContributors($record, $data)
+    {
+        $contributors = [];
+        // registryObject/collection/citationInfo/citationMetadata/contributor
+        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+            'ro:registryObject/ro:' . $record->class.'/ro:citationInfo/ro:citationMetadata/ro:contributor') AS $object) {
+            // TODO: get contributor from citationMetadata
+
+            $contributors[] = [
+                'credit-name' => (string) $object->namePart,
+                'contributor-orcid' => null,
+                'contributor-attributes' => [
+                    'contributor-sequence' => (string) $object->attributes()['seq'],
+                    'contributor-role' => 'author'
+                ]
+            ];
+        }
+
+        $validParty = collect($data['relationships'])->filter(function($item) {
+            return $item->to() && $item->hasRelationTypes(self::$validContributorRelationTypes);
+        });
+
+        foreach ($validParty as $party) {
+            $contributors[] = [
+                'credit-name' => $party->prop('to_title'),
+                'contributor-orcid' => null, // TODO get contributor-orcid
+                'contributor-attributes' => [
+                    'contributor-sequence' => null,
+                    'contributor-role' => self::getContributorRole($party)
+                ]
+            ];
+        }
+
+        return $contributors;
+    }
+
+    public static function getContributorRole($party)
+    {
+        $mapping = [
+            "hasPrincipalInvestigator" => "principal-investigator",
+            "author" => "author",
+            "coinvestigator" => "co-investigator"
+        ];
+
+        foreach ($mapping as $key => $value) {
+            if ($party->hasRelationType($key)) {
+                return $value;
+            }
+        }
+        return "author";
+    }
+
 }
