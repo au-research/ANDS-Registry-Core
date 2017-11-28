@@ -244,12 +244,16 @@ class Registry_object extends MX_Controller
             //DRAFT Preview are not recorded, or should they?
         }
 
+
         // Determine resolved party identifiers
         $resolvedPartyIdentifiers = array();
-        if (isset($ro->relationships['party_one'])) {
-            foreach ($ro->relationships['party_one'] as $rel) {
-                if (is_array($rel) && ($rel['origin'] == 'IDENTIFIER' || $rel['origin'] == 'IDENTIFIER REVERSE') && $rel['registry_object_id'] != '') {
-                    $resolvedPartyIdentifiers[] = $rel['related_object_identifier'];
+        if (isset($ro->relationships['researchers'])) {
+            foreach ($ro->relationships['researchers']['docs'] as $rel) {
+                if(is_array($rel)) {
+                    $rels = is_array($rel['relation_origin']) ? $rel['relation_origin'] : array($rel['relation_origin']);
+                    if ((in_array('IDENTIFIER', $rels) || in_array('IDENTIFIER REVERSE', $rels)) && $rel['from_id'] != '') {
+                        $resolvedPartyIdentifiers[] = $rel['relation_identifier_identifier'];
+                    }
                 }
             }
         }

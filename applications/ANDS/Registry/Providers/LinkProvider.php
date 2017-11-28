@@ -179,7 +179,7 @@ class LinkProvider implements RegistryContentProvider
     public static function getResolvedLinkForIdentifier($type, $identifier)
     {
         $identifier = trim($identifier);
-        $typeArray = ['handle', 'purl', 'doi', 'uri', 'url', 'ark', 'orcid', 'au-anl:peau' ];
+        $typeArray = ['handle', 'purl', 'doi', 'uri', 'url', 'ark', 'orcid', 'au-anl:peau' , 'raid', 'grid','scopusID','igsn','isni'];
 
         if ((strpos($identifier,'http://') === 0 || strpos($identifier,'https://') === 0)
             && in_array($type, $typeArray)){
@@ -196,11 +196,32 @@ class LinkProvider implements RegistryContentProvider
                 else
                     return "http://hdl.handle.net/" . $identifier;
                 break;
+            case 'raid':
+                if(strpos($identifier,"hdl:") === 0) {
+                    return "http://hdl.handle.net/" . substr($identifier, strpos($identifier, "hdl:") + 4);
+                }
+                elseif(strpos($identifier, "hdl.handle.net/") === 0)
+                    return "http://hdl.handle.net/" . substr($identifier, strpos($identifier, "hdl.handle.net/") + 15);
+                else
+                    return "http://hdl.handle.net/" . $identifier;
+                break;
             case 'purl':
                 if(strpos($identifier,"purl.org/") === false)
                     return "http://purl.org/".$identifier;
                 else
                     return "http://purl.org/" . substr($identifier, strpos($identifier, "purl.org/") + 9);
+                break;
+            case 'igsn':
+                if(strpos($identifier,"igsn.org/") === false)
+                    return "http://igsn.org/".$identifier;
+                else
+                    return "http://igsn.org/" . substr($identifier, strpos($identifier, "igsn.org/") + 9);
+                break;
+            case 'isni':
+                if(strpos($identifier,"isni.org/") === false)
+                    return "http://www.isni.org/".$identifier;
+                else
+                    return "http://www.isni.org/" . substr($identifier, strpos($identifier, "isni.org/") + 9);
                 break;
             case 'doi':
                 if(strpos($identifier,"doi.org/") === false )
@@ -230,6 +251,7 @@ class LinkProvider implements RegistryContentProvider
                 else
                     return "http://nla.gov.au/" . substr($identifier, strpos($identifier, "nla.gov.au/") + 11);
                 break;
+
             default:
                 return "";
         }
