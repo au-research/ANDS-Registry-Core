@@ -757,12 +757,33 @@ class Relationships_Extension extends ExtensionBase
                 return 'Handle : <a class="identifier" href="' . $urlValue . '" title="Resolve this handle">' . $value . '<img class="identifier_logo" src="' . asset_url('assets/core/images/icons/handle_icon.png',
                     'base_path') . '" alt="Handle icon"></a><br/>';
                 break;
+            case 'handle':
+                if (strpos($value, 'http://hdl.handle.net/') === false) {
+                    $urlValue = 'http://hdl.handle.net/' . $value;
+                }
+                return 'RAID : <a class="identifier" href="' . $urlValue . '" title="Resolve this handle">' . $value . '<img class="identifier_logo" src="' . asset_url('assets/core/images/icons/handle_icon.png',
+                    'base_path') . '" alt="Handle icon"></a><br/>';
+                break;
             case 'purl':
                 if (strpos($value, 'http://purl.org/') === false) {
                     $urlValue = 'http://purl.org/' . $value;
                 }
                 return 'PURL : <a class="identifier" href="' . $urlValue . '" title="Resolve this purl identifier">' . $value . '<img class="identifier_logo" src="' . asset_url('assets/core/images/icons/external_link.png',
                     'base_path') . '" alt="PURL icon"></a><br/>';
+                break;
+            case 'igsn':
+                if (strpos($value, 'http://igsn.org/') === false) {
+                    $urlValue = 'http://igsn.org/' . $value;
+                }
+                return 'IGSN : <a class="identifier" href="' . $urlValue . '" title="Resolve this purl identifier">' . $value . '<img class="identifier_logo" src="' . asset_url('assets/core/images/icons/external_link.png',
+                    'base_path') . '" alt="IGSN icon"></a><br/>';
+                break;
+            case 'isni':
+                if (strpos($value, 'http://') === false) {
+                    $urlValue = 'http://www.isni.org/' . $value;
+                }
+                return 'ISNI : <a class="identifier" href="' . $urlValue . '" title="Resolve this purl identifier">' . $value . '<img class="identifier_logo" src="' . asset_url('assets/core/images/icons/external_link.png',
+                    'base_path') . '" alt="ISNI icon"></a><br/>';
                 break;
             case 'doi':
                 if (strpos($value, 'http://dx.doi.org/') === false) {
@@ -777,6 +798,20 @@ class Relationships_Extension extends ExtensionBase
                 }
                 return 'URI : <a class="identifier" href="' . $urlValue . '" title="Resolve this URI">' . $value . '<img class="identifier_logo" src="' . asset_url('assets/core/images/icons/external_link.png',
                     'base_path') . '" alt="URI icon"></a><br/>';
+                break;
+            case 'grid':
+                if (!(strpos($value, 'http://') === false) && !(strpos($value, 'https://') === false)) {
+                    $urlValue = $value;
+                return 'GRID : <a class="identifier" href="' . $urlValue . '" title="Resolve this URI">' . $value . '<img class="identifier_logo" src="' . asset_url('assets/core/images/icons/external_link.png',
+                    'base_path') . '" alt="URI icon"></a><br/>';
+                }
+                break;
+            case 'scopusID':
+                if (!(strpos($value, 'http://') === false) && !(strpos($value, 'https://') === false)) {
+                    $urlValue = $value;
+                    return 'Scopus : <a class="identifier" href="' . $urlValue . '" title="Resolve this URI">' . $value . '<img class="identifier_logo" src="' . asset_url('assets/core/images/icons/external_link.png',
+                        'base_path') . '" alt="URI icon"></a><br/>';
+                }
                 break;
             case 'urn':
                 return 'URN : <a class="identifier" href="' . $value . '" title="Resolve this URN">' . $value . '<img class="identifier_logo" src="' . asset_url('assets/core/images/icons/external_link.png',
