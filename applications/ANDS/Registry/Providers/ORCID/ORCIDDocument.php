@@ -15,17 +15,13 @@ class ORCIDDocument
         "xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance",
         "xmlns:common" => "http://www.orcid.org/ns/common",
         "xmlns:work" => "http://www.orcid.org/ns/work",
-//        "xsi:schemaLocation" => "http://www.orcid.org/ns/common
-//            https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/common_2.0/common-2.0.xsd
-//            http://www.orcid.org/ns/work
-//            https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/work-2.0.xsd"
     ];
 
     protected $schemaLocations = [
         'http://www.orcid.org/ns/common',
-            'https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/common_2.0/common-2.0.xsd',
-            'http://www.orcid.org/ns/work',
-            'https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/work-2.0.xsd'
+        'https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/common_2.0/common-2.0.xsd',
+        'http://www.orcid.org/ns/work',
+        'https://raw.githubusercontent.com/ORCID/ORCID-Source/master/orcid-model/src/main/resources/record_2.0/work-2.0.xsd'
     ];
 
     public function set($key, $value)
