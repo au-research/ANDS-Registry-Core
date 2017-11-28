@@ -69,6 +69,7 @@ class CitationProvider implements RIFCSProvider
             ];
         })->first();
 
+
         return [
             'full' => $full ? $full['value'] : null,
             'full_style' => $full ? $full['style'] : null,
@@ -99,8 +100,23 @@ class CitationProvider implements RIFCSProvider
         if ($elem->identifier && $elem->identifier['type'] == 'doi') {
             $result .= "DOI={".(string) $elem->identifier. "} ";
         }
+        $names = [];
+
+        if ($elem->contributor) {
+            foreach ($elem->contributor as $contributor) {
+                $name = [];
+                if (!$contributor->namePart) {
+                    continue;
+                }
+                foreach ($contributor->namePart as $namePart) {
+                    $name[] = (string) $namePart;
+                }
+                $names[] = implode(" ", $name);
+            }
+        }
+
         if ($elem->contributor && $elem->contributor->namePart) {
-            $result .= "author={".(string) $elem->contributor->namePart."} ";
+            $result .= "author={".implode(", ", $names)."} ";
         }
         if ($elem->publisher && $elem->publisher) {
             $result .= "publisher={".(string) $elem->publisher."}";
