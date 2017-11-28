@@ -413,6 +413,17 @@ function identifierResolution($identifier,$type)
             $identifiers['hover_text'] = 'Resolve this handle';
             return  $identifiers;
             break;
+        case 'raid':
+            if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
+            elseif(strpos($identifier,"dl:")>0) $identifier_href ="http://hdl.handle.net/".substr($identifier,strpos($identifier,"hdl:")+4);
+            elseif(strpos($identifier,"dl.handle.net/")>0) $identifier_href ="http://hdl.handle.net/".substr($identifier,strpos($identifier,"hdl.handle.net/")+15);
+            else $identifier_href = "http://hdl.handle.net/".$identifier;
+            $identifiers['href'] = $identifier_href;
+            $identifiers['display_text'] = 'RAID';
+            $identifiers['display_icon'] = '<img class="identifier_logo" src= '.portal_url().'assets/core/images/icons/handle_icon.png alt="Handle Link"/>';
+            $identifiers['hover_text'] = 'Resolve this handle';
+            return  $identifiers;
+            break;
         case 'purl':
             if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
             elseif(strpos($identifier,"url.org/")<1) $identifier_href ="http://purl.org/".$identifier;
@@ -422,6 +433,46 @@ function identifierResolution($identifier,$type)
             $identifiers['display_icon'] = '<img class="identifier_logo" src= '.portal_url().'assets/core/images/icons/external_link.png alt="External Link"/>';
             $identifiers['hover_text'] = 'Resolve this PURL';
             return  $identifiers;
+            break;
+        case 'isni':
+            if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
+            elseif(strpos($identifier,"isni.org/")<1) $identifier_href ="http://isni.org/".$identifier;
+            else $identifier_href = "http://isni.org/".substr($identifier,strpos($identifier,"isni.org/")+9);
+            $identifiers['href'] = $identifier_href;
+            $identifiers['display_text'] = 'ISNI';
+            $identifiers['display_icon'] = '<img class="identifier_logo" src= '.portal_url().'assets/core/images/icons/external_link.png alt="External Link"/>';
+            $identifiers['hover_text'] = 'Resolve this ISNI';
+            return  $identifiers;
+            break;
+        case 'igsn':
+            if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
+            elseif(strpos($identifier,"igsn.org/")<1) $identifier_href ="http://igsn.org/".$identifier;
+            else $identifier_href = "http://igsn.org/".substr($identifier,strpos($identifier,"igsn.org/")+9);
+            $identifiers['href'] = $identifier_href;
+            $identifiers['display_text'] = 'IGSN';
+            $identifiers['display_icon'] = '<img class="identifier_logo" src= '.portal_url().'assets/core/images/icons/external_link.png alt="External Link"/>';
+            $identifiers['hover_text'] = 'Resolve this IGSN';
+            return  $identifiers;
+            break;
+        case 'grid':
+            if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
+            if(isset($identifier_href)) {
+                $identifiers['href'] = $identifier_href;
+                $identifiers['display_icon'] = '<img class="identifier_logo" src= ' . portal_url() . 'assets/core/images/icons/external_link.png alt="External Link"/>';
+
+            }
+            $identifiers['display_text'] = 'GRID';
+            return $identifiers;
+            break;
+        case 'scopusID':
+            if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
+            if(isset($identifier_href)) {
+                $identifiers['href'] = $identifier_href;
+                $identifiers['display_icon'] = '<img class="identifier_logo" src= ' . portal_url() . 'assets/core/images/icons/external_link.png alt="External Link"/>';
+
+            }
+            $identifiers['display_text'] = 'Scopus';
+            return $identifiers;
             break;
         case 'uri':
             $identifiers['href'] = $identifier;
