@@ -515,7 +515,7 @@ class JsonLDProvider implements RIFCSProvider
                 if($relation->prop("to_title") != ""){
                     $author[] = array("@type"=>$type,"name"=>$relation->prop("to_title"),"url"=>self::base_url() ."view?key=".$relation->prop("to_key"));
                 }else{
-                    $author[] = array("@type"=>$type,"name"=>$relation->prop("relation_to_title").$relation->prop('relation_type'));
+                    $author[] = array("@type"=>$type,"name"=>$relation->prop("relation_to_title"));
                 }
             }
         }
@@ -539,14 +539,25 @@ class JsonLDProvider implements RIFCSProvider
 
         foreach ($relationships as $relation) {
             $relation_types = [];
-            if(is_array($relation->prop('relation_type'))){
+            if (is_array($relation->prop('relation_type'))) {
                 $relation_types = $relation->prop('relation_type');
-            }else{
+            } else {
                 $relation_types[] = $relation->prop('relation_type');
             }
-            if ($relation->prop("to_class") == "party" && in_array("isOwnedBy", $relation_types)
+
+            if (($relation->prop("to_class") == "party" || $relation->prop("to_related_info_type") == "party")
+                && in_array("isOwnedBy", $relation_types)
             ) {
-                $accountablePerson[] = array("@type"=>"Person","name"=>$relation->prop("to_title"));
+                if ($relation->prop("to_type") == 'group' || $relation->prop("to_related_info_type") == 'group') {
+                    $type = "Organization";
+                } else {
+                    $type = "Person";
+                }
+                if ($relation->prop("to_title") != "") {
+                    $accountablePerson[] = array("@type" => $type, "name" => $relation->prop("to_title"), "url" => self::base_url() . "view?key=" . $relation->prop("to_key"));
+                } else {
+                    $accountablePerson[] = array("@type" => $type, "name" => $relation->prop("relation_to_title"));
+                }
             }
         }
 
@@ -562,10 +573,15 @@ class JsonLDProvider implements RIFCSProvider
             $data = MetadataProvider::getSelective($record, ['recordData']);
         }
 
+        $types= array ("brief","full");
+
         $descriptions = [];
         foreach (XMLUtil::getElementsByXPath($data['recordData'],'ro:registryObject/ro:' . $record->class . '/ro:description') AS $description) {
-            if((string)$description["type"]=="full" || (string)$description["type"]=="brief") {
-                $descriptions[] = ((string)$description);
+            foreach($types as $type) {
+                if ((string)$description["type"] == $type) {
+                    $descriptions[] = ((string)$description);
+                    return $descriptions;
+                }
             }
         };
 
@@ -600,12 +616,17 @@ class JsonLDProvider implements RIFCSProvider
             $data = MetadataProvider::getSelective($record, ['recordData']);
         }
 
+        $types = array("alternative","abbreviated");
+
         $alternateNames = [];
-        foreach (XMLUtil::getElementsByXPath($data['recordData'],'ro:registryObject/ro:' . $record->class . '/ro:name') AS $name) {
-            if((string)$name["type"]=="alternative" || (string)$name["type"]=="abbreviated") {
-                $alternateNames[] = (implode(" ",(array)$name->namePart));
-            }
-        };
+        foreach($types as $type) {
+            foreach (XMLUtil::getElementsByXPath($data['recordData'], 'ro:registryObject/ro:' . $record->class . '/ro:name') AS $name) {
+                if ((string)$name["type"] == $type ) {
+                    $alternateNames[] = (implode(" ", (array)$name->namePart));
+                    return $alternateNames;
+                }
+            };
+        }
 
         return $alternateNames;
     }
