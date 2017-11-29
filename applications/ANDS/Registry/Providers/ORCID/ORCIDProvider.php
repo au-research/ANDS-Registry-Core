@@ -112,10 +112,20 @@ class ORCIDProvider implements RegistryContentProvider
         // registryObject/collection/citationInfo/citationMetadata/contributor
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class.'/ro:citationInfo/ro:citationMetadata/ro:contributor') AS $object) {
-            // TODO: get contributor from citationMetadata
 
+            // TODO: Refactor this to a common provider, used in a lot of places
+            $name = [];
+            $order = ['given', 'family'];
+            foreach ($order as $o) {
+                foreach ($object->namePart as $namePart) {
+                    if ((string) $namePart['type'] == $o) {
+                        $name[] = (string) $namePart;
+                    }
+                }
+            }
+            $name = implode(" ", $name);
             $contributors[] = [
-                'credit-name' => (string) $object->namePart,
+                'credit-name' => $name,
                 'contributor-orcid' => null,
                 'contributor-attributes' => [
                     'contributor-sequence' => (string) $object->attributes()['seq'],

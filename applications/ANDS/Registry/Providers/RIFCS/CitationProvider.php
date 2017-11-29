@@ -109,6 +109,7 @@ class CitationProvider implements RIFCSProvider
                     continue;
                 }
 
+                // TODO: Refactor this to a common provider, used in a lot of places
                 $order = ['given', 'family'];
                 foreach ($order as $o) {
                     foreach ($contributor->namePart as $namePart) {
