@@ -203,7 +203,7 @@ class DatesProvider implements RIFCSProvider
 
         foreach ($formats as $format) {
             try {
-                $parsed = Carbon::createFromFormat('m-Y', $date);
+                $parsed = Carbon::createFromFormat($format, $date);
                 return $parsed;
             } catch (\Exception $e) {
                 // not a parsable date
