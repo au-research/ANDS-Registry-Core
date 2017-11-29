@@ -1,5 +1,7 @@
 <?php
 
+use ANDS\Registry\Providers\ORCID\ORCIDRecordsRepository;
+
 /**
  * Class Registry_object
  */
@@ -500,7 +502,16 @@ class Registry_object extends MX_Controller
 
                 //ORCID "Pull back"
                 if ($fr->related_info_type == 'party' && $fr->related_object_identifier_type == 'orcid' && isset($fr->related_object_identifier)) {
-                    $pullback = $this->ro->resolveIdentifier('orcid', $fr->related_object_identifier);
+
+                    $orcid = ORCIDRecordsRepository::obtain($fr->related_object_identifier);
+
+                    $pullback = [
+                        'name' => $orcid->full_name,
+                        'bio' => json_decode($orcid->record_data, true),
+                        'orcidRecord' => $orcid,
+                        'orcid' => $orcid->orcid_id
+                    ];
+
                     $filters = array('identifier_value' => $fr->related_object_identifier);
                     $ro = $this->ro->findRecord($filters);
                 }

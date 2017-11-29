@@ -12,13 +12,18 @@
 			<h4>
 				@if($record->related_title)
 					{{$record->related_title}}
+					@if($pullback['orcidRecord'])
+						<br/>
+						<a href="{{ $pullback['orcidRecord']->url }}">
+							{{  $pullback['orcidRecord']->url }}
+						</a>
+					@endif
 				@else
-					{{$pullback['name']}}
+					{{ $pullback['name'] }} ({{ $pullback['orcidRecord'] ? $pullback['orcidRecord']->url : '' }})
 				@endif
 			</h4>
-			<p>{{$pullback['bio']}}</p>
+
 			<p>@include('registry_object/contents/the-description')</p>
-			
 
 			@if($ro)
 				<?php 
@@ -50,7 +55,7 @@
 				@if($ro)
 					<a href="{{portal_url($ro->core['slug'].'/'.$ro->core['id'])}}" class="btn btn-primary btn-link btn-sm">View Record</a>
 				@endif
-				<a href="http://orcid.org/{{$pullback['orcid']}}" class="btn btn-primary btn-link btn-sm">View profile in <img src="{{asset_url('img/orcid_tagline_small.png', 'base')}}" alt="" style="border: none;width: 50px;margin-top: -5px;
+				<a href="{{ $pullback['orcidRecord']->url }} " class="btn btn-primary btn-link btn-sm">View profile in <img src="{{asset_url('img/orcid_tagline_small.png', 'base')}}" alt="" style="border: none;width: 50px;margin-top: -5px;
 			margin-left: 5px;"></a>
 			</p>
 			
