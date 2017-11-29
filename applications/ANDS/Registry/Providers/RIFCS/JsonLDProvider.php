@@ -100,7 +100,15 @@ class JsonLDProvider implements RIFCSProvider
             'ro:registryObject/ro:' . $record->class . '/ro:citationInfo/ro:citationMetadata/ro:identifier') AS $identifier) {
             $identifier_url = LinkProvider::getResolvedLinkForIdentifier($identifier['type'],(string)$identifier);
             if($identifier_url) {
-                $identifiers[] = $identifier_url;
+                $identifiers[] = array( "@type"=> "PropertyValue",
+                    "propertyID"=> "URL",
+                    "value"=> $identifier_url
+                );
+            }else{
+                $identifiers[] = array( "@type"=> "PropertyValue",
+                    "propertyID"=> "Text",
+                    "value"=> (string)$identifier
+                );
             }
         };
 
@@ -108,7 +116,15 @@ class JsonLDProvider implements RIFCSProvider
             'ro:registryObject/ro:' . $record->class . '/ro:identifier') AS $identifier) {
             $identifier_url = LinkProvider::getResolvedLinkForIdentifier($identifier['type'],(string)$identifier);
             if($identifier_url) {
-                $identifiers[] = $identifier_url;
+                $identifiers[] = array( "@type"=> "PropertyValue",
+                    "propertyID"=> "URL",
+                    "value"=> $identifier_url
+                );
+            }else{
+                $identifiers[] = array( "@type"=> "PropertyValue",
+                    "propertyID"=> "Text",
+                    "value"=> (string)$identifier
+                );
             }
          };
         return $identifiers;
@@ -122,7 +138,7 @@ class JsonLDProvider implements RIFCSProvider
 
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class . '/ro:coverage/ro:spatial') AS $coverage) {
-            $coverages[] = array("@type"=>"place","description"=>$coverage['type']." ".(string)$coverage);
+            $coverages[] = array("@type"=>"Place","description"=>$coverage['type']." ".(string)$coverage);
         };
 
         return $coverages;
@@ -341,8 +357,14 @@ class JsonLDProvider implements RIFCSProvider
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class . '/ro:location/ro:address/ro:electronic') AS $distribute) {
             if((string)$distribute['target']=='directDownload') {
-                $distribution[] = array("@type"=>"DataDownload","contentSize"=>(string)$distribute->byteSize,
-                    "URL"=>(string)$distribute->value,"fileFormat"=>(string)$distribute->mediaType,"description"=>(string)$distribute->notes);
+                $notes = (trim((string)$distribute->notes)!="")? trim((string)$distribute->notes) : null;
+                $distArray = [];
+                $distArray["@type"] = "DataDownload";
+                $distArray["contentSize"] = (string)$distribute->byteSize;
+                $distArray["URL"] = (string)$distribute->value;
+                $distArray["fileFormat"] = (string)$distribute->mediaType;
+                if($notes) $distArray["description"] = $notes;
+                $distribution[] = $distArray;
             }
         };
         return $distribution;
@@ -398,7 +420,7 @@ class JsonLDProvider implements RIFCSProvider
         $data = null
     )
     {
-        $creatorArray = array("IsPrincipalInvestigatorOf","author","coInvestigator","isOwnedBy","hasCollector");
+        $creatorArray = array("isPrincipalInvestigatorOf","author","coInvestigator","isOwnedBy","hasCollector");
 
         if (!$data) {
             $data = MetadataProvider::getSelective($record, ['recordData']);
@@ -540,9 +562,10 @@ class JsonLDProvider implements RIFCSProvider
         if (!$data) {
             $data = MetadataProvider::getSelective($record, ['recordData']);
         }
-        $accountablePerson = [];
 
         $relationships = $data['relationships'];
+
+        $accountablePerson = [];
 
         foreach ($relationships as $relation) {
             $relation_types = [];
@@ -553,7 +576,7 @@ class JsonLDProvider implements RIFCSProvider
             }
 
             if (($relation->prop("to_class") == "party" || $relation->prop("to_related_info_type") == "party")
-                && in_array("isOwnedBy", $relation_types)
+                && (in_array("isOwnedBy", $relation_types) || in_array("isOwnerOf", $relation_types))
             ) {
                 if ($relation->prop("to_type") == 'group' || $relation->prop("to_related_info_type") == 'group') {
                     $type = "Organization";
@@ -583,8 +606,8 @@ class JsonLDProvider implements RIFCSProvider
         $types= array ("brief","full");
 
         $descriptions = [];
-        foreach (XMLUtil::getElementsByXPath($data['recordData'],'ro:registryObject/ro:' . $record->class . '/ro:description') AS $description) {
-            foreach($types as $type) {
+        foreach($types as $type) {
+            foreach (XMLUtil::getElementsByXPath($data['recordData'],'ro:registryObject/ro:' . $record->class . '/ro:description') AS $description) {
                 if ((string)$description["type"] == $type) {
                     $descriptions[] = ((string)$description);
                     return $descriptions;
