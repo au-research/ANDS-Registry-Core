@@ -30,4 +30,14 @@ class DatesProviderTest extends \RegistryTestClass
         $publicationDate = DatesProvider::getPublicationDate($record);
         $this->assertEquals("2001-12-12", $publicationDate);
     }
+
+    /** @test */
+    function it_should_get_correct_publciation_date_2()
+    {
+        $key = "AUTORCIDWizCollection2";
+        $this->ensureKeyExist($key);
+        $record = RegistryObjectsRepository::getPublishedByKey($key);
+        $publicationDate = DatesProvider::getPublicationDate($record);
+        $this->assertEquals("2011-02-07", $publicationDate);
+    }
 }
