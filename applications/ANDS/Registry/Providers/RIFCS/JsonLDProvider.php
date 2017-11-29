@@ -138,7 +138,19 @@ class JsonLDProvider implements RIFCSProvider
 
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class . '/ro:coverage/ro:spatial') AS $coverage) {
-            $coverages[] = array("@type"=>"Place","description"=>$coverage['type']." ".(string)$coverage);
+
+            $type = (string)$coverage['type'];
+
+            if($type == "iso19139dcmiBox"){
+                $geo = array("@type"=>"GeoShape","box"=>(string)$coverage);
+                $coverages[] = array("@type" => "Place", "geo" =>$geo);
+            }
+            if($type == "dcmiPoint" || $type == "gmlKmlPolyCoords"|| $type == "kmlPolyCoords") {
+                $geo = array("@type"=>"GeoShape","polygon"=>(string)$coverage);
+                $coverages[] = array("@type" => "Place", "geo" =>$geo);
+            }else{
+                $coverages[] = array("@type" => "Place", "description" => $coverage['type'] . " " . (string)$coverage);
+            }
         };
 
         return $coverages;
@@ -152,14 +164,7 @@ class JsonLDProvider implements RIFCSProvider
 
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class . '/ro:coverage/ro:temporal/ro:date') AS $coverage) {
-            if($coverage['type'] == 'dateFrom' ||  $coverage['type'] == 'dateTo'){
-                if($coverage['type']=='dateFrom') $type="startDate";
-                if($coverage['type']=='dateTo') $type="endDate";
-                $coverages[] = array("@type"=>'DateTime',$type =>(string)$coverage);
-            }else{
-                $coverages[] = (string)$coverage;
-            }
-
+                $coverages[] = $coverage['type']." ".(string)$coverage;
         };
 
         return $coverages;
@@ -258,6 +263,7 @@ class JsonLDProvider implements RIFCSProvider
     ){
         $related = [];
         $relationships = $data['relationships'];
+
 
         foreach ($relationships as $relation) {
             $relation_types = [];
