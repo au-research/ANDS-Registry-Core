@@ -76,7 +76,7 @@ class DatesProvider implements RIFCSProvider
          */
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class . '/ro:dates') AS $date) {
-            $value = (string) $date;
+            $value = (string) $date->date;
             $type = (string) $date['type'];
             if (in_array($type, ['dc.issued', 'dc.available', 'dc.created'])) {
                 return self::formatDate($value, $format);
