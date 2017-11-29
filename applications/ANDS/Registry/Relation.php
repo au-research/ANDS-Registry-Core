@@ -348,8 +348,14 @@ class Relation
         return $type == $this->prop('relation_type');
     }
 
-    public function hasRelationTypes($types)
+    public function hasRelationTypes($types, $includeReverse)
     {
+        if ($includeReverse) {
+            $reverseTypes = collect($types)->map(function($item) {
+                return getReverseRelationshipString($item);
+            })->toArray();
+            $types = array_merge($types, $reverseTypes);
+        }
         foreach ($types as $type) {
             if ($this->hasRelationType($type)) {
                 return true;
