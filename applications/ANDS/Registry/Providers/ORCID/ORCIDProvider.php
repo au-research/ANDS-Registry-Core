@@ -126,17 +126,43 @@ class ORCIDProvider implements RegistryContentProvider
 
         // does not find more contributors if there's enough from citationMetadata
         if (count($contributors) > 0) {
+            $contributors = self::remapContributorsSequences($contributors);
             return $contributors;
         }
 
         $validParty = collect($data['relationships'])->filter(function($item) {
-            return $item->to() && $item->hasRelationTypes(self::$validContributorRelationTypes);
+            return $item->hasRelationTypes(self::$validContributorRelationTypes);
         });
 
         foreach ($validParty as $party) {
+            $title = $party->prop('to_title');
+            if (!$title) {
+                $title = $party->prop('relation_to_title');
+            }
+
+            // check for contributor-orcid in record identifier
+            $orcids = [];
+            if ($party->to()) {
+                $identifiers = IdentifierProvider::get($party->to());
+                $orcids = array_merge($orcids, collect($identifiers)->filter(function($item) {
+                    return $item['type'] == 'orcid';
+                })->toArray());
+            }
+
+            // check for contributor-orcid in relatedInfo
+            if ($party->prop('to_identifier_type') == "orcid") {
+                $orcids[] = [
+                    'value' => $party->prop('to_identifier'),
+                    'type' => 'orcid'
+                ];
+            }
+            if (count($orcids) > 0) {
+                $orcids = self::formatContributorOrcid($orcids);
+            }
+
             $contributors[] = [
-                'credit-name' => $party->prop('to_title'),
-                'contributor-orcid' => null, // TODO get contributor-orcid
+                'credit-name' => $title ,
+                'contributor-orcid' => count($orcids) ? $orcids : null,
                 'contributor-attributes' => [
                     'contributor-sequence' => null,
                     'contributor-role' => self::getContributorRole($party)
@@ -145,12 +171,7 @@ class ORCIDProvider implements RegistryContentProvider
         }
 
         // first, additional mapping for sequence
-        $contributors = collect($contributors)->map(function($contributor) {
-           if ($seq = $contributor['contributor-attributes']['contributor-sequence']) {
-               $contributor['contributor-attributes']['contributor-sequence'] = $seq == 1 ? "first" : "additional";
-           }
-           return $contributor;
-        });
+        $contributors = self::remapContributorsSequences($contributors);
 
         return $contributors;
     }
@@ -272,6 +293,36 @@ class ORCIDProvider implements RegistryContentProvider
             return $mapping[$full_style];
         }
         return 'formatted-unspecified';
+    }
+
+    /**
+     * @param $contributors
+     * @return array
+     */
+    private static function remapContributorsSequences($contributors)
+    {
+        $contributors = collect($contributors)->map(function ($contributor) {
+            if ($seq = $contributor['contributor-attributes']['contributor-sequence']) {
+                $contributor['contributor-attributes']['contributor-sequence'] = $seq == 1 ? "first" : "additional";
+            }
+            return $contributor;
+        })->toArray();
+        return $contributors;
+    }
+
+    private static function formatContributorOrcid($orcids)
+    {
+        return collect($orcids)->unique()->map(function ($item) {
+            $value = $item['value'];
+            $prefix = "https://orcid.org/";
+            $uri = strpos($value, 'http', 0) ? $value : $prefix.$value;
+            $path = !strpos($value, 'http', 0) ? $value : end(explode('/', $value));
+            return [
+               'uri' => $uri,
+               'path' => $path,
+               'host' => 'orcid.org'
+           ];
+        })->first();
     }
 
 }
