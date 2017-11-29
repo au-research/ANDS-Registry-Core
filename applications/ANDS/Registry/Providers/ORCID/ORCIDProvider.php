@@ -194,7 +194,7 @@ class ORCIDProvider implements RegistryContentProvider
         return "author";
     }
 
-    public static function getORCID($record, $orcid)
+    public static function getORCID(RegistryObject $record, ORCIDRecord $orcid)
     {
         $data = MetadataProvider::get($record);
 
@@ -260,16 +260,20 @@ class ORCIDProvider implements RegistryContentProvider
 
         // external-ids
         $identifiers = IdentifierProvider::get($record);
-        if ($identifiers && count($identifiers) > 0) {
+        $identifiers[] = [
+            'type' => 'other-id',
+            'value' => $record->portalUrlWithKey
+        ];
 
-            $identifiers = collect($identifiers)->map(function($item) {
-                if (!in_array($item['type'], self::$validExternalIDsIdentifierType)) {
-                    $item['type'] = 'other-id';
-                }
-                return $item;
-            })->toArray();
-            $doc->set('external-ids', $identifiers);
-        }
+        $identifiers = collect($identifiers)->map(function($item) {
+            if (!in_array($item['type'], self::$validExternalIDsIdentifierType)) {
+                $item['type'] = 'other-id';
+            }
+            return $item;
+        })->toArray();
+
+        $doc->set('external-ids', $identifiers);
+
 
         // contributors
         if ($contributors = self::getContributors($record, $data)) {
