@@ -261,11 +261,26 @@ class JsonLDProvider implements RIFCSProvider
 
         foreach ($relationships as $relation) {
             $relation_types = [];
+            $relation_origins = [];
+
             if(is_array($relation->prop('relation_type'))){
                 $relation_types = $relation->prop('relation_type');
             }else{
                 $relation_types[] = $relation->prop('relation_type');
             }
+            if(is_array($relation->prop('relation_type'))){
+                $relation_origins = $relation->prop('relation_origin');
+            }else{
+                $relation_origins[] = $relation->prop('relation_origin');
+            }
+
+            for($i=0;$i<count($relation_origins);$i++){
+                if(str_replace("REVERSE_GRANTS"," ",$relation_origins[$i])!=$relation_origins[$i]){
+                    unset($relation_origins[$i]);
+                    unset($relation_types[$i]);
+                }
+            }
+
             if ( ($relation->prop("to_class") == "collection" || $relation->prop("to_related_info_type") == "collection")
                 && in_array($relation_type, $relation_types)) {
                 if($relation->prop("to_title") != ""){
