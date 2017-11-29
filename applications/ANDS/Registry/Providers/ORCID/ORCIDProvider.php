@@ -271,7 +271,7 @@ class ORCIDProvider implements RegistryContentProvider
         // external-ids
         $identifiers = IdentifierProvider::get($record);
         $identifiers[] = [
-            'type' => 'other-id',
+            'type' => 'uri',
             'value' => $record->portalUrlWithKey
         ];
 
