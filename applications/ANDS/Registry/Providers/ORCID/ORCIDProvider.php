@@ -131,7 +131,7 @@ class ORCIDProvider implements RegistryContentProvider
         }
 
         $validParty = collect($data['relationships'])->filter(function($item) {
-            return $item->hasRelationTypes(self::$validContributorRelationTypes);
+            return $item->hasRelationTypes(self::$validContributorRelationTypes, true);
         });
 
         foreach ($validParty as $party) {

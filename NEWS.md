@@ -1,3 +1,44 @@
+## Release 26
+
+Release 26 of ANDS Online Services is scheduled for implementation on 6 December 2017. This release implements a number of Research Data Australia (RDA), DOI Service, Research Vocabularies Australia (RVA) and ORCID-RDA Integration service fixes and enhancement requests received through the ANDS Service Desk. New RIF-CS vocabulary terms will also be introduced in RIF-CS v1.6.2.
+
+**Research Data Australia**
+
+* Correct the display of Contact Information for records having multiple location addresses 
+* Fix the issue where inaccurate records are returned in RDA Suggested Datasets due to incorrect subjects pool query
+* Review and update Schema.org mapping for Collections and Services 
+* Refactor the NLA pullback job to ensure that new NLA identifiers used in RDA records are retrieved from NLA and published in a timely manner 
+* Fix the relationship index so that the correct authors are identified when exporting collections to EndNote
+* Fix the ordering of AKA name parts
+
+**RDA Registry**
+* Allow data source administrators (DSAs) to customise the default CSW harvest parameters for their data source 
+
+**ANDS DOI Service**
+* Fix bug preventing updates to client accounts where the client id is a single digit
+
+**RIF-CS (v1.6.2)**
+* Addition of IGSN, GRID, ScopusID, ISNI and RAiD as identifier types in RIF-CS
+* Addition of PONT, SCOT, APT, PSYCHIT and ISO639 subject types in RIF-CS
+* Simplification of RIF-CS identifier types
+
+**Research Vocabularies Australia**
+ * Include missing JAR files in the vocabulary toolkit to allow parsing of vocabularies in some RDF formats (N3, N-Quads and TriX)
+
+**RDA-ORCID Integration Service**
+* Retrieve and index ORCID name if ORCID ID is used as relatedInfo identifier
+* ORCID Works Export: Upgrade the ORCID Works Export service to use ORCID API v2.0 
+* RDA to ORCID Import: Revisit business rules for extracting creation date when citationMetadata is not available
+* RDA to ORCID Import: Add better error reporting
+* ORCID Import wizard: change default type to 'dataset' (currently set to 'other')
+
+Please note that changes listed above are the planned features, subject to  timetabling  changes.
+
+A separate email with the list of impact and requirements for each change will be sent out before the release. 
+
+For any comments or questions, please email [services@ands.org.au](mail:toservices@ands.org.au). Thank you.
+
+
 ## Release 25
 Release 25 of ANDS Online Services is scheduled for implementation on  11 October 2017. This release implements a number of Research Data Australia, Research Vocabularies Australia and ANDS Registry bug fixes and enhancement requests received through the ANDS Service Desk.
 
