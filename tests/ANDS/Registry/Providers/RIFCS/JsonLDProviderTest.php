@@ -13,7 +13,7 @@ class JsonLDProviderTest extends \RegistryTestClass
     public function it_should_output_json_encode_object_collection()
     {
 
-        $key = "AUTCollection2";
+        $key = "AUTSchemaOrgCollection1";
         $this->ensureKeyExist($key);
         $record = RegistryObjectsRepository::getPublishedByKey($key);
         $output = JsonLDProvider::process($record);
