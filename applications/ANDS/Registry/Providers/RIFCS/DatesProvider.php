@@ -59,6 +59,13 @@ class DatesProvider implements RIFCSProvider
             }
         }
 
+        // registryObject/collection/citationInfo/citationMetadata/date[@type=’issued date’]
+        foreach ($citationMedataDates AS $date) {
+            if ((string) $date['type'] == 'issued') {
+                return self::formatDate((string) $date, $format);
+            }
+        }
+
         // registryObject/collection/citationInfo/citationMetadata/date[@type=’created’]
         foreach ($citationMedataDates AS $date) {
             if ((string) $date['type'] == 'created') {
@@ -66,12 +73,6 @@ class DatesProvider implements RIFCSProvider
             }
         }
 
-        // registryObject/collection/citationInfo/citationMetadata/date[@type=’issued date’]
-        foreach ($citationMedataDates AS $date) {
-            if ((string) $date['type'] == 'issued') {
-                return self::formatDate((string) $date, $format);
-            }
-        }
 
         // first citationMetadata/date found
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
