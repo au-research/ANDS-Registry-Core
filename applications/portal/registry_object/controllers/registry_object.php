@@ -504,10 +504,11 @@ class Registry_object extends MX_Controller
                 if ($fr->related_info_type == 'party' && $fr->related_object_identifier_type == 'orcid' && isset($fr->related_object_identifier)) {
 
                     $orcid = ORCIDRecordsRepository::obtain($fr->related_object_identifier);
-
+                    $bio = json_decode($orcid->record_data, true);
                     $pullback = [
                         'name' => $orcid->full_name,
-                        'bio' => json_decode($orcid->record_data, true),
+                        'bio' => $bio,
+                        'bio_content' => $bio['person']['biography']['content'],
                         'orcidRecord' => $orcid,
                         'orcid' => $orcid->orcid_id
                     ];

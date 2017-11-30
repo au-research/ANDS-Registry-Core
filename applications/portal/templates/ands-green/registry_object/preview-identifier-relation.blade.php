@@ -23,7 +23,11 @@
 				@endif
 			</h4>
 
-			<p>@include('registry_object/contents/the-description')</p>
+			@if(!$pullback)
+				<p>@include('registry_object/contents/the-description')</p>
+			@else
+				<p> {{ $pullback['bio_content']  }}</p>
+			@endif
 
 			@if($ro)
 				<?php 
