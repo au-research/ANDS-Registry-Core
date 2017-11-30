@@ -17,7 +17,7 @@
                 <div id="loading"></div>
                 <input type="hidden" name="client_id" value="<?php echo $client_id; ?>"/>
                 <input type="hidden" name="app_id" value="<?php echo $app_id; ?>"/>
-                <input type="hidden" name="xml"/> <a href="http://schema.datacite.org/meta/kernel-3.0/index.html" target="_blank" class="pull-right">DataCite Schema Help</a>
+                <input type="hidden" name="xml"/> <a href="http://schema.datacite.org/meta/kernel-4.1/index.html" target="_blank" class="pull-right">DataCite Schema Help</a>
             <div class="control-group">
                 <label class="control-label">DOI</label> <div class="controls"><input type="text" name="doi" value="<?php echo $doi_id; ?>" readonly="readonly"/></div>
 
