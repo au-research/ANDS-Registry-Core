@@ -4,12 +4,14 @@
 namespace ANDS\Commands;
 
 
+use ANDS\Commands\Script\GenericScript;
 use ANDS\Commands\Script\NLAPullBack;
 use ANDS\Commands\Script\ProcessGroups;
 use ANDS\Commands\Script\ProcessScholix;
 use ANDS\Commands\Script\ProcessServiceLinksScript;
 use ANDS\Commands\Script\ProcessTitles;
 use ANDS\Commands\Script\ReportScript;
+use ANDS\Commands\Script\TestScript;
 use ANDS\Commands\Script\UpdateDataciteClient;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,14 +20,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class RunScriptCommand extends ANDSCommand
 {
-    protected $scripts = [
+    protected static $scripts = [
         "processGroups" => ProcessGroups::class,
         "processTitles" => ProcessTitles::class,
         "processScholix" => ProcessScholix::class,
         "updateDataciteClient" => UpdateDataCiteClient::class,
         "report" => ReportScript::class,
         "processServiceLinks" => ProcessServiceLinksScript::class,
-        "nlaPullBack" => NLAPullBack::class
+        "nlaPullBack" => NLAPullBack::class,
+        "testScript" => TestScript::class
     ];
 
     protected function configure()
@@ -35,7 +38,7 @@ class RunScriptCommand extends ANDSCommand
             ->setDescription('Get something from ro')
             ->setHelp("This command allows you to run custom scripts")
 
-            ->addArgument('what', InputArgument::REQUIRED, implode('|', array_keys($this->scripts)))
+            ->addArgument('what', InputArgument::REQUIRED, implode('|', array_keys(self::$scripts)))
             ->addOption(
                 'params',
                 'p',
@@ -56,7 +59,22 @@ class RunScriptCommand extends ANDSCommand
             return;
         }
 
-        $script = new $this->scripts[$input->getArgument("what")]($this, $input, $output);
+        $script = new $this->scripts[$input->getArgument("what")]($this);
+        $script->run();
+    }
+
+    /**
+     * @param $script
+     * @return GenericScript
+     */
+    public static function getScript($script)
+    {
+        return new self::$scripts[$script](new RunScriptCommand());
+    }
+
+    public static function runScript($script)
+    {
+        $script = self::getScript($script);
         $script->run();
     }
 }

@@ -13,6 +13,31 @@ class ANDSCommand extends Command
 {
     private $input;
     private $output;
+    public $logs = [];
+
+    /**
+     * @return mixed
+     */
+    public function getInput()
+    {
+        return $this->input;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOutput()
+    {
+        return $this->output;
+    }
+
+    /**
+     * @return array
+     */
+    public function getLogs()
+    {
+        return $this->logs;
+    }
 
     protected function configure()
     {
@@ -29,16 +54,25 @@ class ANDSCommand extends Command
 
     public function log($message, $wrapper = null)
     {
-        if ($wrapper) {
-            $this->output->writeln("<$wrapper>$message</$wrapper>");
-            return;
+        $this->logs[] = $wrapper ? "[{$wrapper}] " : "" . $message;
+
+        if ($this->output) {
+            if ($wrapper) {
+                $this->output->writeln("<$wrapper>$message</$wrapper>");
+                return;
+            }
+            $this->output->writeln($message);
         }
-        $this->output->writeln($message);
+
         return;
     }
 
     public function table($rows, $headers = [])
     {
+        if (!$this->output) {
+            print_r($rows);
+            return;
+        }
         $table = new Table($this->output);
         $table->setHeaders($headers)
             ->setRows($rows)
@@ -47,16 +81,27 @@ class ANDSCommand extends Command
 
     public function isQuite()
     {
-        return $this->output->isQuite();
+        if ($this->output) {
+            return $this->output->isQuite();
+        }
+        return true;
     }
 
     public function isVerbose()
     {
-        return $this->output->isVerbose();
+        if ($this->output) {
+            return $this->output->isVerbose();
+        }
+
+        return true;
     }
 
     public function isDebug()
     {
-        return $this->output->isDebug();
+        if ($this->output) {
+            return $this->output->isDebug();
+        }
+
+        return true;
     }
 }
