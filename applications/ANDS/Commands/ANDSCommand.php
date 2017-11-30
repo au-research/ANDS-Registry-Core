@@ -54,7 +54,7 @@ class ANDSCommand extends Command
 
     public function log($message, $wrapper = null)
     {
-        $this->logs[] = $wrapper ? "[{$wrapper}] " : "" . $message;
+        $this->logs[] = ($wrapper ? "[{$wrapper}] " : "") . $message;
 
         if ($this->output) {
             if ($wrapper) {
