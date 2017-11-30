@@ -68,7 +68,7 @@ class DatesProvider implements RIFCSProvider
 
         // registryObject/collection/citationInfo/citationMetadata/date[@type=’issued date’]
         foreach ($citationMedataDates AS $date) {
-            if ((string) $date['type'] == 'issued_date') {
+            if ((string) $date['type'] == 'issued') {
                 return self::formatDate((string) $date, $format);
             }
         }
