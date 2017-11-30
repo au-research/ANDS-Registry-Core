@@ -23,7 +23,8 @@ class Administration extends MX_Controller {
 	{
 	    $script = \ANDS\Commands\RunScriptCommand::getScript("nlaPullBack");
 	    $script->run();
-	    print_r($script->getCommand()->getLogs());
+	    $logs = $script->getCommand()->getLogs();
+	    echo implode("<br/>", $logs);
 	}
 
 	public function nla_pullback()
