@@ -154,7 +154,7 @@ class NLAPullBack extends GenericScript implements GenericScriptRunnable
         $this->log("Related Object NLA Identifier(s): {$count}");
 
         // has related info parties
-        $identifiers = IdentifierRelationship::where('related_object_identifier', 'like', "{$prefix}")->pluck('related_object_identifier')->unique()->toArray();
+        $identifiers = IdentifierRelationship::where('related_object_identifier', 'like', "%{$prefix}%")->pluck('related_object_identifier')->unique()->toArray();
         $this->nlaIdentifiers += $identifiers;
         $count = count($identifiers);
         $this->log("Related Info NLA Identifier(s): {$count}");
