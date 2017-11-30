@@ -55,6 +55,7 @@ class NLAPullBack extends GenericScript implements GenericScriptRunnable
 
         $this->log("Starting importing process...");
         $this->import($payload);
+        $this->log("Finished...");
     }
 
     /**
