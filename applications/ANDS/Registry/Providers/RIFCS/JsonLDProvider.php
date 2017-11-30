@@ -43,7 +43,7 @@ class JsonLDProvider implements RIFCSProvider
             $json_ld->{'@type'} = "Dataset";
             $json_ld->distribution = self::getDistribution($record, $data);
         }
-        if ($record->type == 'software') {
+        if ($record->type == 'software' && $record->class == "collection") {
             $json_ld->codeRepository = self::getCodeRepository($record, $data);
             $json_ld->{'@type'} = "SoftwareSourceCode";
         }
@@ -51,7 +51,7 @@ class JsonLDProvider implements RIFCSProvider
             $json_ld->{'@type'} = "Service";
             $json_ld->serviceType = $record->type;
             $json_ld->provider = self::getProvider($record, $data);
-            $json_ld->termsOfService = self::getLicense($record, $data);
+            $json_ld->termsOfService = self::getTermsOfService($record, $data);
         } elseif ($record->class == 'collection'){
             $json_ld->accountablePerson = self::getAccountablePerson($record, $data);
             $json_ld->author = self::getAuthor($record, $data);
@@ -98,7 +98,7 @@ class JsonLDProvider implements RIFCSProvider
 
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class . '/ro:citationInfo/ro:citationMetadata/ro:identifier') AS $identifier) {
-            $identifier_url = LinkProvider::getResolvedLinkForIdentifier($identifier['type'],(string)$identifier);
+            $identifier_url = LinkProvider::getResolvedLinkForIdentifier((string)$identifier['type'],(string)$identifier);
             if($identifier_url) {
                 $identifiers[] = array( "@type"=> "PropertyValue",
                     "propertyID"=> "URL",
@@ -106,7 +106,7 @@ class JsonLDProvider implements RIFCSProvider
                 );
             }else{
                 $identifiers[] = array( "@type"=> "PropertyValue",
-                    "propertyID"=> "Text",
+                    "propertyID"=> (string)$identifier['type'],
                     "value"=> (string)$identifier
                 );
             }
@@ -114,7 +114,7 @@ class JsonLDProvider implements RIFCSProvider
 
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class . '/ro:identifier') AS $identifier) {
-            $identifier_url = LinkProvider::getResolvedLinkForIdentifier($identifier['type'],(string)$identifier);
+            $identifier_url = LinkProvider::getResolvedLinkForIdentifier((string)$identifier['type'],(string)$identifier);
             if($identifier_url) {
                 $identifiers[] = array( "@type"=> "PropertyValue",
                     "propertyID"=> "URL",
@@ -122,7 +122,7 @@ class JsonLDProvider implements RIFCSProvider
                 );
             }else{
                 $identifiers[] = array( "@type"=> "PropertyValue",
-                    "propertyID"=> "Text",
+                    "propertyID"=> (string)$identifier['type'],
                     "value"=> (string)$identifier
                 );
             }
@@ -200,6 +200,27 @@ class JsonLDProvider implements RIFCSProvider
         };
 
         return $licenses;
+    }
+
+    public static function getTermsOfService(
+        RegistryObject $record,
+        $data = null
+    ){
+        $termsOfService = [];
+
+        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+            'ro:registryObject/ro:' . $record->class . '/ro:rights/ro:licence') AS $right) {
+            $termsOfService[]= (string)$right;
+            $termsOfService[]= (string)$right['type'];
+            $termsOfService[]= (string)$right['rightsUri'];
+        };
+        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+            'ro:registryObject/ro:' . $record->class . '/ro:rights/ro:accessRights') AS $right) {
+            $termsOfService[]= (string)$right;
+            $termsOfService[]= (string)$right['rightsUri'];
+        };
+
+        return $termsOfService;
     }
 
     public static function getKeywords(
