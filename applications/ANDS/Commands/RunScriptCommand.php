@@ -54,12 +54,12 @@ class RunScriptCommand extends ANDSCommand
         $this->setUp($input, $output);
 
         $what = $input->getArgument("what");
-        if (!in_array($what, array_keys($this->scripts))) {
-            $this->log("unknown $what, available: ". implode('|', array_keys($this->scripts)), "error");
+        if (!in_array($what, array_keys(static::$scripts))) {
+            $this->log("unknown $what, available: ". implode('|', array_keys(static::$scripts)), "error");
             return;
         }
 
-        $script = new $this->scripts[$input->getArgument("what")]($this);
+        $script = new static::$scripts[$input->getArgument("what")]($this);
         $script->run();
     }
 
