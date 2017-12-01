@@ -142,20 +142,20 @@ class NLAPullBack extends GenericScript implements GenericScriptRunnable
         $this->nlaIdentifiers = [];
 
         // has nla identifier
-        $identifiers = Identifier::where('identifier', 'like', "%{$prefix}%")->pluck('identifier')->unique()->toArray();
-        $this->nlaIdentifiers += $identifiers;
+        $identifiers = Identifier::where('identifier', 'like', "%{$prefix}%")->pluck('identifier')->unique()->values()->toArray();
+        $this->nlaIdentifiers = array_merge($this->nlaIdentifiers, $identifiers);
         $count = count($identifiers);
         $this->log("NLA identifier(s): {$count}");
 
         // directly relates to nla identifier
-        $identifiers = Relationship::where('related_object_key', 'like', "%{$prefix}%")->pluck('related_object_key')->unique()->toArray();
-        $this->nlaIdentifiers += $identifiers;
+        $identifiers = Relationship::where('related_object_key', 'like', "%{$prefix}%")->pluck('related_object_key')->unique()->values()->toArray();
+        $this->nlaIdentifiers = array_merge($this->nlaIdentifiers, $identifiers);
         $count = count($identifiers);
         $this->log("Related Object NLA Identifier(s): {$count}");
 
         // has related info parties
-        $identifiers = IdentifierRelationship::where('related_object_identifier', 'like', "%{$prefix}%")->pluck('related_object_identifier')->unique()->toArray();
-        $this->nlaIdentifiers += $identifiers;
+        $identifiers = IdentifierRelationship::where('related_object_identifier', 'like', "%{$prefix}%")->pluck('related_object_identifier')->unique()->values()->toArray();
+        $this->nlaIdentifiers = array_merge($this->nlaIdentifiers, $identifiers);
         $count = count($identifiers);
         $this->log("Related Info NLA Identifier(s): {$count}");
 
