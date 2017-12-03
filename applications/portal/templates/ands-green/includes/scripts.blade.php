@@ -121,6 +121,6 @@
 @endif
 
 <?php if(isset($ro->jsonld[0])){
-    print($ro->jsonld[0]);
+    print('<script type="application/ld+json">'.$ro->jsonld[0].'</script>');
 }
 ?>

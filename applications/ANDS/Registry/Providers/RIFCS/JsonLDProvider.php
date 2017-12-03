@@ -83,7 +83,7 @@ class JsonLDProvider implements RIFCSProvider
         $json_ld->url = self::base_url() . "view?key=" . $record->key;
 
         $json_ld = (object) array_filter((array) $json_ld);
-        return '<script type="application/ld+json">'.json_encode($json_ld).'</script>';
+        return json_encode($json_ld);
     }
 
     public static function get(RegistryObject $record){
