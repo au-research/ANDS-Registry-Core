@@ -335,18 +335,15 @@
                         matchingdoc.push(doc);
                     }
                 });
-                // $log.debug(matchingdoc);
                 angular.forEach(matchingdoc, function(doc) {
                     if(!doc.hide) {
                         search_factory.get_matching_records(doc.id).then(function(data){
+                            var matches = data.data[0].identifiermatch;
                             if (doc && !doc.hide) {
-                                // console.log(doc)
-                               // doc.identifiermatch = data.message.identifiermatch;
-                               // if(doc && !doc.hide) {
-                               //     angular.forEach(doc.identifiermatch, function(idd){
-                                //        $scope.hidedoc(idd.registry_object_id);
-                                 //   });
-                               // }
+                                doc.identifiermatch = matches;
+                                angular.forEach(matches, function (match) {
+                                    $scope.hidedoc(match.registry_object_id);
+                                });
                             }
                         });
                     }

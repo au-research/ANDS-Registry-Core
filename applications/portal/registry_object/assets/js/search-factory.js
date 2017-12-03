@@ -351,7 +351,7 @@
 
             get_matching_records: function (id) {
                 return $http
-                    .get(registry_url + 'services/api/registry_objects/' + id + '/identifiermatch')
+                    .get(api_url + '/registry/object/' + id + '/identifiermatch')
                     .then(function (response) {
                         return response.data;
                     });
