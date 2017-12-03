@@ -1,6 +1,7 @@
 <script>
 	var base_url = "{{base_url()}}";
 	var registry_url = "{{registry_url()}}";
+	var api_url = "{{ api_url()  }}";
 </script>
 
 @if(get_config_item('tracking'))

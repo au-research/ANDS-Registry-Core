@@ -51,6 +51,7 @@
                         </h2>
                         <p><small>[[doc.group]]</small> <small ng-if="filters.class=='activity' && doc.earliest_year"><span style="padding-left:15px"></span><strong>[[doc.earliest_year]] to [[doc.latest_year]]</strong></small></p>
                         <p ng-if="doc.matching_identifier_count">[[ doc.matching_identifier_count ]] Linked Records</p>
+
                         <p ng-if="doc.identifiermatch">
                             <ul>
                                 <li ng-repeat="idd in doc.identifiermatch">
