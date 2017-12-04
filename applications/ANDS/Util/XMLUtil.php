@@ -17,6 +17,10 @@ if (!defined("NL")) {
     define('NL',"\n");
 }
 
+if (!defined("REGISTRY_APP_PATH")) {
+    define('REGISTRY_APP_PATH', 'applications/registry/');
+}
+
 class XMLUtil
 {
 
@@ -172,6 +176,15 @@ class XMLUtil
     }
 
     /**
+     * TODO: Refactor
+     * @return null|\XSLTProcessor
+     */
+    public static function getORCIDTransformer()
+    {
+        return Transforms::get_extrif_to_orcid_transformer();
+    }
+
+    /**
      * validates datacite xml against required schema version
      *
      * @param $schema
@@ -193,6 +206,25 @@ class XMLUtil
 
         $schemaPath = dirname(__DIR__) ."/../../etc/schema/$schema/$schema.xsd";
         $result = $xml->schemaValidate($schemaPath);
+        foreach (libxml_get_errors() as $error) {
+            $this->validationMessage = $error->message;
+        }
+        return $result;
+    }
+
+    public function validateRemoteSchema($schema, $payload)
+    {
+        libxml_use_internal_errors(true);
+
+        try {
+            $xml = new \DOMDocument();
+            $xml->loadXML($payload);
+        } Catch (\Exception $e) {
+            $this->validationMessage = $e->getMessage();
+            return false;
+        }
+
+        $result = $xml->schemaValidate($schema);
         foreach (libxml_get_errors() as $error) {
             $this->validationMessage = $error->message;
         }

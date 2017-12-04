@@ -13,11 +13,7 @@ class Citations extends ROHandler {
         $result = array();
 
         if ($this->xml) {
-
-
             $coins = $this->getCoinsSpan();
-
-
             foreach($this->xml->{$this->ro->class}->citationInfo as $citation){
                 foreach($citation->citationMetadata as $citationMetadata){
                     $contributors = Array();
@@ -40,29 +36,11 @@ class Citations extends ROHandler {
                     $displayNames ='';
                     $contributorCount = 0;
                     foreach($contributors as $contributor){
-                        $org_text='';
-                        if((int)$contributor['seq']>1)
-                        {
-                            $org_text = ' itemprop="contributor"';
-                        }
-                        elseif((int)$contributor['seq']==1){
-                            $org_text = ' itemprop="creator author"';
-                        }
                         $contributorCount++;
-                        $displayNames .= '<span '.$org_text.'>'.formatName($contributor['name']).'</span>';
+                        $displayNames .= formatName($contributor['name']);
                         if($contributorCount < count($contributors)) $displayNames .= "; ";
                     }
                     $identifierResolved = identifierResolution((string)$citationMetadata->identifier, (string)$citationMetadata->identifier['type']);
-                    if((string)$citationMetadata->version!=''){
-                        $version_text = ' itemprop="version"';
-                    }else{
-                        $version_text = '';
-                    }
-                    if((string)$citationMetadata->publisher!=''){
-                        $publisher_text = ' itemprop="publisher"';
-                    }else{
-                        $publisher_text = '';
-                    }
 
                     $publicationDate = (string)$citationMetadata->date;
                     if(strlen($citationMetadata->date) > 4){
@@ -74,8 +52,8 @@ class Citations extends ROHandler {
                         'identifier' => (string)$citationMetadata->identifier,
                         'identifier_type' => strtoupper((string)$citationMetadata->identifier['type']),
                         'identifierResolved' => $identifierResolved,
-                        'version' => "<span ".$version_text.">".(string)$citationMetadata->version."</span>",
-                        'publisher' => "<span ".$publisher_text.">".(string)$citationMetadata->publisher."</span>",
+                        'version' => (string)$citationMetadata->version,
+                        'publisher' => (string)$citationMetadata->publisher,
                         'url' => (string)$citationMetadata->url,
                         'context' => (string)$citationMetadata->context,
                         'placePublished' => (string)$citationMetadata->placePublished,
@@ -528,13 +506,21 @@ Y2  - '.date("Y-m-d")."
         }
 
         if (!$contributors) {
+            /*
+             * We do query the "relations" core for related parties.
+             * We do index reverse relationships BUT without the mirrored (reversed) relationship type
+             * adding the reversed types to the query ensures that the party is found in either ways in the index
+             */
             $relationshipTypeArray = array(
                 'hasPrincipalInvestigator',
+                'isPrincipalInvestigatorOf',
                 'principalInvestigator',
                 'author',
                 'coInvestigator',
                 'isOwnedBy',
-                'hasCollector'
+                'isOwnerOf',
+                'hasCollector',
+                'isCollectorOf'
             );
             $classArray = array('party');
             $authors = $this->ro->getRelatedObjectsIndex($classArray, $relationshipTypeArray);

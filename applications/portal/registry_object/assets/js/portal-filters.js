@@ -44,6 +44,7 @@ angular.module('portal-filters', [])
 				case 'completion_to': return 'Completion To'; break;
 				case 'completion_from': return 'Completion From'; break;
 				case 'spatial': return 'Location'; break;
+				case 'access_methods_ss': return 'Access Method'; break;
 				default: return text;
 			}
 		}
@@ -57,13 +58,11 @@ angular.module('portal-filters', [])
 				case 'related_party_one_search' : return 'Related People' ; break;
 				case 'related_party_multi_search' : return 'Related Organisations' ; break;
 				case 'group_search' : return 'Data Provider' ; break;
-				case 'related_info_search' : return 'Related Data' ; break;
 				case 'related_activity_search' : return 'Related Project or Grant' ; break;
 				case 'related_service_search' : return 'Related Tool or Service' ; break;
 				case 'related_info_search' : return 'Related Resource' ; break;
 				case 'subject_value_resolved_search' : return 'Subject' ; break;
 				case 'description_value' : return 'Description' ; break;
-				case 'date_to' : return 'Dates' ; break;
 				case 'date_to' : return 'Dates' ; break;
 				case 'date_from' : return 'Coverage' ; break;
 				case 'citation_info_search' : return 'Citation ' ; break;
@@ -98,6 +97,28 @@ angular.module('portal-filters', [])
 	.filter('toTitleCase', function($log){
 		return function(str){
 			return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+		}
+	})
+	.filter('formatFacet', function () {
+		return function (str) {
+			switch (str) {
+				case 'OGC:WMTS': case 'ogc:wmts': return 'OGC Web Map Tile Service'; break;
+				case 'OGC:WFS': case 'ogc:wfs': return 'OGC Web Feature Service'; break;
+				case 'OGC:WMS': case 'ogc:wms': return 'OGC Web Map Service'; break;
+				case 'OGC:WCS': case 'ogc:wcs': return 'OGC Web Coverage Service'; break;
+                case 'OGC:WPS': case 'ogc:wps': return 'OGC Web Processing Service'; break;
+                case 'landingPage': return 'Landing Page'; break;
+				case 'directDownload': return 'Direct Download'; break;
+				case 'GeoServer': return 'GeoServer'; break;
+				case 'THREDDS': case 'thredds': return 'THREDDS'; break;
+                case 'THREDDS:WCS': case 'thredds:wcs': return 'THREDDS Web Coverage Service'; break;
+                case 'THREDDS:WMS': case 'thredds:wms':return 'THREDDS Web Map Service'; break;
+                case 'THREDDS:OPeNDAP': case 'thredds:opendap':return 'THREDDS OPeNDAP'; break;
+                case 'contactCustodian': return 'Contact Custodian'; break;
+				default:
+					return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+					break;
+			}
 		}
 	})
 	.filter('getLabelFor', function($log){

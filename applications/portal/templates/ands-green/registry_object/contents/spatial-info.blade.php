@@ -23,7 +23,7 @@ foreach($ro->spatial as $a_coverage){
 
 			@foreach($ro->spatial as $a_coverage)
             @if(isset($a_coverage['polygon']))
-			    <p class="coverage hide" itemprop="spatial">{{$a_coverage['polygon']}}</p>
+			    <p class="coverage hide">{{$a_coverage['polygon']}}</p>
             @endif
             @if(isset($a_coverage['center']))
 			    <p class="spatial_coverage_center hide">{{$a_coverage['center']}}</p>

@@ -30,4 +30,5 @@ class DatesProviderTest extends \RegistryTestClass
         $publicationDate = DatesProvider::getPublicationDate($record);
         $this->assertEquals("2001-12-12", $publicationDate);
     }
+
 }

@@ -39,7 +39,7 @@
         </div>
         <div class="pull-right">
             <a href="" ng-click="advanced()" style="margin-right:6px">Advanced Search</a>
-            <a href="" ng-click="advanced('spatial')" ng-if="filters.class=='collection'">Map Search</a>
+            <a href="" ng-click="advanced('spatial')" ng-if="filters.class=='collection' || filters.class == 'service'">Map Search</a>
         </div>
     </form>
 </div>

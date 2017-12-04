@@ -45,15 +45,20 @@
                     'title': ['AlternativeTitle', 'Subtitle', 'TranslatedTitle','Other']
                 };
 
+                scope.availableOptions['nameType'] = ['Organizational', 'Personal'];
+
                 scope.availableOptions['contributorType'] = ['ContactPerson', 'DataCollector', 'DataCurator', 'DataManager', 'Distributor', 'Editor', 'HostingInstitution', 'Producer', 'ProjectLeader', 'ProjectManager', 'ProjectMember', 'RegistrationAgency', 'RegistrationAuthority', 'RelatedPerson', 'Researcher', 'ResearchGroup', 'RightsHolder', 'Sponsor', 'Supervisor', 'WorkPackageLeader', 'Other'];
 
                 scope.availableOptions['relatedIdentifierType'] = ['ARK', 'arXiv', 'bibcode', 'DOI', 'EAN13', 'EISSN', 'Handle', 'IGSN', 'ISBN', 'ISSN', 'ISTC', 'LISSN', 'LSID', 'PMID', 'PURL', 'UPC', 'URL', 'URN'];
 
-                scope.availableOptions['relationType'] = ['IsCitedBy', 'Cites', 'IsSupplementTo', 'IsSupplementedBy', 'IsContinuedBy', 'Continues', 'HasMetadata', 'IsMetadataFor', 'IsNewVersionOf', 'IsPreviousVersionOf', 'IsPartOf', 'HasPart', 'IsReferencedBy', 'References', 'IsDocumentedBy', 'Documents', 'IsCompiledBy', 'Compiles', 'IsVariantFormOf', 'IsOriginalFormOf', 'IsIdenticalTo', 'IsReviewedBy', 'Reviews', 'IsDerivedFrom', 'IsSourceOf'];
+                scope.availableOptions['relationType'] = ['IsCitedBy', 'Cites', 'IsSupplementTo', 'IsSupplementedBy', 'IsContinuedBy', 'Continues', 'HasMetadata', 'IsMetadataFor', 'IsNewVersionOf', 'IsPreviousVersionOf', 'IsPartOf', 'HasPart', 'IsReferencedBy', 'References', 'IsDocumentedBy', 'Documents', 'IsCompiledBy', 'Compiles', 'IsVariantFormOf', 'IsOriginalFormOf', 'IsIdenticalTo', 'IsReviewedBy', 'Reviews', 'IsDerivedFrom', 'IsSourceOf', 'IsDescribedBy', 'Describes', 'HasVersion', 'IsVersionOf', 'IsRequiredBy', 'Requires'];
 
                 scope.availableOptions['descriptionType'] = ['Abstract', 'Methods', 'SeriesInformation', 'TableOfContents', 'TechnicalInfo', 'Other'];
 
                 scope.availableOptions['funderIdentifierType'] = ['ISNI', 'GRID', 'Crossref Funder ID', 'Other'];
+
+                scope.availableOptions['resourceTypeGeneral'] = ['Audiovisual', 'Collection', 'Dataset', 'DataPaper', 'Event', 'Image', 'InteractiveResource', 'Model', 'PhysicalObject', 'Service', 'Software', 'Sound', 'Text', 'Workflow', 'Other'];
+
 
                 scope.setOption = function (item, attr, value) {
                     if (!item._attr) item._attr = {};
@@ -90,7 +95,8 @@
                                     {'pointLongitude':[{}], 'pointLatitude': [{}]},
                                     {'pointLongitude':[{}], 'pointLatitude': [{}]},
                                     {'pointLongitude':[{}], 'pointLatitude': [{}]}
-                                ]
+                                ],
+                                'inPolygonPoint': [{'pointLongitude':[{}], 'pointLatitude': [{}]}]
                             }]
                         }
                     } else if (elem == 'contributor') {
@@ -112,6 +118,16 @@
                         obj = {
                             'polygonPoint': [{}]
                         }
+                    } else if (elem == 'geoLocationPolygon'){
+                        obj = {
+                            'polygonPoint': [
+                                {'pointLongitude':[{}], 'pointLatitude': [{}]},
+                                {'pointLongitude':[{}], 'pointLatitude': [{}]},
+                                {'pointLongitude':[{}], 'pointLatitude': [{}]},
+                                {'pointLongitude':[{}], 'pointLatitude': [{}]}
+                            ],
+                            'inPolygonPoint': [{'pointLongitude':[{}], 'pointLatitude': [{}]}]
+                        }
                     }
                     if (!list) {
                         var parent = elem + 's'; //title becomes titles
@@ -122,6 +138,7 @@
                         }
                         scope.objectModel.resource[0][parent][0][elem].push(obj);
                     } else {
+
                         if (!list[elem]) list[elem] = [];
                         list[elem].push(obj);
                     }
@@ -198,7 +215,7 @@
 
                     if (scope.objectModel.resource[0].geoLocations) {
                         angular.forEach(scope.objectModel.resource[0].geoLocations[0].geoLocation, function(geoLocation, index){
-                            var fields = ['geoLocationPoint', 'geoLocationBox', 'geoLocationPolygon', 'geoLocationPlace'];
+                            var fields = ['geoLocationPlace','geoLocationPoint', 'geoLocationBox', 'geoLocationPolygon'];
                             var n = {};
                             angular.forEach(fields, function (fi) {
                                 if (!geoLocation[fi]) geoLocation[fi] = [{}];
@@ -207,7 +224,20 @@
                             angular.forEach(geoLocation.geoLocationPoint, function(point, index){
                                 if (!point['pointLongitude']) point['pointLongitude'] = [{}];
                                 if (!point['pointLatitude']) point['pointLatitude'] = [{}];
-                            })
+                            });
+                            angular.forEach(geoLocation.geoLocationPolygon, function(polygon, index){
+                                if (!polygon['polygonPoint']) {
+                                    polygon['polygonPoint'] = [
+                                        {'pointLongitude': [{}], 'pointLatitude': [{}]},
+                                        {'pointLongitude': [{}], 'pointLatitude': [{}]},
+                                        {'pointLongitude': [{}], 'pointLatitude': [{}]},
+                                        {'pointLongitude': [{}], 'pointLatitude': [{}]}
+                                    ];
+                                }
+                                if (!polygon['inPolygonPoint']) {
+                                    polygon['inPolygonPoint'] = [{'pointLongitude':[{}], 'pointLatitude': [{}]}];
+                                }
+                            });
                             angular.forEach(geoLocation.geoLocationBox, function(box, index){
                                 if (!box['westBoundLongitude']) box['westBoundLongitude'] = [{}];
                                 if (!box['eastBoundLongitude']) box['eastBoundLongitude'] = [{}];
@@ -218,30 +248,23 @@
                         });
                     }
                 };
-
+                
                 scope.addGeoLocationPolygonPoint = function(parent) {
                     if (!parent.polygonPoint) parent.polygonPoint = [];
                     parent.polygonPoint.push({'pointLongitude':[{}], 'pointLatitude':[{}]});
                 };
 
+
+
+
                 scope.jsonToXml = function (json) {
                     if (json) {
                         var xml = '';
+                        var xmlns = "http://datacite.org/schema/kernel-4";
+                        var xmlnsxsi = "http://www.w3.org/2001/XMLSchema-instance";
+                        var xsischemaLocation = "http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4.1/metadata.xsd";
                         xml += '<?xml version="1.0" encoding="utf-8"?>';
-
-                        //resource
-                        var xmlns = json.resource[0]['_attr']['xmlns']['_value'];
-                        var xmlnsxsi = json.resource[0]['_attr']['xmlns:xsi']['_value'];
-                        var xsischemaLocation = json.resource[0]['_attr']['schemaLocation']['_value'];
-
-                        //convert all schema level to 3
-                        var default_kernel = 'kernel-4';
-                        xmlns = xmlns.replace(/kernel-2.1/g, default_kernel).replace(/kernel-2.2/g, default_kernel).replace(/kernel-3/g, default_kernel);
-                        xmlnsxsi = xmlnsxsi.replace(/kernel-2.1/g, default_kernel).replace(/kernel-2.2/g, default_kernel).replace(/kernel-3/g, default_kernel);
-                        xsischemaLocation = xsischemaLocation.replace(/kernel-2.1/g, default_kernel).replace(/kernel-2.2/g, default_kernel).replace(/kernel-3/g, default_kernel);
-
                         xml += '<resource xmlns="' + xmlns + '" xmlns:xsi="' + xmlnsxsi + '" xsi:schemaLocation="' + xsischemaLocation + '">';
-
                         xml += '<identifier identifierType="' + json.resource[0].identifier[0]['_attr']['identifierType']['_value'] + '">' + json.resource[0].identifier[0]['_text'] + '</identifier>';
 
                         //single values
@@ -340,15 +363,14 @@
                                         xml += "</" + subsubitemkey + ">";
                                     } else {
                                         // even deeper for polygonPoint!
-                                        if (subsubitemkey != 'polygonPoint') {
-                                        } else {
+                                        if (subsubitemkey == 'polygonPoint' || subsubitemkey == 'inPolygonPoint') {
                                             angular.forEach(subsubitem, function (point) {
-                                                xml += '<polygonPoint>';
+                                                xml += '<'+subsubitemkey+'>';
                                                 var longitude = point.pointLongitude[0]['_text'] ? point.pointLongitude[0]['_text']: "";
                                                 var lattitude = point.pointLatitude[0]['_text'] ? point.pointLatitude[0]['_text'] : "";
                                                 xml += '<pointLongitude>' + longitude + '</pointLongitude>';
                                                 xml += '<pointLatitude>' + lattitude + '</pointLatitude>';
-                                                xml += '</polygonPoint>';
+                                                xml += '</'+subsubitemkey+'>';
                                             });
                                         }
                                     }
@@ -401,7 +423,9 @@
                 'optiontype': '=',
                 'label': '=',
                 'custom': '=',
-                'readonly': '='
+                'readonly': '=',
+                'attribute' : '=',
+                // 'attributeValue' : '=?'
             },
             transclude: true,
             templateUrl: apps_url + 'assets/mydois/js/angular_datacite_twin_form.html',
@@ -409,22 +433,28 @@
                 scope.availableOptions = {
                     'title': ['AlternativeTitle', 'Subtitle', 'TranslatedTitle']
                 };
-                scope.availableOptions['titleType'] = ['AlternativeTitle', 'Subtitle', 'TranslatedTitle','Other'];
-                scope.availableOptions['dateType'] = ['Accepted', 'Available', 'Copyrighted', 'Collected', 'Created', 'Issued', 'Submitted', 'Updated', 'Valid'];
-                scope.availableOptions['resourceTypeGeneral'] = ['Audiovisual', 'Collection', 'Dataset', 'Event', 'Image', 'InteractiveResource', 'Model', 'PhysicalObject', 'Service', 'Software', 'Sound', 'Text', 'Workflow', 'Other'];
-                scope.availableOptions['descriptionType'] = ['Abstract', 'Methods', 'SeriesInformation', 'TableOfContents', 'Other'];
 
+
+                scope.availableOptions['nameType'] = ['Organizational', 'Personal'];
+                scope.availableOptions['titleType'] = ['AlternativeTitle', 'Subtitle', 'TranslatedTitle', 'Other'];
+                scope.availableOptions['dateType'] = ['Accepted', 'Available', 'Copyrighted', 'Collected', 'Created', 'Issued', 'Submitted', 'Updated', 'Valid', 'Other'];
+                scope.availableOptions['resourceTypeGeneral'] = ['Audiovisual', 'Collection', 'Dataset', 'DataPaper', 'Event', 'Image', 'InteractiveResource', 'Model', 'PhysicalObject', 'Service', 'Software', 'Sound', 'Text', 'Workflow', 'Other'];
+                scope.availableOptions['descriptionType'] = ['Abstract', 'Methods', 'SeriesInformation', 'TableOfContents', 'Other'];
 
                 scope.remove = function () {
                     scope.list.splice(scope.index, '1');
                 };
+
                 scope.setOption = function (item, attr, value) {
                     if (!item) item = {};
                     if (!item._attr) item._attr = {};
                     if (!item._attr[attr]) item._attr[attr] = {};
                     item._attr[attr]._value = value;
-                }
+                };
 
+                if (scope.attribute) {
+                    scope.setOption(scope.item, scope.attribute, "");
+                }
             }
         }
     }

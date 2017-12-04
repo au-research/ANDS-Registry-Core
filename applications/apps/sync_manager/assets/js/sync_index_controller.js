@@ -5,18 +5,22 @@
         .controller('indexCtrl', indexCtrl);
 
 
-    function indexCtrl(APITaskService, APIDataSourceService, $interval, $scope, $modal) {
+    function indexCtrl(
+        APITaskService, APIDataSourceService, APIRegistryObjectService,
+        $interval, $scope, $modal
+    ) {
 
         $scope.base_url = base_url;
 
         // default options
         $scope.options = {
-            'autorefresh': true
+            'autorefresh': false
         };
 
         // function declaration
         $scope.refreshTasks = refreshTasks;
         $scope.refreshDataSources = refreshDataSources;
+        $scope.refreshCounts = refreshCounts;
         $scope.addTask = addTask;
         $scope.showTaskStatus = showTaskStatus;
         $scope.syncRo = syncRo;
@@ -60,21 +64,40 @@
          * @param subject
          */
         function syncRo(subject) {
-            if (subject && !$scope.syncing) {
-                $scope.syncing = true;
-                addTask('sync', 'ro', subject, true).then(function (data) {
-                    var task = data;
-                    if (task.id) {
-                        APITaskService.runTask(task.id).then(function (data) {
-                            $scope.syncing = false;
-                            var task = data.data;
-                            console.log(task);
-                            $scope.refreshTasks();
-                            $scope.showTask(task.id);
-                        });
-                    }
-                });
+            if (!subject || $scope.syncing) {
+                return;
             }
+
+            $scope.syncing = true;
+
+            APIRegistryObjectService.syncRecord(subject)
+                .then(function(data){
+                    $scope.syncing = false;
+                    if (data.data.status === "ERROR") {
+                        alert(data.data.data); // wow?
+                        return;
+                    }
+                    $scope.showTask(data.id);
+                });
+        }
+
+        $scope.syncDS = function(id) {
+            if (!id) {
+                return;
+            }
+
+            if (!confirm("Are you sure you want to sync this data source?")) {
+                return;
+            }
+
+            APIDataSourceService.syncDataSource(id)
+                .then(function(data) {
+                    if (data.data.status === "ERROR") {
+                        alert(data.data.data); // wow?
+                        return;
+                    }
+                    $scope.showTask(data.id);
+                });
         }
 
         function clearIndex(id) {
@@ -179,12 +202,24 @@
          */
         function refreshDataSources() {
             APIDataSourceService.getDataSources().then(function (data) {
-                $scope.datasources = data.data;
+                $scope.datasources = data;
                 angular.forEach($scope.datasources, function (ds) {
-                    ds.count_PUBLISHED = parseInt(ds.count_PUBLISHED);
-                    ds.count_INDEXED = parseInt(ds.count_INDEXED);
-                    ds.count_MISSING = ds.count_PUBLISHED - ds.count_INDEXED;
+                    ds.count_PUBLISHED = parseInt(ds.counts.count_PUBLISHED);
+                    ds.count_INDEXED = parseInt(ds.counts.count_INDEXED);
+                    ds.count_MISSING = parseInt(ds.counts.count_MISSING);
                 });
+            });
+        }
+
+        /**
+         * Refresh the data sources count
+         * TODO: maybe it's not a good idea to refreshDataSources after this
+         * TODO: loading indicator since this is a long operation
+         */
+        function refreshCounts() {
+            $scope.datasources = [];
+            APIDataSourceService.refreshDataSourcesCount().then(function(data) {
+                refreshDataSources();
             });
         }
 

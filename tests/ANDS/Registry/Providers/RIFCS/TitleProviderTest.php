@@ -61,6 +61,27 @@ class TitleProviderTest extends \RegistryTestClass
     }
 
     /** @test **/
+    public function it_should_title_and_suffix()
+    {
+        $rawNames = [
+            ['@attributes' => ['type' => 'non-primary'], 'value' => 'non'],
+            [
+                '@attributes' => ['type' => 'primary'],
+                'value' => [
+                    ['@attributes' => ['type' => 'family'], 'value' => 'Bloggs'],
+                    ['@attributes' => ['type' => 'given'], 'value' => 'Joel'],
+                    ['@attributes' => ['type' => 'suffix'], 'value' => 'PhD'],
+                    ['@attributes' => ['type' => 'title'], 'value' => 'Mr']
+                ]
+            ]
+        ];
+
+        $titles = TitleProvider::getTitlesFromRaw($rawNames, 'party');
+        $this->assertEquals("Mr, Joel., Bloggs, PhD", $titles['listTitle']);
+        $this->assertEquals("Mr Joel Bloggs PhD", $titles['displayTitle']);
+    }
+
+    /** @test **/
     public function it_should_get_first_name_found()
     {
         $rawNames = [
@@ -234,5 +255,42 @@ class TitleProviderTest extends \RegistryTestClass
         $titles = TitleProvider::getTitlesFromRaw($rawNames, 'Collection');
         $this->assertEquals('Kuerschner', $titles['listTitle']);
     }
+
+    /** @test */
+    public function it_should_get_alternative_name()
+    {
+        $rawNames = [
+            ['@attributes' => ['type' => 'primary'], 'value' => 'non'],
+            [
+                '@attributes' => ['type' => 'alternative'],
+                'value' => [
+                    ['@attributes' => ['type' => 'family'], 'value' => 'Bloggs'],
+                    ['@attributes' => ['type' => 'given'], 'value' => 'Joel'],
+                    ['@attributes' => ['type' => 'suffix'], 'value' => 'PhD'],
+                    ['@attributes' => ['type' => 'title'], 'value' => 'Mr']
+                ]
+            ],
+            [
+                '@attributes' => ['type' => 'abbreviated'],
+                'value' => 'Another'
+            ]
+        ];
+
+        $titles = TitleProvider::getTitlesFromRaw($rawNames, 'party');
+        $this->assertEquals("non", $titles['listTitle']);
+        $this->assertEquals("non", $titles['listTitle']);
+        $this->assertArrayHasKey('alternativeTitles', $titles);
+        $this->assertContains("Mr Joel Bloggs PhD", $titles['alternativeTitles']);
+    }
+
+    /** @test */
+    public function test_on_party_record_titles()
+    {
+        // https://test.ands.org.au/api/registry/object/86064/core
+        $record = $this->ensureKeyExist("http://nla.gov.au/nla.party-512931AUT3");
+        $titles = TitleProvider::get($record);
+        $this->assertContains("Alexander Öpik", $titles['alt_titles']);
+    }
+
 
 }

@@ -4,7 +4,7 @@
  */
 angular.module('orcid_app', ['portal-filters'])
 
-	//Router
+	// Router
 	.config(function($routeProvider){
 		$routeProvider
 			.when('/', {
@@ -13,42 +13,49 @@ angular.module('orcid_app', ['portal-filters'])
 			})
 	})
 
-	//Factory
+	// Factory
 	.factory('works', function($http){
 		return {
-			getWorks: function(data) {
-				return $http.post(base_url+'/orcid/orcid_works', {data:data}).then(function(response) {return response.data});
-			},
-			search: function(filters) {
-				return $http.post(base_url+'/services/registry/post_solr_search', {filters:filters}).then(function(response) {return response.data});
-			},
-			import_works: function(ro_ids) {
-				return $http.post(base_url+'/orcid/import_to_orcid', {ro_ids:ro_ids}).then(function(response) {return response.data});
-			}
+			getWorks: function (orcid_id) {
+                return $http.get(api_url + 'registry/orcids/' + orcid_id + '/works')
+                    .then(function (response) {
+                        return response.data
+                    })
+            },
+			importWorks: function(orcid_id, ids) {
+                return $http.post(api_url + 'registry/orcids/' + orcid_id + '/works', {ids: ids})
+                    .then(function (response) {
+                        return response.data
+                    })
+            },
+			search: function (filters) {
+                return $http.post(base_url + '/services/registry/post_solr_search', {filters: filters})
+                    .then(function (response) {
+                        return response.data
+                    });
+            }
 		}
 	})
 ;
 
 /**
  * Primary Controller
- * @param  $scope
- * @param factory works
+ * @param $scope
+ * @param works
  */
 function IndexCtrl($scope, works) {
 
 	//Default Values
-	$scope.works = {};
+	$scope.works = false;
 	$scope.to_import = [];
 	$scope.import_available = false;
 	$scope.filters = {};
 	$scope.search_results = {};
-	$scope.imported_ids= [];
 	$scope.import_stg = 'ready';
 
+	// obtain the orcid id from the DOM
 	$scope.orcid = {
-		orcid_id:$('#orcid_id').text(),
-		first_name:$('#first_name').text(),
-		last_name:$('#last_name').text()
+		id:$('#orcid_id').text()
 	};
 
 	//Overwrite the import button to only open the modal if it's not disabled
@@ -60,28 +67,20 @@ function IndexCtrl($scope, works) {
 		return false;
 	});
 
-	//Refresh functions refreshes the works, populates the imported_ids 
-	$scope.refresh = function(){
-		$scope.imported_ids = [];
-		works.getWorks($scope.orcid).then(function(data){
-			$scope.works = data.works;
-			if($scope.works){
-				$.each($scope.works, function(){
-					if(this.type=='imported' && this.in_orcid){
-						$scope.imported_ids.push(this.id);
-					}
-				});
-			}
+	// Refresh functions refreshes the works, populates the imported_ids
+	$scope.refresh = function (){
+		works.getWorks($scope.orcid.id).then(function(data){
+			$scope.works = data;
 		});
-	}
+	};
+
 	//run once
 	$scope.refresh();
 
 	/**
-	 * Watch Expression on works and search result to updat the import tag
-	 * @return {[type]} [description]
+	 * Watch Expression on works and search result to update the import tag
 	 */
-	$scope.$watch('works', function(){
+	$scope.$watch('works', function(oldv, newv){
 		$scope.review();
 	}, true);
 
@@ -108,39 +107,76 @@ function IndexCtrl($scope, works) {
 				}
 			});
 		}
-		$scope.import_stg = 'ready';
-	}
+		//$scope.import_stg = 'ready';
+	};
+
+    /**
+	 * If an id is already imported
+	 *
+     * @param id
+     * @returns {boolean}
+     */
+	$scope.alreadyImported = function(id) {
+		if (!$scope.works) {
+			return false;
+		}
+		var importedIDs = $scope.works.filter(function(item) {
+			return item.in_orcid;
+		}).map(function(item) {
+			return item.registry_object_id
+		});
+		return importedIDs.indexOf(id) >= 0;
+	};
 
 	/**
 	 * Generic SOLR search for collections
-	 * @return search_result
 	 */
 	$scope.search = function() {
-		if($scope.filters.q!=''){
-			$scope.filters.rows = 100;
-			$scope.filters.class = 'collection';
-			works.search($scope.filters).then(function(data){
-				$scope.search_results = data.result;
-			});
+		if ($scope.filters.q === '') {
+			return;
 		}
-	}
+
+		$scope.filters.rows = 100;
+		$scope.filters.class = 'collection';
+		works.search($scope.filters).then(function(data){
+			$scope.search_results = data.result;
+		});
+	};
 
 	/**
 	 * Import the set of to_import works to ORCID, calling the import_works factory method
 	 * Increment import stages from idle->importing->complete, error is a stage
 	 */
+    $scope.importResult = null;
+    $scope.importedResultCount = 0;
+    $scope.failedResultCount = 0;
 	$scope.import = function() {
 		$scope.import_stg = 'importing';
-		var ids = [];
-		$.each($scope.to_import, function(){
-			ids.push(this.id);
+		$scope.importResult = null;
+		var ids = $scope.to_import.map(function(item) {
+			return item.id;
 		});
-		works.import_works(ids).then(function(data){
-			if(data!=1){
-				window.location = base_url+'/orcid/login';
-			} else {
-				$scope.import_stg = 'complete';
-			}
+		works.importWorks($scope.orcid.id, ids).then(function(data){
+			$scope.import_stg = 'complete';
+			$scope.importResult = data;
+
+            $scope.importedResultCount = $scope.importResult.filter(function(item) {
+                return item.in_orcid;
+            }).length;
+
+            $scope.failedResultCount = $scope.importResult.filter(function(item) {
+                return !item.in_orcid;
+            }).length;
+
+            $scope.refresh();
 		});
+	};
+
+	$scope.resetImported = function () {
+		$scope.importResult = null;
+		$scope.import_stg = "ready";
 	}
+
+
+
 }

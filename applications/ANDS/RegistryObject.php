@@ -18,6 +18,17 @@ class RegistryObject extends Model
     public $duplicateRecordIds = null;
     public $identifiers = null;
 
+    public static $classes = ['collection', 'service', 'party', 'activity'];
+    public static $statuses = [
+        "MORE_WORK_REQUIRED",
+        "DRAFT",
+        "SUBMITTED_FOR_ASSESSMENT",
+        "ASSESSMENT_IN_PROGRESS",
+        "APPROVED",
+        "PUBLISHED"
+    ];
+    public static $levels = [1,2,3,4];
+
     /**
      * Eloquent Accessor
      * usage: $this->id will return $this->registry_object_id
@@ -277,5 +288,25 @@ class RegistryObject extends Model
         
         return $this->duplicateRecordIds;
         
+    }
+
+
+    /**
+     * $this->portalUrl
+     * $this->portal_url
+     * @return string
+     */
+    public function getPortalUrlAttribute()
+    {
+        return baseUrl($this->slug.'/'.$this->registry_object_id);
+    }
+
+    /**
+     * $this->portalUrlWithKey
+     * @return string
+     */
+    public function getPortalUrlWithKeyAttribute()
+    {
+        return baseUrl("view/?key={$this->key}");
     }
 }

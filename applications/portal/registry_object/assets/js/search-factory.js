@@ -94,6 +94,7 @@
                 {'name': 'subject', 'display': 'Subject'},
                 {'name': 'group', 'display': 'Data Provider'},
                 {'name': 'access_rights', 'display': 'Access'},
+                {'name': 'access_methods_ss', 'display': 'Access Method'},
                 {'name': 'license_class', 'display': 'Licence'},
                 {'name': 'temporal', 'display': 'Time Period'},
                 {'name': 'spatial', 'display': 'Location'},
@@ -115,6 +116,7 @@
                 {'name': 'type', 'display': 'Type'},
                 {'name': 'subject', 'display': 'Subject'},
                 {'name': 'group', 'display': 'Data Provider'},
+                {'name': 'spatial', 'display': 'Location'},
                 {'name': 'review', 'display': 'Review'},
                 {'name': 'help', 'display': '<i class="fa fa-question-circle"></i> Help'}
             ],
@@ -133,7 +135,7 @@
                 {'name': 'help', 'display': '<i class="fa fa-question-circle"></i> Help'}
             ],
 
-            collection_facet_order: ['group', 'access_rights', 'license_class', 'type'],
+            collection_facet_order: ['group', 'access_rights', 'access_methods_ss','license_class', 'type'],
             activity_facet_order: ['type', 'activity_status', 'funding_scheme', 'administering_institution', 'funders'],
 
             ingest: function (hash) {
@@ -239,7 +241,6 @@
                         value: facets[item]
                     });
                 });
-
                 return orderedfacets;
             },
 
@@ -350,7 +351,7 @@
 
             get_matching_records: function (id) {
                 return $http
-                    .get(registry_url + 'services/api/registry_objects/' + id + '/identifiermatch')
+                    .get(api_url + '/registry/object/' + id + '/identifiermatch')
                     .then(function (response) {
                         return response.data;
                     });

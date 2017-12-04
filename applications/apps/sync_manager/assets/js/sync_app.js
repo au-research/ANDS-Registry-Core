@@ -2,7 +2,7 @@
     'use strict';
 
     angular
-        .module('sync_app', ['APITask', 'APIDataSource', 'ngRoute', 'ui.bootstrap'])
+        .module('sync_app', ['APITask', 'APIDataSource', 'APIRegistryObject', 'ngRoute', 'ui.bootstrap'])
         .config(configuration);
 
     function configuration($routeProvider) {

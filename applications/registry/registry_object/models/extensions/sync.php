@@ -1,4 +1,5 @@
 <?php use ANDS\Repository\RegistryObjectsRepository;
+      use ANDS\Registry\Providers\RelationshipProvider;
 
 if (!defined('BASEPATH')) exit('No direct script access allowed');
 
@@ -281,7 +282,13 @@ class Sync_extension extends ExtensionBase{
 		//related info text for searching
 		$json['related_info_search'] = '';
         foreach($gXPath->query('//ro:relatedInfo') as $node) {
-            $json['related_info_search'] .= htmlspecialchars(trim($node->nodeValue));
+            $json['related_info_search'] .= htmlspecialchars(trim($node->nodeValue)). " ";
+        }
+
+        // CC-2049. Index found relatedinfo titles as well
+        $relations = RelationshipProvider::getIdentifierRelationship($record);
+        foreach ($relations as $relation) {
+            $json['related_info_search'] .= " ". $relation->prop("relation_to_title")." ";
         }
 
 		//citation metadata text
@@ -548,6 +555,11 @@ class Sync_extension extends ExtensionBase{
 
         //default values if none present
         if(!isset($json['license_class'])) $json['license_class'] = 'unknown';
+
+        // access methods
+        $accessMethods = \ANDS\Registry\Providers\RIFCS\AccessProvider::get($record);
+        $methods = array_keys($accessMethods);
+        $json['access_methods_ss'] = $methods;
 
         //lowercase all facet-able values
         $lowercase = array('type', 'license_class', 'access_rights', 'activity_status');

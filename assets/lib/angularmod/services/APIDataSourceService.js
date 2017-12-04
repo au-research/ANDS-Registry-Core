@@ -10,14 +10,23 @@
         .service('APIDataSourceService', APIDataSourceService);
 
     function APIDataSourceService(APIService) {
+
+        var resource = 'registry/datasources/';
+
         return {
             getDataSources: function() {
-                return APIService.get('registry/datasource/', {
-                    includes: 'count'
+                return APIService.get(resource, {
+                    with: 'counts'
                 });
             },
+            syncDataSource: function(id) {
+                return APIService.get(resource + id +'/sync', {})
+            },
+            refreshDataSourcesCount: function () {
+                return APIService.get(resource, {'action': 'recount'})
+            },
             getDataSource: function(id) {
-                return APIService.get('registry/datasource/'+id, {})
+                return APIService.get(resource + id, {})
             }
         }
 

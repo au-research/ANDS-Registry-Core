@@ -1,6 +1,7 @@
 <script>
 	var base_url = "{{base_url()}}";
 	var registry_url = "{{registry_url()}}";
+	var api_url = "{{ api_url()  }}";
 </script>
 
 @if(get_config_item('tracking'))
@@ -119,3 +120,8 @@
 		<script src="{{asset_url('js/'.$script.'.js')}}"></script>
 	@endforeach
 @endif
+
+<?php if(isset($ro->jsonld[0])){
+    print('<script type="application/ld+json">'.$ro->jsonld[0].'</script>');
+}
+?>
