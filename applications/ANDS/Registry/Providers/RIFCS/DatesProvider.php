@@ -47,20 +47,32 @@ class DatesProvider implements RIFCSProvider
             $data = MetadataProvider::getSelective($record, ['recordData']);
         }
 
-        /*
-         * registryObject/collection/citationInfo/citationMetadata/date[@type=’publication date’]
-         * registryObject/collection/citationInfo/citationMetadata/date[@type=’issued date’]
-         * registryObject/collection/citationInfo/citationMetadata/date[@type=’created’]
-         */
-        foreach (XMLUtil::getElementsByXPath($data['recordData'],
-            'ro:registryObject/ro:' . $record->class . '/ro:citationInfo/ro:citationMetadata/ro:date') AS $date) {
+        $citationMedataDates = XMLUtil::getElementsByXPath(
+            $data['recordData'],
+            'ro:registryObject/ro:' . $record->class . '/ro:citationInfo/ro:citationMetadata/ro:date'
+        );
 
-            $value = (string) $date;
-            $type = (string) $date['type'];
-            if (in_array($type, ['publicationDate', 'issued_date', 'created'])) {
-                return self::formatDate($value, $format);
+        // registryObject/collection/citationInfo/citationMetadata/date[@type=’publication date’]
+        foreach ($citationMedataDates AS $date) {
+            if ((string) $date['type'] == 'publicationDate') {
+                return self::formatDate((string) $date, $format);
             }
         }
+
+        // registryObject/collection/citationInfo/citationMetadata/date[@type=’issued date’]
+        foreach ($citationMedataDates AS $date) {
+            if ((string) $date['type'] == 'issued') {
+                return self::formatDate((string) $date, $format);
+            }
+        }
+
+        // registryObject/collection/citationInfo/citationMetadata/date[@type=’created’]
+        foreach ($citationMedataDates AS $date) {
+            if ((string) $date['type'] == 'created') {
+                return self::formatDate((string) $date, $format);
+            }
+        }
+
 
         // first citationMetadata/date found
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
@@ -69,17 +81,29 @@ class DatesProvider implements RIFCSProvider
             return self::formatDate($value, $format);
         }
 
-        /**
-         * registryObject/collection/dates[@type=’issued’]
-         * registryObject/collection/dates[@type=’available’]
-         * registryObject/collection/dates[@type=’created’]
-         */
-        foreach (XMLUtil::getElementsByXPath($data['recordData'],
-            'ro:registryObject/ro:' . $record->class . '/ro:dates') AS $date) {
-            $value = (string) $date;
-            $type = (string) $date['type'];
-            if (in_array($type, ['dc.issued', 'dc.available', 'dc.created'])) {
-                return self::formatDate($value, $format);
+        $roDates = XMLUtil::getElementsByXPath(
+            $data['recordData'],
+            'ro:registryObject/ro:' . $record->class . '/ro:dates'
+        );
+
+        // registryObject/collection/dates[@type=’issued’]
+        foreach ($roDates AS $date) {
+            if ((string) $date['type'] == 'dc.issued') {
+                return self::formatDate((string) $date->date, $format);
+            }
+        }
+
+        // registryObject/collection/dates[@type=’available’]
+        foreach ($roDates AS $date) {
+            if ((string) $date['type'] == 'dc.available') {
+                return self::formatDate((string) $date->date, $format);
+            }
+        }
+
+        // registryObject/collection/dates[@type=’created’]
+        foreach ($roDates AS $date) {
+            if ((string) $date['type'] == 'dc.created') {
+                return self::formatDate((string) $date->date, $format);
             }
         }
 
@@ -137,6 +161,10 @@ class DatesProvider implements RIFCSProvider
             return $value;
         }
 
+        if (self::validateDate($value, 'm-Y')) {
+            return $value;
+        }
+
         if (self::validateDate($value, 'Y-m')) {
             return $value;
         }
@@ -144,6 +172,7 @@ class DatesProvider implements RIFCSProvider
         if (self::isValidTimeStamp($value)) {
             return Carbon::createFromTimestamp($value)->format($format);
         }
+
         return (new Carbon($value))->format($format);
     }
 
@@ -169,8 +198,43 @@ class DatesProvider implements RIFCSProvider
      */
     public static function validateDate($date, $format = 'Y-m-d')
     {
-        $d = DateTime::createFromFormat($format, $date);
+        try {
+            $d = DateTime::createFromFormat($format, $date);
+            return $d && $d->format($format) === $date;
+        } catch (\Exception $e) {
+            // try again
+        }
+
+        $d = self::parseDate($date);
         return $d && $d->format($format) === $date;
+    }
+
+    public static function parseDate($date)
+    {
+        try {
+            return Carbon::parse($date);
+        } catch (\Exception $e) {
+            // not a parsable date
+        }
+
+        $formats = [
+            'Y-m-d',
+            'Y',
+            'Y-m',
+            'm-Y',
+            'd-m-Y'
+        ];
+
+        foreach ($formats as $format) {
+            try {
+                $parsed = Carbon::createFromFormat($format, $date);
+                return $parsed;
+            } catch (\Exception $e) {
+                // not a parsable date
+            }
+        }
+
+        return null;
     }
 
 

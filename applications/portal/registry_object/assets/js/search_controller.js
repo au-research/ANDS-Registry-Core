@@ -335,18 +335,15 @@
                         matchingdoc.push(doc);
                     }
                 });
-                // $log.debug(matchingdoc);
                 angular.forEach(matchingdoc, function(doc) {
                     if(!doc.hide) {
                         search_factory.get_matching_records(doc.id).then(function(data){
+                            var matches = data.data[0].identifiermatch;
                             if (doc && !doc.hide) {
-                                console.log(doc)
-                               // doc.identifiermatch = data.message.identifiermatch;
-                               // if(doc && !doc.hide) {
-                               //     angular.forEach(doc.identifiermatch, function(idd){
-                                //        $scope.hidedoc(idd.registry_object_id);
-                                 //   });
-                               // }
+                                doc.identifiermatch = matches;
+                                angular.forEach(matches, function (match) {
+                                    $scope.hidedoc(match.registry_object_id);
+                                });
                             }
                         });
                     }
@@ -561,9 +558,11 @@
         $scope.showFacet = function(facet) {
             var allowed = [];
             if ($scope.filters['class']=='collection') {
-                allowed = ['subjects', 'group', 'access_rights', 'license_class', 'temporal', 'spatial'];
+                allowed = ['subjects', 'group', 'access_rights', 'license_class', 'temporal', 'spatial', 'access_methods_ss'];
             } else if($scope.filters['class']=='activity') {
                 allowed = ['type', 'activity_status', 'subjects', 'administering_institution', 'funders', 'funding_scheme', 'commencement_to', 'commencement_from', 'completion_to', 'completion_from', 'funding_amount'];
+            } else if ($scope.filters['class'] == 'service') {
+                allowed = ['type' ,'subjects', 'group', 'spatial'];
             } else {
                 allowed = ['type' ,'subjects', 'group'];
             }
@@ -756,6 +755,7 @@
             delete $scope.prefilters2[name];
             search_factory.search_no_record($scope.prefilters2).then(function(data){
                 $scope.prefacets2 = search_factory.construct_facets(data, $scope.prefilters['class']);
+                console.log($scope.prefacets2);
             });
 
             $scope.presearch();

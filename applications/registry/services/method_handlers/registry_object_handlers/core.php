@@ -17,24 +17,13 @@ class Core extends ROHandler {
             $result[$f] = $attr;
         }
 
-        // TODO: TitleProvider::getAlternativeNames(record)
-        $alt_title = array();
-        if($this->xml) {
-            foreach($this->xml->{$this->ro->class}->name as $name) {
-                $type = (string) $name['type'];
-                if (($type=='abbreviated' || $type=='alternative') && $name->namePart) {
-                    $altName = [];
-                    foreach ($name->children()->namePart as $namePart) {
-                        $altName[] = trim((string) $namePart);
-                    }
-                    if (!empty($altName)) {
-                        $altName = implode(" ", $altName);
-                        $alt_title[] = $altName;
-                    }
-                }
-            }
+        // CC-2112. Alt title ordering
+        $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($this->ro->id);
+        $titles = \ANDS\Registry\Providers\TitleProvider::get($record);
+        if (array_key_exists('alt_titles', $titles)) {
+            $result['alt_title'] = $titles['alt_titles'];
         }
-        if(!empty($alt_title)) $result['alt_title'] = $alt_title;
+
 
         $result['site_name'] = "Research Data Australia";
         $result['description'] = isset($this->index['list_description']) ? $this->index['list_description'] : 'No description text available.';

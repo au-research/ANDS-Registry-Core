@@ -10,11 +10,13 @@ use ANDS\DataSource\DataSourceLog;
 use ANDS\DataSource\Harvest;
 use ANDS\DataSourceAttribute;
 use ANDS\Payload;
+use ANDS\Registry\API\Router;
 use ANDS\Registry\Importer;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\Config;
 use \Exception as Exception;
+use ANDS\Registry\Providers\ServiceDiscovery\ServiceDiscovery as ServiceDiscoveryProvider;
 
 /**
  * Class DatasourcesHandler
@@ -24,21 +26,69 @@ class DatasourcesHandler extends Handler
 {
     private $input = [];
 
+
+
+    public function handle()
+    {
+        $this->getParentAPI()->providesOwnResponse();
+        $this->getParentAPI()->outputFormat = "application/json";
+
+        $router = new Router('/api/registry/');
+
+        // RESOURCE ds/:id
+        $router->resource('datasources', 'DataSourcesController');
+
+        // RESOURCE ds/:id/attributes
+        $router->resource('datasources/(\w+)/attributes', 'DataSourcesAttributesController');
+
+        // GET ds/:id/log
+        $router->get('datasources/(\w+)/log', 'DataSourcesLogController@index');
+
+        // GET ds/:id/harvest
+        $router->get('datasources/(\w+)/harvest', 'DataSourcesHarvestController@index');
+
+        // PUT|POST ds/:id/harvest
+        $router->route(['put', 'post'], 'datasources/(\w+)/harvest', 'DataSourcesHarvestController@triggerHarvest');
+
+        // DELETE ds/:id/harvest
+        $router->route(['delete'], 'datasources/(\w+)/harvest', 'DataSourcesHarvestController@stopHarvest');
+
+        // PUT ds/:id/services
+        $router->route(['put', 'post'], 'datasources/(\w+)/services', 'DataSourcesServiceController@index');
+
+        // standard resources
+        $router->resource('datasources/(\w+)/records', 'DataSourcesRecordsController');
+        $router->route(['delete'], 'datasources/(\w+)/records', 'DataSourcesRecordsController@delete');
+
+        // sync
+        $router->route(['get', 'put', 'post'], 'datasources/(\w+)/sync', 'DataSourcesController@sync');
+
+        return $this->format($router->execute());
+    }
+
+    public function format($data)
+    {
+        return json_encode($data);
+    }
+
+    // 6/11/2017: BELOW THIS LINE SHOULD BE DEPRECATED...
+    // TODO: REMOVE DEPRECATED CODE
+
     /**
      * DatasourceHandler constructor.
      * @param bool $params
      */
-    public function __construct($params)
-    {
-        parent::__construct($params);
-        initEloquent();
-    }
+//    public function __construct($params)
+//    {
+//        parent::__construct($params);
+//        initEloquent();
+//    }
 
     /**
      * @return array
      * @throws Exception
      */
-    public function handle()
+    public function handle_deprecated()
     {
         $this->middleware();
 
@@ -92,9 +142,55 @@ class DatasourcesHandler extends Handler
                 return $this->handleRecords($dataSource);
             case "log":
                 return $this->handleDataSourceLog($dataSource);
+            case "services":
+                return $this->handleServiceCreation($dataSource);
         }
 
         return null;
+    }
+
+    private function handleServiceCreation(DataSource $dataSource)
+    {
+        // trigger service creation
+        if (!$this->isPost() && !$this->isPut()) {
+            return;
+        }
+
+        $ids = RegistryObject::where("status", "PUBLISHED")
+            ->where('data_source_id', $dataSource->data_source_id)
+            ->where('class', 'collection')->pluck('registry_object_id');
+
+        if (count($ids) === 0) {
+            return "No collection found";
+        }
+
+        $links = ServiceDiscoveryProvider::getServiceByRegistryObjectIds($ids);
+        $links = ServiceDiscoveryProvider::processLinks($links);
+        $links = ServiceDiscoveryProvider::formatLinks($links);
+
+        if (count($links) === 0) {
+            return "No links found for {$ids->count()} collections";
+        }
+
+        $acronym = $dataSource->acronym ? : "ACRONYM";
+        $batchID = "MANUAL";
+        $directoryPath = "/var/ands/data/{$acronym}";
+
+        try {
+            if (!is_dir($directoryPath)) {
+                mkdir($directoryPath, 0775, true);
+            }
+            $filePath = "{$directoryPath}/services_{$batchID}.json";
+
+            file_put_contents($filePath, json_encode($links, true));
+
+            return [
+                'count' => count($links),
+                'path' => $filePath
+            ];
+        } catch (Exception $e) {
+            return get_exception_msg($e);
+        }
     }
 
     /**

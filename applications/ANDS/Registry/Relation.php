@@ -334,6 +334,36 @@ class Relation
         return false;
     }
 
+    public function hasRelationType($type)
+    {
+        if (is_array($this->prop('relation_type'))) {
+            foreach ($this->prop('relation_type') as $rtype) {
+                if ($type === $rtype) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        return $type == $this->prop('relation_type');
+    }
+
+    public function hasRelationTypes($types, $includeReverse)
+    {
+        if ($includeReverse) {
+            $reverseTypes = collect($types)->map(function($item) {
+                return getReverseRelationshipString($item);
+            })->toArray();
+            $types = array_merge($types, $reverseTypes);
+        }
+        foreach ($types as $type) {
+            if ($this->hasRelationType($type)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function isReverse()
     {
         $origins = $this->prop('relation_origin');

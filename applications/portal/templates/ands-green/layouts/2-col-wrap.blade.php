@@ -11,7 +11,7 @@
     		    <section class="section swatch-gray" style="z-index:1">
     		    	<div class="container">
     		    		<div class="row element-short-top">
-                            <div class="col-md-9 view-content" style="padding-right:0"  itemscope itemtype="http://schema.org/Dataset">
+                            <div class="col-md-9 view-content" style="padding-right:0">
                                 <div class="panel panel-primary swatch-white panel-content">
                                     <div class="panel-tools">
                                         @include('registry_object/contents/icon')
@@ -25,16 +25,16 @@
                                                 </div>
                                                 @endif
                                                 <div class="col-xs-12 col-md-10">
-                                                    <h1 class="hairline bordered-normal" style="line-height:1.1em"><span itemprop="name">{{$ro->core['title']}}</span></h1>
+                                                    <h1 class="hairline bordered-normal" style="line-height:1.1em">{{$ro->core['title']}}</h1>
                                                     @if(isset($ro->core['alt_title'])&& trim(implode($ro->core['alt_title']))!='')
                                                         <small>Also known as:
-                                                            <span itemprop="alternateName alternativeHeadline" >{{implode(', ',$ro->core['alt_title'])}}</span>
+                                                           {{implode(', ',$ro->core['alt_title'])}}
                                                         </small><br/>
                                                     @endif
                                                     @if(!$logo)
-                                                        <a href="{{base_url('contributors')}}/{{$group_slug}}" tip="Record provided by {{$ro->core['group']}}" title="Record provided by {{$ro->core['group']}}"><span itemprop="sourceOrganization">{{$ro->core['group']}}</span></a>
+                                                        <a href="{{base_url('contributors')}}/{{$group_slug}}" tip="Record provided by {{$ro->core['group']}}" title="Record provided by {{$ro->core['group']}}">{{$ro->core['group']}}</a>
                                                     @else
-                                                        <small itemprop="sourceOrganization">{{$ro->core['group']}}</small>
+                                                        <small>{{$ro->core['group']}}</small>
                                                     @endif
                                                     @if(is_array($ro->identifiermatch) && sizeof($ro->identifiermatch) > 0)
                                                         @if($show_dup_identifier_qtip)

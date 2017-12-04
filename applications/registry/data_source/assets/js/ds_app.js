@@ -212,6 +212,7 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
         {name:'service', value:'CSW'},
         {name:'version', value:'2.0.2'},
         {name:'namespace', value:'xmlns(csw=http://www.opengis.net/cat/csw)'},
+		{name:'outputFormat', value:'application/xml'},
         {name:'resultType', value:'results'},
         {name:'typeNames', value:'csw:Record'},
         {name:'elementSetName', value:'full'},
@@ -361,17 +362,18 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 				}
 			});
 		}
+
         if($scope.ds.harvest_method=='CSWHarvester') {
-            if(!$scope.ds.user_defined_params)$scope.ds.user_defined_params = [];
-
-            $.each($scope.csw_harvest_params, function(){
-                if(!isParamSet(this.name)){
-                    $scope.ds.user_defined_params.push({
-                        name:this.name, value:this.value
-                    });
-                }
-            });
-
+            if(!$scope.ds.user_defined_params){
+				$scope.ds.user_defined_params = [];
+				$.each($scope.csw_harvest_params, function(){
+					if(!isParamSet(this.name)){
+						$scope.ds.user_defined_params.push({
+							name:this.name, value:this.value
+						});
+					}
+				});
+			}
         }
 
 		if($scope.ds.harvest_method=='PMHHarvester') {
@@ -877,8 +879,8 @@ function bind_plugins($scope) {
 			elem.on('error.vocab.ands', function(event, xhr) {
 				//error handling
 			});
-			widget.vocab_widget('repository', 'rifcs1.6.1');
-			widget.vocab_widget('narrow', "http://purl.org/au-research/vocabulary/RIFCS/1.6.1/" + vocab);
+			widget.vocab_widget('repository', 'rifcs-current');
+			widget.vocab_widget('narrow', "http://purl.org/au-research/vocabulary/RIFCS/" + vocab);
 		}
 	});
 }

@@ -5,21 +5,23 @@
     @foreach($ro->contact as $contact)
     <?php
         if($contact['contact_type']=='url'&& $contact['contact_value']!=''){
-            $contactInfo .= '<p><a href="'.$contact['contact_value'].'">'.$contact['contact_value'].'</a></p>';
+            $contactInfo .= '<a href="'.$contact['contact_value'].'">'.$contact['contact_value'].'</a><br/>';
         }
         if($contact['contact_type']=='email'&& $contact['contact_value']!=''){
-            $contactInfo .=  '<p>'.$contact['contact_value'].'</p>';
+            $contactInfo .=  $contact['contact_value'].'<br/>';
         }
         elseif($contact['contact_type']=='telephoneNumber'&& $contact['contact_value']!='')
         {
-            $contactInfo .=  '<p>Ph: '.$contact['contact_value'].'</p>';
+            $contactInfo .=  'Ph: '.$contact['contact_value'].'<br/>';
         }
         elseif($contact['contact_type']=='faxNumber'&& $contact['contact_value']!='')
         {
-            $contactInfo .=  '<p>Fax: '.$contact['contact_value'].'</p>';
+            $contactInfo .=  'Fax: '.$contact['contact_value'].'<br/>';
         }
         elseif($contact['contact_value']!=''){
-            $contactInfo .= '<span itemprop="contentLocation">'.html_entity_decode($contact['contact_value'])."<br /></span>";
+            $contactInfo .= html_entity_decode($contact['contact_value'])."<br/>";
+        } elseif($contact['contact_type'] == "end") {
+            $contactInfo .="<br/>";
         }
     ?>
     @endforeach

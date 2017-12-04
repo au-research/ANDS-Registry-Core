@@ -841,6 +841,9 @@ class Solr
                 case 'related_data':
                     $this->setOpt('fq', '+related_party_multi_id:("' . $value . '") +class:collection');
                     break;
+                case 'access_methods_ss':
+                    $this->setOpt('fq', '+access_methods_ss:("'.$value.'")');
+                    break;
             }
         }
         return $this;

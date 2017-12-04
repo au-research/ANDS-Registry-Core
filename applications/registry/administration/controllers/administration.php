@@ -21,13 +21,10 @@ class Administration extends MX_Controller {
 
 	public function triggerNLAHarvest()
 	{
-		echo "Executing pullback script...<i>this may take several minutes (depending on server load)</i>" .BR.BR; ob_flush();flush();
-		$ctx=stream_context_create(array('http'=>
-    		array(
-        	'timeout' => 1200 // 20 minutes
-    		)
-		));
-		echo nl2br(file_get_contents(registry_url('maintenance/nlaPullback'),false,$ctx)); ob_flush(); flush();
+	    $script = \ANDS\Commands\RunScriptCommand::getScript("nlaPullBack");
+	    $script->run();
+	    $logs = $script->getCommand()->getLogs();
+	    echo implode("<br/>", $logs);
 	}
 
 	public function nla_pullback()
@@ -36,41 +33,41 @@ class Administration extends MX_Controller {
 		$data['scripts'] = array();
 		$data['title'] = 'Registry Administration - NLA Party Pullback';
 
-		$this->load->config('nla_pullback');
-		$this->load->model('data_source/data_sources', 'ds');
 
-		$ds = $this->ds->getByKey($this->config->item('nlaPartyDataSourceKey'));
+		$config = \ANDS\Util\Config::get('nla');
 
-		if (!$this->config->item('nlaPartyDataSourceKey'))
-		{
-			echo "Not configured for NLA pullback - check your config options (registry/core/config/nla_pullback.php). Aborting..." .NL;
-			return;
-		}
+		$dataSource = \ANDS\Repository\DataSourceRepository::getByKey($config['datasource']['key']);
 
-		if (!$ds)
-		{
-			$ds = $this->ds->create($this->config->item('nlaPartyDataSourceKey'), url_title($this->config->item('nlaPartyDataSourceDefaultTitle')));
-			$ds->setAttribute('title', $this->config->item('nlaPartyDataSourceDefaultTitle'));
-			$ds->setAttribute('record_owner', 'SYSTEM');
-			$ds->save();
-			$ds->updateStats();
-		}
+		if (!$dataSource) {
+		    throw new Exception("Not configured for NLA pull back, update configurations");
+        }
 
-		$data['data_source_url'] = base_url('data_source/manage#!/view/' . $ds->id);
+        // TODO: add created_at and modified_at to registry_objects table
+//        $pullBackEntries = \ANDS\RegistryObject::where('data_source_id', $dataSource->data_source_id)
+//            ->latest()
+//            ->take(100);
 
-
-		$data['pullback_entries'] = array();
+        $pullBackEntries = [];
 		$this->db->distinct('registry_object_id')->select('roa.registry_object_id, key, title, roa.value AS "created"')
 				->join('registry_object_attributes roa', 'roa.registry_object_id = ro.registry_object_id')
 				->from('registry_objects ro')
-				->where('data_source_id', $ds->id)
+				->where('data_source_id', $dataSource->data_source_id)
 				->where('roa.attribute = "updated"')
 				->order_by('roa.value', 'DESC')
 				->limit(100);
 		$query = $this->db->get();
-		if ($query->num_rows()) { foreach($query->result_array() AS $result) $data['pullback_entries'][] = $result; }
+		if ($query->num_rows()) {
+		    foreach ($query->result_array() AS $result) $pullBackEntries[] = $result;
+		}
 
-		$this->load->view('nla_pullback', $data);
+		$this->load->view('nla_pullback', [
+		    'js_lib' => ['core'],
+            'scripts' => [],
+            'title' => 'Registry Administration - NLA Party Pullback',
+            'dataSource' => $dataSource,
+            'data_source_url' => base_url('data_source/manage#!/view/' . $dataSource->id),
+            'pullback_entries' => $pullBackEntries
+        ]);
 	}
 
 

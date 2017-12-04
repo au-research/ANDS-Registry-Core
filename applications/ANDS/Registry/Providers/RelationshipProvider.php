@@ -14,7 +14,9 @@ use ANDS\Repository\DataSourceRepository;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\RegistryObject\Relationship;
 use ANDS\RegistryObject\IdentifierRelationship;
+use ANDS\Registry\Providers\ORCID\ORCIDRecord;
 use ANDS\Util\XMLUtil;
+use ANDS\Registry\Providers\ORCID\ORCIDRecordsRepository;
 
 
 /**
@@ -73,36 +75,20 @@ class RelationshipProvider
     public static function getMergedRelationships(RegistryObject $record, $includeDuplicates = true)
     {
         $allRelationships = static::get($record);
-        $allRelationships = collect($allRelationships)->flatten(1)->values()->all();
+
         $result = [];
-        foreach ($allRelationships as $relation) {
+        foreach ($allRelationships as $type => $relations) {
 
-            $key = $relation->getUniqueID();
+            foreach ($relations as $key => $relation) {
 
-            if (array_key_exists($key, $result)) {
-                $result[$key]->mergeWith($relation->getProperties());
-            } else {
-                $result[$key] = $relation;
+                if (!array_key_exists($key, $result)) {
+                    $result[$key] = $relation;
+                    continue;
+                }
+                // exist, merge them
+                $result[$key] = $result[$key]->mergeWith($relation->getProperties());
             }
         }
-
-        // duplicate of the related
-        // Removed as of CC-1986. Added the duplicate index to the query instead of the index TODO: Code Review and Remove the following
-//        $currentResult = $result;
-//        foreach ($currentResult as $key => $related) {
-//            if ($to = $related->to()) {
-//                $duplicates = $to->getDuplicateRecords();
-//                foreach ($duplicates as $duplicate) {
-//                    $swappedRelation = $related->switchToRecord($duplicate);
-//                    $swappedKey = $swappedRelation->getUniqueID();
-//                    if (array_key_exists($swappedKey, $result)) {
-//                        $result[$swappedKey]->mergeWith($swappedRelation->getProperties());
-//                    } else {
-//                        $result[$swappedKey] = $swappedRelation;
-//                    }
-//                }
-//            }
-//        }
 
         if ($includeDuplicates != true) {
             return $result;
@@ -359,6 +345,9 @@ class RelationshipProvider
                 }
                 foreach ($related_info->identifier as $i) {
                     $identifiers_div .= getResolvedLinkForIdentifier((string)$i['type'], trim((string)$i));
+                    if ($related_info_title == '' and (string)$i['type'] == 'orcid' and trim((string)$i) != '' and $orcidRecord = ORCIDRecordsRepository::obtain((string)$i)) {
+                        $related_info_title = $orcidRecord->full_name;
+                    }
                     $identifier_count++;
                 }
                 $identifiers_div = "<h5>Identifier" . ($identifier_count > 1 ? 's' : '') . ": </h5>" . $identifiers_div;
@@ -788,5 +777,5 @@ class RelationshipProvider
     {
         return Identifier::whereIn('identifier', $identifiers)->get()->pluck('registry_object_id')->unique()->toArray();
     }
-    
+
 }

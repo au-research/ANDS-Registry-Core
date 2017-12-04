@@ -51,6 +51,7 @@
                         </h2>
                         <p><small>[[doc.group]]</small> <small ng-if="filters.class=='activity' && doc.earliest_year"><span style="padding-left:15px"></span><strong>[[doc.earliest_year]] to [[doc.latest_year]]</strong></small></p>
                         <p ng-if="doc.matching_identifier_count">[[ doc.matching_identifier_count ]] Linked Records</p>
+
                         <p ng-if="doc.identifiermatch">
                             <ul>
                                 <li ng-repeat="idd in doc.identifiermatch">
@@ -135,7 +136,7 @@
             <ul class="listy no-bottom" ng-show="isArray(value)===false && (name!='anzsrc-for' && name!='anzsrc-seo') && name!='nottype'">
                 <li>
                     <a href="" ng-click="toggleFilter(name, value, true)">
-                        <span ng-if="name!='related_party_one_id'&&name!='q'&&name!='related_collection_id'&& name!='related_party_one_id'&& name!='related_party_multi_id' && name!='related_service_id' && name!='related_activity_id'">[[ value | truncate:30  ]]</span>
+                        <span ng-if="name!='related_party_one_id'&&name!='q'&&name!='related_collection_id'&& name!='related_party_one_id'&& name!='related_party_multi_id' && name!='related_service_id' && name!='related_activity_id'">[[ value | formatFacet | truncate:30  ]]</span>
                         <span ng-if="name!='related_party_one_id'&&name=='q'" tip="<b>Query</b>:[[value]]">[[ value | truncate:30  ]]</span>
                         <span ng-if="name=='related_collection_id' || name=='related_party_one_id' || name=='related_party_multi_id' || name=='related_service_id' || name=='related_activity_id' " resolve-ro roid="value">[[value | truncate:30 ]]</span>
                         <small><i class="fa fa-remove" tip="Remove Item"></i></small>
@@ -201,6 +202,7 @@
 
     <div facet-search facets="facets" type="group" ng-if="showFacet('group')"></div>
     <div facet-search facets="facets" type="access_rights" ng-if="showFacet('access_rights')"></div>
+    <div facet-search facets="facets" type="access_methods_ss" ng-if="showFacet('access_methods_ss')"></div>
     <div facet-search facets="facets" type="license_class" ng-if="showFacet('license_class')"></div>
     <div facet-search facets="facets" type="administering_institution" ng-if="showFacet('administering_institution')"></div>
     <div facet-search facets="facets" type="funders" ng-if="showFacet('funders')"></div>

@@ -17,7 +17,7 @@ class RelationshipProviderTest extends \RegistryTestClass
     /** @test **/
     public function it_should_1()
     {
-        $record = RegistryObjectsRepository::getPublishedByKey("Collection346");
+        $record = $this->ensureKeyExist("Collection346");
         RelationshipProvider::process($record);
         RelationshipProvider::processGrantsRelationship($record);
 
@@ -27,7 +27,7 @@ class RelationshipProviderTest extends \RegistryTestClass
     /** @test **/
     public function it_should_find_all_implicit_links()
     {
-        $record = RegistryObjectsRepository::getPublishedByKey("Collection31_demo");
+        $record = $this->ensureKeyExist("Collection31_demo");
 
         $parentCollections = GrantsConnectionsProvider::create()->getParentsCollections($record);
         $this->assertGreaterThan(0, count($parentCollections));
@@ -43,7 +43,6 @@ class RelationshipProviderTest extends \RegistryTestClass
     {
         $record = $this->ensureIDExist(86321);
         $affectedRecords = RelationshipProvider::getAffectedIDsFromIDs([$record->id], [$record->key]);
-        dd(count($affectedRecords));
     }
 
 

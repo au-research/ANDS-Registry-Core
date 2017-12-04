@@ -50,6 +50,8 @@ class Router
         $this->route(['get'], "$resource/", "$controller@index");
         $this->route(['get'], "$resource/(\\w+)/", "$controller@show");
         $this->route(['post'], "$resource/", "$controller@add");
+        $this->route(['put', 'patch'], "$resource/(\\w+)/", "$controller@update");
+        $this->route(['delete'], "$resource/(\\w+)/", "$controller@destroy");
     }
 
     public function execute($url = null, $requestMethod = null) {
@@ -66,7 +68,7 @@ class Router
         }
 
         // no match
-        return "No route match $url";
+        throw new \Exception("No route match $url");
     }
 
     public function getMatch($url = null, $requestMethod = null)
@@ -93,7 +95,7 @@ class Router
 
                 // ensure last / for matching
                 $url = rtrim($url, '/') . '/';
-
+                // var_dump($pattern, $url);
                 if (preg_match($pattern, $url, $params)) {
                     array_shift($params);
                     return [

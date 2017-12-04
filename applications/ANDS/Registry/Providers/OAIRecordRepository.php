@@ -362,8 +362,24 @@ class OAIRecordRepository implements OAIRepository
         if ($options['set']) {
             $set = $options['set'];
             $set = explode(':', $set);
-            if ($set[0] == "class") {
-                $records = $records->where('class', $set[1]);
+
+            $opt = $set[0];
+            $value = $set[1];
+
+            switch ($opt) {
+                case "class":
+                    $records = $records->where('class', $value);
+                    break;
+                case "datasource":
+                    if ($value = $this->getDataSourceID($value)) {
+                        $records = $records->where('data_source_id', $value);
+                    }
+                    break;
+                case "group":
+                    if ($value = $this->getGroupName($value)) {
+                        $records = $records->where('group', $value);
+                    }
+                    break;
             }
         }
 
@@ -380,6 +396,37 @@ class OAIRecordRepository implements OAIRepository
             'records' => $records,
             'total' => $total
         ];
+    }
+
+    private function getDataSourceID($value)
+    {
+        // datasource:9
+        if ($dataSource = DataSource::find($value)) {
+            return $dataSource->data_source_id;
+        }
+
+        // Integrated-Marine-Observing-System
+        $name = str_replace("-", " ", $value);
+        if ($dataSource = DataSource::where('title', $name)->first()) {
+            return $dataSource->data_source_id;
+        }
+
+        return null;
+    }
+
+    private function getGroupName($value)
+    {
+        // group:9
+        if ($group = Group::find($value)) {
+            return $group->title;
+        }
+
+        $name = str_replace("0x20", " ", $value);
+        if ($group = Group::where('title', $name)->first()) {
+            return $group->title;
+        }
+
+        return null;
     }
 
     /**
