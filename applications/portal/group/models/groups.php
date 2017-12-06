@@ -121,14 +121,13 @@ class Groups extends CI_Model {
 
 		$this->solr
 			->init()
-			->setOpt('fq', '+group:("'.$group['title'].'")');
-
-		//facets
-		$this->solr
+			->setOpt('fq', '+group:("'.$group['title'].'")')
+            ->setOpt('fq', '+class:collection')
 			->setFacetOpt('field','class')
 			->setFacetOpt('field', 'subject_value_resolved')
 			->setFacetOpt('limit', '-1')
 			->setFacetOpt('sort', 'count')
+            ->setOpt('rows', 0)
 			->executeSearch();
 
 		$group['facet'] = array();
@@ -146,13 +145,6 @@ class Groups extends CI_Model {
 			$group['facet']['class'][$class] = $num;
 		}
 
-		// dd($this->solr->getFacetResult('subject_value_resolved'));
-
-		$this->solr
-			->setOpt('fq', '+class:collection')
-			->executeSearch();
-
-
 		//subjects
 		$group['facet']['subjects'] = array();
 		$subjects = $this->solr->getFacetResult('subject_value_resolved');
@@ -164,6 +156,8 @@ class Groups extends CI_Model {
                 );
             }
 		}
+
+
 
 		//reload and collect groups
 		$group['groups'] = array();
