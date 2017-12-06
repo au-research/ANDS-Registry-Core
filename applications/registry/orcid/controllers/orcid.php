@@ -92,7 +92,7 @@ class Orcid extends MX_Controller {
      */
 	function wiz(ORCIDRecord $orcid) {
 	    $this->load->view('orcid_app', [
-            'title' => 'Import Your Work',
+            'title' => 'Research Data Australia - Link Your Work to your ORCID Record',
             'scripts' => ['orcid_app'],
             'js_lib' => ['core','prettyprint', 'angular'],
             'orcid' => $orcid

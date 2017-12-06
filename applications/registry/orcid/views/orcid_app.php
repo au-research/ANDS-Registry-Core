@@ -1,7 +1,7 @@
 <?php $this->load->view('header'); ?>
 <div ng-app="orcid_app">
 	<div class="content-header">
-		<h1>Import Your Datasets to <img style="margin: -13px 0 0 1px;" src="<?php echo asset_url('img/orcid_tagline_small.png'); ?>"/></h1>
+		<h1>Link Your Datasets to ORCID</h1>
 	</div>
 	<span class="hide" id="orcid_id"><?php echo $orcid->orcid_id; ?></span>
 	<div ng-view></div>
@@ -11,8 +11,11 @@
 	<div class="container-fluid" id="main-content" >
         <div class="alert alert-info">
             You are logged in as
-             <?php echo $orcid->full_name; ?> <a href="<?php echo $orcid->url ?>"><?php echo $orcid->url ?>
-                <img src="https://orcid.org/sites/default/files/images/orcid_16x16.png" alt=""></a>
+             <?php echo $orcid->full_name; ?> <img
+                    src="<?php echo asset_url('img/orcid_16x16.png'); ?>"
+                    alt="orcid logo id"> <a
+                    href="<?php echo $orcid->url ?>"><?php echo $orcid->url ?>
+            </a>
             <a class="pull-right" href="<?php echo registry_url('orcid/logout')?>"><i class="icon icon"></i>Sign Out</a>
         </div>
 		<div class="row-fluid">
@@ -30,7 +33,7 @@
 						<label class="checkbox" ng-repeat="item in filteredWorks = (works| filter:{type:'suggested'})">
 							<input type="checkbox" ng-model="item.to_import"/>
                             <a href="{{item.url}}" target="_blank">{{item.title}}</a>
-                            <span class="label label-info" ng-show="item.in_orcid">Imported</span>
+                            <span class="label label-info" ng-show="item.in_orcid">Linked</span>
 						</label>
                         <div ng-show="!works">
                             Loading, please wait
@@ -58,7 +61,7 @@
 									<input type="checkbox" ng-model="doc.to_import" />
 								</div>
 								<div style="margin-left:25px;">
-									<h5><a href="<?php echo portal_url()?>{{doc.slug}}/{{doc.id}}">{{doc.title}}</a><span class="label label-info pull-right" style="margin-right:15px;" ng-show="alreadyImported(doc.id)">Imported</span></h5>
+									<h5><a href="<?php echo portal_url()?>{{doc.slug}}/{{doc.id}}">{{doc.title}}</a><span class="label label-info pull-right" style="margin-right:15px;" ng-show="alreadyImported(doc.id)">Linked</span></h5>
 									<p>{{doc.description | removeHtml}}</p>
 								</div>
 								<div class="clearfix"></div>
@@ -71,7 +74,7 @@
 			<div class="span4">
 				<div class="widget-box">
 					<a href="#myModal" role="button" data-toggle="modal" class="btn btn-primary btn-block btn-large import" ng-class="{true:'', false:'disabled', '':'hidden'}[import_available]" ng-click="resetImported()">
-						Import Selected <span ng-show="to_import.length>0">{{to_import.length}}</span> Works
+						Link Selected <span ng-show="to_import.length>0">{{to_import.length}}</span> Works
 					</a>
 				</div>
 				<div class="widget-box">
@@ -85,7 +88,7 @@
 				</div>
 
 				<div class="widget-box">
-					<div class="widget-title"><h5>Datasets already imported from Research Data Australia</h5></div>
+					<div class="widget-title"><h5>Datasets already linked from Research Data Australia</h5></div>
 					<div class="widget-content">
 						<ul>
 							<li ng-repeat="item in filteredWorks = (works | filter:{in_orcid:true})"> <a href="{{item.url}}" target="_blank">{{item.title}}</a></li>
@@ -93,7 +96,7 @@
                         <div ng-show="!works">
                             Loading... Please wait...
                         </div>
-						<div class="alert alert-info" ng-show="works && filteredWorks.length == 0">You have not imported any works from Research Data Australia!</div>
+						<div class="alert alert-info" ng-show="works && filteredWorks.length == 0">You have not linked any works from Research Data Australia!</div>
 					</div>
 				</div>
 			</div>
@@ -104,18 +107,18 @@
 	<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
 		<div class="modal-header">
 			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-			<h3 id="modalLabel">Review and Import</h3>
+			<h3 id="modalLabel">Review and Link</h3>
 		</div>
 		<div class="modal-body">
-			<p><b>({{to_import.length}}) works have been selected for import to your ORCID profile.</b></p>
-			<p>Please review your selected works and ensure they are appropriate before continuing with the import</p>
+			<p><b>({{to_import.length}}) works have been selected for linking to your ORCID Record.</b></p>
+			<p>Please review your selected works and ensure they are appropriate before continuing with the linking</p>
 			<div class="well" ng-hide="importResult">
 				<p ng-repeat="item in to_import">
                     <a href="" ng-click="item.to_import=!item.to_import" tip="Remove">
                         <i class="icon icon-minus-sign"></i>
                     </a> {{item.title}}
                 </p>
-				<p ng-show="to_import.length==0">No works are selected for import</p>
+				<p ng-show="to_import.length==0">No works are selected for linking</p>
 			</div>
 			<hr>
             <div class="well" ng-show="importResult">
@@ -127,18 +130,18 @@
             <hr>
             <div ng-show="import_stg=='complete'">
                 <div class="alert alert-success" ng-show="importedResultCount > 0">
-                    <p>Congratulations, <b>({{ importedResultCount }})</b> works have successfully been imported to your ORCID profile.</p>
+                    <p>Congratulations, <b>({{ importedResultCount }})</b> works have successfully been linked to your ORCID Record.</p>
                 </div>
                 <div class="alert alert-danger" ng-show="failedResultCount > 0">
                     <p><b>({{ failedResultCount }})</b> works has failed .</p>
                 </div>
-                <p>Remember to review and set the appropriate visibility settings for the works via your profile in ORCID.</p>
+                <p>Remember to review and set the appropriate <a href="https://support.orcid.org/knowledgebase/articles/124518-visibility-settings">visibility settings</a> for the works via your ORCID Recod.</p>
             </div>
 		</div>
         <div class="modal-footer">
             <button ng-show="import_stg=='ready'" class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
             <button ng-show="import_stg=='ready' && to_import.length > 0" class="btn btn-primary" ng-click="import()">Import</button>
-            <button ng-show="import_stg=='importing'" disabled class="btn btn-primary-disabled">Importing {{to_import.length}} works... please wait</button>
+            <button ng-show="import_stg=='importing'" disabled class="btn btn-primary-disabled">Linking {{to_import.length}} works... please wait</button>
             <button ng-show="import_stg=='complete'" class="btn" data-dismiss="modal" aria-hidden="true" ng-click="import_stg='ready'">Ok</button>
         </div>
 	</div>
