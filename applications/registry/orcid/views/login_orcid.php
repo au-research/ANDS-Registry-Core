@@ -25,7 +25,7 @@
                     <p>
                         <a href="<?php echo $link ?>"
                            class="btn btn-large btn-block">Login with ORCID
-                            <img src="<?php echo asset_url('img/orcid_16x16.gif'); ?>"
+                            <img src="<?php echo asset_url('img/orcid_16x16.png'); ?>"
                                  alt="orcid id logo" style="margin-bottom: 5px;"></a>
                     </p>
 					<?php if($this->config->item('deployment_state')!='production'):?>
