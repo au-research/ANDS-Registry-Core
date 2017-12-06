@@ -62,16 +62,15 @@
                         your ORCID record:
                     </p>
                     <ul>
-                        <li>Add or update your research activities</li>
-                        <li>Allow this organization or application to add
+                        <li><strong>Add or update your research
+                                activities</strong><br/>Allow this organization
+                            or application to add
                             activity information stored in their system(s) to
                             your ORCID record and update information they have
                             added.
                         </li>
-                        <li>Read limited information from your research
-                            activities
-                        </li>
-                        <li>Will allow this organization or application to read
+                        <li><strong>Read limited information from your research
+                                activities</strong><br/>Will allow this organization or application to read
                             limited information from your works, funding or
                             affiliations
                         </li>
@@ -86,13 +85,13 @@
                     <p>If you have any questions or concerns, please contact us
                         by any of the following means during business hours
                         Monday to Friday.</p>
-
                     <p>
                         ANDS Office<br/>
                         Monash University,<br/>
                         PO Box 197,<br/>
                         Caulfield East VIC 3145,<br/>
                         AUSTRALIA<br/>
+                        <br/>
                         Phone: +61 3 9902 0585 <br/>
                         E-mail: <a href="mailto:services@ands.org.au">services@ands.org.au</a>
                         <br/>
