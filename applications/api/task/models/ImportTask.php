@@ -433,7 +433,10 @@ class ImportTask extends Task
      */
     public function loadParams()
     {
-        parse_str($this->getParams(), $parameters);
+        $parameters = $this->getParams();
+        if (!is_array($this->params)) {
+            parse_str($this->getParams(), $parameters);
+        }
 
         if ($this->dataSourceID === null) {
             $this->dataSourceID = array_key_exists('ds_id', $parameters) ? $parameters['ds_id']: null;

@@ -73,19 +73,22 @@ class ImportHandler extends Handler
         // get Harvest
         $harvest = $dataSource->harvest()->first();
 
+        $name = $params['name'] ?: "Harvester initiated import - $dataSource->title($dataSource->data_source_id) - $batchID";
+
         $task = [
-            'name' => "Harvester initiated import - $dataSource->title($dataSource->data_source_id) - $batchID",
+            'name' => $name,
             'type' => 'PHPSHELL',
             'frequency' => 'ONCE',
             'priority' => 2,
             'params' => http_build_query([
                 'class' => 'import',
                 'ds_id' => $dataSource->data_source_id,
-                'batch_id' => $params['batch_id'],
-                'harvest_id' => $harvest->harvest_id,
+                'batch_id' => $batchID,
+                'harvest_id' => $harvest ? $harvest->harvest_id : null,
                 'source' => $from
             ])
         ];
+
 
         $taskManager = new TaskManager($this->ci->db, $this);
         $taskCreated = $taskManager->addTask($task);
