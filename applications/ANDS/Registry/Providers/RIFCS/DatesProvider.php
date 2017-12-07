@@ -173,7 +173,13 @@ class DatesProvider implements RIFCSProvider
             return Carbon::createFromTimestamp($value)->format($format);
         }
 
-        return (new Carbon($value))->format($format);
+        // last try
+        try {
+            return (new Carbon($value))->format($format);
+        } catch (\Exception $e) {
+            // TODO: log the date type we can't parse
+            return (new Carbon())->format($format);
+        }
     }
 
     /**
@@ -199,12 +205,11 @@ class DatesProvider implements RIFCSProvider
     public static function validateDate($date, $format = 'Y-m-d')
     {
         try {
-            $d = DateTime::createFromFormat($format, $date);
+            $d = Carbon::createFromFormat($format, $date);
             return $d && $d->format($format) === $date;
         } catch (\Exception $e) {
             // try again
         }
-
         $d = self::parseDate($date);
         return $d && $d->format($format) === $date;
     }
