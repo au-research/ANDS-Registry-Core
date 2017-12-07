@@ -110,11 +110,12 @@ class Payload
      * @param $dataSourceID
      * @param $batchID
      * @param $content
+     * @return string
      * @throws \Exception
      */
     public static function write($dataSourceID, $batchID, $content)
     {
-        $harvestedContentDir = get_config_item('harvested_contents_path');
+        $harvestedContentDir = get_config_item('HARVESTED_CONTENTS');
         $harvestedContentDir = rtrim($harvestedContentDir, '/') . '/';
         $directory = $harvestedContentDir.$dataSourceID;
         if (!is_dir($directory)) {
@@ -130,6 +131,7 @@ class Payload
         try {
             file_put_contents($file, $content);
             chmod($file, 0775);
+            return $file;
         } catch (\Exception $e) {
             $message = get_exception_msg($e);
             throw new \Exception("Failure putting content into $file : $message");

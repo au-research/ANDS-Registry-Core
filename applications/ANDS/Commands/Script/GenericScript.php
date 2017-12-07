@@ -53,7 +53,7 @@ class GenericScript implements GenericScriptRunnable
             return;
         }
 
-        $this->log("Progress $count");
+        //$this->log("Progress $count");
     }
 
     public function progressFinish()
@@ -63,7 +63,7 @@ class GenericScript implements GenericScriptRunnable
             return;
         }
         $this->log("Progress Finished");
-        $this->log("\n");
+        //$this->log("\n");
     }
 
     public function info($message)
@@ -73,9 +73,7 @@ class GenericScript implements GenericScriptRunnable
 
     public function error($message)
     {
-        $this->log("\n");
         $this->command->log($message, "error");
-        $this->log("\n");
     }
 
     public function debug($message)
