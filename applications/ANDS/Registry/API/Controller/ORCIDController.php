@@ -129,31 +129,36 @@ class ORCIDController extends HTTPController {
                 continue;
             }
 
-            $xml = ORCIDProvider::getORCIDXML($record, $orcid);
-
-            $existing = ORCIDExport::where('orcid_id', $orcid->orcid_id)
+            $export = ORCIDExport::where('orcid_id', $orcid->orcid_id)
                 ->where('registry_object_id', $record->id)
                 ->where('orcid_id', $orcid->orcid_id)
                 ->first();
 
-            if ($existing) {
-                // if we have an existing, update the data, then sync
-                $existing->data = $xml;
-                $existing->save();
-                ORCIDAPI::sync($existing);
-                $existing->load('registryObject');
-                $result[] = $existing;
-            } else {
-                // make a new one, then sync
+            if (!$export) {
                 $export = ORCIDExport::create([
                     'registry_object_id' => $record->id,
-                    'orcid_id' => $orcid->orcid_id,
-                    'data' => $xml
+                    'orcid_id' => $orcid->orcid_id
                 ]);
+            }
+
+            try {
+                $xml = ORCIDProvider::getORCIDXML($record, $orcid);
+                $export->xml = $xml;
+
+                $export->save();
                 ORCIDAPI::sync($export);
                 $export->load('registryObject');
                 $result[] = $export;
+            } catch (\Exception $e) {
+                $export->response = json_encode([
+                    'error' => 'internal',
+                    'error_description' => get_exception_msg($e),
+                    'user-message' => "An error has occured while linking record {$record->title}($record->id)"
+                ], true);
+                $export->save();
+                $result[] = $export;
             }
+
         }
 
         // reload all exports

@@ -140,7 +140,7 @@
 		</div>
         <div class="modal-footer">
             <button ng-show="import_stg=='ready'" class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-            <button ng-show="import_stg=='ready' && to_import.length > 0" class="btn btn-primary" ng-click="import()">Import</button>
+            <button ng-show="import_stg=='ready' && to_import.length > 0" class="btn btn-primary" ng-click="import()">Link</button>
             <button ng-show="import_stg=='importing'" disabled class="btn btn-primary-disabled">Linking {{to_import.length}} works... please wait</button>
             <button ng-show="import_stg=='complete'" class="btn" data-dismiss="modal" aria-hidden="true" ng-click="import_stg='ready'">Ok</button>
         </div>
