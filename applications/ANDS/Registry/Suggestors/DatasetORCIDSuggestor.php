@@ -38,7 +38,7 @@ class DatasetORCIDSuggestor
     public function suggest(ORCIDRecord $orcid)
     {
         $suggested = [];
-
+return [];
         // TODO: this should be cached
 
         // find all party sharing the same surname
