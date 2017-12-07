@@ -3,6 +3,8 @@
 namespace ANDS\Commands\Script;
 
 use ANDS\DataSource;
+use ANDS\Payload;
+use ANDS\Registry\Importer;
 use ANDS\RegistryObject\Identifier;
 use ANDS\RegistryObject\IdentifierRelationship;
 use ANDS\RegistryObject\Relationship;
@@ -66,17 +68,24 @@ class NLAPullBack extends GenericScript implements GenericScriptRunnable
      */
     private function import($payload)
     {
-        $client = new Client(['base_uri' => baseUrl()]);
+        // make payload
+        $xml = trim($payload);
+        $batchID = "SCHEDULED-XML-".md5($xml).'-'.time();
+        $file = Payload::write($this->dataSource->data_source_id, $batchID, $xml);
+
+        $this->log("Payload writen at: {$file}");
 
         try {
+            $client = new Client(['base_uri' => baseUrl()]);
             $response = $client->request(
                 'POST',
                 '/api/registry/import',
                 [
                     'form_params' => [
-                        'xml' => $payload,
-                        'from' => 'xml',
-                        'ds_id' => $this->dataSource->data_source_id
+                        'ds_id' => $this->dataSource->data_source_id,
+                        'batch_id' => $batchID,
+                        'source' => 'NLAPullBack',
+                        'name' => 'NLA Pull Back Job'
                     ]
                 ]
             );
@@ -89,9 +98,11 @@ class NLAPullBack extends GenericScript implements GenericScriptRunnable
             $path = "/tmp/".uniqid();
             $this->log("Response writen to $path");
             file_put_contents($path, $result);
+
         } catch (RequestException $e) {
             $this->error($e->getResponse()->getBody());
         }
+
     }
 
     /**

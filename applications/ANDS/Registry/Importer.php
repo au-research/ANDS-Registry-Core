@@ -54,6 +54,53 @@ class Importer
     }
 
     /**
+     * Schedule an Import, given a chunk of XML
+     *
+     * @param DataSource $dataSource
+     * @param $xml
+     * @param array $customParameters
+     * @return ImportTask
+     */
+    public static function scheduleImportRecord(
+        DataSource $dataSource,
+        $xml,
+        $customParameters = []
+    ) {
+        $params = [
+            'ds_id' => $dataSource->data_source_id
+        ];
+
+        $params = array_merge($params, $customParameters);
+        $name = $params['name'] ?: "Scheduled Import Task for {$dataSource->title}";
+
+        // make Payload
+        $xml = trim($xml);
+        $batchID = "SCHEDULED-XML-".md5($xml).'-'.time();
+        Payload::write($dataSource->data_source_id, $batchID, $xml);
+
+        $importTask = new ImportTask();
+        $importTask->init([
+            'name' => $name,
+            'params' => [
+                'class' => 'import',
+                'pipeline' => 'ManualImport',
+                'source' => 'xml',
+                'ds_id' => $dataSource->data_source_id,
+                'batch_id' => $batchID
+            ]
+        ]);
+
+        $importTask->initialiseTask();
+//        $importTask->enableRunAllSubTask();
+
+//        $importTask->setCI($ci =& get_instance());
+//        $importTask->setDb($ci->db);
+        $importTask->sendToBackground();
+
+        return $importTask;
+    }
+
+    /**
      * @param DataSource $dataSource
      * @param $batchID
      * @param array $customParameters
