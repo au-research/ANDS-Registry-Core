@@ -137,19 +137,19 @@ class ORCIDDocument
                 $contributorDOM = $this->workElem('contributor');
 
                 // work:contributors/work:contributor/contributor-orcid
-                if ($contributor['contributor-orcid']) {
-                    $contributorORCIDDOM = $this->commonElem('contributor-orcid');
-                    $contributorORCIDDOM->appendChild(
-                        $this->commonElem('uri', $contributor['contributor-orcid']['uri'])
-                    );
-                    $contributorORCIDDOM->appendChild(
-                        $this->commonElem('path', $contributor['contributor-orcid']['path'])
-                    );
-                    $contributorORCIDDOM->appendChild(
-                        $this->commonElem('host', $contributor['contributor-orcid']['host'])
-                    );
-                    $contributorDOM->appendChild($contributorORCIDDOM);
-                }
+//                if ($contributor['contributor-orcid']) {
+//                    $contributorORCIDDOM = $this->commonElem('contributor-orcid');
+//                    $contributorORCIDDOM->appendChild(
+//                        $this->commonElem('uri', $contributor['contributor-orcid']['uri'])
+//                    );
+//                    $contributorORCIDDOM->appendChild(
+//                        $this->commonElem('path', $contributor['contributor-orcid']['path'])
+//                    );
+//                    $contributorORCIDDOM->appendChild(
+//                        $this->commonElem('host', $contributor['contributor-orcid']['host'])
+//                    );
+//                    $contributorDOM->appendChild($contributorORCIDDOM);
+//                }
 
                 // work:contributors/work:contributor/work:credit-name
                 $contributorDOM->appendChild(
