@@ -146,7 +146,7 @@
                 <div class="alert alert-danger" ng-show="failedResultCount > 0">
                     <p><b>({{ failedResultCount }})</b> works has failed .</p>
                 </div>
-                <p>Remember to review and set the appropriate <a href="https://support.orcid.org/knowledgebase/articles/124518-visibility-settings">visibility settings</a> for the works via your ORCID Recod.</p>
+                <p>Remember to review and set the appropriate <a href="https://support.orcid.org/knowledgebase/articles/124518-visibility-settings" target="_blank">visibility settings</a> for the works via your ORCID Recod.</p>
             </div>
 		</div>
         <div class="modal-footer">
