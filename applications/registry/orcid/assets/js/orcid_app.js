@@ -35,11 +35,17 @@ angular.module('orcid_app', ['portal-filters'])
                     });
             },
 			remove: function (orcid_id, work_id) {
-				return $http.delete(api_url + 'registry/orcids/' + orcid_id + '/works/' + work_id)
-					.then(function(response) {
-						return response.data;
-					});
-			}
+                return $http.delete(api_url + 'registry/orcids/' + orcid_id + '/works/' + work_id)
+                    .then(function(response) {
+                        return response.data;
+                    });
+            },
+            sync: function (orcid_id) {
+                return $http.get(api_url + 'registry/orcids/' + orcid_id + '/sync/')
+                    .then(function(response) {
+                        return response.data;
+                    });
+            }
 		}
 	})
 ;
@@ -81,6 +87,12 @@ function IndexCtrl($scope, works) {
 		works.getWorks($scope.orcid.id).then(function(data){
 			$scope.works = data;
 		});
+	};
+
+	$scope.syncRefresh = function() {
+		works.sync($scope.orcid.id).then(function(data) {
+			$scope.refresh(true);
+		})
 	};
 
 	//run once
