@@ -2,6 +2,7 @@
 namespace ANDS\Registry\API\Controller;
 
 
+use ANDS\API\Task\ImportSubTask\ProcessRelationships;
 use ANDS\Authenticator\ORCIDAuthenticator;
 use ANDS\Registry\API\Middleware\ValidORCIDSessionMiddleware;
 use ANDS\Registry\API\Request;
@@ -10,6 +11,7 @@ use ANDS\Registry\Providers\ORCID\ORCIDProvider;
 use ANDS\Registry\Providers\ORCID\ORCIDRecord;
 use ANDS\Registry\Suggestors\DatasetORCIDSuggestor;
 use ANDS\Repository\RegistryObjectsRepository;
+use ANDS\Util\Config;
 use ANDS\Util\ORCIDAPI;
 
 /**
@@ -26,7 +28,9 @@ class ORCIDController extends HTTPController {
      */
     public function show($id = null)
     {
-        return ORCIDRecord::find($id);
+        $orcid = ORCIDRecord::find($id);
+        $orcid->record_data = json_decode($orcid->record_data, true);
+        return $orcid;
     }
 
     /**
@@ -68,6 +72,9 @@ class ORCIDController extends HTTPController {
 
         $orcid = ORCIDRecord::find($id);
         $orcid->load('exports');
+
+        // sanity check for syncing
+        ORCIDAPI::syncRecord($orcid);
 
         $works = [];
 
@@ -193,5 +200,13 @@ class ORCIDController extends HTTPController {
 
         // should be a good response
         return ['deleted' => true];
+    }
+
+    public function sync($orcidID)
+    {
+        $orcid = ORCIDRecord::find($orcidID);
+        ORCIDAPI::syncRecord($orcid);
+
+        return ['synced' => true];
     }
 }

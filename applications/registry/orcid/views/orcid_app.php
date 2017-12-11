@@ -88,7 +88,15 @@
 				</div>
 
 				<div class="widget-box">
-					<div class="widget-title"><h5>Datasets already linked from Research Data Australia</h5></div>
+					<div class="widget-title">
+                        <span
+                                class="icon"
+                                tip="Refresh"
+                                ng-click="refresh(true)">
+                            <i class="icon icon-refresh"></i>
+                        </span>
+                        <h5>Datasets already linked from Research Data Australia</h5>
+                    </div>
 					<div class="widget-content">
 						<ul>
 							<li ng-repeat="item in filteredWorks = (works | filter:{in_orcid:true})">

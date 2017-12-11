@@ -124,14 +124,16 @@ class ORCIDProvider implements RegistryContentProvider
                 }
             }
             $name = implode(" ", $name);
-            $contributors[] = [
-                'credit-name' => $name,
-                'contributor-orcid' => null,
-                'contributor-attributes' => [
-                    'contributor-sequence' => (string) $object->attributes()['seq'],
-                    'contributor-role' => 'author'
-                ]
-            ];
+            if (trim($name)!="") {
+                $contributors[] = [
+                    'credit-name' => $name,
+                    'contributor-orcid' => null,
+                    'contributor-attributes' => [
+                        'contributor-sequence' => (string) $object->attributes()['seq'],
+                        'contributor-role' => 'author'
+                    ]
+                ];
+            }
         }
 
         // does not find more contributors if there's enough from citationMetadata

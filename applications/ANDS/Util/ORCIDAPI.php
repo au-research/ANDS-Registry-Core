@@ -92,6 +92,40 @@ class ORCIDAPI
     }
 
     /**
+     * Fully sync an orcid record
+     * Delete any export that comes from us that is deleted upstream
+     *
+     * @param ORCIDRecord $orcid
+     */
+    public static function syncRecord(ORCIDRecord $orcid)
+    {
+        $conf = Config::get('orcid');
+        $orcid->populateRecordData();
+        $data = json_decode($orcid->record_data, true);
+        $allWorks = $data['activities-summary']['works']['group'];
+
+        try {
+            $codes = collect($allWorks)->filter(function($item) use ($conf){
+                return $item['work-summary'][0]['source']['source-client-id']['path'] === $conf['client_id'];
+            })->map(function($item) {
+                return $item['work-summary'][0]['put-code'];
+            })->toArray();
+
+            $shouldBeDeleted = ORCIDExport::where('orcid_id', $orcid->orcid_id)
+                ->where('put_code', '!=', "")
+                ->whereNotIn('put_code', $codes);
+
+            if ($shouldBeDeleted->count() > 0) {
+                $shouldBeDeleted->delete();
+            }
+        } catch (\Exception $e) {
+            // todo: log the error somehow
+            // todo: handle exception here
+            return;
+        }
+    }
+
+    /**
      * Get a public client
      * use for getting public metadata
      *
