@@ -182,6 +182,12 @@ class ORCIDProvider implements RegistryContentProvider
             ];
         }
 
+        // remove empty credit-name
+        $contributors = collect($contributors)->filter(function($item) {
+            return trim($item['credit-name']) != "";
+        })->toArray();
+
+
         // first, additional mapping for sequence
         $contributors = self::remapContributorsSequences($contributors);
 
