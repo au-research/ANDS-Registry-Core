@@ -90,10 +90,14 @@ class ORCIDController extends HTTPController {
             }
             $suggestion['type'] = 'suggested';
         }
+        $suggestedIDs = collect($suggestions)->pluck('registry_object_id')->toArray();
 
         $works = array_merge($works, $suggestions);
 
         foreach ($orcid->exports as $export) {
+            if (in_array($export->registry_object_id, $suggestedIDs)) {
+                continue;
+            }
             $export->load('registryObject');
             $works[] = [
                 'registry_object_id' => $export->registry_object_id,
@@ -104,12 +108,12 @@ class ORCIDController extends HTTPController {
             ];
         }
 
-        // item url
-        foreach ($works as &$work) {
-            // id is used globally in the front end
+        // fixed value for front end
+        $works = collect($works)->map(function($work) {
             $work['id'] = $work['registry_object_id'];
             $work['url'] = portal_url($work['slug']. '/'. $work['registry_object_id']);
-        }
+            return $work;
+        })->toArray();
 
         return $works;
     }
