@@ -153,7 +153,7 @@ class ORCIDDocument
 
                 // work:contributors/work:contributor/work:credit-name
                 $contributorDOM->appendChild(
-                    $this->workElem('credit-name', $contributor['credit-name'])
+                    $this->workElem('credit-name', htmlspecialchars($contributor['credit-name']))
                 );
 
                 // work:contributors/work:contributor/contributor-attributes
