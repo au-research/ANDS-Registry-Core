@@ -240,7 +240,12 @@ class ORCIDProvider implements RegistryContentProvider
         // collect descriptions
         $descriptions = DescriptionProvider::get($record);
         if ($descriptions['primary_description']) {
-            $doc->set('short-description', $descriptions['primary_description']);
+            // truncate to 5000 char
+            $description = $descriptions['primary_description'];
+            if (strlen($description) > 5000) {
+                $description = substr($description, 0, 4995) . "...";
+            }
+            $doc->set('short-description', $description);
         }
 
         $doc->set('url', $record->portalUrl);
