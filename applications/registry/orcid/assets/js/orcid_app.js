@@ -33,7 +33,13 @@ angular.module('orcid_app', ['portal-filters'])
                     .then(function (response) {
                         return response.data
                     });
-            }
+            },
+			remove: function (orcid_id, work_id) {
+				return $http.delete(api_url + 'registry/orcids/' + orcid_id + '/works/' + work_id)
+					.then(function(response) {
+						return response.data;
+					});
+			}
 		}
 	})
 ;
@@ -169,6 +175,18 @@ function IndexCtrl($scope, works) {
             }).length;
 
             $scope.refresh();
+		});
+	};
+
+	$scope.remove = function (item) {
+
+		if (!confirm("Are you sure you want to unlink " + item.title + "?")) {
+			return;
+		}
+
+		works.remove($scope.orcid.id, item.id).then(function(data){
+			alert(item.title + " is now unlinked");
+			$scope.refresh();
 		});
 	};
 

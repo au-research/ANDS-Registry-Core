@@ -18,6 +18,7 @@ class OrcidsHandler extends Handler {
         $router->get('orcids/(.*)/works', 'ORCIDController@works');
         $router->route(['put', 'post'], 'orcids/(.*)/works', 'ORCIDController@import');
         $router->get('orcids/(.*)', 'ORCIDController@show');
+        $router->route(['delete'], 'orcids/(.*)/works/(.*)', 'ORCIDController@destroyWorks');
 
         //        dd($router->getMatch());
         return $this->format($router->execute());

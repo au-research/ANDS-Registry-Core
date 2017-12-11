@@ -126,4 +126,14 @@ class ORCIDAPI
         ]);
         return $client;
     }
+
+    public static function delete($orcid, $export)
+    {
+        $client = self::getMemberClient($orcid->orcid_id);
+        try {
+            $client->delete("work/{$export->put_code}");
+        } catch (RequestException $e) {
+            throw new \Exception($e->getResponse()->getBody()->getContents());
+        }
+    }
 }

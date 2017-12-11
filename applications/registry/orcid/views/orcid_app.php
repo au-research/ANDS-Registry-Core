@@ -91,7 +91,10 @@
 					<div class="widget-title"><h5>Datasets already linked from Research Data Australia</h5></div>
 					<div class="widget-content">
 						<ul>
-							<li ng-repeat="item in filteredWorks = (works | filter:{in_orcid:true})"> <a href="{{item.url}}" target="_blank">{{item.title}}</a></li>
+							<li ng-repeat="item in filteredWorks = (works | filter:{in_orcid:true})">
+                                <a href="{{item.url}}" target="_blank">{{item.title}}</a>
+                                <a href="" ng-click="remove(item)"><i class="icon icon-remove"></i></a>
+                            </li>
 						</ul>
                         <div ng-show="!works">
                             Loading... Please wait...
