@@ -143,7 +143,7 @@ class ORCIDController extends HTTPController {
 
             try {
                 $xml = ORCIDProvider::getORCIDXML($record, $orcid);
-                $export->xml = $xml;
+                $export->data = $xml;
 
                 $export->save();
                 ORCIDAPI::sync($export);
@@ -163,5 +163,35 @@ class ORCIDController extends HTTPController {
 
         // reload all exports
         return $result;
+    }
+
+    public function destroyWorks($orcidID, $registryObjectID)
+    {
+        $this->middlewares([ValidORCIDSessionMiddleware::class]);
+
+        // sanity check
+        $orcid = ORCIDRecord::find($orcidID);
+        if (!$orcid) {
+            throw new \Exception("ORCID {$orcidID} not found");
+        }
+
+        $export = ORCIDExport::where('registry_object_id', $registryObjectID)
+            ->where('orcid_id', $orcidID)
+            ->first();
+        if (!$export) {
+            throw new \Exception("ORCID Work for record {$registryObjectID} not found");
+        }
+
+        // delete from ORCID
+        if ($export->inOrcid) {
+            ORCIDAPI::delete($orcid, $export);
+        }
+
+
+        // then delete locally
+        $export->delete();
+
+        // should be a good response
+        return ['deleted' => true];
     }
 }
