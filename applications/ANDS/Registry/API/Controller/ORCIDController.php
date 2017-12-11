@@ -71,10 +71,11 @@ class ORCIDController extends HTTPController {
         $this->middlewares([ValidORCIDSessionMiddleware::class]);
 
         $orcid = ORCIDRecord::find($id);
-        $orcid->load('exports');
 
         // sanity check for syncing
         ORCIDAPI::syncRecord($orcid);
+
+        $orcid->load('exports');
 
         $works = [];
 

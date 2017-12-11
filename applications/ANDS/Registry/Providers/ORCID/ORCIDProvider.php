@@ -255,10 +255,12 @@ class ORCIDProvider implements RegistryContentProvider
             $citationType = 'bibtex';
         }
 
-        $doc->set('citation', [
-            'type' => $citationType,
-            'value' => $citationValue
-        ]);
+        if ($citationValue) {
+            $doc->set('citation', [
+                'type' => $citationType,
+                'value' => $citationValue
+            ]);
+        }
 
         // dates
         $publicationDate = DatesProvider::getPublicationDate($record, $data);
@@ -285,7 +287,6 @@ class ORCIDProvider implements RegistryContentProvider
         })->toArray();
 
         $doc->set('external-ids', $identifiers);
-
 
         // contributors
         if ($contributors = self::getContributors($record, $data)) {
