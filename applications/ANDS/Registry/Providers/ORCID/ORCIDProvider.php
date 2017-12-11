@@ -124,7 +124,13 @@ class ORCIDProvider implements RegistryContentProvider
                 }
             }
             $name = implode(" ", $name);
-            if (trim($name)!="") {
+
+            if (trim($name) == "") {
+                // just join the namePart if there's no given nor family
+                $name = (string) $object->namePart;
+            }
+
+            if (trim($name) != "") {
                 $contributors[] = [
                     'credit-name' => $name,
                     'contributor-orcid' => null,
