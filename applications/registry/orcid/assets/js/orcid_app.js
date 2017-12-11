@@ -184,9 +184,8 @@ function IndexCtrl($scope, works) {
 			return;
 		}
 
-		works.remove($scope.orcid.id, item.id).then(function(data){
-			alert(item.title + " is now unlinked");
-			$scope.refresh();
+		works.remove($scope.orcid.id, item.id).then( function() {
+            $scope.works.splice($scope.works.indexOf(item), 1);
 		});
 	};
 
