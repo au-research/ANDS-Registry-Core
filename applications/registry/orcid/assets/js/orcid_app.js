@@ -74,7 +74,10 @@ function IndexCtrl($scope, works) {
 	});
 
 	// Refresh functions refreshes the works, populates the imported_ids
-	$scope.refresh = function (){
+	$scope.refresh = function (clear){
+		if (clear) {
+			$scope.works = false;
+		}
 		works.getWorks($scope.orcid.id).then(function(data){
 			$scope.works = data;
 		});

@@ -39,6 +39,8 @@ class ORCIDRecordsRepository
         $orcid->refresh_token = $data['refresh_token'];
 
         $orcid->save();
+
+        ORCIDAPI::syncRecord($orcid);
         $orcid->populateRecordData();
 
         return $orcid;
