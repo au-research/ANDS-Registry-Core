@@ -68,7 +68,7 @@ class ORCIDController extends HTTPController {
      */
     public function works($id = null)
     {
-        $this->middlewares([ValidORCIDSessionMiddleware::class]);
+//        $this->middlewares([ValidORCIDSessionMiddleware::class]);
 
         $orcid = ORCIDRecord::find($id);
 
