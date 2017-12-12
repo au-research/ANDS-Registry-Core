@@ -60,19 +60,21 @@ class DatasetORCIDSuggestor
         $partyIDs = array_merge($partyIDs, $sameName);
 
         // all collection that relates to these partyIDs
-        $query = "+to_class:collection +from_id:(".implode(" OR ", $partyIDs).")";
-        $result = $this->solr->setCore('relations')->search([
-            'q' => $query
-        ]);
+        if (count($partyIDs) > 0) {
+            $query = "+to_class:collection +from_id:(".implode(" OR ", $partyIDs).")";
+            $result = $this->solr->setCore('relations')->search([
+                'q' => $query
+            ]);
 
-        foreach ($result->getDocs() as $doc) {
-            $doc = $doc->toArray();
-            $suggested[] = [
-                'registry_object_id' => $doc['to_id'],
-                'title' => $doc['to_title'],
-                'key' => $doc['to_key'],
-                'slug' => $doc['to_slug']
-            ];
+            foreach ($result->getDocs() as $doc) {
+                $doc = $doc->toArray();
+                $suggested[] = [
+                    'registry_object_id' => $doc['to_id'],
+                    'title' => $doc['to_title'],
+                    'key' => $doc['to_key'],
+                    'slug' => $doc['to_slug']
+                ];
+            }
         }
 
         // all collection that has relatedInfo/citationInfo like the orcid_id
