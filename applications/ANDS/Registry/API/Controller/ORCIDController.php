@@ -113,7 +113,7 @@ class ORCIDController extends HTTPController {
             $work['id'] = $work['registry_object_id'];
             $work['url'] = portal_url($work['slug']. '/'. $work['registry_object_id']);
             return $work;
-        })->toArray();
+        })->unique()->values()->toArray();
 
         return $works;
     }
