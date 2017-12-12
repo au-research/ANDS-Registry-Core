@@ -68,7 +68,7 @@ class ORCIDController extends HTTPController {
      */
     public function works($id = null)
     {
-        $this->middlewares([ValidORCIDSessionMiddleware::class]);
+//        $this->middlewares([ValidORCIDSessionMiddleware::class]);
 
         $orcid = ORCIDRecord::find($id);
 
@@ -82,7 +82,10 @@ class ORCIDController extends HTTPController {
         // get all suggestions, mark them
         $suggestor = new DatasetORCIDSuggestor();
         $suggestions = $suggestor->suggest($orcid);
-        $exportIDs = $orcid->exports->pluck('registry_object_id')->toArray();
+        $exportIDs = $orcid->exports->filter(function($item){
+            return $item->in_orcid;
+        })->pluck('registry_object_id')->toArray();
+
         foreach ($suggestions as &$suggestion) {
             $suggestion['in_orcid'] = false;
             if (in_array($suggestion['registry_object_id'], $exportIDs)) {
