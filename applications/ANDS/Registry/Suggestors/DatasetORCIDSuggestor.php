@@ -93,6 +93,10 @@ class DatasetORCIDSuggestor
             ];
         }
 
+        // unique the values
+        $suggested = collect($suggested)
+            ->unique()->values()->toArray();
+
         return $suggested;
     }
 }
