@@ -1,7 +1,10 @@
 <?php $this->load->view('header'); ?>
 <div ng-app="orcid_app">
-	<div class="content-header">
-		<h1>Link Your Datasets to ORCID</h1>
+	<div class="content-header" style="height:100px;">
+		<h1 style="margin-top:30px"> Link Your Datasets to ORCID</h1>
+        <img src="<?php echo asset_url('img/ORCID_Member_Logo.png'); ?>"
+             alt="orcid member logo"
+             style="height:65px;margin:15px 20px;" class="pull-right"/>
 	</div>
 	<span class="hide" id="orcid_id"><?php echo $orcid->orcid_id; ?></span>
 	<div ng-view></div>
@@ -105,9 +108,7 @@
 					</div>
 				</div>
 
-                <img src="<?php echo asset_url('img/ORCID_Member_Logo.png'); ?>"
-                     alt="orcid member logo"
-                     style="display:block;margin:10px auto;"/>
+
 
 			</div>
 		</div>
@@ -145,7 +146,7 @@
                 <div class="alert alert-danger" ng-show="failedResultCount > 0">
                     <p><b>({{ failedResultCount }})</b> works has failed .</p>
                 </div>
-                <p>Remember to review and set the appropriate <a href="https://support.orcid.org/knowledgebase/articles/124518-visibility-settings" target="_blank">visibility settings</a> for the works via your ORCID Recod.</p>
+                <p>Remember to review and set the appropriate <a href="https://support.orcid.org/knowledgebase/articles/124518-visibility-settings" target="_blank">visibility settings</a> for the works via your ORCID Record.</p>
             </div>
 		</div>
         <div class="modal-footer">
