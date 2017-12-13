@@ -74,10 +74,16 @@ class ORCIDRecord extends Model
         return json_decode($this->record_data, true);
     }
 
+    /**
+     * $this->url
+     * Returns the https version regardless
+     *
+     * @return mixed
+     */
     public function getUrlAttribute()
     {
         if ($this->bio['orcid-identifier']['uri']) {
-            return $this->bio['orcid-identifier']['uri'];
+            return str_replace("http://", "https://", $this->bio['orcid-identifier']['uri']);
         }
     }
 
