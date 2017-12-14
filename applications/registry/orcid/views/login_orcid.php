@@ -78,7 +78,7 @@
                     <h4>Accessing/Deleting Your Personal Information</h4>
                     <p>You have a right to access your personal information or
                         ask for it to be removed from the ANDS system (subject
-                        to exceptions allowed by law). To make a reqest please
+                        to exceptions allowed by law). To make a request please
                         use the contact information below. You may be required
                         to put your request in writing for security reasons.</p>
                     <h4>Contacting us</h4>
