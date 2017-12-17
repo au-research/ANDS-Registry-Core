@@ -76,7 +76,7 @@ class Orcid extends MX_Controller {
 
         if (!Request::get('code')) {
             // require the user to login via ORCID
-            redirect(ORCIDAuthenticator::getOauthLink());
+            redirect(ORCIDAuthenticator::getOauthLink(registry_url('orcid/auth')));
             throw new Exception("No valid code returned from ORCID");
         }
 
