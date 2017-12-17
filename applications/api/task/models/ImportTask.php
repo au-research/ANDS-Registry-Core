@@ -299,6 +299,7 @@ class ImportTask extends Task
                 $tasks = [
                     "ProcessCoreMetadata",
                     "ProcessIdentifiers",
+                    "ProcessLinks",
                     "ProcessRelationships",
                     "ProcessGrantsRelationship",
 //                    "PopulateAffectedList",

@@ -2,6 +2,7 @@
 namespace ANDS\Registry\API\Controller;
 
 
+use ANDS\API\Task\ImportSubTask\ProcessRelationships;
 use ANDS\Authenticator\ORCIDAuthenticator;
 use ANDS\Registry\API\Middleware\ValidORCIDSessionMiddleware;
 use ANDS\Registry\API\Request;
@@ -10,6 +11,7 @@ use ANDS\Registry\Providers\ORCID\ORCIDProvider;
 use ANDS\Registry\Providers\ORCID\ORCIDRecord;
 use ANDS\Registry\Suggestors\DatasetORCIDSuggestor;
 use ANDS\Repository\RegistryObjectsRepository;
+use ANDS\Util\Config;
 use ANDS\Util\ORCIDAPI;
 
 /**
@@ -26,7 +28,9 @@ class ORCIDController extends HTTPController {
      */
     public function show($id = null)
     {
-        return ORCIDRecord::find($id);
+        $orcid = ORCIDRecord::find($id);
+        $orcid->record_data = json_decode($orcid->record_data, true);
+        return $orcid;
     }
 
     /**
@@ -67,6 +71,10 @@ class ORCIDController extends HTTPController {
         $this->middlewares([ValidORCIDSessionMiddleware::class]);
 
         $orcid = ORCIDRecord::find($id);
+
+        // sanity check for syncing
+        ORCIDAPI::syncRecord($orcid);
+
         $orcid->load('exports');
 
         $works = [];
@@ -74,7 +82,10 @@ class ORCIDController extends HTTPController {
         // get all suggestions, mark them
         $suggestor = new DatasetORCIDSuggestor();
         $suggestions = $suggestor->suggest($orcid);
-        $exportIDs = $orcid->exports->pluck('registry_object_id')->toArray();
+        $exportIDs = $orcid->exports->filter(function($item){
+            return $item->in_orcid;
+        })->pluck('registry_object_id')->toArray();
+
         foreach ($suggestions as &$suggestion) {
             $suggestion['in_orcid'] = false;
             if (in_array($suggestion['registry_object_id'], $exportIDs)) {
@@ -82,10 +93,14 @@ class ORCIDController extends HTTPController {
             }
             $suggestion['type'] = 'suggested';
         }
+        $suggestedIDs = collect($suggestions)->pluck('registry_object_id')->toArray();
 
         $works = array_merge($works, $suggestions);
 
         foreach ($orcid->exports as $export) {
+            if (in_array($export->registry_object_id, $suggestedIDs)) {
+                continue;
+            }
             $export->load('registryObject');
             $works[] = [
                 'registry_object_id' => $export->registry_object_id,
@@ -96,12 +111,12 @@ class ORCIDController extends HTTPController {
             ];
         }
 
-        // item url
-        foreach ($works as &$work) {
-            // id is used globally in the front end
+        // fixed value for front end
+        $works = collect($works)->map(function($work) {
             $work['id'] = $work['registry_object_id'];
             $work['url'] = portal_url($work['slug']. '/'. $work['registry_object_id']);
-        }
+            return $work;
+        })->unique()->values()->toArray();
 
         return $works;
     }
@@ -129,34 +144,77 @@ class ORCIDController extends HTTPController {
                 continue;
             }
 
-            $xml = ORCIDProvider::getORCIDXML($record, $orcid);
-
-            $existing = ORCIDExport::where('orcid_id', $orcid->orcid_id)
+            $export = ORCIDExport::where('orcid_id', $orcid->orcid_id)
                 ->where('registry_object_id', $record->id)
                 ->where('orcid_id', $orcid->orcid_id)
                 ->first();
 
-            if ($existing) {
-                // if we have an existing, update the data, then sync
-                $existing->data = $xml;
-                $existing->save();
-                ORCIDAPI::sync($existing);
-                $existing->load('registryObject');
-                $result[] = $existing;
-            } else {
-                // make a new one, then sync
+            if (!$export) {
                 $export = ORCIDExport::create([
                     'registry_object_id' => $record->id,
-                    'orcid_id' => $orcid->orcid_id,
-                    'data' => $xml
+                    'orcid_id' => $orcid->orcid_id
                 ]);
+            }
+
+            try {
+                $xml = ORCIDProvider::getORCIDXML($record, $orcid);
+                $export->data = $xml;
+
+                $export->save();
                 ORCIDAPI::sync($export);
                 $export->load('registryObject');
                 $result[] = $export;
+            } catch (\Exception $e) {
+                $export->response = json_encode([
+                    'error' => 'internal',
+                    'error_description' => get_exception_msg($e),
+                    'user-message' => "An error has occured while linking record {$record->title}($record->id)"
+                ], true);
+                $export->save();
+                $result[] = $export;
             }
+
         }
 
         // reload all exports
         return $result;
+    }
+
+    public function destroyWorks($orcidID, $registryObjectID)
+    {
+        $this->middlewares([ValidORCIDSessionMiddleware::class]);
+
+        // sanity check
+        $orcid = ORCIDRecord::find($orcidID);
+        if (!$orcid) {
+            throw new \Exception("ORCID {$orcidID} not found");
+        }
+
+        $export = ORCIDExport::where('registry_object_id', $registryObjectID)
+            ->where('orcid_id', $orcidID)
+            ->first();
+        if (!$export) {
+            throw new \Exception("ORCID Work for record {$registryObjectID} not found");
+        }
+
+        // delete from ORCID
+        if ($export->inOrcid) {
+            ORCIDAPI::delete($orcid, $export);
+        }
+
+
+        // then delete locally
+        $export->delete();
+
+        // should be a good response
+        return ['deleted' => true];
+    }
+
+    public function sync($orcidID)
+    {
+        $orcid = ORCIDRecord::find($orcidID);
+        ORCIDAPI::syncRecord($orcid);
+
+        return ['synced' => true];
     }
 }

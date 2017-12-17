@@ -47,6 +47,8 @@ class DatesProvider implements RIFCSProvider
             $data = MetadataProvider::getSelective($record, ['recordData']);
         }
 
+        $publicationDate = null;
+
         $citationMedataDates = XMLUtil::getElementsByXPath(
             $data['recordData'],
             'ro:registryObject/ro:' . $record->class . '/ro:citationInfo/ro:citationMetadata/ro:date'
@@ -55,31 +57,35 @@ class DatesProvider implements RIFCSProvider
         // registryObject/collection/citationInfo/citationMetadata/date[@type=’publication date’]
         foreach ($citationMedataDates AS $date) {
             if ((string) $date['type'] == 'publicationDate') {
-                return self::formatDate((string) $date, $format);
+                $publicationDate = self::formatDate((string) $date, $format);
             }
         }
+        if ($publicationDate) return $publicationDate;
 
         // registryObject/collection/citationInfo/citationMetadata/date[@type=’issued date’]
         foreach ($citationMedataDates AS $date) {
             if ((string) $date['type'] == 'issued') {
-                return self::formatDate((string) $date, $format);
+                $publicationDate = self::formatDate((string) $date, $format);
             }
         }
+        if ($publicationDate) return $publicationDate;
 
         // registryObject/collection/citationInfo/citationMetadata/date[@type=’created’]
         foreach ($citationMedataDates AS $date) {
             if ((string) $date['type'] == 'created') {
-                return self::formatDate((string) $date, $format);
+                $publicationDate = self::formatDate((string) $date, $format);
             }
         }
+        if ($publicationDate) return $publicationDate;
 
 
         // first citationMetadata/date found
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class . '/ro:citationInfo/ro:citationMetadata/ro:date') AS $date) {
             $value = (string) $date;
-            return self::formatDate($value, $format);
+            $publicationDate = self::formatDate($value, $format);
         }
+        if ($publicationDate) return $publicationDate;
 
         $roDates = XMLUtil::getElementsByXPath(
             $data['recordData'],
@@ -89,23 +95,26 @@ class DatesProvider implements RIFCSProvider
         // registryObject/collection/dates[@type=’issued’]
         foreach ($roDates AS $date) {
             if ((string) $date['type'] == 'dc.issued') {
-                return self::formatDate((string) $date->date, $format);
+                $publicationDate = self::formatDate((string) $date->date, $format);
             }
         }
+        if ($publicationDate) return $publicationDate;
 
         // registryObject/collection/dates[@type=’available’]
         foreach ($roDates AS $date) {
             if ((string) $date['type'] == 'dc.available') {
-                return self::formatDate((string) $date->date, $format);
+                $publicationDate = self::formatDate((string) $date->date, $format);
             }
         }
+        if ($publicationDate) return $publicationDate;
 
         // registryObject/collection/dates[@type=’created’]
         foreach ($roDates AS $date) {
             if ((string) $date['type'] == 'dc.created') {
-                return self::formatDate((string) $date->date, $format);
+                $publicationDate = self::formatDate((string) $date->date, $format);
             }
         }
+        if ($publicationDate) return $publicationDate;
 
         /**
          * registryObject/collection@dateModified
@@ -114,9 +123,11 @@ class DatesProvider implements RIFCSProvider
             'ro:registryObject/ro:' . $record->class) AS $object) {
 
             if ($dateModified = (string) $object['dateModified']) {
-                return self::formatDate($dateModified, $format);
+                $publicationDate = self::formatDate($dateModified, $format);
             }
         }
+        if ($publicationDate) return $publicationDate;
+
 
         /**
          * registryObject/Collection@dateAccessioned
@@ -125,9 +136,10 @@ class DatesProvider implements RIFCSProvider
             'ro:registryObject/ro:' . $record->class) AS $object) {
 
             if ($dateAccessioned = (string) $object['dateAccessioned']) {
-                return self::formatDate($dateAccessioned, $format);
+                $publicationDate = self::formatDate($dateAccessioned, $format);
             }
         }
+        if ($publicationDate) return $publicationDate;
 
         return self::getCreatedDate($record, $format);
     }
@@ -158,22 +170,24 @@ class DatesProvider implements RIFCSProvider
     {
         // if it comes in as the year, just return the year
         if (self::validateDate($value, 'Y')) {
-            return $value;
-        }
-
-        if (self::validateDate($value, 'm-Y')) {
-            return $value;
+            return "{$value}-1-1";
         }
 
         if (self::validateDate($value, 'Y-m')) {
-            return $value;
+            return "{$value}-1";
         }
 
         if (self::isValidTimeStamp($value)) {
             return Carbon::createFromTimestamp($value)->format($format);
         }
 
-        return (new Carbon($value))->format($format);
+        // last try
+        try {
+            return (new Carbon($value))->format($format);
+        } catch (\Exception $e) {
+            // TODO: log the date type we can't parse
+            return null;
+        }
     }
 
     /**
@@ -199,12 +213,11 @@ class DatesProvider implements RIFCSProvider
     public static function validateDate($date, $format = 'Y-m-d')
     {
         try {
-            $d = DateTime::createFromFormat($format, $date);
+            $d = Carbon::createFromFormat($format, $date);
             return $d && $d->format($format) === $date;
         } catch (\Exception $e) {
             // try again
         }
-
         $d = self::parseDate($date);
         return $d && $d->format($format) === $date;
     }

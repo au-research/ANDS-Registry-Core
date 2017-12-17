@@ -124,14 +124,22 @@ class ORCIDProvider implements RegistryContentProvider
                 }
             }
             $name = implode(" ", $name);
-            $contributors[] = [
-                'credit-name' => $name,
-                'contributor-orcid' => null,
-                'contributor-attributes' => [
-                    'contributor-sequence' => (string) $object->attributes()['seq'],
-                    'contributor-role' => 'author'
-                ]
-            ];
+
+            if (trim($name) == "") {
+                // just join the namePart if there's no given nor family
+                $name = (string) $object->namePart;
+            }
+
+            if (trim($name) != "") {
+                $contributors[] = [
+                    'credit-name' => $name,
+                    'contributor-orcid' => null,
+                    'contributor-attributes' => [
+                        'contributor-sequence' => (string) $object->attributes()['seq'],
+                        'contributor-role' => 'author'
+                    ]
+                ];
+            }
         }
 
         // does not find more contributors if there's enough from citationMetadata
@@ -179,6 +187,12 @@ class ORCIDProvider implements RegistryContentProvider
                 ]
             ];
         }
+
+        // remove empty credit-name
+        $contributors = collect($contributors)->filter(function($item) {
+            return trim($item['credit-name']) != "";
+        })->toArray();
+
 
         // first, additional mapping for sequence
         $contributors = self::remapContributorsSequences($contributors);
@@ -238,7 +252,12 @@ class ORCIDProvider implements RegistryContentProvider
         // collect descriptions
         $descriptions = DescriptionProvider::get($record);
         if ($descriptions['primary_description']) {
-            $doc->set('short-description', $descriptions['primary_description']);
+            // truncate to 5000 char
+            $description = $descriptions['primary_description'];
+            if (strlen($description) > 5000) {
+                $description = substr($description, 0, 4995) . "...";
+            }
+            $doc->set('short-description', $description);
         }
 
         $doc->set('url', $record->portalUrl);
@@ -253,10 +272,12 @@ class ORCIDProvider implements RegistryContentProvider
             $citationType = 'bibtex';
         }
 
-        $doc->set('citation', [
-            'type' => $citationType,
-            'value' => $citationValue
-        ]);
+        if ($citationValue) {
+            $doc->set('citation', [
+                'type' => $citationType,
+                'value' => $citationValue
+            ]);
+        }
 
         // dates
         $publicationDate = DatesProvider::getPublicationDate($record, $data);
@@ -283,7 +304,6 @@ class ORCIDProvider implements RegistryContentProvider
         })->toArray();
 
         $doc->set('external-ids', $identifiers);
-
 
         // contributors
         if ($contributors = self::getContributors($record, $data)) {

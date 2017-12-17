@@ -68,16 +68,19 @@ class Orcid extends MX_Controller {
             throw new Exception(Request::get('error_description'));
         }
 
-        if (!Request::get('code')) {
-            throw new Exception("No valid code returned from ORCID");
-        }
-
         if (ORCIDAuthenticator::isLoggedIn()) {
             $orcid = ORCIDAuthenticator::getSession();
             $this->wiz($orcid);
             return;
         }
 
+        if (!Request::get('code')) {
+            // require the user to login via ORCID
+            redirect(ORCIDAuthenticator::getOauthLink());
+            throw new Exception("No valid code returned from ORCID");
+        }
+
+        // code authentication as per normal
         $orcid = ORCIDAuthenticator::oauth(Request::get('code'));
         $this->wiz($orcid);
         return;
@@ -89,7 +92,7 @@ class Orcid extends MX_Controller {
      */
 	function wiz(ORCIDRecord $orcid) {
 	    $this->load->view('orcid_app', [
-            'title' => 'Import Your Work',
+            'title' => 'Research Data Australia - Link Your Work to your ORCID Record',
             'scripts' => ['orcid_app'],
             'js_lib' => ['core','prettyprint', 'angular'],
             'orcid' => $orcid
