@@ -33,6 +33,18 @@ angular.module('orcid_app', ['portal-filters'])
                     .then(function (response) {
                         return response.data
                     });
+            },
+			remove: function (orcid_id, work_id) {
+                return $http.delete(api_url + 'registry/orcids/' + orcid_id + '/works/' + work_id)
+                    .then(function(response) {
+                        return response.data;
+                    });
+            },
+            sync: function (orcid_id) {
+                return $http.get(api_url + 'registry/orcids/' + orcid_id + '/sync/')
+                    .then(function(response) {
+                        return response.data;
+                    });
             }
 		}
 	})
@@ -68,10 +80,19 @@ function IndexCtrl($scope, works) {
 	});
 
 	// Refresh functions refreshes the works, populates the imported_ids
-	$scope.refresh = function (){
+	$scope.refresh = function (clear){
+		if (clear) {
+			$scope.works = false;
+		}
 		works.getWorks($scope.orcid.id).then(function(data){
 			$scope.works = data;
 		});
+	};
+
+	$scope.syncRefresh = function() {
+		works.sync($scope.orcid.id).then(function(data) {
+			$scope.refresh(true);
+		})
 	};
 
 	//run once
@@ -169,6 +190,17 @@ function IndexCtrl($scope, works) {
             }).length;
 
             $scope.refresh();
+		});
+	};
+
+	$scope.remove = function (item) {
+
+		if (!confirm("Are you sure you want to unlink " + item.title + "?")) {
+			return;
+		}
+
+		works.remove($scope.orcid.id, item.id).then( function() {
+            $scope.works.splice($scope.works.indexOf(item), 1);
 		});
 	};
 
