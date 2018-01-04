@@ -61,7 +61,7 @@ class ValidatePayload extends ImportSubTask
             // xml is processed individually and there's none that pass validation
             if ($xml === false) {
                 $this->parent()->stoppedWithError("XML does not pass validation". NL . implode(NL, $this->parent()->getError()));
-                return;
+                continue;
             }
 
             $payload->writeContentByStatus(
