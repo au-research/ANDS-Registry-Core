@@ -30,12 +30,14 @@ class JsonLDProvider implements RIFCSProvider
 
     public static function process(RegistryObject $record)
     {
+        // CC-2143.
+        // Do the truth test first and early return to fix super node issue
+        if ($record->class <> "collection" && $record->class <> "service") return "";
+        if ($record->class == "collection" && $record->type <> "collection" && $record->type <> "dataset" && $record->type <> "software") return "";
 
         $base_url = Config::get('app.default_base_url');
 
         $data = MetadataProvider::get($record);
-        if ($record->class <> "collection" && $record->class <> "service") return "";
-        if ($record->class == "collection" && $record->type <> "collection" && $record->type <> "dataset" && $record->type <> "software") return "";
 
         $json_ld = new JsonLDProvider();
         $json_ld->{'@context'} = "http://schema.org/";
