@@ -970,6 +970,11 @@ class Registry_object extends MX_Controller
      * @param $queries
      */
     public function getSolrCountForQuery($filters){
+
+        // CC-2141. only the get count, doesn't care about any of the data
+        // rows to 0 just in case, to prevent large document cause memory overflow
+        $filters = array_merge($filters, ['fl' => 'id', 'rows' => 0]);
+
         $this->load->library('solr');
         $result = $this->solr->init()->setFilters($filters)->executeSearch(true);
         return $result['response']['numFound'];
