@@ -1,3 +1,41 @@
+## Release 27
+
+Release 27 of ANDS Online Services is scheduled for implementation on 7 March 2018. This release implements a number of enhancements to the Research Vocabularies Australia (RVA), DOI Service and and a bug fix and enhancement to Research Data Australia.
+
+**Research Data Australia**
+
+* Update of the broken link on RDA About page's 'Become a contributor' link 
+* Removal of 'Contact information' heading in RDA record display when contact information is not available
+ 
+**DOI Service**
+
+* Implementation of additional checks after each request made to DataCite to ensure correct handling of response
+
+**Research Vocabularies Australia**
+
+* Complete refactor of the RVA backend and publishing workflow. Notable changes include:
+
+***URLs***
+
+* The canonical URL of the view page of a vocabulary has changed to be ID-based.
+* The URL of the resource IRI resolution service is changing. The users of this service will be contacted in a separate communication.
+* Slug generation has been improved. (Slug generation is applied to vocabulary and version titles, and is used, for example, in the URLs of generated SPARQL and LDA endpoints.) If a vocabulary or version title contains non-ASCII characters, slug generation will convert them into ASCII equivalents. For example, a version title "你好" will be converted into "ni-hao".
+
+***CMS***
+
+* A subset of HTML elements is now officially supported and used in certain metadata fields: vocabulary description and note, and version note. An embedded HTML editor is provided; it is also possible to edit the raw HTML.
+* The related entity dialog has been substantially revised, to reflect the raising of related entities to "first class" objects.
+* The functionality to add a related vocabulary that is within RVA has been separated into a separate dialog.
+* When editing an existing published version, there is now a switch to request a one-off re-harvest/re-import/re-publication of that version, irrespective of its status as current/superseded. The switch is off by default.
+* Removal of a file access point from a published version is now supported. 
+* When adding an access point to a version, an access point format can now only be entered for access point type = File (e.g., not for API/SPARQL)
+
+***Vocabulary View Page***
+
+* The popup for a related entity now includes its websites (URLs) and identifiers.
+* In the related entity panel's list of "More vocabularies related to xxx", the full list of related vocabularies is shown, not just one.
+
+
 ## Release 26
 
 Release 26 of ANDS Online Services is scheduled for implementation on 6 December 2017. This release implements a number of Research Data Australia (RDA), DOI Service, Research Vocabularies Australia (RVA) and ORCID-RDA Integration service fixes and enhancement requests received through the ANDS Service Desk. New RIF-CS vocabulary terms will also be introduced in RIF-CS v1.6.2.
