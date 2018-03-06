@@ -26,7 +26,7 @@
     ?>
     @endforeach
 
-    @if(trim($contactInfo)!='')
+    @if(trim($contactInfo)!='' && trim($contactInfo)!='<br/>')
     <div id="contact">
         <h4>Contact Information</h4>
         {{$contactInfo}}
