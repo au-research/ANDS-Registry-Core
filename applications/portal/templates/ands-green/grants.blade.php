@@ -77,9 +77,11 @@
                                 <h3 class="figure-caption-title bordered bordered-small bordered-link">
                                   <a href="{{ portal_url($con['slug'].'/'.$con['id']) }}" target="_self">{{ $con['title'] }}</a>
                                 </h3>
+                                @if(array_key_exists('list_description', $con))
                                 <p>
-                                  {{ strlen($con['list_description']) > 300 ? substr($con['list_description'],0,300)."..." : $con['list_description']; }}
+                                  {{ strlen($con['list_description']) > 300 ? substr($con['list_description'],0,300)."..." : $con['list_description'] }}
                                 </p>
+                                @endif
 
                                   <a href="{{ portal_url($con['slug'].'/'.$con['id']) }}" target="_self">read more</a>
 
