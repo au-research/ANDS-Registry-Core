@@ -137,7 +137,148 @@ class ScholixDocument
         return $xml;
     }
 
-    public function json2xml($link)
+    /**
+     * Returns the schema v3 for the scholix
+     *
+     * CC-2150
+     *
+     * @url https://github.com/scholix/schema/blob/master/xsd/v3/schema.xsd
+     * @param $link
+     * @return string
+     */
+    public function schema3($link)
+    {
+        $str = "<scholix xmlns=\"http://www.scholix.org\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.scholix.org\">";
+
+        $str .= "<LinkPublicationDate>".$link['publicationDate']."</LinkPublicationDate>";
+
+        $str .= "<publisher>";
+        $str .= "<name>".htmlspecialchars($link['publisher']['name'])."</name>";
+        if (array_key_exists('identifier', $link['publisher'])) {
+            foreach ($link['publisher']['identifier'] as $identifier) {
+                $str .= "<identifier>";
+                $str .= "<ID>".htmlspecialchars($identifier['identifier'])."</ID>";
+                $str .= "<IDSheme>".htmlspecialchars($identifier['schema'])."</IDSheme>";
+                //$str .= "<IDURL></IDURL>";
+                $str .= "</identifier>";
+            }
+        }
+        $str .= "</publisher>";
+
+        $str .= "<LinkProvider>";
+        $str .= "<name>Australian National Data Service</name>";
+        if (array_key_exists('identifier', $link['linkProvider'])) {
+            foreach ($link['linkProvider']['identifier'] as $identifier) {
+                $str .= "<identifier>";
+                $str .= "<ID>" . htmlspecialchars($identifier['identifier']) . "</ID>";
+                $str .= "<IDScheme>" . htmlspecialchars($identifier['schema']) . "</IDScheme>";
+                $str .= "</identifier>";
+            }
+        }
+        $str .= "</LinkProvider>";
+
+        if (array_key_exists('relationship', $link)) {
+            foreach ($link['relationship'] as $relationship) {
+                $str .= "<RelationshipType>";
+                $str .= "<Name>".$relationship['name']."</Name>";
+                $str .= "<Schema>".$relationship['schema']."</Schema>";
+                $str .= "</RelationshipType>";
+            }
+        }
+
+        // source
+        $str .= "<source>";
+        if (array_key_exists('identifier', $link['source'])) {
+            foreach ($link['source']['identifier'] as $identifier) {
+                $str .= "<Identifier>";
+                $str .= "<ID>" . $identifier['identifier'] . "</ID>";
+                $str .= "<IDScheme>" . $identifier['schema'] . "</IDScheme>";
+                $str .= "</Identifier>";
+            }
+        }
+        $str .= "<Type>";
+        $str .= "<type>". $link['source']['objectType']."</type>";
+        $str .= "</Type>";
+        $str .= "<Title>".htmlspecialchars($link['source']['title'])."</Title>";
+
+        // creator
+        if (array_key_exists('creator', $link['source'])) {
+            foreach ($link['source']['creator'] as $creator) {
+                $str .= "<Creator>";
+                $str .= "<Name>" . $creator['name'] . "</Name>";
+                if (array_key_exists('identifier', $creator)) {
+                    foreach ($creator['identifier'] as $identifier) {
+                        $str .= "<Identifier>";
+                        $str .= "<ID>" . $identifier['identifier'] . "</ID>";
+                        $str .= "<IDScheme>" . $identifier['schema'] . "</IDScheme>";
+                        $str .= "</Identifier>";
+                    }
+                }
+                $str .= "</Creator>";
+            }
+        }
+
+        if (array_key_exists('publicationDate', $link['source'])) {
+            $str .= "<PublicationDate>" . $link['source']['publicationDate'] . "</PublicationDate>";
+        }
+
+        $str .= "</source>";
+
+        // target
+        $str .= "<target>";
+        if (array_key_exists('identifier', $link['target'])) {
+            foreach ($link['target']['identifier'] as $identifier) {
+                $str .= "<Identifier>";
+                $str .= "<ID>" . htmlspecialchars($identifier['identifier']) . "</ID>";
+                $str .= "<IDScheme>" . $identifier['schema'] . "</IDScheme>";
+                $str .= "</Identifier>";
+            }
+        }
+        $str .= "<Type>";
+        $str .= "<type>". $link['target']['objectType']."</type>";
+        $str .= "</Type>";
+        if (array_key_exists('title', $link['target'])) {
+            $str .= "<Title>".htmlspecialchars($link['target']['title'])."</Title>";
+        }
+
+        // creator
+        if (array_key_exists('creator', $link['target'])) {
+            foreach ($link['target']['creator'] as $creator) {
+                $str .= "<Creator>";
+                $str .= "<Name>" . $creator['name'] . "</Name>";
+                if (array_key_exists('identifier', $creator)) {
+                    foreach ($creator['identifier'] as $identifier) {
+                        $str .= "<Identifier>";
+                        $str .= "<ID>" . $identifier['identifier'] . "</ID>";
+                        $str .= "<Scheme>" . $identifier['schema'] . "</Scheme>";
+                        $str .= "</Identifier>";
+                    }
+                }
+                $str .= "</Creator>";
+            }
+        }
+
+        if (array_key_exists('publicationDate', $link['target'])) {
+            $str .= "<PublicationDate>" . $link['target']['publicationDate'] . "</PublicationDate>";
+        }
+
+        $str .= "</target>";
+
+
+        $str .= "</scholix>";
+
+        return $str;
+    }
+
+    /**
+     * Returns the schema v1 for the Scholix
+     *
+     * @note deprecated by CC-2150 in favor for schema version 3
+     * @url https://github.com/scholix/schema/blob/master/xsd/v1/scholix.xsd
+     * @param $link
+     * @return string
+     */
+    public function schema1($link)
     {
         $str = "<link>";
 
@@ -261,6 +402,11 @@ class ScholixDocument
 
         $str .= "</link>";
         return $str;
+    }
+
+    public function json2xml($link)
+    {
+        return $this->schema3($link);
     }
 
     public function getLinks()
