@@ -25,15 +25,25 @@ $(document).on('click', '#add_confirm', function(){
 			}else{
 				listTrustedClients();
 				$('#add_trusted_client_form')[0].reset();
+				$('#shared_secret_show').show();
+				$('#sharedSecret_field').hide();
 				thisButton.button('reset');
 				$('#add_trusted_client_modal').modal('hide');
 			}
+		},
+		error: function(XMLHttpRequest, textStatus, errorThrown,data) {
+			console.log(XMLHttpRequest);
+			console.log(data);
 		}
 	});
 }).on('click', '#app_id_show', function(){
 	$(this).hide();
 	$('#app_id_field').show();
 	$('#app_id_field select').chosen();
+}).on('click', '#shared_secret_show', function(){
+	$(this).hide();
+	$('#sharedSecret_field').show();
+	$('#sharedSecret_field input').val(Math.random().toString(36).slice(-8));
 }).on('click', '.remove', function(){
 	var ip = $(this).attr('ip');
 	var app_id = $(this).attr('app_id');
