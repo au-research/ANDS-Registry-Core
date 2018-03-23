@@ -22,9 +22,10 @@ class _pids extends CI_Model
 		return $result->result_array();
 	}
 
-	function addTrustedClient($ip, $desc, $appId){
+	function addTrustedClient($ip, $desc, $appId, $sharedSecret){
 			$requestURI = $this->PIDS_SERVICE_BASE_URI.'addClient';
 			$requestURI .= "?ip=".$ip."&desc=".$desc;
+            $requestURI .= (strlen($sharedSecret)==8 ? "&sharedSecret=" . $sharedSecret : '');
 			$requestURI .= (strlen($appId)==40 ? "&appId=" . $appId : '');
 			$response = file_get_contents($requestURI);
 			$result_array = array();

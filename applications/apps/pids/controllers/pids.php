@@ -78,7 +78,8 @@ class Pids extends MX_Controller {
 		$ip = trim(urlencode($posted['ip']));
 		$desc = trim(urlencode($posted['desc']));
 		$appId = trim(urlencode($posted['app_id']));
-		$response = $this->pids->addTrustedClient($ip, $desc, $appId);
+        $sharedSecret = trim(urlencode($posted['sharedSecret']));
+		$response = $this->pids->addTrustedClient($ip, $desc, $appId,$sharedSecret);
 		echo json_encode($response);
 	}
 
