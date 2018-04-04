@@ -65,6 +65,7 @@ class ExportCSV extends ANDSCommand
 
     private $importPath = "/Users/minhd/dev/neo4j/import/";
     private $nodes = [ ['roId:ID', 'class', ':LABEL'] ];
+    private $relations = [ [':START_ID', ':END_ID', ':TYPE'] ];
     private function exportNodes()
     {
         $records = RegistryObject::orderBy('registry_object_id');
