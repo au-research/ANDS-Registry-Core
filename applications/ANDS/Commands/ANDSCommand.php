@@ -52,6 +52,35 @@ class ANDSCommand extends Command
         date_default_timezone_set('UTC');
     }
 
+    /**
+     * Log if Verbose
+     * @param $message
+     * @param null $wrapper
+     * @return null;
+     */
+    public function logv($message, $wrapper = null)
+    {
+        if ($this->isVerbose()) {
+            return $this->log($message, $wrapper);
+        }
+        return null;
+    }
+
+    /**
+     * Log if debug
+     *
+     * @param $message
+     * @param null $wrapper
+     * @return null|void
+     */
+    public function logd($message, $wrapper = null)
+    {
+        if ($this->isDebug()) {
+            return $this->log($message, $wrapper);
+        }
+        return null;
+    }
+
     public function log($message, $wrapper = null)
     {
         $this->logs[] = ($wrapper ? "[{$wrapper}] " : "") . $message;
