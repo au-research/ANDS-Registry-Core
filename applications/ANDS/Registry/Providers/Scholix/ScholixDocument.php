@@ -152,19 +152,6 @@ class ScholixDocument
 
         $str .= "<LinkPublicationDate>".$link['publicationDate']."</LinkPublicationDate>";
 
-        $str .= "<publisher>";
-        $str .= "<name>".htmlspecialchars($link['publisher']['name'])."</name>";
-        if (array_key_exists('identifier', $link['publisher'])) {
-            foreach ($link['publisher']['identifier'] as $identifier) {
-                $str .= "<identifier>";
-                $str .= "<ID>".htmlspecialchars($identifier['identifier'])."</ID>";
-                $str .= "<IDSheme>".htmlspecialchars($identifier['schema'])."</IDSheme>";
-                //$str .= "<IDURL></IDURL>";
-                $str .= "</identifier>";
-            }
-        }
-        $str .= "</publisher>";
-
         $str .= "<LinkProvider>";
         $str .= "<name>Australian National Data Service</name>";
         if (array_key_exists('identifier', $link['linkProvider'])) {
@@ -222,6 +209,19 @@ class ScholixDocument
             $str .= "<PublicationDate>" . $link['source']['publicationDate'] . "</PublicationDate>";
         }
 
+        $str .= "<publisher>";
+        $str .= "<name>".htmlspecialchars($link['publisher']['name'])."</name>";
+        if (array_key_exists('identifier', $link['publisher'])) {
+            foreach ($link['publisher']['identifier'] as $identifier) {
+                $str .= "<identifier>";
+                $str .= "<ID>".htmlspecialchars($identifier['identifier'])."</ID>";
+                $str .= "<IDSheme>".htmlspecialchars($identifier['schema'])."</IDSheme>";
+                //$str .= "<IDURL></IDURL>";
+                $str .= "</identifier>";
+            }
+        }
+        $str .= "</publisher>";
+
         $str .= "</source>";
 
         // target
@@ -261,6 +261,19 @@ class ScholixDocument
         if (array_key_exists('publicationDate', $link['target'])) {
             $str .= "<PublicationDate>" . $link['target']['publicationDate'] . "</PublicationDate>";
         }
+
+        $str .= "<publisher>";
+        $str .= "<name>".htmlspecialchars($link['publisher']['name'])."</name>";
+        if (array_key_exists('identifier', $link['publisher'])) {
+            foreach ($link['publisher']['identifier'] as $identifier) {
+                $str .= "<identifier>";
+                $str .= "<ID>".htmlspecialchars($identifier['identifier'])."</ID>";
+                $str .= "<IDSheme>".htmlspecialchars($identifier['schema'])."</IDSheme>";
+                //$str .= "<IDURL></IDURL>";
+                $str .= "</identifier>";
+            }
+        }
+        $str .= "</publisher>";
 
         $str .= "</target>";
 
