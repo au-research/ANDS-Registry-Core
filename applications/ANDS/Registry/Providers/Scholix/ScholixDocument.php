@@ -153,6 +153,19 @@ class ScholixDocument
         $str .= "<LinkPublicationDate>".$link['publicationDate']."</LinkPublicationDate>";
 
         $str .= "<LinkProvider>";
+        $str .= "<name>".htmlspecialchars($link['publisher']['name'])."</name>";
+        if (array_key_exists('identifier', $link['publisher'])) {
+            foreach ($link['publisher']['identifier'] as $identifier) {
+                $str .= "<identifier>";
+                $str .= "<ID>".htmlspecialchars($identifier['identifier'])."</ID>";
+                $str .= "<IDSheme>".htmlspecialchars($identifier['schema'])."</IDSheme>";
+                //$str .= "<IDURL></IDURL>";
+                $str .= "</identifier>";
+            }
+        }
+        $str .= "</LinkProvider>";
+
+        $str .= "<LinkProvider>";
         $str .= "<name>Australian National Data Service</name>";
         if (array_key_exists('identifier', $link['linkProvider'])) {
             foreach ($link['linkProvider']['identifier'] as $identifier) {
