@@ -180,7 +180,7 @@ class ScholixDocument
         if (array_key_exists('relationship', $link)) {
             foreach ($link['relationship'] as $relationship) {
                 $str .= "<RelationshipType>";
-                $str .= "<Name>".$relationship['name']."</Name>";
+                $str .= "<Name>isRelatedTo</Name>";
                 $str .= "</RelationshipType>";
             }
         }
@@ -196,7 +196,7 @@ class ScholixDocument
             }
         }
         $str .= "<Type>";
-        $str .= "<type>". $link['source']['objectType']."</type>";
+        $str .= "<Name>". $link['source']['objectType']."</Name>";
         $str .= "</Type>";
         $str .= "<Title>".htmlspecialchars($link['source']['title'])."</Title>";
 
