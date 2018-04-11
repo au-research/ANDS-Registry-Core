@@ -181,7 +181,6 @@ class ScholixDocument
             foreach ($link['relationship'] as $relationship) {
                 $str .= "<RelationshipType>";
                 $str .= "<Name>".$relationship['name']."</Name>";
-                $str .= "<Schema>".$relationship['schema']."</Schema>";
                 $str .= "</RelationshipType>";
             }
         }
