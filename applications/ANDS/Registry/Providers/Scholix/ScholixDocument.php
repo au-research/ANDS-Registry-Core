@@ -180,7 +180,7 @@ class ScholixDocument
         if (array_key_exists('relationship', $link)) {
             foreach ($link['relationship'] as $relationship) {
                 $str .= "<RelationshipType>";
-                $str .= "<Name>isRelatedTo</Name>";
+                $str .= "<Name>IsRelatedTo</Name>";
                 $str .= "</RelationshipType>";
             }
         }
