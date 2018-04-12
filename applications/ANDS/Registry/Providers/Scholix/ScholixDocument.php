@@ -247,7 +247,7 @@ class ScholixDocument
             }
         }
         $str .= "<Type>";
-        $str .= "<type>". $link['target']['objectType']."</type>";
+        $str .= "<Name>". $link['target']['objectType']."</Name>";
         $str .= "</Type>";
         if (array_key_exists('title', $link['target'])) {
             $str .= "<Title>".htmlspecialchars($link['target']['title'])."</Title>";
