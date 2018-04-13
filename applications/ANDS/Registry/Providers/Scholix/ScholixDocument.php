@@ -281,7 +281,7 @@ class ScholixDocument
                 foreach ($link['publisher']['identifier'] as $identifier) {
                     $str .= "<identifier>";
                     $str .= "<ID>" . htmlspecialchars($identifier['identifier']) . "</ID>";
-                    $str .= "<IDSheme>" . htmlspecialchars($identifier['schema']) . "</IDSheme>";
+                    $str .= "<IDScheme>" . htmlspecialchars($identifier['schema']) . "</IDScheme>";
                     //$str .= "<IDURL></IDURL>";
                     $str .= "</identifier>";
                 }
