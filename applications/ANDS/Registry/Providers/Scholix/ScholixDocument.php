@@ -274,18 +274,20 @@ class ScholixDocument
             $str .= "<PublicationDate>" . $link['target']['publicationDate'] . "</PublicationDate>";
         }
 
-        $str .= "<publisher>";
-        $str .= "<name>".htmlspecialchars($link['publisher']['name'])."</name>";
-        if (array_key_exists('identifier', $link['publisher'])) {
-            foreach ($link['publisher']['identifier'] as $identifier) {
-                $str .= "<identifier>";
-                $str .= "<ID>".htmlspecialchars($identifier['identifier'])."</ID>";
-                $str .= "<IDSheme>".htmlspecialchars($identifier['schema'])."</IDSheme>";
-                //$str .= "<IDURL></IDURL>";
-                $str .= "</identifier>";
+        if (array_key_exists('target', $link['target'])) {
+            $str .= "<publisher>";
+            $str .= "<name>" . htmlspecialchars($link['target']['publisher']['name']) . "</name>";
+            if (array_key_exists('identifier', $link['target']['publisher'])) {
+                foreach ($link['publisher']['identifier'] as $identifier) {
+                    $str .= "<identifier>";
+                    $str .= "<ID>" . htmlspecialchars($identifier['identifier']) . "</ID>";
+                    $str .= "<IDSheme>" . htmlspecialchars($identifier['schema']) . "</IDSheme>";
+                    //$str .= "<IDURL></IDURL>";
+                    $str .= "</identifier>";
+                }
             }
+            $str .= "</publisher>";
         }
-        $str .= "</publisher>";
 
         $str .= "</target>";
 
