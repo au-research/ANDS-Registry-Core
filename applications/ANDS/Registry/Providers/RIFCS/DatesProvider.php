@@ -170,7 +170,7 @@ class DatesProvider implements RIFCSProvider
     {
         // if it comes in as the year or year-month, just leave it
         if (self::validateDate($value, 'Y') || self::validateDate($value, 'Y-m')) {
-            return $value
+            return $value;
         }
 
         if (self::isValidTimeStamp($value)) {
