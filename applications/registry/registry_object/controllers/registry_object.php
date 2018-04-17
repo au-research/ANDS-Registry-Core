@@ -1710,6 +1710,7 @@ function use_citation_handle($registry_object_id, $cite_ro)
 
 	$ci =& get_instance();
 	$ci->load->library('solr');
+    $ci->solr->init();
 	$ci->solr->clearOpt('fq');
 	$ci->solr->setOpt('fq', '+id:' . $registry_object_id);
 	$ci->solr->setOpt('fl', 'id,key,slug,title,class,type,data_source_id,group,created,status,subject_value_resolved');
