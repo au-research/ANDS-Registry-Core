@@ -274,7 +274,7 @@ class ScholixDocument
             $str .= "<PublicationDate>" . $link['target']['publicationDate'] . "</PublicationDate>";
         }
 
-        if (array_key_exists('target', $link['target'])) {
+        if (array_key_exists('publisher', $link['target'])) {
             $str .= "<publisher>";
             $str .= "<name>" . htmlspecialchars($link['target']['publisher']['name']) . "</name>";
             if (array_key_exists('identifier', $link['target']['publisher'])) {
