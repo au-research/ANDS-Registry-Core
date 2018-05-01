@@ -168,13 +168,9 @@ class DatesProvider implements RIFCSProvider
      */
     public static function formatDate($value, $format = 'Y-m-d')
     {
-        // if it comes in as the year, just return the year
-        if (self::validateDate($value, 'Y')) {
-            return "{$value}-1-1";
-        }
-
-        if (self::validateDate($value, 'Y-m')) {
-            return "{$value}-1";
+        // if it comes in as the year or year-month, just leave it
+        if (self::validateDate($value, 'Y') || self::validateDate($value, 'Y-m')) {
+            return $value;
         }
 
         if (self::isValidTimeStamp($value)) {

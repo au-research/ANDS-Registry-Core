@@ -26,9 +26,7 @@ class DatasourcesHandler extends Handler
 {
     private $input = [];
 
-
-
-    public function handle()
+    public function handle_experiment()
     {
         $this->getParentAPI()->providesOwnResponse();
         $this->getParentAPI()->outputFormat = "application/json";
@@ -71,24 +69,21 @@ class DatasourcesHandler extends Handler
         return json_encode($data);
     }
 
-    // 6/11/2017: BELOW THIS LINE SHOULD BE DEPRECATED...
-    // TODO: REMOVE DEPRECATED CODE
-
     /**
      * DatasourceHandler constructor.
      * @param bool $params
      */
-//    public function __construct($params)
-//    {
-//        parent::__construct($params);
-//        initEloquent();
-//    }
+    public function __construct($params)
+    {
+        parent::__construct($params);
+        initEloquent();
+    }
 
     /**
      * @return array
      * @throws Exception
      */
-    public function handle_deprecated()
+    public function handle()
     {
         $this->middleware();
 
