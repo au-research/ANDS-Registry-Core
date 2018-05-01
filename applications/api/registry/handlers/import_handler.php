@@ -73,7 +73,7 @@ class ImportHandler extends Handler
         // get Harvest
         $harvest = $dataSource->harvest()->first();
 
-        $name = $params['name'] ?: "Harvester initiated import - $dataSource->title($dataSource->data_source_id) - $batchID";
+        $name = array_key_exists('name', $params) ? $params['name'] : "Harvester initiated import - $dataSource->title($dataSource->data_source_id) - $batchID";
 
         $task = [
             'name' => $name,
