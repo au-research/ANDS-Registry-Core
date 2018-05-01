@@ -3,7 +3,11 @@ All notable changes to this project will be documented in this file.
 
 ANDS Research Data Registry follows a quarterly release cycle
 
-## [Release 26](https://github.com/au-research/ANDS-ResearchData-Registry/compare/master...develop)
+## Release 27 & Release 27.1
+* Added ability to provide `app_id` and `shared_secret` for PIDs
+* Updated Scholix to v3
+
+## Release 26
 * Added `ORCIDPRovider` for ORCID XML generation. 
 * Updated ORCID registry wizard to use Version 2.1 of the API and produces version 2.0 ORCID XML
 * Added `JSONLDProvider` to produces structured data

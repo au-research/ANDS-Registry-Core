@@ -37,7 +37,7 @@ class Request
     {
         $inputs = [];
 
-        $contentType = $_SERVER['CONTENT_TYPE'];
+        $contentType = array_key_exists('CONTENT_TYPE', $_SERVER) ? $_SERVER['CONTENT_TYPE'] : "";
 
         if (strpos($contentType, "x-www-form-urlencoded") !== false) {
             $result = [];
