@@ -1,3 +1,38 @@
+## Release 27.1
+
+Release 27.1 of ANDS Online Services is scheduled for implementation on Thursday, 3 May 2018 from 8am to 12pm. During the implementation, the following services will be unavailable:
+
+* Research Data Australia (RDA)
+* Research Vocabularies Australia (RVA)
+* ANDS Handle Service
+* ANDS DOI Service
+
+The following services are not impacted by the release implementation:
+
+* DOI resolution
+* Handle resolution
+* RVA Editor (PoolParty)
+
+Below is the list of changes included in this service release:
+
+**Research Data Australia (RDA) changes**
+
+* Fix an issue where Export to EndNote fails when one or more records being exported do not contain an author
+* Update Scholix export functionality to use v3.0 of the Scholix schema
+
+**Research Vocabularies Australia (RVA) changes**
+
+* Fix broken list of formats in SISSVoc HTML pages
+* Remove unusable 'more like this' and related search buttons in SISSVoc HTML pages
+* CMS: Enhance the Vocabs CMS modal dialog to be able to handle user-source SISSVoc endpoints
+
+**Handle Service**
+
+* Extend the handle service API to enable authentication via shared secret instead of IP address
+* Enhance handle service logging mechanism by ensuring that an appID is captured during minting
+
+Please take note that a soft release to Demo will be implemented on 2 May 2018 between 8am and 5pm.
+
 ## Release 27
 
 Release 27 of ANDS Online Services is scheduled for implementation on 7 March 2018. This release implements a number of enhancements to the Research Vocabularies Australia (RVA), DOI Service and and a bug fix and enhancement to Research Data Australia.
