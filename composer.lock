@@ -978,16 +978,16 @@
         },
         {
             "name": "jaybizzle/crawler-detect",
-            "version": "v1.2.51",
+            "version": "v1.2.62",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JayBizzle/Crawler-Detect.git",
-                "reference": "be9074b1206ba7b5ac5662f900295edc088a9da8"
+                "reference": "f9767578e00f87a081835b49adc7c71074a5b46c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/be9074b1206ba7b5ac5662f900295edc088a9da8",
-                "reference": "be9074b1206ba7b5ac5662f900295edc088a9da8",
+                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/f9767578e00f87a081835b49adc7c71074a5b46c",
+                "reference": "f9767578e00f87a081835b49adc7c71074a5b46c",
                 "shasum": ""
             },
             "require": {
@@ -1023,7 +1023,7 @@
                 "crawlerdetect",
                 "php crawler detect"
             ],
-            "time": "2017-08-07T18:48:00+00:00"
+            "time": "2018-03-27T18:25:43+00:00"
         },
         {
             "name": "minhd/oai-pmh",
