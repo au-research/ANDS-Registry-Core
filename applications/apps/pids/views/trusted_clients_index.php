@@ -60,6 +60,17 @@
 						</select>
 					</div>
 				</div>
+				<div class="control-group">
+					<div class="controls">
+						<a href="javascript:;" class="btn btn-primary" id="shared_secret_show">Include A Shared Secret</a>
+					</div>
+				</div>
+				<div class="control-group hide" id="sharedSecret_field">
+					<label class="control-label">Shared Secret</label>
+					<div class="controls">
+						<input type="text" name="sharedSecret" value=""/>
+					</div>
+				</div>
 			</form>
 		</div>
 	</div>
@@ -82,6 +93,7 @@
 				<tr>
 					<th>IP</th>
 					<th>App ID</th>
+					<th>Shared Secret</th>
 					<th>Date Created</th>
 					<th>Description </th>
 					<th>Action </th>
@@ -92,6 +104,7 @@
 				<tr>
 					<td>{{ip_address}}</td>
 					<td>{{app_id}}</td>
+					<td>{{shared_secret}}</td>
 					<td>{{created_when}}</td>
 					<td>{{description}}</td>
 					<td><a href="javascript:;" class="remove btn btn-small btn-danger" tip="Remove" ip="{{ip_address}}" app_id="{{app_id}}"><i class="icon-white icon-remove"></i</a</td>
