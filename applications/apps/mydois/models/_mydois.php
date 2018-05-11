@@ -12,7 +12,9 @@ class _mydois extends CI_Model
 	private $DOIS_DATACENTRE_NAME_PREFIX = null;
 	private $DOIS_DATACENTRE_NAME_MIDDLE = null;
     private $DOIS_DATACENTRE_PASSWORD = null;
-
+	private $DATACITE_CONTACT_NAME = null;
+	private $DATACITE_CONTACT_EMAIL = null;
+	private $DATACITE_FABRICA_URL = null;
     /** @var ClientRepository */
     private $clientRepository;
 
@@ -26,6 +28,10 @@ class _mydois extends CI_Model
 		$this->DOIS_DATACENTRE_NAME_MIDDLE = $config['name_middle'];
 		$this->DOIS_DATACENTRE_PREFIXS = $config['prefixs'];
         $this->DOIS_DATACENTRE_PASSWORD = $config['password'];
+		$this->DATACITE_CONTACT_NAME = $config['contact-name'];
+		$this->DATACITE_CONTACT_EMAIL = $config['contact-email'];
+
+
 		$this->gDefaultBaseUrl = get_config_item('default_base_url');
 
         $database = \ANDS\Util\Config::get('database.dois');
@@ -83,8 +89,13 @@ class _mydois extends CI_Model
 
 		if($client_id<10){$client_id = "-".$client_id;}
 
-		return $this->mdsDatacentreUpdate($client_name, $client_contact_name, $client_contact_email, $domainList, $datacite_prefix,$client_id);
-	
+		$response =  $this->doFabricaDatacentreAPICall($client_name, $domainList, $datacite_prefix, $client_id , "create");
+		if(isset($response['errorMessages'])){
+			$client->delete();
+		}
+
+		return $response;
+
 	}
 
 	function editTrustedClient($ip, $client_id, $client_name, $client_contact_name, $client_contact_email, $domainList, $datacite_prefix, $shared_secret){	
@@ -119,68 +130,83 @@ class _mydois extends CI_Model
                'shared_secret' => $shared_secret                     
         );
 
-		$this->doi_db->where('client_id', $client_id); 
-		$this->doi_db->update('doi_client', $clientdata);
+		$response =  $this->doFabricaDatacentreAPICall($client_name, $domainList, $datacite_prefix, $client_id, "update");
+		if(!isset($response['errorMessages'])){
+			$this->doi_db->where('client_id', $client_id);
+			$this->doi_db->update('doi_client', $clientdata);
+		}
 
-		//if($client_id<10){$client_id = "-".$client_id;}
-
-		return $this->mdsDatacentreUpdate($client_name, $client_contact_name, $client_contact_email, $domainList, $datacite_prefix,$client_id);
+		return $response;
 	}
 
-	function mdsDatacentreUpdate($client_name, $client_contact_name, $client_contact_email, $domainList, $datacite_prefix,$client_id)
+	function doFabricaDatacentreAPICall($client_name, $domainList, $datacite_prefix, $client_id, $transaction)
 	{
-		//Removed check on non production domains to cater for future use of demo by clients
-	    //if($this->gDefaultBaseUrl!="https://researchdata.ands.org.au/")
-		//{
-		//	$symbol= $this->DOIS_DATACENTRE_NAME_PREFIX.".CENTRE-0"; //make sure we only hit the test datacenter config for non production domains
-		//}else{
 
-        $client = $this->clientRepository->getByID($client_id);
 
-        $symbol= $client->datacite_symbol;
+		$client = $this->clientRepository->getByID($client_id);
+		if($transaction != "delete"){
+			$attributes = array("name" => $client_name,
+				"symbol" => $client->datacite_symbol,
+				"domains" => $domainList,
+				"is-active" => true,
+				"contact-name" => $this->DATACITE_CONTACT_NAME,
+				"contact-email" => $this->DATACITE_CONTACT_EMAIL);
+			$provider = array("data" => array("type" => "providers",
+				"id" => "ands"));
+			$prefixes = array("data" => array("id" => trim($datacite_prefix,"/"),
+				"type" => "prefix"));
+			$relationships = array("provider" => $provider, "prefixes" => $prefixes);
+			$clientInfo = array("data" => array("attributes" => $attributes, "relationships" => $relationships, "type" => "client"));
+		}
 
-		//}
+		$fabricaConfig = \ANDS\Util\Config::get('datacite.fabrica');
 
-		//create the datacite datacentre xml
-		$outxml = '<?xml version="1.0" encoding="UTF-8"?>
-		<datacentre><name>'.$client_name.'</name>
-		<symbol>'.$symbol.'</symbol>
-		<domains>'.$domainList.'</domains>
-		<isActive>true</isActive>
-		<prefixes><prefix>'.trim($datacite_prefix,"/").'</prefix></prefixes>
-		<contactName>'.$client_contact_name.'</contactName>
-		<contactEmail>'.$client_contact_email.'</contactEmail>
-		</datacentre>';
+		$authstr =  $fabricaConfig['username'].":".$fabricaConfig['password'];
 
-		$authstr =  $this->DOIS_DATACENTRE_NAME_PREFIX.":".$this->DOIS_DATACENTRE_PASSWORD;
 		$context = [
-            'Content-Type: application/xml;charset=UTF-8',
+            'Content-Type: application/json',
             'Authorization: Basic '.base64_encode($authstr)
         ];
 
-		$requestURI = $this->DOI_SERVICE_BASE_URI."datacentre";
+		$newch = curl_init();
+		$requestURI = $fabricaConfig['api_url'];
 
-        $newch = curl_init();
+		switch ($transaction){
+			case "update":
+				$requestURI = $requestURI.$client->datacite_symbol;
+				$method = "PATCH";
+				curl_setopt($newch, CURLOPT_POSTFIELDS,json_encode($clientInfo));
+				break;
+			case "create":
+				$method = "POST";
+				curl_setopt($newch, CURLOPT_POSTFIELDS,json_encode($clientInfo));
+				break;
+			case "delete":
+				$requestURI = $requestURI.$client->datacite_symbol;
+				$method = "DELETE";
+				break;
+		}
+
+
 		curl_setopt($newch, CURLOPT_URL, $requestURI);
 		curl_setopt($newch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($newch, CURLOPT_CUSTOMREQUEST, "PUT");
+		curl_setopt($newch, CURLOPT_CUSTOMREQUEST, $method);
 		curl_setopt($newch, CURLOPT_HTTPHEADER,$context);
-		curl_setopt($newch, CURLOPT_POSTFIELDS,$outxml);
+
 		$result = curl_exec($newch);
-
-        $outputINFO = curl_getinfo($newch);
-
+		$outputINFO = curl_getinfo($newch);
 		curl_close($newch);
-
 		$result_array = array();
-		if( $result )
+		if($outputINFO['http_code'] < 300)
 		{
-			$resultXML = $result;
+			$result_array = $result;
 		}else{
-			$result_array['errorMessages'] = "Error whilst attempting to put to URI: " . $this->DOI_SERVICE_BASE_URI . "<br/><em> $client_name </em>has not been updated";
+			$result_array['errorMessages'] = "Error whilst attempting to put to URI: " . $this->DATACITE_FABRICA_URL . "<br/><em>".
+			$client_name ."</em>has not been ".$transaction."d response:".$result;
 		}
 		return $result_array;		
 	}
+	
 
 	function getAllDoiAppID(){
 		$result = array();
@@ -193,6 +219,8 @@ class _mydois extends CI_Model
 	}
 
 	function removeTrustedClient($client_id){
+
+		$this->doFabricaDatacentreAPICall("", "", "", $client_id, "delete");
 		$tables = array('doi_client_domains', 'doi_client');
 		$this->doi_db->where('client_id', $client_id);
 		$this->doi_db->delete($tables);
