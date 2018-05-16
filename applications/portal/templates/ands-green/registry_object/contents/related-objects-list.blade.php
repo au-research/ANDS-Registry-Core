@@ -6,6 +6,91 @@
 ?>
 @if($hasRelated)
     <div class="panel panel-primary element-no-top element-short-bottom panel-content">
+        <div class="panel-body swatch-white" >
+            <div id="graph-viz" style="height:450px;"></div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        function init() {
+            var neo4jd3 = new Neo4jd3('#graph-viz', {
+                icons: {
+                    'Party': 'user',
+                    'Activity': 'gear'
+                },
+                minCollision: 60,
+                // neo4jDataUrl: './node_modules/neo4jd3/docs/json/neo4jData.json',
+                neo4jDataUrl: base_url + 'registry_object/graph',
+                nodeRadius: 25,
+                onNodeClick: function(node) {
+                    console.log(node);
+                    node.fx = node.fy = null;
+                    delete node.fixed;
+                },
+                onNodeDoubleClick: function(node) {
+                    node.fixed = true;
+                    node.x = 1;
+                    node.y = 1;
+//                    if (!node.properties.more || node.properties.more < 1) {
+//                        return;
+//                    }
+//                    node.properties.more -= 1;
+//                    var x = Math.random();
+//                    var y = Math.random();
+//                    var neo4jdata = {
+//                        "results": [{
+//                            "columns": ["user", "entity"],
+//                            "data": [{
+//                                "graph": {
+//                                    "nodes": [{
+//                                        "id": x,
+//                                        "labels": ["Activity"],
+//                                        "properties": {
+//                                            "roId": "536332",
+//                                            "title": "Some Activity"
+//                                        }
+//                                    }],
+//                                    "relationships": [{
+//                                        "id": y,
+//                                        "type": "isFundedBy",
+//                                        "startNode": x,
+//                                        "endNode": node.id,
+//                                        "properties": {
+//                                            "from": 1473581532586
+//                                        }
+//                                    }]
+//                                }
+//                            }]
+//                        }],
+//                        "errors": []
+//                    };
+//                    console.log(node.x + "");
+
+                     var maxNodes = 1,
+                         data = neo4jd3.randomD3Data(node, maxNodes);
+                     neo4jd3.updateWithD3Data(data);
+
+//                    var source = node;
+//                    t = d3.zoomTransform(baseSvg.node());
+//                    x = -source.y0;
+//                    y = -source.x0;
+//                    x = x * t.k + viewerWidth / 2;
+//                    y = y * t.k + viewerHeight / 2;
+//                    d3.select('svg').transition().duration(duration).call( zoomListener.transform, d3.zoomIdentity.translate(x,y).scale(t.k) );
+                },
+                onRelationshipDoubleClick: function(relationship) {
+                    console.log('double click on relationship: ' + JSON.stringify(relationship));
+                },
+                zoomFit: false,
+                infoPanel: false,
+                showCount: true
+            });
+        };
+
+        window.onload = init;
+    </script>
+
+    <div class="panel panel-primary element-no-top element-short-bottom panel-content">
         <div class="panel-body swatch-white">
             {{--Related Publications--}}
             @if (isset($related['publications']) && sizeof($related['publications']['docs']) > 0)

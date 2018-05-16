@@ -42,6 +42,10 @@
     <script src="{{asset_url('lib/angular-bootstrap/ui-bootstrap.min.js', 'core')}}"></script>
     <script src="{{asset_url('lib/angular-bootstrap/ui-bootstrap-tpls.min.js', 'core')}}"></script>
     <script src="{{asset_url('lib/angular-loading-bar/build/loading-bar.min.js', 'core')}}"></script>
+
+    <script src="{{ asset_url('ands-green/js/d3.min.js', 'templates') }}"></script>
+    <script src="{{ asset_url('ands-green/js/neo4jd3/js/neo4jd3.js', 'templates') }}"></script>
+
     <script src="{{asset_url('ands-green/js/packages.min.js','templates')}}"></script>
     <script src="{{asset_url('lib/qtip2/jquery.qtip.js', 'core')}}"></script>
     <script src="{{asset_url('js/scripts.js', 'core')}}"></script>

@@ -595,6 +595,47 @@ class Registry_object extends MX_Controller
         return $related;
     }
 
+    public function graph()
+    {
+        echo '{
+    "results": [{
+        "columns": ["user", "entity"],
+        "data": [{
+            "graph": {
+                "nodes": [{
+                    "id": "115387",
+                    "labels": ["Party"],
+                    "properties": {
+                        "roId": "518517",
+                        "fixed": true,
+                        "title": "Australian Research Council",
+                        "more": 5
+                    }
+                }, {
+                    "id": "132751",
+                    "labels": ["Activity"],
+                    "properties": {
+                        "roId": "536332",
+                        "title": "Some Activity"
+                    }
+                }],
+                "relationships": [{
+                    "id": "292972",
+                    "type": "isFundedBy",
+                    "startNode": "132751",
+                    "endNode": "115387",
+                    "properties": {
+                        "from": 1473581532586
+                    }
+                }]
+            }
+        }]
+    }],
+    "errors": []
+}
+';
+    }
+
     /**
      * Returns the vocabulary element
      * todo move to the vocab component
