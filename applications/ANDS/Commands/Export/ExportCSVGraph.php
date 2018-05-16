@@ -6,6 +6,7 @@ namespace ANDS\Commands\Export;
 
 use ANDS\Commands\ANDSCommand;
 use ANDS\DataSource;
+use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\RelationshipView;
 use ANDS\RegistryObject;
 use ANDS\RegistryObject\Identifier;
@@ -84,16 +85,20 @@ class ExportCSVGraph extends ANDSCommand
         $progressBar = new ProgressBar($this->getOutput(), $records->count());
         $records->chunk(10000, function($records) use ($progressBar) {
             foreach ($records as $record) {
-                $this->nodes[] = [
-                    'researchgraph.org/ands/'.$record->key,
-                    'ands.org.au',
-                    $record->key,
-                    $record->title,
-                    '',
-                    $record->getRegistryObjectAttributeValue('updated'),
-                    '',
-                    $record->portal_url
-                ];
+                try {
+                    $this->nodes[] = [
+                        'researchgraph.org/ands/'.$record->key,
+                        'ands.org.au',
+                        $record->key,
+                        $record->title,
+                        '',
+                        $record->getRegistryObjectAttributeValue('updated'),
+                        DatesProvider::getPublicationDate($record),
+                        $record->portal_url
+                    ];
+                } catch (Exception $e) {
+                    $this->log("Error getting data for {$record->id} : {$e->getMessage()}");
+                }
                 $progressBar->advance(1);
             }
         });

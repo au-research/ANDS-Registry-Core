@@ -19,6 +19,8 @@ use Symfony\Component\Stopwatch\Stopwatch;
 class ExportCSV extends ANDSCommand
 {
     protected $just = ['nodes', 'relations'];
+    private $importPath = "/Users/minhd/dev/neo4j/import/";
+
     protected function configure()
     {
         $this
@@ -30,6 +32,7 @@ class ExportCSV extends ANDSCommand
             ->addOption('identical', null, InputOption::VALUE_NONE, "Identical Relations")
             ->addOption('relatedInfoRelations', null, InputOption::VALUE_NONE, "Related Info Relations")
             ->addOption('relatedInfoNodes', null, InputOption::VALUE_NONE, "Related Info Nodes")
+            ->addOption('importPath', $this->importPath, InputOption::VALUE_OPTIONAL, "Import Path")
 //            ->addArgument('target', InputArgument::REQUIRED)
         ;
     }
@@ -38,6 +41,8 @@ class ExportCSV extends ANDSCommand
     {
         $this->setUp($input, $output);
         ini_set('memory_limit','512M');
+
+        $this->importPath = $input->getOption("importPath");
 
         $nodes = $input->getOption('nodes');
         if ($nodes) {
@@ -109,23 +114,92 @@ class ExportCSV extends ANDSCommand
         $this->log("\n$name written to $filePath\n", "info");
     }
 
-    private $importPath = "/Users/minhd/dev/neo4j/import/";
-    private $nodes = [ ['roId:ID', 'class', ':LABEL'] ];
+    private function writeCSVAssoc($content, $name)
+    {
+        $filePath = $this->importPath."$name.csv";
+        $fp = fopen($filePath, "w");
+
+        // write first row with keys
+        $header = array_keys($content[0]);
+        fputcsv($fp, $header);
+        fclose($fp);
+
+        // keep writing
+        $fp = fopen($filePath, "a");
+        foreach ($content as $fields) {
+            fputcsv($fp, $fields);
+        }
+        $this->log("\n$name written to $filePath\n", "info");
+    }
+
+    private function wipe($name)
+    {
+        $filePath = $this->importPath."$name.csv";
+        $f = @fopen($filePath, "r+");
+        if ($f !== false) {
+            ftruncate($f, 0);
+            fclose($f);
+        }
+    }
+
+    private function stream($name, $content)
+    {
+        $filePath = $this->importPath."$name.csv";
+        $fp = fopen($filePath, "a");
+        fputcsv($fp, $content);
+    }
+
+    private function sanitizeTitle($title)
+    {
+        $title = str_replace([',', '"', ';', '\t', ':'], '', $title);
+
+        $title = preg_replace( "/\r|\n/", " ", $title);
+
+        return $title;
+    }
+
     private function exportNodes()
     {
-        $records = RegistryObject::orderBy('registry_object_id');
+        $this->wipe("nodes");
+        $filePath = $this->importPath."nodes.csv";
+        $fp = fopen($filePath, "a");
+
+        $records = RegistryObject::where('status', 'PUBLISHED')->orderBy('registry_object_id');
         $progressBar = new ProgressBar($this->getOutput(), $records->count());
-        $records->chunk(10000, function($records) use ($progressBar) {
+
+        // stream into file
+        $first = true;
+        $records->chunk(10000, function($records) use ($progressBar, $fp, &$first) {
             foreach ($records as $record) {
-                $this->nodes[] = [
-                    $record->id, $record->class, 'RegistryObject'
+
+                $row = [
+                    "roId:ID" => $record->id,
+                    ":LABEL" => implode(";", ["RegistryObject", $record->class]),
+                    "key" => $record->key,
+                    "type" => $record->type,
+                    "group" => $record->group,
+                    "data_source_id" => $record->data_source_id,
+                    "title" => $this->sanitizeTitle($record->title),
+                    "record_owner" => $record->record_owner
                 ];
+
+                // insert header if first
+                if ($first) {
+                    fputcsv($fp, array_keys($row));
+                    $first = false;
+                }
+
+                // stream to file
+                fputcsv($fp, $row);
+
                 $progressBar->advance(1);
             }
         });
         $progressBar->finish();
+        fclose($fp);
 
-        $this->writeToCSV($this->nodes, "nodes");
+        $this->log("Nodes written to $filePath", "info");
+
         unset($this->nodes);
     }
 
