@@ -77,6 +77,7 @@ class GraphRelationshipProviderTest extends \RegistryTestClass
 
         // links should include a->b, c->a and b->c
         $links = $graph['links'];
+
         $this->assertCount(3, $links);
 
         // links should include a->b
