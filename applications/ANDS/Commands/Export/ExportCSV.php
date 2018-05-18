@@ -199,54 +199,78 @@ class ExportCSV extends ANDSCommand
         fclose($fp);
 
         $this->log("Nodes written to $filePath", "info");
-
-        unset($this->nodes);
     }
 
-    private $directRelations = [ [':START_ID', ':END_ID', ':TYPE'] ];
     private function exportDirectRelations()
     {
+        $name = "direct";
+        $this->wipe("$name");
+        $filePath = $this->importPath."$name.csv";
+        $fp = fopen($filePath, "a");
+
         $allRelations = RelationshipView::where('relation_origin', 'EXPLICIT');
         $progressBar = new ProgressBar($this->getOutput(), $allRelations->count());
-        $allRelations->chunk(10000, function($relations) use ($progressBar) {
+
+        $first = true;
+        $allRelations->chunk(10000, function ($relations) use ($progressBar, $fp, &$first) {
             foreach ($relations as $relation) {
                 $type = str_replace(['{', '}', ' '], '', $relation->relation_type);
-                if ($type == '') continue;
-                $this->directRelations[] = [
-                    $relation->from_id,
-                    $relation->to_id,
-                    $type
+                if ($type == '') {
+                    continue;
+                }
+
+                $relation = [
+                    ':START_ID' => $relation->from_id,
+                    ':END_ID' => $relation->to_id,
+                    ':TYPE' => $type
                 ];
+
+                if ($first) {
+                    fputcsv($fp, array_keys($relation));
+                    $first = false;
+                }
+
+                fputcsv($fp, $relation);
+
                 $progressBar->advance(1);
             }
         });
         $progressBar->finish();
-
-        $this->writeToCSV($this->directRelations, "direct");
-        unset($this->directRelations);
+        fclose($fp);
     }
 
-    private $primaryRelations =  [ [':START_ID', ':END_ID', ':TYPE'] ];
     private function exportPrimaryRelations()
     {
+        $name = "primary";
+        $this->wipe("$name");
+        $filePath = $this->importPath."$name.csv";
+        $fp = fopen($filePath, "a");
+
         $allRelations = RelationshipView::where('relation_origin', 'PRIMARY');
         $progressBar = new ProgressBar($this->getOutput(), $allRelations->count());
-        $allRelations->chunk(500, function($relations) use($progressBar) {
+
+        $first = true;
+        $allRelations->chunk(500, function($relations) use($progressBar, $fp, &$first) {
             foreach ($relations as $relation) {
                 $type = $this->getPrimaryRelationType($relation);
 
-                $this->primaryRelations[] = [
-                    $relation->from_id,
-                    $relation->to_id,
-                    $type
+                $relation = [
+                    ':START_ID' => $relation->from_id,
+                    ':END_ID' => $relation->to_id,
+                    ':TYPE' => $type
                 ];
+
+                if ($first) {
+                    fputcsv($fp, array_keys($relation));
+                    $first = false;
+                }
+                fputcsv($fp, $relation);
+
                 $progressBar->advance(1);
             }
         });
         $progressBar->finish();
-
-        $this->writeToCSV($this->primaryRelations, "primary");
-        unset($this->primaryRelations);
+        fclose($fp);
     }
 
     private function getPrimaryRelationType($relation)
@@ -286,15 +310,23 @@ class ExportCSV extends ANDSCommand
         return $defaultType;
     }
 
-    private $identicalRelations =  [ [':START_ID', ':END_ID', ':TYPE'] ];
     private function exportIdenticalRelations()
     {
+        $name = "identical";
+        $this->wipe("$name");
+        $filePath = $this->importPath."$name.csv";
+        $fp = fopen($filePath, "a");
+
         $identifiers = Identifier::selectRaw('identifier, COUNT(*)')
             ->groupBy('identifier')
-            ->havingRaw('COUNT(*) > 1');
+            ->havingRaw('COUNT(*) > 1')->get();
 
-        foreach ($identifiers->get() as $identifier) {
-            $ids = Identifier::where('identifier', $identifier->identifier)->pluck('registry_object_id')->unique()->values();
+        $progressBar = new ProgressBar($this->getOutput(), $identifiers->count());
+
+        $first = true;
+        foreach ($identifiers as $identifier) {
+            $ids = Identifier::where('identifier', $identifier->identifier)
+                ->pluck('registry_object_id')->unique()->values();
 
             if (count($ids) < 2) {
                 continue;
@@ -302,16 +334,26 @@ class ExportCSV extends ANDSCommand
 
             // everything relates to the first one
             for ($i = 1; $i <= count($ids) - 1; $i++) {
-                $this->identicalRelations[] = [
-                    $ids[0],
-                    $ids[$i],
-                    'identicalTo'
-                ];
+                $from = RegistryObject::where('registry_object_id', $ids[0])->where('status', 'PUBLISHED')->first();
+                $to = RegistryObject::where('registry_object_id', $ids[$i])->where('status', 'PUBLISHED')->first();
+                if ($from && $to) {
+                    $relation = [
+                        ':START_ID' => $ids[0],
+                        ':END_ID' => $ids[$i],
+                        ':TYPE' => 'identicalTo'
+                    ];
+
+                    if ($first) {
+                        fputcsv($fp, array_keys($relation));
+                        $first = false;
+                    }
+                    fputcsv($fp, $relation);
+                }
             }
+
+            $progressBar->advance(1);
         }
 
-        $this->writeToCSV($this->identicalRelations, "identical");
-        unset($this->identicalRelations);
     }
 
     private $relatedInfoRelations =  [ [':START_ID', ':END_ID', ':TYPE'] ];

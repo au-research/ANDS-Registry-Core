@@ -13,17 +13,19 @@
 
     <script type="text/javascript">
         function init() {
+            console.log(base_url + 'registry_object/graph/' + $('#ro_id')[0].value)
             var neo4jd3 = new Neo4jd3('#graph-viz', {
                 icons: {
-                    'Party': 'user',
-                    'Activity': 'gear'
+                    'collection': 'folder',
+                    'activity' : 'gear',
+                    'party' : 'user',
+                    'service': 'flask'
                 },
                 minCollision: 60,
                 // neo4jDataUrl: './node_modules/neo4jd3/docs/json/neo4jData.json',
-                neo4jDataUrl: base_url + 'registry_object/graph',
+                neo4jDataUrl: base_url + 'registry_object/graph/' + $('#ro_id')[0].value,
                 nodeRadius: 25,
                 onNodeClick: function(node) {
-                    console.log(node);
                     node.fx = node.fy = null;
                     delete node.fixed;
                 },
@@ -82,8 +84,9 @@
                     console.log('double click on relationship: ' + JSON.stringify(relationship));
                 },
                 zoomFit: false,
-                infoPanel: false,
+                infoPanel: true,
                 showCount: true
+//                roPreview: true
             });
         };
 

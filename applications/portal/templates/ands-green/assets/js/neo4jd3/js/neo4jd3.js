@@ -149,8 +149,20 @@ function Neo4jD3(_selector, _options) {
                            }
                        }
 
+                       if (options.roPreview) {
+                           classes += ' ro_preview';
+                       }
+
                        return classes;
                    })
+                    .attr('href', function(d) {
+                        return "";
+                    })
+            .attr('ro_id', function(d) {
+                if (options.roPreview) {
+                    return d.properties.roId;
+                }
+            })
                    .on('click', function(d) {
                        d.fx = d.fy = null;
 
@@ -447,13 +459,19 @@ function Neo4jD3(_selector, _options) {
     function icon(d) {
         var code;
 
+        var iconable = d.labels.find(function(label, index) {
+            return options.icons[d.labels[index]];
+        });
+        if (!iconable) iconable = d.labels[0];
+        var index = d.labels.indexOf(iconable);
+
         if (options.iconMap && options.showIcons && options.icons) {
-            if (options.icons[d.labels[0]] && options.iconMap[options.icons[d.labels[0]]]) {
-                code = options.iconMap[options.icons[d.labels[0]]];
-            } else if (options.iconMap[d.labels[0]]) {
-                code = options.iconMap[d.labels[0]];
-            } else if (options.icons[d.labels[0]]) {
-                code = options.icons[d.labels[0]];
+            if (options.icons[d.labels[index]] && options.iconMap[options.icons[d.labels[index]]]) {
+                code = options.iconMap[options.icons[d.labels[index]]];
+            } else if (options.iconMap[d.labels[index]]) {
+                code = options.iconMap[d.labels[index]];
+            } else if (options.icons[d.labels[index]]) {
+                code = options.icons[d.labels[index]];
             }
         }
 
@@ -625,6 +643,7 @@ function Neo4jD3(_selector, _options) {
         };
 
         data.results.forEach(function(result) {
+
             result.data.forEach(function(data) {
                 data.graph.nodes.forEach(function(node) {
                     if (!contains(graph.nodes, node.id)) {
