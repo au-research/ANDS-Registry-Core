@@ -240,7 +240,7 @@ function Neo4jD3(_selector, _options) {
                        return "30px";
                    })
                    .html(function(d) {
-                       return d.properties.more ? d.properties.more : '';
+                       return d.properties.count ? d.properties.count : '';
                    });
     }
 
@@ -801,10 +801,10 @@ function Neo4jD3(_selector, _options) {
             node.attr('transform', function(d) {
                 return 'translate(' + d.x + ', ' + d.y + ')';
             });
-            // node.selectAll('text.count')
-            //   .html(function(d) {
-            //            return d.properties.more ? d.properties.more : '';
-            //        });
+            node.selectAll('text.count')
+              .html(function(d) {
+                   return d.properties.count ? d.properties.count : '';
+               });
         }
     }
 

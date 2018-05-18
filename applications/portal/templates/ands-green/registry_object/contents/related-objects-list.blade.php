@@ -19,7 +19,8 @@
                     'collection': 'folder',
                     'activity' : 'gear',
                     'party' : 'user',
-                    'service': 'flask'
+                    'service': 'flask',
+                    'cluster': 'cubes'
                 },
                 minCollision: 60,
                 // neo4jDataUrl: './node_modules/neo4jd3/docs/json/neo4jData.json',
