@@ -6,7 +6,9 @@ namespace ANDS\Registry\Providers;
 
 use ANDS\RegistryObject;
 use ANDS\Util\Config;
+use GraphAware\Common\Type\Node;
 use GraphAware\Neo4j\Client\ClientBuilder;
+use GraphAware\Neo4j\Client\Formatter\Type\Relationship;
 
 class GraphRelationshipProvider implements RegistryContentProvider
 {
@@ -38,6 +40,84 @@ class GraphRelationshipProvider implements RegistryContentProvider
         // get direct relationships for identicalTo records
         // get grants relationships path
         // get relationships between result set
+        return static::getByID($record->id);
+
+    }
+
+    /**
+     * @param $id
+     * @return array
+     */
+    public static function getByID($id)
+    {
+        $client = static::db();
+        $nodes = [];
+        $relationships = [];
+
+        // get direct relationships
+        $result = $client->run(
+            'MATCH direct = (n)-[r]-(n2) WHERE n.roId={id} RETURN * LIMIT 100;',[
+                'id' => $id
+            ]);
+
+        foreach ($result->records() as $record) {
+            $nodes[$record->get('n')->identity()] = static::formatNode($record->get('n'));
+            $nodes[$record->get('n2')->identity()] = static::formatNode($record->get('n2'));
+            $relationships[$record->get('r')->identity()] = static::formatRelationship($record->get('r'));
+        }
+
+        // get relationships of records in result set
+        $allNodesIDs = collect($nodes)
+            ->pluck('properties')
+            ->pluck('roId')
+            ->filter(function ($item) use ($id){
+                return $item != $id;
+            })
+            ->map(function($item) {
+                return "$item";
+            })->toArray();
+        $allNodesIDs = '["'. implode('","', $allNodesIDs).'"]';
+
+        $result = $client->run("MATCH (n)-[r]-(n2) WHERE n2.roId IN {$allNodesIDs} AND n.roId IN {$allNodesIDs} RETURN * LIMIT 100;");
+
+        foreach ($result->records() as $record) {
+            $relationships[$record->get('r')->identity()] = static::formatRelationship($record->get('r'));
+        }
+
+        return [
+            'nodes' => $nodes,
+            'links' => $relationships
+        ];
+    }
+
+    private static function formatNode(Node $node)
+    {
+        return [
+            'id' => $node->identity(),
+            'labels' => $node->labels(),
+            'properties' => $node->values()
+        ];
+    }
+
+    private static function formatRelationship(Relationship $relationship)
+    {
+        return [
+            'id' => $relationship->identity(),
+            'startNode' => $relationship->startNodeIdentity(),
+            'endNode' => $relationship->endNodeIdentity(),
+            'type' => $relationship->type(),
+            'properties' => array_merge($relationship->values(), ['from' => rand(1,100)])
+        ];
+    }
+
+    public static function getDirect(RegistryObject $record)
+    {
+        // TODO
+    }
+
+    public static function getGrantsNetwork(RegistryObject $record)
+    {
+        // TODO
     }
 
     /**
