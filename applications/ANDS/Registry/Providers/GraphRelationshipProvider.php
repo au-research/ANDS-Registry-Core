@@ -58,9 +58,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
         $nodes = [];
         $links = [];
 
-        // get node id by roID
-        $result = $client->run("MATCH (n {roId: {roId}}) RETURN n", ['roId' => $id]);
-        $node = $result->firstRecord()->get('n');
+        $node = static::getNodeByID($id);
 
         // TODO: if not found, return default
 
@@ -68,22 +66,14 @@ class GraphRelationshipProvider implements RegistryContentProvider
             WITH collect(identical.roId)+collect(n.roId) AS identicalIDs
             MATCH (n)-[r]-(direct) WHERE n.roId IN identicalIDs";
 
-        // get direct relationships count
-        $result = $client->run(
-            "$directQuery
-            RETURN TYPE(r) as relation, count(direct) as total;",[
-                'id' => $id
-            ]);
-        $counts = [];
-        foreach ($result->records() as $record) {
-            $counts[$record->get('relation')] = $record->get('total');
-        }
+        $counts = static::getCountsByRelationships($id, $directQuery);
 
         $threshold = 20;
-
         $over = collect($counts)->filter(function($item) use ($threshold) {
             return $item > $threshold;
         })->toArray();
+
+        // TODO: Refactor ClusterRelationship
 
         $clusterRelationship = count($over) > 0 ? array_keys($over) : [];
 
@@ -108,10 +98,9 @@ class GraphRelationshipProvider implements RegistryContentProvider
                     ]
                 ));
             }
-
         }
 
-
+        // TODO: Refactor direct relationships
         // get direct relationships
         $result = $client->run(
             "$directQuery
@@ -126,25 +115,9 @@ class GraphRelationshipProvider implements RegistryContentProvider
         }
 
         // grants network
-        $result = $client->run('
-        MATCH (n)-[r:identicalTo|isPartOf|:hasPart|:produces|:isFundedBy|:funds*1..]-(n2) 
-        WHERE n.roId={id}
-        RETURN * LIMIT 100', [
-            'id' => $id
-        ]);
-
-        foreach ($result->records() as $record) {
-            $nodes[$record->get('n')->identity()] = static::formatNode($record->get('n'));
-            $nodes[$record->get('n2')->identity()] = static::formatNode($record->get('n2'));
-            $relations = $record->get('r');
-            if (is_array($relations)) {
-                foreach ($relations as $relation) {
-                    $links[$relation->identity()] = static::formatRelationship($relation);
-                }
-            } else {
-                $links[$relations->identity()] = static::formatRelationship($relations);
-            }
-        }
+        $grantsNetwork = static::getGrantsNetwork($id);
+        $nodes = collect($nodes)->merge($grantsNetwork['nodes'])->unique()->toArray();
+        $links = collect($links)->merge($grantsNetwork['links'])->unique()->toArray();
 
         // get relationships of records in result set
         $allNodesIDs = collect($nodes)
@@ -158,16 +131,82 @@ class GraphRelationshipProvider implements RegistryContentProvider
             })->toArray();
         $allNodesIDs = '["'. implode('","', $allNodesIDs).'"]';
 
-        $result = $client->run("MATCH (n)-[r]-(n2) WHERE n2.roId IN {$allNodesIDs} AND n.roId IN {$allNodesIDs} RETURN * LIMIT 100;");
-
-        foreach ($result->records() as $record) {
-            $links[$record->get('r')->identity()] = static::formatRelationship($record->get('r'));
-        }
+        $links = collect($links)
+            ->merge(static::getRelationshipsBetweenIDs($allNodesIDs))
+            ->unique()
+            ->toArray();
 
         return [
             'nodes' => $nodes,
             'links' => $links
         ];
+    }
+
+    public static function getGrantsNetwork($id)
+    {
+        $nodes = [];
+        $links = [];
+        $client = static::db();
+        $result = $client->run('
+            MATCH (n)-[r:identicalTo|isPartOf|:hasPart|:produces|:isFundedBy|:funds*1..]-(n2) 
+            WHERE n.roId={id}
+            RETURN * LIMIT 100', [
+                'id' => $id
+            ]);
+        foreach ($result->records() as $record) {
+            $nodes[$record->get('n')->identity()] = static::formatNode($record->get('n'));
+            $nodes[$record->get('n2')->identity()] = static::formatNode($record->get('n2'));
+            $relations = $record->get('r');
+            if (is_array($relations)) {
+                foreach ($relations as $relation) {
+                    $links[$relation->identity()] = static::formatRelationship($relation);
+                }
+            } else {
+                $links[$relations->identity()] = static::formatRelationship($relations);
+            }
+        }
+        return [
+            'nodes' => $nodes,
+            'links' => $links
+        ];
+    }
+
+    public static function getRelationshipsBetweenIDs($ids)
+    {
+        $client = static::db();
+        $result = $client->run("MATCH (n)-[r]-(n2) WHERE n2.roId IN {$ids} AND n.roId IN {$ids} RETURN * LIMIT 100;");
+        $links = [];
+        foreach ($result->records() as $record) {
+            $links[$record->get('r')->identity()] = static::formatRelationship($record->get('r'));
+        }
+        return $links;
+    }
+
+    public static function getCountsByRelationships($id, $directQuery)
+    {
+        $client = static::db();
+
+        $result = $client->run(
+            "$directQuery
+            RETURN TYPE(r) as relation, count(direct) as total;",[
+            'id' => $id
+        ]);
+        $counts = [];
+        foreach ($result->records() as $record) {
+            $counts[$record->get('relation')] = $record->get('total');
+        }
+        return $counts;
+    }
+
+    /**
+     * @param $id
+     * @return Node
+     */
+    public static function getNodeByID($id)
+    {
+        $client = static::db();
+        $result = $client->run("MATCH (n {roId: {roId}}) RETURN n", ['roId' => $id]);
+        return $result->firstRecord()->get('n');
     }
 
     private static function formatNode(Node $node)
@@ -186,15 +225,10 @@ class GraphRelationshipProvider implements RegistryContentProvider
             'startNode' => $relationship->startNodeIdentity(),
             'endNode' => $relationship->endNodeIdentity(),
             'type' => $relationship->type(),
-            'properties' => array_merge($relationship->values(), ['from' => rand(1,100)])
+            'properties' => array_merge($relationship->values(), [])
         ];
     }
 
-
-    public static function getGrantsNetwork(RegistryObject $record)
-    {
-        // TODO
-    }
 
     /**
      * The graph database instance
