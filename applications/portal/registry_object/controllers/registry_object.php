@@ -600,10 +600,7 @@ class Registry_object extends MX_Controller
     {
         set_exception_handler('json_exception_handler');
 
-        $client = ClientBuilder::create()
-            ->addConnection('default', 'http://neo4j:abc123@neo4j:7474') // Example for HTTP connection configuration (port is optional)
-            ->addConnection('bolt', 'bolt://neo4j:abc123@neo4j:7687') // Example for BOLT connection configuration (port is optional)
-            ->build();
+        $client = \ANDS\Registry\Providers\GraphRelationshipProvider::db();
 
         $query = 'MATCH direct = (n)-[r]-(n2) WHERE n.roId={id} RETURN * LIMIT 100;';
         $result = $client->run($query, ['id' => "${registryObjectID}"]);
