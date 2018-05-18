@@ -600,107 +600,25 @@ class Registry_object extends MX_Controller
     {
         set_exception_handler('json_exception_handler');
 
-        $client = \ANDS\Registry\Providers\GraphRelationshipProvider::db();
+        $graph = \ANDS\Registry\Providers\GraphRelationshipProvider::getByID($registryObjectID);
 
-        $query = 'MATCH direct = (n)-[r]-(n2) WHERE n.roId={id} RETURN * LIMIT 100;';
-        $result = $client->run($query, ['id' => "${registryObjectID}"]);
-
-        $nodes = [];
-        $relationships = [];
-
-        foreach ($result->records() as $record) {
-            $nodes[$record->get('n')->identity()] = [
-                'id' => $record->get('n')->identity(),
-                'labels' => $record->get('n')->labels(),
-                'properties' => $record->get('n')->values()
-            ];
-            $nodes[$record->get('n2')->identity()] = [
-                'id' => $record->get('n2')->identity(),
-                'labels' => $record->get('n2')->labels(),
-                'properties' => $record->get('n2')->values()
-            ];
-            $relationships[$record->get('r')->identity()] = [
-                'id' => $record->get('r')->identity(),
-                'startNode' => $record->get('r')->startNodeIdentity(),
-                'endNode' => $record->get('r')->endNodeIdentity(),
-                'type' => $record->get('r')->type(),
-                'properties' => array_merge($record->get('r')->values(), ['from' => rand(1,100)])
-            ];
-        }
-
-        // Find all relationships between the provided nodes
-        $allNodesIDs = collect($nodes)
-            ->pluck('properties')
-            ->pluck('roId')
-            ->filter(function ($item) use ($registryObjectID){
-                return $item != $registryObjectID;
-            })
-            ->map(function($item) {
-                return "$item";
-            })->toArray();
-        $allNodesIDs = '["'. implode('","', $allNodesIDs).'"]';
-        $query = 'MATCH (n)-[r]-(n2) WHERE n2.roId IN '.$allNodesIDs.' AND n.roId IN '.$allNodesIDs.' RETURN * LIMIT 100;';
-        $result = $client->run($query);
-
-        foreach ($result->records() as $record) {
-            $relationships[$record->get('r')->identity()] = [
-                'id' => $record->get('r')->identity(),
-                'startNode' => $record->get('r')->startNodeIdentity(),
-                'endNode' => $record->get('r')->endNodeIdentity(),
-                'type' => $record->get('r')->type(),
-                'properties' => array_merge($record->get('r')->values(), ['from' => rand(1,100)])
-            ];
-        }
-
+        // format for neo4jd3 js library
         $payload = [
             'results' => [
-                ['data' => [[
-                    'graph' => [
-                        'nodes' => array_values($nodes),
-                        'relationships' => array_values($relationships)
-                    ]]
-                ]]
+                [
+                    'data' => [
+                        [
+                            'graph' => [
+                                'nodes' => array_values($graph['nodes']),
+                                'relationships' => array_values($graph['links'])
+                            ]
+                        ]
+                    ]
+                ]
             ]
         ];
 
         echo json_encode($payload);
-
-//        echo '{
-//    "results": [{
-//        "data": [{
-//            "graph": {
-//                "nodes": [{
-//                    "id": "115387",
-//                    "labels": ["Party"],
-//                    "properties": {
-//                        "roId": "518517",
-//                        "fixed": true,
-//                        "title": "Australian Research Council",
-//                        "more": 5
-//                    }
-//                }, {
-//                    "id": "132751",
-//                    "labels": ["Activity"],
-//                    "properties": {
-//                        "roId": "536332",
-//                        "title": "Some Activity"
-//                    }
-//                }],
-//                "relationships": [{
-//                    "id": "292972",
-//                    "type": "isFundedBy",
-//                    "startNode": "132751",
-//                    "endNode": "115387",
-//                    "properties": {
-//                        "from": 1473581532586
-//                    }
-//                }]
-//            }
-//        }]
-//    }],
-//    "errors": []
-//}
-//';
     }
 
     /**
