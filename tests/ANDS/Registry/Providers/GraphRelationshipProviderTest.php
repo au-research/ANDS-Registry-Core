@@ -22,9 +22,9 @@ class GraphRelationshipProviderTest extends \RegistryTestClass
     {
         // given A isPartOf B
         $stack = $this->client->stack();
-        $stack->push('CREATE (n:test {id: "A" })');
-        $stack->push('CREATE (n:test {id: "B" })');
-        $stack->push('CREATE (a:test {id: "A"})-[:isPartOf]->(b:test {id: "B"})');
+        $stack->push('MERGE (n:test {roId: {roId} }) RETURN n', ['roId' => 'A'], 'a');
+        $stack->push('MERGE (n:test {roId: {roId} }) RETURN n', ['roId' => 'B'], 'b');
+        $stack->push('MATCH (a:test {roId: "A"}) MATCH (b:test {roId: "B"}) MERGE (a)-[:isPartOf]->(b)');
         $this->client->runStack($stack);
 
         // search for A isPartOf B works
@@ -87,6 +87,32 @@ class GraphRelationshipProviderTest extends \RegistryTestClass
             return $item['startNode'] == $b->identity() && $item['endNode'] == $c->identity();
         })->first();
         $this->assertEquals('hasPart', $b2c['type']);
+    }
+
+    /** @test */
+    function get_identical_relationships()
+    {
+        // given a->b, a identical to a2, a2->c
+        $stack = $this->client->stack();
+        $stack->push('MERGE (n:test {roId: {roId} }) RETURN n', ['roId' => 'A'], 'a');
+        $stack->push('MERGE (n:test {roId: {roId} }) RETURN n', ['roId' => 'B'], 'b');
+        $stack->push('MERGE (n:test {roId: {roId} }) RETURN n', ['roId' => 'C'], 'c');
+        $stack->push('MERGE (n:test {roId: {roId} }) RETURN n', ['roId' => 'A2'], 'a2');
+        $stack->push('MATCH (a:test {roId: "A"}) MATCH (b:test {roId: "B"}) MERGE (a)-[:rel]->(b)');
+        $stack->push('MATCH (a:test {roId: "A"}) MATCH (a2:test {roId: "A2"}) MERGE (a)-[:identicalTo]->(a2)');
+        $stack->push('MATCH (a2:test {roId: "A2"}) MATCH (c:test {roId: "C"}) MERGE (a2)-[:hasPart]->(c)');
+        $results = $this->client->runStack($stack);
+
+        $a2 = $results->get('a2')->firstRecord()->get('n');
+        $c = $results->get('c')->firstRecord()->get('n');
+
+        $graph = GraphRelationshipProvider::getByID("A");
+        $links = $graph['links'];
+        // links should include a2->c
+        $a22c = collect($links)->filter(function($item) use ($a2, $c){
+            return $item['startNode'] == $a2->identity() && $item['endNode'] == $c->identity();
+        })->first();
+        $this->assertEquals("hasPart", $a22c['type']);
     }
 
     public function setUp()

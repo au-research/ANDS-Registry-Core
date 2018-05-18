@@ -45,6 +45,8 @@ class GraphRelationshipProvider implements RegistryContentProvider
     }
 
     /**
+     * Return all the relevant nodes and links from getting all relationships for a given node
+     *
      * @param $id
      * @return array
      */
@@ -56,7 +58,9 @@ class GraphRelationshipProvider implements RegistryContentProvider
 
         // get direct relationships
         $result = $client->run(
-            'MATCH direct = (n)-[r]-(n2) WHERE n.roId={id} RETURN * LIMIT 100;',[
+            'MATCH (n)-[:identicalTo*0..]-(nn) WHERE n.roId={id} 
+             WITH collect(nn.roId)+collect(n.roId) AS cs
+             MATCH (n)-[r]-(n2) WHERE n.roId IN cs RETURN * LIMIT 100;',[
                 'id' => $id
             ]);
 
