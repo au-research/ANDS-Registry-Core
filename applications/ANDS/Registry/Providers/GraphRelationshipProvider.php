@@ -13,6 +13,8 @@ use GraphAware\Neo4j\Client\Formatter\Type\Relationship;
 class GraphRelationshipProvider implements RegistryContentProvider
 {
 
+    protected static $threshold = 20;
+
     /**
      * Process the object and (optionally) store processed data
      *
@@ -66,41 +68,33 @@ class GraphRelationshipProvider implements RegistryContentProvider
             WITH collect(identical.roId)+collect(n.roId) AS identicalIDs
             MATCH (n)-[r]-(direct) WHERE n.roId IN identicalIDs";
 
-        $counts = static::getCountsByRelationships($id, $directQuery);
+        $counts = static::getCountsByRelationshipsType($id, $directQuery);
 
-        $threshold = 20;
-        $over = collect($counts)->filter(function($item) use ($threshold) {
-            return $item > $threshold;
+        $over = collect($counts)->filter(function($item) {
+            return $item['count'] > static::$threshold;
         })->toArray();
 
-        // TODO: Refactor ClusterRelationship
+        $under = collect($counts)->filter(function($item) {
+            return $item['count'] <= static::$threshold;
+        })->toArray();
 
-        $clusterRelationship = count($over) > 0 ? array_keys($over) : [];
-
-        if (count($clusterRelationship) > 0) {
-            $directQuery .= ' AND NOT TYPE(r) IN ["'. implode('","', $clusterRelationship).'"]';
-
-            foreach ($clusterRelationship as $rel) {
-                // add cluster node
-                $nodes["Cluster$rel"] = static::formatNode(new \GraphAware\Neo4j\Client\Formatter\Type\Node(
-                    "Cluster$rel",
-                    ["RegistryObject", "cluster"],
-                    [
-                        "roId" => 'asdf',
-                        'count' => $counts[$rel]
-                    ])
-                );
-
-                // add cluster relationship
-                $links["Cluster$rel"] = static::formatRelationship(new Relationship(
-                    rand(1,999999), $rel, $node->identity(), "Cluster$rel", [
-                        'count' => $counts[$rel]
-                    ]
-                ));
-            }
+        // get all underThreshold relations that have been clustered
+        if (count($under)) {
+            $underRelationship = static::getUnderRelationships($id, $directQuery, $under);
+            $nodes = collect($nodes)->merge($underRelationship['nodes'])->unique()->toArray();
+            $links = collect($links)->merge($underRelationship['links'])->unique()->toArray();
         }
 
-        // TODO: Refactor direct relationships
+        if (count($over) > 0) {
+            $clusterRelationships = static::getClusterRelationships($node, $over);
+            $nodes = collect($nodes)->merge($clusterRelationships['nodes'])->unique()->toArray();
+            $links = collect($links)->merge($clusterRelationships['links'])->unique()->toArray();
+
+            $overThresholdRelationships = collect($over)->pluck('relation')->toArray();
+            $directQuery .= ' AND NOT TYPE(r) IN ["'. implode('","', $overThresholdRelationships).'"]';
+        }
+
+
         // get direct relationships
         $result = $client->run(
             "$directQuery
@@ -182,6 +176,26 @@ class GraphRelationshipProvider implements RegistryContentProvider
         return $links;
     }
 
+    public static function getCountsByRelationshipsType($id, $directQuery)
+    {
+        $client = static::db();
+
+        $result = $client->run(
+            "$directQuery
+            RETURN labels(direct) as labels, TYPE(r) as relation, count(direct) as total;",[
+            'id' => $id
+        ]);
+        $counts = [];
+        foreach ($result->records() as $record) {
+            $counts[] = [
+                'relation' => $record->get('relation'),
+                'labels' => $record->get('labels'),
+                'count' => $record->get('total')
+            ];
+        }
+        return $counts;
+    }
+
     public static function getCountsByRelationships($id, $directQuery)
     {
         $client = static::db();
@@ -249,5 +263,74 @@ class GraphRelationshipProvider implements RegistryContentProvider
                 "http://{$config['username']}:{$config['password']}@{$config['hostname']}:7687"
             )
             ->build();
+    }
+
+    private static function getClusterRelationships($node, $over)
+    {
+        $nodes = [];
+        $links = [];
+        foreach ($over as $rel) {
+
+            $key = md5($rel['relation'].implode(',',$rel['labels']));
+            $labels = array_merge(['cluster'], $rel['labels']);
+
+            // add cluster node
+            $nodes[$key] = static::formatNode(new \GraphAware\Neo4j\Client\Formatter\Type\Node(
+                    $key, $labels, [ 'count' => $rel['count'] ])
+            );
+
+            // add cluster relationship
+            $links[$key] = static::formatRelationship(new Relationship(
+                rand(1,999999), $rel['relation'], $node->identity(), $key, [
+                    'count' => $rel['count']
+                ]
+            ));
+        }
+
+        return [
+            'nodes' => $nodes,
+            'links' => $links
+        ];
+    }
+
+    private static function getUnderRelationships($id, $directQuery, $under)
+    {
+        $client = static::db();
+        $nodes = [];
+        $links = [];
+
+        foreach ($under as $rel) {
+
+            $relationship = $rel['relation'];
+
+            $labels = collect($rel['labels'])->flatten(2)->unique()->toArray();
+            $labels = 'AND direct:'. implode(' AND direct:', $labels);
+
+            /**
+             * MATCH (n)-[:identicalTo*0..]-(identical) WHERE n.roId={id}
+             * WITH collect(identical.roId)+collect(n.roId) AS identicalIDs
+             * MATCH (n)-[r]-(direct) WHERE n.roId IN identicalIDs
+             * AND TYPE(r) in ["relatesTo"]
+             * AND direct:test
+             * AND direct:party
+             */
+
+            $query = "$directQuery AND TYPE(r) = {relationship} $labels RETURN * LIMIT 100";
+            $result = $client->run($query, [
+                'id' => $id,
+                'relationship' => $relationship
+            ]);
+
+            foreach ($result->records() as $record) {
+                $nodes[$record->get('n')->identity()] = static::formatNode($record->get('n'));
+                $nodes[$record->get('direct')->identity()] = static::formatNode($record->get('direct'));
+                $links[$record->get('r')->identity()] = static::formatRelationship($record->get('r'));
+            }
+        }
+
+        return [
+            'nodes' => $nodes,
+            'links' => $links
+        ];
     }
 }

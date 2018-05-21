@@ -13,7 +13,8 @@
 
     <script type="text/javascript">
         function init() {
-            console.log(base_url + 'registry_object/graph/' + $('#ro_id')[0].value)
+            var roID = $('#ro_id')[0].value;
+//            console.log(base_url + 'registry_object/graph/' + roID)
             var neo4jd3 = new Neo4jd3('#graph-viz', {
                 icons: {
                     'collection': 'folder',
@@ -23,71 +24,33 @@
                     'cluster': 'cubes'
                 },
                 minCollision: 60,
-                // neo4jDataUrl: './node_modules/neo4jd3/docs/json/neo4jData.json',
-                neo4jDataUrl: base_url + 'registry_object/graph/' + $('#ro_id')[0].value,
+                neo4jDataUrl: base_url + 'registry_object/graph/' + roID,
                 nodeRadius: 25,
+                zoomFit: false,
+                infoPanel: false,
+                showCount: true,
+                highlight: [{
+                    'class': 'RegistryObject',
+                    'property':'roId',
+                    'value': roID
+                }],
                 onNodeClick: function(node) {
-                    node.fx = node.fy = null;
-                    delete node.fixed;
+//                    var url = base_url + 'registry_object/graph/' + node.properties.roId;
+//                    $.getJSON(url, function(data) {
+//                        var graph = neo4jd3.neo4jDataToD3Data(data);
+//                        neo4jd3.updateWithD3Data(graph);
+//                    });
                 },
                 onNodeDoubleClick: function(node) {
-                    node.fixed = true;
-                    node.x = 1;
-                    node.y = 1;
-//                    if (!node.properties.more || node.properties.more < 1) {
-//                        return;
-//                    }
-//                    node.properties.more -= 1;
-//                    var x = Math.random();
-//                    var y = Math.random();
-//                    var neo4jdata = {
-//                        "results": [{
-//                            "columns": ["user", "entity"],
-//                            "data": [{
-//                                "graph": {
-//                                    "nodes": [{
-//                                        "id": x,
-//                                        "labels": ["Activity"],
-//                                        "properties": {
-//                                            "roId": "536332",
-//                                            "title": "Some Activity"
-//                                        }
-//                                    }],
-//                                    "relationships": [{
-//                                        "id": y,
-//                                        "type": "isFundedBy",
-//                                        "startNode": x,
-//                                        "endNode": node.id,
-//                                        "properties": {
-//                                            "from": 1473581532586
-//                                        }
-//                                    }]
-//                                }
-//                            }]
-//                        }],
-//                        "errors": []
-//                    };
-//                    console.log(node.x + "");
-
-                     var maxNodes = 1,
-                         data = neo4jd3.randomD3Data(node, maxNodes);
-                     neo4jd3.updateWithD3Data(data);
-
-//                    var source = node;
-//                    t = d3.zoomTransform(baseSvg.node());
-//                    x = -source.y0;
-//                    y = -source.x0;
-//                    x = x * t.k + viewerWidth / 2;
-//                    y = y * t.k + viewerHeight / 2;
-//                    d3.select('svg').transition().duration(duration).call( zoomListener.transform, d3.zoomIdentity.translate(x,y).scale(t.k) );
+                    var url = base_url + 'registry_object/graph/' + node.properties.roId;
+                    $.getJSON(url, function(data) {
+                        var graph = neo4jd3.neo4jDataToD3Data(data);
+                        neo4jd3.updateWithD3Data(graph);
+                    });
                 },
                 onRelationshipDoubleClick: function(relationship) {
                     console.log('double click on relationship: ' + JSON.stringify(relationship));
-                },
-                zoomFit: false,
-                infoPanel: true,
-                showCount: true
-//                roPreview: true
+                }
             });
         };
 

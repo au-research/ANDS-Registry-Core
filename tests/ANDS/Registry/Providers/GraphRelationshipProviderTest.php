@@ -230,8 +230,85 @@ class GraphRelationshipProviderTest extends \RegistryTestClass
     function get_supernode_group_by_relation_and_class()
     {
         // given a party relates to 25 collection and 25 activity with the same relation
+        $stack = $this->client->stack();
+        $stack = $this->addNode($stack, 'party', 'P');
+        for ($i = 0; $i < 25; $i++) {
+            $stack = $this->addNode($stack, 'collection', "C$i");
+            $stack = $this->addRelation($stack, "C$i", "hasAssociationWith", "P");
+        }
+        for ($i = 0; $i < 25; $i++) {
+            $stack = $this->addNode($stack, 'activity', "A$i");
+            $stack = $this->addRelation($stack, "A$i", "hasAssociationWith", "P");
+        }
+        $this->client->runStack($stack);
+
         // when obtaining graph data
+        $graph = GraphRelationshipProvider::getByID("P");
+        $nodes = $graph['nodes'];
+
         // it should display 2 cluster, 1 for each class
+        $clusters = collect($nodes)->filter(function($item) {
+            return in_array('cluster', $item['labels']);
+        })->toArray();
+        $this->assertCount(2, $clusters);
+    }
+
+    /** @test */
+    function it_should_display_all_nodes_under_threshold_when_clustered()
+    {
+        // given a party relatesTo 25 collections, and relatesTo 1 party, and relatesTo 1 service
+        $stack = $this->client->stack();
+        $stack = $this->addNode($stack, 'party', 'P');
+        for ($i = 0; $i < 25; $i++) {
+            $stack = $this->addNode($stack, 'collection', "C$i");
+            $stack = $this->addRelation($stack, "C$i", "relatesTo", "P");
+        }
+        $stack = $this->addNode($stack, 'party', 'P2');
+        $stack = $this->addRelation($stack, 'P2', 'relatesTo', 'P');
+
+        $stack = $this->addNode($stack, 'service', 'S');
+        $stack = $this->addRelation($stack, 'P', 'relatesTo', 'S');
+
+        $results = $this->client->runStack($stack);
+
+        // when obtaining graph data
+        $graph = GraphRelationshipProvider::getByID("P");
+        $nodes = $graph['nodes'];
+        $links = $graph['links'];
+
+        // there should be 1 cluster
+        $clusters = collect($nodes)->filter(function($item) {
+            return in_array('cluster', $item['labels']);
+        })->toArray();
+        $this->assertCount(1, $clusters);
+
+        // there should be a standalone P2
+        $P2 = collect($nodes)->filter(function($item){
+            return array_key_exists('roId', $item['properties']) && $item['properties']['roId'] == 'P2';
+        })->first();
+        $this->assertNotNull($P2);
+
+        // and there should be a relationship between P and P2
+        $p = $results->get('p')->firstRecord()->get('n');
+        $p2 = $results->get('p2')->firstRecord()->get('n');
+        $P2P2 = collect($links)->filter(function($item) use ($p, $p2){
+            return $item['startNode'] == $p2->identity() && $item['endNode'] == $p->identity();
+        })->first();
+        $this->assertNotNull($P2P2);
+
+        // there should be a standalone S
+        $S = collect($nodes)->filter(function($item){
+            return array_key_exists('roId', $item['properties']) && $item['properties']['roId'] == 'S';
+        })->first();
+        $this->assertNotNull($S);
+
+        // and there should be a relationship between P and S
+        $p = $results->get('p')->firstRecord()->get('n');
+        $s = $results->get('s')->firstRecord()->get('n');
+        $p2s = collect($links)->filter(function($item) use ($p, $s){
+            return $item['startNode'] == $p->identity() && $item['endNode'] == $s->identity();
+        })->first();
+        $this->assertNotNull($p2s);
     }
 
     /**
