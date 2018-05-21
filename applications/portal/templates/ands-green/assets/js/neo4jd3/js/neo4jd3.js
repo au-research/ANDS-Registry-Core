@@ -164,14 +164,14 @@ function Neo4jD3(_selector, _options) {
                 }
             })
                    .on('click', function(d) {
-                       d.fx = d.fy = null;
+                       //d.fx = d.fy = null;
 
                        if (typeof options.onNodeClick === 'function') {
                            options.onNodeClick(d);
                        }
                    })
                    .on('dblclick', function(d) {
-                       stickNode(d);
+                       //stickNode(d);
 
                        if (typeof options.onNodeDoubleClick === 'function') {
                            options.onNodeDoubleClick(d);
@@ -254,18 +254,26 @@ function Neo4jD3(_selector, _options) {
                    .style('stroke', function(d) {
                        return options.nodeOutlineFillColor ? class2darkenColor(options.nodeOutlineFillColor) : class2darkenColor(d.labels[0]);
                    })
-                   .append('title').text(function(d) {
-                       return toString(d);
-                   });
+                .attr('tip', function(d) {
+                    return toHtml(d);
+                });
+
+               // .append('title').text(function(d) {
+               //     return toString(d);
+               // });
+    }
+
+    function toHtml(node) {
+        return '<a href="'+base_url+'/'+node.properties.roId+'">' + node.properties.title + "("+node.id+")" + "</a>";
     }
 
     function appendRingToNode(node) {
         return node.append('circle')
                    .attr('class', 'ring')
-                   .attr('r', options.nodeRadius * 1.16)
-                   .append('title').text(function(d) {
-                       return toString(d);
-                   });
+                   .attr('r', options.nodeRadius * 1.16);
+                   // .append('title').text(function(d) {
+                   //     return toString(d);
+                   // });
     }
 
     function appendTextToNode(node) {
@@ -929,6 +937,30 @@ function Neo4jD3(_selector, _options) {
     }
 
     function updateWithD3Data(d3Data) {
+
+        // remove the nodes that already exists
+        if (nodes.length) {
+            var ids = nodes.map(function(node) {
+                return node.id;
+            });
+            d3Data.nodes = d3Data.nodes.filter(function(node) {
+                return ids.indexOf(node.id) === -1;
+            });
+            d3Data.nodes = d3Data.nodes.map(function(node) {
+                // manipulate new node for new
+                return node;
+            });
+        }
+
+        if (relationships.length) {
+            var ids = relationships.map(function(link) {
+                return link.id;
+            });
+            d3Data.relationships = d3Data.relationships.filter(function(link) {
+                return ids.indexOf(link.id) === -1;
+            });
+        }
+
         updateNodesAndRelationships(d3Data.nodes, d3Data.relationships);
     }
 
@@ -955,6 +987,12 @@ function Neo4jD3(_selector, _options) {
 
     function updateNodes(n) {
         Array.prototype.push.apply(nodes, n);
+
+        nodes.map(function(node) {
+            node.x = event.clientX;
+            node.y = event.clientY;
+            return node;
+        });
 
         node = svgNodes.selectAll('.node')
                        .data(nodes, function(d) { return d.id; });
