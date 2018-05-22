@@ -85,6 +85,9 @@ body {
 .relationship line {
   stroke: #aaa;
 }
+.relationship-new .overlay {
+  fill: #f58000 !important;
+}
 .relationship .outline {
   cursor: default;
 }
