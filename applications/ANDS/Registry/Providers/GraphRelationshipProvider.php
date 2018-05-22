@@ -20,6 +20,16 @@ class GraphRelationshipProvider implements RegistryContentProvider
     protected static $enableGrantsNetwork = true;
     protected static $enableInterlinking = true;
 
+    public static $flippableRelation = [
+        'describes' => 'isDescribedBy',
+        'hasPart' => 'isPartOf',
+        'hasCollector' => 'isCollectorOf',
+        'funds' => 'isFundedBy',
+        'isFunderOf' => 'isFundedBy',
+        'outputs' => 'isOutputOf',
+        'hasOutput' => 'isOutputOf'
+    ];
+
     /**
      * Process the object and (optionally) store processed data
      *
@@ -155,7 +165,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
         $links = [];
         $client = static::db();
         $result = $client->run('
-            MATCH (n)-[r:identicalTo|isPartOf|:hasPart|:produces|:isFundedBy|:funds*1..3]-(n2) 
+            MATCH (n)-[r:identicalTo|isPartOf|:hasPart|:isProductOf|:isFundedBy*1..]->(n2) 
             WHERE n.roId={id}
             RETURN * LIMIT 100', [
                 'id' => $id
