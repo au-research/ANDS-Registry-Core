@@ -303,18 +303,25 @@ function Neo4jD3(_selector, _options) {
 
     function appendRelationship() {
         return relationship.enter()
-                           .append('g')
-                           .attr('class', 'relationship')
-                           .on('dblclick', function(d) {
-                               if (typeof options.onRelationshipDoubleClick === 'function') {
-                                   options.onRelationshipDoubleClick(d);
-                               }
-                           })
-                           .on('mouseenter', function(d) {
-                               if (info) {
-                                   updateInfo(d);
-                               }
-                           });
+            .append('g')
+            .attr('class', 'relationship')
+            .attr('mtip', function (d) {
+                return relationshipToHtml(d)
+            })
+            .on('dblclick', function (d) {
+                if (typeof options.onRelationshipDoubleClick === 'function') {
+                    options.onRelationshipDoubleClick(d);
+                }
+            })
+            .on('mouseenter', function (d) {
+                if (info) {
+                    updateInfo(d);
+                }
+            });
+    }
+
+    function relationshipToHtml(d) {
+        return d.type;
     }
 
     function appendOutlineToRelationship(r) {
@@ -940,25 +947,41 @@ function Neo4jD3(_selector, _options) {
 
         // remove the nodes that already exists
         if (nodes.length) {
-            var ids = nodes.map(function(node) {
+            var ids = nodes.map(function (node) {
                 return node.id;
             });
-            d3Data.nodes = d3Data.nodes.filter(function(node) {
+            d3Data.nodes = d3Data.nodes.filter(function (node) {
                 return ids.indexOf(node.id) === -1;
-            });
-            d3Data.nodes = d3Data.nodes.map(function(node) {
-                // manipulate new node for new
-                return node;
             });
         }
 
         if (relationships.length) {
-            var ids = relationships.map(function(link) {
+            var ids = relationships.map(function (link) {
                 return link.id;
             });
-            d3Data.relationships = d3Data.relationships.filter(function(link) {
+
+            // remove the relationships that is already here
+            d3Data.relationships = d3Data.relationships.filter(function (link) {
                 return ids.indexOf(link.id) === -1;
             });
+        }
+
+        d3Data.relationships = d3Data.relationships.map(function (link) {
+            link.label = link.type;
+            return link;
+        });
+
+        // deduplicate relationships that has the same startNode and endNode
+        for (var i = 0; i < d3Data.relationships.length ;i++) {
+            var n = d3Data.relationships[i];
+            if (!n) continue;
+            var dup = d3Data.relationships.find(function(node) {
+                return node.startNode === n.startNode && node.endNode === n.endNode && node.id !== n.id;
+            });
+            if (!dup) continue;
+            n.type += ', '+ dup.type;
+            var index = d3Data.relationships.indexOf(dup);
+            d3Data.relationships.splice(index, 1);
         }
 
         updateNodesAndRelationships(d3Data.nodes, d3Data.relationships);
