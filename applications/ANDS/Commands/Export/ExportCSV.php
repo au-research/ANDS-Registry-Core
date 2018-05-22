@@ -7,6 +7,7 @@ namespace ANDS\Commands\Export;
 use ANDS\Commands\ANDSCommand;
 use ANDS\DataSource;
 use ANDS\Registry\IdentifierRelationshipView;
+use ANDS\Registry\Providers\GraphRelationshipProvider;
 use ANDS\Registry\RelationshipView;
 use ANDS\RegistryObject;
 use ANDS\RegistryObject\Identifier;
@@ -219,11 +220,15 @@ class ExportCSV extends ANDSCommand
                     continue;
                 }
 
+                // TODO: Flip relation if met
+
                 $relation = [
                     ':START_ID' => $relation->from_id,
                     ':END_ID' => $relation->to_id,
                     ':TYPE' => $type
                 ];
+
+                $relation = $this->postProcessRelation($relation);
 
                 if ($first) {
                     fputcsv($fp, array_keys($relation));
@@ -237,6 +242,21 @@ class ExportCSV extends ANDSCommand
         });
         $progressBar->finish();
         fclose($fp);
+
+        $this->log("Direct Relations written to $filePath", "info");
+    }
+
+    private function postProcessRelation($relation)
+    {
+        $flippableRelations = GraphRelationshipProvider::$flippableRelation;
+        if (in_array($relation[':TYPE'], array_keys($flippableRelations))) {
+            return [
+                ':START_ID' => $relation[':END_ID'],
+                ':END_ID' => $relation[':START_ID'],
+                ':TYPE' => $flippableRelations[$relation[':TYPE']]
+            ];
+        }
+        return $relation;
     }
 
     private function exportPrimaryRelations()
@@ -259,6 +279,8 @@ class ExportCSV extends ANDSCommand
                     ':END_ID' => $relation->to_id,
                     ':TYPE' => $type
                 ];
+
+                $relation = $this->postProcessRelation($relation);
 
                 if ($first) {
                     fputcsv($fp, array_keys($relation));
@@ -343,15 +365,19 @@ class ExportCSV extends ANDSCommand
                         ':TYPE' => 'identicalTo'
                     ];
 
+                    $relation = $this->postProcessRelation($relation);
+
                     if ($first) {
                         fputcsv($fp, array_keys($relation));
                         $first = false;
                     }
                     fputcsv($fp, $relation);
                 }
+                $progressBar->advance(1);
             }
-
-            $progressBar->advance(1);
+            $progressBar->finish();
+            fclose($fp);
+            $this->log("Identical writen to $filePath\n");
         }
 
     }
@@ -359,9 +385,15 @@ class ExportCSV extends ANDSCommand
     private $relatedInfoRelations =  [ [':START_ID', ':END_ID', ':TYPE'] ];
     private function exportRelatedInfoRelations()
     {
+        $name = "relations-relatedInfo";
+        $this->wipe("$name");
+        $filePath = $this->importPath."$name.csv";
+        $fp = fopen($filePath, "a");
+
         $allRelations = IdentifierRelationshipView::orderBy('from_id');
         $progressBar = new ProgressBar($this->getOutput(), $allRelations->count());
-        $allRelations->chunk(5000, function($relations) use($progressBar) {
+        $first = true;
+        $allRelations->chunk(5000, function($relations) use($progressBar, $fp, &$first) {
             foreach ($relations as $relation) {
                 $type = $relation->relation_type;
 
@@ -369,18 +401,24 @@ class ExportCSV extends ANDSCommand
                     continue;
                 }
 
-                $this->relatedInfoRelations[] = [
-                    $relation->from_id,
-                    $relation->to_id ? $relation->to_id : $relation->to_identifier,
-                    $type
+                $rel = [
+                    ':START_ID' => $relation->from_id,
+                    ':END_ID' => $relation->to_id ? $relation->to_id : $relation->to_identifier,
+                    ':TYPE' => $type
                 ];
+                $rel = $this->postProcessRelation($rel);
+
+                if ($first) {
+                    fputcsv($fp, array_keys($rel));
+                    $first = false;
+                }
+                fputcsv($fp, $rel);
+
                 $progressBar->advance(1);
             }
         });
         $progressBar->finish();
-
-        $this->writeToCSV($this->relatedInfoRelations, "relations-relatedInfo");
-        unset($this->relatedInfoRelations);
+        $this->log("Related Info Relations has been written to $filePath\n");
     }
 
     private $relatedInfoNodes = [ ['identifier:ID', 'type', 'relatedInfoType',':LABEL'] ];

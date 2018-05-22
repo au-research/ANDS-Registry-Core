@@ -137,7 +137,7 @@ class GraphRelationshipProviderTest extends \RegistryTestClass
             'party' => ['C']
         ]);
         $stack = $this->addRelations($stack, [
-            ["B", "produces", "A"],
+            ["A", "isProductOf", "B"],
             ["B", "isFundedBy", "C"]
         ]);
         $results = $this->client->runStack($stack);
@@ -167,9 +167,9 @@ class GraphRelationshipProviderTest extends \RegistryTestClass
         ]);
         $stack = $this->addRelations($stack, [
             ["A", "identicalTo", "A2"],
-            ["B", "produces", "A2"],
+            ["A2", "isProductOf", "B"],
             ["B", "identicalTo", "B2"],
-            ["C", "funds", "B2"]
+            ["B2", "isFundedBy", "C"]
         ]);
         $results = $this->client->runStack($stack);
 
@@ -180,10 +180,10 @@ class GraphRelationshipProviderTest extends \RegistryTestClass
         $links = $graph['links'];
 
         // links should include b2<-c
-        $c2b = collect($links)->filter(function($item) use ($b2, $c){
-            return $item['startNode'] == $c->identity() && $item['endNode'] == $b2->identity();
+        $b22c = collect($links)->filter(function($item) use ($b2, $c){
+            return $item['startNode'] == $b2->identity() && $item['endNode'] == $c->identity();
         })->first();
-        $this->assertEquals("funds", $c2b['type']);
+        $this->assertEquals("isFundedBy", $b22c['type']);
     }
 
     /** @test */
