@@ -222,8 +222,6 @@ jQuery(document).ready(function( $ ) {
         createCookie(name,"",-1);
     }
 
-
-
     //
     ///////////////////
 

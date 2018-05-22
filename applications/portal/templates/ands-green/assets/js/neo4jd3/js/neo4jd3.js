@@ -11,6 +11,7 @@ module.exports = neo4jd3;
 'use strict';
 
 function Neo4jD3(_selector, _options) {
+
     var container, graph, info, node, nodes, relationship, relationshipOutline, relationshipOverlay, relationshipText, relationships, selector, simulation, svg, svgNodes, svgRelationships, svgScale, svgTranslate,
         classes2colors = {},
         justLoaded = false,
@@ -158,11 +159,11 @@ function Neo4jD3(_selector, _options) {
                     .attr('href', function(d) {
                         return "";
                     })
-            .attr('ro_id', function(d) {
-                if (options.roPreview) {
-                    return d.properties.roId;
-                }
-            })
+                    .attr('ro_id', function(d) {
+                        if (options.roPreview) {
+                            return d.properties.roId;
+                        }
+                    })
                    .on('click', function(d) {
                        //d.fx = d.fy = null;
 
@@ -185,6 +186,9 @@ function Neo4jD3(_selector, _options) {
                        if (typeof options.onNodeMouseEnter === 'function') {
                            options.onNodeMouseEnter(d);
                        }
+
+                       mouseEnter(d);
+
                    })
                    .on('mouseleave', function(d) {
                        if (info) {
@@ -194,11 +198,58 @@ function Neo4jD3(_selector, _options) {
                        if (typeof options.onNodeMouseLeave === 'function') {
                            options.onNodeMouseLeave(d);
                        }
+
+                       mouseOut(d);
                    })
                    .call(d3.drag()
                            .on('start', dragStarted)
                            .on('drag', dragged)
                            .on('end', dragEnded));
+    }
+
+    function mouseEnter(d) {
+        svg.selectAll("path")
+            .filter(function(n) {
+                return (n.source === d) || (n.target === d);
+            })
+            .style('fill', '#f58000');
+
+        // svg.selectAll('.relationship text')
+        //     .filter(function (n) {
+        //         return (n.source === d) || (n.target === d);
+        //     }).style('fill', '#f58000');
+
+        var rel = relationships.filter(function(r) {
+            return (r.source === d) || (r.target === d);
+        });
+
+        var connected = rel.map(function(r){
+            return r.startNode;
+        }).concat(rel.map(function(r){
+            return r.endNode;
+        }));
+
+        svg.selectAll('.outline')
+            .style('opacity', function(n) {
+                if (n.id === d.id || connected.indexOf(n.id) > -1) {
+                    return '1';
+                } else if (n.source === d || n.target === d ) {
+                    return '1';
+                } else {
+                    return '0.2';
+                }
+            });
+    }
+
+    function mouseOut(d) {
+        svg.selectAll("path")
+            .style('fill', "rgb(165, 171, 182)");
+
+        // svg.selectAll('.relationship text')
+        //     .style('fill', 'rgb(165, 171, 182)');
+
+        svg.selectAll('.outline')
+            .style('opacity', '1');
     }
 
     function appendNodeToGraph() {
@@ -304,7 +355,13 @@ function Neo4jD3(_selector, _options) {
     function appendRelationship() {
         return relationship.enter()
             .append('g')
-            .attr('class', 'relationship')
+            .attr('class', function(d) {
+                var classes = ['relationship'];
+                if (d.new) {
+                    classes.push('relationship-new');
+                }
+                return classes.join(' ');
+            })
             .attr('mtip', function (d) {
                 return relationshipToHtml(d)
             })
@@ -960,9 +1017,21 @@ function Neo4jD3(_selector, _options) {
                 return link.id;
             });
 
+            // all old links will not be NEW
+            relationships = relationships.map(function(link){
+                link.new = false;
+                return link;
+            });
+
             // remove the relationships that is already here
             d3Data.relationships = d3Data.relationships.filter(function (link) {
                 return ids.indexOf(link.id) === -1;
+            });
+
+            // all new links will be NEW
+            d3Data.relationships = d3Data.relationships.map(function(link){
+                link.new = true;
+                return link;
             });
         }
 
