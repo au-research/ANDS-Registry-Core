@@ -23,7 +23,7 @@
                     'service': 'flask',
                     'cluster': 'cubes'
                 },
-                minCollision: 60,
+                minCollision: 70,
                 neo4jDataUrl: base_url + 'registry_object/graph/' + roID,
                 nodeRadius: 25,
                 zoomFit: false,

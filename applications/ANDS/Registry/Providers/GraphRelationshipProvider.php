@@ -14,6 +14,11 @@ class GraphRelationshipProvider implements RegistryContentProvider
 {
 
     protected static $threshold = 20;
+    protected static $limit = 100;
+    protected static $enableIdentical = true;
+    protected static $enableCluster = true;
+    protected static $enableGrantsNetwork = true;
+    protected static $enableInterlinking = true;
 
     /**
      * Process the object and (optionally) store processed data
@@ -64,41 +69,45 @@ class GraphRelationshipProvider implements RegistryContentProvider
 
         // TODO: if not found, return default
 
-        $directQuery = "MATCH (n)-[:identicalTo*0..]-(identical) WHERE n.roId={id}
+        $directQuery = "MATCH (n)-[r]-(direct) WHERE n.roId={id}";
+        if (static::$enableIdentical) {
+            $directQuery = "MATCH (n)-[:identicalTo*0..]-(identical) WHERE n.roId={id}
             WITH collect(identical.roId)+collect(n.roId) AS identicalIDs
             MATCH (n)-[r]-(direct) WHERE n.roId IN identicalIDs";
-
-        $counts = static::getCountsByRelationshipsType($id, $directQuery);
-
-        $over = collect($counts)->filter(function($item) {
-            return $item['count'] > static::$threshold;
-        })->toArray();
-
-        $under = collect($counts)->filter(function($item) {
-            return $item['count'] <= static::$threshold;
-        })->toArray();
-
-        // get all underThreshold relations that have been clustered
-        if (count($under)) {
-            $underRelationship = static::getUnderRelationships($id, $directQuery, $under);
-            $nodes = collect($nodes)->merge($underRelationship['nodes'])->unique()->toArray();
-            $links = collect($links)->merge($underRelationship['links'])->unique()->toArray();
         }
 
-        if (count($over) > 0) {
-            $clusterRelationships = static::getClusterRelationships($node, $over);
-            $nodes = collect($nodes)->merge($clusterRelationships['nodes'])->unique()->toArray();
-            $links = collect($links)->merge($clusterRelationships['links'])->unique()->toArray();
+        if (static::$enableCluster) {
+            $counts = static::getCountsByRelationshipsType($id, $directQuery);
 
-            $overThresholdRelationships = collect($over)->pluck('relation')->toArray();
-            $directQuery .= ' AND NOT TYPE(r) IN ["'. implode('","', $overThresholdRelationships).'"]';
+            $over = collect($counts)->filter(function($item) {
+                return $item['count'] > static::$threshold;
+            })->toArray();
+
+            $under = collect($counts)->filter(function($item) {
+                return $item['count'] <= static::$threshold;
+            })->toArray();
+
+            // get all underThreshold relations that have been clustered
+            if (count($under)) {
+                $underRelationship = static::getUnderRelationships($id, $directQuery, $under);
+                $nodes = collect($nodes)->merge($underRelationship['nodes'])->unique()->toArray();
+                $links = collect($links)->merge($underRelationship['links'])->unique()->toArray();
+            }
+
+            if (count($over) > 0) {
+                $clusterRelationships = static::getClusterRelationships($node, $over);
+                $nodes = collect($nodes)->merge($clusterRelationships['nodes'])->unique()->toArray();
+                $links = collect($links)->merge($clusterRelationships['links'])->unique()->toArray();
+
+                $overThresholdRelationships = collect($over)->pluck('relation')->toArray();
+                $directQuery .= ' AND NOT TYPE(r) IN ["'. implode('","', $overThresholdRelationships).'"]';
+            }
         }
-
 
         // get direct relationships
         $result = $client->run(
             "$directQuery
-            RETURN * LIMIT 100;",[
+            RETURN * LIMIT ".static::$limit.";",[
                 'id' => $id
             ]);
 
@@ -109,26 +118,30 @@ class GraphRelationshipProvider implements RegistryContentProvider
         }
 
         // grants network
-        $grantsNetwork = static::getGrantsNetwork($id);
-        $nodes = collect($nodes)->merge($grantsNetwork['nodes'])->unique()->toArray();
-        $links = collect($links)->merge($grantsNetwork['links'])->unique()->toArray();
+        if (static::$enableGrantsNetwork) {
+            $grantsNetwork = static::getGrantsNetwork($id);
+            $nodes = collect($nodes)->merge($grantsNetwork['nodes'])->unique()->toArray();
+            $links = collect($links)->merge($grantsNetwork['links'])->unique()->toArray();
+        }
 
         // get relationships of records in result set
-        $allNodesIDs = collect($nodes)
-            ->pluck('properties')
-            ->pluck('roId')
-            ->filter(function ($item) use ($id){
-                return $item != $id;
-            })
-            ->map(function($item) {
-                return "$item";
-            })->toArray();
-        $allNodesIDs = '["'. implode('","', $allNodesIDs).'"]';
+        if (static::$enableInterlinking) {
+            $allNodesIDs = collect($nodes)
+                ->pluck('properties')
+                ->pluck('roId')
+                ->filter(function ($item) use ($id){
+                    return $item != $id;
+                })
+                ->map(function($item) {
+                    return "$item";
+                })->toArray();
+            $allNodesIDs = '["'. implode('","', $allNodesIDs).'"]';
 
-        $links = collect($links)
-            ->merge(static::getRelationshipsBetweenIDs($allNodesIDs))
-            ->unique()
-            ->toArray();
+            $links = collect($links)
+                ->merge(static::getRelationshipsBetweenIDs($allNodesIDs))
+                ->unique()
+                ->toArray();
+        }
 
         return [
             'nodes' => $nodes,
@@ -142,7 +155,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
         $links = [];
         $client = static::db();
         $result = $client->run('
-            MATCH (n)-[r:identicalTo|isPartOf|:hasPart|:produces|:isFundedBy|:funds*1..]-(n2) 
+            MATCH (n)-[r:identicalTo|isPartOf|:hasPart|:produces|:isFundedBy|:funds*1..3]-(n2) 
             WHERE n.roId={id}
             RETURN * LIMIT 100', [
                 'id' => $id

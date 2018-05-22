@@ -265,6 +265,28 @@ jQuery(document).ready(function( $ ) {
                 classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'
             }
         }, event); // Pass through our original event to qTip
+    }).on('mouseover', '*[mtip]', function(event){
+        $(this).qtip({
+            overwrite: false, // Make sure the tooltip won't be overridden once created
+            content: $(this).attr('mtip'),
+            show: {
+                event: event.type,
+                ready: true
+            },
+            hide: {
+                delay: 200,
+                fixed: true
+            },
+            position: {
+                target: 'mouse',
+                my : 'bottom center',
+                at : 'top center',
+                viewport: $(window)
+            },
+            style: {
+                classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'
+            }
+        }, event); // Pass through our original event to qTip
     }).on('mouseover', '*[xtip]', function(event){
         var cut = $(this).attr('cut') ? $(this).attr('cut') : 30;
         var content = $(this).attr('xtip');
