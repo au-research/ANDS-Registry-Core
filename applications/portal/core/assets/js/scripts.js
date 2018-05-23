@@ -235,24 +235,21 @@ jQuery(document).ready(function( $ ) {
         $('.listItem').removeClass('hidden');
     }).on('mouseover', '*[tip]', function(event){
         // Bind the qTip within the event handler
-        var my = $(this).attr('my');
-        var at = $(this).attr('at');
-        if(!my){
-            my = 'bottom center';
-        }
-        if(!at){
-            at = 'top center';
-        }
+        var my = $(this).attr('my') ? $(this).attr('my') : 'bottom center';
+        var at = $(this).attr('at') ? $(this).attr('at') : 'top center';
+        var delay = $(this).attr('tip-delay') ? $(this).attr('tip-delay') : 0;
+
         $(this).qtip({
             overwrite: false, // Make sure the tooltip won't be overridden once created
             content: $(this).attr('tip'),
             show: {
-                event: event.type, // Use the same show event as the one that triggered the event handler
-                ready: true // Show the tooltip as soon as it's bound, vital so it shows up the first time you hover!
+                delay: delay,
+                event: event.type,
+                ready: true
             },
             hide: {
                 delay: 200,
-                fixed: true,
+                fixed: true
             },
             position: {
                 my: my, // Use the corner...
