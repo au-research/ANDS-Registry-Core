@@ -17,11 +17,10 @@
 //            console.log(base_url + 'registry_object/graph/' + roID)
             var neo4jd3 = new Neo4jd3('#graph-viz', {
                 icons: {
-                    'collection': 'folder',
+                    'collection': 'folder-open',
                     'activity' : 'flask',
                     'party' : 'user',
-                    'service': 'gear',
-                    'cluster': 'cubes',
+                    'service': 'wrench',
                     'publication': 'book',
                     'website': 'globe'
                 },
