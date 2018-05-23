@@ -21,7 +21,9 @@
                     'activity' : 'flask',
                     'party' : 'user',
                     'service': 'gear',
-                    'cluster': 'cubes'
+                    'cluster': 'cubes',
+                    'publication': 'book',
+                    'website': 'globe'
                 },
                 minCollision: 60,
                 neo4jDataUrl: base_url + 'registry_object/graph/' + roID,

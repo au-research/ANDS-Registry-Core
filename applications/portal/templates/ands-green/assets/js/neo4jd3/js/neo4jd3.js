@@ -223,18 +223,15 @@ function Neo4jD3(_selector, _options) {
 
         // highlight the nodes
         node.selectAll('circle')
-            .transition()
             .filter('.outline')
             .style('opacity', opacityForNode);
 
         // highlight the count
         node.selectAll('text.count')
-            .transition()
             .style('opacity', opacityForNode);
 
         // highlight the paths
         relationship
-            .transition()
             .style('opacity', function(r) {
                 return rels.indexOf(r) > -1 ? '1' : '0.2';
             });
@@ -252,12 +249,10 @@ function Neo4jD3(_selector, _options) {
         relationship.style('opacity', '1');
 
         node.selectAll('circle')
-            .transition()
             .filter('.outline')
             .style('opacity', '1');
 
         node.selectAll('text.count')
-            .transition()
             .style('opacity', '1');
     }
 
@@ -284,24 +279,24 @@ function Neo4jD3(_selector, _options) {
 
     function appendCountToNode(node) {
           return node.append('text')
-                   .attr('class', function(d) {
-                       return 'count';
-                   })
-                   .attr('fill', '#645E9D')
-                   .attr('font-size', function(d) {
-                       return icon(d) ? (options.nodeRadius + 'px') : '10px';
-                   })
-                   .attr('pointer-events', 'none')
-                   .attr('text-anchor', 'middle')
-                   .attr('x', function(d) {
-                       return "0px";
-                   })
-                   .attr('y', function(d) {
-                       return "30px";
-                   })
-                   .html(function(d) {
-                       return d.properties.count ? d.properties.count : '';
-                   });
+              .attr('class', function (d) {
+                  return 'count';
+              })
+              .attr('fill', '#645E9D')
+              .attr('font-size', function (d) {
+                  return icon(d) ? (options.nodeRadius + 'px') : '10px';
+              })
+              .attr('pointer-events', 'none')
+              .attr('text-anchor', 'middle')
+              .attr('x', function (d) {
+                  return "0px";
+              })
+              .attr('y', function (d) {
+                  return "30px";
+              })
+              .html(function (d) {
+                  return d.properties.count ? d.properties.count : '';
+              });
     }
 
     function appendOutlineToNode(node) {
@@ -309,10 +304,12 @@ function Neo4jD3(_selector, _options) {
             .attr('class', 'outline')
             .attr('r', options.nodeRadius)
             .style('fill', function (d) {
-                return options.nodeOutlineFillColor ? options.nodeOutlineFillColor : class2color(d.labels[0]);
+                var color = getNodeFill(d, options.colors);
+                return options.nodeOutlineFillColor ? options.nodeOutlineFillColor : color;
             })
             .style('stroke', function (d) {
-                return options.nodeOutlineFillColor ? class2darkenColor(options.nodeOutlineFillColor) : class2darkenColor(d.labels[0]);
+                var color = getNodeFill(d, options.colors);
+                return options.nodeOutlineFillColor ? class2darkenColor(options.nodeOutlineFillColor) : d3.rgb(color).darker(1);
             })
             .attr('tip', function (d) {
                 return toHtml(d);
@@ -320,8 +317,35 @@ function Neo4jD3(_selector, _options) {
             .attr('tip-delay', 700);
     }
 
+    Array.prototype.has = function(f) {
+        return this.indexOf(f) > -1;
+    };
+
+    function getNodeFill(node, colors) {
+        if (node.labels.has('collection')) {
+            return colors[0];
+        } else if(node.labels.has('party')) {
+            return colors[1];
+        } else if (node.labels.has('activity')) {
+            return colors[2];
+        } else if (node.labels.has('service')) {
+            return colors[3];
+        } else if (node.labels.has('publication')) {
+            return colors[4];
+        } else if (node.labels.has('website')) {
+            return colors[6];
+        } else {
+            return colors[9];
+        }
+    }
+
     function toHtml(node) {
-        return '<a href="'+base_url+'/'+node.properties.roId+'">' + node.properties.title + "("+node.id+")" + "</a>";
+        var html = '<div class="swatch-white">';
+        html += '<a href="'+base_url+'/'+node.properties.roId+'">' + node.properties.title + "("+node.id+")" + "</a>";
+        html += '<p>LABELS: '+JSON.stringify(node.labels)+'</p>';
+        html += '<p>PROPERTIES: '+JSON.stringify(node.properties)+'</p>';
+        html += '</div>';
+        return html;
     }
 
     function appendRingToNode(node) {
@@ -382,7 +406,6 @@ function Neo4jD3(_selector, _options) {
 
         // highlight the nodes
         node.selectAll('circle')
-            .transition()
             .filter('.outline')
             .style('opacity', function(d) {
                 return (d === rel.source || d === rel.target) ? '1' : '0.2';
@@ -390,14 +413,12 @@ function Neo4jD3(_selector, _options) {
 
         // highlight the count
         node.selectAll('text.count')
-            .transition()
             .style('opacity', function(d) {
                 return (d === rel.source || d === rel.target) ? '1' : '0.2';
             });
 
         // highlight the paths
         relationship
-            .transition()
             .style('opacity', function(r) {
                 return rel === r ? '1' : '0.2';
             });
@@ -557,15 +578,10 @@ function Neo4jD3(_selector, _options) {
     function icon(d) {
         var code;
 
-        // icon by label mapping. ANDS Business Rule
-        var mapping =  {
-            'collection': 'folder',
-            'activity' : 'flask',
-            'party' : 'user',
-            'party-group': 'user',
-            'service': 'gear',
-            'cluster': 'cubes'
-        };
+        // ANDS Business Logic
+        if (d.labels.has('party') && d.labels.has('group')) {
+            return options.iconMap['group,users'];
+        }
 
         // find first icon
         var iconable = d.labels.find(function(label, index) {

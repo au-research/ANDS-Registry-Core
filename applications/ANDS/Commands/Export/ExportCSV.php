@@ -175,7 +175,7 @@ class ExportCSV extends ANDSCommand
 
                 $row = [
                     "roId:ID" => $record->id,
-                    ":LABEL" => implode(";", ["RegistryObject", $record->class]),
+                    ":LABEL" => implode(";", ["RegistryObject", $record->class, $record->type]),
                     "key" => $record->key,
                     "type" => $record->type,
                     "group" => $record->group,
@@ -421,31 +421,49 @@ class ExportCSV extends ANDSCommand
         $this->log("Related Info Relations has been written to $filePath\n");
     }
 
-    private $relatedInfoNodes = [ ['identifier:ID', 'type', 'relatedInfoType',':LABEL'] ];
     private function exportRelatedInfoNodes()
     {
-        $allRelations = IdentifierRelationshipView::whereNull('to_id')->distinct('to_identifier')->orderBy('from_id');
+        $name = "nodes-relatedInfo";
+        $this->wipe("$name");
+        $filePath = $this->importPath."$name.csv";
+        $fp = fopen($filePath, "a");
+
+        $allRelations = IdentifierRelationshipView::whereNull('to_id')->distinct('to_identifier');
         $progressBar = new ProgressBar($this->getOutput(), $allRelations->count());
+
         $done = [];
-        $allRelations->chunk(5000, function($relations) use($progressBar, &$done) {
+        $first = true;
+        $allRelations->chunk(5000, function($relations) use($progressBar, $fp, &$done, &$first) {
             foreach ($relations as $relation) {
                 if (in_array($relation->to_identifier, $done)) {
+                    $progressBar->advance(1);
                     continue;
                 }
-                $this->relatedInfoNodes[] = [
-                    $relation->to_identifier,
-                    $relation->to_identifier_type,
-                    $relation->to_related_info_type,
-                    'RelatedInfo'
+
+                $row = [
+                    'identifier:ID' => $relation->to_identifier,
+                    ':LABEL' => implode(';', ['RelatedInfo', $relation->to_identifier_type, $relation->to_related_info_type]),
+                    'type' => $relation->to_identifier_type,
+                    'relatedInfoType' => $relation->to_related_info_type
                 ];
+
+                // insert header if first
+                if ($first) {
+                    fputcsv($fp, array_keys($row));
+                    $first = false;
+                }
+
+                // stream to file
+                fputcsv($fp, $row);
                 $done[] = $relation->to_identifier;
+
                 $progressBar->advance(1);
             }
         });
         $progressBar->finish();
 
-        $this->writeToCSV($this->relatedInfoNodes, "nodes-relatedInfo");
-        unset($this->relatedInfoNodes);
+        fclose($fp);
+        $this->log("Related Info nodes written to $filePath\n");
     }
 
 }
