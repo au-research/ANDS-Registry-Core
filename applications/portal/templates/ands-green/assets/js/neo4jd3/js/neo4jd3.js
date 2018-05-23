@@ -279,21 +279,16 @@ function Neo4jD3(_selector, _options) {
 
     function appendCountToNode(node) {
           return node.append('text')
-              .attr('class', function (d) {
-                  return 'count';
-              })
-              .attr('fill', '#645E9D')
+              .attr('class', 'count')
+              .attr('fill', 'white')
+              // .attr('stroke', '#645E9D')
               .attr('font-size', function (d) {
-                  return icon(d) ? (options.nodeRadius + 'px') : '10px';
+                  return icon(d) ? (options.nodeRadius * 0.7 + 'px') : '10px';
               })
               .attr('pointer-events', 'none')
               .attr('text-anchor', 'middle')
-              .attr('x', function (d) {
-                  return "0px";
-              })
-              .attr('y', function (d) {
-                  return "30px";
-              })
+              .attr('x', '0px')
+              .attr('y', "25px")
               .html(function (d) {
                   return d.properties.count ? d.properties.count : '';
               });
@@ -302,7 +297,12 @@ function Neo4jD3(_selector, _options) {
     function appendOutlineToNode(node) {
         return node.append('circle')
             .attr('class', 'outline')
-            .attr('r', options.nodeRadius)
+            .attr('r', function(d){
+                if (d.properties.count) {
+                    return options.nodeRadius * 1.3;
+                }
+                return options.nodeRadius
+            })
             .style('fill', function (d) {
                 var color = getNodeFill(d, options.colors);
                 return options.nodeOutlineFillColor ? options.nodeOutlineFillColor : color;
@@ -341,11 +341,55 @@ function Neo4jD3(_selector, _options) {
 
     function toHtml(node) {
         var html = '<div class="swatch-white">';
-        html += '<a href="'+base_url+'/'+node.properties.roId+'">' + node.properties.title + "("+node.id+")" + "</a>";
-        html += '<p>LABELS: '+JSON.stringify(node.labels)+'</p>';
-        html += '<p>PROPERTIES: '+JSON.stringify(node.properties)+'</p>';
+        html += '<h4>';
+        html += '<i class="fa '+getFontIconForNode(node)+' icon-portal" style="margin-right:4px;"></i>';
+        if (node.properties.title) {
+            html += '<a href="'+base_url+'/'+node.properties.roId+'">' + node.properties.title + '</a>';
+        } else if (node.properties.identifier) {
+            html += node.properties.identifier;
+        } else if (node.properties.count) {
+            html += node.properties.count + " related " + getReadableTypeForNode(node);
+        }
+        html += '</h4>';
+        // html += '<p>LABELS: '+JSON.stringify(node.labels)+'</p>';
+        // html += '<p>PROPERTIES: '+JSON.stringify(node.properties)+'</p>';
         html += '</div>';
         return html;
+    }
+
+    function getReadableTypeForNode(node) {
+        if (node.labels.has('dataset')) {
+            return 'datasets';
+        } else if(node.labels.has('party') && (node.labels.has('group'))) {
+            return 'organisations';
+        } else if (node.labels.has('party')) {
+            return 'researchers';
+        } else if (node.labels.has('activity')) {
+            return 'activities';
+        } else if (node.labels.has('service')) {
+            return 'services';
+        }
+
+        return node.labels[0];
+    }
+
+    function getFontIconForNode(node) {
+        if (node.labels.has('collection')) {
+            return 'fa-folder-open';
+        } else if(node.labels.has('party') && (node.labels.has('group'))) {
+            return 'fa-group';
+        } else if (node.labels.has('party')) {
+            return 'fa-user';
+        } else if (node.labels.has('service')) {
+            return 'fa-wrench';
+        } else if (node.labels.has('activity')) {
+            return 'fa-flask';
+        } else if (node.labels.has('publication')) {
+            return 'fa-book';
+        } else if (node.labels.has('website')) {
+            return 'fa-globe';
+        }
+        return '';
     }
 
     function appendRingToNode(node) {
@@ -580,7 +624,7 @@ function Neo4jD3(_selector, _options) {
 
         // ANDS Business Logic
         if (d.labels.has('party') && d.labels.has('group')) {
-            return options.iconMap['group,users'];
+            return options.iconMap['group'];
         }
 
         // find first icon
