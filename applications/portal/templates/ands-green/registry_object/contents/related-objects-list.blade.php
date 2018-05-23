@@ -18,12 +18,12 @@
             var neo4jd3 = new Neo4jd3('#graph-viz', {
                 icons: {
                     'collection': 'folder',
-                    'activity' : 'gear',
+                    'activity' : 'flask',
                     'party' : 'user',
-                    'service': 'flask',
+                    'service': 'gear',
                     'cluster': 'cubes'
                 },
-                minCollision: 70,
+                minCollision: 60,
                 neo4jDataUrl: base_url + 'registry_object/graph/' + roID,
                 nodeRadius: 25,
                 zoomFit: false,

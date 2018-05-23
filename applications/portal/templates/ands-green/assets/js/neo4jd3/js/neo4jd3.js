@@ -199,7 +199,7 @@ function Neo4jD3(_selector, _options) {
                            options.onNodeMouseLeave(d);
                        }
 
-                       mouseOut(d);
+                       resetOpacity();
                    })
                    .call(d3.drag()
                            .on('start', dragStarted)
@@ -208,47 +208,56 @@ function Neo4jD3(_selector, _options) {
     }
 
     function mouseEnter(d) {
-        svg.selectAll("path")
-            .filter(function(n) {
-                return (n.source === d) || (n.target === d);
-            })
-            .style('fill', '#f58000');
 
-        // svg.selectAll('.relationship text')
-        //     .filter(function (n) {
-        //         return (n.source === d) || (n.target === d);
-        //     }).style('fill', '#f58000');
-
-        var rel = relationships.filter(function(r) {
+        // find all the paths that interacts with d
+        var rels = relationships.filter(function(r) {
             return (r.source === d) || (r.target === d);
         });
 
-        var connected = rel.map(function(r){
+        // find all the nodes that interacts with those paths
+        var connected = rels.map(function(r){
             return r.startNode;
-        }).concat(rel.map(function(r){
+        }).concat(rels.map(function(r){
             return r.endNode;
         }));
 
-        svg.selectAll('.outline')
-            .style('opacity', function(n) {
-                if (n.id === d.id || connected.indexOf(n.id) > -1) {
-                    return '1';
-                } else if (n.source === d || n.target === d ) {
-                    return '1';
-                } else {
-                    return '0.2';
-                }
+        // highlight the nodes
+        node.selectAll('circle')
+            .transition()
+            .filter('.outline')
+            .style('opacity', opacityForNode);
+
+        // highlight the count
+        node.selectAll('text.count')
+            .transition()
+            .style('opacity', opacityForNode);
+
+        // highlight the paths
+        relationship
+            .transition()
+            .style('opacity', function(r) {
+                return rels.indexOf(r) > -1 ? '1' : '0.2';
             });
+
+        function opacityForNode(n) {
+            if ((n.id === d.id || connected.indexOf(n.id) > -1) || (n.source === d || n.target === d)) {
+                return '1';
+            } else {
+                return '0.2';
+            }
+        }
     }
 
-    function mouseOut(d) {
-        svg.selectAll("path")
-            .style('fill', "rgb(165, 171, 182)");
+    function resetOpacity() {
+        relationship.style('opacity', '1');
 
-        // svg.selectAll('.relationship text')
-        //     .style('fill', 'rgb(165, 171, 182)');
+        node.selectAll('circle')
+            .transition()
+            .filter('.outline')
+            .style('opacity', '1');
 
-        svg.selectAll('.outline')
+        node.selectAll('text.count')
+            .transition()
             .style('opacity', '1');
     }
 
@@ -297,21 +306,18 @@ function Neo4jD3(_selector, _options) {
 
     function appendOutlineToNode(node) {
         return node.append('circle')
-                   .attr('class', 'outline')
-                   .attr('r', options.nodeRadius)
-                   .style('fill', function(d) {
-                       return options.nodeOutlineFillColor ? options.nodeOutlineFillColor : class2color(d.labels[0]);
-                   })
-                   .style('stroke', function(d) {
-                       return options.nodeOutlineFillColor ? class2darkenColor(options.nodeOutlineFillColor) : class2darkenColor(d.labels[0]);
-                   })
-                .attr('tip', function(d) {
-                    return toHtml(d);
-                });
-
-               // .append('title').text(function(d) {
-               //     return toString(d);
-               // });
+            .attr('class', 'outline')
+            .attr('r', options.nodeRadius)
+            .style('fill', function (d) {
+                return options.nodeOutlineFillColor ? options.nodeOutlineFillColor : class2color(d.labels[0]);
+            })
+            .style('stroke', function (d) {
+                return options.nodeOutlineFillColor ? class2darkenColor(options.nodeOutlineFillColor) : class2darkenColor(d.labels[0]);
+            })
+            .attr('tip', function (d) {
+                return toHtml(d);
+            })
+            .attr('tip-delay', 700);
     }
 
     function toHtml(node) {
@@ -320,11 +326,8 @@ function Neo4jD3(_selector, _options) {
 
     function appendRingToNode(node) {
         return node.append('circle')
-                   .attr('class', 'ring')
-                   .attr('r', options.nodeRadius * 1.16);
-                   // .append('title').text(function(d) {
-                   //     return toString(d);
-                   // });
+            .attr('class', 'ring')
+            .attr('r', options.nodeRadius * 1.16);
     }
 
     function appendTextToNode(node) {
@@ -355,12 +358,8 @@ function Neo4jD3(_selector, _options) {
     function appendRelationship() {
         return relationship.enter()
             .append('g')
-            .attr('class', function(d) {
-                var classes = ['relationship'];
-                if (d.new) {
-                    classes.push('relationship-new');
-                }
-                return classes.join(' ');
+            .attr('class', function () {
+                return 'relationship';
             })
             .attr('mtip', function (d) {
                 return relationshipToHtml(d)
@@ -374,6 +373,33 @@ function Neo4jD3(_selector, _options) {
                 if (info) {
                     updateInfo(d);
                 }
+                mouseEnterRelationship(d);
+            })
+            .on('mouseleave', resetOpacity);
+    }
+
+    function mouseEnterRelationship(rel) {
+
+        // highlight the nodes
+        node.selectAll('circle')
+            .transition()
+            .filter('.outline')
+            .style('opacity', function(d) {
+                return (d === rel.source || d === rel.target) ? '1' : '0.2';
+            });
+
+        // highlight the count
+        node.selectAll('text.count')
+            .transition()
+            .style('opacity', function(d) {
+                return (d === rel.source || d === rel.target) ? '1' : '0.2';
+            });
+
+        // highlight the paths
+        relationship
+            .transition()
+            .style('opacity', function(r) {
+                return rel === r ? '1' : '0.2';
             });
     }
 
@@ -531,6 +557,17 @@ function Neo4jD3(_selector, _options) {
     function icon(d) {
         var code;
 
+        // icon by label mapping. ANDS Business Rule
+        var mapping =  {
+            'collection': 'folder',
+            'activity' : 'flask',
+            'party' : 'user',
+            'party-group': 'user',
+            'service': 'gear',
+            'cluster': 'cubes'
+        };
+
+        // find first icon
         var iconable = d.labels.find(function(label, index) {
             return options.icons[d.labels[index]];
         });
