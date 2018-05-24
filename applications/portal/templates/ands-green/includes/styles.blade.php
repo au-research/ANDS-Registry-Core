@@ -1,5 +1,5 @@
 <link rel="stylesheet" href="{{asset_url('ands-green/js/neo4jd3/css/font-awesome.min.css','templates')}}" media="screen">
-<link rel="stylesheet" href="{{asset_url('ands-green/js/neo4jd3/css/neo4jd3.min.css','templates')}}" media="screen">
+<link rel="stylesheet" href="{{asset_url('ands-green/js/neo4jd3/css/neo4jd3.css','templates')}}" media="screen">
 @if(is_dev())
 <link rel="stylesheet" href="{{asset_url('ands-green/css/bootstrap.css','templates')}}" media="screen">
 <link rel="stylesheet" href="{{asset_url('ands-green/css/theme.min.css','templates')}}" media="screen">
