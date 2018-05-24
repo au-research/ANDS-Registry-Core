@@ -8,16 +8,12 @@ body {
   font-size: 20px;
 }
 
-.neo4jd3-graph {
-  border: 1px solid #ddd;
-  border-radius: 5px;
-}
-
 .neo4jd3-info {
   font-size: 16px;
   padding: 10px;
   position: absolute;
 }
+
 .neo4jd3-info a {
   border: 1px solid;
   display: inline-block;

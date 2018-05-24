@@ -344,11 +344,11 @@ function Neo4jD3(_selector, _options) {
         html += '<h4>';
         html += '<i class="fa '+getFontIconForNode(node)+' icon-portal" style="margin-right:4px;"></i>';
         if (node.properties.title) {
-            html += '<a href="'+base_url+'/'+node.properties.roId+'">' + node.properties.title + '</a>';
+            html += '<a href="'+node.properties.url+'">' + node.properties.title + '</a>';
         } else if (node.properties.identifier) {
             html += node.properties.identifier;
         } else if (node.properties.count) {
-            html += node.properties.count + " related " + getReadableTypeForNode(node);
+            html += '<a href="'+node.properties.url+'">' + node.properties.count + " related " + getReadableTypeForNode(node) + '</a>';
         }
         html += '</h4>';
         // html += '<p>LABELS: '+JSON.stringify(node.labels)+'</p>';

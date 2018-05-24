@@ -179,6 +179,8 @@ class ExportCSV extends ANDSCommand
                     "key" => $record->key,
                     "type" => $record->type,
                     "group" => $record->group,
+                    "slug" => $record->slug,
+                    "url" => $record->portalUrl,
                     "data_source_id" => $record->data_source_id,
                     "title" => $this->sanitizeTitle($record->title),
                     "record_owner" => $record->record_owner
