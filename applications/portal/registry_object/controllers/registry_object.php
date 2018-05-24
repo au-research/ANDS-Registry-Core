@@ -645,7 +645,7 @@ class Registry_object extends MX_Controller
             });
 
         $nodes = collect($nodes)->map(function ($node) use ($clusters) {
-            if (!in_array($node['id'], $clusters->pluck('id')->toArray())) {
+            if (!in_array($node['id'], $clusters->pluck('id')->toArray(), true)) {
                 return $node;
             }
             return $clusters->filter(function ($c) use ($node) {
@@ -660,8 +660,8 @@ class Registry_object extends MX_Controller
                     'data' => [
                         [
                             'graph' => [
-                                'nodes' => array_values($nodes),
-                                'relationships' => array_values($relationships)
+                                'nodes' => $nodes,
+                                'relationships' => $relationships
                             ]
                         ]
                     ]
@@ -1054,6 +1054,7 @@ class Registry_object extends MX_Controller
 
         $this->load->library('solr');
         $result = $this->solr->init()->setFilters($filters)->executeSearch(true);
+
         return $result['response']['numFound'];
     }
 
