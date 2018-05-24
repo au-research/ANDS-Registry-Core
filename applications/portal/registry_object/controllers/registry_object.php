@@ -609,6 +609,11 @@ class Registry_object extends MX_Controller
             ->filter(function ($item) {
                 return in_array("cluster", $item['labels']);
             })->map(function ($cluster) use ($relationships, $record) {
+
+                if (collect($cluster['labels'])->contains('RelatedInfo')) {
+                    return $cluster;
+                }
+
                 $clusterClass = collect($cluster['labels'])->filter(function ($label) {
                     return in_array($label, ['collection', 'service', 'activity', 'party']);
                 })->first();

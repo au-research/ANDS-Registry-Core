@@ -347,8 +347,11 @@ function Neo4jD3(_selector, _options) {
             html += '<a href="'+node.properties.url+'">' + node.properties.title + '</a>';
         } else if (node.properties.identifier) {
             html += node.properties.identifier;
-        } else if (node.properties.count) {
+        } else if (node.properties.count && !node.labels.has('RelatedInfo')) {
             html += '<a href="'+node.properties.url+'">' + node.properties.count + " related " + getReadableTypeForNode(node) + '</a>';
+        } else if (node.properties.count && node.labels.has('RelatedInfo')) {
+            // no link for relatedInfo yet
+            html += node.properties.count + " related " + getReadableTypeForNode(node);
         }
         html += '</h4>';
         // html += '<p>LABELS: '+JSON.stringify(node.labels)+'</p>';
@@ -370,7 +373,8 @@ function Neo4jD3(_selector, _options) {
             return 'services';
         }
 
-        return node.labels[0];
+        // default return the last one
+        return node.labels[node.labels.length - 1];
     }
 
     function getFontIconForNode(node) {
