@@ -12,6 +12,7 @@ use ANDS\Registry\Relation;
 use ANDS\Registry\RelationshipView;
 use ANDS\RegistryObject;
 use ANDS\RegistryObject\Identifier;
+use ANDS\Repository\RegistryObjectsRepository;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -22,6 +23,7 @@ class ExportCSV extends ANDSCommand
 {
     protected $just = ['nodes', 'relations'];
     private $importPath = null;
+    private $format = null;
 
     protected function configure()
     {
@@ -34,7 +36,8 @@ class ExportCSV extends ANDSCommand
             ->addOption('identical', null, InputOption::VALUE_NONE, "Identical Relations")
             ->addOption('relatedInfoRelations', null, InputOption::VALUE_NONE, "Related Info Relations")
             ->addOption('relatedInfoNodes', null, InputOption::VALUE_NONE, "Related Info Nodes")
-            ->addOption('importPath', $this->importPath, InputOption::VALUE_REQUIRED, "Import Path", env("NEO4J_IMPORT_PATH", "/tmp/"))
+            ->addOption('importPath', 'i', InputOption::VALUE_REQUIRED, "Import Path", env("NEO4J_IMPORT_PATH", "/tmp/"))
+            ->addOption('format', 'f', InputOption::VALUE_REQUIRED, "Export Format", RegistryObject::$CSV_NEO_GRAPH)
         ;
     }
 
@@ -49,6 +52,8 @@ class ExportCSV extends ANDSCommand
         ini_set('memory_limit','512M');
 
         $this->importPath = $input->getOption("importPath");
+        $this->format = $input->getOption('format');
+
         $this->log("Import Path: {$this->importPath}", "info");
 
         $nodes = $input->getOption('nodes');
@@ -136,7 +141,7 @@ class ExportCSV extends ANDSCommand
             foreach ($records as $record) {
                 /* @var $record RegistryObject */
 
-                $row = $record->toCSV();
+                $row = $record->toCSV($this->format);
 
                 // insert header if first
                 if ($first) {
@@ -177,20 +182,28 @@ class ExportCSV extends ANDSCommand
                     continue;
                 }
 
-                $relation = [
+                $rel = [
                     ':START_ID' => $relation->from_id,
                     ':END_ID' => $relation->to_id,
                     ':TYPE' => $type
                 ];
 
-                $relation = $this->postProcessRelation($relation);
+                if ($this->format === RegistryObject::$CSV_RESEARCH_GRAPH) {
+                    $rel = [
+                        ':START_ID' => 'researchgraph.org/ands/'.$relation->from_id,
+                        ':END_ID' => 'researchgraph.org/ands/'.$relation->to_id,
+                        ':TYPE' => $type
+                    ];
+                }
+
+                $rel = $this->postProcessRelation($rel);
 
                 if ($first) {
-                    fputcsv($fp, array_keys($relation));
+                    fputcsv($fp, array_keys($rel));
                     $first = false;
                 }
 
-                fputcsv($fp, $relation);
+                fputcsv($fp, $rel);
 
                 $progressBar->advance(1);
             }
@@ -232,19 +245,27 @@ class ExportCSV extends ANDSCommand
             foreach ($relations as $relation) {
                 $type = $this->getPrimaryRelationType($relation);
 
-                $relation = [
+                $rel = [
                     ':START_ID' => $relation->from_id,
                     ':END_ID' => $relation->to_id,
                     ':TYPE' => $type
                 ];
 
-                $relation = $this->postProcessRelation($relation);
+                if ($this->format === RegistryObject::$CSV_RESEARCH_GRAPH) {
+                    $rel = [
+                        ':START_ID' => 'researchgraph.org/ands/'.$relation->from_id,
+                        ':END_ID' => 'researchgraph.org/ands/'.$relation->to_id,
+                        ':TYPE' => $type
+                    ];
+                }
+
+                $rel = $this->postProcessRelation($rel);
 
                 if ($first) {
-                    fputcsv($fp, array_keys($relation));
+                    fputcsv($fp, array_keys($rel));
                     $first = false;
                 }
-                fputcsv($fp, $relation);
+                fputcsv($fp, $rel);
 
                 $progressBar->advance(1);
             }
@@ -256,10 +277,10 @@ class ExportCSV extends ANDSCommand
     /**
      * Get primary relationship type for a particular relation
      * TODO: Refactor to helper
-     * @param Relation $relation
+     * @param RelationshipView $relation
      * @return string
      */
-    private function getPrimaryRelationType(Relation $relation)
+    private function getPrimaryRelationType(RelationshipView $relation)
     {
         $defaultType = "hasAssociationWith";
         $ds = DataSource::find($relation->from_data_source_id);
