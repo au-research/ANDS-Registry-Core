@@ -10,4 +10,9 @@ class Identifier extends Model
     protected $primaryKey = "id";
     public $timestamps = false;
     protected $fillable = ['registry_object_id', 'identifier', 'identifier_type'];
+
+    public function scopeIdentical($query)
+    {
+        return $query->select('identifier, count(*)')->groupBy('identifier')->havingRaw('COUNT(*) > 2');
+    }
 }

@@ -56,7 +56,8 @@
         "minhd/oai-pmh" : "dev-master",
         "javibravo/simpleue" : "dev-master",
         "cebe/markdown": "~1.1.1",
-        "ramsey/uuid": "^3.7"
+        "ramsey/uuid": "^3.7",
+        "graphaware/neo4j-php-client": "^4.0"
     },
 
     "repositories": [
