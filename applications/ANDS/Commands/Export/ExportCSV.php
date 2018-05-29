@@ -8,6 +8,7 @@ use ANDS\Commands\ANDSCommand;
 use ANDS\DataSource;
 use ANDS\Registry\IdentifierRelationshipView;
 use ANDS\Registry\Providers\GraphRelationshipProvider;
+use ANDS\Registry\Relation;
 use ANDS\Registry\RelationshipView;
 use ANDS\RegistryObject;
 use ANDS\RegistryObject\Identifier;
@@ -20,7 +21,7 @@ use Symfony\Component\Stopwatch\Stopwatch;
 class ExportCSV extends ANDSCommand
 {
     protected $just = ['nodes', 'relations'];
-    private $importPath = "/Users/minhd/dev/neo4j/import/";
+    private $importPath = null;
 
     protected function configure()
     {
@@ -33,17 +34,22 @@ class ExportCSV extends ANDSCommand
             ->addOption('identical', null, InputOption::VALUE_NONE, "Identical Relations")
             ->addOption('relatedInfoRelations', null, InputOption::VALUE_NONE, "Related Info Relations")
             ->addOption('relatedInfoNodes', null, InputOption::VALUE_NONE, "Related Info Nodes")
-            ->addOption('importPath', $this->importPath, InputOption::VALUE_OPTIONAL, "Import Path")
-//            ->addArgument('target', InputArgument::REQUIRED)
+            ->addOption('importPath', $this->importPath, InputOption::VALUE_REQUIRED, "Import Path", env("NEO4J_IMPORT_PATH", "/tmp/"))
         ;
     }
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int|null
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->setUp($input, $output);
         ini_set('memory_limit','512M');
 
         $this->importPath = $input->getOption("importPath");
+        $this->log("Import Path: {$this->importPath}", "info");
 
         $nodes = $input->getOption('nodes');
         if ($nodes) {
@@ -75,6 +81,7 @@ class ExportCSV extends ANDSCommand
                return $this->exportRelatedInfoRelations();
             });
         }
+
         if ($input->getOption('relatedInfoNodes')) {
             return $this->timedActivity("Exporting RelatedInfo Nodes", function() {
                return $this->exportRelatedInfoNodes();
@@ -92,50 +99,17 @@ class ExportCSV extends ANDSCommand
         });
     }
 
-    private function timedActivity($activity, $closure)
-    {
-        $this->log("$activity started");
-        $stopwatch = new Stopwatch();
-        $stopwatch->start('event');
-        call_user_func($closure);
-        $event = $stopwatch->stop('event');
-        $second = $event->getDuration() / 1000;
-        $megaBytes = $event->getMemory() / 1000000;
-        $this->log("\n$activity completed. duration: {$second}s. Memory Usage: {$megaBytes} MB");
-    }
-
-    private function writeToCSV($content, $name)
-    {
-        $filePath = $this->importPath."$name.csv";
-        $fp = fopen($filePath, "w");
-        foreach ($content as $fields) {
-            fputcsv($fp, $fields);
-        }
-        fclose($fp);
-        $this->log("\n$name written to $filePath\n", "info");
-    }
-
-    private function writeCSVAssoc($content, $name)
-    {
-        $filePath = $this->importPath."$name.csv";
-        $fp = fopen($filePath, "w");
-
-        // write first row with keys
-        $header = array_keys($content[0]);
-        fputcsv($fp, $header);
-        fclose($fp);
-
-        // keep writing
-        $fp = fopen($filePath, "a");
-        foreach ($content as $fields) {
-            fputcsv($fp, $fields);
-        }
-        $this->log("\n$name written to $filePath\n", "info");
-    }
-
+    /**
+     * Wipe a file
+     * TODO: Refactor
+     * @param $name
+     */
     private function wipe($name)
     {
         $filePath = $this->importPath."$name.csv";
+        if (!file_exists($filePath)) {
+            touch($filePath);
+        }
         $f = @fopen($filePath, "r+");
         if ($f !== false) {
             ftruncate($f, 0);
@@ -143,22 +117,22 @@ class ExportCSV extends ANDSCommand
         }
     }
 
-    private function stream($name, $content)
-    {
-        $filePath = $this->importPath."$name.csv";
-        $fp = fopen($filePath, "a");
-        fputcsv($fp, $content);
-    }
-
+    /**
+     * Sanitize a title
+     * TODO: Refactor to helper
+     * @param $title
+     * @return mixed
+     */
     private function sanitizeTitle($title)
     {
         $title = str_replace([',', '"', ';', '\t', ':'], '', $title);
-
         $title = preg_replace( "/\r|\n/", " ", $title);
-
         return $title;
     }
 
+    /**
+     * Export nodes to CSV
+     */
     private function exportNodes()
     {
         $this->wipe("nodes");
@@ -204,6 +178,9 @@ class ExportCSV extends ANDSCommand
         $this->log("Nodes written to $filePath", "info");
     }
 
+    /**
+     * Export Relations to CSV
+     */
     private function exportDirectRelations()
     {
         $name = "direct";
@@ -221,8 +198,6 @@ class ExportCSV extends ANDSCommand
                 if ($type == '') {
                     continue;
                 }
-
-                // TODO: Flip relation if met
 
                 $relation = [
                     ':START_ID' => $relation->from_id,
@@ -261,6 +236,9 @@ class ExportCSV extends ANDSCommand
         return $relation;
     }
 
+    /**
+     * Export Primary Relationships
+     */
     private function exportPrimaryRelations()
     {
         $name = "primary";
@@ -297,7 +275,13 @@ class ExportCSV extends ANDSCommand
         fclose($fp);
     }
 
-    private function getPrimaryRelationType($relation)
+    /**
+     * Get primary relationship type for a particular relation
+     * TODO: Refactor to helper
+     * @param Relation $relation
+     * @return string
+     */
+    private function getPrimaryRelationType(Relation $relation)
     {
         $defaultType = "hasAssociationWith";
         $ds = DataSource::find($relation->from_data_source_id);
@@ -334,6 +318,9 @@ class ExportCSV extends ANDSCommand
         return $defaultType;
     }
 
+    /**
+     * Export relations about identical
+     */
     private function exportIdenticalRelations()
     {
         $name = "identical";
@@ -366,9 +353,7 @@ class ExportCSV extends ANDSCommand
                         ':END_ID' => $ids[$i],
                         ':TYPE' => 'identicalTo'
                     ];
-
                     $relation = $this->postProcessRelation($relation);
-
                     if ($first) {
                         fputcsv($fp, array_keys($relation));
                         $first = false;
@@ -377,14 +362,15 @@ class ExportCSV extends ANDSCommand
                 }
                 $progressBar->advance(1);
             }
-            $progressBar->finish();
-            fclose($fp);
-            $this->log("Identical writen to $filePath\n");
         }
-
+        $progressBar->finish();
+        fclose($fp);
+        $this->log("Identical writen to $filePath\n");
     }
 
-    private $relatedInfoRelations =  [ [':START_ID', ':END_ID', ':TYPE'] ];
+    /**
+     * Export RelatedInfo Relations
+     */
     private function exportRelatedInfoRelations()
     {
         $name = "relations-relatedInfo";
@@ -423,6 +409,9 @@ class ExportCSV extends ANDSCommand
         $this->log("Related Info Relations has been written to $filePath\n");
     }
 
+    /**
+     *
+     */
     private function exportRelatedInfoNodes()
     {
         $name = "nodes-relatedInfo";

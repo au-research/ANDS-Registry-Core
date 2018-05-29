@@ -8,6 +8,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 class ANDSCommand extends Command
 {
@@ -132,5 +133,21 @@ class ANDSCommand extends Command
         }
 
         return true;
+    }
+
+    /**
+     * @param $activity
+     * @param $closure
+     */
+    public function timedActivity($activity, $closure)
+    {
+        $this->log("$activity started");
+        $stopwatch = new Stopwatch();
+        $stopwatch->start('event');
+        call_user_func($closure);
+        $event = $stopwatch->stop('event');
+        $second = $event->getDuration() / 1000;
+        $megaBytes = $event->getMemory() / 1000000;
+        $this->log("\n$activity completed. duration: {$second}s. Memory Usage: {$megaBytes} MB");
     }
 }
