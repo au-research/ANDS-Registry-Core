@@ -4,6 +4,7 @@
 namespace ANDS;
 
 
+use ANDS\RegistryObject\ExportToCSVTrait;
 use ANDS\RegistryObject\Identifier;
 use ANDS\RegistryObject\Metadata;
 use ANDS\Repository\RegistryObjectsRepository;
@@ -12,6 +13,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class RegistryObject extends Model
 {
+    /** traits */
+    use ExportToCSVTrait;
+
     protected $table = "registry_objects";
     protected $primaryKey = "registry_object_id";
     public $timestamps = false;
@@ -28,6 +32,11 @@ class RegistryObject extends Model
         "PUBLISHED"
     ];
     public static $levels = [1,2,3,4];
+
+    /** @var string */
+    protected static $STATUS_PUBLISHED = 'PUBLISHED';
+
+
 
     /**
      * Eloquent Accessor
