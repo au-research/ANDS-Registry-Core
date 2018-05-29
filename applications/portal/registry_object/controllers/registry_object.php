@@ -1,6 +1,7 @@
 <?php
 
 use ANDS\Registry\Providers\ORCID\ORCIDRecordsRepository;
+use GraphAware\Neo4j\Client\ClientBuilder;
 
 /**
  * Class Registry_object
@@ -595,6 +596,82 @@ class Registry_object extends MX_Controller
         return $related;
     }
 
+    public function graph($registryObjectID)
+    {
+        set_exception_handler('json_exception_handler');
+
+        $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($registryObjectID);
+        $graph = \ANDS\Registry\Providers\GraphRelationshipProvider::getByID($registryObjectID);
+
+        $nodes = array_values($graph['nodes']);
+        $relationships = array_values($graph['links']);
+        $clusters = collect($nodes)
+            ->filter(function ($item) {
+                return in_array("cluster", $item['labels']);
+            })->map(function ($cluster) use ($relationships, $record) {
+
+                if (collect($cluster['labels'])->contains('RelatedInfo')) {
+                    return $cluster;
+                }
+
+                $clusterClass = collect($cluster['labels'])->filter(function ($label) {
+                    return in_array($label, ['collection', 'service', 'activity', 'party']);
+                })->first();
+
+                // related_party_multi_id construction
+                $searchClass = $record->class;
+                if ($record->class == 'party') {
+                    $searchClass = (strtolower($record->type) == 'group') ? 'party_multi' : 'party_one';
+                }
+
+                // find the relationship that connects this cluster to the current node
+                $relation = collect($relationships)->filter(function ($rel) use ($cluster) {
+                    return $rel['endNode'] === $cluster['id'];
+                })->first();
+
+                $filters = [
+                    'class' => $clusterClass,
+                    "related_{$searchClass}_id" => $record->id,
+                    'relation' => $relation['type']
+                ];
+
+                $cluster['properties'] = array_merge($cluster['properties'], [
+                    'url' => constructPortalSearchQuery($filters),
+                    'count' => $this->getSolrCountForQuery($filters),
+                    'clusterClass' => $clusterClass
+                ]);
+
+                return $cluster;
+            });
+
+        $nodes = collect($nodes)->map(function ($node) use ($clusters) {
+            if (!in_array($node['id'], $clusters->pluck('id')->toArray(), true)) {
+                return $node;
+            }
+            return $clusters->filter(function ($c) use ($node) {
+                return $c['id'] == $node['id'];
+            })->first();
+        })->toArray();
+
+        // format for neo4jd3 js library
+        $payload = [
+            'results' => [
+                [
+                    'data' => [
+                        [
+                            'graph' => [
+                                'nodes' => $nodes,
+                                'relationships' => $relationships
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        echo json_encode($payload);
+    }
+
     /**
      * Returns the vocabulary element
      * todo move to the vocab component
@@ -977,6 +1054,7 @@ class Registry_object extends MX_Controller
 
         $this->load->library('solr');
         $result = $this->solr->init()->setFilters($filters)->executeSearch(true);
+
         return $result['response']['numFound'];
     }
 

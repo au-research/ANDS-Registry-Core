@@ -6,6 +6,59 @@
 ?>
 @if($hasRelated)
     <div class="panel panel-primary element-no-top element-short-bottom panel-content">
+        <div class="panel-body swatch-white" >
+            <div id="graph-viz" style="height:450px;"></div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        function init() {
+            var roID = $('#ro_id')[0].value;
+//            console.log(base_url + 'registry_object/graph/' + roID)
+            var neo4jd3 = new Neo4jd3('#graph-viz', {
+                icons: {
+                    'collection': 'folder-open',
+                    'activity' : 'flask',
+                    'party' : 'user',
+                    'service': 'wrench',
+                    'publication': 'book',
+                    'website': 'globe'
+                },
+                minCollision: 60,
+                neo4jDataUrl: base_url + 'registry_object/graph/' + roID,
+                nodeRadius: 25,
+                zoomFit: false,
+                infoPanel: false,
+                showCount: true,
+                highlight: [{
+                    'class': 'RegistryObject',
+                    'property':'roId',
+                    'value': roID
+                }],
+                onNodeClick: function(node) {
+//                    var url = base_url + 'registry_object/graph/' + node.properties.roId;
+//                    $.getJSON(url, function(data) {
+//                        var graph = neo4jd3.neo4jDataToD3Data(data);
+//                        neo4jd3.updateWithD3Data(graph);
+//                    });
+                },
+                onNodeDoubleClick: function(node) {
+                    var url = base_url + 'registry_object/graph/' + node.properties.roId;
+                    $.getJSON(url, function(data) {
+                        var graph = neo4jd3.neo4jDataToD3Data(data);
+                        neo4jd3.updateWithD3Data(graph);
+                    });
+                },
+                onRelationshipDoubleClick: function(relationship) {
+                    console.log('double click on relationship: ' + JSON.stringify(relationship));
+                }
+            });
+        };
+
+        window.onload = init;
+    </script>
+
+    <div class="panel panel-primary element-no-top element-short-bottom panel-content">
         <div class="panel-body swatch-white">
             {{--Related Publications--}}
             @if (isset($related['publications']) && sizeof($related['publications']['docs']) > 0)

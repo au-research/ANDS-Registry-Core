@@ -5,6 +5,7 @@
 require __DIR__.'/vendor/autoload.php';
 
 restore_error_handler();
+restore_exception_handler();
 date_default_timezone_set('UTC');
 
 use Symfony\Component\Console\Application;
@@ -19,5 +20,8 @@ $application->add(new \ANDS\Commands\RegistryObject\RegistryObjectProcessCommand
 $application->add(new \ANDS\Commands\SyncRecordWorkerRedisCommand());
 $application->add(new \ANDS\Commands\RunScriptCommand());
 $application->add(new \ANDS\Commands\ExportCommand());
+$application->add(new \ANDS\Commands\Graph\GraphGenerate());
+$application->add(new \ANDS\Commands\Export\ExportCSV());
+$application->add(new \ANDS\Commands\Export\ExportCSVGraph());
 
 $application->run();
