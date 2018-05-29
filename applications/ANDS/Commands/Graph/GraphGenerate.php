@@ -155,17 +155,6 @@ class GraphGenerate extends ANDSCommand
         $this->log("$fileName written to $filePath");
     }
 
-    private function timedActivity($activity)
-    {
-        $this->log("$activity started");
-        $stopwatch = new Stopwatch();
-        $stopwatch->start('event');
-        $this->$activity();
-        $event = $stopwatch->stop('event');
-        $second = $event->getDuration() / 1000;
-        $this->log("$activity completed. duration: {$second}s. Memory Usage: {$event->getMemory()}");
-    }
-
     private function createIndex()
     {
         $this->client->run("CREATE INDEX ON :RegistryObject(id)");
@@ -220,14 +209,5 @@ MERGE (from)-[:REL {type:line.relation}]->(to)");
             }
         });
         $progressBar->finish();
-
-//        $this->log("\n");
-//        $this->log("Starting stack indexing");
-//
-//        $stopwatch->start('stack');
-//        $this->client->runStack($stack);
-//        $event = $stopwatch->stop('stack');
-//        $second = $event->getDuration() / 1000;
-//        $this->log("Task completed. duration: {$second}s. Memory Usage: {$event->getMemory()}");
     }
 }

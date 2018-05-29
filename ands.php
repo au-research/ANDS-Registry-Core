@@ -10,6 +10,12 @@ date_default_timezone_set('UTC');
 
 use Symfony\Component\Console\Application;
 
+if (!file_exists('.env')) {
+    die("Installation incompleted. .env file missing");
+}
+$dotenv = new Dotenv\Dotenv(__DIR__);
+$result = $dotenv->load();
+
 $application = new Application();
 
 $application->add(new \ANDS\Commands\ConceptsCommand());
@@ -22,6 +28,6 @@ $application->add(new \ANDS\Commands\RunScriptCommand());
 $application->add(new \ANDS\Commands\ExportCommand());
 $application->add(new \ANDS\Commands\Graph\GraphGenerate());
 $application->add(new \ANDS\Commands\Export\ExportCSV());
-$application->add(new \ANDS\Commands\Export\ExportCSVGraph());
+//$application->add(new \ANDS\Commands\Export\ExportCSVGraph());
 
 $application->run();
