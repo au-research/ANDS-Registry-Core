@@ -117,18 +117,6 @@ class ExportCSV extends ANDSCommand
         }
     }
 
-    /**
-     * Sanitize a title
-     * TODO: Refactor to helper
-     * @param $title
-     * @return mixed
-     */
-    private function sanitizeTitle($title)
-    {
-        $title = str_replace([',', '"', ';', '\t', ':'], '', $title);
-        $title = preg_replace( "/\r|\n/", " ", $title);
-        return $title;
-    }
 
     /**
      * Export nodes to CSV
@@ -146,19 +134,9 @@ class ExportCSV extends ANDSCommand
         $first = true;
         $records->chunk(10000, function($records) use ($progressBar, $fp, &$first) {
             foreach ($records as $record) {
+                /* @var $record RegistryObject */
 
-                $row = [
-                    "roId:ID" => $record->id,
-                    ":LABEL" => implode(";", ["RegistryObject", $record->class, $record->type]),
-                    "key" => $record->key,
-                    "type" => $record->type,
-                    "group" => $record->group,
-                    "slug" => $record->slug,
-                    "url" => $record->portalUrl,
-                    "data_source_id" => $record->data_source_id,
-                    "title" => $this->sanitizeTitle($record->title),
-                    "record_owner" => $record->record_owner
-                ];
+                $row = $record->toCSV();
 
                 // insert header if first
                 if ($first) {
@@ -360,8 +338,8 @@ class ExportCSV extends ANDSCommand
                     }
                     fputcsv($fp, $relation);
                 }
-                $progressBar->advance(1);
             }
+            $progressBar->advance(1);
         }
         $progressBar->finish();
         fclose($fp);
