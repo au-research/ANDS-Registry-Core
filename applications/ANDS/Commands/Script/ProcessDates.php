@@ -33,10 +33,11 @@ class ProcessDates extends GenericScript implements GenericScriptRunnable
 
     private function all()
     {
-        $unchecked = RegistryObject::whereNull('modified_at');
-        $progressBar = new ProgressBar($this->getOutput(), $unchecked->count());
-        $unchecked->chunk(2000, function($records) use ($progressBar){
+        $records = RegistryObject::whereNull('modified_at')->orderBy('registry_object_id');
+        $progressBar = new ProgressBar($this->getOutput(), $records->count());
+        $records->chunk(1000, function($records) use ($progressBar){
             foreach ($records as $record) {
+                /* @var $record RegistryObject */
                 try {
                     DatesProvider::process($record);
                 } catch (\Exception $e) {

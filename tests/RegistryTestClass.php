@@ -44,14 +44,20 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
     {
         parent::tearDown();
 
+        if (!$this->dataSource) {
+            return;
+        }
         // find records that belongs to test data source
         $records = RegistryObject::where('data_source_id', $this->dataSource->id);
 
-        // delete all record data
-        \ANDS\RecordData::whereIn('registry_object_id', $records->pluck('registry_object_id')->toArray())->delete();
+        if ($records->count() > 0) {
 
-        // delete all records
-        $records->delete();
+            // delete all record data
+            \ANDS\RecordData::whereIn('registry_object_id', $records->pluck('registry_object_id')->toArray())->delete();
+
+            // delete all records
+            $records->delete();
+        }
 
         // delete data source
         $this->dataSource->delete();
