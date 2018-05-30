@@ -10,5 +10,6 @@ return [
     'elasticsearch_url' => env('ELASTICSEARCH_URL', 'http://localhost:9200/'),
     'socket_url' => env('SOCKET_URL', 'https://localhost:3001/'),
 
-    'api_whitelist_ip' => explode(',', env('API_WHITELIST_IP', ''))
+    'api_whitelist_ip' => explode(',', env('API_WHITELIST_IP', '')),
+    'timezone' => env("TIMEZONE", 'Australia/Canberra')
 ];

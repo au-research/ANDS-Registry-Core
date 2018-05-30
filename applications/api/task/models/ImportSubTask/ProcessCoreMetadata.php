@@ -6,6 +6,7 @@ namespace ANDS\API\Task\ImportSubTask;
 
 use ANDS\Registry\Group;
 use ANDS\Registry\Providers\RIFCS\CoreMetadataProvider;
+use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\Providers\ScholixProvider;
 use ANDS\Registry\Providers\TitleProvider;
 use ANDS\RegistryObject;
@@ -56,6 +57,14 @@ class ProcessCoreMetadata extends ImportSubTask
                 TitleProvider::process($record);
             } catch (\Exception $e) {
                 $this->addError("Failed Title processing on record $roID: ". get_exception_msg($e));
+                continue;
+            }
+
+            // process dates
+            try {
+                DatesProvider::process($record);
+            } catch (\Exception $e) {
+                $this->addError("Failed Date processing on record $roID: ". get_exception_msg($e));
                 continue;
             }
 

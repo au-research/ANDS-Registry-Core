@@ -3,6 +3,7 @@
 
 namespace ANDS\API\Task\ImportSubTask;
 
+use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\Providers\Scholix\Scholix;
 use ANDS\RegistryObject;
 use ANDS\RegistryObject\IdentifierRelationship;
@@ -110,6 +111,9 @@ class ProcessDelete extends ImportSubTask
 
             // delete scholix documents
             Scholix::where('registry_object_id', $record->registry_object_id)->delete();
+
+            // touch timestamp
+            DatesProvider::touchDelete($record);
 
             $portalQuery .= " id:$record->registry_object_id";
             $fromRelationQuery .= " from_id:$record->registry_object_id";

@@ -36,6 +36,7 @@ class RegistryObject extends Model
     /** @var string */
     protected static $STATUS_PUBLISHED = 'PUBLISHED';
 
+    protected $fillable = ['key', 'title', 'status', 'group', 'data_source_id'];
 
 
     /**
@@ -88,6 +89,11 @@ class RegistryObject extends Model
         }
 
         return $currentData;
+    }
+
+    public function recordData()
+    {
+        return $this->hasMany(RecordData::class, 'registry_object_id', 'registry_object_id');
     }
 
     /**
