@@ -74,10 +74,11 @@ trait ExportToCSVTrait
             "type" => $this->type,
             "group" => $this->group,
             "slug" => $this->slug,
-            "url" => $this->portalUrl,
             "data_source_id" => $this->data_source_id,
             "title" => $this->sanitizeTitle($this->title),
-            "record_owner" => $this->record_owner
+            "record_owner" => $this->record_owner,
+            "modified_at" => $this->modified_at,
+            "created_at" => $this->created_at
         ];
     }
 
