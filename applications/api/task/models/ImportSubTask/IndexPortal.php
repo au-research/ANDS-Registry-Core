@@ -3,6 +3,7 @@
 
 namespace ANDS\API\Task\ImportSubTask;
 
+use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Repository\RegistryObjectsRepository as Repo;
 use ANDS\Repository\DataSourceRepository;
 use ANDS\Repository\RegistryObjectsRepository;
@@ -81,7 +82,8 @@ class IndexPortal extends ImportSubTask
                 }
 
                 // save last_sync_portal
-                $record->setRegistryObjectAttribute('indexed_portal_at', Carbon::now()->timestamp);
+                DatesProvider::touchSync($record);
+                // $record->setRegistryObjectAttribute('indexed_portal_at', Carbon::now()->timestamp);
             }
 
             $this->updateProgress($index, $total, "Processed ($index/$total) $ro->title($roID)");

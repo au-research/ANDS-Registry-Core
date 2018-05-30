@@ -8,6 +8,10 @@ use ANDS\DataSource;
 
 class DataSourceRepository
 {
+    /**
+     * @param $key
+     * @return DataSource
+     */
     public static function getByKey($key)
     {
         return DataSource::where('key', $key)->first();

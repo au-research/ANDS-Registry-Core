@@ -1198,7 +1198,6 @@ function Neo4jD3(_selector, _options) {
         updateNodes(n);
 
         simulation.nodes(nodes);
-        console.log(relationships);
         simulation.force('link').links(relationships);
     }
 

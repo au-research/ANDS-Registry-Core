@@ -57,6 +57,9 @@ if(isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/bot|crawl|slurp|spider/i',
 }
 define('ENVIRONMENT', $ENV['deployment_state']);
 
+// timezone settings
+date_default_timezone_set(env('TIMEZONE', 'Australia/Canberra'));
+
 /*
  *---------------------------------------------------------------
  * ERROR REPORTING
