@@ -644,14 +644,21 @@ class Registry_object extends MX_Controller
                 return $cluster;
             });
 
-        $nodes = collect($nodes)->map(function ($node) use ($clusters) {
-            if (!in_array($node['id'], $clusters->pluck('id')->toArray(), true)) {
+        $nodes = collect($nodes)
+            ->map(function ($node) use ($clusters) {
+                if (!in_array($node['id'], $clusters->pluck('id')->toArray(), true)) {
+                    return $node;
+                }
+                return $clusters->filter(function ($c) use ($node) {
+                    return $c['id'] == $node['id'];
+                })->first();
+            })->map(function($node) {
+                if (array_key_exists('slug', $node['properties'])) {
+                    $node['properties']['url'] = portal_url($node['properties']['slug'].'/'.$node['properties']['roId']);
+                    return $node;
+                }
                 return $node;
-            }
-            return $clusters->filter(function ($c) use ($node) {
-                return $c['id'] == $node['id'];
-            })->first();
-        })->toArray();
+            })->toArray();
 
         // format for neo4jd3 js library
         $payload = [
