@@ -141,16 +141,21 @@ class ExportCSV extends ANDSCommand
             foreach ($records as $record) {
                 /* @var $record RegistryObject */
 
-                $row = $record->toCSV($this->format);
+                try {
+                    $row = $record->toCSV($this->format);
 
-                // insert header if first
-                if ($first) {
-                    fputcsv($fp, array_keys($row));
-                    $first = false;
+                    // insert header if first
+                    if ($first) {
+                        fputcsv($fp, array_keys($row));
+                        $first = false;
+                    }
+
+                    // stream to file
+                    fputcsv($fp, $row);
+
+                } catch (\Exception $e) {
+                    $this->log("Failed exporting record {$record->id}: {$e->getMessage()}", "error");
                 }
-
-                // stream to file
-                fputcsv($fp, $row);
 
                 $progressBar->advance(1);
             }
@@ -352,6 +357,15 @@ class ExportCSV extends ANDSCommand
                         ':END_ID' => $ids[$i],
                         ':TYPE' => 'identicalTo'
                     ];
+
+                    if ($this->format === RegistryObject::$CSV_RESEARCH_GRAPH) {
+                        $relation = [
+                            ':START_ID' => 'researchgraph.org/ands/'.$ids[0],
+                            ':END_ID' => 'researchgraph.org/ands/'.$ids[$i],
+                            ':TYPE' => 'knownAs'
+                        ];
+                    }
+
                     $relation = $this->postProcessRelation($relation);
                     if ($first) {
                         fputcsv($fp, array_keys($relation));
