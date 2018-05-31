@@ -52,8 +52,15 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
 
         if ($records->count() > 0) {
 
+            $ids = $records->pluck('registry_object_id')->toArray();
+            $keys = $records->pluck('key')->toArray();
+
             // delete all record data
-            \ANDS\RecordData::whereIn('registry_object_id', $records->pluck('registry_object_id')->toArray())->delete();
+            \ANDS\RecordData::whereIn('registry_object_id', $ids)->delete();
+
+            // delete all relationships
+            RegistryObject\Relationship::where('registry_object_id', $ids)->delete();
+            RegistryObject\Relationship::where('related_object_key', $keys)->delete();
 
             // delete all records
             $records->delete();
@@ -77,6 +84,8 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
                 'key' => uniqid(),
                 'title' => uniqid(),
                 'status' => 'PUBLISHED',
+                'class' => 'collection',
+                'type' => 'dataset',
                 'data_source_id' => $this->dataSource->id
             ], $attributes);
             $record = RegistryObject::create($attrs);
@@ -89,6 +98,14 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
                 'timestamp' => time()
             ], $attributes);
             return \ANDS\RecordData::create($attrs);
+        } elseif ($class == RegistryObject\Relationship::class) {
+            $attrs = array_merge([
+                'registry_object_id' => $this->stub(RegistryObject::class)->id,
+                'related_object_key' => $this->stub(RegistryObject::class)->key,
+                'origin' => 'EXPLICIT',
+                'relation_type' => 'hasAssociationWith'
+            ], $attributes);
+            return RegistryObject\Relationship::create($attrs);
         }
 
         throw new Exception("unknown $class");
