@@ -4,9 +4,12 @@
 namespace ANDS;
 
 
+use ANDS\Registry\IdentifierRelationshipView;
 use ANDS\RegistryObject\ExportToCSVTrait;
 use ANDS\RegistryObject\Identifier;
+use ANDS\RegistryObject\IdentifierRelationship;
 use ANDS\RegistryObject\Metadata;
+use ANDS\RegistryObject\Relationship;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\XMLUtil;
 use Illuminate\Database\Eloquent\Model;
@@ -36,7 +39,7 @@ class RegistryObject extends Model
     /** @var string */
     protected static $STATUS_PUBLISHED = 'PUBLISHED';
 
-    protected $fillable = ['key', 'title', 'status', 'group', 'data_source_id'];
+    protected $fillable = ['key', 'title', 'status', 'group', 'data_source_id', 'class', 'type'];
 
 
     /**
@@ -64,6 +67,16 @@ class RegistryObject extends Model
     public function datasource()
     {
         return $this->belongsTo(DataSource::class, 'data_source_id', 'data_source_id');
+    }
+
+    public function relationships()
+    {
+        return $this->hasMany(Relationship::class, 'registry_object_id', 'registry_object_id');
+    }
+
+    public function identifierRelationships()
+    {
+        return $this->hasMany(IdentifierRelationshipView::class, 'registry_object_id', 'registry_object_id');
     }
 
     public function registryObjectAttributes()

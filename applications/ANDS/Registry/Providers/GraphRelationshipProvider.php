@@ -5,10 +5,12 @@ namespace ANDS\Registry\Providers;
 
 
 use ANDS\RegistryObject;
+use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\Config;
 use GraphAware\Common\Type\Node;
 use GraphAware\Neo4j\Client\ClientBuilder;
 use GraphAware\Neo4j\Client\Formatter\Type\Relationship;
+use GraphAware\Neo4j\Client\Stack;
 
 class GraphRelationshipProvider implements RegistryContentProvider
 {
@@ -38,10 +40,56 @@ class GraphRelationshipProvider implements RegistryContentProvider
      */
     public static function process(RegistryObject $record)
     {
-        // TODO: Implement process() method.
-        // read rifcs and insert direct relationships
+        $client = static::db();
+        $stack = $client->stack();
+
+        // current node
+        $stack->push(static::getMergeNodeQuery($record));
+
+        // relationships should already be available in database
+        $relationships = $record->relationships;
+        foreach ($relationships as $relationship) {
+            // add to node
+            $to = RegistryObjectsRepository::getPublishedByKey($relationship->related_object_key);
+            if ($to) {
+                $stack->push(static::getMergeNodeQuery($to));
+                $stack->push(static::getMergeLinkQuery($record, $to, $relationship));
+            }
+        }
+
+//        $identifierRelationships = $record->identifierRelationships;
+//        foreach ($identifierRelationships as $relationship) {
+//            // TODO add relatedInfo node
+//            // TODO add relationship
+//        }
+
         // (after process identifier) find identical records and establish identicalTo relations
         // insert into neo4j instance
+        $result = $client->runStack($stack);
+
+        return $result->updateStatistics();
+    }
+
+    public static function getMergeNodeQuery(RegistryObject $record)
+    {
+        $csv = $record->toCSV(RegistryObject::$CSV_NEO_GRAPH);
+        $data = collect($csv)->except(['roId:ID', ':LABEL'])->toArray();
+        $labels = str_replace(';', ':', $csv[':LABEL']);
+
+        $sets = [];
+        foreach ($data as $key => $value) {
+            if ($value) {
+                $sets[] = "n.$key = '$value'";
+            }
+        }
+        $sets = implode(', ', $sets);
+
+        return "MERGE (n:{$labels} {roId: \"{$record->id}\" }) ON CREATE SET {$sets} ON MATCH SET {$sets} RETURN n";
+    }
+
+    public static function getMergeLinkQuery(RegistryObject $record, RegistryObject $to, $relationship)
+    {
+        return 'MATCH (a {roId:"'.$record->id.'"}) MATCH (b {roId:"'.$to->id.'"}) MERGE (a)-[:'.$relationship->relation_type.']->(b)';
     }
 
     /**
@@ -76,6 +124,9 @@ class GraphRelationshipProvider implements RegistryContentProvider
         $links = [];
 
         $node = static::getNodeByID($id);
+        if (!$node) {
+            return ['nodes' => [], 'links' => []];
+        }
 
         // TODO: if not found, return default
 
@@ -118,7 +169,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
         $result = $client->run(
             "$directQuery
             RETURN * LIMIT ".static::$limit.";",[
-                'id' => $id
+                'id' => (string) $id
             ]);
 
         foreach ($result->records() as $record) {
@@ -206,7 +257,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
         $result = $client->run(
             "$directQuery
             RETURN labels(direct) as labels, TYPE(r) as relation, count(direct) as total;",[
-            'id' => $id
+            'id' => (string) $id
         ]);
         $counts = [];
         foreach ($result->records() as $record) {
@@ -226,7 +277,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
         $result = $client->run(
             "$directQuery
             RETURN TYPE(r) as relation, count(direct) as total;",[
-            'id' => $id
+            'id' => (string) $id
         ]);
         $counts = [];
         foreach ($result->records() as $record) {
@@ -242,7 +293,10 @@ class GraphRelationshipProvider implements RegistryContentProvider
     public static function getNodeByID($id)
     {
         $client = static::db();
-        $result = $client->run("MATCH (n {roId: {roId}}) RETURN n", ['roId' => $id]);
+        $result = $client->run("MATCH (n {roId: {roId}}) RETURN n", ['roId' => (string) $id]);
+        if (count($result->records()) == 0) {
+            return null;
+        }
         return $result->firstRecord()->get('n');
     }
 
@@ -255,7 +309,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
         ];
     }
 
-    private static function formatRelationship(Relationship $relationship)
+    private static function formatRelationship($relationship)
     {
         return [
             'id' => $relationship->identity(),
@@ -283,7 +337,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
             )
             ->addConnection(
                 'bolt',
-                "http://{$config['username']}:{$config['password']}@{$config['hostname']}:7687"
+                "bolt://{$config['username']}:{$config['password']}@{$config['hostname']}:7687"
             )
             ->build();
     }

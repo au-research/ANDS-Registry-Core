@@ -68,7 +68,7 @@ trait ExportToCSVTrait
     private function graph()
     {
         return [
-            "roId:ID" => $this->id,
+            "roId:ID" => (string) $this->id,
             ":LABEL" => implode(";", ["RegistryObject", $this->class, $this->type]),
             "key" => $this->key,
             "type" => $this->type,

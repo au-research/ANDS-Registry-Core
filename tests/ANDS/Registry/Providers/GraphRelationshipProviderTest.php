@@ -311,6 +311,32 @@ class GraphRelationshipProviderTest extends \RegistryTestClass
         $this->assertNotNull($p2s);
     }
 
+    /** @test */
+    function it_should_process_direct_relationship()
+    {
+        // given 2 records
+        $a = $this->stub(RegistryObject::class, ['title' => 'A', 'key' => 'a']);
+        $b = $this->stub(RegistryObject::class, ['title' => 'B', 'key' => 'b']);
+
+        // they are related
+        $this->stub(RegistryObject\Relationship::class, ['registry_object_id' => $a->id, 'related_object_key' => $b->key]);
+
+        // when process
+        GraphRelationshipProvider::process($a);
+
+        // will have the a2b link
+        $graph = GraphRelationshipProvider::getByID($a->id);
+        $links = $graph['links'];
+        $this->assertCount(1, $links);
+    }
+
+    /** @test */
+    function it_should_process_relatedInfo_relationships()
+    {
+        $a = $this->stub(RegistryObject::class, ['title' => 'A', 'key' => 'a']);
+
+    }
+
     /**
      * Helper method to mass add relations
      *
@@ -402,5 +428,8 @@ class GraphRelationshipProviderTest extends \RegistryTestClass
     private function clear()
     {
         $this->client->run("MATCH (n:test) OPTIONAL MATCH (n)-[r]-() DELETE n, r");
+        if ($this->dataSource) {
+            $this->client->run("MATCH (n {data_source_id:\"{$this->dataSource->id}\"}) OPTIONAL MATCH (n)-[r]-() DELETE n, r");
+        }
     }
 }

@@ -12,6 +12,14 @@ class Relationship extends Model
     protected $primaryKey = null;
     public $incrementing = false;
     public $timestamps = false;
-    protected $fillable = ['registry_object_id', 'related_object_key', 'origin',
-        'relation_type', 'relation_description','relation_url'];
+
+    protected $fillable = [
+        'registry_object_id',
+        'related_object_key',
+        'origin',
+        'relation_type',
+        'relation_description',
+        'relation_url'
+    ];
+
 }
