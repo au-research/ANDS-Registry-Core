@@ -76,7 +76,7 @@ class RegistryObject extends Model
 
     public function identifierRelationships()
     {
-        return $this->hasMany(IdentifierRelationshipView::class, 'registry_object_id', 'registry_object_id');
+        return $this->hasMany(IdentifierRelationship::class, 'registry_object_id', 'registry_object_id');
     }
 
     public function registryObjectAttributes()
