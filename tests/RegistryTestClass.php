@@ -71,6 +71,8 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * TODO Refactor to Test Factory class
+     *
      * @param $class
      * @param array $attributes
      * @param int $count
@@ -106,6 +108,15 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
                 'relation_type' => 'hasAssociationWith'
             ], $attributes);
             return RegistryObject\Relationship::create($attrs);
+        } elseif ($class == RegistryObject\IdentifierRelationship::class) {
+            $attrs = array_merge([
+                'registry_object_id' => $this->stub(RegistryObject::class)->id,
+                'related_object_identifier' => 'testID',
+                'related_info_type' => 'publication',
+                'related_object_identifier_type' => 'handle',
+                'relation_type' => 'hasAssociationWith'
+            ], $attributes);
+            return RegistryObject\IdentifierRelationship::create($attrs);
         }
 
         throw new Exception("unknown $class");

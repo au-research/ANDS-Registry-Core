@@ -57,13 +57,22 @@ class GraphRelationshipProvider implements RegistryContentProvider
             }
         }
 
-//        $identifierRelationships = $record->identifierRelationships;
-//        foreach ($identifierRelationships as $relationship) {
-//            // TODO add relatedInfo node
-//            // TODO add relationship
-//        }
+        // (after process identifier and process relationships) related info relationships
+        $identifierRelationships = $record->identifierRelationships;
+        foreach ($identifierRelationships as $relationship) {
+            $stack->push(static::getMergeRelatedInfoNodeQuery($relationship));
+            $stack->push(static::getMergeLinkRelatedInfoQuery($record, $relationship));
+        }
 
         // (after process identifier) find identical records and establish identicalTo relations
+        $duplicates = $record->getDuplicateRecords();
+        foreach ($duplicates as $duplicate) {
+            // everything is identicalTo this record
+            $stack->push("MATCH (n {roId:\"{$record->id}\"}) MATCH (i {roId:\"{$duplicate->id}\"}) MERGE (i)-[:identicalTo]->(n)");
+        }
+
+        // TODO: delete removed relationships
+
         // insert into neo4j instance
         $result = $client->runStack($stack);
 
@@ -87,9 +96,35 @@ class GraphRelationshipProvider implements RegistryContentProvider
         return "MERGE (n:{$labels} {roId: \"{$record->id}\" }) ON CREATE SET {$sets} ON MATCH SET {$sets} RETURN n";
     }
 
+    public static function getMergeRelatedInfoNodeQuery(RegistryObject\IdentifierRelationship $relationship)
+    {
+        $csv = $relationship->toCSV();
+        $data = collect($csv)->except(['identifier:ID', ':LABEL'])->toArray();
+        $labels = str_replace(';', ':', $csv[':LABEL']);
+
+        $sets = [];
+        foreach ($data as $key => $value) {
+            if ($value) {
+                $sets[] = "n.$key = '$value'";
+            }
+        }
+        $sets = implode(', ', $sets);
+
+        $id = $relationship->related_object_identifier;
+        return "MERGE (n:{$labels} {identifier: \"{$id}\" }) ON CREATE SET {$sets} ON MATCH SET {$sets} RETURN n";
+    }
+
     public static function getMergeLinkQuery(RegistryObject $record, RegistryObject $to, $relationship)
     {
         return 'MATCH (a {roId:"'.$record->id.'"}) MATCH (b {roId:"'.$to->id.'"}) MERGE (a)-[:'.$relationship->relation_type.']->(b)';
+    }
+
+    public static function getMergeLinkRelatedInfoQuery(
+        RegistryObject $record,
+        RegistryObject\IdentifierRelationship $relationship
+    ) {
+        $id = $relationship->related_object_identifier;
+        return 'MATCH (a {roId:"'.$record->id.'"}) MATCH (b:RelatedInfo {identifier:"'.$id.'"}) MERGE (a)-[:'.$relationship->relation_type.']->(b)';
     }
 
     /**
@@ -216,7 +251,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
         $links = [];
         $client = static::db();
         $result = $client->run('
-            MATCH (n)-[r:identicalTo|isPartOf|:hasPart|:isProductOf|:isFundedBy*1..]->(n2) 
+            MATCH (n)-[r:identicalTo|isPartOf|:hasPart|:isOutputOf|:isProductOf|:isFundedBy*1..]->(n2) 
             WHERE n.roId={id}
             RETURN * LIMIT 100', [
                 'id' => $id
