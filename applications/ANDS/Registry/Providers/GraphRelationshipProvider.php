@@ -245,13 +245,43 @@ class GraphRelationshipProvider implements RegistryContentProvider
         ];
     }
 
+    /**
+     * Return the relationships as part of a grants network
+     *
+     * TODO refactor to make this cleaner
+     *
+     * @param $id
+     * @return array
+     */
     public static function getGrantsNetwork($id)
     {
         $nodes = [];
         $links = [];
         $client = static::db();
+
+        // going down
         $result = $client->run('
-            MATCH (n)-[r:identicalTo|isPartOf|:hasPart|:isOutputOf|:isProductOf|:isFundedBy*1..]->(n2) 
+            MATCH (n)<-[r:identicalTo|:isPartOf|:hasPart|:isOutputOf|:isProductOf|:isFundedBy*1..]-(n2)
+            WHERE n.roId={id}
+            RETURN * LIMIT 100', [
+            'id' => $id
+        ]);
+        foreach ($result->records() as $record) {
+            $nodes[$record->get('n')->identity()] = static::formatNode($record->get('n'));
+            $nodes[$record->get('n2')->identity()] = static::formatNode($record->get('n2'));
+            $relations = $record->get('r');
+            if (is_array($relations)) {
+                foreach ($relations as $relation) {
+                    $links[$relation->identity()] = static::formatRelationship($relation);
+                }
+            } else {
+                $links[$relations->identity()] = static::formatRelationship($relations);
+            }
+        }
+
+        // going up
+        $result = $client->run('
+            MATCH (n)-[r:identicalTo|:isPartOf|:hasPart|:isOutputOf|:isProductOf|:isFundedBy*1..]->(n2)
             WHERE n.roId={id}
             RETURN * LIMIT 100', [
                 'id' => $id
