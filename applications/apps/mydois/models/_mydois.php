@@ -197,7 +197,7 @@ class _mydois extends CI_Model
 		$outputINFO = curl_getinfo($newch);
 		curl_close($newch);
 		$result_array = array();
-		if($outputINFO['http_code'] < 300)
+		if($outputINFO['http_code'] > 199 && $outputINFO['http_code'] < 400)
 		{
 			$result_array = $result;
 		}else{
