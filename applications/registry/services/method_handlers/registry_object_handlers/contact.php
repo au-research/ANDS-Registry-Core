@@ -24,16 +24,7 @@ class Contact extends ROHandler {
 
         foreach($addresses as $address){
 
-            $electronic_contact = $this->gXPath->query("ro:electronic[@type='email']", $address);
 
-            foreach($electronic_contact as $contact){
-
-
-                $contacts[] =Array(
-                    'contact_type' => 'email',
-                    'contact_value' => trim($contact->nodeValue)
-                );
-            }
 
             $physical_contact = $this->gXPath->query("ro:physical/ro:addressPart[@type='telephoneNumber']", $address);
 
@@ -215,6 +206,14 @@ class Contact extends ROHandler {
                 $contacts[] =Array(
                     'contact_type' => 'text',
                     'contact_value' => $contact->nodeValue
+                );
+            }
+            $electronic_contact = $this->gXPath->query("ro:electronic", $address);
+
+            foreach($electronic_contact as $contact){
+                $contacts[] =Array(
+                    'contact_type' => "electronic_".$contact->getAttribute("type"),
+                    'contact_value' => trim($contact->nodeValue)
                 );
             }
 

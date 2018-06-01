@@ -4,13 +4,7 @@
     ?>
     @foreach($ro->contact as $contact)
     <?php
-        if($contact['contact_type']=='url'&& $contact['contact_value']!=''){
-            $contactInfo .= '<a href="'.$contact['contact_value'].'">'.$contact['contact_value'].'</a><br/>';
-        }
-        if($contact['contact_type']=='email'&& $contact['contact_value']!=''){
-            $contactInfo .=  $contact['contact_value'].'<br/>';
-        }
-        elseif($contact['contact_type']=='telephoneNumber'&& $contact['contact_value']!='')
+        if($contact['contact_type']=='telephoneNumber'&& $contact['contact_value']!='')
         {
             $contactInfo .=  'Ph: '.$contact['contact_value'].'<br/>';
         }
@@ -18,9 +12,22 @@
         {
             $contactInfo .=  'Fax: '.$contact['contact_value'].'<br/>';
         }
-        elseif($contact['contact_value']!=''){
+        elseif($contact['contact_value']!='' && str_replace("electronic_","",$contact['contact_type']) == $contact['contact_type']){
             $contactInfo .= html_entity_decode($contact['contact_value'])."<br/>";
-        } elseif($contact['contact_type'] == "end") {
+        }
+        elseif($contact['contact_type']=='electronic_url'&& $contact['contact_value']!=''){
+            $contactInfo .= '<a href="'.$contact['contact_value'].'">'.$contact['contact_value'].'</a><br/>';
+        }
+        elseif($contact['contact_type']=='electronic_email'&& $contact['contact_value']!=''){
+            $contactInfo .=  $contact['contact_value'].'<br/>';
+        }
+        elseif($contact['contact_type']=='electronic_other'&& $contact['contact_value']!=''){
+            $contactInfo .=  $contact['contact_value'].'<br/>';
+        }
+        elseif(str_replace("electronic_","",$contact['contact_type']) != $contact['contact_type']){
+            $contactInfo .=  $contact['contact_value'].'<br/>';
+        }
+        elseif($contact['contact_type'] == "end") {
             $contactInfo .="<br/>";
         }
     ?>
