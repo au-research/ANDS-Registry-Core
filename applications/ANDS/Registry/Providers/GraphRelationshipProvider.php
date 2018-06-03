@@ -445,7 +445,13 @@ class GraphRelationshipProvider implements RegistryContentProvider
 
             $relationship = $rel['relation'];
 
-            $labels = collect($rel['labels'])->flatten(2)->unique()->toArray();
+            $labels = collect($rel['labels'])
+                ->flatten(2)
+                ->unique()
+                ->map(function($label){
+                    // fix label having bad character by wrapping with `` eg. direct:`AU-NLA`
+                    return "`$label`";
+                })->toArray();
             $labels = 'AND direct:'. implode(' AND direct:', $labels);
 
             /**
