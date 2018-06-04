@@ -554,7 +554,7 @@ class Sync_extension extends ExtensionBase{
         }
 
         //default values if none present
-        if(!isset($json['license_class'])) $json['license_class'] = 'unknown';
+        if(!isset($json['license_class'])) $json['license_class'] = 'other';
 
         // access methods
         $accessMethods = \ANDS\Registry\Providers\RIFCS\AccessProvider::get($record);
