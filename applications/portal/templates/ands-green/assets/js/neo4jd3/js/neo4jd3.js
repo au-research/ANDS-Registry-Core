@@ -595,6 +595,9 @@ function Neo4jD3(_selector, _options) {
 
     function dragged(d) {
         stickNode(d);
+
+        // TODO: recalculate the d3.forceCenter to the dragged node
+        simulation.force('center', null);
     }
 
     function dragStarted(d) {
@@ -758,15 +761,16 @@ function Neo4jD3(_selector, _options) {
     function initSimulation() {
         var simulation = d3.forceSimulation()
                           // .velocityDecay(0.8)
-                          // .force('x', d3.force().strength(0.002))
-                          // .force('y', d3.force().strength(0.002))
+
                            .force('collide', d3.forceCollide().radius(function(d) {
                                return options.minCollision;
                            }).iterations(2))
-                           .force('charge', d3.forceManyBody())
+                           // .force('charge', d3.forceManyBody())
                            .force('link', d3.forceLink().id(function(d) {
                                return d.id;
                            }))
+            // .force('x', d3.forceX().strength(0.002))
+            // .force('y', d3.forceY().strength(0.002))
                            .force('center', d3.forceCenter(svg.node().parentElement.parentElement.clientWidth / 2, svg.node().parentElement.parentElement.clientHeight / 2))
                            .on('tick', function() {
                                tick();
