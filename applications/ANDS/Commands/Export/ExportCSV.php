@@ -404,7 +404,7 @@ class ExportCSV extends ANDSCommand
 
                 $rel = [
                     ':START_ID' => $relation->from_id,
-                    ':END_ID' => $relation->to_id ? $relation->to_id : $relation->to_identifier,
+                    ':END_ID' => $relation->to_id ? $relation->to_id : md5($relation->to_identifier),
                     ':TYPE' => $type
                 ];
                 $rel = $this->postProcessRelation($rel);
@@ -439,17 +439,15 @@ class ExportCSV extends ANDSCommand
         $first = true;
         $allRelations->chunk(5000, function($relations) use($progressBar, $fp, &$done, &$first) {
             foreach ($relations as $relation) {
+
+                /* @var $relation RegistryObject\IdentifierRelationship */
+
                 if (in_array($relation->to_identifier, $done)) {
                     $progressBar->advance(1);
                     continue;
                 }
 
-                $row = [
-                    'identifier:ID' => $relation->to_identifier,
-                    ':LABEL' => implode(';', ['RelatedInfo', $relation->to_identifier_type, $relation->to_related_info_type]),
-                    'type' => $relation->to_identifier_type,
-                    'relatedInfoType' => $relation->to_related_info_type
-                ];
+                $row = $relation->toCSV();
 
                 // insert header if first
                 if ($first) {

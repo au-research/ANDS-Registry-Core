@@ -343,7 +343,7 @@ function Neo4jD3(_selector, _options) {
         var html = '<div class="swatch-white">';
         html += '<h4>';
         html += '<i class="fa '+getFontIconForNode(node)+' icon-portal" style="margin-right:4px;"></i>';
-        if (node.properties.title) {
+        if (node.properties.url) {
             html += '<a href="'+node.properties.url+'">' + node.properties.title + '</a>';
         } else if (node.properties.identifier) {
             html += node.properties.identifier;

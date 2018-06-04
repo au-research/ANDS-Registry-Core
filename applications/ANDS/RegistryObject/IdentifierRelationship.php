@@ -20,9 +20,12 @@ class IdentifierRelationship extends Model
     {
         return [
             'identifier:ID' => $this->related_object_identifier,
-            ':LABEL' => implode(';', ['RelatedInfo', $this->related_object_identifier_type, $this->related_info_type]),
-            'type' => $this->related_info_type,
-            'relatedInfoType' => $this->related_object_identifier_type
+            ':LABEL' => implode(';', ['RelatedInfo', $this->related_info_type]),
+            'relatedInfoType' => $this->related_info_type,
+            'type' => $this->related_object_identifier_type,
+            'title' => $this->related_title,
+            'url' => $this->related_url,
+            'description' => $this->related_description
         ];
     }
 }
