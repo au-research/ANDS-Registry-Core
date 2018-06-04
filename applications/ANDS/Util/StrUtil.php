@@ -6,6 +6,32 @@ namespace ANDS\Util;
 
 class StrUtil
 {
+    /**
+     * Sanitize a string
+     * Remove bad characters that breaks exporting
+     *
+     * @param $str
+     * @return mixed
+     */
+    public static function sanitize($str)
+    {
+        $str = str_replace([',', '"', ';', '\t', ':'], '', $str);
+        $str = static::removeNewlines($str);
+        return $str;
+    }
+
+    public static function removeNewlines($str)
+    {
+        return preg_replace( "/\r|\n/", " ", $str);
+    }
+
+    /**
+     * Remove stop words defined in this file
+     * For indexing purposes
+     *
+     * @param $str
+     * @return mixed
+     */
     public static function removeStopWords($str)
     {
         return str_replace(self::stopWords, "", $str);
