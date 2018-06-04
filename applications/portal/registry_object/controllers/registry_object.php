@@ -596,9 +596,17 @@ class Registry_object extends MX_Controller
         return $related;
     }
 
+    /**
+     * Returns the graph information for this record
+     *
+     * TODO: Cache response
+     * @param $registryObjectID
+     */
     public function graph($registryObjectID)
     {
         set_exception_handler('json_exception_handler');
+        // header('Cache-Control: no-cache, must-revalidate');
+        header('Content-type: application/json');
 
         $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($registryObjectID);
         $graph = \ANDS\Registry\Providers\GraphRelationshipProvider::getByID($registryObjectID);
@@ -659,6 +667,25 @@ class Registry_object extends MX_Controller
                 }
                 return $node;
             })->toArray();
+
+        // user friendly relationship naming
+        $relationships = collect($relationships)->map(function($link) use ($nodes){
+            $from = collect($nodes)->filter(function($node) use ($link) {
+                return $node['id'] === $link['startNode'];
+            })->first();
+
+            $to = collect($nodes)->filter(function($node) use ($link) {
+                return $node['id'] === $link['endNode'];
+            })->first();
+
+            $fromClass = array_key_exists('class', $from['properties']) ? $from['properties'] : 'cluster';
+
+            $toClass = array_key_exists('class', $to['properties']) ? $to['properties'] : 'cluster';
+
+            $link['type'] = format_relationship($fromClass, $link['type'], false, $toClass);
+
+            return $link;
+        });
 
         // format for neo4jd3 js library
         $payload = [
