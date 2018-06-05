@@ -643,9 +643,11 @@ class Registry_object extends MX_Controller
                     'relation' => $relation['type']
                 ];
 
+                $count = $this->getSolrCountForQuery($filters);
                 $cluster['properties'] = array_merge($cluster['properties'], [
+                    'title' => "$count related $clusterClass",
                     'url' => constructPortalSearchQuery($filters),
-                    'count' => $this->getSolrCountForQuery($filters),
+                    'count' => $count,
                     'clusterClass' => $clusterClass
                 ]);
 
@@ -666,7 +668,7 @@ class Registry_object extends MX_Controller
                     return $node;
                 }
                 return $node;
-            })->toArray();
+            })->values()->toArray();
 
         // user friendly relationship naming
         $relationships = collect($relationships)->map(function($link) use ($nodes){

@@ -597,7 +597,7 @@ function Neo4jD3(_selector, _options) {
         stickNode(d);
 
         // TODO: recalculate the d3.forceCenter to the dragged node
-        simulation.force('center', null);
+        // simulation.force('center', null);
     }
 
     function dragStarted(d) {
@@ -1203,6 +1203,7 @@ function Neo4jD3(_selector, _options) {
 
         simulation.nodes(nodes);
         simulation.force('link').links(relationships);
+        simulation.alpha(0.1).restart();
     }
 
     function updateRelationships(r) {
