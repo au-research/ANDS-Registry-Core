@@ -59,8 +59,11 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
             \ANDS\RecordData::whereIn('registry_object_id', $ids)->delete();
 
             // delete all relationships
-            RegistryObject\Relationship::where('registry_object_id', $ids)->delete();
-            RegistryObject\Relationship::where('related_object_key', $keys)->delete();
+            RegistryObject\Relationship::whereIn('registry_object_id', $ids)->delete();
+            RegistryObject\Relationship::whereIn('related_object_key', $keys)->delete();
+
+            // delete all identifier relationships
+            RegistryObject\IdentifierRelationship::whereIn('registry_object_id', $ids)->delete();
 
             // delete all records
             $records->delete();
@@ -117,6 +120,13 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
                 'relation_type' => 'hasAssociationWith'
             ], $attributes);
             return RegistryObject\IdentifierRelationship::create($attrs);
+        } elseif ($class == RegistryObject\Identifier::class) {
+            $attrs = array_merge([
+                'registry_object_id' => $this->stub(RegistryObject::class)->id,
+                'identifier' => uniqid(),
+                'identifier_type' => 'test'
+            ], $attributes);
+            return RegistryObject\Identifier::create($attrs);
         }
 
         throw new Exception("unknown $class");

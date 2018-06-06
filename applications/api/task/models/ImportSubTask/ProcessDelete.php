@@ -3,6 +3,7 @@
 
 namespace ANDS\API\Task\ImportSubTask;
 
+use ANDS\Registry\Providers\GraphRelationshipProvider;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\Providers\Scholix\Scholix;
 use ANDS\RegistryObject;
@@ -120,6 +121,13 @@ class ProcessDelete extends ImportSubTask
             $toRelationQuery .= " to_id:$record->registry_object_id";
 
             $this->parent()->incrementTaskData("recordsDeletedCount");
+        }
+
+        // remove from the graph database
+        try {
+            GraphRelationshipProvider::bulkDelete($records);
+        } catch (\Exception $e) {
+            throw new \Exception("Error deleting graph relationships: ". get_exception_msg($e));
         }
 
         // there are nothing to be added to the affected here, because there
