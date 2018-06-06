@@ -46,6 +46,9 @@ class GraphRelationshipProvider implements RegistryContentProvider
         // current node
         $stack->push(static::getMergeNodeQuery($record));
 
+        // delete outgoing relationships
+        $stack->push("MATCH (n:RegistryObject {roId:\"{$record->id}\"}) OPTIONAL MATCH (n)-[r]->() DELETE r");
+
         // relationships should already be available in database
         $relationships = $record->relationships;
         foreach ($relationships as $relationship) {
@@ -67,16 +70,46 @@ class GraphRelationshipProvider implements RegistryContentProvider
         // (after process identifier) find identical records and establish identicalTo relations
         $duplicates = $record->getDuplicateRecords();
         foreach ($duplicates as $duplicate) {
-            // everything is identicalTo this record
-            $stack->push("MATCH (n {roId:\"{$record->id}\"}) MATCH (i {roId:\"{$duplicate->id}\"}) MERGE (i)-[:identicalTo]->(n)");
-        }
 
-        // TODO: delete removed relationships
+            // make sure the duplicate record exists
+            $stack->push(static::getMergeNodeQuery($duplicate));
+
+            // this record is identical to all duplicates
+            $stack->push("MATCH (n {roId:\"{$record->id}\"}) MATCH (i {roId:\"{$duplicate->id}\"}) MERGE (n)-[:identicalTo]->(i)");
+        }
 
         // insert into neo4j instance
         $result = $client->runStack($stack);
 
         return $result->updateStatistics();
+    }
+
+    /**
+     * Delete the node and all of it's relationships
+     *
+     * @param RegistryObject $record
+     * @return \GraphAware\Common\Result\Result
+     */
+    public static function delete(RegistryObject $record)
+    {
+        $client = static::db();
+        return $client->run("MATCH (n:RegistryObject {roId:\"{$record->id}\"}) OPTIONAL MATCH (n)-[r]-() DELETE n, r");
+    }
+
+    /**
+     * Bulk delete an array of registryObject
+     *
+     * @param array $records
+     * @return \GraphAware\Common\Result\Result|\GraphAware\Neo4j\Client\Result\ResultCollection|null
+     */
+    public static function bulkDelete(array $records)
+    {
+        $client = static::db();
+        $stack = $client->stack();
+        foreach ($records as $record) {
+            return $client->run("MATCH (n:RegistryObject {roId:\"{$record->id}\"}) OPTIONAL MATCH (n)-[r]-() DELETE n, r");
+        }
+        return $client->runStack($stack);
     }
 
     public static function getMergeNodeQuery(RegistryObject $record)

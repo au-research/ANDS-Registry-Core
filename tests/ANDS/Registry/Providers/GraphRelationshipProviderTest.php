@@ -333,8 +333,60 @@ class GraphRelationshipProviderTest extends \RegistryTestClass
     /** @test */
     function it_should_process_relatedInfo_relationships()
     {
+        // given a has 2 relatedInfo
         $a = $this->stub(RegistryObject::class, ['title' => 'A', 'key' => 'a']);
+        $this->stub(RegistryObject\IdentifierRelationship::class, ['registry_object_id' => $a->id, 'related_object_identifier' => 'A1']);
+        $this->stub(RegistryObject\IdentifierRelationship::class, ['registry_object_id' => $a->id, 'related_object_identifier' => 'A2']);
 
+        // when process
+        GraphRelationshipProvider::process($a);
+
+        // 3 nodes and 2 links
+        $graph = GraphRelationshipProvider::getByID($a->id);
+        $this->assertCount(2, $graph['links']);
+        $this->assertCount(3, $graph['nodes']);
+    }
+
+    /** @test */
+    function it_should_process_identical_to_relationships()
+    {
+        // given a and b has the same identifier
+        $a = $this->stub(RegistryObject::class, ['title' => 'A', 'key' => 'a']);
+        $b = $this->stub(RegistryObject::class, ['title' => 'B', 'key' => 'b']);
+        $this->stub(RegistryObject\Identifier::class, ['registry_object_id' => $a->id, 'identifier' => 'samesies']);
+        $this->stub(RegistryObject\Identifier::class, ['registry_object_id' => $b->id, 'identifier' => 'samesies']);
+
+        // when process
+        GraphRelationshipProvider::process($a);
+
+        // 2 nodes and 1 link between a and b
+        $graph = GraphRelationshipProvider::getByID($a->id);
+        $this->assertCount(1, $graph['links']);
+        $this->assertCount(2, $graph['nodes']);
+    }
+
+    /** @test */
+    function it_should_delete_relationships_not_there_any_more()
+    {
+        // given a relates to b
+        $a = $this->stub(RegistryObject::class, ['title' => 'A', 'key' => 'a']);
+        $b = $this->stub(RegistryObject::class, ['title' => 'B', 'key' => 'b']);
+        $this->stub(RegistryObject\Relationship::class, ['registry_object_id' => $a->id, 'related_object_key' => $b->key]);
+
+        GraphRelationshipProvider::process($a);
+
+        // a is now relates to c
+        RegistryObject\Relationship::where('registry_object_id', $a->id)->where('related_object_key', $b->key)->delete();
+        $c = $this->stub(RegistryObject::class, ['title' => 'C', 'key' => 'c']);
+        $this->stub(RegistryObject\Relationship::class, ['registry_object_id' => $a->id, 'related_object_key' => $c->key]);
+
+        // when process
+        GraphRelationshipProvider::process($a);
+
+        // 2 nodes and 1 link between a and c
+        $graph = GraphRelationshipProvider::getByID($a->id);
+        $this->assertCount(1, $graph['links']);
+        $this->assertCount(2, $graph['nodes']);
     }
 
     /**

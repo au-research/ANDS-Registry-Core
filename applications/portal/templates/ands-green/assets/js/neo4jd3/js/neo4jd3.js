@@ -1203,7 +1203,7 @@ function Neo4jD3(_selector, _options) {
 
         simulation.nodes(nodes);
         simulation.force('link').links(relationships);
-        simulation.alpha(0.1).restart();
+        simulation.alpha(0.2).restart();
     }
 
     function updateRelationships(r) {
