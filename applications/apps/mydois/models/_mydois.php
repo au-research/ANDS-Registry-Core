@@ -154,9 +154,13 @@ class _mydois extends CI_Model
 			$attributes = array("name" => $client_name,
 				"symbol" => $client->datacite_symbol,
 				"domains" => $domainList,
+                "password-input" => $this->DOIS_DATACENTRE_PASSWORD,
 				"is-active" => true,
-				"contact-name" => $this->DATACITE_CONTACT_NAME,
+                "has-password" => true,
+                "keep-password" =>true,
+				"contact-name" => $client_name,
 				"contact-email" => $this->DATACITE_CONTACT_EMAIL);
+
 			$provider = array("data" => array("type" => "providers",
 				"id" => "ands"));
 			$prefixes = array("data" => array("id" => trim($datacite_prefix,"/"),
