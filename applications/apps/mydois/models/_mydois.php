@@ -44,8 +44,7 @@ class _mydois extends CI_Model
 	}
 
 	function getTrustedClients(){
-		$query = $this->doi_db->query("SELECT * FROM doi_client");
-		return $query->result_array();
+		return $this->clientRepository->getAll();
 	}
 
 	function buildPrefixOptions()
@@ -77,6 +76,13 @@ class _mydois extends CI_Model
             'shared_secret' => $shared_secret
         ]);
 
+		$fabricaConfig = \ANDS\Util\Config::get('datacite.fabrica');
+
+	
+		$dataCiteClient = new \ANDS\DOI\FabricaClient($fabricaConfig['username'],$fabricaConfig['password']);
+
+		$response = $dataCiteClient->addClient($client);
+		
 		$client_id = $client->client_id;
 
         foreach (explode(",",$domainList) as $aDomain) {
