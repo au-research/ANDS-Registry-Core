@@ -20,7 +20,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
     protected static $enableIdentical = true;
     protected static $enableCluster = true;
     protected static $enableGrantsNetwork = true;
-    protected static $enableInterlinking = false;
+    protected static $enableInterlinking = true;
 
     public static $flippableRelation = [
         'describes' => 'isDescribedBy',
