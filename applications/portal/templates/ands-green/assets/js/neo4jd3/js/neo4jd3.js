@@ -1185,7 +1185,7 @@ function Neo4jD3(_selector, _options) {
     function updateNodes(n) {
         Array.prototype.push.apply(nodes, n);
 
-        nodes.map(function(node) {
+        nodes.map(function(node, event) {
             node.x = event.clientX;
             node.y = event.clientY;
             return node;
