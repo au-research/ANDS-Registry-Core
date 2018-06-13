@@ -25,7 +25,7 @@
                     'website': 'globe'
                 },
                 minCollision: 60,
-                neo4jDataUrl: base_url + 'registry_object/graph/' + roID,
+                neo4jDataUrl: api_url + 'registry/records/' + roID + '/graph',
                 nodeRadius: 25,
                 zoomFit: false,
                 infoPanel: false,
@@ -43,7 +43,7 @@
 //                    });
                 },
                 onNodeDoubleClick: function(node) {
-                    var url = base_url + 'registry_object/graph/' + node.properties.roId;
+                    var url = api_url + 'registry/records/' + node.properties.roId + '/graph';
                     $.getJSON(url, function(data) {
                         var graph = neo4jd3.neo4jDataToD3Data(data);
                         neo4jd3.updateWithD3Data(graph);

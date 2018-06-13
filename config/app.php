@@ -11,5 +11,18 @@ return [
     'socket_url' => env('SOCKET_URL', 'https://localhost:3001/'),
 
     'api_whitelist_ip' => explode(',', env('API_WHITELIST_IP', '')),
-    'timezone' => env("TIMEZONE", 'Australia/Canberra')
+    'timezone' => env("TIMEZONE", 'Australia/Canberra'),
+
+    'cache' => [
+        'default' => 'file',
+
+        'storage' => [
+            'file' => [
+                'namespace' => env('CACHE_FILE_NS', 'ands'),
+                'path' => env('CACHE_FILE_PATH', CACHE_PATH . '/storage'),
+                'ttl' => env('CACHE_FILE_TTL', 60)
+            ]
+        ]
+
+    ]
 ];
