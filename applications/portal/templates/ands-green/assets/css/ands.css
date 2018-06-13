@@ -185,3 +185,46 @@ h1.bordered:after{
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+#graph-viz {
+    height:150px;
+    border-bottom:1px solid #cfcfcf
+}
+
+#toggle-visualisation {
+    font-size: 23px;
+    background: #f58000;
+    position: absolute;
+    bottom: -18px;
+    right: 35px;
+    border-radius: 50%;
+    padding: 4px 12px;
+}
+
+#visualisation-overlay {
+    cursor: pointer;
+    opacity: 0.2;
+    position: absolute;
+    display: block;
+    background: #6c6c6c;
+    width: 100%;
+    height: 100%;
+}
+
+#visualisation-notice {
+    display:none;
+    color:white;
+    padding: 0px 10px;
+    text-align:center;
+    position:absolute;
+    width:300px;
+    background:#6c6c6c;
+    bottom:0px;
+    right:25%;
+    left:50%;
+    margin-left:-150px;
+}
+
+#toggle-visualisation i {
+    color: white;
+}

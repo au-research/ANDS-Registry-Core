@@ -371,8 +371,35 @@ jQuery(document).ready(function( $ ) {
 
         $('#'+useTab).addClass('active');
         $('#'+useTab+'_tab').addClass('active');
+    }).on('click', '#toggle-visualisation', function(event) {
+        toggleGraphDisplay(event)
+    }).on('click', '#visualisation-overlay', function(event) {
+        toggleGraphDisplay(event)
+    }).on('mouseover', '#visualisation-overlay', function(event){
+        event.stopPropagation();
+        $('#visualisation-notice').show();
+    }).on('mouseout', '#visualisation-overlay', function(event){
+        event.stopPropagation();
+        $('#visualisation-notice').hide();
     });
 
+    function toggleGraphDisplay(event) {
+        event.stopPropagation();
+        var viz = $('#graph-viz');
+        var overlay = $('#visualisation-overlay');
+        overlay.hide();
+        if (viz.height() < 449) {
+            viz.animate({height: 450}, 400, 'swing', function() {
+                window.neo4jd3.zoomFit();
+            });
+        } else if (viz.height() > 149) {
+            console.log('here');
+            viz.animate({height: 150}, 400, 'swing', function() {
+                // window.neo4jd3.zoomFit();
+            });
+            overlay.show();
+        }
+    }
 
     //Feedback button
     window.ATL_JQ_PAGE_PROPS =  {
@@ -383,6 +410,5 @@ jQuery(document).ready(function( $ ) {
             showCollectorDialog();
         });
     }};
-
 
 });
