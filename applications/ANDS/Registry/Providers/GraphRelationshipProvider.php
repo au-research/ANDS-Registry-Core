@@ -4,6 +4,7 @@
 namespace ANDS\Registry\Providers;
 
 
+use ANDS\Cache\Cache;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\Config;
@@ -40,6 +41,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
      */
     public static function process(RegistryObject $record)
     {
+
         $client = static::db();
         $stack = $client->stack();
 
@@ -80,6 +82,8 @@ class GraphRelationshipProvider implements RegistryContentProvider
 
         // insert into neo4j instance
         $result = $client->runStack($stack);
+
+        // todo: queue warm cache for retrieval?
 
         return $result->updateStatistics();
     }

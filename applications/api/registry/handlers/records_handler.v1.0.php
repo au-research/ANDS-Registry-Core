@@ -19,6 +19,7 @@ class RecordsHandler extends Handler {
         $router->get('records/(\w+)/identifiers', 'RecordsIdentifiersController@index');
         $router->get('records/(\w+)/orcid', 'RecordsMiscController@orcid');
         $router->get('records/(\w+)/orcid/validate', 'RecordsMiscController@orcidValidate');
+        $router->get('records/(\w+)/graph', 'RecordsGraphController@index');
 
         $router->route(['GET', 'PUT', 'POST'], 'records/(\w+)/sync', 'RecordsController@sync');
 //        dd($router->getMatch());

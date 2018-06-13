@@ -4,6 +4,7 @@
 namespace ANDS\API\Task\ImportSubTask;
 
 
+use ANDS\Cache\Cache;
 use ANDS\Registry\Providers\GraphRelationshipProvider;
 use ANDS\Repository\RegistryObjectsRepository;
 
@@ -29,6 +30,7 @@ class ProcessGraphRelationships extends ImportSubTask
             $record = RegistryObjectsRepository::getRecordByID($id);
             // process implicit relationships for the grants network
             try {
+                Cache::forget("graph.{$record->id}");
                 GraphRelationshipProvider::process($record);
             } catch (\Exception $e) {
                 throw new \Exception("Error processing graph relationships for {$id}: ". get_exception_msg($e));
