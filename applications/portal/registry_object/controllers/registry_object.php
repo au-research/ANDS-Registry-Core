@@ -416,22 +416,22 @@ class Registry_object extends MX_Controller
             $query = [];
             switch ($rr) {
                 case "data":
-                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'collection'];
+                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'collection', 'sort' => 'score desc'];
                     break;
                 case "programs":
-                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'activity', 'type' => 'program'];
+                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'activity', 'type' => 'program', 'sort' => 'score desc'];
                     break;
                 case "grants_projects":
-                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'activity', 'nottype' => 'program'];
+                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'activity', 'nottype' => 'program', 'sort' => 'score desc'];
                     break;
                 case "services":
-                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'service'];
+                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'service', 'sort' => 'score desc'];
                     break;
                 case "organisations";
-                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'party', 'type' => 'group'];
+                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'party', 'type' => 'group', 'sort' => 'score desc'];
                     break;
                 case "researchers":
-                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'party', 'nottype' => 'group'];
+                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'party', 'nottype' => 'group', 'sort' => 'score desc'];
                     break;
             }
             $related[$rr]['searchUrl'] = constructPortalSearchQuery($query);
