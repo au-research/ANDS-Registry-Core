@@ -4,7 +4,7 @@
         <div class="swatch-white" style="position:relative;">
             <div id="visualisation-overlay"></div>
             <div id="graph-viz"></div>
-            <a href="" id="toggle-visualisation"><i class="fa fa-bars"></i></a>
+            <a href="" id="toggle-visualisation"><i class="fa fa-sort"></i></a>
             <div id="visualisation-notice">Click to explore visualisation graph</div>
         </div>
 

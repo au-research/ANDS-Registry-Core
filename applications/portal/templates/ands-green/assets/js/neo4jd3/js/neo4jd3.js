@@ -323,15 +323,15 @@ function Neo4jD3(_selector, _options) {
 
     function getNodeFill(node, colors) {
         if (node.labels.has('collection')) {
-            return colors[0];
+            return "#EB6E1F";
         } else if(node.labels.has('party')) {
-            return colors[1];
+            return "#62CC9E";
         } else if (node.labels.has('activity')) {
-            return colors[2];
+            return "#FFD66C";
         } else if (node.labels.has('service')) {
             return colors[3];
         } else if (node.labels.has('publication')) {
-            return colors[4];
+            return "#55BFF6";
         } else if (node.labels.has('website')) {
             return colors[6];
         } else {
