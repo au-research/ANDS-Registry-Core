@@ -153,7 +153,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
 
     public static function getMergeLinkQuery(RegistryObject $record, RegistryObject $to, $relationship)
     {
-        return 'MATCH (a {roId:"'.$record->id.'"}) MATCH (b {roId:"'.$to->id.'"}) MERGE (a)-[:'.$relationship->relation_type.']->(b)';
+        return 'MATCH (a {roId:"'.$record->id.'"}) MATCH (b {roId:"'.$to->id.'"}) MERGE (a)-[:`'.$relationship->relation_type.'`]->(b)';
     }
 
     public static function getMergeLinkRelatedInfoQuery(
@@ -161,7 +161,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
         RegistryObject\IdentifierRelationship $relationship
     ) {
         $id = $relationship->related_object_identifier;
-        return 'MATCH (a {roId:"'.$record->id.'"}) MATCH (b:RelatedInfo {identifier:"'.$id.'"}) MERGE (a)-[:'.$relationship->relation_type.']->(b)';
+        return 'MATCH (a {roId:"'.$record->id.'"}) MATCH (b:RelatedInfo {identifier:"'.$id.'"}) MERGE (a)-[:`'.$relationship->relation_type.'`]->(b)';
     }
 
     /**
