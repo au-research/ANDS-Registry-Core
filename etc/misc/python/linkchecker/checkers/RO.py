@@ -268,6 +268,11 @@ class ROChecker(base.BaseChecker):
     def _get_RO_links_for_checking(self, rol_list, data_source_id=None):
         """Get all RO links to be tested.
 
+        Links are tested irrespective of the status of the
+        registry object (i.e., whether or not the record is published);
+        the _get_RO_links_for_reporting method may report
+        only a subset of the broken links (i.e., only for published records).
+
         The rol_list array is updated in situ.
 
         Arguments:
@@ -875,6 +880,8 @@ data_source_id: {}
     def _get_RO_links_for_reporting(self, rol_list, data_source_id=None):
         """Get all RO links to be reported.
 
+        Only links from published records are reported.
+
         The rol_list array is updated in situ.
 
         Arguments:
@@ -897,7 +904,8 @@ data_source_id: {}
                  ", ".join(ro_columns_for_query) +
                  " FROM registry_object_links rol"
                  " JOIN registry_objects ro"
-                 " WHERE rol.registry_object_id = ro.registry_object_id")
+                 " WHERE rol.registry_object_id = ro.registry_object_id"
+                 " AND ro.status = 'PUBLISHED'")
         if data_source_id is not None:
             query += " AND rol.`data_source_id`=" + str(data_source_id)
         query += " ORDER BY ro.registry_object_id;"
