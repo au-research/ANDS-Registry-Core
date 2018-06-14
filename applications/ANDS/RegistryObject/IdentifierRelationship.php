@@ -18,13 +18,19 @@ class IdentifierRelationship extends Model
 
     public function toCSV()
     {
+        $url = $this->related_url;
+
+        if (!$url && $this->related_info_type == 'website') {
+            $url = $this->related_object_identifier;
+        }
+
         return [
             'identifier:ID' => $this->related_object_identifier,
             ':LABEL' => implode(';', ['RelatedInfo', $this->related_info_type]),
             'relatedInfoType' => $this->related_info_type,
             'type' => $this->related_object_identifier_type,
             'title' => $this->related_title,
-            'url' => $this->related_url,
+            'url' => $url,
             'description' => $this->related_description
         ];
     }
