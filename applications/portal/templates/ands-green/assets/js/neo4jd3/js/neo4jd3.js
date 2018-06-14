@@ -344,11 +344,15 @@ function Neo4jD3(_selector, _options) {
         html += '<h4>';
         html += '<i class="fa '+getFontIconForNode(node)+' icon-portal" style="margin-right:4px;"></i>';
         if (node.properties.url) {
-            html += '<a href="'+node.properties.url+'">' + node.properties.title + '</a>';
+            html += '<a target="_blank" href="'+node.properties.url+'">' + node.properties.title;
+            if (node.labels.has('RelatedInfo')) {
+                html += ' <img class="identifier_logo" src="'+base_url+'/assets/core/images/icons/external_link.png" alt="External Link">';
+            }
+            html += '</a>';
         } else if (node.properties.identifier) {
             html += node.properties.identifier;
         } else if (node.properties.count && !node.labels.has('RelatedInfo')) {
-            html += '<a href="'+node.properties.url+'">' + node.properties.count + " related " + getReadableTypeForNode(node) + '</a>';
+            html += '<a target="_blank" href="'+node.properties.url+'">' + node.properties.count + " related " + getReadableTypeForNode(node) + '</a>';
         } else if (node.properties.count && node.labels.has('RelatedInfo')) {
             // no link for relatedInfo yet
             html += node.properties.count + " related " + getReadableTypeForNode(node);
