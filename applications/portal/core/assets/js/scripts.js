@@ -373,18 +373,12 @@ jQuery(document).ready(function( $ ) {
         $('#'+useTab+'_tab').addClass('active');
     }).on('click', '#toggle-visualisation', function(event) {
         toggleGraphDisplay(event)
-    }).on('click', '#visualisation-overlay', function(event) {
+    }).on('click', '.visualisation-overlay', function(event) {
         toggleGraphDisplay(event)
-    }).on('mouseover', '#visualisation-overlay', function(event){
+    }).on('mouseover', '.visualisation-overlay', function(event){
         event.stopPropagation();
         $('#visualisation-notice').show();
-    }).on('mouseover', '#visualisation-notice', function(event){
-        event.stopPropagation();
-        $('#visualisation-notice').show();
-    }).on('mouseout', '#visualisation-overlay', function(event){
-        event.stopPropagation();
-        $('#visualisation-notice').hide();
-    }).on('mouseout', '#visualisation-notice', function(event){
+    }).on('mouseout', '.visualisation-overlay', function(event){
         event.stopPropagation();
         $('#visualisation-notice').hide();
     });

@@ -212,6 +212,7 @@ h1.bordered:after{
 }
 
 #visualisation-notice {
+    cursor:pointer;
     opacity: 1;
     display:none;
     color:white;
