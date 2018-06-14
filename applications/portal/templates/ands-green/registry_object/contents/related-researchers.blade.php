@@ -9,7 +9,11 @@
                    title="{{ $col['to_title'] }}"
                    class="ro_preview"
                    tip="{{ $col['display_description'] }}"
-                   ro_id="{{ $col['to_id'] }}">
+                   @if(isset($col['relation_identifier_id']))
+                    identifier_relation_id="{{ $col['relation_identifier_id'] }}"
+                   @elseif(isset($col['to_id']))
+                    ro_id="{{$col['to_id']}}"
+                   @endif>
                     {{$col['to_title']}}</a>
             </li>
         @endforeach
