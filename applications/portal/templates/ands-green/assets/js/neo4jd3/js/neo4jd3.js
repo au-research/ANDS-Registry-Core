@@ -629,6 +629,10 @@ function Neo4jD3(_selector, _options) {
     function icon(d) {
         var code;
 
+        if (d.loading) {
+            return options.iconMap['spinner'];
+        }
+
         // ANDS Business Logic
         if (d.labels.has('party') && d.labels.has('group')) {
             return options.iconMap['group'];
@@ -982,6 +986,18 @@ function Neo4jD3(_selector, _options) {
               .html(function(d) {
                    return d.properties.count ? d.properties.count : '';
                });
+            node.selectAll('text.icon')
+                .html(function(d) {
+                    var _icon = icon(d);
+                    return _icon ? '&#x' + _icon : d.id;
+                })
+                .attr('class', function(d) {
+                    var classes = 'text' + (icon(d) ? ' icon' : '');
+                    if (d.loading) {
+                        classes += ' fa-spin';
+                    }
+                    return classes;
+                });
         }
     }
 
