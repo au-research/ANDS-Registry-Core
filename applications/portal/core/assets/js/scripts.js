@@ -378,7 +378,13 @@ jQuery(document).ready(function( $ ) {
     }).on('mouseover', '#visualisation-overlay', function(event){
         event.stopPropagation();
         $('#visualisation-notice').show();
+    }).on('mouseover', '#visualisation-notice', function(event){
+        event.stopPropagation();
+        $('#visualisation-notice').show();
     }).on('mouseout', '#visualisation-overlay', function(event){
+        event.stopPropagation();
+        $('#visualisation-notice').hide();
+    }).on('mouseout', '#visualisation-notice', function(event){
         event.stopPropagation();
         $('#visualisation-notice').hide();
     });
