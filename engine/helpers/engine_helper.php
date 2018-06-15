@@ -753,10 +753,19 @@ function tearDownEloquent() {
 }
 
 function getSolrCountForQuery($filters) {
-    $solr = new SolrClient(\ANDS\Util\Config::get('app.solr_url'));
-    return $solr
-        ->search(array_merge($filters, ['fl' => 'id', 'rows' => 0]))
-        ->getNumFound();
+    $ci =& get_instance();
+    $ci->load->library('solr');
+    $result = $ci->solr->init()
+        ->setFilters($filters)
+        ->executeSearch(true);
+
+    return $result['response']['numFound'];
+
+    // TODO: map solr search to use solr client instead
+//    $solr = new SolrClient(\ANDS\Util\Config::get('app.solr_url'));
+//    return $solr
+//        ->search(array_merge($filters, ['fl' => 'id', 'rows' => 0]))
+//        ->getNumFound();
 }
 
 function constructPortalSearchQuery($queries)

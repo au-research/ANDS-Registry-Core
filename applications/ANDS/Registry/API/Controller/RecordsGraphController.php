@@ -10,6 +10,9 @@ use ANDS\Repository\RegistryObjectsRepository;
 
 class RecordsGraphController
 {
+
+    protected $caching = false;
+
     /**
      * api/registry/records/:id/graph
      * @param $id
@@ -17,9 +20,14 @@ class RecordsGraphController
      */
     public function index($id)
     {
-        return Cache::remember("graph.$id", 30, function() use ($id){
-            return $this->getGraphForRecord($id);
-        });
+        if ($this->caching) {
+            return Cache::remember("graph.$id", 30, function() use ($id){
+                return $this->getGraphForRecord($id);
+            });
+        }
+
+        return $this->getGraphForRecord($id);
+
     }
 
     /**
