@@ -24,13 +24,27 @@ class GraphRelationshipProvider implements RegistryContentProvider
     protected static $enableInterlinking = true;
 
     public static $flippableRelation = [
+        'addsValueTo' => 'hasValueAddedBy',
         'describes' => 'isDescribedBy',
-        'hasPart' => 'isPartOf',
+        'enriches' => 'isEnrichedBy',
         'hasCollector' => 'isCollectorOf',
-        'funds' => 'isFundedBy',
+        'hasDerivedCollection' => 'isDerivedFrom',
+        'hasMember' => 'isMemberOf',
+        'hasOutput' => 'isOutputOf',
+        'hasPart' => 'isPartOf',
+        'hasParticipant' => 'isParticipantIn',
+        'hasPrincipalInvestigator' => 'isPrincipalInvestigatorOf',
         'isFunderOf' => 'isFundedBy',
+        'makesAvailable' => 'isAvailableThrough',
+        'operatesOn' => 'isOperatedOnBy',
+        'presents' => 'isPresentedBy',
+        'produces' => 'isProducedBy',
+        'supports' => 'isSupportedBy',
+        'isLocationFor' => 'isLocatedIn',
+        'isManagerOf' => 'isManagedBy',
+        'isOwnerOf' => 'isOwnedBy',
+        'funds' => 'isFundedBy',
         'outputs' => 'isOutputOf',
-        'hasOutput' => 'isOutputOf'
     ];
 
     /**
@@ -41,7 +55,6 @@ class GraphRelationshipProvider implements RegistryContentProvider
      */
     public static function process(RegistryObject $record)
     {
-
         $client = static::db();
         $stack = $client->stack();
 
@@ -153,14 +166,30 @@ class GraphRelationshipProvider implements RegistryContentProvider
 
     public static function getMergeLinkQuery(RegistryObject $record, RegistryObject $to, $relationship)
     {
-        return 'MATCH (a {roId:"'.$record->id.'"}) MATCH (b {roId:"'.$to->id.'"}) MERGE (a)-[:`'.$relationship->relation_type.'`]->(b)';
+        // flip the relation if match
+        $relation_type = $relationship->relation_type;
+        if (in_array($relation_type, array_keys(static::$flippableRelation))) {
+            $flipped = static::$flippableRelation[$relation_type];
+            return 'MATCH (b {roId:"'.$to->id.'"}) MATCH (a {roId:"'.$record->id.'"}) MERGE (b)-[:`'.$flipped.'`]->(a)';
+        }
+
+        return 'MATCH (a {roId:"'.$record->id.'"}) MATCH (b {roId:"'.$to->id.'"}) MERGE (a)-[:`'.$relation_type.'`]->(b)';
     }
 
     public static function getMergeLinkRelatedInfoQuery(
         RegistryObject $record,
         RegistryObject\IdentifierRelationship $relationship
     ) {
+
         $id = $relationship->related_object_identifier;
+
+        // flip the relation if match
+        $relation_type = $relationship->relation_type;
+        if (in_array($relation_type, array_keys(static::$flippableRelation))) {
+            $flipped = static::$flippableRelation[$relation_type];
+            return 'MATCH (b:RelatedInfo {identifier:"'.$id.'"}) MATCH (a {roId:"'.$record->id.'"}) MERGE (b)-[:`'.$flipped.'`]->(a)';
+        }
+
         return 'MATCH (a {roId:"'.$record->id.'"}) MATCH (b:RelatedInfo {identifier:"'.$id.'"}) MERGE (a)-[:`'.$relationship->relation_type.'`]->(b)';
     }
 

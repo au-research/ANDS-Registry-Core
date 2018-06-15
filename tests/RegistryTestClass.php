@@ -69,6 +69,9 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
             $records->delete();
         }
 
+        // delete data source attributes
+        $this->dataSource->dataSourceAttributes()->delete();
+
         // delete data source
         $this->dataSource->delete();
     }
