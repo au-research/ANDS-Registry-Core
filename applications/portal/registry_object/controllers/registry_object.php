@@ -256,7 +256,7 @@ class Registry_object extends MX_Controller
             foreach ($ro->relationships['researchers']['docs'] as $rel) {
                 if(is_array($rel)) {
                     $rels = is_array($rel['relation_origin']) ? $rel['relation_origin'] : array($rel['relation_origin']);
-                    if ((in_array('IDENTIFIER', $rels) || in_array('IDENTIFIER REVERSE', $rels)) && $rel['from_id'] != '') {
+                    if ((in_array('IDENTIFIER', $rels) || in_array('IDENTIFIER REVERSE', $rels)) && $rel['from_id'] != '' && array_key_exists('relation_identifier_identifier', $rel)) {
                         $resolvedPartyIdentifiers[] = $rel['relation_identifier_identifier'];
                     }
                 }
