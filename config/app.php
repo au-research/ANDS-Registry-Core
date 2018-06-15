@@ -19,7 +19,7 @@ return [
         'storage' => [
             'file' => [
                 'namespace' => env('CACHE_FILE_NS', 'ands'),
-                'path' => env('CACHE_FILE_PATH', CACHE_PATH . '/storage'),
+                'path' => env('CACHE_FILE_PATH', 'engine/cache/storage'),
                 'ttl' => env('CACHE_FILE_TTL', 60)
             ]
         ]
