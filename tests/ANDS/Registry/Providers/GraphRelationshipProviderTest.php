@@ -389,6 +389,61 @@ class GraphRelationshipProviderTest extends \RegistryTestClass
         $this->assertCount(2, $graph['nodes']);
     }
 
+    /** @test */
+    function it_should_include_primary_links()
+    {
+        // given record a and b
+        $a = $this->stub(RegistryObject::class, ['title' => 'A', 'key' => 'a']);
+        $b = $this->stub(RegistryObject::class, ['title' => 'B', 'key' => 'b']);
+
+        // a is the primary link for the data source, b->a
+        $this->dataSource->setDataSourceAttribute('create_primary_relationships', DB_TRUE);
+        $this->dataSource->setDataSourceAttribute('primary_key_1', $a->key);
+        $this->dataSource->setDataSourceAttribute('collection_rel_1', 'hasAssociationWith');
+
+        // process b
+        RelationshipProvider::createPrimaryLinks($b);
+        GraphRelationshipProvider::process($b);
+
+        // 2 nodes and 1 link between b and a
+        $graph = GraphRelationshipProvider::getByID($b->id);
+        $this->assertCount(1, $graph['links']);
+        $this->assertCount(2, $graph['nodes']);
+    }
+
+    /** @test */
+    function it_should_flip_relation_when_required()
+    {
+        // given record a and b
+        $a = $this->stub(RegistryObject::class, ['title' => 'A', 'key' => 'a']);
+        $b = $this->stub(RegistryObject::class, ['title' => 'B', 'key' => 'b']);
+
+        // b funds a
+        $this->stub(RegistryObject\Relationship::class, ['registry_object_id' => $b->id, 'related_object_key' => $a->key, 'relation_type' => 'isFunderOf']);
+
+        GraphRelationshipProvider::process($a);
+        GraphRelationshipProvider::process($b);
+
+        // 2 nodes, 1 link
+        $graph = GraphRelationshipProvider::getByID($a->id);
+        $this->assertCount(1, $graph['links']);
+        $this->assertCount(2, $graph['nodes']);
+
+        $aNode = collect($graph['nodes'])->filter(function($node) use ($a){
+            return $node['properties']['roId'] == $a->id;
+        })->first();
+
+        $bNode = collect($graph['nodes'])->filter(function($node) use ($b){
+            return $node['properties']['roId'] == $b->id;
+        })->first();
+
+        // a should be isFundedBy b
+        $link = $graph['links'][0];
+        $this->assertEquals($aNode['id'], $link['startNode']);
+        $this->assertEquals($bNode['id'], $link['endNode']);
+        $this->assertEquals('isFundedBy', $link['type']);
+    }
+
     /**
      * Helper method to mass add relations
      *

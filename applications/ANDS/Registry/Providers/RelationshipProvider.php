@@ -215,7 +215,7 @@ class RelationshipProvider
      * @param $record
      * @param $explicit_keys
      */
-    public static function createPrimaryLinks($record, $explicit_keys){
+    public static function createPrimaryLinks($record, $explicit_keys = []){
 
         $dataSource = DataSourceRepository::getByID($record->data_source_id);
 
