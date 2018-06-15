@@ -5,6 +5,7 @@ namespace ANDS\Commands\RegistryObject;
 
 
 use ANDS\Commands\ANDSCommand;
+use ANDS\Registry\Providers\GraphRelationshipProvider;
 use ANDS\Registry\Providers\LinkProvider;
 use ANDS\Registry\Providers\QualityMetadataProvider;
 use ANDS\Registry\Providers\RelationshipProvider;
@@ -29,14 +30,15 @@ class RegistryObjectProcessCommand extends ANDSCommand
         'relationship' => RelationshipProvider::class,
         'title' => TitleProvider::class,
         'core' => CoreMetadataProvider::class,
-        'date' => DatesProvider::class
+        'date' => DatesProvider::class,
+        'graph' => GraphRelationshipProvider::class
     ];
 
     protected function configure()
     {
         // load the constants needed
         define("BASEPATH", './');
-        require('./engine/config/constants.php');
+        require(BASEPATH. 'engine/config/constants.php');
 
         $this
             ->setName('ro:process')
