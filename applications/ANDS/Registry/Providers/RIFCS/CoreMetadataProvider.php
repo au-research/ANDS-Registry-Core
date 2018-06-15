@@ -6,6 +6,7 @@ namespace ANDS\Registry\Providers\RIFCS;
 use ANDS\Registry\Group;
 use ANDS\Registry\Providers\RIFCSProvider;
 use ANDS\RegistryObject;
+use ANDS\Util\StrUtil;
 use ANDS\Util\XMLUtil;
 
 class CoreMetadataProvider implements RIFCSProvider
@@ -36,7 +37,7 @@ class CoreMetadataProvider implements RIFCSProvider
         );
 
         $record->class = $class;
-        $record->type = (string)$element['type'];
+        $record->type = StrUtil::sanitize((string) $element['type']);
         $group = (string)$registryObjectElement['group'];
         $record->group = (string)$registryObjectElement['group'];
 
