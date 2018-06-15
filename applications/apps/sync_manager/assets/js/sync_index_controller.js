@@ -202,9 +202,9 @@
          */
         function refreshDataSources() {
             APIDataSourceService.getDataSources().then(function (data) {
-                $scope.datasources = data;
+                $scope.datasources = data['data'] ? data['data'] : data;
                 angular.forEach($scope.datasources, function (ds) {
-                    ds.count_PUBLISHED = parseInt(ds.counts.count_PUBLISHED);
+                    ds.count_PUBLISHED = parseInt(ds.counts['count_PUBLISHED'] ? ds.counts['count_PUBLISHED']: 0);
                     ds.count_INDEXED = parseInt(ds.counts.count_INDEXED);
                     ds.count_MISSING = parseInt(ds.counts.count_MISSING);
                 });
