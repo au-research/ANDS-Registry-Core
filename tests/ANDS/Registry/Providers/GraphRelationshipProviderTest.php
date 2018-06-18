@@ -444,6 +444,35 @@ class GraphRelationshipProviderTest extends \RegistryTestClass
         $this->assertEquals('isFundedBy', $link['type']);
     }
 
+    /** @test */
+    function it_merge_resolved_identifier_relationship_to_real_ones()
+    {
+        // given record a and b
+        $a = $this->stub(RegistryObject::class, ['title' => 'A', 'key' => 'a']);
+        $b = $this->stub(RegistryObject::class, ['title' => 'B', 'key' => 'b']);
+
+        // give b an identifier
+        $identifierB = $this->stub(RegistryObject\Identifier::class, ['registry_object_id' => $b->id]);
+
+        // a relates to b
+        $this->stub(RegistryObject\Relationship::class, ['registry_object_id' => $a->id, 'related_object_key' => $b->key]);
+
+        // a relates to $identifierB
+        $this->stub(RegistryObject\IdentifierRelationship::class, [
+            'registry_object_id' => $a->id,
+            'related_object_identifier' => $identifierB->identifier
+        ]);
+
+        // when process a and b
+        GraphRelationshipProvider::process($a);
+        GraphRelationshipProvider::process($b);
+
+        $graph = GraphRelationshipProvider::getByID($a->id);
+
+        // a should relates to only 1 other node, which is b
+        $this->assertCount(2, $graph['nodes']);
+    }
+
     /**
      * Helper method to mass add relations
      *
