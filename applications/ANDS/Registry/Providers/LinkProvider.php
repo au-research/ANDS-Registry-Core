@@ -261,7 +261,9 @@ class LinkProvider implements RegistryContentProvider
     {
         foreach($jsonLinksArray as $link){
             $link = json_decode($link, true);
-            Links::create($link);
+            if (is_array($link) && count($link)) {
+                Links::create($link);
+            }
         }
     }
 
