@@ -20,25 +20,15 @@ class Sync_extension extends ExtensionBase{
 	 * @return boolean/string [if it's a string, it's an error message]
 	 */
 	function sync($full = true, $conn_limit=20){
-		try {
-			$this->_CI->load->library('solr');
-			if ($full){
-				$this->ro->processIdentifiers();
-				$this->ro->addRelationships();
-				$this->ro->update_quality_metadata();
-			}
-            if($this->ro->status == PUBLISHED){
-                $this->ro->processLinks();
-            }
 
-            $this->index_solr();
-            $this->indexRelationship();
+	    try {
+	        $record = RegistryObjectsRepository::getRecordByID($this->ro->id);
+	        \ANDS\Registry\Importer::instantSyncRecord($record);
+        } catch (Exception $e) {
+	        return "error: ". $e;
+        }
 
-//			$this->_dropCache();
-		} catch (Exception $e) {
-			return 'error: '.$e;
-		}
-		return true;
+        return true;
 	}
 
 	function index_solr($commit = true) {
