@@ -350,7 +350,7 @@ function Neo4jD3(_selector, _options) {
             }
             html += '</a>';
         } else if (node.properties.identifier) {
-            html += node.properties.identifier;
+            html += node.properties.title;
         } else if (node.properties.count && !node.labels.has('RelatedInfo')) {
             html += '<a target="_blank" href="'+node.properties.url+'">' + node.properties.count + " related " + getReadableTypeForNode(node) + '</a>';
         } else if (node.properties.count && node.labels.has('RelatedInfo')) {
