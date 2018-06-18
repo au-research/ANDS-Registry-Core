@@ -102,7 +102,7 @@ class LinkProvider implements RegistryContentProvider
             preg_match_all($regex, html_entity_decode($desc), $matches);
             $type = 'description_link';
             foreach($matches[0] as $url){
-                $url = trim($url);
+                $url = trim($url,"):.,");
                 if ($url != '') {
                     array_push($descLinks, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$url,'status'=>'NEW')));
                 }
