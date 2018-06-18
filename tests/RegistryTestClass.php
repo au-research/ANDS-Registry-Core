@@ -62,6 +62,9 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
             RegistryObject\Relationship::whereIn('registry_object_id', $ids)->delete();
             RegistryObject\Relationship::whereIn('related_object_key', $keys)->delete();
 
+            // delete all identifiers
+            RegistryObject\Identifier::whereIn('registry_object_id', $ids)->delete();
+
             // delete all identifier relationships
             RegistryObject\IdentifierRelationship::whereIn('registry_object_id', $ids)->delete();
 

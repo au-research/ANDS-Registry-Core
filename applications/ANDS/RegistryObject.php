@@ -84,6 +84,11 @@ class RegistryObject extends Model
         return $this->hasMany(RegistryObjectAttribute::class, 'registry_object_id', 'registry_object_id');
     }
 
+    public function identifiers()
+    {
+        return $this->hasMany(Identifier::class, 'registry_object_id', 'registry_object_id');
+    }
+
     /**
      * Eloquent
      * Returns a current recordData
