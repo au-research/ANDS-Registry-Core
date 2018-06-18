@@ -477,7 +477,7 @@ function Neo4jD3(_selector, _options) {
     }
 
     function relationshipToHtml(d) {
-        return d.type;
+        return d.html;
     }
 
     function appendOutlineToRelationship(r) {
