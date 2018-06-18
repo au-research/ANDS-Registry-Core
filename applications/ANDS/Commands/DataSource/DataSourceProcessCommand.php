@@ -81,7 +81,7 @@ class DataSourceProcessCommand extends ANDSCommand
                             $processMethod->invoke(new $this->processors[$process], $record);
                             $this->logd("Success $process on ({$record->id})", "info");
                         } catch (\Exception $e) {
-                            $this->log($e->getMessage(), "error");
+                            $this->log("Error process {$process} for record: {$record->id}: {$e->getMessage()}", "error");
                             continue;
                         }
                         $progressBar->advance(1);
