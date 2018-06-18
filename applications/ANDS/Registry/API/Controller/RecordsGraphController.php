@@ -6,6 +6,7 @@ namespace ANDS\Registry\API\Controller;
 
 use ANDS\Cache\Cache;
 use ANDS\Registry\Providers\GraphRelationshipProvider;
+use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 use ANDS\Repository\RegistryObjectsRepository;
 
 class RecordsGraphController
@@ -98,6 +99,14 @@ class RecordsGraphController
                     $node['properties']['url'] = portal_url($node['properties']['slug'].'/'.$node['properties']['roId']);
                     return $node;
                 }
+
+                // TODO: tighten checks
+                if (array_key_exists('identifier', $node['properties']) && array_key_exists('identifierType', $node['properties'])) {
+                    $identifier = IdentifierProvider::format($node['properties']['identifier'], $node['properties']['identifierType']);
+                    $node['properties']['url'] = $identifier['href'];
+                    return $node;
+                }
+
                 return $node;
             })->values()->toArray();
 
@@ -119,6 +128,7 @@ class RecordsGraphController
 
             return $link;
         });
+
 
         // format for neo4jd3 js library
         return [
