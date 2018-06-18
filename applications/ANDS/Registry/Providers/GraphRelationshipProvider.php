@@ -471,6 +471,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
                 'bolt',
                 "bolt://{$config['username']}:{$config['password']}@{$config['hostname']}:7687"
             )
+            ->setDefaultTimeout(10)
             ->build();
     }
 

@@ -95,14 +95,23 @@ class RecordsGraphController
                     return $c['id'] == $node['id'];
                 })->first();
             })->map(function($node) {
-                if (array_key_exists('slug', $node['properties'])) {
+
+                $props = $node['properties'];
+
+                if (array_key_exists('slug', $props)) {
                     $node['properties']['url'] = portal_url($node['properties']['slug'].'/'.$node['properties']['roId']);
                     return $node;
                 }
 
                 // TODO: tighten checks
-                if (array_key_exists('identifier', $node['properties']) && array_key_exists('identifierType', $node['properties'])) {
-                    $identifier = IdentifierProvider::format($node['properties']['identifier'], $node['properties']['identifierType']);
+                if (array_key_exists('identifier', $props) && array_key_exists('identifierType', $props)) {
+                    $identifier = IdentifierProvider::format($props['identifier'], $props['identifierType']);
+                    $node['properties']['url'] = $identifier['href'];
+                    return $node;
+                }
+
+                if (array_key_exists('identifier', $props) && array_key_exists('type', $props)) {
+                    $identifier = IdentifierProvider::format($props['identifier'], $props['type']);
                     $node['properties']['url'] = $identifier['href'];
                     return $node;
                 }

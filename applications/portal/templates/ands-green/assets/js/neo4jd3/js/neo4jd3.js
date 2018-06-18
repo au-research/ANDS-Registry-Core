@@ -333,7 +333,7 @@ function Neo4jD3(_selector, _options) {
         } else if (node.labels.has('publication')) {
             return "#55BFF6";
         } else if (node.labels.has('website')) {
-            return colors[6];
+            return "#405f9e";
         } else {
             return colors[9];
         }
