@@ -4,16 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "38dbd1978630f5a6a097010a2731342b",
+    "content-hash": "da53431790a4c70de59e027590260a54",
     "packages": [
         {
             "name": "au-research/ands-doi-service",
-            "version": "dev-feature/CC-2207-enhancement-doi-service-client-admin-implement-new-fabrica-ap",
+            "version": "dev-develop",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/au-research/ANDS-DOI-Service.git",
+                "reference": "fb89e636b0f3decfabfeebb5c7c7d3349c5ca916"
+            },
             "dist": {
-                "type": "path",
-                "url": "/var/www/html/workareas/leo/doi",
-                "reference": "9dcdd5a10dce86bf5de769e40d1620adf7556fca",
-                "shasum": null
+                "type": "zip",
+                "url": "https://api.github.com/repos/au-research/ANDS-DOI-Service/zipball/fb89e636b0f3decfabfeebb5c7c7d3349c5ca916",
+                "reference": "fb89e636b0f3decfabfeebb5c7c7d3349c5ca916",
+                "shasum": ""
             },
             "require": {
                 "guzzle/http": "^3.9",
@@ -29,15 +34,7 @@
                     "ANDS\\DOI\\": "src"
                 }
             },
-            "scripts": {
-                "test": [
-                    "@clearTestReports",
-                    "vendor/bin/phpunit --log-junit tests/reports/junit.xml --coverage-xml tests/reports/coverage/xml --coverage-html tests/reports/coverage/html"
-                ],
-                "clearTestReports": [
-                    "rm -rf tests/reports/*"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "Apache-2.0"
             ],
@@ -48,9 +45,7 @@
                 }
             ],
             "description": "ANDS DOI Service library",
-            "transport-options": {
-                "symlink": true
-            }
+            "time": "2018-06-19T00:23:06+00:00"
         },
         {
             "name": "cebe/markdown",
