@@ -121,7 +121,6 @@ class RecordsGraphController
                     $identifier = IdentifierProvider::format($props['identifier'], $props['type']);
                     if ($identifier && array_key_exists('href', $identifier)){
                         $node['properties']['url'] = $identifier['href'];
-                        $node['properties']['title'] = $props['identifier'];
                     }
                     if (!array_key_exists('title', $props)) {
                         $node['properties']['title'] = $props['identifier'];
