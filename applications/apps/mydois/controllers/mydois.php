@@ -1,114 +1,117 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-//mod_enforce('mydois');
+<?php use ANDS\DOI\DataCiteClient;
+use ANDS\DOI\FabricaClient;
+use ANDS\DOI\Repository\ClientRepository;
 
-/**
- * Services controller
- *
- * Abstract services controller allows for easy extension of the
- * services module and logging and access management of requests
- * via the API key system.
- *
- * @author Ben Greenwood <ben.greenwood@ands.org.au>
- * @package ands/services
- *
- */
+if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
 class Mydois extends MX_Controller {
 
-	function testing()
-	{
-		$authstr =  '313ba574c47f1cdd8f626942dd8b6509441f23a9:2959ce543222';
-		$context  = array('Content-Type: application/xml;charset=UTF-8','Authorization: Basic '.base64_encode($authstr));
-		//$context = array('Content-Type: application/xml;charset=UTF-8');
-		$requestURI = 'http://devl.ands.org.au/workareas/liz/ands/apps/mydois/mint/?url=sdfjds.sdfds.dsfdsf&app_id=313ba574c47f1cdd8f626942dd8b6509441f23a9';
+    /** @var ClientRepository */
+    private $clientRepository;
 
-		$postdata = 'xml=<xml><identifier>10.5046/dghjfgg</identifier></xml>';
+    /** @var FabricaClient */
+    private $fabricaClient;
 
-		$newch = curl_init();
-		curl_setopt($newch, CURLOPT_URL, $requestURI);
-		curl_setopt($newch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($newch, CURLOPT_POST, 1);
-		curl_setopt($newch, CURLOPT_POSTFIELDS,$postdata);
-		curl_setopt($newch, CURLOPT_HTTPHEADER,$context);
-
-		$result = curl_exec($newch);
-		$curlinfo = curl_getinfo($newch);
-		curl_close($newch);
-		echo $result;
-
-	}
-
+    /**
+     * MyDOIS SPA
+     */
 	function index() {
-		$this->app();
+        acl_enforce('DOI_USER');
+
+        $this->load->view('doi_cms_app', [
+            'title' => 'ANDS DOI Management App',
+            'js_lib' => ['core', 'angular129', 'prettyprint', 'APIService', 'APIRoleService', 'APIDOIService', 'xmlToJson'],
+            'scripts' => ['doi_cms_app', 'doi_cms_mainCtrl', 'angular_datacite_xml_builder']
+        ]);
 	}
 
-	function index2()
-	{
-		acl_enforce('DOI_USER');
-
-		$data['js_lib'] = array('core');
-		$data['title'] = 'My DOIs List';
-		$data['associated_app_ids'] = array();
-
-		if($this->user->loggedIn())
-		{
-
-			if (count($this->user->affiliations()))
-			{
-				$roles_db = $this->load->database('roles', TRUE);
-				$roles_db->distinct()->select('parent_role_id')
-						->where_in('child_role_id', $this->user->affiliations())
-						->where('role_type_id', 'ROLE_DOI_APPID      ', 'after')
-						->join('roles', 'role_id = parent_role_id')
-						->from('role_relations');
-				$query = $roles_db->get();
-
-				if ($query->num_rows() > 0)
-				{
-					foreach ($query->result() AS $result)
-					{
-						$data['associated_app_ids'][] = $result->parent_role_id;
-					}
-				}
-			}
-            if(count($data['associated_app_ids'])===1){
-                $this->show($data['associated_app_ids'][0]);
-            }else{
-			    $this->load->view('input_app_id', $data);
-            }
-		}else{
-			$this->load->view('login_required', $data);
-		}
-	}
-
-	function remove_trusted_client(){
+    /**
+     * TODO change it to logical delete
+     * added checks to only test client
+     */
+    function remove_trusted_client(){
 		acl_enforce('SUPERUSER');
-		$data['title'] = 'Remove Trusted Client';
-		$client_id = $this->input->post('client_id');
-		$response = $this->mydois->removeTrustedClient($client_id);
+        $client_id = $this->input->post('client_id');
+        $this->clientRepository->deleteClientById($client_id);
+        // TODO delete from datacite?
 	}
 
-	function list_trusted(){
+    /**
+     * mydois/list_trusted
+     * List Trusted Client SPA
+     * Front end for list trusted doi clients app
+     */
+    function list_trusted(){
 		acl_enforce('SUPERUSER');
-		$data['title'] = 'List Trusted Clients';
-		$data['scripts'] = array('trusted_clients');
-		$data['js_lib'] = array('core', 'dataTables');
-		$data['all_app_id'] = $this->mydois->getAllDoiAppID();
-		$this->load->view('trusted_clients_index', $data);
+		$this->load->view('trusted_clients_index', [
+		    'title' => 'List Trusted Clients',
+            'scripts' => ['trusted_clients'],
+            'js_lib' => ['core', 'dataTables']
+        ]);
 	}
 
-	function get_prefixes_for_client(){
+    /**
+     * AJAX entry for mydois/list_trusted
+     */
+    function list_trusted_clients(){
+		echo json_encode($this->getTrustedClients());
+	}
+
+    /**
+     * TODO refactor to ANDS-DOI-SERVICE functionality
+     *
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
+    private function getTrustedClients(){
+        $allClients =  $this->clientRepository->getAll();
+        foreach($allClients as $client){
+            $client['domain_list'] = $this->getTrustedClientDomains($client->client_id);
+            $client['datacite_prefix'] = $this->getTrustedClientActivePrefix($client->client_id);
+        }
+
+        return $allClients;
+    }
+
+    /**
+     * TODO refactor to ANDS-DOI-SERVICE functionality
+     *
+     * @param $client_id
+     * @return string
+     */
+    private function getTrustedClientDomains($client_id)
+    {
+        $client = $this->clientRepository->getByID($client_id);
+        $domains_str = "";
+        $first = true;
+        foreach ($client->domains as $domain) {
+            if(!$first)
+                $domains_str .= ",";
+            $domains_str .= $domain->client_domain;
+            $first = false;
+        }
+        return $domains_str;
+    }
+
+    /**
+     * TODO refactor to ANDS-DOI-SERVICE functionality
+     *
+     * @param $client_id
+     * @return mixed
+     */
+    private function getTrustedClientActivePrefix($client_id){
+        $client = $this->clientRepository->getByID($client_id);
+        foreach ($client->prefixes as $clientPrefix) {
+            if($clientPrefix->active)
+                return $clientPrefix->prefix->prefix_value;
+        }
+    }
+
+    /**
+     * AJAX Entry for adding trusted client
+     */
+    function add_trusted_client() {
 		acl_enforce('SUPERUSER');
-		$client_id = $this->input->post('id');
-		echo $this->mydois->getAvailablePrefixesForClient($client_id);
-	}
 
-	function list_trusted_clients(){
-		$trusted_clients = $this->mydois->getTrustedClients();
-		echo json_encode($trusted_clients);
-	}
-
-	function add_trusted_client(){
-		acl_enforce('SUPERUSER');
 		$posted = $this->input->post('jsonData');
 		$ip = trim(urlencode($posted['ip_address']));
 		$client_name = trim(urlencode($posted['client_name']));
@@ -117,143 +120,99 @@ class Mydois extends MX_Controller {
 		$domainList = trim(urlencode($posted['domainList']));
 		$datacite_prefix = 	trim(urlencode($posted['datacite_prefix']));
 		$shared_secret = trim(urlencode($posted['shared_secret']))	;
-		$response = $this->mydois->addTrustedClient($ip, $client_name, $client_contact_name, $client_contact_email, $domainList, $datacite_prefix, $shared_secret);
-		echo json_encode($response);
+
+        // add the client to the repository
+        $client = $this->clientRepository->create([
+            'ip_address' => $ip,
+            'app_id' => sha1($shared_secret.$client_name),
+            'client_name' => urldecode($client_name),
+            'client_contact_name' => urldecode($client_contact_name),
+            'client_contact_email' => urldecode($client_contact_email),
+            'shared_secret' => $shared_secret
+        ]);
+        $client->addDomains($domainList);
+        $client->addClientPrefix($datacite_prefix, true);
+
+		echo json_encode($this->fabricaClient->getResponse());
 	}
 
-	function get_trusted_client(){
+    /**
+     * AJAX entry
+     * for editing a client
+     */
+    function get_trusted_client() {
 		acl_enforce('SUPERUSER');
 		$client_id = $this->input->post('id');
-		$response = $this->mydois->getTrustedClient($client_id);
-		$response['domain_list'] = $this->mydois->getTrustedClientDomains($client_id);
-		$response['datacite_prefix'] = $this->mydois->getTrustedClientActivePrefix($client_id);
-		$response['available_prefixes'] = $this->mydois->getAvailablePrefixesForClient($client_id);
+		$response = $this->clientRepository->getByID($client_id);
+		$response['domain_list'] = $this->getTrustedClientDomains($client_id);
+		$response['datacite_prefix'] = $this->getTrustedClientActivePrefix($client_id);
+		$response['available_prefixes'] = $this->getAvailablePrefixesForClient($client_id);
 		echo json_encode($response);
 	}
 
-	function edit_trusted_client(){
+    /**
+     * TODO refactor to ANDS-DOI-SERVICE functionality
+     *
+     * @param $client_id
+     * @return array
+     */
+    private function getAvailablePrefixesForClient($client_id)
+    {
+        $unallocatedPrefixes = $this->clientRepository->getUnalocatedPrefixes();
+        $prefixes = [];
+
+        if ($ownPrefix = $this->getTrustedClientActivePrefix($client_id)) {
+            $prefixes[] = $ownPrefix;
+        }
+
+        foreach($unallocatedPrefixes as $aPrefix) {
+            $prefixes[] = $aPrefix->prefix_value;
+        }
+
+        return $prefixes;
+    }
+
+    /**
+     * AJAX entry
+     * for commiting a change to a client
+     */
+    function edit_trusted_client() {
 		acl_enforce('SUPERUSER');
+
 		$posted = $this->input->post('jsonData');
-		$ip = trim(urlencode($posted['ip_address']));
-		$client_id = trim(urlencode($posted['client_id']));
-		$client_name = trim(urlencode($posted['client_name']));
-		$client_contact_name = trim(urlencode($posted['client_contact_name']));
-		$client_contact_email = trim(urlencode($posted['client_contact_email']));
-		$domainList = trim(urlencode($posted['domainList']));
-		$datacite_prefix = 	trim(urlencode($posted['datacite_prefix']));
-		$shared_secret = trim(urlencode($posted['shared_secret']))	;
-		$response = $this->mydois->editTrustedClient($ip, $client_id, $client_name, $client_contact_name, $client_contact_email, $domainList, $datacite_prefix, $shared_secret);
-		echo json_encode($response);
+		$ip = trim($posted['ip_address']);
+		$client_id = trim($posted['client_id']);
+		$client_name = trim($posted['client_name']);
+		$client_contact_name = trim($posted['client_contact_name']);
+		$client_contact_email = trim($posted['client_contact_email']);
+		$domainList = trim($posted['domainList']);
+		$datacite_prefix = 	trim($posted['datacite_prefix']);
+		$shared_secret = trim($posted['shared_secret']);
+
+        $clientdata = [
+            'client_id' => $client_id,
+            'ip_address' =>  $ip,
+            'client_name'  => $client_name,
+            'client_contact_name' => $client_contact_name,
+            'client_contact_email' => $client_contact_email,
+            'shared_secret' => $shared_secret
+        ];
+        $this->clientRepository->updateClient($clientdata);
+        $client = $this->clientRepository->getByID($client_id);
+        $client->removeClientDomains();
+        $client->addDomains($domainList);
+        $client->addClientPrefix($datacite_prefix, true);
+
+		$this->fabricaClient->updateClient($client);
+
+		echo json_encode($this->fabricaClient->getResponse());
 	}
 
-	function app()
-	{
-		acl_enforce('DOI_USER');
-		$data['js_lib'] = array('core', 'angular129', 'prettyprint', 'APIService', 'APIRoleService', 'APIDOIService', 'xmlToJson');
-		$data['scripts'] = array('doi_cms_app', 'doi_cms_mainCtrl', 'angular_datacite_xml_builder');
-		$data['title'] = 'ANDS DOI Management App';
-		$this->load->view('doi_cms_app', $data);
-	}
-
-
-	function show($app_id=null)
-	{
-		acl_enforce('DOI_USER');
-
-		$data['js_lib'] = array('core');
-		$data['scripts'] = array('mydois','datacite_form');
-		$data['title'] = 'DOI Query Tool';
-
-		// Validate the appId
-		$appId = $this->input->get_post('app_id');
-		$doi_update = $this->input->get_post('doi_update');
-		$error = $this->input->get_post('error');
-		if (!$appId)
-		{
-			$appId = $this->input->get_post('app_id_select');
-		}
-        if (!$appId & isset($app_id)){
-            $appId = $app_id;
-
-        }
-		$doiStatus = $this->input->get_post('doi_status');
-		$data['doi_appids'] = $this->user->doiappids();
-		if($doi_update)
-		{
-				$data['doi_update'] = $doi_update;
-		}
-		if($error)
-		{
-				$data['error'] = $error;
-		}
-		if (!$appId) throw new Exception ('Invalid App ID');
-
-		if(!in_array($appId, $data['doi_appids'] ))
-		{
-			throw new Exception ('You do not have authorisation to view dois associated with application id '.$appId);
-		}
-
-		$doi_db = $this->load->database('dois', TRUE);
-
-		$query = $doi_db->where('app_id',$appId)->select('*')->get('doi_client');
-		if (!$client_obj = $query->result()) throw new Exception ('Invalid App ID');
-		$client_obj = array_pop($client_obj);
-
-		// Store the recently used app id in the client cookie
-		$this->input->set_cookie('last_used_doi_appid', $appId, 9999999);
-		//087391e742ee920e4428aa6e4ca548b190138b89
-
-		$query = $doi_db->order_by('updated_when', 'desc')->order_by('created_when', 'desc')->where('client_id',$client_obj->client_id)->where('status !=','REQUESTED')->select('*')->get('doi_objects');
-
-
-		$data['dois'] = array();
-		foreach ($query->result() AS $doi)
-		{
-			$data['dois'][] = $doi;
-		}
-
-		$query = $doi_db->order_by('timestamp', 'desc')->where('client_id',$client_obj->client_id)->select('*')->limit(50)->get('activity_log');
-		$data['activities'] = $query->result();
-
-		$query = $doi_db->where('client_id',$client_obj->client_id)->select('client_domain')->get('doi_client_domains');
-		foreach ($query->result_array() AS $domain) {
-			$client_obj->permitted_url_domains[] = $domain['client_domain'];
-		}
-        if($client_obj->client_id<10)
-        {
-            $doi_client_id = "0".$client_obj->client_id;
-        }else{
-            $doi_client_id = $client_obj->client_id;
-        }
-        $data['client_id'] = $client_obj->client_id;
-        $data['doi_id'] = $client_obj->datacite_prefix.$doi_client_id."/".uniqid();
-        $data['app_id'] = $appId;
-
-		$data['client'] = $client_obj;
-		$this->load->view('list_dois', $data);
-	}
-
-	function getActivityLog()
-	{
-		acl_enforce('DOI_USER');
-
-		$doi_db = $this->load->database('dois', TRUE);
-
-		// Validate the appId
-		$appId = $this->input->get_post('app_id');
-		if (!$appId) throw new Exception ('Invalid App ID');
-
-		$query = $doi_db->where('app_id',$appId)->select('*')->get('doi_client');
-		if (!$client_obj = $query->result()) throw new Exception ('Invalid App ID');
-		$client_obj = array_pop($client_obj);
-
-		$query = $doi_db->order_by('timestamp', 'desc')->where('client_id',$client_obj->client_id)->select('*')->limit(50)->get('activity_log');
-		$this->load->view('view_activity_log',array("activities"=>$query->result()));
-
-
-	}
-
-	function runDoiLinkChecker()
+    /**
+     * TODO refactor LinkChecking API. Ask @Cel
+     * @throws Exception
+     */
+    function runDoiLinkChecker()
 	{
 		header('Content-Type: application/json');
 		acl_enforce('DOI_USER');
@@ -275,115 +234,23 @@ class Mydois extends MX_Controller {
 		echo json_encode($data);
 	}
 
-	function getDoiXml()
-	{
-		acl_enforce('DOI_USER');
 
-		$doi_db = $this->load->database('dois', TRUE);
-
-		// Validate the doi_id
-		$doi_id = rawurldecode($this->input->get_post('doi_id'));
-		if (!$doi_id) throw new Exception ('Invalid DOI ID');
-
-		$query = $doi_db->where('doi_id',$doi_id)->select('doi_id, datacite_xml')->get('doi_objects');
-		if (!$doi_obj = $query->result_array()) throw new Exception ('Invalid DOI ID');
-		$doi_obj = array_pop($doi_obj);
-
-		$this->load->view('view_datacite_xml',$doi_obj);
-
-	}
-
-	function updateDoi()
-	{
-		acl_enforce('DOI_USER');
-
-		$doi_db = $this->load->database('dois', TRUE);
-		// Validate the doi_id
-		$doi_id = rawurldecode($this->input->get_post('doi_id'));
-        $appId = $this->input->get_post('app_id');
-        if (!$appId) throw new Exception ('Invalid App ID');
-
-		if (!$doi_id) throw new Exception ('Invalid DOI ID');
-
-		$query = $doi_db->where('doi_id',$doi_id)->select('doi_id, url,client_id, datacite_xml')->get('doi_objects');
-		if (!$doi_obj = $query->result_array()) throw new Exception ('Invalid DOI ID');
-		$doi_obj = array_pop($doi_obj);
-        $doi_obj['app_id'] = $appId;
-		$this->load->view('update_doi',$doi_obj);
-
-	}
-
-
-	function getAppIDConfig()
-	{
-		acl_enforce('DOI_USER');
-
-		$doi_db = $this->load->database('dois', TRUE);
-
-		// Validate the appId
-		$appId = $this->input->get_post('app_id');
-		if (!$appId) throw new Exception ('Invalid App ID');
-
-		$query = $doi_db->where('app_id',$appId)->select('*')->get('doi_client');
-		if (!$client_obj = $query->result_array()) throw new Exception ('Invalid App ID');
-		$client_obj = array_pop($client_obj);
-
-		$query = $doi_db->where('client_id',$client_obj['client_id'])->select('client_domain')->get('doi_client_domains');
-		foreach ($query->result_array() AS $domain)
-		{
-			$client_obj['permitted_url_domains'][] = $domain['client_domain'];
-		}
-
-		$this->load->view('view_app_id_config', $client_obj);
-
-
-	}
-
-    /*function manualMintForm(){
-
+    function __construct()
+    {
+        parent::__construct();
         acl_enforce('DOI_USER');
-        $doi_db = $this->load->database('dois', TRUE);
-        $appId = $this->input->get_post('app_id');
-        if (!$appId) throw new Exception ('Invalid App ID');
 
-        $query = $doi_db->where('app_id',$appId)->select('*')->get('doi_client');
-        if (!$client_obj = $query->result()) throw new Exception ('Invalid App ID');
-        $client_obj = array_pop($client_obj);
-        $data['client_id'] = $client_obj->client_id;
-        if($client_obj->client_id<10){
-            $client_obj->client_id = "0".$client_obj->client_id;
-        }
-        $data['doi_id'] = $client_obj->datacite_prefix.$client_obj->client_id."/".uniqid();
-        $data['app_id'] = $appId;
-        $this->load->view('mint_doi',$data);
-    } */
+        $database = \ANDS\Util\Config::get('database.dois');
+        $this->clientRepository = new ClientRepository(
+            $database['hostname'],
+            $database['database'],
+            $database['username'],
+            $database['password']
+        );
 
-    function uploadFile(){
-        if ( isset($_FILES['file']) ) {
-            $filename = time().basename($_FILES['file']['name']);
-            $error = true;
-
-            $path = '/tmp/'.$filename;
-            $error = move_uploaded_file($_FILES['file']['tmp_name'], $path);
-
-            $rsp = array(
-                'error' => $error, // Used in JS
-                'filename' => $filename,
-                'filepath' => '/tmp/' . $filename, // Web accessible
-                'xml' =>file_get_contents($path),
-            );
-            unlink($path);
-            echo json_encode($rsp);
-            exit;
-        }else{
-            echo json_encode("File not uploaded");
-
-        }
+        $fabricaConfig = \ANDS\Util\Config::get('datacite.fabrica');
+        $this->fabricaClient = new FabricaClient($fabricaConfig['username'],$fabricaConfig['password']);
+        $this->fabricaClient->setDataciteUrl($fabricaConfig['api_url']);
     }
-
-  	function __construct(){
-		acl_enforce('DOI_USER');
-		$this->load->model('_mydois', 'mydois');
-	}
 
 }
