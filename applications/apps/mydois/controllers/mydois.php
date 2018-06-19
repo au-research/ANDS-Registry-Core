@@ -93,8 +93,13 @@ class Mydois extends MX_Controller {
 		$data['scripts'] = array('trusted_clients');
 		$data['js_lib'] = array('core', 'dataTables');
 		$data['all_app_id'] = $this->mydois->getAllDoiAppID();
-		$data['datacite_prefixs'] = $this->mydois->buildPrefixOptions();
 		$this->load->view('trusted_clients_index', $data);
+	}
+
+	function get_prefixes_for_client(){
+		acl_enforce('SUPERUSER');
+		$client_id = $this->input->post('id');
+		echo $this->mydois->getAvailablePrefixesForClient($client_id);
 	}
 
 	function list_trusted_clients(){
@@ -120,7 +125,9 @@ class Mydois extends MX_Controller {
 		acl_enforce('SUPERUSER');
 		$client_id = $this->input->post('id');
 		$response = $this->mydois->getTrustedClient($client_id);
-		$response[0]['domain_list'] = $this->mydois->getTrustedClientDomains($client_id);
+		$response['domain_list'] = $this->mydois->getTrustedClientDomains($client_id);
+		$response['datacite_prefix'] = $this->mydois->getTrustedClientActivePrefix($client_id);
+		$response['available_prefixes'] = $this->mydois->getTrustedClientActivePrefix($client_id);
 		echo json_encode($response);
 	}
 
