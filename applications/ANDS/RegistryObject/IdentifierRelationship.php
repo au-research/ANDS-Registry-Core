@@ -65,7 +65,7 @@ class IdentifierRelationship extends Model
 
         return [
             'identifier:ID' => $this->related_object_identifier,
-            ':LABEL' => implode(';', ['RelatedInfo', $this->related_info_type]),
+            ':LABEL' => implode(';', ['RelatedInfo', "`$this->related_info_type`"]),
             'relatedInfoType' => $this->related_info_type,
             'type' => $this->related_object_identifier_type,
             'title' => StrUtil::sanitize($this->related_title),
