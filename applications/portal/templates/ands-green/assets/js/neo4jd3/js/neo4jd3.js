@@ -375,6 +375,12 @@ function Neo4jD3(_selector, _options) {
             return 'activities';
         } else if (node.labels.has('service')) {
             return 'services';
+        } else if (node.labels.has('website')) {
+            return 'websites';
+        } else if (node.labels.has('collection')) {
+            return 'collections';
+        } else if (node.labels.has('publication')) {
+            return 'publications';
         }
 
         // default return the last one

@@ -8,6 +8,7 @@ use ANDS\Cache\Cache;
 use ANDS\Registry\Providers\GraphRelationshipProvider;
 use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 use ANDS\Repository\RegistryObjectsRepository;
+use ANDS\Util\StrUtil;
 
 class RecordsGraphController
 {
@@ -77,8 +78,9 @@ class RecordsGraphController
                 ];
 
                 $count = getSolrCountForQuery($filters);
+                $classPlural = StrUtil::plural($clusterClass);
                 $cluster['properties'] = array_merge($cluster['properties'], [
-                    'title' => "$count related $clusterClass",
+                    'title' => "$count related $classPlural",
                     'url' => constructPortalSearchQuery($filters),
                     'count' => $count,
                     'class' => 'cluster',
