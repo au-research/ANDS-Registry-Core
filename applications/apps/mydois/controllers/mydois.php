@@ -127,7 +127,7 @@ class Mydois extends MX_Controller {
 		$response = $this->mydois->getTrustedClient($client_id);
 		$response['domain_list'] = $this->mydois->getTrustedClientDomains($client_id);
 		$response['datacite_prefix'] = $this->mydois->getTrustedClientActivePrefix($client_id);
-		$response['available_prefixes'] = $this->mydois->getTrustedClientActivePrefix($client_id);
+		$response['available_prefixes'] = $this->mydois->getAvailablePrefixesForClient($client_id);
 		echo json_encode($response);
 	}
 

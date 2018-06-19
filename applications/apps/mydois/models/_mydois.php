@@ -166,16 +166,18 @@ class _mydois extends CI_Model
 
 	function getAvailablePrefixesForClient($client_id)
 	{
-
 		$unallocatedPrefixes = $this->clientRepository->getUnalocatedPrefixes();
 		$prefixes = [];
-		$prefixes[] = $this->getTrustedClientActivePrefix($client_id);
 
-		foreach($unallocatedPrefixes as $aPrefix)
-		{
+		if ($ownPrefix = $this->getTrustedClientActivePrefix($client_id)) {
+            $prefixes[] = $ownPrefix;
+        }
+
+		foreach($unallocatedPrefixes as $aPrefix) {
 			$prefixes[] = $aPrefix->prefix_value;
 		}
-		return json_encode($prefixes);
+
+		return $prefixes;
 	}
 
 }
