@@ -83,8 +83,10 @@ class GraphRelationshipProvider implements RegistryContentProvider
             if ($relationship->resolvesToRecord) {
                 // it resolves to a record
                 $to = $relationship->getToRecord();
-                $stack->push(static::getMergeNodeQuery($to));
-                $stack->push(static::getMergeLinkQuery($record, $to, $relationship));
+                if (RegistryObjectsRepository::isPublishedStatus($to->status)) {
+                    $stack->push(static::getMergeNodeQuery($to));
+                    $stack->push(static::getMergeLinkQuery($record, $to, $relationship));
+                }
             } else {
                 // it resolves to an identifier, make the appropriate links
                 $stack->push(static::getMergeRelatedInfoNodeQuery($relationship));
