@@ -78,8 +78,18 @@ class GraphRelationshipProvider implements RegistryContentProvider
         // (after process identifier and process relationships) related info relationships
         $identifierRelationships = $record->identifierRelationships;
         foreach ($identifierRelationships as $relationship) {
-            $stack->push(static::getMergeRelatedInfoNodeQuery($relationship));
-            $stack->push(static::getMergeLinkRelatedInfoQuery($record, $relationship));
+
+            /** @var RegistryObject\IdentifierRelationship $relationship */
+            if ($relationship->resolvesToRecord) {
+                // it resolves to a record
+                $to = $relationship->getToRecord();
+                $stack->push(static::getMergeNodeQuery($to));
+                $stack->push(static::getMergeLinkQuery($record, $to, $relationship));
+            } else {
+                // it resolves to an identifier, make the appropriate links
+                $stack->push(static::getMergeRelatedInfoNodeQuery($relationship));
+                $stack->push(static::getMergeLinkRelatedInfoQuery($record, $relationship));
+            }
         }
 
         // (after process identifier) find identical records and establish identicalTo relations
@@ -471,6 +481,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
                 'bolt',
                 "bolt://{$config['username']}:{$config['password']}@{$config['hostname']}:7687"
             )
+            ->setDefaultTimeout(10)
             ->build();
     }
 

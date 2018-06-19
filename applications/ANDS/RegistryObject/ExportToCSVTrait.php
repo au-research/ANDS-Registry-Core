@@ -72,6 +72,7 @@ trait ExportToCSVTrait
             "roId:ID" => (string) $this->id,
             ":LABEL" => implode(";", ["RegistryObject", $this->class, $this->type]),
             "key" => $this->key,
+            "class" => $this->class,
             "type" => $this->type,
             "group" => $this->group,
             "slug" => $this->slug,

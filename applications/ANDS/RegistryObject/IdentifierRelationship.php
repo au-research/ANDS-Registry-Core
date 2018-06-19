@@ -4,6 +4,7 @@
 namespace ANDS\RegistryObject;
 
 
+use ANDS\Repository\RegistryObjectsRepository;
 use Illuminate\Database\Eloquent\Model;
 
 class IdentifierRelationship extends Model
@@ -12,9 +13,46 @@ class IdentifierRelationship extends Model
     protected $primaryKey = null;
     public $incrementing = false;
     public $timestamps = false;
-    protected $fillable = ['registry_object_id', 'related_object_identifier', 'related_info_type',
-    'related_object_identifier_type', 'relation_type', 'related_title', 'related_url',
-        'related_description', 'connections_preview_div', 'notes'];
+
+    protected $fillable = [
+        'registry_object_id',
+        'related_object_identifier',
+        'related_info_type',
+        'related_object_identifier_type',
+        'relation_type',
+        'related_title',
+        'related_url',
+        'related_description',
+        'connections_preview_div',
+        'notes'
+    ];
+
+    /**
+     * $relationship->resolvesToRecord
+     *
+     * @return boolean
+     */
+    public function getResolvesToRecordAttribute()
+    {
+        $record = $this->getToRecord();
+        if (!$record) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * get the record that this relations relates to
+     * null if not exists
+     *
+     * @return \ANDS\RegistryObject|null
+     */
+    public function getToRecord()
+    {
+        $id = Identifier::where('identifier', $this->related_object_identifier)->pluck('registry_object_id')->first();
+        return RegistryObjectsRepository::getRecordByID($id);
+    }
 
     public function toCSV()
     {
