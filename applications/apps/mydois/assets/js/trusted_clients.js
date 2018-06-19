@@ -80,21 +80,36 @@ $(document).on('click', '#add_confirm', function(){
 		type: 'POST',
 		data: {id:client_id},
 		success: function(data){
-			$('#edit_trusted_client_form input[name=client_id]').val(data[0].client_id)			
-			$('#edit_trusted_client_form input[name=client_name]').val(data[0].client_name)
-			$('#edit_trusted_client_form input[name=client_contact_name]').val(data[0].client_contact_name)
-			$('#edit_trusted_client_form input[name=client_contact_email]').val(data[0].client_contact_email)
-			$('#edit_trusted_client_form input[name=ip_address]').val(data[0].ip_address)
-			$('#edit_trusted_client_form input[name=domainList]').val(data[0].domain_list)
-			$('#edit_trusted_client_form input[name=app_id]').val(data[0].app_id)
-			$('#edit_trusted_client_form select[name=datacite_prefix]').val(data[0].datacite_prefix)
-			$('#edit_trusted_client_form input[name=shared_secret]').val(data[0].shared_secret)																					
+			$('#edit_trusted_client_form input[name=client_id]').val(data['client_id']);
+			$('#edit_trusted_client_form input[name=client_name]').val(data['client_name']);
+			$('#edit_trusted_client_form input[name=client_contact_name]').val(data['client_contact_name']);
+			$('#edit_trusted_client_form input[name=client_contact_email]').val(data['client_contact_email']);
+			$('#edit_trusted_client_form input[name=ip_address]').val(data['ip_address']);
+			$('#edit_trusted_client_form input[name=domainList]').val(data['domain_list']);
+			$('#edit_trusted_client_form input[name=app_id]').val(data['app_id']);
+			$('#edit_trusted_client_form select[name=datacite_prefix]').val(data['datacite_prefix']);
+			$('#edit_trusted_client_form input[name=shared_secret]').val(data['shared_secret']);
 			$('#edit_trusted_client_modal').modal('show');
 		},
 		});
 }).on('click', '.sec_gen', function(){
 	var sec = $(this).attr('sec');
 	$('#edit_trusted_client_form input[name=shared_secret]').val(sec)	
+}).on('click', '.edit', function(){
+	var client_id = $(this).attr('client_id');
+	$.ajax({
+		url:apps_url+'mydois/get_prefixes_for__client',
+		type: 'POST',
+		data: {id:client_id},
+		success: function(data){
+			console.log(data);
+			var option = document.createElement("option");
+			option.text = data['datacite_prefix'];
+			option.value = data['datacite_prefix'];
+			$('#edit_trusted_client_form select[name=datacite_prefix]').add(option);
+			$('#edit_trusted_client_modal').modal('show');
+		}
+	})
 });
 
 function listTrustedClients() {

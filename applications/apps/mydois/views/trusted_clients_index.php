@@ -62,7 +62,6 @@
 					<label class="control-label">DOI Prefix</label>
 					<div class="controls">
 						<select name="datacite_prefix">
-							<option value="10.5072/">10.5072</option>
 						</select>
 					</div>
 				</div>																			
@@ -129,10 +128,7 @@
 				<div class="control-group">
 					<label class="control-label">DOI Prefix</label>
 					<div class="controls">
-						<select name="datacite_prefix">
-							<?php
-							print_r($datacite_prefixs);
-							?>
+						<select name="datacite_prefix" id="prefix_select">
 						</select>
 					</div>
 				</div>																			
@@ -180,6 +176,8 @@
 					<th>Client Name </th>
 					<th>Contact Name </th>
 					<th>App ID</th>
+					<th>Datacite Prefix</th>
+					<th>Domain List</th>
 					<th>Shared Secret</th>					
 					<th>IP</th>
 					<th>Date Created</th>
@@ -192,7 +190,9 @@
 					<td>{{client_id}}</td>
 					<td>{{client_name}}</td>
 					<td>{{client_contact_name}}</td>
-					<td>{{app_id}}</td>	
+					<td>{{app_id}}</td>
+					<td>{{datacite_prefix}}</td>
+					<td>{{domain_list}}</td>
 					<td>{{shared_secret}}</td>
 					<td class="limit_ip_td">{{ip_address}}</td>
 					<td>{{created_when}}</td>
