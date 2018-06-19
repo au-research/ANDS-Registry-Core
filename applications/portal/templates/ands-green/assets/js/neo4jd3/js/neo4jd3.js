@@ -333,7 +333,7 @@ function Neo4jD3(_selector, _options) {
         } else if (node.labels.has('publication')) {
             return "#55BFF6";
         } else if (node.labels.has('website')) {
-            return colors[6];
+            return "#405f9e";
         } else {
             return colors[9];
         }
@@ -350,7 +350,7 @@ function Neo4jD3(_selector, _options) {
             }
             html += '</a>';
         } else if (node.properties.identifier) {
-            html += node.properties.identifier;
+            html += node.properties.title;
         } else if (node.properties.count && !node.labels.has('RelatedInfo')) {
             html += '<a target="_blank" href="'+node.properties.url+'">' + node.properties.count + " related " + getReadableTypeForNode(node) + '</a>';
         } else if (node.properties.count && node.labels.has('RelatedInfo')) {
@@ -477,7 +477,7 @@ function Neo4jD3(_selector, _options) {
     }
 
     function relationshipToHtml(d) {
-        return d.type;
+        return d.html;
     }
 
     function appendOutlineToRelationship(r) {
