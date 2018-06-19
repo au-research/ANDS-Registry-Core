@@ -300,6 +300,11 @@ class Doi_api
                     $this->ci->input->get('doi')
                 );
                 break;
+            case "doistatus":
+                $doiService->getStatus(
+                    $this->ci->input->get('doi')
+                );
+                break;
         }
 
         // log is done using ArrayFormatter
