@@ -1,9 +1,7 @@
 <?php
 if($ro->core['class']=='service'){
-    $buttonStr = 'Service Provider';
     $textStr = 'service';
 }else{
-    $buttonStr = 'Data Provider';
     $textStr = 'data';
 }
 
@@ -11,16 +9,16 @@ if($ro->core['class']=='service'){
 @if($ro->directaccess)
     @if($ro->directaccess[0]['access_type']=='url' && count($ro->directaccess) == 1)
         @if(isset($ro->directaccess[0]['access_value']['href']))
-            <a href="{{trim($ro->directaccess[0]['access_value']['href'])}}" ng-click="$event.preventDefault();access($event)" class="btn btn-lg btn-primary btn-block"><i class="fa fa-cube"></i> Go to {{$buttonStr}}</a>
+            <a href="{{trim($ro->directaccess[0]['access_value']['href'])}}" ng-click="$event.preventDefault();access($event)" class="btn btn-lg btn-primary btn-block btn_access"><i class="fa fa-external-link"></i> Access the {{$textStr}}</a>
         @elseif(isset($ro->directaccess[0]['access_value']))
-            <a href="{{trim($ro->directaccess[0]['access_value'])}}" ng-click="$event.preventDefault();access($event)" class="btn btn-lg btn-primary btn-block"><i class="fa fa-cube"></i> Go to {{$buttonStr}}</a>
+            <a href="{{trim($ro->directaccess[0]['access_value'])}}" ng-click="$event.preventDefault();access($event)" class="btn btn-lg btn-primary btn-block btn_access"><i class="fa fa-external-link"></i> Access the {{$textStr}}</a>
         @endif
 
     @endif
 
     @if($ro->directaccess[0]['access_type']!='url' || count($ro->directaccess) > 1 )
-        <a href="" class="btn btn-lg btn-primary btn-block" id="gotodata"><i class="fa fa-cube"></i> Go to {{$buttonStr}}s</a>
-        <div id="dataformats">
+        <a href="" class="btn btn-lg btn-primary btn-block  btn_access" id="gotodata"><i class="fa fa-external-link"></i> Access the {{$textStr}}</a>
+        <div id="dataformats" class="formats_block">
         @foreach($ro->directaccess as $access)
             <?php
             $title = $access['title'];
@@ -63,9 +61,11 @@ if($ro->core['class']=='service'){
         @endforeach
         </div>
     @endif
-@else
-    <a href="" class="btn btn-lg btn-primary btn-block" id="gotodata"><i class="fa fa-cube"></i> Go to {{$buttonStr}}</a>
+@elseif($ro->contact)
+
+    <a href="" class="btn btn-lg btn-primary btn-block btn_access" id="gotodata"><i class="fa fa-external-link"></i>  Access the  {{$textStr}}</a>
     <div id="dataformats">
         <p>Please use the contact information below to request access to this {{$textStr}}.</p>
+        @include('registry_object/contents/contact-info')
     </div>
 @endif

@@ -223,8 +223,9 @@
                 @if($access_content) {{$access_content}}@endif
             </div>
         @endif
-
-       @include('registry_object/contents/contact-info')
+        @if($ro->directaccess)
+            @include('registry_object/contents/contact-info')
+        @endif
 
 
     </div>
