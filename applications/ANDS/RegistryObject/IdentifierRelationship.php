@@ -5,6 +5,7 @@ namespace ANDS\RegistryObject;
 
 
 use ANDS\Repository\RegistryObjectsRepository;
+use ANDS\Util\StrUtil;
 use Illuminate\Database\Eloquent\Model;
 
 class IdentifierRelationship extends Model
@@ -67,7 +68,7 @@ class IdentifierRelationship extends Model
             ':LABEL' => implode(';', ['RelatedInfo', $this->related_info_type]),
             'relatedInfoType' => $this->related_info_type,
             'type' => $this->related_object_identifier_type,
-            'title' => $this->related_title,
+            'title' => StrUtil::sanitize($this->related_title),
             'url' => $url,
             'description' => $this->related_description
         ];

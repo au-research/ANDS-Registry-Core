@@ -15,7 +15,7 @@ class StrUtil
      */
     public static function sanitize($str)
     {
-        $str = str_replace([',', '"', ';', '\t', '&#xA'], '', $str);
+        $str = str_replace([',', '"', ';', '\t', '&#xA', '\''], '', $str);
         $str = static::removeNewlines($str);
         $str = trim($str);
         return $str;
