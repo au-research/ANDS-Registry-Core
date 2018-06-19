@@ -22,6 +22,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
     protected static $enableCluster = true;
     protected static $enableGrantsNetwork = true;
     protected static $enableInterlinking = true;
+    protected static $defaultTimeout = 60;
 
     public static $flippableRelation = [
         'addsValueTo' => 'hasValueAddedBy',
@@ -483,7 +484,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
                 'bolt',
                 "bolt://{$config['username']}:{$config['password']}@{$config['hostname']}:7687"
             )
-            ->setDefaultTimeout(10)
+            ->setDefaultTimeout(static::$defaultTimeout)
             ->build();
     }
 
