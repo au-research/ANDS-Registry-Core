@@ -5,7 +5,8 @@ namespace ANDS\API;
 use ANDS\API\DOI\Bulk;
 use ANDS\API\DOI\BulkRequest;
 use ANDS\API\Task\TaskManager;
-use ANDS\DOI\DataCiteClient;
+use ANDS\DOI\MdsClient;
+use ANDS\DOI\FabricaClient;
 use ANDS\DOI\DOIServiceProvider;
 use ANDS\DOI\Formatter\ArrayFormatter;
 use ANDS\DOI\Formatter\XMLFormatter;
@@ -363,7 +364,7 @@ class Doi_api
                     2, '-', STR_PAD_LEFT);
         }
 
-        $dataciteClient = new DataCiteClient(
+        $dataciteClient = new MdsClient(
             $clientUsername, $config['password']
         );
 
@@ -1091,6 +1092,17 @@ class Doi_api
         }
     }
 
+
+    private function getTrustedClients()
+    {
+        $clientRepository = new ClientRepository(getenv("DATABASE_URL"),
+            getenv("DATABASE"),
+            getenv("DATABASE_USERNAME"),
+            getenv("DATABASE_PASSWORD"));
+        return $clientRepository->getAll();
+    }
+    
+    
     private function clientDetail()
     {
         return array(
