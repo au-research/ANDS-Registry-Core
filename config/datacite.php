@@ -1,7 +1,5 @@
 <?php
 
-$prefixes = explode(', ', env('DATACITE_PREFIXES', ''));
-
 return [
     'base_url' => env('DATACITE_URL', 'https://mds.datacite.org/'),
     'name_prefix' => env('DATACITE_NAME', 'ANDS'),
@@ -14,6 +12,5 @@ return [
         'username' => env('DATACITE_FABRICA_USERNAME', 'ands'),
         'password' => env('DATACITE_FABRICA_PASSWORD', null)
     ],
-    'response_success' => 'OK',
-    'prefixs' => $prefixes
+    'response_success' => 'OK'
 ];
