@@ -182,7 +182,7 @@ class Registry extends MX_Controller {
 		}
 
 		if($filters['include_facet_tags']){
-			$this->solr->setOpt('sort', 'update_timestamp desc');
+			$this->solr->setOpt('sort', 'record_modified_timestamp desc');
 			$this->solr->setFacetOpt('query', '{!ex=dt key="hasTag"}tag:*');
 			$this->solr->setFacetOpt('mincount','1');
 			$this->solr->setFacetOpt('limit','100');

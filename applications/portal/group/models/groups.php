@@ -185,7 +185,7 @@ class Groups extends CI_Model {
 			->setOpt('rows', '5')
 			->setOpt('fq', '+group:("'.$group['title'].'")')
 			->setOpt('fq', '+class:collection')
-			->setOpt('sort', 'update_timestamp desc');
+			->setOpt('sort', 'record_modified_timestamp desc');
 		$result = $this->solr->executeSearch(true);
 		foreach($result['response']['docs'] as $doc) {
 			$group['latest_collections'][] = array(
