@@ -1,14 +1,12 @@
 {
     "name": "au-research/ands-researchdata-registry",
     "description": "Core ANDS codebase which includes a metadata registry, front-end portal and access management system. This software currently powers the ANDS National Collections Registry and Research Data Australia",
-
     "authors": [
         {
             "name": "Minh Duc Nguyen",
             "email": "minh.nguyen@ands.org.au"
         }
     ],
-
     "scripts": {
         "post-update-cmd": "@dumpAutoload",
         "post-install-cmd": "@dumpAutoload",
@@ -19,8 +17,7 @@
         "clearTestReports": "rm -rf tests-reports/*",
         "dumpAutoload": "composer dump-autoload --optimize"
     },
-
-    "autoload" : {
+    "autoload": {
         "psr-4": {
             "ANDS\\API\\Registry\\": "applications/api/registry",
             "ANDS\\API\\Registry\\Handler\\": "applications/api/registry/handlers/",
@@ -41,10 +38,9 @@
             "tests/CommandsTestClass.php"
         ]
     },
-
     "require": {
         "illuminate/database": "5.2.*",
-        "au-research/ands-doi-service": "dev-master",
+        "au-research/ands-doi-service": "dev-develop",
         "predis/predis": "^1.1",
         "symfony/stopwatch": "^3.1",
         "monolog/monolog": "^1.19",
@@ -53,19 +49,20 @@
         "symfony/console": "^3.2",
         "minhd/solr-client": "dev-master",
         "elasticsearch/elasticsearch": "~2.0",
-        "minhd/oai-pmh" : "dev-master",
-        "javibravo/simpleue" : "dev-master",
+        "minhd/oai-pmh": "dev-master",
+        "javibravo/simpleue": "dev-master",
         "cebe/markdown": "~1.1.1",
         "ramsey/uuid": "^3.7",
         "graphaware/neo4j-php-client": "^4.0",
         "illuminate/cache": "~5.2.0",
         "symfony/cache": "^3.4"
     },
-
     "repositories": [
-        { "type": "vcs", "url": "https://github.com/minhd/oai-pmh" }
+        {
+            "type": "vcs",
+            "url": "https://github.com/minhd/oai-pmh"
+        }
     ],
-
     "require-dev": {
         "phpunit/phpunit": "4.8.*"
     }

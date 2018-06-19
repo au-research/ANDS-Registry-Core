@@ -80,18 +80,27 @@ $(document).on('click', '#add_confirm', function(){
 		type: 'POST',
 		data: {id:client_id},
 		success: function(data){
-			$('#edit_trusted_client_form input[name=client_id]').val(data[0].client_id)			
-			$('#edit_trusted_client_form input[name=client_name]').val(data[0].client_name)
-			$('#edit_trusted_client_form input[name=client_contact_name]').val(data[0].client_contact_name)
-			$('#edit_trusted_client_form input[name=client_contact_email]').val(data[0].client_contact_email)
-			$('#edit_trusted_client_form input[name=ip_address]').val(data[0].ip_address)
-			$('#edit_trusted_client_form input[name=domainList]').val(data[0].domain_list)
-			$('#edit_trusted_client_form input[name=app_id]').val(data[0].app_id)
-			$('#edit_trusted_client_form select[name=datacite_prefix]').val(data[0].datacite_prefix)
-			$('#edit_trusted_client_form input[name=shared_secret]').val(data[0].shared_secret)																					
+			$('#edit_trusted_client_form input[name=client_id]').val(data['client_id']);
+			$('#edit_trusted_client_form input[name=client_name]').val(data['client_name']);
+			$('#edit_trusted_client_form input[name=client_contact_name]').val(data['client_contact_name']);
+			$('#edit_trusted_client_form input[name=client_contact_email]').val(data['client_contact_email']);
+			$('#edit_trusted_client_form input[name=ip_address]').val(data['ip_address']);
+			$('#edit_trusted_client_form input[name=domainList]').val(data['domain_list']);
+			$('#edit_trusted_client_form input[name=app_id]').val(data['app_id']);
+			$('#edit_trusted_client_form select[name=datacite_prefix]').val(data['datacite_prefix']);
+			$('#edit_trusted_client_form input[name=shared_secret]').val(data['shared_secret']);
 			$('#edit_trusted_client_modal').modal('show');
-		},
-		});
+
+            $('#prefix_select').empty();
+            $.each(data['available_prefixes'], function (i, item) {
+                $('#prefix_select').append($('<option>', {
+                    value: item,
+                    text : item
+                }));
+            });
+
+		}
+	});
 }).on('click', '.sec_gen', function(){
 	var sec = $(this).attr('sec');
 	$('#edit_trusted_client_form input[name=shared_secret]').val(sec)	
