@@ -100,10 +100,13 @@ class Mydois extends MX_Controller {
      */
     private function getTrustedClientActivePrefix($client_id){
         $client = $this->clientRepository->getByID($client_id);
+        if(is_array_empty($client->prefixes))
+            return "";
         foreach ($client->prefixes as $clientPrefix) {
             if($clientPrefix->active)
                 return $clientPrefix->prefix->prefix_value;
         }
+        return "";
     }
 
     /**
