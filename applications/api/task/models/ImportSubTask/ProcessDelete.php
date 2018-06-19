@@ -127,7 +127,7 @@ class ProcessDelete extends ImportSubTask
         try {
             GraphRelationshipProvider::bulkDelete($records);
         } catch (\Exception $e) {
-            throw new \Exception("Error deleting graph relationships: ". get_exception_msg($e));
+            $this->addError("Error deleting graph relationships: ". get_exception_msg($e));
         }
 
         // there are nothing to be added to the affected here, because there

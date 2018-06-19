@@ -33,7 +33,7 @@ class ProcessGraphRelationships extends ImportSubTask
                 Cache::forget("graph.{$record->id}");
                 GraphRelationshipProvider::process($record);
             } catch (\Exception $e) {
-                throw new \Exception("Error processing graph relationships for {$id}: ". get_exception_msg($e));
+                $this->addError("Error processing graph relationships for {$id}: ". get_exception_msg($e));
             }
             $this->updateProgress($index, $total, "Processed ($index/$total) $record->title($record->registry_object_id)");
             tearDownEloquent();
