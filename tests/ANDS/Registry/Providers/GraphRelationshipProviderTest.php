@@ -473,6 +473,25 @@ class GraphRelationshipProviderTest extends \RegistryTestClass
         $this->assertCount(2, $graph['nodes']);
     }
 
+    /** @test */
+    function it_process_reverse_links()
+    {
+        // given record a and b
+        $a = $this->stub(RegistryObject::class, ['title' => 'A', 'key' => 'a']);
+        $b = $this->stub(RegistryObject::class, ['title' => 'B', 'key' => 'b']);
+
+        // a relates to b
+        $this->stub(RegistryObject\Relationship::class, ['registry_object_id' => $a->id, 'related_object_key' => $b->key]);
+
+        // when process b
+        GraphRelationshipProvider::process($b);
+
+        $graph = GraphRelationshipProvider::getByID($a->id);
+
+        // a should relates to only 1 other node, which is b
+        $this->assertCount(2, $graph['nodes']);
+    }
+
     /**
      * Helper method to mass add relations
      *
