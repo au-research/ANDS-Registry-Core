@@ -284,6 +284,10 @@ class Registry_object extends MX_Controller
         //construct displayable relationship array with business logic built in
         $related = $this->getRelationship($ro);
 
+        $related['total'] = [
+            'count' => collect($related)->pluck('count')->sum()
+        ];
+
         //Do the rendering
         $this->blade
             ->set('scripts', array('view', 'view_app', 'tag_controller'))
