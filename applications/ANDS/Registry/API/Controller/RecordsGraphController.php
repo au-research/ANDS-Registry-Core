@@ -12,8 +12,8 @@ use ANDS\Util\StrUtil;
 
 class RecordsGraphController
 {
-
-    protected $caching = false;
+    /** @var int cache time in minutes */
+    protected $cacheTTL = 1440;
 
     /**
      * api/registry/records/:id/graph
@@ -22,14 +22,9 @@ class RecordsGraphController
      */
     public function index($id)
     {
-        if ($this->caching) {
-            return Cache::remember("graph.$id", 30, function() use ($id){
-                return $this->getGraphForRecord($id);
-            });
-        }
-
-        return $this->getGraphForRecord($id);
-
+        return Cache::remember("graph.$id", $this->cacheTTL, function() use ($id){
+            return $this->getGraphForRecord($id);
+        });
     }
 
     /**
