@@ -5,6 +5,7 @@ namespace ANDS\Registry\Providers;
 
 
 use ANDS\Cache\Cache;
+use ANDS\Registry\RelationshipView;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\Config;
@@ -22,6 +23,8 @@ class GraphRelationshipProvider implements RegistryContentProvider
     protected static $enableCluster = true;
     protected static $enableGrantsNetwork = true;
     protected static $enableInterlinking = true;
+    protected static $defaultTimeout = 60;
+    protected static $reverseLinklimit = 200;
 
     public static $flippableRelation = [
         'addsValueTo' => 'hasValueAddedBy',
@@ -72,6 +75,17 @@ class GraphRelationshipProvider implements RegistryContentProvider
             if ($to) {
                 $stack->push(static::getMergeNodeQuery($to));
                 $stack->push(static::getMergeLinkQuery($record, $to, $relationship));
+            }
+        }
+
+        // reverse links
+        $reverses = RelationshipView::where('to_id', $record->id)
+            ->limit(static::$reverseLinklimit)->get();
+        foreach ($reverses as $reverse) {
+            $to = RegistryObjectsRepository::getPublishedByKey($reverse->from_key);
+            if ($to) {
+                $stack->push(static::getMergeNodeQuery($to));
+                $stack->push(static::getMergeLinkQuery($to, $record, $reverse));
             }
         }
 
@@ -483,7 +497,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
                 'bolt',
                 "bolt://{$config['username']}:{$config['password']}@{$config['hostname']}:7687"
             )
-            ->setDefaultTimeout(10)
+            ->setDefaultTimeout(static::$defaultTimeout)
             ->build();
     }
 
