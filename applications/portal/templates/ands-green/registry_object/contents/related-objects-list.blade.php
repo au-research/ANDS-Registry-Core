@@ -1,4 +1,4 @@
-@if(count($related) > 0)
+@if($related['total']['count'] > 0)
     <div class="panel panel-primary element-no-top element-short-bottom panel-content">
 
         <div class="swatch-white" style="position:relative;">
