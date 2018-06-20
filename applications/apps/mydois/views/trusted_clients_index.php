@@ -2,7 +2,7 @@
 <div class="content-header">
 	<h1>List Trusted Clients</h1>
 	<div class="btn-group">
-		<a data-toggle="modal" href="#add_trusted_client_modal" href="javascript:;" class="btn btn-large"><i class="icon icon-plus"></i> Add Trusted Clients</a>
+		<a id="add_trusted_client_btn" href="javascript:;" class="btn btn-large"><i class="icon icon-plus"></i> Add Trusted Clients</a>
 	</div>
 </div>
 <div id="breadcrumb" style="clear:both;">
@@ -61,7 +61,7 @@
 				<div class="control-group">
 					<label class="control-label">DOI Prefix</label>
 					<div class="controls">
-						<select name="datacite_prefix">
+						<select name="datacite_prefix" id="add_prefix_select">
 						</select>
 					</div>
 				</div>																			

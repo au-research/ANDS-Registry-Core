@@ -50,6 +50,20 @@ class Mydois extends MX_Controller {
         ]);
 	}
 
+    function get_available_prefixes(){
+        $prefixes = [];
+        $this->fabricaClient->syncUnallocatedPrefixes();
+        $unallocatedPrefixes = $this->clientRepository->getUnalocatedPrefixes();
+        foreach($unallocatedPrefixes as $aPrefix) {
+            $prefixes[] = $aPrefix->prefix_value;
+        }
+        echo json_encode($prefixes);
+    }
+
+    function sync_prefixes(){
+        echo json_encode($this->fabricaClient->syncUnallocatedPrefixes());
+    }
+
     /**
      * AJAX entry for mydois/list_trusted
      */
