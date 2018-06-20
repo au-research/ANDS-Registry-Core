@@ -103,7 +103,24 @@ $(document).on('click', '#add_confirm', function(){
 	});
 }).on('click', '.sec_gen', function(){
 	var sec = $(this).attr('sec');
-	$('#edit_trusted_client_form input[name=shared_secret]').val(sec)	
+	$('#edit_trusted_client_form input[name=shared_secret]').val(sec)
+}).on('click', '#add_trusted_client_btn', function(){
+	$.ajax({
+		url:apps_url+'mydois/get_available_prefixes',
+		type: 'GET',
+		success: function(data){
+
+			$('#add_prefix_select').empty();
+			$.each(data, function (i, item) {
+				console.log(item);
+				$('#add_prefix_select').append($('<option>', {
+					value: item,
+					text : item
+				}));
+			});
+			$('#add_trusted_client_modal').modal('show');
+		}
+	});
 });
 
 function listTrustedClients() {
@@ -121,3 +138,8 @@ function listTrustedClients() {
 		});
 	});
 }
+
+/*
+
+
+ */
