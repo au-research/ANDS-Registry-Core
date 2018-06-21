@@ -66,10 +66,16 @@ class RecordsGraphController
                     return $rel['endNode'] === $cluster['id'];
                 })->first();
 
+                $relationType = $relation['type'];
+
+                if (in_array($relationType, GraphRelationshipProvider::$flippableRelation)){
+                    $relationType = array_search($relationType, GraphRelationshipProvider::$flippableRelation);
+                }
+
                 $filters = [
                     'class' => $clusterClass,
                     "related_{$searchClass}_id" => $record->id,
-                    'relation' => $relation['type']
+                    'relation' => $relationType
                 ];
 
                 $count = getSolrCountForQuery($filters);
