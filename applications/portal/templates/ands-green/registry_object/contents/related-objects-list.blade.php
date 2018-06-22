@@ -70,13 +70,6 @@
                     'property':'roId',
                     'value': roID
                 }],
-                onNodeClick: function(node) {
-//                    var url = base_url + 'registry_object/graph/' + node.properties.roId;
-//                    $.getJSON(url, function(data) {
-//                        var graph = neo4jd3.neo4jDataToD3Data(data);
-//                        neo4jd3.updateWithD3Data(graph);
-//                    });
-                },
                 onNodeDoubleClick: function(node) {
                     var url = api_url + 'registry/records/' + node.properties.roId + '/graph';
                     node.loading = true;
@@ -86,8 +79,11 @@
                         node.loading = false;
                     });
                 },
-                onRelationshipDoubleClick: function(relationship) {
-                    console.log('double click on relationship: ' + JSON.stringify(relationship));
+                onLoading: function() {
+                    $('#toggle-visualisation i').removeClass('fa-sort').addClass('fa-spin').addClass('fa-spinner');
+                },
+                onLoadComplete: function(data) {
+                    $('#toggle-visualisation i').removeClass('fa-spin').removeClass('fa-spinner').addClass('fa-sort');
                 }
             });
         };

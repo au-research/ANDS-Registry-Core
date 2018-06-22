@@ -267,14 +267,13 @@ class GraphRelationshipProvider implements RegistryContentProvider
 
         if (static::$enableCluster) {
             $counts = static::getCountsByRelationshipsType($id, $directQuery);
-
             $over = collect($counts)->filter(function($item) {
                 return $item['count'] > static::$threshold;
-            })->toArray();
+            })->values()->toArray();
 
             $under = collect($counts)->filter(function($item) {
                 return $item['count'] <= static::$threshold;
-            })->toArray();
+            })->values()->toArray();
 
             // get all underThreshold relations that have been clustered
             if (count($under)) {
@@ -542,11 +541,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
             $labels = collect($rel['labels'])
                 ->flatten(2)
                 ->unique()
-                ->map(function($label){
-                    // fix label having bad character by wrapping with `` eg. direct:`AU-NLA`
-                    return "`$label`";
-                })->toArray();
-            $labels = 'AND direct:'. implode(' AND direct:', $labels);
+                ->toArray();
 
             /**
              * MATCH (n)-[:identicalTo*0..]-(identical) WHERE n.roId={id}
@@ -557,10 +552,11 @@ class GraphRelationshipProvider implements RegistryContentProvider
              * AND direct:party
              */
 
-            $query = "$directQuery AND TYPE(r) = {relationship} $labels RETURN * LIMIT 100";
+            $query = "$directQuery AND TYPE(r) = {relationship} AND labels(direct) = {labels} RETURN * LIMIT 100";
             $result = $client->run($query, [
                 'id' => $id,
-                'relationship' => $relationship
+                'relationship' => $relationship,
+                'labels' => $labels
             ]);
 
             foreach ($result->records() as $record) {

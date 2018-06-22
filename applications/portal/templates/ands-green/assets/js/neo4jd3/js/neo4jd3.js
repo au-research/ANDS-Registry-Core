@@ -31,7 +31,9 @@ function Neo4jD3(_selector, _options) {
             nodeOutlineFillColor: undefined,
             nodeRadius: 25,
             relationshipColor: '#a5abb6',
-            zoomFit: false
+            zoomFit: false,
+            maxZoom: 1.5,
+            minZoom: 0.25
         },
         VERSION = '0.0.1';
 
@@ -40,20 +42,8 @@ function Neo4jD3(_selector, _options) {
                        .attr('width', '100%')
                        .attr('height', '100%')
                        .attr('class', 'neo4jd3-graph')
-                       .call(d3.zoom().on('zoom', function() {
-                           var scale = d3.event.transform.k,
-                               translate = [d3.event.transform.x, d3.event.transform.y];
-
-                           if (svgTranslate) {
-                               translate[0] += svgTranslate[0];
-                               translate[1] += svgTranslate[1];
-                           }
-
-                           if (svgScale) {
-                               scale *= svgScale;
-                           }
-
-                           svg.attr('transform', 'translate(' + translate[0] + ', ' + translate[1] + ') scale(' + scale + ')');
+                       .call(d3.zoom().scaleExtent([options.minZoom, options.maxZoom]).on('zoom', function() {
+                           svg.attr("transform", d3.event.transform);
                        }))
                        .on('dblclick.zoom', null)
                        .append('g')
@@ -773,6 +763,8 @@ function Neo4jD3(_selector, _options) {
     }
 
     function initSimulation() {
+        var width = $(svg.node().parentElement).width() ? $(svg.node().parentElement).width() : 862; // hardcoded for ie
+        var height = $(svg.node().parentElement).height() ? $(svg.node().parentElement).height() : 150;
         var simulation = d3.forceSimulation()
                           // .velocityDecay(0.8)
 
@@ -785,7 +777,7 @@ function Neo4jD3(_selector, _options) {
                            }))
             // .force('x', d3.forceX().strength(0.002))
             // .force('y', d3.forceY().strength(0.002))
-                           .force('center', d3.forceCenter(svg.node().parentElement.parentElement.clientWidth / 2, svg.node().parentElement.parentElement.clientHeight / 2))
+                           .force('center', d3.forceCenter(width / 2, height / 2))
                            .on('tick', function() {
                                tick();
                            })
@@ -810,7 +802,14 @@ function Neo4jD3(_selector, _options) {
         nodes = [];
         relationships = [];
 
+        if (options.onLoading) {
+            options.onLoading()
+        }
         d3.json(neo4jDataUrl, function(error, data) {
+
+            if (options.onLoadComplete) {
+                options.onLoadComplete(data)
+            }
 
             if (error) {
                 throw error;
@@ -1258,9 +1257,9 @@ function Neo4jD3(_selector, _options) {
 
     function zoomFit(transitionDuration) {
         var bounds = svg.node().getBBox(),
-            parent = svg.node().parentElement.parentElement,
-            fullWidth = parent.clientWidth,
-            fullHeight = parent.clientHeight,
+            parent = svg.node().parentElement,
+            fullWidth = $(parent).width() ? parent.clientWidth : 862, // hardcoded for ie
+            fullHeight = $(parent).height() ? parent.clientHeight: 400,
             width = bounds.width,
             height = bounds.height,
             midX = bounds.x + width / 2,
@@ -1271,6 +1270,9 @@ function Neo4jD3(_selector, _options) {
         }
 
         svgScale = 0.85 / Math.max(width / fullWidth, height / fullHeight);
+        if (svgScale > options.maxZoom) {
+            svgScale = options.maxZoom;
+        }
         svgTranslate = [fullWidth / 2 - svgScale * midX, fullHeight / 2 - svgScale * midY];
 
         svg.attr('transform', 'translate(' + svgTranslate[0] + ', ' + svgTranslate[1] + ') scale(' + svgScale + ')');
