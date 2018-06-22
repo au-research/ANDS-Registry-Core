@@ -28,7 +28,6 @@ class ProcessGraphRelationships extends ImportSubTask
         $this->log("Process Graph Relationships started for $total records");
         foreach ($importedRecords as $index => $id) {
             $record = RegistryObjectsRepository::getRecordByID($id);
-            // process implicit relationships for the grants network
             try {
                 Cache::forget("graph.{$record->id}");
                 GraphRelationshipProvider::process($record);
@@ -36,7 +35,6 @@ class ProcessGraphRelationships extends ImportSubTask
                 $this->addError("Error processing graph relationships for {$id}: ". get_exception_msg($e));
             }
             $this->updateProgress($index, $total, "Processed ($index/$total) $record->title($record->registry_object_id)");
-            tearDownEloquent();
         }
 
         $this->log("Process Graph Relationships completed for $total records");

@@ -188,7 +188,8 @@ h1.bordered:after{
 
 #graph-viz {
     height:150px;
-    border-bottom:1px solid #cfcfcf
+    border-bottom:1px solid #cfcfcf;
+    margin:0;
 }
 
 #toggle-visualisation {
