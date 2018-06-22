@@ -5,9 +5,9 @@
 @elseif($ro->core['class']=='service')
     <i class="fa fa-wrench icon-portal"></i>
 @elseif($ro->core['class']=='party')
-    @if($ro->core['type']=='person')
-        <i class="fa fa-user icon-portal"></i>
-    @elseif($ro->core['type']=='group')
+    @if($ro->core['type']=='group')
+        <i class="fa fa-group icon-portal"></i>
+    @else
         <i class="fa fa-group icon-portal"></i>
     @endif
 @endif

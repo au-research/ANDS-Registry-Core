@@ -3,7 +3,7 @@
     <ul class="list-unstyled">
         @foreach($related['researchers']['docs'] as $col)
             <li>
-                <i class="fa fa-group icon-portal"></i>
+                <i class="fa fa-user icon-portal"></i>
                 <small>{{ $col['display_relationship'] }}</small>
                 <a href="{{ base_url() }}{{$col['to_slug']}}/{{$col['to_id']}}"
                    title="{{ $col['to_title'] }}"
