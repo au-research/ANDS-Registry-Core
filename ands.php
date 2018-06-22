@@ -29,6 +29,6 @@ $application->add(new \ANDS\Commands\ExportCommand());
 $application->add(new \ANDS\Commands\Graph\GraphGenerate());
 $application->add(new \ANDS\Commands\Export\ExportCSV());
 $application->add(new \ANDS\Commands\DataSourceProcessCommand());
-//$application->add(new \ANDS\Commands\Export\ExportCSVGraph());
+$application->add(new \ANDS\Commands\ClearCacheCommand());
 
 $application->run();
