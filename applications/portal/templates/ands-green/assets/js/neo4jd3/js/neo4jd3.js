@@ -800,7 +800,14 @@ function Neo4jD3(_selector, _options) {
         nodes = [];
         relationships = [];
 
+        if (options.onLoading) {
+            options.onLoading()
+        }
         d3.json(neo4jDataUrl, function(error, data) {
+
+            if (options.onLoadComplete) {
+                options.onLoadComplete(data)
+            }
 
             if (error) {
                 throw error;
