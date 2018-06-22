@@ -33,7 +33,7 @@ class Mydois extends MX_Controller {
 		acl_enforce('SUPERUSER');
         $client_id = $this->input->post('client_id');
         $this->clientRepository->deleteClientById($client_id);
-        // TODO delete from datacite?
+        // TODO delete from datacite? (WE SHOULDN'T)
 	}
 
     /**
@@ -128,7 +128,7 @@ class Mydois extends MX_Controller {
      */
     function add_trusted_client() {
 		acl_enforce('SUPERUSER');
-
+        $response = [];
 		$posted = $this->input->post('jsonData');
 		$ip = trim(urlencode($posted['ip_address']));
 		$client_name = trim(urlencode($posted['client_name']));
@@ -150,7 +150,16 @@ class Mydois extends MX_Controller {
         $client->addDomains($domainList);
         $client->addClientPrefix($datacite_prefix, true);
 
-		echo json_encode($this->fabricaClient->getResponse());
+        $this->fabricaClient->addClient($client);
+        $this->fabricaClient->updateClient($client);
+        
+        if($this->fabricaClient->responseCode == 200 || $this->fabricaClient->responseCode == 201)
+            echo $this->fabricaClient->responseCode;
+        else{
+            $response['errorMessages'] = $this->fabricaClient->getErrors();
+            $response['Messages'] = $this->fabricaClient->getMessages();
+            echo json_encode($response);
+        }
 	}
 
     /**
@@ -218,11 +227,23 @@ class Mydois extends MX_Controller {
         $client = $this->clientRepository->getByID($client_id);
         $client->removeClientDomains();
         $client->addDomains($domainList);
-        $client->addClientPrefix($datacite_prefix, true);
-
+        
 		$this->fabricaClient->updateClient($client);
 
-		echo json_encode($this->fabricaClient->getResponse());
+        if(!$client->hasPrefix($datacite_prefix)){
+            $this->fabricaClient->updateClientPrefixes($client);
+        }
+
+        $client->addClientPrefix($datacite_prefix, true);
+
+        if($this->fabricaClient->responseCode == 200 || $this->fabricaClient->responseCode == 201)
+            echo $this->fabricaClient->responseCode;
+        else{
+            $response['errorMessages'] = $this->fabricaClient->getErrors();
+            $response['Messages'] = $this->fabricaClient->getMessages();
+            echo json_encode($response);
+        }
+
 	}
 
     /**
