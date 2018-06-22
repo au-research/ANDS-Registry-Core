@@ -31,7 +31,9 @@ function Neo4jD3(_selector, _options) {
             nodeOutlineFillColor: undefined,
             nodeRadius: 25,
             relationshipColor: '#a5abb6',
-            zoomFit: false
+            zoomFit: false,
+            maxZoom: 1.5,
+            minZoom: 0.25
         },
         VERSION = '0.0.1';
 
@@ -40,20 +42,8 @@ function Neo4jD3(_selector, _options) {
                        .attr('width', '100%')
                        .attr('height', '100%')
                        .attr('class', 'neo4jd3-graph')
-                       .call(d3.zoom().on('zoom', function() {
-                           var scale = d3.event.transform.k,
-                               translate = [d3.event.transform.x, d3.event.transform.y];
-
-                           if (svgTranslate) {
-                               translate[0] += svgTranslate[0];
-                               translate[1] += svgTranslate[1];
-                           }
-
-                           if (svgScale) {
-                               scale *= svgScale;
-                           }
-
-                           svg.attr('transform', 'translate(' + translate[0] + ', ' + translate[1] + ') scale(' + scale + ')');
+                       .call(d3.zoom().scaleExtent([options.minZoom, options.maxZoom]).on('zoom', function() {
+                           svg.attr("transform", d3.event.transform);
                        }))
                        .on('dblclick.zoom', null)
                        .append('g')
@@ -1271,6 +1261,9 @@ function Neo4jD3(_selector, _options) {
         }
 
         svgScale = 0.85 / Math.max(width / fullWidth, height / fullHeight);
+        if (svgScale > options.maxZoom) {
+            svgScale = options.maxZoom;
+        }
         svgTranslate = [fullWidth / 2 - svgScale * midX, fullHeight / 2 - svgScale * midY];
 
         svg.attr('transform', 'translate(' + svgTranslate[0] + ', ' + svgTranslate[1] + ') scale(' + svgScale + ')');
