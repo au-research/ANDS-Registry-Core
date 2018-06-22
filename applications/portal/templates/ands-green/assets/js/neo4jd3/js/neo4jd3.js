@@ -763,6 +763,8 @@ function Neo4jD3(_selector, _options) {
     }
 
     function initSimulation() {
+        var width = $(svg.node().parentElement).width() ? $(svg.node().parentElement).width() : 862; // hardcoded for ie
+        var height = $(svg.node().parentElement).height() ? $(svg.node().parentElement).height() : 150;
         var simulation = d3.forceSimulation()
                           // .velocityDecay(0.8)
 
@@ -775,7 +777,7 @@ function Neo4jD3(_selector, _options) {
                            }))
             // .force('x', d3.forceX().strength(0.002))
             // .force('y', d3.forceY().strength(0.002))
-                           .force('center', d3.forceCenter(svg.node().parentElement.parentElement.clientWidth / 2, svg.node().parentElement.parentElement.clientHeight / 2))
+                           .force('center', d3.forceCenter(width / 2, height / 2))
                            .on('tick', function() {
                                tick();
                            })
@@ -1255,9 +1257,9 @@ function Neo4jD3(_selector, _options) {
 
     function zoomFit(transitionDuration) {
         var bounds = svg.node().getBBox(),
-            parent = svg.node().parentElement.parentElement,
-            fullWidth = parent.clientWidth,
-            fullHeight = parent.clientHeight,
+            parent = svg.node().parentElement,
+            fullWidth = $(parent).width() ? parent.clientWidth : 862, // hardcoded for ie
+            fullHeight = $(parent).height() ? parent.clientHeight: 400,
             width = bounds.width,
             height = bounds.height,
             midX = bounds.x + width / 2,
