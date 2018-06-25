@@ -577,11 +577,9 @@ class GraphRelationshipProviderTest extends \RegistryTestClass
     public function tearDown()
     {
         parent::tearDown();
-        $this->clear();
-    }
-
-    private function clear()
-    {
+        if (!$this->client) {
+            $this->client = GraphRelationshipProvider::db();
+        }
         $this->client->run("MATCH (n:test) OPTIONAL MATCH (n)-[r]-() DELETE n, r");
         if ($this->dataSource) {
             $this->client->run("MATCH (n {data_source_id:\"{$this->dataSource->id}\"}) OPTIONAL MATCH (n)-[r]-() DELETE n, r");
