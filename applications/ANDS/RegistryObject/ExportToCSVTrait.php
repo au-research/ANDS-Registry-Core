@@ -71,14 +71,14 @@ trait ExportToCSVTrait
         return [
             "roId:ID" => (string) $this->id,
             ":LABEL" => implode(";", ["RegistryObject", "`{$this->class}`", "`$this->type`"]),
-            "key" => $this->key,
+            "key" => StrUtil::removeNewlines($this->key),
             "class" => $this->class,
             "type" => $this->type,
-            "group" => $this->group,
+            "group" => StrUtil::removeNewlines($this->group),
             "slug" => $this->slug,
             "data_source_id" => $this->data_source_id,
             "title" => StrUtil::sanitize($this->title),
-            "record_owner" => $this->record_owner,
+            "record_owner" => StrUtil::removeNewlines($this->record_owner),
             "modified_at" => $this->modified_at,
             "created_at" => $this->created_at
         ];

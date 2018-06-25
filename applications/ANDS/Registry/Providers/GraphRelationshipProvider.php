@@ -287,10 +287,13 @@ class GraphRelationshipProvider implements RegistryContentProvider
                 $nodes = collect($nodes)->merge($clusterRelationships['nodes'])->unique()->toArray();
                 $links = collect($links)->merge($clusterRelationships['links'])->unique()->toArray();
 
-                $overThresholdRelationships = collect($over)->pluck('relation')->toArray();
+                $overThresholdRelationships = collect($over)->pluck('relation')->unique()->toArray();
                 $directQuery .= ' AND NOT TYPE(r) IN ["'. implode('","', $overThresholdRelationships).'"]';
             }
         }
+
+        // add current node to the list
+        $nodes[$node->identity()] = static::formatNode($node);
 
         // get direct relationships
         $result = $client->run(
@@ -300,7 +303,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
             ]);
 
         foreach ($result->records() as $record) {
-            $nodes[$record->get('n')->identity()] = static::formatNode($record->get('n'));
+//            $nodes[$record->get('n')->identity()] = static::formatNode($record->get('n'));
             $nodes[$record->get('direct')->identity()] = static::formatNode($record->get('direct'));
             $links[$record->get('r')->identity()] = static::formatRelationship($record->get('r'));
         }

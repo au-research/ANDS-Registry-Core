@@ -37,20 +37,6 @@ class ScholixProviderTest extends RegistryTestClass
     }
 
     /** @test **/
-    public function it_should_process_scholixable_correctly()
-    {
-        $record = $this->ensureKeyExist("AUTCollectionToTestSearchFields37");
-        ScholixProvider::process($record);
-        $scholixable = (bool) $record->getRegistryObjectAttributeValue("scholixable");
-        $this->assertTrue($scholixable);
-
-        $record = $this->ensureKeyExist("AUTestingRecordsQualityLevelsCollection8_demo");
-        ScholixProvider::process($record);
-        $scholixable = (bool) $record->getRegistryObjectAttributeValue("scholixable");
-        $this->assertFalse($scholixable);
-    }
-
-    /** @test **/
     public function it_should_get_the_right_identifier()
     {
         $partyRecord = $this->ensureKeyExist("AUTestingRecords2ScholixGroupRecord1");
@@ -113,14 +99,18 @@ class ScholixProviderTest extends RegistryTestClass
     public function it_should_has_all_identifiers_as_source()
     {
         $record = $this->ensureKeyExist("AUTCollectionToTestSearchFields37");
+        ScholixProvider::process($record);
         $scholix = ScholixProvider::get($record);
 
         $links = $scholix->toArray();
 
-        $sourcesIdentifiers = collect($links)->pluck('link')->pluck('source')->pluck('identifier')->flatten();
+        $sourcesIdentifiers = collect($links)->pluck('link.source.identifier')->flatten();
 
         // each identifier has a source
-        $identifiers = collect(\ANDS\Registry\Providers\RIFCS\IdentifierProvider::get($record))->flatten();
+        $identifiers = collect(\ANDS\Registry\Providers\RIFCS\IdentifierProvider::get($record))->filter(function($identifier) {
+            return in_array($identifier['type'], ScholixProvider::$validSourceIdentifierTypes);
+        })->flatten();
+
         foreach ($identifiers as $identifier) {
             $this->assertContains($identifier, $sourcesIdentifiers);
         }
