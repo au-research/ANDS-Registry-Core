@@ -143,6 +143,7 @@ class ExportCSV extends ANDSCommand
 
                 try {
                     $row = $record->toCSV($this->format);
+                    $row[':LABEL'] = str_replace('`', '', $row[':LABEL']);
 
                     // insert header if first
                     if ($first) {
@@ -448,6 +449,7 @@ class ExportCSV extends ANDSCommand
                 }
 
                 $row = $relation->toCSV();
+                $row[':LABEL'] = str_replace('`', '', $row[':LABEL']);
 
                 // insert header if first
                 if ($first) {
