@@ -45,6 +45,7 @@ $(document).on('click', '#add_confirm', function(){
 		type: 'POST',
 		data: {jsonData:jsonData},
 		success: function(data){
+			console.log(data);
 			if(data.errorMessages){
 				$('#result_msg').html(data.errorMessages).addClass('label label-important');
 				thisButton.button('reset');
@@ -121,10 +122,19 @@ $(document).on('click', '#add_confirm', function(){
 			$('#add_trusted_client_modal').modal('show');
 		}
 	});
+}).on('click', '#fetch_unassigned_prefixes_btn', function(){
+	$.ajax({
+		url:apps_url+'mydois/fetch_unassigned_prefix',
+		type: 'GET',
+		success: function(data){
+			$('#result_msg').html(data.message).addClass('label label-important');
+		}
+	});
 });
 
 function listTrustedClients() {
 	$('#trusted_clients').html('loading');
+	$('#result_msg').html("result").removeClass('label label-important');
 	$.getJSON(apps_url+'mydois/list_trusted_clients/', function(data) {
 		var template = $('#trusted_clients-template').html();
 		var output = Mustache.render(template, data);
