@@ -21,6 +21,11 @@ class StrUtil
         return $str;
     }
 
+    public static function escape($str)
+    {
+        return strip_slashes($str);
+    }
+
     public static function removeNewlines($str)
     {
         return preg_replace( "/\r|\n/", " ", $str);
