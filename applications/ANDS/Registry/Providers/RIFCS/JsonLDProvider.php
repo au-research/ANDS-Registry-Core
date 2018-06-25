@@ -24,7 +24,7 @@ use ANDS\Util\XMLUtil;
 class JsonLDProvider implements RIFCSProvider
 {
 
-    public function base_url() {
+    public static function base_url() {
         return Config::get('app.default_base_url');
     }
 
