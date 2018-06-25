@@ -3,6 +3,7 @@
 	<h1>List Trusted Clients</h1>
 	<div class="btn-group">
 		<a id="add_trusted_client_btn" href="javascript:;" class="btn btn-large"><i class="icon icon-plus"></i> Add Trusted Clients</a>
+		<a id="fetch_unassigned_prefixes_btn" href="javascript:;" class="btn btn-large"><i class="icon icon-plus"></i> Fetch Unassigned Prefixes</a>
 	</div>
 </div>
 <div id="breadcrumb" style="clear:both;">

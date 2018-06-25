@@ -12,6 +12,8 @@ class Mydois extends MX_Controller {
     /** @var FabricaClient */
     private $fabricaClient;
 
+
+    private $unallocatedPrefixLimit = 5;
     /**
      * MyDOIS SPA
      */
@@ -64,6 +66,29 @@ class Mydois extends MX_Controller {
         echo json_encode($this->fabricaClient->syncUnallocatedPrefixes());
     }
 
+    public function fetch_unassigned_prefix()
+    {
+        $response = [];
+        $unallocatedPrefixes = $this->clientRepository->getUnalocatedPrefixes();
+
+        if(sizeof($unallocatedPrefixes) > $this->unallocatedPrefixLimit){
+            $response['message'] = "Number of Unallocated Prefixes (".sizeof($unallocatedPrefixes).") is greater than the Prefix Limit of (".$this->unallocatedPrefixLimit.").";
+        }elseif(sizeof($unallocatedPrefixes) == $this->unallocatedPrefixLimit){
+            $response['message'] = "Number of Unallocated Prefixes (".sizeof($unallocatedPrefixes).") is equal to the Prefix Limit of (".$this->unallocatedPrefixLimit.").";
+        }else{
+
+            $numberofPrefixestoFetch = $this->unallocatedPrefixLimit - sizeof($unallocatedPrefixes);
+//            // mock response
+//            $response['newPrefixes'] = [];
+//            for($i = 0 ; $i < $numberofPrefixestoFetch ; $i++){
+//                $response['newPrefixes'][] = "10.999999".$i;
+//            }
+            $response['newPrefixes'] = $this->fabricaClient->claimNumberOfUnassignedPrefixes($numberofPrefixestoFetch);
+
+            $response['message'] = "Fetched ".sizeof($response['newPrefixes']) . " new Prefixe(s)";
+        }
+        echo json_encode($response);
+    }
     /**
      * AJAX entry for mydois/list_trusted
      */
@@ -147,19 +172,34 @@ class Mydois extends MX_Controller {
             'client_contact_email' => urldecode($client_contact_email),
             'shared_secret' => $shared_secret
         ]);
+        
         $client->addDomains($domainList);
         $client->addClientPrefix($datacite_prefix, true);
 
         $this->fabricaClient->addClient($client);
-        $this->fabricaClient->updateClient($client);
-        
-        if($this->fabricaClient->responseCode == 200 || $this->fabricaClient->responseCode == 201)
-            echo $this->fabricaClient->responseCode;
-        else{
-            $response['errorMessages'] = $this->fabricaClient->getErrors();
+
+        if($this->fabricaClient->hasError()){
+            $response['responseCode'] = $this->fabricaClient->responseCode;
+            $response['errorMessages'] = $this->fabricaClient->getErrorMessage();
             $response['Messages'] = $this->fabricaClient->getMessages();
             echo json_encode($response);
+            exit();
         }
+
+        if($datacite_prefix){
+
+            $this->fabricaClient->updateClientPrefixes($client);
+            if($this->fabricaClient->hasError()){
+                $response['responseCode'] = $this->fabricaClient->responseCode;
+                $response['errorMessages'] = $this->fabricaClient->getErrorMessage();
+                $response['Messages'] = $this->fabricaClient->getMessages();
+                echo json_encode($response);
+                exit();
+            }
+        }
+
+        if($this->fabricaClient->responseCode == 200 || $this->fabricaClient->responseCode == 201)
+            echo $this->fabricaClient->responseCode;
 	}
 
     /**
@@ -192,6 +232,8 @@ class Mydois extends MX_Controller {
         }
 
         foreach($unallocatedPrefixes as $aPrefix) {
+            if(sizeof($prefixes) >= $this->unallocatedPrefixLimit)
+                break;
             $prefixes[] = $aPrefix->prefix_value;
         }
 
@@ -227,24 +269,37 @@ class Mydois extends MX_Controller {
         $client = $this->clientRepository->getByID($client_id);
         $client->removeClientDomains();
         $client->addDomains($domainList);
-        
-		$this->fabricaClient->updateClient($client);
+        $client->addClientPrefix($datacite_prefix, true);
 
-        if(!$client->hasPrefix($datacite_prefix)){
-            $this->fabricaClient->updateClientPrefixes($client);
+        $this->fabricaClient->updateClient($client);
+
+
+        if($this->fabricaClient->hasError()){
+            $response['responseCode'] = $this->fabricaClient->responseCode;
+            $response['errorMessages'] = $this->fabricaClient->getErrorMessage();
+            $response['Messages'] = $this->fabricaClient->getMessages();
+            echo json_encode($response);
+            exit();
         }
 
-        $client->addClientPrefix($datacite_prefix, true);
+
+
+        if($datacite_prefix){
+            $this->fabricaClient->updateClientPrefixes($client);
+            if($this->fabricaClient->hasError()){
+                $response['responseCode'] = $this->fabricaClient->responseCode;
+                $response['errorMessages'] = $this->fabricaClient->getErrorMessage();
+                $response['Messages'] = $this->fabricaClient->getMessages();
+                echo json_encode($response);
+                exit();
+            }
+        }
+
+
 
         if($this->fabricaClient->responseCode == 200 || $this->fabricaClient->responseCode == 201)
             echo $this->fabricaClient->responseCode;
-        else{
-            $response['errorMessages'] = $this->fabricaClient->getErrors();
-            $response['Messages'] = $this->fabricaClient->getMessages();
-            echo json_encode($response);
-        }
-
-	}
+    }
 
     /**
      * TODO refactor LinkChecking API. Ask @Cel
@@ -289,6 +344,7 @@ class Mydois extends MX_Controller {
         $fabricaConfig = \ANDS\Util\Config::get('datacite.fabrica');
         $this->fabricaClient = new FabricaClient($fabricaConfig['username'],$fabricaConfig['password']);
         $this->fabricaClient->setDataciteUrl($fabricaConfig['api_url']);
+        $this->fabricaClient->setClientRepository($this->clientRepository);
     }
 
 }
