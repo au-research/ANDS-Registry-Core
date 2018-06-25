@@ -17,7 +17,8 @@ class JsonLDProviderTest extends \RegistryTestClass
         $this->ensureKeyExist($key);
         $record = RegistryObjectsRepository::getPublishedByKey($key);
         $output = JsonLDProvider::process($record);
-        echo $output;
+//        echo $output;
+        // TODO add assertions
     }
 
     /** @test **/
@@ -28,7 +29,8 @@ class JsonLDProviderTest extends \RegistryTestClass
         $this->ensureKeyExist($key);
         $record = RegistryObjectsRepository::getPublishedByKey($key);
         $output = JsonLDProvider::process($record);
-        echo $output;
+//        echo $output;
+        // TODO add assertions
     }
 
     /** @test **/
@@ -39,9 +41,7 @@ class JsonLDProviderTest extends \RegistryTestClass
         $this->ensureKeyExist($key);
         $record = RegistryObjectsRepository::getPublishedByKey($key);
         $output = JsonLDProvider::process($record);
-        echo $output;
+//        echo $output;
+        // TODO add assertions
     }
-
-
-
 }
