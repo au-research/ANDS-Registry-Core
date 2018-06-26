@@ -173,14 +173,13 @@
 		<table class="table table-bordered data-table">
 			<thead>
 				<tr>
-					<th>Client Id </th>
+					<th>Client Symbol</th>
 					<th>Client Name </th>
 					<th>Contact Name </th>
 					<th>App ID</th>
-					<th>Datacite Prefix</th>
+					<th>Active Prefix</th>
+					<th>Other Prefixes</th>
 					<th>Domain List</th>
-					<th>Shared Secret</th>					
-					<th>IP</th>
 					<th>Date Created</th>
 					<th>Action </th>
 				</tr>
@@ -188,14 +187,13 @@
 			<tbody>
 			{{#.}}
 				<tr>
-					<td>{{client_id}}</td>
+					<td><a href="{{url}}" target="_blank" title="view it in datacite">{{datacite_symbol}}</a></td>
 					<td>{{client_name}}</td>
 					<td>{{client_contact_name}}</td>
 					<td>{{app_id}}</td>
 					<td>{{datacite_prefix}}</td>
+					<td>{{not_active_prefixes}}</td>
 					<td>{{domain_list}}</td>
-					<td>{{shared_secret}}</td>
-					<td class="limit_ip_td">{{ip_address}}</td>
 					<td>{{created_when}}</td>
 					<td>
 					<a href="javascript:;" class="edit btn btn-small" tip="Edit" app_id="{{app_id}}" client_id="{{client_id}}"><i class="icon-edit"></i></a> 
