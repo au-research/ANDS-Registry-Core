@@ -31,7 +31,7 @@
 	
 	<div class="modal-screen-container">
 		<div class="modal-body">
-			<div class="alert alert-info">
+			<div id="add_client_msg" class="alert alert-info">
 				Please provide the relevant information
 			</div>
 			<form action="#" method="get" class="form-horizontal" id="add_trusted_client_form">
