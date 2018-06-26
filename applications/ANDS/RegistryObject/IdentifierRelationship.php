@@ -59,7 +59,8 @@ class IdentifierRelationship extends Model
     {
         $url = $this->related_url;
 
-        if (!$url && $this->related_info_type == 'website') {
+        $urlable = ['website', 'uri', 'url'];
+        if (!$url || in_array($this->related_object_identifier, $urlable)) {
             $url = $this->related_object_identifier;
         }
 
@@ -67,8 +68,10 @@ class IdentifierRelationship extends Model
             'identifier:ID' => $this->related_object_identifier,
             ':LABEL' => implode(';', ['RelatedInfo', "`$this->related_info_type`"]),
             'relatedInfoType' => $this->related_info_type,
+            'identifierType' => $this->related_object_identifier_type,
             'class' => 'RelatedInfo',
             'type' => $this->related_object_identifier_type,
+            'identifier' => StrUtil::removeNewlines($this->related_object_identifier),
             'title' => StrUtil::sanitize($this->related_title),
             'url' => $url,
             'description' => $this->related_description

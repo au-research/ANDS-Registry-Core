@@ -4158,7 +4158,6 @@ CHECKS.ie6 = {
                 window.neo4jd3.zoomFit();
             });
         } else if (viz.height() > 149) {
-            console.log('here');
             viz.animate({height: 150}, 400, 'swing', function() {
                 // window.neo4jd3.zoomFit();
             });

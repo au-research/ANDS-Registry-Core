@@ -6,6 +6,54 @@ namespace ANDS\Util;
 
 class StrUtil
 {
+
+    /**
+     * Returns the fontawesome icon for a given class and (optional) type
+     * RelatedInfo class is RelatedInfo, type is RelatedInfoType
+     *
+     * @param $class
+     * @param null $type
+     * @return string
+     */
+    public static function getIconFor($class, $type = null)
+    {
+        if ($class === 'collection') {
+            return "fa-folder-open";
+        }
+
+        if ($class === "activity") {
+            return "fa-flask";
+        }
+
+        if ($class === "service") {
+            return "fa-wrench";
+        }
+
+        if ($class === "party") {
+            if ($type === "group") {
+                return "fa-group";
+            } else {
+                return "fa-user";
+            }
+        }
+
+        // RelatedInfo
+        if ($type === "website") {
+            return "fa-globe";
+        }
+        if ($type === "publication") {
+            return "fa-book";
+        }
+
+        return "";
+    }
+
+    public static function portalIconHTML($class, $type = null)
+    {
+        $icon = static::getIconFor($class, $type);
+        return "<i class='fa $icon icon-portal'></i>";
+    }
+
     /**
      * Sanitize a string
      * Remove bad characters that breaks exporting
