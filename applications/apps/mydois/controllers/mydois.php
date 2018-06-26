@@ -15,6 +15,8 @@ class Mydois extends MX_Controller {
     private $fabricaUrl;
 
     private $unallocatedPrefixLimit = 5;
+
+    private $testPrefix = "10.5072";
     /**
      * MyDOIS SPA
      */
@@ -55,9 +57,12 @@ class Mydois extends MX_Controller {
 
     function get_available_prefixes(){
         $prefixes = [];
+        $prefixes[] = $this->testPrefix;
         $this->fabricaClient->syncUnallocatedPrefixes();
         $unallocatedPrefixes = $this->clientRepository->getUnalocatedPrefixes();
         foreach($unallocatedPrefixes as $aPrefix) {
+            if(sizeof($prefixes) >= $this->unallocatedPrefixLimit)
+                break;
             $prefixes[] = $aPrefix->prefix_value;
         }
         echo json_encode($prefixes);
@@ -207,7 +212,7 @@ class Mydois extends MX_Controller {
             exit();
         }
 
-        if($datacite_prefix){
+        if($datacite_prefix && $datacite_prefix != $this->testPrefix){
 
             $this->fabricaClient->updateClientPrefixes($client);
             if($this->fabricaClient->hasError()){
@@ -257,7 +262,7 @@ class Mydois extends MX_Controller {
                 break;
             $prefixes[] = $aPrefix->prefix_value;
         }
-
+        $prefixes[] = $this->testPrefix;
         return $prefixes;
     }
 
@@ -303,9 +308,7 @@ class Mydois extends MX_Controller {
             exit();
         }
 
-
-
-        if($datacite_prefix){
+        if($datacite_prefix && $datacite_prefix != $this->testPrefix){
             $this->fabricaClient->updateClientPrefixes($client);
             if($this->fabricaClient->hasError()){
                 $response['responseCode'] = $this->fabricaClient->responseCode;
