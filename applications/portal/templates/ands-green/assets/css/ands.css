@@ -234,11 +234,15 @@ h1.bordered:after{
 
 .btn_access{
     margin-bottom: 15px;
-    box-shadow:
-            inset 0 0 2px 0 rgba(255,255,255,.4),
-            inset 0 0 2px 0 rgba(255, 255, 255, 0.4),
-            inset 0 0 2px 2px rgba(253, 253, 253, 0.4),
-            2px 2px 2px 0 rgba(254, 254, 254, 0.25);
+    background: linear-gradient(#becdba,#84a07b);
+    border: .5px solid #657f65;
+    border-radius: 4px;
+}
+.btn_access:hover {
+    background: linear-gradient(rgb(255, 185, 102), rgb(244, 129, 0));
+    border: .5px solid #ed7b00;
+    border-radius: 4px;
+    color: #fff;
 }
 
 .formats_block{
