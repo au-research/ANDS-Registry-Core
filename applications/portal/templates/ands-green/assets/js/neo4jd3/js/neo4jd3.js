@@ -329,10 +329,17 @@ function Neo4jD3(_selector, _options) {
         }
     }
 
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
     function toHtml(node) {
         var html = '<div class="swatch-white">';
         html += '<h4>';
         html += '<i class="fa '+getFontIconForNode(node)+' icon-portal" style="margin-right:4px;"></i>';
+        if (node.properties.type) {
+            html += '<span style="margin-right:5px;color:#EB6E1F">'+capitalizeFirstLetter(node.properties.type)+'</span>';
+        }
         if (node.properties.url) {
             html += '<a target="_blank" href="'+node.properties.url+'">' + node.properties.title;
             if (node.labels.has('RelatedInfo')) {

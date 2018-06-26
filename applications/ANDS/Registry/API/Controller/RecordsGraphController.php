@@ -44,16 +44,12 @@ class RecordsGraphController
 
         $clusters = collect($nodes)
             ->filter(function ($item) {
-                return in_array("cluster", $item['labels']);
+                // only look at RegistryObject cluster
+                return in_array("cluster", $item['labels']) && !in_array("RelatedInfo", $item['labels']);
             })->map(function ($cluster) use ($relationships, $record) {
 
-                if (collect($cluster['labels'])->contains('RelatedInfo')) {
-                    return $cluster;
-                }
-
-                $clusterClass = collect($cluster['labels'])->filter(function ($label) {
-                    return in_array($label, ['collection', 'service', 'activity', 'party']);
-                })->first();
+                $clusterClass = $cluster['properties']['class'];
+                $clusterType = $cluster['properties']['type'];
 
                 // related_party_multi_id construction
                 $searchClass = $record->class;
@@ -74,6 +70,7 @@ class RecordsGraphController
 
                 $filters = [
                     'class' => $clusterClass,
+                    'type' => $clusterType,
                     "related_{$searchClass}_id" => $record->id,
                     'relation' => $relationType
                 ];
@@ -84,7 +81,7 @@ class RecordsGraphController
                     'title' => "$count related $classPlural",
                     'url' => constructPortalSearchQuery($filters),
                     'count' => $count,
-                    'class' => 'cluster',
+                    'class' => $clusterClass,
                     'clusterClass' => $clusterClass
                 ]);
 
@@ -214,11 +211,13 @@ class RecordsGraphController
                 return $node['id'] === $link['endNode'];
             })->first();
 
-            $fromClass = array_key_exists('class', $from['properties']) ? $from['properties']['class'] : 'cluster';
-            $toClass = array_key_exists('class', $to['properties']) ? $to['properties']['class'] : 'cluster';
+            $fromClass = $from['properties']['class'];
+            $fromType = array_key_exists('type', $from['properties']) ? $from['properties']['type'] : null;
+            $toClass = $to['properties']['class'];
+            $toType = array_key_exists('type', $to['properties']) ? $to['properties']['type'] : null;
 
-            $fromIcon = $this->getIconFor($from);
-            $toIcon = $this->getIconFor($to);
+            $fromIcon = StrUtil::portalIconHTML($fromClass, $fromType);
+            $toIcon = StrUtil::portalIconHTML($toClass, $toType);
 
             $relation = format_relationship($fromClass, $link['type'], false, $toClass);
 
@@ -260,29 +259,5 @@ class RecordsGraphController
                 ]
             ]
         ];
-    }
-
-    private function getIconFor($node)
-    {
-        $icon = '';
-        $labels = $node['labels'];
-
-        if (in_array('collection', $labels)) {
-            $icon = 'fa-folder-open';
-        } elseif (in_array('activity', $labels)) {
-            $icon = 'fa-flask';
-        } elseif (in_array('service', $labels)) {
-            $icon = 'fa-wrench';
-        } elseif (in_array('group', $labels)) {
-            $icon = 'fa-group';
-        } elseif (in_array('party', $labels)) {
-            $icon = 'fa-user';
-        } elseif (in_array('website', $labels)) {
-            $icon = 'fa-globe';
-        } elseif (in_array('publication', $labels)) {
-            $icon = 'fa-book';
-        }
-
-        return "<i class='fa $icon icon-portal'></i>";
     }
 }

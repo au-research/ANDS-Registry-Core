@@ -267,6 +267,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
 
         if (static::$enableCluster) {
             $counts = static::getCountsByRelationshipsType($id, $directQuery);
+
             $over = collect($counts)->filter(function($item) {
                 return $item['count'] > static::$threshold;
             })->values()->toArray();
@@ -416,7 +417,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
 
         $result = $client->run(
             "$directQuery
-            RETURN labels(direct) as labels, TYPE(r) as relation, count(direct) as total;",[
+            RETURN labels(direct) as labels, TYPE(r) as relation, direct.class as class, direct.type as type, count(direct) as total;",[
             'id' => (string) $id
         ]);
         $counts = [];
@@ -424,24 +425,10 @@ class GraphRelationshipProvider implements RegistryContentProvider
             $counts[] = [
                 'relation' => $record->get('relation'),
                 'labels' => $record->get('labels'),
+                'class' => $record->get('class'),
+                'type' => $record->get('type'),
                 'count' => $record->get('total')
             ];
-        }
-        return $counts;
-    }
-
-    public static function getCountsByRelationships($id, $directQuery)
-    {
-        $client = static::db();
-
-        $result = $client->run(
-            "$directQuery
-            RETURN TYPE(r) as relation, count(direct) as total;",[
-            'id' => (string) $id
-        ]);
-        $counts = [];
-        foreach ($result->records() as $record) {
-            $counts[$record->get('relation')] = $record->get('total');
         }
         return $counts;
     }
@@ -514,13 +501,19 @@ class GraphRelationshipProvider implements RegistryContentProvider
 
             // add cluster node
             $nodes[$key] = static::formatNode(new \GraphAware\Neo4j\Client\Formatter\Type\Node(
-                    $key, $labels, [ 'count' => $rel['count'] ])
+                    $key, $labels, [
+                        'count' => $rel['count'],
+                        'class' => $rel['class'],
+                        'type' => $rel['type']
+                    ])
             );
 
             // add cluster relationship
             $links[$key] = static::formatRelationship(new Relationship(
                 rand(1,999999), $rel['relation'], $node->identity(), $key, [
-                    'count' => $rel['count']
+                    'count' => $rel['count'],
+                    'class' => $rel['class'],
+                    'type' => $rel['type']
                 ]
             ));
         }
