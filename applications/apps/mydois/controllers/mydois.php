@@ -162,7 +162,7 @@ class Mydois extends MX_Controller {
 		$domainList = trim(urlencode($posted['domainList']));
 		$datacite_prefix = 	trim(urlencode($posted['datacite_prefix']));
 		$shared_secret = trim(urlencode($posted['shared_secret']))	;
-
+        
         // add the client to the repository
         $client = $this->clientRepository->create([
             'ip_address' => $ip,
