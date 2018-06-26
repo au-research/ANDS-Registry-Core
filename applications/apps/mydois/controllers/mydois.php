@@ -295,6 +295,9 @@ class Mydois extends MX_Controller {
         $client = $this->clientRepository->getByID($client_id);
         $client->removeClientDomains();
         $client->addDomains($domainList);
+
+        $hasPrefix = $client->hasPrefix($datacite_prefix);
+        
         $client->addClientPrefix($datacite_prefix, true);
 
         $this->fabricaClient->updateClient($client);
@@ -308,7 +311,7 @@ class Mydois extends MX_Controller {
             exit();
         }
 
-        if($datacite_prefix && $datacite_prefix != $this->testPrefix){
+        if($datacite_prefix && $datacite_prefix != $this->testPrefix && !$hasPrefix){
             $this->fabricaClient->updateClientPrefixes($client);
             if($this->fabricaClient->hasError()){
                 $response['responseCode'] = $this->fabricaClient->responseCode;
