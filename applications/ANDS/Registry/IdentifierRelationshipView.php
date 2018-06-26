@@ -15,15 +15,20 @@ class IdentifierRelationshipView extends Model
     public function toCSV()
     {
         $url = $this->relation_url;
-        if ($this->to_identifier_type == "uri" || $this->to_identifier_type == 'url') {
+
+        $urlable = ['website', 'uri', 'url'];
+        if (!$url || in_array($this->to_identifier, $urlable)) {
             $url = $this->to_identifier;
         }
+
         return [
             'identifier:ID' => md5($this->to_identifier),
             ':LABEL' => implode(';', ['RelatedInfo', $this->to_related_info_type]),
             'relatedInfoType' => $this->to_related_info_type,
             'identifierType' => $this->to_identifier_type,
-            'identifier' => StrUtil::sanitize($this->to_identifier),
+            'class' => 'RelatedInfo',
+            'type' => $this->related_object_identifier_type,
+            'identifier' => StrUtil::removeNewlines($this->to_identifier),
             'title' => StrUtil::sanitize($this->relation_to_title),
             'url' => StrUtil::removeNewlines($url),
             'description' => StrUtil::sanitize($this->related_description)
