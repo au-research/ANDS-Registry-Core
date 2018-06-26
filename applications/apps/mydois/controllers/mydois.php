@@ -12,6 +12,7 @@ class Mydois extends MX_Controller {
     /** @var FabricaClient */
     private $fabricaClient;
 
+    private $fabricaUrl;
 
     private $unallocatedPrefixLimit = 5;
     /**
@@ -104,6 +105,7 @@ class Mydois extends MX_Controller {
     private function getTrustedClients(){
         $allClients =  $this->clientRepository->getAll();
         foreach($allClients as $client){
+            $client["url"] = $this->fabricaUrl  . strtolower($client->datacite_symbol);
             $client['domain_list'] = $this->getTrustedClientDomains($client->client_id);
             $client['datacite_prefix'] = $this->getTrustedClientActivePrefix($client->client_id);
         }
@@ -342,6 +344,8 @@ class Mydois extends MX_Controller {
         );
 
         $fabricaConfig = \ANDS\Util\Config::get('datacite.fabrica');
+
+        $this->fabricaUrl = $fabricaConfig['url'];
         $this->fabricaClient = new FabricaClient($fabricaConfig['username'],$fabricaConfig['password']);
         $this->fabricaClient->setDataciteUrl($fabricaConfig['api_url']);
         $this->fabricaClient->setClientRepository($this->clientRepository);
