@@ -108,6 +108,7 @@ class Mydois extends MX_Controller {
             $client["url"] = $this->fabricaUrl  . strtolower($client->datacite_symbol);
             $client['domain_list'] = $this->getTrustedClientDomains($client->client_id);
             $client['datacite_prefix'] = $this->getTrustedClientActivePrefix($client->client_id);
+            $client['not_active_prefixes'] = $this->getTrustedClientNonActivePrefixes($client->client_id);
         }
 
         return $allClients;
@@ -148,6 +149,24 @@ class Mydois extends MX_Controller {
                 return $clientPrefix->prefix->prefix_value;
         }
         return "";
+    }
+
+    /**
+     * TODO refactor to ANDS-DOI-SERVICE functionality
+     *
+     * @param $client_id
+     * @return mixed
+     */
+    private function getTrustedClientNonActivePrefixes($client_id){
+        $client = $this->clientRepository->getByID($client_id);
+        $notActiveprefixes = "";
+        if(is_array_empty($client->prefixes))
+            return "";
+        foreach ($client->prefixes as $clientPrefix) {
+            if(!$clientPrefix->active)
+                $notActiveprefixes .= $clientPrefix->prefix->prefix_value.", ";
+        }
+        return trim($notActiveprefixes, ', "');
     }
 
     /**
