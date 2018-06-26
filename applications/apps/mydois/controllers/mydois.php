@@ -105,7 +105,7 @@ class Mydois extends MX_Controller {
     private function getTrustedClients(){
         $allClients =  $this->clientRepository->getAll();
         foreach($allClients as $client){
-            $client["url"] = $this->fabricaUrl  . strtolower($client->datacite_symbol);
+            $client["url"] = $this->fabricaUrl  . "/clients/" . strtolower($client->datacite_symbol);
             $client['domain_list'] = $this->getTrustedClientDomains($client->client_id);
             $client['datacite_prefix'] = $this->getTrustedClientActivePrefix($client->client_id);
             $client['not_active_prefixes'] = $this->getTrustedClientNonActivePrefixes($client->client_id);
