@@ -34,7 +34,7 @@ class RecordsGraphController
      * @param $id
      * @return array
      */
-    private function getGraphForRecord($id)
+    public function getGraphForRecord($id)
     {
         $record = RegistryObjectsRepository::getRecordByID($id);
         $graph = GraphRelationshipProvider::getByID($id);
@@ -101,7 +101,7 @@ class RecordsGraphController
                 $props = $node['properties'];
 
                 if (array_key_exists('slug', $props)) {
-                    $node['properties']['url'] = portal_url($node['properties']['slug'].'/'.$node['properties']['roId']);
+                    $node['properties']['url'] = baseUrl($node['properties']['slug'].'/'.$node['properties']['roId']);
                     return $node;
                 }
 
