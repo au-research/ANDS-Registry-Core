@@ -76,6 +76,7 @@ class Doi_api
             'status',
             'xml'
         ];
+
         if (in_array($this->params['submodule'], $validDOIRequests)) {
             $this->params['submodule'] .= ".string";
             return $this->handleDOIRequest();
@@ -85,7 +86,7 @@ class Doi_api
         $this->getClient();
 
         //get a potential DOI
-        if ($this->params['object_module']) {
+        if (strpos($this->params['submodule'], '10.') === 0 && $this->params['identifier']) {
             array_shift($method);
             $potential_doi = join('/', $method);
             if ($doi = $this->getDOI($potential_doi)) {
@@ -99,7 +100,6 @@ class Doi_api
                 return $doi;
             }
         }
-
         // extended DOI API
         try {
             if ($this->params['submodule'] == 'list') {
