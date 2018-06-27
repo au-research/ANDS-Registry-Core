@@ -1086,14 +1086,14 @@ class Doi_api
     
     private function clientDetail()
     {
-        $permitted_url_domains = [];
+        $domains_str = "";
         foreach ($this->client->domains as $domain) {
-            $permitted_url_domains[] = $domain->client_domain;
+            $domains_str .= $domain->client_domain. ", ";
         }
 
+        $this->client['permitted_url_domains'] = trim($domains_str, ", ");
         return array(
-            'client' => $this->client,
-            'permitted_url_domains' => $permitted_url_domains
+            'client' => $this->client
         );
     }
 
