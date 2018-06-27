@@ -753,6 +753,11 @@ function tearDownEloquent() {
 }
 
 function getSolrCountForQuery($filters) {
+
+    if (!function_exists('get_instance')) {
+        return 0;
+    }
+
     $ci =& get_instance();
     $ci->load->library('solr');
     $result = $ci->solr->init()

@@ -69,3 +69,19 @@ if ( ! function_exists('url_title'))
         return trim($str, $separator);
     }
 }
+
+if (!function_exists('retry')) {
+    function retry($f, $delay = 10, $retries = 3)
+    {
+        try {
+            return $f();
+        } catch (Exception $e) {
+            if ($retries > 0) {
+                sleep($delay);
+                return retry($f, $delay, $retries - 1);
+            } else {
+                throw $e;
+            }
+        }
+    }
+}

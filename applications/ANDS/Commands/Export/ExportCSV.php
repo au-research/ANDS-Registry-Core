@@ -164,7 +164,7 @@ class ExportCSV extends ANDSCommand
         $progressBar->finish();
         fclose($fp);
 
-        $this->log("Nodes written to $filePath", "info");
+        $this->log("\nNodes written to $filePath", "info");
     }
 
     /**
@@ -217,7 +217,7 @@ class ExportCSV extends ANDSCommand
         $progressBar->finish();
         fclose($fp);
 
-        $this->log("Direct Relations written to $filePath", "info");
+        $this->log("\nDirect Relations written to $filePath", "info");
     }
 
     private function postProcessRelation($relation)
@@ -278,6 +278,8 @@ class ExportCSV extends ANDSCommand
         });
         $progressBar->finish();
         fclose($fp);
+
+        $this->log("\nPrimary relation exported to $filePath", "info");
     }
 
     /**
@@ -379,7 +381,8 @@ class ExportCSV extends ANDSCommand
         }
         $progressBar->finish();
         fclose($fp);
-        $this->log("Identical writen to $filePath\n");
+
+        $this->log("\nIdentical writen to $filePath", "info");
     }
 
     /**
@@ -420,7 +423,7 @@ class ExportCSV extends ANDSCommand
             }
         });
         $progressBar->finish();
-        $this->log("Related Info Relations has been written to $filePath\n");
+        $this->log("\nRelated Info Relations has been written to $filePath", "info");
     }
 
     /**
@@ -467,7 +470,7 @@ class ExportCSV extends ANDSCommand
         $progressBar->finish();
 
         fclose($fp);
-        $this->log("Related Info nodes written to $filePath\n");
+        $this->log("\nRelated Info nodes written to $filePath", "info");
     }
 
 }

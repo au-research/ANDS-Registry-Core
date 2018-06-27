@@ -7,6 +7,8 @@ namespace ANDS\API\Task\ImportSubTask;
 use ANDS\Cache\Cache;
 use ANDS\Registry\Providers\GraphRelationshipProvider;
 use ANDS\Repository\RegistryObjectsRepository;
+use GraphAware\Common\Result\CombinedStatistics;
+use GraphAware\Common\Result\ResultCollection;
 
 class ProcessGraphRelationships extends ImportSubTask
 {
@@ -26,16 +28,28 @@ class ProcessGraphRelationships extends ImportSubTask
         $total = count($importedRecords);
 
         $this->log("Process Graph Relationships started for $total records");
+        $stats = new CombinedStatistics();
         foreach ($importedRecords as $index => $id) {
             $record = RegistryObjectsRepository::getRecordByID($id);
             try {
                 Cache::forget("graph.{$record->id}");
-                GraphRelationshipProvider::process($record);
+
+                /** @var CombinedStatistics $statistics */
+                $stat = GraphRelationshipProvider::process($record);
+
+                $stats->mergeStats($stat);
+
             } catch (\Exception $e) {
                 $this->addError("Error processing graph relationships for {$id}: ". get_exception_msg($e));
             }
             $this->updateProgress($index, $total, "Processed ($index/$total) $record->title($record->registry_object_id)");
         }
+
+        $this->log("Nodes Created: {$stats->nodesCreated()}");
+        $this->log("Nodes Deleted: {$stats->nodesDeleted()}");
+        $this->log("Relationships Created: {$stats->relationshipsCreated()}");
+        $this->log("Relationships Deleted: {$stats->relationshipsDeleted()}");
+        $this->log("Properties Set: {$stats->propertiesSet()}");
 
         $this->log("Process Graph Relationships completed for $total records");
     }
