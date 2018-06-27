@@ -13534,6 +13534,11 @@ h1.bordered:after{
     border-radius: 4px;
     color: #fff;
 }
+.btn_access:focus {
+    background: linear-gradient(#becdba,#84a07b);
+    border: .5px solid #657f65;
+    border-radius: 4px;
+}
 
 .formats_block{
     margin-top:-15px;
