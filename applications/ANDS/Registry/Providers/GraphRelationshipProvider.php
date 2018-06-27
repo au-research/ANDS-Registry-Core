@@ -125,7 +125,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
 
         /** @var Result|ResultCollection $result */
         $result = retry(function() use ($client, $stack){
-             $client->runStack($stack);
+             return $client->runStack($stack);
         }, 5, 3);
 
         // todo: queue warm cache for retrieval?
