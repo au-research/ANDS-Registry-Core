@@ -9,6 +9,8 @@ use ANDS\Registry\RelationshipView;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\Config;
+use GraphAware\Common\Result\Result;
+use GraphAware\Common\Result\ResultCollection;
 use GraphAware\Common\Type\Node;
 use GraphAware\Neo4j\Client\ClientBuilder;
 use GraphAware\Neo4j\Client\Formatter\Type\Relationship;
@@ -120,10 +122,13 @@ class GraphRelationshipProvider implements RegistryContentProvider
         }
 
         // insert into neo4j instance
-        $result = $client->runStack($stack);
+
+        /** @var Result|ResultCollection $result */
+        $result = retry(function() use ($client, $stack){
+             $client->runStack($stack);
+        }, 5, 3);
 
         // todo: queue warm cache for retrieval?
-
         return $result->updateStatistics();
     }
 
