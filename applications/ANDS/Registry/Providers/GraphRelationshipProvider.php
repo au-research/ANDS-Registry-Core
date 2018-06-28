@@ -282,7 +282,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
             })->values()->toArray();
 
             // get all underThreshold relations that have been clustered
-            if (count($under)) {
+            if (count($under) > 0) {
                 $underRelationship = static::getUnderRelationships($id, $directQuery, $under);
                 $nodes = collect($nodes)->merge($underRelationship['nodes'])->unique()->toArray();
                 $links = collect($links)->merge($underRelationship['links'])->unique()->toArray();
@@ -292,14 +292,12 @@ class GraphRelationshipProvider implements RegistryContentProvider
                 $clusterRelationships = static::getClusterRelationships($node, $over);
                 $nodes = collect($nodes)->merge($clusterRelationships['nodes'])->unique()->toArray();
                 $links = collect($links)->merge($clusterRelationships['links'])->unique()->toArray();
-
                 $overThresholdRelationships = collect($over)->pluck('relation')->unique()->toArray();
                 $directQuery .= ' AND NOT TYPE(r) IN ["'. implode('","', $overThresholdRelationships).'"]';
             }
         }
-
         // add current node to the list
-        $nodes[$node->identity()] = static::formatNode($node);
+        $nodes[] = static::formatNode($node);
 
         // get direct relationships
         $result = $client->run(
@@ -309,9 +307,9 @@ class GraphRelationshipProvider implements RegistryContentProvider
             ]);
 
         foreach ($result->records() as $record) {
-//            $nodes[$record->get('n')->identity()] = static::formatNode($record->get('n'));
-            $nodes[$record->get('direct')->identity()] = static::formatNode($record->get('direct'));
-            $links[$record->get('r')->identity()] = static::formatRelationship($record->get('r'));
+            $nodes[] = static::formatNode($record->get('n'));
+            $nodes[] = static::formatNode($record->get('direct'));
+            $links[] = static::formatRelationship($record->get('r'));
         }
 
         // grants network
@@ -327,7 +325,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
                 ->pluck('properties')
                 ->pluck('roId')
                 ->filter(function ($item) use ($id){
-                    return $item != $id;
+                    return $item != $id && $item != "";
                 })
                 ->map(function($item) {
                     return "$item";
