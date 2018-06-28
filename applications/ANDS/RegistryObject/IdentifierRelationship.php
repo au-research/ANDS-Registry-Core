@@ -70,7 +70,7 @@ class IdentifierRelationship extends Model
             'relatedInfoType' => $this->related_info_type,
             'identifierType' => $this->related_object_identifier_type,
             'class' => 'RelatedInfo',
-            'type' => $this->related_object_identifier_type,
+            'type' => $this->related_info_type,
             'identifier' => StrUtil::removeNewlines($this->related_object_identifier),
             'title' => StrUtil::sanitize($this->related_title),
             'url' => $url,
