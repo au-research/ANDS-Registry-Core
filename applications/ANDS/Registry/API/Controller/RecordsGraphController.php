@@ -22,6 +22,7 @@ class RecordsGraphController
      */
     public function index($id)
     {
+        return $this->getGraphForRecord($id);
         return Cache::remember("graph.$id", $this->cacheTTL, function() use ($id){
             return $this->getGraphForRecord($id);
         });
@@ -66,6 +67,7 @@ class RecordsGraphController
 
                 if (in_array($relationType, GraphRelationshipProvider::$flippableRelation)){
                     $relationType = array_search($relationType, GraphRelationshipProvider::$flippableRelation);
+                    // TODO: flip the relation direction too
                 }
 
                 $filters = [
@@ -219,7 +221,7 @@ class RecordsGraphController
             $fromIcon = StrUtil::portalIconHTML($fromClass, $fromType);
             $toIcon = StrUtil::portalIconHTML($toClass, $toType);
 
-            $relation = format_relationship($fromClass, $link['type'], false, $toClass);
+            $relation = format_relationship($fromClass, $link['type'], 'EXPLICIT', $toClass);
 
             $link['type'] = $relation;
             $link['html'] = "$fromIcon $relation $toIcon";
