@@ -314,6 +314,30 @@ class ImportTask extends Task
                     "ProcessGraphRelationships",
                 ];
                 break;
+            case "IndexWorkflow":
+                $tasks = [
+                    "IndexPortal",
+                    "IndexRelationship",
+                ];
+                break;
+            case "IndexPortalWorkflow":
+                $tasks = [
+                    "IndexPortal",
+                ];
+                break;
+            case "SyncNoGraphWorkflow":
+                $tasks = [
+                    "ProcessCoreMetadata",
+                    "ProcessIdentifiers",
+                    "ProcessLinks",
+                    "ProcessRelationships",
+                    "ProcessGrantsRelationship",
+                    "ProcessScholix",
+                    "ProcessQualityMetadata",
+                    "IndexPortal",
+                    "IndexRelationship",
+                ];
+                break;
             case "ErrorWorkflow":
                 $tasks = [
                     "PopulateImportOptions",
