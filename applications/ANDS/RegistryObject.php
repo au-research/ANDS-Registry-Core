@@ -4,14 +4,21 @@
 namespace ANDS;
 
 
+use ANDS\Registry\IdentifierRelationshipView;
+use ANDS\RegistryObject\ExportToCSVTrait;
 use ANDS\RegistryObject\Identifier;
+use ANDS\RegistryObject\IdentifierRelationship;
 use ANDS\RegistryObject\Metadata;
+use ANDS\RegistryObject\Relationship;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\XMLUtil;
 use Illuminate\Database\Eloquent\Model;
 
 class RegistryObject extends Model
 {
+    /** traits */
+    use ExportToCSVTrait;
+
     protected $table = "registry_objects";
     protected $primaryKey = "registry_object_id";
     public $timestamps = false;
@@ -28,6 +35,12 @@ class RegistryObject extends Model
         "PUBLISHED"
     ];
     public static $levels = [1,2,3,4];
+
+    /** @var string */
+    protected static $STATUS_PUBLISHED = 'PUBLISHED';
+
+    protected $fillable = ['key', 'title', 'status', 'group', 'data_source_id', 'class', 'type'];
+
 
     /**
      * Eloquent Accessor
@@ -56,9 +69,24 @@ class RegistryObject extends Model
         return $this->belongsTo(DataSource::class, 'data_source_id', 'data_source_id');
     }
 
+    public function relationships()
+    {
+        return $this->hasMany(Relationship::class, 'registry_object_id', 'registry_object_id');
+    }
+
+    public function identifierRelationships()
+    {
+        return $this->hasMany(IdentifierRelationship::class, 'registry_object_id', 'registry_object_id');
+    }
+
     public function registryObjectAttributes()
     {
         return $this->hasMany(RegistryObjectAttribute::class, 'registry_object_id', 'registry_object_id');
+    }
+
+    public function identifiers()
+    {
+        return $this->hasMany(Identifier::class, 'registry_object_id', 'registry_object_id');
     }
 
     /**
@@ -79,6 +107,11 @@ class RegistryObject extends Model
         }
 
         return $currentData;
+    }
+
+    public function recordData()
+    {
+        return $this->hasMany(RecordData::class, 'registry_object_id', 'registry_object_id');
     }
 
     /**

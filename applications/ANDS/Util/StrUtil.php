@@ -6,9 +6,134 @@ namespace ANDS\Util;
 
 class StrUtil
 {
+
+    /**
+     * Returns the fontawesome icon for a given class and (optional) type
+     * RelatedInfo class is RelatedInfo, type is RelatedInfoType
+     *
+     * @param $class
+     * @param null $type
+     * @return string
+     */
+    public static function getIconFor($class, $type = null)
+    {
+        if ($class === 'collection') {
+            return "fa-folder-open";
+        }
+
+        if ($class === "activity") {
+            return "fa-flask";
+        }
+
+        if ($class === "service") {
+            return "fa-wrench";
+        }
+
+        if ($class === "party") {
+            if ($type === "group") {
+                return "fa-group";
+            } else {
+                return "fa-user";
+            }
+        }
+
+        // RelatedInfo
+        if ($type === "website") {
+            return "fa-globe";
+        }
+        if ($type === "publication") {
+            return "fa-book";
+        }
+
+        return "";
+    }
+
+    public static function portalIconHTML($class, $type = null)
+    {
+        $icon = static::getIconFor($class, $type);
+        return "<i class='fa $icon icon-portal'></i>";
+    }
+
+    /**
+     * Sanitize a string
+     * Remove bad characters that breaks exporting
+     *
+     * @param $str
+     * @return mixed
+     */
+    public static function sanitize($str)
+    {
+        $str = str_replace([',', '"', ';', '\t', '&#xA', '\''], '', $str);
+        $str = static::removeNewlines($str);
+        $str = trim($str);
+        return $str;
+    }
+
+    public static function escape($str)
+    {
+        return strip_slashes($str);
+    }
+
+    public static function removeNewlines($str)
+    {
+        return preg_replace( "/\r|\n/", " ", $str);
+    }
+
+    /**
+     * Remove stop words defined in this file
+     * For indexing purposes
+     *
+     * @param $str
+     * @return mixed
+     */
     public static function removeStopWords($str)
     {
         return str_replace(self::stopWords, "", $str);
+    }
+
+    /**
+     * Takes a singular word and makes it plural
+     *
+     * @param $str
+     * @param bool $force
+     * @return mixed|string
+     */
+    public static function plural($str, $force = FALSE)
+    {
+        $result = strval($str);
+
+        $plural_rules = array(
+            '/^(ox)$/'                 => '\1\2en',     // ox
+            '/([m|l])ouse$/'           => '\1ice',      // mouse, louse
+            '/(matr|vert|ind)ix|ex$/'  => '\1ices',     // matrix, vertex, index
+            '/(x|ch|ss|sh)$/'          => '\1es',       // search, switch, fix, box, process, address
+            '/([^aeiouy]|qu)y$/'       => '\1ies',      // query, ability, agency
+            '/(hive)$/'                => '\1s',        // archive, hive
+            '/(?:([^f])fe|([lr])f)$/'  => '\1\2ves',    // half, safe, wife
+            '/sis$/'                   => 'ses',        // basis, diagnosis
+            '/([ti])um$/'              => '\1a',        // datum, medium
+            '/(p)erson$/'              => '\1eople',    // person, salesperson
+            '/(m)an$/'                 => '\1en',       // man, woman, spokesman
+            '/(c)hild$/'               => '\1hildren',  // child
+            '/(buffal|tomat)o$/'       => '\1\2oes',    // buffalo, tomato
+            '/(bu|campu)s$/'           => '\1\2ses',    // bus, campus
+            '/(alias|status|virus)/'   => '\1es',       // alias
+            '/(octop)us$/'             => '\1i',        // octopus
+            '/(ax|cris|test)is$/'      => '\1es',       // axis, crisis
+            '/s$/'                     => 's',          // no change (compatibility)
+            '/$/'                      => 's',
+        );
+
+        foreach ($plural_rules as $rule => $replacement)
+        {
+            if (preg_match($rule, $result))
+            {
+                $result = preg_replace($rule, $replacement, $result);
+                break;
+            }
+        }
+
+        return $result;
     }
 
     /* From Joel Benn, 2014 */

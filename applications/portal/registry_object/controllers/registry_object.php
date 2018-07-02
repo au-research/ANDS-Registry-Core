@@ -1,6 +1,9 @@
 <?php
 
+use ANDS\Cache\Cache;
+use ANDS\Cache\CacheManager;
 use ANDS\Registry\Providers\ORCID\ORCIDRecordsRepository;
+use GraphAware\Neo4j\Client\ClientBuilder;
 
 /**
  * Class Registry_object
@@ -253,7 +256,7 @@ class Registry_object extends MX_Controller
             foreach ($ro->relationships['researchers']['docs'] as $rel) {
                 if(is_array($rel)) {
                     $rels = is_array($rel['relation_origin']) ? $rel['relation_origin'] : array($rel['relation_origin']);
-                    if ((in_array('IDENTIFIER', $rels) || in_array('IDENTIFIER REVERSE', $rels)) && $rel['from_id'] != '') {
+                    if ((in_array('IDENTIFIER', $rels) || in_array('IDENTIFIER REVERSE', $rels)) && $rel['from_id'] != '' && array_key_exists('relation_identifier_identifier', $rel)) {
                         $resolvedPartyIdentifiers[] = $rel['relation_identifier_identifier'];
                     }
                 }
@@ -280,6 +283,10 @@ class Registry_object extends MX_Controller
 
         //construct displayable relationship array with business logic built in
         $related = $this->getRelationship($ro);
+
+        $related['total'] = [
+            'count' => collect($related)->pluck('count')->sum()
+        ];
 
         //Do the rendering
         $this->blade
@@ -413,22 +420,22 @@ class Registry_object extends MX_Controller
             $query = [];
             switch ($rr) {
                 case "data":
-                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'collection'];
+                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'collection', 'sort' => 'score desc'];
                     break;
                 case "programs":
-                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'activity', 'type' => 'program'];
+                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'activity', 'type' => 'program', 'sort' => 'score desc'];
                     break;
                 case "grants_projects":
-                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'activity', 'nottype' => 'program'];
+                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'activity', 'nottype' => 'program', 'sort' => 'score desc'];
                     break;
                 case "services":
-                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'service'];
+                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'service', 'sort' => 'score desc'];
                     break;
                 case "organisations";
-                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'party', 'type' => 'group'];
+                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'party', 'type' => 'group', 'sort' => 'score desc'];
                     break;
                 case "researchers":
-                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'party', 'nottype' => 'group'];
+                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'party', 'nottype' => 'group', 'sort' => 'score desc'];
                     break;
             }
             $related[$rr]['searchUrl'] = constructPortalSearchQuery($query);
@@ -977,6 +984,7 @@ class Registry_object extends MX_Controller
 
         $this->load->library('solr');
         $result = $this->solr->init()->setFilters($filters)->executeSearch(true);
+
         return $result['response']['numFound'];
     }
 

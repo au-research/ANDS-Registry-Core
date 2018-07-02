@@ -1,4 +1,4 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
 /*
 |--------------------------------------------------------------------------
@@ -122,6 +122,7 @@ define('PORTAL_APP_PATH', 'applications/portal/');
 define('API_APP_PATH', 'applications/api/');
 define('APPS_APP_PATH', 'applications/apps/');
 define('TEST_APP_PATH', 'applications/test/');
+define('CACHE_PATH', 'engine/cache');
 
 define('NATIVE_HARVEST_FORMAT_TYPE','nativeHarvestData');
 

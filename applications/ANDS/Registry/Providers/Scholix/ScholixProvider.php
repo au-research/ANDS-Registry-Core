@@ -248,6 +248,7 @@ class ScholixProvider implements RegistryContentProvider
             IdentifierProvider::getCitationMetadataIdentifiers($record, $data['recordData'])
         );
 
+
         //unique and format
         $identifiers = collect($identifiers)->filter(function($item){
             return in_array($item['type'], array_keys(self::$validSourceIdentifierTypes));

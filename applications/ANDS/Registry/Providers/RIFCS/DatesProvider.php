@@ -3,6 +3,7 @@
 
 namespace ANDS\Registry\Providers\RIFCS;
 
+use ANDS\RecordData;
 use ANDS\Registry\Providers\MetadataProvider;
 use ANDS\Registry\Providers\RIFCSProvider;
 use ANDS\RegistryObject;
@@ -15,6 +16,9 @@ class DatesProvider implements RIFCSProvider
 
     public static function process(RegistryObject $record)
     {
+        $record->modified_at = static::getModifiedAt($record);
+        $record->created_at = static::getCreatedAt($record);
+        $record->save();
         return;
     }
 
@@ -244,6 +248,40 @@ class DatesProvider implements RIFCSProvider
         }
 
         return null;
+    }
+
+    /**
+     * @param RegistryObject $record
+     * @return Carbon
+     */
+    public static function getModifiedAt(RegistryObject $record)
+    {
+        // latest record data timestamp
+        $data = RecordData::where('registry_object_id', $record->id)->orderBy('timestamp', 'desc')->first();
+        return Carbon::createFromTimestamp($data->timestamp);
+    }
+
+    /**
+     * @param RegistryObject $record
+     * @return Carbon
+     */
+    public static function getCreatedAt(RegistryObject $record)
+    {
+        //earliest record data timestamp
+        $data = RecordData::where('registry_object_id', $record->id)->orderBy('timestamp', 'asc')->first();
+        return Carbon::createFromTimestamp($data->timestamp);
+    }
+
+    public static function touchSync(RegistryObject $record)
+    {
+        $record->synced_at = Carbon::now();
+        $record->save();
+    }
+
+    public static function touchDelete(RegistryObject $record)
+    {
+        $record->deleted_at = Carbon::now();
+        $record->save();
     }
 
 

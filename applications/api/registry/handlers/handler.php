@@ -5,7 +5,7 @@ use \Exception as Exception;
 class Handler {
     public $params;
     public $ci;
-    private $parentAPI;
+    public $parentAPI;
 
     function __construct($params = false, $parentAPI = null) {
         $this->params = $params;

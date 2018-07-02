@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ANDS Research Data Registry follows a quarterly release cycle
 
+## Release 28
+* Added `RelationshipsGraphProvider` for neo4j integration
+
 ## Release 27 & Release 27.1
 * Added ability to provide `app_id` and `shared_secret` for PIDs
 * Updated Scholix to v3

@@ -1,5 +1,10 @@
 <?php
 
+use Illuminate\Cache\CacheManager;
+use Illuminate\Container\Container;
+use MinhD\SolrClient\SolrClient;
+use Symfony\Component\Filesystem\Filesystem;
+
 function get_config_item($name) {
 
     if (env($name)) {
@@ -745,4 +750,41 @@ function initEloquent() {
 function tearDownEloquent() {
     $connection = \Illuminate\Database\Capsule\Manager::connection("default");
     $connection->disconnect();
+}
+
+function getSolrCountForQuery($filters) {
+
+    if (!function_exists('get_instance')) {
+        return 0;
+    }
+
+    $ci =& get_instance();
+    $ci->load->library('solr');
+    $result = $ci->solr->init()
+        ->setFilters($filters)
+        ->executeSearch(true);
+
+    return $result['response']['numFound'];
+
+    // TODO: map solr search to use solr client instead
+//    $solr = new SolrClient(\ANDS\Util\Config::get('app.solr_url'));
+//    return $solr
+//        ->search(array_merge($filters, ['fl' => 'id', 'rows' => 0]))
+//        ->getNumFound();
+}
+
+function constructPortalSearchQuery($queries)
+{
+    $query = portal_url('search');
+    $query .= '#!/';
+    foreach ($queries as $key=>$value) {
+        if (is_array($value)) {
+            foreach ($value as $v) {
+                $query.= $key .'='.$v.'/';
+            }
+        } else {
+            $query .= $key . '=' . $value . '/';
+        }
+    }
+    return $query;
 }

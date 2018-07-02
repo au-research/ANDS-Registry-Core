@@ -69,11 +69,7 @@ class RegistryObjectGetCommand extends Command
                 break;
             case "relationships":
                 $relationships = RelationshipProvider::getMergedRelationships($record);
-                $relationships = collect($relationships)->filter(function($relation) {
-                    return $relation->prop('to_id') == 902442;
-                })->toArray();
-                var_dump(array_shift($relationships)->getProperties());
-                var_dump($relationships);
+                dd($relationships);
                 break;
             case "relationships-count":
                 $count = count(RelationshipProvider::getMergedRelationships($record));

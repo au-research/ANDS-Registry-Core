@@ -1,3 +1,25 @@
+## Release 28
+
+ANDS Online Services Release 28 is due for implementation on Wednesday, 4 July 2018.  Please find below the summary of all R28 changes with an overview of who, what and how the changes will impact our users. 
+
+**Research Data Australia (RDA) changes**
+
+* Integrate Relationship Graph to RDA view pages
+* Update the RDA party view page to ensure that the electronic address is displayed when provided in RIF-CS
+* Change the label 'Go To Data Provider' to 'Access Data' in RDA view page and update the display to emphasise a clickable button
+* Properly index collections without licence type under 'Other' rather than 'Unknown' 
+* Enhancements to the Broken Link tool
+* Fix bug in query for 'Last 5 Datasets' section on Contributor pages
+
+**DOI Service**
+
+* New Functionality: Transfer of DOI ownership
+* Assignment of individual DOI prefix per client
+* Implementation of a single Test account for all clients
+* Removal of the client ID from DOIs
+* Implementation of an API endpoint that returns the status of the DOI 
+* Validation of the response code/message received from DataCite after client creation or update
+
 ## Release 27.1
 
 Release 27.1 of ANDS Online Services is scheduled for implementation on Thursday, 3 May 2018 from 8am to 12pm. During the implementation, the following services will be unavailable:

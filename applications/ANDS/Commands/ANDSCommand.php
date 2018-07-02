@@ -8,6 +8,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 class ANDSCommand extends Command
 {
@@ -50,6 +51,35 @@ class ANDSCommand extends Command
         $this->output = $output;
         initEloquent();
         date_default_timezone_set('UTC');
+    }
+
+    /**
+     * Log if Verbose
+     * @param $message
+     * @param null $wrapper
+     * @return null;
+     */
+    public function logv($message, $wrapper = null)
+    {
+        if ($this->isVerbose()) {
+            return $this->log($message, $wrapper);
+        }
+        return null;
+    }
+
+    /**
+     * Log if debug
+     *
+     * @param $message
+     * @param null $wrapper
+     * @return null|void
+     */
+    public function logd($message, $wrapper = null)
+    {
+        if ($this->isDebug()) {
+            return $this->log($message, $wrapper);
+        }
+        return null;
     }
 
     public function log($message, $wrapper = null)
@@ -103,5 +133,21 @@ class ANDSCommand extends Command
         }
 
         return true;
+    }
+
+    /**
+     * @param $activity
+     * @param $closure
+     */
+    public function timedActivity($activity, $closure)
+    {
+        $this->log("$activity started");
+        $stopwatch = new Stopwatch();
+        $stopwatch->start('event');
+        call_user_func($closure);
+        $event = $stopwatch->stop('event');
+        $second = $event->getDuration() / 1000;
+        $megaBytes = $event->getMemory() / 1000000;
+        $this->log("\n$activity completed. duration: {$second}s. Memory Usage: {$megaBytes} MB");
     }
 }

@@ -653,6 +653,11 @@ class Solr
                         $this->setOpt('fq', $fq_str);
                     } else {
                         $this->setOpt('fq', '+related_collection_id:"' . $value . '"');
+
+                        // CC-2206 give a boost to the group of the same record
+                        $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($value);
+                        $group = $record->group;
+                        $this->setOpt('bq', 'group:"'.$group.'"');
                     }
                     break;
                 case 'related_service_id':
@@ -663,6 +668,11 @@ class Solr
                         $this->setOpt('fq', $fq_str);
                     } else {
                         $this->setOpt('fq', '+related_service_id:("' . $value . '")');
+
+                        // CC-2206 give a boost to the group of the same record
+                        $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($value);
+                        $group = $record->group;
+                        $this->setOpt('bq', 'group:"'.$group.'"');
                     }
                     break;
                 case 'related_activity_id':
@@ -673,6 +683,11 @@ class Solr
                         $this->setOpt('fq', $fq_str);
                     } else {
                         $this->setOpt('fq', '+related_activity_id:("' . $value . '")');
+
+                        // CC-2206 give a boost to the group of the same record
+                        $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($value);
+                        $group = $record->group;
+                        $this->setOpt('bq', 'group:"'.$group.'"');
                     }
                     break;
                 case 'is_output_of':
@@ -843,6 +858,9 @@ class Solr
                     break;
                 case 'access_methods_ss':
                     $this->setOpt('fq', '+access_methods_ss:("'.$value.'")');
+                    break;
+                case 'relation':
+                    $this->setOpt('fq', "{!join from=to_id to=id fromIndex=relations}+relation:{$value}");
                     break;
             }
         }

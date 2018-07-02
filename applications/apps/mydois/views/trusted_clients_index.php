@@ -2,7 +2,8 @@
 <div class="content-header">
 	<h1>List Trusted Clients</h1>
 	<div class="btn-group">
-		<a data-toggle="modal" href="#add_trusted_client_modal" href="javascript:;" class="btn btn-large"><i class="icon icon-plus"></i> Add Trusted Clients</a>
+		<a id="add_trusted_client_btn" href="javascript:;" class="btn btn-large"><i class="icon icon-plus"></i> Add Trusted Clients</a>
+		<a id="fetch_unassigned_prefixes_btn" href="javascript:;" class="btn btn-large"><i class="icon icon-plus"></i> Fetch Unassigned Prefixes</a>
 	</div>
 </div>
 <div id="breadcrumb" style="clear:both;">
@@ -30,7 +31,7 @@
 	
 	<div class="modal-screen-container">
 		<div class="modal-body">
-			<div class="alert alert-info">
+			<div id="add_client_msg" class="alert alert-info">
 				Please provide the relevant information
 			</div>
 			<form action="#" method="get" class="form-horizontal" id="add_trusted_client_form">
@@ -61,8 +62,7 @@
 				<div class="control-group">
 					<label class="control-label">DOI Prefix</label>
 					<div class="controls">
-						<select name="datacite_prefix">
-							<option value="10.5072/">10.5072</option>
+						<select name="datacite_prefix" id="add_prefix_select">
 						</select>
 					</div>
 				</div>																			
@@ -129,10 +129,7 @@
 				<div class="control-group">
 					<label class="control-label">DOI Prefix</label>
 					<div class="controls">
-						<select name="datacite_prefix">
-							<?php
-							print_r($datacite_prefixs);
-							?>
+						<select name="datacite_prefix" id="prefix_select">
 						</select>
 					</div>
 				</div>																			
@@ -176,12 +173,13 @@
 		<table class="table table-bordered data-table">
 			<thead>
 				<tr>
-					<th>Client Id </th>
+					<th>Client Symbol</th>
 					<th>Client Name </th>
 					<th>Contact Name </th>
 					<th>App ID</th>
-					<th>Shared Secret</th>					
-					<th>IP</th>
+					<th>Active Prefix</th>
+					<th>Other Prefixes</th>
+					<th>Domain List</th>
 					<th>Date Created</th>
 					<th>Action </th>
 				</tr>
@@ -189,12 +187,13 @@
 			<tbody>
 			{{#.}}
 				<tr>
-					<td>{{client_id}}</td>
+					<td><a href="{{url}}" target="_blank" title="view it in datacite">{{datacite_symbol}}</a></td>
 					<td>{{client_name}}</td>
 					<td>{{client_contact_name}}</td>
-					<td>{{app_id}}</td>	
-					<td>{{shared_secret}}</td>
-					<td class="limit_ip_td">{{ip_address}}</td>
+					<td>{{app_id}}</td>
+					<td>{{datacite_prefix}}</td>
+					<td>{{not_active_prefixes}}</td>
+					<td>{{domain_list}}</td>
 					<td>{{created_when}}</td>
 					<td>
 					<a href="javascript:;" class="edit btn btn-small" tip="Edit" app_id="{{app_id}}" client_id="{{client_id}}"><i class="icon-edit"></i></a> 

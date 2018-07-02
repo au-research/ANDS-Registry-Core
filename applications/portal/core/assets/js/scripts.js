@@ -222,8 +222,6 @@ jQuery(document).ready(function( $ ) {
         createCookie(name,"",-1);
     }
 
-
-
     //
     ///////////////////
 
@@ -237,28 +235,47 @@ jQuery(document).ready(function( $ ) {
         $('.listItem').removeClass('hidden');
     }).on('mouseover', '*[tip]', function(event){
         // Bind the qTip within the event handler
-        var my = $(this).attr('my');
-        var at = $(this).attr('at');
-        if(!my){
-            my = 'bottom center';
-        }
-        if(!at){
-            at = 'top center';
-        }
+        var my = $(this).attr('my') ? $(this).attr('my') : 'bottom center';
+        var at = $(this).attr('at') ? $(this).attr('at') : 'top center';
+        var delay = $(this).attr('tip-delay') ? $(this).attr('tip-delay') : 0;
+
         $(this).qtip({
             overwrite: false, // Make sure the tooltip won't be overridden once created
             content: $(this).attr('tip'),
             show: {
-                event: event.type, // Use the same show event as the one that triggered the event handler
-                ready: true // Show the tooltip as soon as it's bound, vital so it shows up the first time you hover!
+                delay: delay,
+                event: event.type,
+                ready: true
             },
             hide: {
                 delay: 200,
-                fixed: true,
+                fixed: true
             },
             position: {
                 my: my, // Use the corner...
                 at: at,
+                viewport: $(window)
+            },
+            style: {
+                classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'
+            }
+        }, event); // Pass through our original event to qTip
+    }).on('mouseover', '*[mtip]', function(event){
+        $(this).qtip({
+            overwrite: false, // Make sure the tooltip won't be overridden once created
+            content: $(this).attr('mtip'),
+            show: {
+                event: event.type,
+                ready: true
+            },
+            hide: {
+                delay: 200,
+                fixed: true
+            },
+            position: {
+                target: 'mouse',
+                my : 'bottom center',
+                at : 'top center',
                 viewport: $(window)
             },
             style: {
@@ -354,8 +371,34 @@ jQuery(document).ready(function( $ ) {
 
         $('#'+useTab).addClass('active');
         $('#'+useTab+'_tab').addClass('active');
+    }).on('click', '#toggle-visualisation', function(event) {
+        toggleGraphDisplay(event)
+    }).on('click', '.visualisation-overlay', function(event) {
+        toggleGraphDisplay(event)
+    }).on('mouseover', '.visualisation-overlay', function(event){
+        event.stopPropagation();
+        $('#visualisation-notice').show();
+    }).on('mouseout', '.visualisation-overlay', function(event){
+        event.stopPropagation();
+        $('#visualisation-notice').hide();
     });
 
+    function toggleGraphDisplay(event) {
+        event.stopPropagation();
+        var viz = $('#graph-viz');
+        var overlay = $('#visualisation-overlay');
+        overlay.hide();
+        if (viz.height() < 449) {
+            viz.animate({height: 450}, 400, 'swing', function() {
+                window.neo4jd3.zoomFit();
+            });
+        } else if (viz.height() > 149) {
+            viz.animate({height: 150}, 400, 'swing', function() {
+                // window.neo4jd3.zoomFit();
+            });
+            overlay.show();
+        }
+    }
 
     //Feedback button
     window.ATL_JQ_PAGE_PROPS =  {
@@ -366,6 +409,5 @@ jQuery(document).ready(function( $ ) {
             showCollectorDialog();
         });
     }};
-
 
 });

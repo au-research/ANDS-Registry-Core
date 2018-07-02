@@ -5,7 +5,8 @@ namespace ANDS\API;
 use ANDS\API\DOI\Bulk;
 use ANDS\API\DOI\BulkRequest;
 use ANDS\API\Task\TaskManager;
-use ANDS\DOI\DataCiteClient;
+use ANDS\DOI\MdsClient;
+use ANDS\DOI\FabricaClient;
 use ANDS\DOI\DOIServiceProvider;
 use ANDS\DOI\Formatter\ArrayFormatter;
 use ANDS\DOI\Formatter\XMLFormatter;
@@ -26,8 +27,16 @@ class Doi_api
     protected $providesOwnResponse = false;
     public $outputFormat = "xml";
 
+    /* @var Client */
     private $client = null;
-    private $doiRepo = null;
+
+    private $testPrefix = "10.5072";
+
+    /* @var ClientRepository */
+    private $clientRepository = null;
+
+    /* @var DoiRepository */
+    private $doiRepository = null;
 
     public function handle($method = array())
     {
@@ -67,6 +76,7 @@ class Doi_api
             'status',
             'xml'
         ];
+
         if (in_array($this->params['submodule'], $validDOIRequests)) {
             $this->params['submodule'] .= ".string";
             return $this->handleDOIRequest();
@@ -76,7 +86,7 @@ class Doi_api
         $this->getClient();
 
         //get a potential DOI
-        if ($this->params['object_module']) {
+        if (strpos($this->params['submodule'], '10.') === 0 && $this->params['identifier']) {
             array_shift($method);
             $potential_doi = join('/', $method);
             if ($doi = $this->getDOI($potential_doi)) {
@@ -90,7 +100,6 @@ class Doi_api
                 return $doi;
             }
         }
-
         // extended DOI API
         try {
             if ($this->params['submodule'] == 'list') {
@@ -152,21 +161,11 @@ class Doi_api
             $sharedSecret = $_SERVER["PHP_AUTH_PW"];
         }
 
-        $database = Config::get('database.dois');
-        $clientRepository = new ClientRepository(
-            $database['hostname'], $database['database'], $database['username'],
-            $database['password']
-        );
-
-        $doiRepository = new DoiRepository(
-            $database['hostname'], $database['database'], $database['username'],
-            $database['password']
-        );
 
         // handles xml.xml
         if ($method == 'xml') {
             if ($doi = $this->ci->input->get('doi')) {
-                $doiObject = $doiRepository->getByID($doi);
+                $doiObject = $this->doiRepository->getByID($doi);
 
                 if ($doiObject == null) {
                     $response = [
@@ -200,7 +199,7 @@ class Doi_api
             $response_status = true;
 
             // Check the local DOI database
-            if (!$doiRepository) {
+            if (!$this->doiRepository) {
                 $response_status = false;
             }
 
@@ -237,14 +236,14 @@ class Doi_api
         }
 
         // constructing the client and checking if the client exists and authorised
-        $client = $clientRepository->getByAppID($appID);
+        $this->client = $this->clientRepository->getByAppID($appID);
 
         // try to get a client based on TEST
-        if (!$client) {
-            $client = $clientRepository->getByAppID(str_replace("TEST", "", $appID));
+        if (!$this->client) {
+            $this->client = $this->clientRepository->getByAppID(str_replace("TEST", "", $appID));
         }
 
-        if(!$client){
+        if(!$this->client){
             $response = [
                 'responsecode' => 'MT009',
                 'verbosemessage' => 'You are not authorised to use this service. No client found with AppID: ' . $appID
@@ -253,10 +252,10 @@ class Doi_api
             return $formater->format($response);
         }
 
-        $dataciteClient = $this->getDataciteClientForClient($client);
+        $dataciteClient = $this->getDataciteClientForClient($this->client);
 
         // construct the DOIServiceProvider to handle DOI requests
-        $doiService = new DOIServiceProvider($clientRepository, $doiRepository,
+        $doiService = new DOIServiceProvider($this->clientRepository, $this->doiRepository,
             $dataciteClient);
 
         // authenticate the client
@@ -269,7 +268,7 @@ class Doi_api
 
         if ($result === false) {
             $this->doilog($doiService->getResponse(), 'doi_' . $method,
-                $client);
+                $this->client);
             return $formater->format($doiService->getResponse());
         }
 
@@ -296,6 +295,11 @@ class Doi_api
                 break;
             case "deactivate":
                 $doiService->deactivate(
+                    $this->ci->input->get('doi')
+                );
+                break;
+            case "doistatus":
+                $doiService->getStatus(
                     $this->ci->input->get('doi')
                 );
                 break;
@@ -335,7 +339,7 @@ class Doi_api
         $this->doilog(
             $logResponse,
             'doi_' . ($manual ? 'm_' : '') . $method,
-            $client
+            $this->client
         );
 
         // return the formatted response
@@ -363,7 +367,7 @@ class Doi_api
                     2, '-', STR_PAD_LEFT);
         }
 
-        $dataciteClient = new DataCiteClient(
+        $dataciteClient = new MdsClient(
             $clientUsername, $config['password']
         );
 
@@ -399,14 +403,8 @@ class Doi_api
             $sharedSecret = $_SERVER["PHP_AUTH_PW"];
         }
 
-        $config = Config::get('database.dois');
 
-        $clientRepository = new ClientRepository(
-            $config['hostname'], $config['database'], $config['username'],
-            $this->dois_db->password
-        );
 
-        $client = $clientRepository->getByAppID($appID);
 
         //If the client has not provided their appid or shared secret - or has provided incorrect ones - then  set up what logging we can and return the datacite error message
         if (!$appID || !$sharedSecret) {
@@ -428,7 +426,10 @@ class Doi_api
             exit;
             return $result;
         }
-        if (!$client) {
+
+        $this->clientRepository->getByAppID($appID);
+
+        if (!$this->client) {
             $response = "Bad credentials";
             $result = "Bad credentials";
             $responselog = [
@@ -445,18 +446,13 @@ class Doi_api
             return $result;
         }
 
-        $doiRepository = new DoiRepository(
-            $config['hostname'], $config['database'], $config['username'],
-            $config['password']
-        );
-
         $call = $this->params['identifier'];
         $responselog['activity'] = $this->params['identifier'];
 
-        $dataciteClient = $this->getDataciteClientForClient($client);
+        $dataciteClient = $this->getDataciteClientForClient($this->client);
 
         // construct the DOIServiceProvider to ensure this client is registered to use the service
-        $doiService = new DOIServiceProvider($clientRepository, $doiRepository,
+        $doiService = new DOIServiceProvider($this->clientRepository, $this->doiRepository,
             $dataciteClient);
 
         // authenticate the client
@@ -496,10 +492,10 @@ class Doi_api
         $clientDoi = true;
         if ($doi) {
             //lets check if this is a valid doi for this client
-            $doiObject = $doiRepository->getByID($doi);
-            $validDoi = $this->checkDoi($doi, $client);
+            $doiObject = $this->doiRepository->getByID($doi);
+            $validDoi = $this->checkDoi($doi);
             if ($doiObject) {
-                $clientDoi = ($doiObject->client_id == $client->client_id) ? true : false;
+                $clientDoi = ($doiObject->client_id == $this->client->client_id) ? true : false;
             }
         }
 
@@ -516,7 +512,7 @@ class Doi_api
         $validDomain = true;
         if ($this->getPostedUrl() != '') {
             $validDomain = URLValidator::validDomains($this->getPostedUrl(),
-                $client->domains);
+                $this->client->domains);
         }
 
         if ($call == 'metadata' && $validDoi) {
@@ -526,14 +522,14 @@ class Doi_api
                         'responsecode' => 'MT003',
                         'activity' => strtoupper("DEACTIVATE_RESERVE")
                     ];
-                    $doiRepository->doiUpdate($doiObject,
+                    $this->doiRepository->doiUpdate($doiObject,
                         array('status' => 'RESERVED_INACTIVE'));
                 } else {
                     $responselog = [
                         'responsecode' => 'MT003',
                         'activity' => strtoupper("DEACTIVATE")
                     ];
-                    $doiRepository->doiUpdate($doiObject,
+                    $this->doiRepository->doiUpdate($doiObject,
                         array('status' => 'INACTIVE'));
                 }
                 $call .= '/' . $doi;
@@ -564,7 +560,7 @@ class Doi_api
                         $doiObject = $doiService->insertNewDOI($doi,
                             $this->getPostedXML(), '');
                     }
-                    $doiRepository->doiUpdate($doiObject,
+                    $this->doiRepository->doiUpdate($doiObject,
                         array('status' => 'RESERVED'));
                 }
                 $requestBody = $this->getPostedXML();
@@ -581,7 +577,7 @@ class Doi_api
                         'responsecode' => 'MT004',
                         'activity' => strtoupper("ACTIVATE")
                     ];
-                    $doiRepository->doiUpdate($doiObject, array(
+                    $this->doiRepository->doiUpdate($doiObject, array(
                         'status' => 'ACTIVE',
                         'datacite_xml' => $this->getPostedXML()
                     ));
@@ -596,7 +592,7 @@ class Doi_api
                         'responsecode' => 'MT002',
                         'activity' => strtoupper("UPDATE")
                     ];
-                    $doiRepository->doiUpdate($doiObject,
+                    $this->doiRepository->doiUpdate($doiObject,
                         array('datacite_xml' => $this->getPostedXML()));
                 }
                 $requestBody = $this->getPostedXML();
@@ -625,7 +621,7 @@ class Doi_api
                 //if the posted url is not valid for this client we will not update the database
 
                 if ($validDomain) {
-                    $doiRepository->doiUpdate($doiObject, array(
+                    $this->doiRepository->doiUpdate($doiObject, array(
                         'status' => 'ACTIVE',
                         'url' => $this->getPostedUrl()
                     ));
@@ -687,7 +683,7 @@ class Doi_api
 
         $responselog['doi'] = $doi;
         $responselog['result'] = $result;
-        $responselog['client_id'] = $client->client_id;
+        $responselog['client_id'] = $this->client->client_id;
         $responselog['app_id'] = $appID;
         $responselog['message'] = json_encode($response, true);
 
@@ -745,16 +741,13 @@ class Doi_api
         return $doi;
     }
 
-    private function checkDoi($doi, $client)
+    private function checkDoi($doi)
     {
         $doiComponents = (explode("/", $doi));
-
-        if ($doiComponents[0] . "/" == $client->datacite_prefix) {
+        if($doiComponents[0] == $this->testPrefix){
             return true;
-        } else {
-            return false;
         }
-
+        return $this->client->hasPrefix($doiComponents[0]);
     }
 
     private function wellFormed($xml)
@@ -840,7 +833,7 @@ class Doi_api
             throw new Exception('App ID required');
         }
 
-        $client = $this->getClientModel($this->ci->input->get('app_id'));
+        $this->getClientModel($this->ci->input->get('app_id'));
 
         // api/doi/bulk/:identifier
         if ($this->params['identifier'] !== false) {
@@ -920,7 +913,7 @@ class Doi_api
 
         // Generate new BulkRequest
         $bulkRequest = new BulkRequest;
-        $bulkRequest->client_id = $client->client_id;
+        $bulkRequest->client_id = $this->client->client_id;
         $bulkRequest->status = "PENDING";
         $bulkRequest->params = json_encode([
             'type' => $type,
@@ -932,7 +925,7 @@ class Doi_api
         // Generate new task do process the BulkRequest
         $taskManager = new TaskManager($this->ci->db, $this->ci);
         $task = $taskManager->addTask([
-            'name' => 'DOI Bulk Request: ' . $client->client_name,
+            'name' => 'DOI Bulk Request: ' . $this->client->client_name,
             'params' => http_build_query([
                 'class' => 'doiBulk',
                 'bulkID' => $bulkRequest->id
@@ -945,8 +938,8 @@ class Doi_api
             [
                 'event' => 'doi_bulk_request',
                 'client' => [
-                    'name' => $client->client_name,
-                    'id' => $client->client_id
+                    'name' => $this->client->client_name,
+                    'id' => $this->client->client_id
                 ],
                 'request' => [
                     'params' => [
@@ -970,7 +963,7 @@ class Doi_api
                 'activity' => 'DOI_BULK_REQUEST',
                 'doi_id' => null,
                 'result' => 'SUCCESS',
-                'client_id' => $client->client_id,
+                'client_id' => $this->client->client_id,
                 'message' => 'DOI Bulk Request Generated. Type: ' . $type . ' From: ' . $from . ' To: ' . $to . ' Affecting ' . $matchingDOIs['total'] . ' DOI(s)'
             ]
         );
@@ -998,10 +991,10 @@ class Doi_api
         if ($type == 'url') {
             // get DOIs belongs to this APPID that has a URL matching FROM
 
-            $client = $this->getClientModel($this->ci->input->get('app_id'));
+            $this->getClientModel($this->ci->input->get('app_id'));
 
             $query = Doi::query();
-            $query->where('client_id', $client->client_id)
+            $query->where('client_id', $this->client->client_id)
                 ->whereRaw('`url` LIKE BINARY ?', ['%' . $from . '%']);
 
             return [
@@ -1015,13 +1008,7 @@ class Doi_api
 
     private function getClientModel($app_id)
     {
-        $config = Config::get('database.dois');
-        $clientRepository = new ClientRepository(
-            $config['hostname'], $config['database'], $config['username'],
-            $config['password']
-        );
-        $client = $clientRepository->getByAppID($this->ci->input->get('app_id'));
-        return $client;
+        $this->client = $this->clientRepository->getByAppID($app_id);
     }
 
 
@@ -1070,31 +1057,43 @@ class Doi_api
         if (!$app_id) {
             throw new Exception('App ID required');
         }
+        $this->client = $this->clientRepository->getByAppID($app_id);
 
-        $query = $this->dois_db
-            ->where('app_id', $app_id)
-            ->select('*')
-            ->get('doi_client');
-
-        if (!$this->client = $query->result()) {
+        if (!$this->client) {
             throw new Exception('Invalid App ID');
         }
+        $this->client->datacite_prefix = $this->getTrustedClientActivePrefix();
+    }
 
-        //permitted_url_domains
-        $this->client = array_pop($this->client);
-        $query = $this->dois_db
-            ->where('client_id', $this->client->client_id)
-            ->select('client_domain')
-            ->get('doi_client_domains');
-        foreach ($query->result_array() AS $domain) {
-            $this->client->permitted_url_domains[] = $domain['client_domain'];
+
+
+    private function getTrustedClientActivePrefix()
+    {
+        if (is_array_empty($this->client->prefixes))
+            return $this->testPrefix;
+        foreach ($this->client->prefixes as $clientPrefix) {
+            if ($clientPrefix->active)
+                return $clientPrefix->prefix->prefix_value;
         }
     }
 
+
+    private function getTrustedClients()
+    {
+        return $this->clientRepository->getAll();
+    }
+    
+    
     private function clientDetail()
     {
+        $domains_str = "";
+        foreach ($this->client->domains as $domain) {
+            $domains_str .= $domain->client_domain. ", ";
+        }
+
+        $this->client['permitted_url_domains'] = trim($domains_str, ", ");
         return array(
-            'client' => $this->client,
+            'client' => $this->client
         );
     }
 
@@ -1272,5 +1271,16 @@ class Doi_api
     {
         $this->ci = &get_instance();
         require_once BASE . 'vendor/autoload.php';
+        $database = Config::get('database.dois');
+
+        $this->clientRepository = new ClientRepository(
+            $database['hostname'], $database['database'], $database['username'],
+            $database['password']
+        );
+        $this->doiRepository = new DoiRepository(
+            $database['hostname'], $database['database'], $database['username'],
+            $database['password']
+        );
+
     }
 }
