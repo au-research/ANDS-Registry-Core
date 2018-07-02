@@ -208,14 +208,19 @@ class Contact extends ROHandler {
                     'contact_value' => $contact->nodeValue
                 );
             }
-            $electronic_contact = $this->gXPath->query("ro:electronic", $address);
 
+            $electronic_contact = $this->gXPath->query("ro:electronic", $address);
             foreach($electronic_contact as $contact){
-                $contacts[] =Array(
-                    'contact_type' => "electronic_".$contact->getAttribute("type"),
-                    'contact_value' => trim($contact->nodeValue)
-                );
+                if($contact->getAttribute("type") != "url" || $this->ro->class == 'party'){
+                    // Collection urls are processed by the directaccess handler
+                    $contacts[] =Array(
+                        'contact_type' => "electronic_".$contact->getAttribute("type"),
+                        'contact_value' => trim($contact->nodeValue)
+                    );
+                }
             }
+
+
 
             // Fix API for HTML rendering
             $contacts[] = [
