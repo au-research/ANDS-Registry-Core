@@ -26,7 +26,7 @@ class DatasourcesHandler extends Handler
 {
     private $input = [];
 
-    public function handle_experiment()
+    public function handle()
     {
         $this->getParentAPI()->providesOwnResponse();
         $this->getParentAPI()->outputFormat = "application/json";
@@ -69,21 +69,12 @@ class DatasourcesHandler extends Handler
         return json_encode($data);
     }
 
-    /**
-     * DatasourceHandler constructor.
-     * @param bool $params
-     */
-    public function __construct($params)
-    {
-        parent::__construct($params);
-        initEloquent();
-    }
-
+    // from this point on, it's old formatting
     /**
      * @return array
      * @throws Exception
      */
-    public function handle()
+    public function handle_old()
     {
         $this->middleware();
 

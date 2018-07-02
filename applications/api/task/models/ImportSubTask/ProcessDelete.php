@@ -3,6 +3,8 @@
 
 namespace ANDS\API\Task\ImportSubTask;
 
+use ANDS\Registry\Providers\GraphRelationshipProvider;
+use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\Providers\Scholix\Scholix;
 use ANDS\RegistryObject;
 use ANDS\RegistryObject\IdentifierRelationship;
@@ -111,11 +113,21 @@ class ProcessDelete extends ImportSubTask
             // delete scholix documents
             Scholix::where('registry_object_id', $record->registry_object_id)->delete();
 
+            // touch timestamp
+            DatesProvider::touchDelete($record);
+
             $portalQuery .= " id:$record->registry_object_id";
             $fromRelationQuery .= " from_id:$record->registry_object_id";
             $toRelationQuery .= " to_id:$record->registry_object_id";
 
             $this->parent()->incrementTaskData("recordsDeletedCount");
+        }
+
+        // remove from the graph database
+        try {
+            GraphRelationshipProvider::bulkDelete($records);
+        } catch (\Exception $e) {
+            $this->addError("Error deleting graph relationships: ". get_exception_msg($e));
         }
 
         // there are nothing to be added to the affected here, because there

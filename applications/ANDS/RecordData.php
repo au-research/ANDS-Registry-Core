@@ -12,6 +12,8 @@ class RecordData extends Model
     protected $primaryKey = "id";
     public $timestamps = false;
 
+    protected $fillable = ['registry_object_id', 'current', 'data', 'timestamp'];
+
     public static function getTableName()
     {
         return static::table;

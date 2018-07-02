@@ -65,7 +65,7 @@ class ContributorData_Extension extends ExtensionBase
 		$this->_CI->solr->setOpt('rows','5');
 		$this->_CI->solr->setOpt('fq', 'group:("'.$this->ro->getAttribute('group').'")');		
 		$this->_CI->solr->setOpt('fq', 'class:("collection")');
-		$this->_CI->solr->setOpt('sort', 'update_timestamp desc');		
+		$this->_CI->solr->setOpt('sort', 'record_modified_timestamp desc');
 		$collectionsAdded = $this->_CI->solr->executeSearch();
 
 		foreach($collectionsAdded->{'response'}->{'docs'} as $collection){

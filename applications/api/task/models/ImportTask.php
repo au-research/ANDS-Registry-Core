@@ -259,6 +259,7 @@ class ImportTask extends Task
                     "ProcessQualityMetadata",
                     "IndexPortal",
                     "IndexRelationship",
+                    "ProcessGraphRelationships",
                     "FinishImport",
                 ];
                 break;
@@ -281,6 +282,7 @@ class ImportTask extends Task
                     "ProcessQualityMetadata",
                     "IndexPortal",
                     "IndexRelationship",
+                    "ProcessGraphRelationships",
                     "FinishImport",
                 ];
                 break;
@@ -292,7 +294,8 @@ class ImportTask extends Task
                     "PopulateAffectedList",
                     "ProcessScholix",
                     "ProcessAffectedRelationships",
-                    "IndexRelationship"
+                    "IndexRelationship",
+                    "ProcessGraphRelationships",
                 ];
                 break;
             case "SyncWorkflow":
@@ -304,6 +307,31 @@ class ImportTask extends Task
                     "ProcessGrantsRelationship",
 //                    "PopulateAffectedList",
 //                    "ProcessAffectedRelationships",
+                    "ProcessScholix",
+                    "ProcessQualityMetadata",
+                    "IndexPortal",
+                    "IndexRelationship",
+                    "ProcessGraphRelationships",
+                ];
+                break;
+            case "IndexWorkflow":
+                $tasks = [
+                    "IndexPortal",
+                    "IndexRelationship",
+                ];
+                break;
+            case "IndexPortalWorkflow":
+                $tasks = [
+                    "IndexPortal",
+                ];
+                break;
+            case "SyncNoGraphWorkflow":
+                $tasks = [
+                    "ProcessCoreMetadata",
+                    "ProcessIdentifiers",
+                    "ProcessLinks",
+                    "ProcessRelationships",
+                    "ProcessGrantsRelationship",
                     "ProcessScholix",
                     "ProcessQualityMetadata",
                     "IndexPortal",
@@ -334,6 +362,7 @@ class ImportTask extends Task
                     "ProcessIdentifiers",
                     "ProcessLinks",
                     "ProcessRelationships",
+                    "ProcessGraphRelationships",
                     "ProcessGrantsRelationship",
                     "ProcessQualityMetadata",
                     "IndexPortal",

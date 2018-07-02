@@ -3,6 +3,7 @@
 namespace ANDS\Registry\API\Controller;
 
 use ANDS\Registry\API\Middleware\IPRestrictionMiddleware;
+use ANDS\Registry\API\Request;
 use ANDS\Registry\Importer;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
@@ -62,8 +63,10 @@ class RecordsController extends HTTPController implements RestfulController
     {
         $this->middlewares([IPRestrictionMiddleware::class]);
 
+        $workflow = Request::value('workflow', 'SyncWorkflow');
+
         $record = RegistryObjectsRepository::getRecordByID($id);
-        $task = Importer::instantSyncRecord($record);
+        $task = Importer::instantSyncRecord($record, $workflow);
         return $task->toArray();
     }
 
