@@ -361,6 +361,7 @@ class Mydois extends MX_Controller {
     public function allocate_prefixes_for_prod_client(){
         //http://devl.ands.org.au/leo/registry/apps//mydois/allocate_prefixes_for_prod_client
         $response = [];
+        $clients_already_updated = [];
         $test_client_count = 0;
         $trusted_clients = $this->clientRepository->getAll();
         $response['trusted_client_count'] = sizeof($trusted_clients);
@@ -369,12 +370,17 @@ class Mydois extends MX_Controller {
             $currentPrefix = $this->getTrustedClientActivePrefix($client->client_id);
             if($currentPrefix == null || ($currentPrefix != $this->testPrefix && in_array($currentPrefix, $this->old_prod_prefixes))) {
                 $clients_to_update[] = $client->client_id;
-            }else{
+            }
+            elseif($currentPrefix == $this->testPrefix){
                 $test_client_count++;
+            }
+            elseif(!in_array($currentPrefix, $this->old_prod_prefixes)){
+                $clients_already_updated[] = $client->client_id;
             }
         }
         $response['trusted_client_count'] = sizeof($trusted_clients);
         $response['test_client_count'] = $test_client_count;
+        $response['clients_already_updated'] = $clients_already_updated;
         $response['prod_client_count'] = sizeof($clients_to_update);
 
         $min_prefix_pool_size = sizeof($clients_to_update);
@@ -401,16 +407,20 @@ class Mydois extends MX_Controller {
                 $response[$client_id]['client_id'] = $client_id;
                 $unAllocatedPrefix = $this->clientRepository->getOneUnallocatedPrefix($this->old_prod_prefixes);
                 if(!in_array($unAllocatedPrefix->prefix_value, $this->old_prod_prefixes)) {
+                    // save it in case update on datacite fails
+                    $currentPrefix = $this->getTrustedClientActivePrefix($client_id);
                     $trusted_client = $this->clientRepository->getByID($client_id);
                     $response[$client_id]['client'] = $trusted_client;
                     $response[$client_id]['new_prefix'] = $unAllocatedPrefix->prefix_value;
-
+                    $trusted_client->addClientPrefix($unAllocatedPrefix->prefix_value);
                     $this->fabricaClient->updateClientPrefixes($trusted_client);
                     $response[$client_id]['ResponseCodes'] = $this->fabricaClient->responseCode;
                     $response[$client_id]['ErrorMessages'] = $this->fabricaClient->getErrorMessage();
                     $response[$client_id]['Messages'] = $this->fabricaClient->getMessages();
-                    if(! $this->fabricaClient->hasError())
-                        $trusted_client->addClientPrefix($unAllocatedPrefix->prefix_value);
+                    if($this->fabricaClient->hasError()){
+                        $trusted_client->addClientPrefix($currentPrefix);
+                    }
+
                     $this->fabricaClient->clearMessages();
                 }else{
                     $response[$client_id]['ErrorMessages'] = "system reassigned old prefix (".$unAllocatedPrefix.") to client ".$client_id ." UPDATE MANUALLY";
