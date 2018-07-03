@@ -23,6 +23,9 @@ module.exports = function(grunt){
             styles:{
                 options:{separator:''},
                 src:[
+                    '<%= yeoman.templates %>/ands-green/assets/js/neo4jd3/css/font-awesome.min.css',
+                    '<%= yeoman.templates %>/ands-green/assets/js/neo4jd3/css/neo4jd3.css',
+
                     '<%= yeoman.templates %>/ands-green/assets/css/bootstrap.css',
                     '<%= yeoman.templates %>/ands-green/assets/css/theme.css',
                     '<%= yeoman.templates %>/ands-green/assets/css/swatch-gray.css',
@@ -33,8 +36,6 @@ module.exports = function(grunt){
                     '<%= yeoman.assets %>/lib/dynatree/src/skin/ui.dynatree.css',
                     '<%= yeoman.assets %>/lib/qtip2/jquery.qtip.css',
                     '<%= yeoman.assets %>/lib/angular-loading-bar/build/loading-bar.min.css',
-                    '<%= yeoman.templates %>/ands-green/js/neo4jd3/css/font-awesome.min.css',
-                    '<%= yeoman.templates %>/ands-green/js/neo4jd3/css/neo4jd3.css',
 
                     '<%= yeoman.templates %>/ands-green/assets/css/ands.css',
                     '<%= yeoman.assets %>/css/portal.less.compiled.css'
