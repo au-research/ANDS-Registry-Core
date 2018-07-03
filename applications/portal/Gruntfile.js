@@ -23,19 +23,21 @@ module.exports = function(grunt){
             styles:{
                 options:{separator:''},
                 src:[
-                    '<%= yeoman.templates %>/ands-green/assets/css/bootstrap2.min.css',
+                    '<%= yeoman.templates %>/ands-green/assets/css/bootstrap.css',
                     '<%= yeoman.templates %>/ands-green/assets/css/theme.css',
                     '<%= yeoman.templates %>/ands-green/assets/css/swatch-gray.css',
-                    '<%= yeoman.templates %>/ands-green/assets/css/swatch-black.min.css',
+                    '<%= yeoman.templates %>/ands-green/assets/css/swatch-black.css',
                     '<%= yeoman.templates %>/ands-green/assets/css/swatch-ands-green.css',
                     '<%= yeoman.templates %>/ands-green/assets/css/fonts.min.css',
 
                     '<%= yeoman.assets %>/lib/dynatree/src/skin/ui.dynatree.css',
                     '<%= yeoman.assets %>/lib/qtip2/jquery.qtip.css',
                     '<%= yeoman.assets %>/lib/angular-loading-bar/build/loading-bar.min.css',
+                    '<%= yeoman.templates %>/ands-green/js/neo4jd3/css/font-awesome.min.css',
+                    '<%= yeoman.templates %>/ands-green/js/neo4jd3/css/neo4jd3.css',
 
                     '<%= yeoman.templates %>/ands-green/assets/css/ands.css',
-                    '<%= yeoman.assets %>/css/portal.less.compiled.css',
+                    '<%= yeoman.assets %>/css/portal.less.compiled.css'
                 ],
                 dest: '<%= yeoman.assets %>/css/portal.combine.css'
             },
@@ -50,9 +52,13 @@ module.exports = function(grunt){
                     '<%=yeoman.assets %>/lib/angular-bootstrap/ui-bootstrap.min.js',
                     '<%=yeoman.assets %>/lib/angular-bootstrap/ui-bootstrap-tpls.min.js',
                     '<%=yeoman.assets %>/lib/angular-loading-bar/build/loading-bar.min.js',
+
+                    '<%=yeoman.templates %>/ands-green/assets/js/d3.min.js',
+                    '<%=yeoman.templates %>/ands-green/assets/js/neo4jd3/js/neo4jd3.js',
+
                     '<%=yeoman.templates %>/ands-green/assets/js/packages.min.js',
                     '<%=yeoman.assets %>/lib/qtip2/jquery.qtip.js',
-                    '<%=yeoman.assets %>/js/scripts.js',
+                    '<%=yeoman.assets %>/js/scripts.js'
                 ],
                 dest:'<%=yeoman.assets %>/js/lib.js'
             },
@@ -70,59 +76,9 @@ module.exports = function(grunt){
                     'registry_object/assets/js/portal-directives.js',
                     'registry_object/assets/js/vocab-factory.js',
                     'registry_object/assets/js/search_controller.js',
-                    'registry_object/assets/js/search-factory.js',
+                    'registry_object/assets/js/search-factory.js'
                 ],
                 dest:'<%=yeoman.assets %>/js/portal_lib.js'
-            },
-            vocab_style: {
-                options:{separator:''},
-                nonull: true,
-                src:[
-                    '<%= yeoman.templates %>/ands-green/assets/css/bootstrap.min.css',
-                    '<%= yeoman.templates %>/ands-green/assets/css/theme.css',
-                    '<%= yeoman.templates %>/ands-green/assets/css/swatch-gray.css',
-                    '<%= yeoman.templates %>/ands-green/assets/css/swatch-white.css',
-                    '<%= yeoman.templates %>/ands-green/assets/css/swatch-black.min.css',
-                    '<%= yeoman.templates %>/ands-green/assets/css/fonts.min.css',
-                    '<%= yeoman.assets %>/lib/qtip2/jquery.qtip.css',
-                    '<%= yeoman.vocab_asset %>/js/lib/angular-loading-bar/build/loading-bar.min.css',
-                    '<%= yeoman.vocab_asset %>/css/aui-just-lozenges.css',
-                    '<%= yeoman.vocab_asset %>/js/lib/ui-select/dist/select.css'
-                ],
-                dest:'<%=yeoman.vocab_asset %>/css/lib.css'
-            },
-            vocab_lib: {
-                options:{separator:';'},
-                nonull: true,
-                src:[
-                    '<%= yeoman.vocab_asset %>/js/lib/angular/angular.min.js',
-                    '<%= yeoman.vocab_asset %>/js/lib/angular-route/angular-route.min.js',
-                    '<%= yeoman.vocab_asset %>/js/lib/angular-sanitize/angular-sanitize.min.js',
-                    '<%= yeoman.vocab_asset %>/js/lib/angular-animate/angular-animate.min.js',
-                    '<%= yeoman.vocab_asset %>/js/lib/angular-ui-utils/ui-utils.min.js',
-                    '<%= yeoman.vocab_asset %>/js/lib/angular-bootstrap/ui-bootstrap.min.js',
-                    '<%= yeoman.vocab_asset %>/js/lib/angular-bootstrap/ui-bootstrap-tpls.min.js',
-                    '<%= yeoman.vocab_asset %>/js/lib/angular-loading-bar/build/loading-bar.min.js',
-                    '<%= yeoman.vocab_asset %>/js/lib/ng-file-upload/angular-file-upload-all.min.js',
-                    '<%= yeoman.templates %>/ands-green/assets/js/packages.min.js',
-                    '<%= yeoman.vocab_asset %>/js/modified-ui-bootstrap-tpls-0.10.0.js'
-                ],
-                dest:'<%=yeoman.vocab_asset %>/js/lib.js'
-            },
-            vocab_scripts: {
-                options:{separator:';'},
-                nonull: true,
-                src:[
-                    // ui-select must be loaded after JQuery.
-                    '<%= yeoman.vocab_asset %>/js/lib/ui-select/dist/select.js',
-                    '<%= yeoman.vocab_asset %>/js/vocabs_app.js',
-                    '<%= yeoman.vocab_asset %>/js/filters.js',
-                    '<%= yeoman.vocab_asset %>/js/directives.js',
-                    '<%= yeoman.vocab_asset %>/js/vocabs_factory.js',
-                    '<%= yeoman.vocab_asset %>/js/vocabs_search_controller.js',
-                    '<%= yeoman.vocab_asset %>/js/vocabs_visualise_directive.js'
-                ],
-                dest:'<%= yeoman.vocab_asset %>/js/scripts.js'
             }
         },
         uglify:{
@@ -144,11 +100,6 @@ module.exports = function(grunt){
                     "<%= yeoman.assets %>/css/print.css": "<%= yeoman.templates %>/ands-green/assets/less/print.less"
                 }
             },
-            vocab_less: {
-                files:{
-                    "<%= yeoman.vocab_asset %>/css/vocab.less.compiled.css": "<%= yeoman.vocab_asset %>/less/ands-vocab.less"
-                }
-            }
         }
     });
     require('load-grunt-tasks')(grunt);
