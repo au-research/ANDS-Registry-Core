@@ -60,7 +60,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
      */
     public static function process(RegistryObject $record)
     {
-        $client = static::bolt();
+        $client = static::db();
         $stack = $client->stack();
 
         // current node
