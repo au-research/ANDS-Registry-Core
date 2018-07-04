@@ -60,7 +60,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
      */
     public static function process(RegistryObject $record)
     {
-        $client = static::db();
+        $client = static::bolt();
         $stack = $client->stack();
 
         // current node
@@ -90,7 +90,6 @@ class GraphRelationshipProvider implements RegistryContentProvider
                 $stack->push(static::getMergeLinkQuery($to, $record, $reverse));
             }
         }
-
 
         // (after process identifier and process relationships) related info relationships
         $identifierRelationships = $record->identifierRelationships;
@@ -203,10 +202,10 @@ class GraphRelationshipProvider implements RegistryContentProvider
         $relation_type = $relationship->relation_type;
         if (in_array($relation_type, array_keys(static::$flippableRelation))) {
             $flipped = static::$flippableRelation[$relation_type];
-            return 'MATCH (b {roId:"'.$to->id.'"}) MATCH (a {roId:"'.$record->id.'"}) MERGE (b)-[:`'.$flipped.'`]->(a)';
+            return 'MATCH (b:RegistryObject {roId:"'.$to->id.'"}) MATCH (a:RegistryObject {roId:"'.$record->id.'"}) MERGE (b)-[:`'.$flipped.'`]->(a)';
         }
 
-        return 'MATCH (a {roId:"'.$record->id.'"}) MATCH (b {roId:"'.$to->id.'"}) MERGE (a)-[:`'.$relation_type.'`]->(b)';
+        return 'MATCH (a:RegistryObject {roId:"'.$record->id.'"}) MATCH (b:RegistryObject {roId:"'.$to->id.'"}) MERGE (a)-[:`'.$relation_type.'`]->(b)';
     }
 
     public static function getMergeLinkRelatedInfoQuery(
@@ -220,10 +219,10 @@ class GraphRelationshipProvider implements RegistryContentProvider
         $relation_type = $relationship->relation_type;
         if (in_array($relation_type, array_keys(static::$flippableRelation))) {
             $flipped = static::$flippableRelation[$relation_type];
-            return 'MATCH (b:RelatedInfo {identifier:"'.$id.'"}) MATCH (a {roId:"'.$record->id.'"}) MERGE (b)-[:`'.$flipped.'`]->(a)';
+            return 'MATCH (b:RelatedInfo {identifier:"'.$id.'"}) MATCH (a:RegistryObject {roId:"'.$record->id.'"}) MERGE (b)-[:`'.$flipped.'`]->(a)';
         }
 
-        return 'MATCH (a {roId:"'.$record->id.'"}) MATCH (b:RelatedInfo {identifier:"'.$id.'"}) MERGE (a)-[:`'.$relationship->relation_type.'`]->(b)';
+        return 'MATCH (a:RegistryObject {roId:"'.$record->id.'"}) MATCH (b:RelatedInfo {identifier:"'.$id.'"}) MERGE (a)-[:`'.$relationship->relation_type.'`]->(b)';
     }
 
     /**
@@ -488,6 +487,19 @@ class GraphRelationshipProvider implements RegistryContentProvider
             )
             ->addConnection(
                 'bolt',
+                "bolt://{$config['username']}:{$config['password']}@{$config['hostname']}:7687"
+            )
+            ->setDefaultTimeout(static::$defaultTimeout)
+            ->build();
+    }
+
+    public static function bolt()
+    {
+        $config = Config::get('neo4j');
+
+        return ClientBuilder::create()
+            ->addConnection(
+                'default',
                 "bolt://{$config['username']}:{$config['password']}@{$config['hostname']}:7687"
             )
             ->setDefaultTimeout(static::$defaultTimeout)
