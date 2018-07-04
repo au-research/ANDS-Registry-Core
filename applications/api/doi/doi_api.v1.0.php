@@ -427,7 +427,7 @@ class Doi_api
             return $result;
         }
 
-        $this->clientRepository->getByAppID($appID);
+        $this->client = $this->clientRepository->getByAppID($appID);
 
         if (!$this->client) {
             $response = "Bad credentials";
