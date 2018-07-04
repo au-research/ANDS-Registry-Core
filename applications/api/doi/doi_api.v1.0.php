@@ -74,7 +74,8 @@ class Doi_api
             'activate',
             'deactivate',
             'status',
-            'xml'
+            'xml',
+            'doistatus'
         ];
 
         if (in_array($this->params['submodule'], $validDOIRequests)) {
@@ -126,7 +127,6 @@ class Doi_api
         $split = explode('.', $this->params['submodule']);
         $method = $split[0];
         $format = array_key_exists(1, $split) ? $split[1] : 'string';
-
         // setting up the formatter, defaults to string if none is specified
         if ($format == "xml") {
             $this->outputFormat = "text/xml";
