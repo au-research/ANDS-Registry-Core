@@ -60,17 +60,16 @@ class RegistryObjectProcessCommand extends ANDSCommand
             return;
         }
 
-        $ids = explode(',', $input->getArgument('id'));
-        foreach ($ids as $id) {
-            $this->log("Processing $process on $id");
+        $id = $input->getArgument('id');
+        return $this->timedActivity("Processing $process on $id", function() use ($id, $process){
             $record = RegistryObjectsRepository::getRecordByID($id);
             if (!$record) {
                 $this->log("Record $id not found", "error");
-                continue;
+                return;
             }
             $processMethod = new ReflectionMethod($this->processors[$process], 'process');
             $processMethod->invoke(new $this->processors[$process], $record);
             $this->log("Success $process on ($id)", "info");
-        }
+        });
     }
 }

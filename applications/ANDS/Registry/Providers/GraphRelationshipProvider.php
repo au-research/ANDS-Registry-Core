@@ -81,7 +81,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
         }
 
         // reverse links
-        $reverses = RelationshipView::where('to_id', $record->id)
+        $reverses = RelationshipView::where('to_key', $record->key)
             ->limit(static::$reverseLinklimit)->get();
         foreach ($reverses as $reverse) {
             $to = RegistryObjectsRepository::getPublishedByKey($reverse->from_key);
@@ -90,6 +90,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
                 $stack->push(static::getMergeLinkQuery($to, $record, $reverse));
             }
         }
+
 
         // (after process identifier and process relationships) related info relationships
         $identifierRelationships = $record->identifierRelationships;
