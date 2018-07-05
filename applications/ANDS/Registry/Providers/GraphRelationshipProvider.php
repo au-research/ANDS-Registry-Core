@@ -267,7 +267,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
         if (static::$enableIdentical) {
             $directQuery = "MATCH (n:RegistryObject)-[:identicalTo*0..]-(identical:RegistryObject) WHERE n.roId={id}
             WITH collect(identical.roId)+collect(n.roId) AS identicalIDs
-            MATCH (n:RegistryObject)-[r]-(direct:RegistryObject) WHERE n.roId IN identicalIDs";
+            MATCH (n:RegistryObject)-[r]-(direct) WHERE n.roId IN identicalIDs";
         }
 
         $over = [];
@@ -319,6 +319,47 @@ class GraphRelationshipProvider implements RegistryContentProvider
             $grantsNetwork = static::getGrantsNetwork($id);
             $nodes = collect($nodes)->merge($grantsNetwork['nodes'])->unique()->toArray();
             $links = collect($links)->merge($grantsNetwork['links'])->unique()->toArray();
+        }
+
+        /**
+         * These are nodes in the graph (commonly Grants Network)
+         * that is already included in the cluster
+         * hence duplicating the display of these nodes
+         */
+        if (static::$enableCluster && static::$enableGrantsNetwork && count($over) > 0) {
+            foreach ($over as $cluster) {
+                $clusterDuplicateNodes = collect($nodes)
+                    ->filter(function($node){
+                        return !in_array('cluster', $node['labels']);
+                    })
+                    ->filter(function($node) use ($cluster) {
+                        // has the same class and type as the cluster
+                        return $node['properties']['class'] === $cluster['class']
+                            && $node['properties']['type'] === $cluster['type'];
+                    })
+                    ->filter(function($node) use ($links, $cluster){
+                        // has exact 1 link
+                        // because we want to keep those with multiple discernable relations to other nodes within the graph
+                        // the link from these type of nodes that are more than 1 could be a path in the grants network
+                        $linkFound = collect($links)
+                            ->filter(function($link) use ($cluster, $node){
+                                return $link['startNode'] === $node['id'] || $link['endNode'] === $node['id'];
+                            })
+                            ->count();
+                        return $linkFound === 1;
+                    });
+
+                // remove cluster duplicate nodes and their relevant links
+                $ids = $clusterDuplicateNodes->pluck('id')->toArray();
+                $nodes = collect($nodes)
+                    ->filter(function($node) use ($ids){
+                        return !in_array($node['id'], $ids);
+                    })->toArray();
+                $links = collect($links)
+                    ->filter(function($link) use ($ids){
+                        return !(in_array($link['startNode'], $ids) || in_array($link['endNode'], $ids));
+                    })->toArray();
+            }
         }
 
         // get relationships of records in result set
@@ -411,7 +452,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
         $result = $client->run("MATCH (n:RegistryObject)-[r]-(n2:RegistryObject) WHERE n2.roId IN {$ids} AND n.roId IN {$ids} RETURN * LIMIT 100;");
         $links = [];
         foreach ($result->records() as $record) {
-            $links[$record->get('r')->identity()] = static::formatRelationship($record->get('r'));
+            $links[] = static::formatRelationship($record->get('r'));
         }
         return $links;
     }
