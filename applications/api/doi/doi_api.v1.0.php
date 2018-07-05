@@ -391,9 +391,7 @@ class Doi_api
         $requestBody = '';
         $responselog = array();
         $this->providesOwnResponse = true;
-        $client = 'unknown';
         $arrayFormater = new ArrayFormatter();
-        $dataCiteResponseCode = '200';
 
         if (isset($_SERVER['PHP_AUTH_USER'])) {
             $appID = $_SERVER['PHP_AUTH_USER'];
@@ -402,9 +400,6 @@ class Doi_api
         if (isset($_SERVER['PHP_AUTH_USER'])) {
             $sharedSecret = $_SERVER["PHP_AUTH_PW"];
         }
-
-
-
 
         //If the client has not provided their appid or shared secret - or has provided incorrect ones - then  set up what logging we can and return the datacite error message
         if (!$appID || !$sharedSecret) {
@@ -419,7 +414,7 @@ class Doi_api
                 'message' => json_encode($response, true)
             ];
             $this->doilog($arrayFormater->format($responselog),
-                'doi_' . $responselog['activity']);
+                'doi_' . $responselog['activity'], $this->client);
             http_response_code("401");
             header('WWW-Authenticate: Basic realm="ands"');
             header('HTTP/1.0 401 Unauthorized');
@@ -427,7 +422,7 @@ class Doi_api
             return $result;
         }
 
-        $this->clientRepository->getByAppID($appID);
+        $this->client = $this->clientRepository->getByAppID($appID);
 
         if (!$this->client) {
             $response = "Bad credentials";
@@ -476,7 +471,7 @@ class Doi_api
             ];
             $this->doilog($arrayFormater->format($responselog),
                 'doi_' . ($manual ? 'm_' : '') . $responselog['activity'],
-                $client);
+                $this->client);
             http_response_code("401");
             return $result;
         }
@@ -693,7 +688,7 @@ class Doi_api
             $this->doilog(
                 $arrayFormater->format($responselog),
                 'doi_' . ($manual ? 'm_' : '') . $responselog['activity'],
-                $client
+                $this->client
             );
         }
 
