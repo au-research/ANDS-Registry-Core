@@ -419,7 +419,7 @@ class Doi_api
                 'message' => json_encode($response, true)
             ];
             $this->doilog($arrayFormater->format($responselog),
-                'doi_' . $responselog['activity']);
+                'doi_' . $responselog['activity'], $this->client);
             http_response_code("401");
             header('WWW-Authenticate: Basic realm="ands"');
             header('HTTP/1.0 401 Unauthorized');
@@ -476,7 +476,7 @@ class Doi_api
             ];
             $this->doilog($arrayFormater->format($responselog),
                 'doi_' . ($manual ? 'm_' : '') . $responselog['activity'],
-                $client);
+                $this->client);
             http_response_code("401");
             return $result;
         }
