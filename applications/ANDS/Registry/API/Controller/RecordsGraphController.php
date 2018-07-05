@@ -22,6 +22,7 @@ class RecordsGraphController
      */
     public function index($id)
     {
+        return $this->getGraphForRecord($id);
         return Cache::remember("graph.$id", $this->cacheTTL, function() use ($id){
             return $this->getGraphForRecord($id);
         });
@@ -64,9 +65,8 @@ class RecordsGraphController
 
                 $relationType = $relation['type'];
 
-                if (in_array($relationType, GraphRelationshipProvider::$flippableRelation)){
-                    $relationType = array_search($relationType, GraphRelationshipProvider::$flippableRelation);
-                    // TODO: flip the relation direction too
+                if (in_array($relationType, array_keys(GraphRelationshipProvider::$flippableRelation))) {
+                    $relationType = array_search($relationType, GraphRelationshipProvider::$flippableRelation[$relationType]);
                 }
 
                 $filters = [
