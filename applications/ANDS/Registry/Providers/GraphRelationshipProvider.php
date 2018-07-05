@@ -263,13 +263,15 @@ class GraphRelationshipProvider implements RegistryContentProvider
 
         // TODO: if not found, return default
 
-        $directQuery = "MATCH (n)-[r]-(direct) WHERE n.roId={id}";
+        $directQuery = "MATCH (n:RegistryObject)-[r]-(direct) WHERE n.roId={id}";
         if (static::$enableIdentical) {
-            $directQuery = "MATCH (n)-[:identicalTo*0..]-(identical) WHERE n.roId={id}
+            $directQuery = "MATCH (n:RegistryObject)-[:identicalTo*0..]-(identical:RegistryObject) WHERE n.roId={id}
             WITH collect(identical.roId)+collect(n.roId) AS identicalIDs
-            MATCH (n)-[r]-(direct) WHERE n.roId IN identicalIDs";
+            MATCH (n:RegistryObject)-[r]-(direct:RegistryObject) WHERE n.roId IN identicalIDs";
         }
 
+        $over = [];
+        $under = [];
         if (static::$enableCluster) {
             $counts = static::getCountsByRelationshipsType($id, $directQuery);
 
@@ -406,7 +408,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
     public static function getRelationshipsBetweenIDs($ids)
     {
         $client = static::db();
-        $result = $client->run("MATCH (n)-[r]-(n2) WHERE n2.roId IN {$ids} AND n.roId IN {$ids} RETURN * LIMIT 100;");
+        $result = $client->run("MATCH (n:RegistryObject)-[r]-(n2:RegistryObject) WHERE n2.roId IN {$ids} AND n.roId IN {$ids} RETURN * LIMIT 100;");
         $links = [];
         foreach ($result->records() as $record) {
             $links[$record->get('r')->identity()] = static::formatRelationship($record->get('r'));
