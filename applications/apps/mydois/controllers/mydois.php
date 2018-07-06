@@ -17,7 +17,7 @@ class Mydois extends MX_Controller {
     private $unallocatedPrefixLimit = 5;
 // the test prefix every client can have
     private $testPrefix = "10.5072";
-    // the old production prefixes as of R28 that shouldn't assign to clients
+    // the old production prefixes as of R28 that shouldn't be assigned to clients
     private $old_prod_prefixes = ['10.4225','10.4226','10.4227'];
     /**
      * MyDOIS SPA
@@ -80,7 +80,7 @@ class Mydois extends MX_Controller {
 
     /**
      * get unallocated prefixes from our registry
-     * if have less than unallocatedPrefixLimit then top it up from datacite
+     * if we have less than unallocatedPrefixLimit then top it up from datacite
      *
      * using the fabrica client to allocate prefixes for future client assignment
      *
@@ -240,7 +240,7 @@ class Mydois extends MX_Controller {
                 exit();
             }
         }
-        // we should get here only if no error occured duringthe update
+        // we should get here only if no error occurred during the update
         // return the code if 200 or 201
         if($this->fabricaClient->responseCode == 200 || $this->fabricaClient->responseCode == 201)
             echo $this->fabricaClient->responseCode;
@@ -290,7 +290,7 @@ class Mydois extends MX_Controller {
 
     /**
      * AJAX entry
-     * for commiting a change to a client
+     * for committing a change to a client
      */
     function edit_trusted_client() {
 		acl_enforce('SUPERUSER');
@@ -351,7 +351,7 @@ class Mydois extends MX_Controller {
             }
         }
 
-        // we should get here only if no error occured duringthe update
+        // we should get here only if no error occurred during the update
         // return the code if 200 or 201
  
         if($this->fabricaClient->responseCode == 200 || $this->fabricaClient->responseCode == 201)
