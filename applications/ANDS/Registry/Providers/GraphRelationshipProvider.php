@@ -119,7 +119,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
             $stack->push(static::getMergeNodeQuery($duplicate));
 
             // this record is identical to all duplicates
-            $stack->push("MATCH (n {roId:\"{$record->id}\"}) MATCH (i {roId:\"{$duplicate->id}\"}) MERGE (n)-[:identicalTo]->(i)");
+            $stack->push("MATCH (n:RegistryObject {roId:\"{$record->id}\"}) MATCH (i:RegistryObject {roId:\"{$duplicate->id}\"}) MERGE (n)-[:identicalTo]->(i)");
         }
 
         // insert into neo4j instance
@@ -161,6 +161,12 @@ class GraphRelationshipProvider implements RegistryContentProvider
         return $client->runStack($stack);
     }
 
+    /**
+     * Gives the CYPHER query to ensure a RegistryObject node exists with all relevant properties
+     *
+     * @param RegistryObject $record
+     * @return string
+     */
     public static function getMergeNodeQuery(RegistryObject $record)
     {
         $csv = $record->toCSV(RegistryObject::$CSV_NEO_GRAPH);
