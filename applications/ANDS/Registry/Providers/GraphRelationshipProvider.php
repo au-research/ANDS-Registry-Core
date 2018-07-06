@@ -126,7 +126,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
             $stack->push(static::getMergeNodeQuery($duplicate));
 
             // this record is identical to all duplicates
-            $stack->push("MATCH (n {roId:\"{$record->id}\"}) MATCH (i {roId:\"{$duplicate->id}\"}) MERGE (n)-[:identicalTo]->(i)");
+            $stack->push("MATCH (n:RegistryObject {roId:\"{$record->id}\"}) MATCH (i:RegistryObject {roId:\"{$duplicate->id}\"}) MERGE (n)-[:identicalTo]->(i)");
         }
 
         // insert into neo4j instance
@@ -171,7 +171,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
     }
 
     /**
-     * Gives the CYPHER query to ensure a RegistryObject node exists with relevant all properties
+     * Gives the CYPHER query to ensure a RegistryObject node exists with all relevant properties
      *
      * @param RegistryObject $record
      * @return string
