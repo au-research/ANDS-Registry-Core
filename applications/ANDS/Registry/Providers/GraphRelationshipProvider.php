@@ -19,6 +19,7 @@ use GraphAware\Neo4j\Client\Stack;
 class GraphRelationshipProvider implements RegistryContentProvider
 {
 
+    // TODO make this configurable
     protected static $threshold = 20;
     protected static $limit = 100;
     protected static $enableIdentical = true;
@@ -28,6 +29,11 @@ class GraphRelationshipProvider implements RegistryContentProvider
     protected static $defaultTimeout = 60;
     protected static $reverseLinklimit = 200;
 
+    /**
+     * normalise the relationships to only display 1 way when any of these relationships are encountered
+     *
+     * @var array
+     * */
     public static $flippableRelation = [
         'addsValueTo' => 'hasValueAddedBy',
         'describes' => 'isDescribedBy',
@@ -61,15 +67,17 @@ class GraphRelationshipProvider implements RegistryContentProvider
     public static function process(RegistryObject $record)
     {
         $client = static::db();
+
+        // CYPHER queries are pushed onto a stack for processing
         $stack = $client->stack();
 
-        // current node
+        // make sure the current node exists
         $stack->push(static::getMergeNodeQuery($record));
 
-        // delete outgoing relationships
+        // delete outgoing relationships, if any is matched
         $stack->push("MATCH (n:RegistryObject {roId:\"{$record->id}\"}) OPTIONAL MATCH (n)-[r]->() DELETE r");
 
-        // relationships should already be available in database
+        // direct relationships (after process relationships)
         $relationships = $record->relationships;
         foreach ($relationships as $relationship) {
             // add to node
@@ -80,7 +88,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
             }
         }
 
-        // reverse links
+        // reverse links, limitted to prevent supernode breaking the stack limit
         $reverses = RelationshipView::where('to_key', $record->key)
             ->limit(static::$reverseLinklimit)->get();
         foreach ($reverses as $reverse) {
@@ -91,7 +99,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
             }
         }
 
-        // (after process identifier and process relationships) related info relationships
+        // related info relationships (after process identifier and process relationships)
         $identifierRelationships = $record->identifierRelationships;
         foreach ($identifierRelationships as $relationship) {
 
@@ -110,7 +118,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
             }
         }
 
-        // (after process identifier) find identical records and establish identicalTo relations
+        // find identical records and establish identicalTo relations (after process identifier)
         $duplicates = $record->getDuplicateRecords();
         foreach ($duplicates as $duplicate) {
 
@@ -127,6 +135,8 @@ class GraphRelationshipProvider implements RegistryContentProvider
         $result = retry(function() use ($client, $stack){
              return $client->runStack($stack);
         }, 5, 3);
+        // retries for 3 times with a delay of 5 seconds in between.
+        // This is due to neo4j can run into DEADLOCK issue when multiple threads are updating the same node properties
 
         // todo: queue warm cache for retrieval?
         return $result->updateStatistics();
@@ -160,6 +170,12 @@ class GraphRelationshipProvider implements RegistryContentProvider
         return $client->runStack($stack);
     }
 
+    /**
+     * Gives the CYPHER query to ensure a RegistryObject node exists with relevant all properties
+     *
+     * @param RegistryObject $record
+     * @return string
+     */
     public static function getMergeNodeQuery(RegistryObject $record)
     {
         $csv = $record->toCSV(RegistryObject::$CSV_NEO_GRAPH);
@@ -178,12 +194,20 @@ class GraphRelationshipProvider implements RegistryContentProvider
         return "MERGE (n:{$labels} {roId: \"{$record->id}\" }) ON CREATE SET {$sets} ON MATCH SET {$sets} RETURN n";
     }
 
+    /**
+     * Returns the CYPHER query to ensure a RelatedInfo node exists with relevant all properties
+     *
+     * @param RegistryObject\IdentifierRelationship $relationship
+     * @return string
+     */
     public static function getMergeRelatedInfoNodeQuery(RegistryObject\IdentifierRelationship $relationship)
     {
         $csv = $relationship->toCSV();
         $data = collect($csv)->except(['identifier:ID', ':LABEL'])->toArray();
         $labels = str_replace(';', ':', $csv[':LABEL']);
 
+        // formats the SETS
+        // n.key = 'key', n.group = 'group'
         $sets = [];
         foreach ($data as $key => $value) {
             if ($value) {
@@ -193,12 +217,23 @@ class GraphRelationshipProvider implements RegistryContentProvider
         $sets = implode(', ', $sets);
 
         $id = $relationship->related_object_identifier;
+
+        // settings properties are cheap on neo4j
         return "MERGE (n:{$labels} {identifier: \"{$id}\" }) ON CREATE SET {$sets} ON MATCH SET {$sets} RETURN n";
     }
 
+    /**
+     * Returns a CYPHER query for a link generation between 2 registryObject, with the relationship
+     * flips the relationship if applicable
+     *
+     * @param RegistryObject $record
+     * @param RegistryObject $to
+     * @param $relationship
+     * @return string
+     */
     public static function getMergeLinkQuery(RegistryObject $record, RegistryObject $to, $relationship)
     {
-        // flip the relation if match
+        // flip the relation if flippable
         $relation_type = $relationship->relation_type;
         if (in_array($relation_type, array_keys(static::$flippableRelation))) {
             $flipped = static::$flippableRelation[$relation_type];
@@ -208,6 +243,14 @@ class GraphRelationshipProvider implements RegistryContentProvider
         return 'MATCH (a:RegistryObject {roId:"'.$record->id.'"}) MATCH (b:RegistryObject {roId:"'.$to->id.'"}) MERGE (a)-[:`'.$relation_type.'`]->(b)';
     }
 
+    /**
+     * Returns a CYPHER query for a link generation between a registryObject and an IdentifierRelationship
+     * flips the relationship if applicable
+     *
+     * @param RegistryObject $record
+     * @param RegistryObject\IdentifierRelationship $relationship
+     * @return string
+     */
     public static function getMergeLinkRelatedInfoQuery(
         RegistryObject $record,
         RegistryObject\IdentifierRelationship $relationship
@@ -233,20 +276,21 @@ class GraphRelationshipProvider implements RegistryContentProvider
      */
     public static function get(RegistryObject $record)
     {
-        // TODO: Implement get() method.
-        // get direct nodes and relationships (covers primary links)
-        // get direct relationships for identicalTo records
-        // get grants relationships path
-        // get relationships between result set
         return static::getByID($record->id);
-
     }
 
     /**
      * Return all the relevant nodes and links from getting all relationships for a given node
      * direct relationships (include primary links)
      * identical records (via identicalTo relationship)
+     * grants network
+     * cluster
      * relationships of result set
+     *
+     * Returns array of node[] and link[]
+     *
+     * TODO refactor, this function is a bit too long
+     *
      * @param $id
      * @return array
      */
@@ -257,12 +301,13 @@ class GraphRelationshipProvider implements RegistryContentProvider
         $links = [];
 
         $node = static::getNodeByID($id);
+
+        // node does not exist, returns default no nodes and links
         if (!$node) {
             return ['nodes' => [], 'links' => []];
         }
 
-        // TODO: if not found, return default
-
+        // the direct relations CYPHER query is reused in various places
         $directQuery = "MATCH (n:RegistryObject)-[r]-(direct) WHERE n.roId={id}";
         if (static::$enableIdentical) {
             $directQuery = "MATCH (n:RegistryObject)-[:identicalTo*0..]-(identical:RegistryObject) WHERE n.roId={id}
@@ -290,6 +335,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
                 $links = collect($links)->merge($underRelationship['links'])->unique()->toArray();
             }
 
+            // get all the over threshold relationshipo and form a cluster for each ones
             if (count($over) > 0) {
                 $clusterRelationships = static::getClusterRelationships($node, $over);
                 $nodes = collect($nodes)->merge($clusterRelationships['nodes'])->unique()->toArray();
@@ -298,23 +344,23 @@ class GraphRelationshipProvider implements RegistryContentProvider
                 $directQuery .= ' AND NOT TYPE(r) IN ["'. implode('","', $overThresholdRelationships).'"]';
             }
         }
-        // add current node to the list
+
+        // add current node
         $nodes[] = static::formatNode($node);
 
-        // get direct relationships
+        // add direct relationships
         $result = $client->run(
             "$directQuery
             RETURN * LIMIT ".static::$limit.";",[
                 'id' => (string) $id
             ]);
-
         foreach ($result->records() as $record) {
             $nodes[] = static::formatNode($record->get('n'));
             $nodes[] = static::formatNode($record->get('direct'));
             $links[] = static::formatRelationship($record->get('r'));
         }
 
-        // grants network
+        // add nodes and links from grants network
         if (static::$enableGrantsNetwork) {
             $grantsNetwork = static::getGrantsNetwork($id);
             $nodes = collect($nodes)->merge($grantsNetwork['nodes'])->unique()->toArray();
@@ -362,8 +408,9 @@ class GraphRelationshipProvider implements RegistryContentProvider
             }
         }
 
-        // get relationships of records in result set
+        // interlinking relationships
         if (static::$enableInterlinking) {
+            // uses the roIDs from all the nodes available currently
             $allNodesIDs = collect($nodes)
                 ->pluck('properties')
                 ->pluck('roId')
@@ -389,8 +436,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
 
     /**
      * Return the relationships as part of a grants network
-     *
-     * TODO refactor to make this cleaner
+     * Have to go down the path and up the path. This is essential to form the correct path everywhere in the chain
      *
      * @param $id
      * @return array
@@ -440,12 +486,19 @@ class GraphRelationshipProvider implements RegistryContentProvider
                 $links[$relations->identity()] = static::formatRelationship($relations);
             }
         }
+
         return [
             'nodes' => $nodes,
             'links' => $links
         ];
     }
 
+    /**
+     * Returns all the links between all given roIDs
+     *
+     * @param $ids
+     * @return array
+     */
     public static function getRelationshipsBetweenIDs($ids)
     {
         $client = static::db();
@@ -457,6 +510,13 @@ class GraphRelationshipProvider implements RegistryContentProvider
         return $links;
     }
 
+    /**
+     * Returns clusterable by relations, labels, class and type
+     *
+     * @param $id
+     * @param $directQuery
+     * @return array
+     */
     public static function getCountsByRelationshipsType($id, $directQuery)
     {
         $client = static::db();
@@ -480,6 +540,8 @@ class GraphRelationshipProvider implements RegistryContentProvider
     }
 
     /**
+     * Returns the Node for a given roID
+     *
      * @param $id
      * @return Node
      */
@@ -493,6 +555,12 @@ class GraphRelationshipProvider implements RegistryContentProvider
         return $result->firstRecord()->get('n');
     }
 
+    /**
+     * Format a Node to return
+     *
+     * @param Node $node
+     * @return array
+     */
     private static function formatNode(Node $node)
     {
         return [
@@ -502,6 +570,12 @@ class GraphRelationshipProvider implements RegistryContentProvider
         ];
     }
 
+    /**
+     * Formats a Relationship to return
+     *
+     * @param Relationship $relationship
+     * @return array
+     */
     private static function formatRelationship($relationship)
     {
         return [
@@ -516,6 +590,9 @@ class GraphRelationshipProvider implements RegistryContentProvider
 
     /**
      * The graph database instance
+     * By default uses the REST Http protocol
+     * Provides the BOLT protocol as backup.
+     * Tests have shown that the BOLT protocol is slower in a lot of test cases
      *
      * @return \GraphAware\Neo4j\Client\ClientInterface
      */
@@ -536,6 +613,11 @@ class GraphRelationshipProvider implements RegistryContentProvider
             ->build();
     }
 
+    /**
+     * Only the BOLT protocol by default
+     *
+     * @return \GraphAware\Neo4j\Client\ClientInterface
+     */
     public static function bolt()
     {
         $config = Config::get('neo4j');
@@ -549,27 +631,36 @@ class GraphRelationshipProvider implements RegistryContentProvider
             ->build();
     }
 
-    private static function getClusterRelationships($node, $over)
+    /**
+     * Returns the cluster relationship for a node
+     * given a list of over relation threshold
+     * No calls are being made to neo4j here, this is purely formatting
+     *
+     * @param Node $node
+     * @param array $over
+     * @return array
+     */
+    private static function getClusterRelationships(Node $node, $over)
     {
         $nodes = [];
         $links = [];
         foreach ($over as $rel) {
 
-            $key = md5($rel['relation'].implode(',',$rel['labels']));
+            $key = md5($rel['relation'] . implode(',', $rel['labels']));
             $labels = array_merge(['cluster'], $rel['labels']);
 
             // add cluster node
             $nodes[$key] = static::formatNode(new \GraphAware\Neo4j\Client\Formatter\Type\Node(
                     $key, $labels, [
-                        'count' => $rel['count'],
-                        'class' => $rel['class'],
-                        'type' => $rel['type']
-                    ])
+                    'count' => $rel['count'],
+                    'class' => $rel['class'],
+                    'type' => $rel['type']
+                ])
             );
 
             // add cluster relationship
             $links[$key] = static::formatRelationship(new Relationship(
-                rand(1,999999), $rel['relation'], $node->identity(), $key, [
+                rand(1, 999999), $rel['relation'], $node->identity(), $key, [
                     'count' => $rel['count'],
                     'class' => $rel['class'],
                     'type' => $rel['type']
@@ -583,6 +674,15 @@ class GraphRelationshipProvider implements RegistryContentProvider
         ];
     }
 
+    /**
+     * Gets all of the nodes & links of the relationships that are under the threshold
+     * This is necessary because the cluster relationships (over threshold) won't contain these
+     *
+     * @param $id
+     * @param $directQuery
+     * @param $under
+     * @return array
+     */
     private static function getUnderRelationships($id, $directQuery, $under)
     {
         $client = static::db();
@@ -599,6 +699,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
                 ->toArray();
 
             /**
+             * CYPHER query will look somewhat like:
              * MATCH (n)-[:identicalTo*0..]-(identical) WHERE n.roId={id}
              * WITH collect(identical.roId)+collect(n.roId) AS identicalIDs
              * MATCH (n)-[r]-(direct) WHERE n.roId IN identicalIDs
@@ -606,7 +707,6 @@ class GraphRelationshipProvider implements RegistryContentProvider
              * AND direct:test
              * AND direct:party
              */
-
             $query = "$directQuery AND TYPE(r) = {relationship} AND labels(direct) = {labels} RETURN * LIMIT 100";
             $result = $client->run($query, [
                 'id' => $id,
