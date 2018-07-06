@@ -22,14 +22,15 @@ class RecordsGraphController
      */
     public function index($id)
     {
-        return $this->getGraphForRecord($id);
+        // caches by default
+        // R28: does not accept custom parameters yet
         return Cache::remember("graph.$id", $this->cacheTTL, function() use ($id){
             return $this->getGraphForRecord($id);
         });
     }
 
     /**
-     * TODO: Refactor to GraphRelationships getforportal?
+     * TODO: Refactor to GraphRelationships formatForPortal?
      * TODO: accepts parameters for different options
      *
      * @param $id
@@ -43,6 +44,11 @@ class RecordsGraphController
         $nodes = array_values($graph['nodes']);
         $relationships = array_values($graph['links']);
 
+        /**
+         * Format the RegistryObject clusters
+         * add search url, get counts from SOLR
+         * add a bunch of meta
+         */
         $clusters = collect($nodes)
             ->filter(function ($item) {
                 // only look at RegistryObject cluster
@@ -91,22 +97,26 @@ class RecordsGraphController
 
         $nodes = collect($nodes)
             ->map(function ($node) use ($clusters) {
+                // is not a cluster, do nothing
                 if (!in_array($node['id'], $clusters->pluck('id')->toArray(), true)) {
                     return $node;
                 }
+
+                // Add the cluster information from the provided $clusters (above)
                 return $clusters->filter(function ($c) use ($node) {
                     return $c['id'] == $node['id'];
                 })->first();
             })->map(function($node) {
-
+                // Formats the node and provide title and url
                 $props = $node['properties'];
 
+                // has a slug, this means it's a registryObject, view url provided
                 if (array_key_exists('slug', $props)) {
                     $node['properties']['url'] = baseUrl($node['properties']['slug'].'/'.$node['properties']['roId']);
                     return $node;
                 }
 
-                // TODO: tighten checks
+                // has an identifier and identifierType, formats the href based on IdentifierProvider::format functions
                 if (array_key_exists('identifier', $props) && array_key_exists('identifierType', $props)) {
                     $identifier = IdentifierProvider::format($props['identifier'], $props['identifierType']);
                     if ($identifier && array_key_exists('href', $identifier)){
@@ -118,6 +128,8 @@ class RecordsGraphController
                     return $node;
                 }
 
+                // similar to above, but checks the type field of the props instead
+                // this is in case the type is used instead of identifierType (the case for some relatedInfo)
                 if (array_key_exists('identifier', $props) && array_key_exists('type', $props)) {
                     $identifier = IdentifierProvider::format($props['identifier'], $props['type']);
                     if ($identifier && array_key_exists('href', $identifier)){
@@ -135,11 +147,15 @@ class RecordsGraphController
         // deduplication
         $relationships = collect($relationships)
             ->map(function($link) use ($relationships){
+                // count the number of times this link has happened
                 $link['count'] = collect($relationships)->filter(function($link2) use ($link){
                     return $link2['startNode'] === $link['startNode'] && $link2['endNode'] === $link['endNode'];
                 })->count();
                 return $link;
             })->map(function($link) use ($relationships){
+                // stores link types and multiple status (for later use)
+
+                // this is a duplicate link
                 if ($link['count'] > 1) {
                     $types = collect($relationships)
                         ->filter(function($link2) use ($link){
@@ -151,6 +167,7 @@ class RecordsGraphController
                     return $link;
                 }
 
+                // not duplicate link
                 $link['multiple'] = false;
                 $link['properties']['types'] = [ $link['type'] ];
                 return $link;
@@ -161,38 +178,44 @@ class RecordsGraphController
 
         // reverse
         $relationships = collect($relationships)
-        ->sortByDesc('count')
-        ->map(function($link) use ($relationships){
-            $link['reverse'] = collect($relationships)->filter(function($link2) use ($link){
-                return $link2['startNode'] === $link['endNode'] && $link2['endNode'] === $link['startNode'];
-            });
-            return $link;
-        })->map(function($link) use ($relationships, &$toRemove){
-            if (count($link['reverse']) > 0 && !in_array($link['id'], $toRemove)) {
-                foreach ($link['reverse'] as $reverse) {
-                    if ($reverse['type'] === 'multiple') {
-                        foreach ($reverse['properties']['types'] as $reverseType) {
-                            $link['properties']['types'][] = getReverseRelationshipString($reverseType);
+            ->sortByDesc('count')
+            ->map(function ($link) use ($relationships) {
+                // find reverse link and store it within this link (for later use)
+                $link['reverse'] = collect($relationships)
+                        ->filter(function ($link2) use ($link) {
+                        return $link2['startNode'] === $link['endNode'] && $link2['endNode'] === $link['startNode'];
+                    });
+                return $link;
+            })->map(function ($link) use ($relationships, &$toRemove) {
+                // add the reverse link to the $toRemove array if sensible
+                // TODO: simplify logic
+                if (count($link['reverse']) > 0 && !in_array($link['id'], $toRemove)) {
+                    foreach ($link['reverse'] as $reverse) {
+                        if ($reverse['type'] === 'multiple') {
+                            foreach ($reverse['properties']['types'] as $reverseType) {
+                                $link['properties']['types'][] = getReverseRelationshipString($reverseType);
+                            }
+                        } else {
+                            $link['properties']['types'][] = getReverseRelationshipString($reverse['type']);
                         }
-                    } else {
-                        $link['properties']['types'][] = getReverseRelationshipString($reverse['type']);
+                        $link['properties']['types'] = array_unique($link['properties']['types']);
+
+                        $toRemove[] = $reverse['id'];
                     }
-                    $link['properties']['types'] = array_unique($link['properties']['types']);
-
-                    $toRemove[] = $reverse['id'];
                 }
-            }
-            return $link;
-        })->filter(function($link) use ($toRemove){
-            return !in_array($link['id'], $toRemove);
-        });
+                return $link;
+            })->filter(function ($link) use ($toRemove) {
+                // remove the link if it's been marked
+                return !in_array($link['id'], $toRemove);
+            });
 
-        // unique by start and end node
+        // unique the relationships by start and end node id
+        // all reverse links flipping and merging should be done by this point
         $relationships = collect($relationships)->unique(function($link){
             return $link['startNode'].$link['endNode'];
         });
 
-        // making sure multiple is indeed multiple
+        // making sure multiple is indeed multiple (only store multiple for merged relations)
         $relationships = collect($relationships)->map(function($link){
             if (count($link['properties']['types']) === 1) {
                 $link['type'] = $link['properties']['types'][0];
@@ -203,7 +226,10 @@ class RecordsGraphController
         });
 
         // user friendly relationship naming
+        // also adds the `icon relation icon` html markup
         $relationships = collect($relationships)->map(function($link) use ($nodes){
+
+            // the formatting requires the knowledge of the from node class and to node class
             $from = collect($nodes)->filter(function($node) use ($link) {
                 return $node['id'] === $link['startNode'];
             })->first();
@@ -236,6 +262,7 @@ class RecordsGraphController
             return $link;
         });
 
+        // unsets not needed variables to make the map cleaner
         $relationships = collect($relationships)
             ->map(function($link) {
                 unset($link['count']);
