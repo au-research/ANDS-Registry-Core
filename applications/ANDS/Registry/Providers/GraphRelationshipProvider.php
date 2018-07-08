@@ -100,6 +100,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
         }
 
         // related info relationships (after process identifier and process relationships)
+        // (after process identifier and process relationships) related info relationships
         $identifierRelationships = $record->identifierRelationships;
         foreach ($identifierRelationships as $relationship) {
 
@@ -308,6 +309,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
         }
 
         // the direct relations CYPHER query is reused in various places
+        // TODO: if not found, return default
         $directQuery = "MATCH (n:RegistryObject)-[r]-(direct) WHERE n.roId={id}";
         if (static::$enableIdentical) {
             $directQuery = "MATCH (n:RegistryObject)-[:identicalTo*0..]-(identical:RegistryObject) WHERE n.roId={id}
