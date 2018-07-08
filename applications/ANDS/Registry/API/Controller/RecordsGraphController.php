@@ -22,7 +22,6 @@ class RecordsGraphController
      */
     public function index($id)
     {
-        return $this->getGraphForRecord($id);
         return Cache::remember("graph.$id", $this->cacheTTL, function() use ($id){
             return $this->getGraphForRecord($id);
         });
