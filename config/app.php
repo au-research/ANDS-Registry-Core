@@ -11,6 +11,8 @@ return [
     'timezone' => env("TIMEZONE", 'Australia/Canberra'),
 
     'cache' => [
+        'enabled' => !!env("CACHE_ENABLED", 0),
+
         'default' => 'file',
 
         'storage' => [
