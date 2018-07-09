@@ -274,7 +274,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
         if (static::$enableIdentical) {
             $directQuery = "MATCH (n:RegistryObject)-[:identicalTo*0..]-(identical:RegistryObject) WHERE n.roId={id}
             WITH collect(identical.roId)+collect(n.roId) AS identicalIDs
-            MATCH (n:RegistryObject)-[r]-(direct:RegistryObject) WHERE n.roId IN identicalIDs";
+            MATCH (n:RegistryObject)-[r]-(direct) WHERE n.roId IN identicalIDs";
         }
 
         $over = [];
