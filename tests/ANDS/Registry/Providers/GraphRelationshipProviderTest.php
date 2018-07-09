@@ -535,7 +535,7 @@ class GraphRelationshipProviderTest extends \RegistryTestClass
      */
     private function addNode(Stack $stack, $label, $id, $tag = null)
     {
-        $labels = ['test', $label];
+        $labels = ['RegistryObject', 'test', $label];
         if ($tag === null) {
             $tag = strtolower($id);
         }
