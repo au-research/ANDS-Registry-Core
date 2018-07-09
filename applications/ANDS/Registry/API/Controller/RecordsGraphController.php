@@ -39,6 +39,11 @@ class RecordsGraphController
     public function getGraphForRecord($id)
     {
         $record = RegistryObjectsRepository::getRecordByID($id);
+
+        if (!$record) {
+            return $this->formatForJSLibrary([], []);
+        }
+
         $graph = GraphRelationshipProvider::getByID($id);
 
         $nodes = array_values($graph['nodes']);
@@ -272,7 +277,18 @@ class RecordsGraphController
             })
             ->values()->toArray();
 
-        // format for neo4jd3 js library
+        return $this->formatForJSLibrary($nodes, $relationships);
+    }
+
+    /**
+     * Format for neo4jd3 library
+     *
+     * @param $nodes
+     * @param $relationships
+     * @return array
+     */
+    public function formatForJSLibrary($nodes, $relationships)
+    {
         return [
             'results' => [
                 [
