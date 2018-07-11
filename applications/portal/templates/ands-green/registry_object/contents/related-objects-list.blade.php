@@ -4,6 +4,8 @@
         <div class="swatch-white" style="position:relative;">
             <div id="visualisation-overlay" class="visualisation-overlay"></div>
             <div id="visualisation-notice" class="visualisation-overlay">Click to explore relationships graph</div>
+            <button id="zoom_in">+</button>
+            <button id="zoom_out">-</button>
             <div id="graph-viz"></div>
             <a href="" id="toggle-visualisation"><i class="fa fa-sort"></i></a>
         </div>
