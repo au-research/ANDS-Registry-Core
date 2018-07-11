@@ -36,19 +36,26 @@ function Neo4jD3(_selector, _options) {
             minZoom: 0.25
         },
         VERSION = '0.0.1';
+    var zoom;
 
     function appendGraph(container) {
+
+        zoom = d3.zoom()
+            .scaleExtent([options.minZoom, options.maxZoom])
+            .on('zoom', zoomed);
+
         svg = container.append('svg')
-                       .attr('width', '100%')
-                       .attr('height', '100%')
-                       .attr('class', 'neo4jd3-graph')
-                       .call(d3.zoom().scaleExtent([options.minZoom, options.maxZoom]).on('zoom', function() {
-                           svg.attr("transform", d3.event.transform);
-                       }))
-                       .on('dblclick.zoom', null)
-                       .append('g')
-                       .attr('width', '100%')
-                       .attr('height', '100%');
+            .attr('width', '100%')
+            .attr('height', '100%')
+            .attr('class', 'neo4jd3-graph')
+            .call(zoom)
+            // .on('dblclick.zoom', zoomed)
+            .on("wheel", function () {
+                d3.event.preventDefault();
+            })
+            .append('g')
+            .attr('width', '100%')
+            .attr('height', '100%');
 
         svgRelationships = svg.append('g')
                               .attr('class', 'relationships');
@@ -160,6 +167,7 @@ function Neo4jD3(_selector, _options) {
                        if (typeof options.onNodeClick === 'function') {
                            options.onNodeClick(d);
                        }
+
                    })
                    .on('dblclick', function(d) {
                        //stickNode(d);
@@ -1262,6 +1270,35 @@ function Neo4jD3(_selector, _options) {
         return VERSION;
     }
 
+    function zoomIn() {
+        zoom.scaleBy(svg.transition(), 1.1);
+
+        // svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
+        // svg.call(zoom.transform, d3.zoomIdentity);
+        // svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity);
+        // console.log(zoom.transform(svg))
+        // var currentZoom = zoom.scale();
+        //
+        // var newScale = Math.floor(currentZoom) + 1;
+        //
+        // var b = svg.node().getBBox();
+        // var t = [(width - newScale * (b[1][0] + b[0][0])) / 2, (height - newScale * (b[1][1] + b[0][1])) / 2];
+        //
+        // zoom.scaleTo(svg, newScale)
+        //     .translateTo(svg, t);
+    }
+
+    function zoomOut() {
+        zoom.scaleBy(svg.transition(), 0.9);
+        // svg.call(zoom);
+    }
+
+    function zoomed() {
+        // console.log(d3.event.transform);
+        svg.attr("transform", d3.event.transform);
+        // zoom.transform(svg, d3.event.transform);
+    }
+
     function zoomFit(transitionDuration) {
         var bounds = svg.node().getBBox(),
             parent = svg.node().parentElement,
@@ -1296,6 +1333,8 @@ function Neo4jD3(_selector, _options) {
         updateWithD3Data: updateWithD3Data,
         updateWithNeo4jData: updateWithNeo4jData,
         zoomFit: zoomFit,
+        zoomIn: zoomIn,
+        zoomOut: zoomOut,
         version: version
     };
 }
