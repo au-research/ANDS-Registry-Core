@@ -122,7 +122,6 @@ class Groups extends CI_Model {
 		$this->solr
 			->init()
 			->setOpt('fq', '+group:("'.$group['title'].'")')
-            ->setOpt('fq', '+class:collection')
 			->setFacetOpt('field','class')
 			->setFacetOpt('field', 'subject_value_resolved')
 			->setFacetOpt('limit', '-1')
