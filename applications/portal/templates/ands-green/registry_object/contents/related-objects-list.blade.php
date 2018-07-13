@@ -2,6 +2,9 @@
     <div class="panel panel-primary element-no-top element-short-bottom panel-content">
 
         <div class="swatch-white" style="position:relative;">
+            <a href="javascript:;" class="open_rda_help_modal" data-help-tab="graphview" data-toggle="modal" data-target="#help_modal">
+                <i class="fa fa-question-circle"></i> Help
+            </a>
             <div id="visualisation-overlay" class="visualisation-overlay"></div>
             <div id="visualisation-notice" class="visualisation-overlay">Click to explore relationships graph</div>
             <button id="zoom_in">+</button>
