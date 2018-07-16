@@ -3,6 +3,7 @@
 namespace ANDS\Registry\Providers;
 
 use ANDS\RegistryObject;
+use ANDS\Repository\DataSourceRepository;
 use GraphAware\Neo4j\Client\ClientInterface;
 use GraphAware\Neo4j\Client\Stack;
 
@@ -540,7 +541,14 @@ class GraphRelationshipProviderTest extends \RegistryTestClass
             $tag = strtolower($id);
         }
         $labels = implode(":", $labels);
-        $stack->push("MERGE (n:{$labels} {roId: {roId} }) RETURN n", ['roId' => $id], $tag);
+        $stack->push("MERGE (n:{$labels} {roId: {roId}, class: {class}, type: {type} }) RETURN n",
+            [
+                'roId' => $id,
+                'class' => $label,
+                'type' => $label
+            ],
+            $tag
+        );
         return $stack;
     }
 

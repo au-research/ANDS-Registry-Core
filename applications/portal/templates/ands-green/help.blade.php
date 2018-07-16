@@ -3,10 +3,11 @@
 <div role="tabpanel">
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" id="overview_tab" class="active"><a href="#" onclick="return false;" class="help_link" id="overview_link">Overview</a></li>
-        <li role="presentation" id="search_tab"><a href="#" onclick="return false;" class="help_link" id="search_link">Search</a></li>
-        <li role="presentation" id="myrda_tab"><a href="#" onclick="return false;" class="help_link" id="myrda_link">MyRDA</a></li>
-        <li role="presentation" id="advsearch_tab"><a href="#" onclick="return false;" class="help_link" id="advsearch_link">Advanced Search</a></li>
+        <li role="presentation" class="tab-link active" id="overview_tab"><a href="#" onclick="return false;" class="help_link" id="overview_link">Overview</a></li>
+        <li role="presentation" class="tab-link" id="search_tab"><a href="#" onclick="return false;" class="help_link" id="search_link">Search</a></li>
+        <li role="presentation" class="tab-link" id="myrda_tab"><a href="#" onclick="return false;" class="help_link" id="myrda_link">MyRDA</a></li>
+        <li role="presentation" class="tab-link" id="advsearch_tab"><a href="#" onclick="return false;" class="help_link" id="advsearch_link">Advanced Search</a></li>
+        <li role="presentation" class="tab-link" id="graphview_tab"><a href="#" onclick="return false;" class="help_link" id="graphview_link">Graph View</a></li>
     </ul>
 
     <!-- Tab panes -->
@@ -22,6 +23,9 @@
         </div>
         <div role="tabpanel" class="tab-pane" id="advsearch">
             @include('includes/help-adv-search')
+        </div>
+        <div role="tabpanel" class="tab-pane" id="graphview">
+            @include('includes/help-graphview')
         </div>
     </div>
 

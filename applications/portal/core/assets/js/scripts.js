@@ -306,69 +306,54 @@ jQuery(document).ready(function( $ ) {
                     classes: 'qtip-light qtip-shadow qtip-normal qtip-bootstrap'
                 }
             }, event); // Pass through our original event to qTip
-        };
+        }
     }).on('click', '.login_btn', function(event){
         event.preventDefault();
         console.log(window.location.href);
         var url = $(this).attr('href');
         var redirect = window.location.href;
         location.href = url+'?redirect='+encodeURIComponent(redirect);
-    }).on('click', '.help_button, .help_link_custom', function(event){
+    }).on('click', '.help_button, .help_link_custom, .open_rda_help_modal', function(event){
 
-        var $loadModal = $('#help_modal')
-        $.get( base_url + "page/help", function( data ) {
+        var $loadModal = $('#help_modal');
+        var $this = $(this);
+
+        $.get(base_url + "page/help", function( data ){
             $loadModal
-                .find('.modal-body').html(data).end()
+                .find('.modal-body')
+                .html(data).end();
+
+            var useTab = $this.data('help-tab') ? $this.data('help-tab') : 'overview';
+
+            var urlStr = window.location.href;
+            if (urlStr.indexOf('/search/#!') > 0) {
+                useTab = 'search';
+            } else if (urlStr.indexOf('/profile#!') > 0) {
+                useTab = 'myrda';
+            }
+
+            $loadModal.find('.tab-link').removeClass('active');
+            $loadModal.find('.tab-pane').removeClass('active');
+
+            $('#'+useTab).addClass('active');
+            $('#'+useTab+'_tab').addClass('active');
         });
 
-        var urlStr = window.location.href;
-        var useTab = 'overview';
-        if(urlStr.indexOf('/search/#!') > 0)
-        {
-            useTab = 'search';
-        }
-        else if(urlStr.indexOf('/profile#!') > 0)
-        {
-            useTab = 'myrda';
-        }
-        $('#overview_tab').removeClass('active');
-        $('#search_tab').removeClass('active');
-        $('#myrda_tab').removeClass('active');
-        $('#advsearch_tab').removeClass('active');
-
-        $('#overview').removeClass('active');
-        $('#search').removeClass('active');
-        $('#myrda').removeClass('active');
-        $('#advsearch').removeClass('active');
-
-        $('#'+useTab).addClass('active');
-        $('#'+useTab+'_tab').addClass('active');
     }).on('click', '.search_help', function(event){
 
-        $('#overview_tab').removeClass('active');
-        $('#myrda_tab').removeClass('active');
-        $('#advsearch_tab').removeClass('active');
-
-        $('#overview').removeClass('active');
-        $('#myrda').removeClass('active');
-        $('#advsearch').removeClass('active');
+        var $loadModal = $('#help_modal');
+        $loadModal.find('.tab-link').removeClass('active');
+        $loadModal.find('.tab-pane').removeClass('active');
 
         $('#search').addClass('active');
         $('#search_tab').addClass('active');
 
     }).on('click', '.help_link', function(event){
         var useTab = $(this).attr('id');
+        var $loadModal = $('#help_modal');
         useTab = useTab.substr(0, useTab.indexOf('_link'));
-        $('#overview_tab').removeClass('active');
-        $('#search_tab').removeClass('active');
-        $('#myrda_tab').removeClass('active');
-        $('#advsearch_tab').removeClass('active');
-
-        $('#overview').removeClass('active');
-        $('#search').removeClass('active');
-        $('#myrda').removeClass('active');
-        $('#advsearch').removeClass('active');
-
+        $loadModal.find('.tab-link').removeClass('active');
+        $loadModal.find('.tab-pane').removeClass('active');
         $('#'+useTab).addClass('active');
         $('#'+useTab+'_tab').addClass('active');
     }).on('click', '#toggle-visualisation', function(event) {
