@@ -387,6 +387,9 @@ jQuery(document).ready(function( $ ) {
     }).on('click', '#zoom_out', function(event){
         event.stopPropagation();
         window.neo4jd3.zoomOut();
+    }).on('click', '#zoom_fit', function(event){
+        event.stopPropagation();
+        window.neo4jd3.zoomFit();
     });
 
     function toggleGraphDisplay(event) {
@@ -396,11 +399,11 @@ jQuery(document).ready(function( $ ) {
         overlay.hide();
         if (viz.height() < 449) {
             viz.animate({height: 450}, 400, 'swing', function() {
-                // window.neo4jd3.zoomFit();
+                window.neo4jd3.zoomFit();
             });
         } else if (viz.height() > 149) {
             viz.animate({height: 150}, 400, 'swing', function() {
-                // window.neo4jd3.zoomFit();
+                window.neo4jd3.zoomFit();
             });
             overlay.show();
         }
