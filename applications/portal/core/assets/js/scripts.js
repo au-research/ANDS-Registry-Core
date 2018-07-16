@@ -366,15 +366,6 @@ jQuery(document).ready(function( $ ) {
     }).on('mouseout', '.visualisation-overlay', function(event){
         event.stopPropagation();
         $('#visualisation-notice').hide();
-    }).on('click', '#zoom_in', function(event){
-        event.stopPropagation();
-        window.neo4jd3.zoomIn();
-    }).on('click', '#zoom_out', function(event){
-        event.stopPropagation();
-        window.neo4jd3.zoomOut();
-    }).on('click', '#zoom_fit', function(event){
-        event.stopPropagation();
-        window.neo4jd3.zoomFit();
     });
 
     function toggleGraphDisplay(event) {

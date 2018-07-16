@@ -66,6 +66,10 @@
 
             svgNodes = theBigG.append('g')
                 .attr('class', 'nodes');
+
+            d3.select('#zoom_in').on('click', zoomIn);
+            d3.select('#zoom_out').on('click', zoomOut);
+            d3.select('#zoom_fit').on('click', zoomFit);
         }
 
 
@@ -74,11 +78,11 @@
         }
 
         function zoomIn() {
-            _zoom.scaleBy(svg, 1.05);
+            _zoom.scaleBy(svg.transition(), 1.05);
         }
 
         function zoomOut() {
-            _zoom.scaleBy(svg, 0.95);
+            _zoom.scaleBy(svg.transition(), 0.95);
         }
 
         function zoomFit() {
