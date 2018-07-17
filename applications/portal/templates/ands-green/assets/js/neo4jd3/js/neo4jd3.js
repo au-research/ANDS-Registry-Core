@@ -85,6 +85,7 @@
 
 
             if(midX && midY && midScale){
+                theBigG.call(_zoom.transform, d3.zoomIdentity.translate(midX, midY).scale(midScale));
                 svg.transition()
                     .duration(750).call(_zoom.transform, d3.zoomIdentity.translate(midX, midY).scale(midScale));
                 return;
@@ -1294,6 +1295,7 @@
         }
 
         function updateNodesAndRelationships(n, r) {
+            midScale = null;
             updateRelationships(r);
             updateNodes(n);
 
