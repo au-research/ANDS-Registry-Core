@@ -86,16 +86,9 @@
         }
 
         function zoomFit() {
-
-
-            if(midX && midY && midScale){
-                theBigG.call(_zoom.transform, d3.zoomIdentity.translate(midX, midY).scale(midScale));
-                svg.transition()
-                    .duration(750).call(_zoom.transform, d3.zoomIdentity.translate(midX, midY).scale(midScale));
-                return;
-            }
-            var bounds = svg.node().getBBox(),
-                parent = svg.parentElement,
+            
+            var bounds = theBigG.node().getBBox(),
+                parent = theBigG.parentElement,
                 width = bounds.width,
                 height = bounds.height;
 
