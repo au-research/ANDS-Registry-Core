@@ -78,6 +78,8 @@ class RecordsGraphController
 
                 if (in_array($relationType, array_keys(GraphRelationshipProvider::$flippableRelation))) {
                     $relationType = array_search($relationType, GraphRelationshipProvider::$flippableRelation[$relationType]);
+                } elseif (in_array($relationType, array_values(GraphRelationshipProvider::$flippableRelation))){
+                    $relationType = array_search($relationType, GraphRelationshipProvider::$flippableRelation);
                 }
 
                 $filters = [
