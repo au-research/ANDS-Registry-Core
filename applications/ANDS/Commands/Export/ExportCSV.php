@@ -54,7 +54,7 @@ class ExportCSV extends ANDSCommand
         $this->importPath = $input->getOption("importPath");
         $this->format = $input->getOption('format');
 
-        $this->log("Import Path: {$this->importPath}", "info");
+        $this->log("Import Path: {$this->importPath} format: {$this->format}", "info");
 
         $nodes = $input->getOption('nodes');
         if ($nodes) {
@@ -196,9 +196,9 @@ class ExportCSV extends ANDSCommand
 
                 if ($this->format === RegistryObject::$CSV_RESEARCH_GRAPH) {
                     $rel = [
-                        ':START_ID' => 'researchgraph.org/ands/'.$relation->from_id,
-                        ':END_ID' => 'researchgraph.org/ands/'.$relation->to_id,
-                        ':TYPE' => $type
+                        'from_key' => RegistryObject::researchGraphID($relation->from_id),
+                        'to_uri' => RegistryObject::researchGraphID($relation->to_id),
+                        'label' => $type
                     ];
                 }
 
@@ -259,9 +259,9 @@ class ExportCSV extends ANDSCommand
 
                 if ($this->format === RegistryObject::$CSV_RESEARCH_GRAPH) {
                     $rel = [
-                        ':START_ID' => 'researchgraph.org/ands/'.$relation->from_id,
-                        ':END_ID' => 'researchgraph.org/ands/'.$relation->to_id,
-                        ':TYPE' => $type
+                        'from_key' => RegistryObject::researchGraphID($relation->from_id),
+                        'to_uri' => RegistryObject::researchGraphID($relation->to_id),
+                        'label' => $type
                     ];
                 }
 
@@ -291,7 +291,10 @@ class ExportCSV extends ANDSCommand
     private function getPrimaryRelationType(RelationshipView $relation)
     {
         $defaultType = "hasAssociationWith";
+
+        /** @var DataSource $ds */
         $ds = DataSource::find($relation->from_data_source_id);
+
         if (!$ds) {
             $this->log("Data Source {$relation->data_source_id} not found", "error");
             return $defaultType;
@@ -363,9 +366,9 @@ class ExportCSV extends ANDSCommand
 
                     if ($this->format === RegistryObject::$CSV_RESEARCH_GRAPH) {
                         $relation = [
-                            ':START_ID' => 'researchgraph.org/ands/'.$ids[0],
-                            ':END_ID' => 'researchgraph.org/ands/'.$ids[$i],
-                            ':TYPE' => 'knownAs'
+                            'from_key' => RegistryObject::researchGraphID($ids[0]),
+                            'to_uri' => RegistryObject::researchGraphID($ids[$i]),
+                            'label' => 'knownAs'
                         ];
                     }
 

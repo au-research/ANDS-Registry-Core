@@ -40,8 +40,11 @@ trait ExportToCSVTrait
             $type = 'auxilary';
         }
 
+        // TODO: doi
+        // TODO: orcid
+
         return [
-            'key:ID' => $this->getResearchGraphID(),
+            'key:ID' => static::researchGraphID($this->id),
             'source' => 'ands.org.au',
             'local_id' => $this->key,
             'title' => StrUtil::sanitize($this->title),
@@ -56,9 +59,9 @@ trait ExportToCSVTrait
         ];
     }
 
-    public function getResearchGraphID()
+    public static function researchGraphID($id)
     {
-        return 'researchgraph.org/ands/'.$this->id;
+        return 'researchgraph.org/ands/'. $id;
     }
 
     /**
