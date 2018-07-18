@@ -1243,15 +1243,20 @@
             for (var i = 0; i < d3Data.relationships.length ;i++) {
                 var n = d3Data.relationships[i];
                 if (!n) continue;
+
                 var dup = d3Data.relationships.find(function(node) {
+                    //console.log(node);
                     return node.startNode === n.startNode && node.endNode === n.endNode && node.id !== n.id;
                 });
+
                 if (!dup) continue;
+
                 n.type += ', '+ dup.type;
                 var index = d3Data.relationships.indexOf(dup);
                 d3Data.relationships.splice(index, 1);
             }
-            if(d3Data.nodes.length > 0 || d3Data.relationships.length > 0){
+
+            if(d3Data.nodes.length > 0){
                 updateNodesAndRelationships(d3Data.nodes, d3Data.relationships);
             }
 
