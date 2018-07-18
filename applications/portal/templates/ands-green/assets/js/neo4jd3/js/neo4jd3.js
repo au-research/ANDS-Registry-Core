@@ -86,7 +86,7 @@
         }
 
         function zoomFit() {
-            
+
             var bounds = theBigG.node().getBBox(),
                 parent = theBigG.parentElement,
                 width = bounds.width,
@@ -1251,8 +1251,10 @@
                 var index = d3Data.relationships.indexOf(dup);
                 d3Data.relationships.splice(index, 1);
             }
+            if(d3Data.nodes.length > 0 || d3Data.relationships.length > 0){
+                updateNodesAndRelationships(d3Data.nodes, d3Data.relationships);
+            }
 
-            updateNodesAndRelationships(d3Data.nodes, d3Data.relationships);
         }
 
         function updateWithNeo4jData(neo4jData) {
@@ -1292,10 +1294,8 @@
         }
 
         function updateNodesAndRelationships(n, r) {
-            midScale = null;
             updateRelationships(r);
             updateNodes(n);
-
             simulation.nodes(nodes);
             simulation.force('link').links(relationships);
             simulation.alpha(0.2).restart();
