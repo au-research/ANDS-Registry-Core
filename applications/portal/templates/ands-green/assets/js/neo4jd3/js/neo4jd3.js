@@ -38,12 +38,14 @@
             VERSION = '0.0.1';
         var _zoom;
         var scale = 1;
-        var midScale;
-        var midX;
-        var midY;
+        var midX, midY, midScale = null;
+        var rX,rY,rScale = null;
+
         var fullWidth = 862; // hardcoded for ie
         var fullHeight = 400;
+
         var theBigG;
+
         function appendGraph(container) {
 
             _zoom = d3.zoom().on("zoom", zoomFunction);
@@ -70,7 +72,7 @@
             d3.select('#zoom_in').on('click', zoomIn);
             d3.select('#zoom_out').on('click', zoomOut);
             d3.select('#zoom_fit').on('click', zoomFit);
-            d3.select('#reset').on('click', reset).on('mouseup', zoomFit);
+            d3.select('#reset').on('click', reset);
         }
 
 
@@ -113,6 +115,11 @@
             midScale = scale;
             midX = Math.floor(fullWidth / 2 - scale * midX);
             midY = Math.floor(fullHeight / 2 - scale * midY);
+            if(!(rX && rY && rScale)){
+                rX = midX;
+                rY = midY;
+                rScale = midScale;
+            }
             theBigG.call(_zoom.transform, d3.zoomIdentity.translate(midX, midY).scale(midScale));
             svg.transition()
                 .duration(750).call(_zoom.transform, d3.zoomIdentity.translate(midX, midY).scale(midScale));
@@ -121,8 +128,18 @@
 
 
         function reset(){
+            if(rX && rY && rScale) {
+                theBigG.call(_zoom.transform, d3.zoomIdentity.translate(rX, rY).scale(rScale));
+                svg.transition()
+                    .duration(750).call(_zoom.transform, d3.zoomIdentity.translate(rX, rY).scale(rScale));
+            }
+            else{
+                zoomFit();
+            }
+
             svgRelationships.selectAll("g").remove();
             svgNodes.selectAll("g").remove();
+
             loadNeo4jDataFromUrl(options.neo4jDataUrl);
         }
 
