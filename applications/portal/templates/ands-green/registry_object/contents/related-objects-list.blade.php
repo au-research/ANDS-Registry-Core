@@ -10,6 +10,7 @@
             <button id="zoom_in">+</button>
             <button id="zoom_out">-</button>
             <button id="zoom_fit">Center</button>
+            <button id="reset">Reset</button>
             <div id="graph-viz"></div>
             <a href="" id="toggle-visualisation"><i class="fa fa-sort"></i></a>
         </div>
