@@ -143,7 +143,9 @@ class ExportCSV extends ANDSCommand
 
                 try {
                     $row = $record->toCSV($this->format);
-                    $row[':LABEL'] = str_replace('`', '', $row[':LABEL']);
+                    if (array_key_exists(':LABEL', $row)) {
+                        $row[':LABEL'] = str_replace('`', '', $row[':LABEL']);
+                    }
 
                     // insert header if first
                     if ($first) {
@@ -200,9 +202,9 @@ class ExportCSV extends ANDSCommand
                         'to_uri' => RegistryObject::researchGraphID($relation->to_id),
                         'label' => $type
                     ];
+                } else {
+                    $rel = $this->postProcessRelation($rel);
                 }
-
-                $rel = $this->postProcessRelation($rel);
 
                 if ($first) {
                     fputcsv($fp, array_keys($rel));
@@ -263,9 +265,9 @@ class ExportCSV extends ANDSCommand
                         'to_uri' => RegistryObject::researchGraphID($relation->to_id),
                         'label' => $type
                     ];
+                } else {
+                    $rel = $this->postProcessRelation($rel);
                 }
-
-                $rel = $this->postProcessRelation($rel);
 
                 if ($first) {
                     fputcsv($fp, array_keys($rel));
@@ -370,9 +372,10 @@ class ExportCSV extends ANDSCommand
                             'to_uri' => RegistryObject::researchGraphID($ids[$i]),
                             'label' => 'knownAs'
                         ];
+                    } else {
+                        $relation = $this->postProcessRelation($relation);
                     }
 
-                    $relation = $this->postProcessRelation($relation);
                     if ($first) {
                         fputcsv($fp, array_keys($relation));
                         $first = false;

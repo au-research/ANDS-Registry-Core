@@ -84,7 +84,7 @@ class RegistryObject extends Model
         return $this->hasMany(RegistryObjectAttribute::class, 'registry_object_id', 'registry_object_id');
     }
 
-    public function identifiers()
+    public function registryObjectIdentifiers()
     {
         return $this->hasMany(Identifier::class, 'registry_object_id', 'registry_object_id');
     }
