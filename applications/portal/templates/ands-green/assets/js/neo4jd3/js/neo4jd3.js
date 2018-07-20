@@ -70,6 +70,7 @@
             d3.select('#zoom_in').on('click', zoomIn);
             d3.select('#zoom_out').on('click', zoomOut);
             d3.select('#zoom_fit').on('click', zoomFit);
+            d3.select('#reset').on('click', reset).on('mouseup', zoomFit);
         }
 
 
@@ -117,6 +118,14 @@
                 .duration(750).call(_zoom.transform, d3.zoomIdentity.translate(midX, midY).scale(midScale));
             return;
         }
+
+
+        function reset(){
+            svgRelationships.selectAll("g").remove();
+            svgNodes.selectAll("g").remove();
+            loadNeo4jDataFromUrl(options.neo4jDataUrl);
+        }
+
 
         function appendImageToNode(node) {
             return node.append('image')
@@ -829,6 +838,7 @@
                 loadNeo4jData(options.neo4jData);
             } else if (options.neo4jDataUrl) {
                 loadNeo4jDataFromUrl(options.neo4jDataUrl);
+
             } else {
                 console.error('Error: both neo4jData and neo4jDataUrl are empty!');
             }
@@ -900,9 +910,8 @@
         function loadNeo4jDataFromUrl(neo4jDataUrl) {
             nodes = [];
             relationships = [];
-
             if (options.onLoading) {
-                options.onLoading()
+                options.onLoading();
             }
             d3.json(neo4jDataUrl, function(error, data) {
 
