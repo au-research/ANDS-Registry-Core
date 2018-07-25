@@ -525,7 +525,8 @@
                 .attr('height', '24px')
                 .attr('pointer-events', 'none')
                 .attr('fill', '#ffffff')
-                .attr('transform','translate(-12,-12)')
+                .attr('x', '-12')
+                .attr('y', '-12')
                 .attr('xlink:href', function(d) {
                     return base_url + '/assets/templates/ands-green/fonts/' + icon(d);
                 })
@@ -1132,6 +1133,15 @@
                         }
                         return classes;
                     });
+
+                node.selectAll('image')
+                    .attr('xlink:href', function(d) {
+                        var imageIcon = d.loading ? 'spinner-solid.svg' : icon(d);
+                        return base_url + '/assets/templates/ands-green/fonts/' + imageIcon;
+                    })
+                    .attr('class', function(d) {
+                        return d.loading ? 'spinner' :'';
+                    })
             }
         }
 
