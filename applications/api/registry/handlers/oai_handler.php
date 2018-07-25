@@ -22,7 +22,7 @@ class OaiHandler extends Handler
         try {
             $response = $provider->get()->getResponse();
         } catch (\Exception $e) {
-            dd($e->getTrace());
+            dd(get_exception_msg($e));
         }
 
 
