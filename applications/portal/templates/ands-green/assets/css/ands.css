@@ -258,6 +258,23 @@ h1.bordered:after{
     border-bottom: 1px solid #ccc;
 }
 
+.spinner {
+    animation: spinner 2s infinite linear;
+    transform-origin: 0 0;
+}
+
+@keyframes spinner {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+
+    100% {
+        -webkit-transform: rotate(359deg);
+        transform: rotate(359deg);
+    }
+}
+
 #toggle-visualisation i {
     color: white;
 }
