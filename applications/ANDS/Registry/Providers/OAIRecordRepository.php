@@ -13,6 +13,7 @@ use ANDS\RegistryObjectAttribute;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\XMLUtil;
 use Carbon\Carbon;
+use DCIMethod;
 use MinhD\OAIPMH\Exception\BadArgumentException;
 use MinhD\OAIPMH\Exception\CannotDisseminateFormat;
 use MinhD\OAIPMH\Exception\IdDoesNotExistException;
@@ -234,7 +235,7 @@ class OAIRecordRepository implements OAIRepository
         return $oaiRecord;
     }
 
-    private function addMetadata($oaiRecord, $record, $metadataFormat)
+    private function addMetadata(Record $oaiRecord, RegistryObject $record, $metadataFormat)
     {
         if ($metadataFormat == 'rif') {
             $metadata = "<registryObject />";
@@ -244,9 +245,23 @@ class OAIRecordRepository implements OAIRepository
             }
             $oaiRecord->setMetadata($metadata);
         } elseif ($metadataFormat == "oai_dc") {
-            // TODO DCI Provider?
+            // TODO DCI Provider
+
+            $metadata = $this->getLegacyDCI($record->id);
+            $oaiRecord->setMetadata($metadata);
         }
         return $oaiRecord;
+    }
+
+    /**
+     * TODO deprecate in favor of DCIProvider
+     *
+     * @param $id
+     * @return mixed
+     */
+    private function getLegacyDCI($id)
+    {
+        return "<oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\"></oai_dc:dc>";
     }
 
     public function listRecordsByToken($token)
