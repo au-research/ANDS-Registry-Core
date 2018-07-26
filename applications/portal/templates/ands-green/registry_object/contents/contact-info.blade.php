@@ -5,14 +5,12 @@
     $contactInfo = '';
     $streetAddress = false;
     $postalAddress = false;
-
     ?>
-
 
     @foreach($ro->contact as $contact)
         <?php
         //let's print out the postal address first if it exists
-        if($contact['contact_type']=='postalAddress_addressLine'&& $contact['contact_value']!='')
+        if(str_replace("postalAddress", "", $contact['contact_type'])!=$contact['contact_type'] && $contact['contact_value']!='')
         {
            if(!$postalAddress) {
                $contactInfo .= "Postal Address: <br/>";
@@ -27,7 +25,7 @@
     @foreach($ro->contact as $contact)
         <?php
         //lets print out the street address if it exists
-        if($contact['contact_type']=='streetAddress_addressLine'&& $contact['contact_value']!='')
+        if(str_replace("streetAddress", "", $contact['contact_type'])!=$contact['contact_type'] && $contact['contact_value']!='')
         {
             if(!$streetAddress) {
                 if($postalAddress) $contactInfo .= "<br/>";
@@ -69,7 +67,8 @@
             }
             elseif($contact['contact_value']!=''
                     && str_replace("electronic_","",$contact['contact_type']) == $contact['contact_type']
-                    && str_replace("_addressLine","",$contact['contact_type']) == $contact['contact_type']){
+                    && str_replace("streetAddress","",$contact['contact_type']) == $contact['contact_type']
+                    && str_replace("postalAddress","",$contact['contact_type']) == $contact['contact_type']){
                 $contactInfo .= html_entity_decode($contact['contact_value'])."<br/>";
             }
             elseif(str_replace("electronic_","",$contact['contact_type']) != $contact['contact_type'] && !in_array($contact['contact_type'],$order)){
