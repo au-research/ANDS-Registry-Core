@@ -5,6 +5,7 @@ namespace ANDS\Registry\API\Controller;
 
 
 use ANDS\Cache\Cache;
+use ANDS\Registry\API\Request;
 use ANDS\Registry\Providers\GraphRelationshipProvider;
 use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 use ANDS\Repository\RegistryObjectsRepository;
@@ -22,11 +23,16 @@ class RecordsGraphController
      */
     public function index($id)
     {
-        // caches by default
-        // R28: does not accept custom parameters yet
-        return Cache::remember("graph.$id", $this->cacheTTL, function() use ($id){
-            return $this->getGraphForRecord($id);
-        });
+        $useCache = !!Request::get('cache');
+        if ($useCache) {
+            // caches by default
+            // R28: does not accept custom parameters yet
+            return Cache::remember("graph.$id", $this->cacheTTL, function() use ($id){
+                $this->getGraphForRecord($id);
+            });
+        }
+
+        return $this->getGraphForRecord($id);
     }
 
     /**
