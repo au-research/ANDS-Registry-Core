@@ -22,7 +22,7 @@
                                         @endif
                                         <div class="col-xs-12 col-md-10">
                                         <h1 class="hairline bordered-normal" style="line-height:1.1em">{{$ro->core['title']}}</h1>
-                                        @if(isset($ro->core['alt_title']))
+                                        @if(isset($ro->core['alt_title']) && sizeof($ro->core['alt_title'])>0)
                                             <small>Also known as:
                                                 <span>{{implode(', ',$ro->core['alt_title'])}}</span>
                                             </small><br/>
