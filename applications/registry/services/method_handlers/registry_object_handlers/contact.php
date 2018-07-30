@@ -21,13 +21,16 @@ class Contact extends ROHandler {
          */
 
       $streetAddresses = $this->gXPath->query("//ro:location/ro:address/ro:physical[@type='streetAddress']");
+       if($streetAddresses->length> 0) {
 
-      array_push($contacts, ...$this->getAddress($streetAddresses, 'streetAddress'));
+            array_push($contacts, ...$this->getAddress($streetAddresses, 'streetAddress'));
+       }
 
       $postalAddresses = $this->gXPath->query("//ro:location/ro:address/ro:physical[@type='postalAddress']");
+        if($postalAddresses->length > 0) {
 
-      array_merge($contacts, ...$this->getAddress($postalAddresses, 'postalAddress'));
-
+            array_push($contacts, ...$this->getAddress($postalAddresses, 'postalAddress'));
+        }
 
         $addresses = $this->gXPath->query("//ro:location/ro:address");
 
