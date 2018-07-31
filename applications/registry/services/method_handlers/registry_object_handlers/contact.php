@@ -20,7 +20,7 @@ class Contact extends ROHandler {
          * ]
          */
 
-      $streetAddresses = $this->gXPath->query("//ro:location/ro:address/ro:physical[@type='streetAddress']");
+       $streetAddresses = $this->gXPath->query("//ro:location/ro:address/ro:physical[@type='streetAddress']");
        if($streetAddresses->length> 0) {
 
             array_push($contacts, ...$this->getAddress($streetAddresses, 'streetAddress'));
@@ -46,7 +46,7 @@ class Contact extends ROHandler {
                 );
             }
 
-            $physical_contact = $this->gXPath->query("ro:physical/ro:addressPart[@type='telephoneNumber']", $address);
+            $physical_contact = $this->gXPath->query("ro:physicall[not(@type='streetAddress') and not(@type='postalAddress')]/ro:addressPart[@type='telephoneNumber']", $address);
 
             foreach($physical_contact as $contact){
 
@@ -55,7 +55,7 @@ class Contact extends ROHandler {
                     'contact_value' => $contact->nodeValue
                 );
             }
-            $physical_contact = $this->gXPath->query("ro:physical/ro:addressPart[@type='faxNumber']", $address);
+            $physical_contact = $this->gXPath->query("ro:physicall[not(@type='streetAddress') and not(@type='postalAddress')]/ro:addressPart[@type='faxNumber']", $address);
 
             foreach($physical_contact as $contact){
 
@@ -255,15 +255,18 @@ class Contact extends ROHandler {
 
     private function getAddress($addresses, $type){
         $contacts = Array();
+       // $address_num = $addresses->length;
+        $count = 0;
 
         foreach($addresses as $address){
+            $count++;
 
             $physical_contact = $this->gXPath->query("ro:addressPart[@type='fullName']", $address);
 
             foreach($physical_contact as $contact){
 
                   $contacts[] =Array(
-                      'contact_type' => $type.'_fullName',
+                      'contact_type' => $type.'_'.$count.'_fullName',
                       'contact_value' => $contact->nodeValue
                   );
               }
@@ -273,7 +276,7 @@ class Contact extends ROHandler {
               foreach($physical_contact as $contact){
 
                   $contacts[] =Array(
-                      'contact_type' => $type.'_organizationName',
+                      'contact_type' => $type.'_'.$count.'_organizationName',
                       'contact_value' => $contact->nodeValue
                   );
               }
@@ -283,7 +286,7 @@ class Contact extends ROHandler {
               foreach($physical_contact as $contact){
 
                   $contacts[] =Array(
-                      'contact_type' => $type.'_buildingOrPropertyName',
+                      'contact_type' => $type.'_'.$count.'_buildingOrPropertyName',
                       'contact_value' => $contact->nodeValue
                   );
               }
@@ -301,7 +304,7 @@ class Contact extends ROHandler {
               }
               if($contact_value!=''){
                   $contacts[] =Array(
-                      'contact_type' => $type.'_flatOrUnitNumber floorOrLevelNumber',
+                      'contact_type' => $type.'_'.$count.'_flatOrUnitNumber floorOrLevelNumber',
                       'contact_value' => $contact_value
                   );
               }
@@ -324,7 +327,7 @@ class Contact extends ROHandler {
               }
               if($contact_value!=''){
                   $contacts[] =Array(
-                      'contact_type' => $type.'_LotNumber houseNumber streetName',
+                      'contact_type' => $type.'_'.$count.'_LotNumber houseNumber streetName',
                       'contact_value' => $contact_value
                   );
               }
@@ -347,7 +350,7 @@ class Contact extends ROHandler {
               }
               if($contact_value!=''){
                   $contacts[] =Array(
-                      'contact_type' => $type.'_postalDeliveryNumberPrefix postalDeliveryNumberValue postalDeliveryNumberSuffix',
+                      'contact_type' => $type.'_'.$count.'_postalDeliveryNumberPrefix postalDeliveryNumberValue postalDeliveryNumberSuffix',
                       'contact_value' => $contact_value
                   );
               }
@@ -357,7 +360,7 @@ class Contact extends ROHandler {
               foreach($physical_contact as $contact){
 
                   $contacts[] =Array(
-                      'contact_type' => $type.'_addressLine',
+                      'contact_type' => $type.'_'.$count.'_addressLine',
                       'contact_value' => $contact->nodeValue
                   );
               }
@@ -380,7 +383,7 @@ class Contact extends ROHandler {
               }
               if($contact_value!=''){
                   $contacts[] =Array(
-                      'contact_type' => $type.'_suburbOrPlaceOrLocality stateOrTerritory postCode',
+                      'contact_type' => $type.'_'.$count.'_suburbOrPlaceOrLocality stateOrTerritory postCode',
                       'contact_value' => $contact_value
                   );
               }
@@ -389,7 +392,7 @@ class Contact extends ROHandler {
               foreach($physical_contact as $contact){
 
                   $contacts[] =Array(
-                      'contact_type' => $type.'_country',
+                      'contact_type' => $type.'_'.$count.'_country',
                       'contact_value' => $contact->nodeValue
                   );
               }
@@ -407,7 +410,7 @@ class Contact extends ROHandler {
               }
               if($contact_value!=''){
                   $contacts[] =Array(
-                      'contact_type' => $type.'_locationDescriptor deliveryPointIdentifier',
+                      'contact_type' => $type.'_'.$count.'_locationDescriptor deliveryPointIdentifier',
                       'contact_value' => $contact_value
                   );
               }
@@ -416,10 +419,28 @@ class Contact extends ROHandler {
               foreach($physical_contact as $contact){
 
                   $contacts[] =Array(
-                      'contact_type' => $type.'_text',
+                      'contact_type' => $type.'_'.$count.'_text',
                       'contact_value' => $contact->nodeValue
                   );
               }
+            $physical_contact = $this->gXPath->query("ro:addressPart[@type='telephoneNumber']", $address);
+
+            foreach($physical_contact as $contact){
+
+                $contacts[] =Array(
+                    'contact_type' => $type.'_'.$count.'_telephoneNumber',
+                    'contact_value' => $contact->nodeValue
+                );
+            }
+            $physical_contact = $this->gXPath->query("ro:addressPart[@type='faxNumber']", $address);
+
+            foreach($physical_contact as $contact){
+
+                $contacts[] =Array(
+                    'contact_type' => $type.'_'.$count.'_faxNumber',
+                    'contact_value' => $contact->nodeValue
+                );
+            }
         }
         return $contacts;
     }

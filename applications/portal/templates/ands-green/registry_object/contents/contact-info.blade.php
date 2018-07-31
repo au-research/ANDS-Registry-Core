@@ -1,20 +1,25 @@
 @if($ro->contact)
-
     <?php
     $order = array('electronic_email', 'electronic_url', 'electronic_other');
     $contactInfo = '';
     $streetAddress = false;
+    $streetAddressPrev = 0;
     $postalAddress = false;
+    $postalAddressPrev = 0;
     ?>
 
     @foreach($ro->contact as $contact)
         <?php
-        //let's print out the postal address first if it exists
+               // print_r($contact);
+        //let's print out the postal address first if it exists - need to print them out in separate blocks if more than i exists
         if(str_replace("postalAddress", "", $contact['contact_type'])!=$contact['contact_type'] && $contact['contact_value']!='')
         {
-           if(!$postalAddress) {
+            $getNum = explode("_",$contact['contact_type']);
+            $postalAddress = $getNum[1];
+            if($postalAddress > $postalAddressPrev) {
+                if($postalAddressPrev > 0) $contactInfo .= "<br/>";
                $contactInfo .= "Postal Address: <br/>";
-               $postalAddress = true;
+                $postalAddressPrev = $postalAddress;
            }
             $contactInfo .= $contact['contact_value'].'<br/>';
         }
@@ -24,13 +29,15 @@
 
     @foreach($ro->contact as $contact)
         <?php
-        //lets print out the street address if it exists
+        //lets print out the street address if it exists - need to print them out in separate blocks if more than i exists
         if(str_replace("streetAddress", "", $contact['contact_type'])!=$contact['contact_type'] && $contact['contact_value']!='')
         {
-            if(!$streetAddress) {
-                if($postalAddress) $contactInfo .= "<br/>";
+            $getNum = explode("_",$contact['contact_type']);
+            $streetAddress = $getNum[1];
+            if($streetAddress > $streetAddressPrev) {
+                if($postalAddress || $streetAddressPrev > 0) $contactInfo .= "<br/>";
                 $contactInfo .= "Street Address: <br/>";
-                $streetAddress = true;
+                $streetAddressPrev = $streetAddress;
             }
             $contactInfo .= $contact['contact_value'].'<br/>';
         }
