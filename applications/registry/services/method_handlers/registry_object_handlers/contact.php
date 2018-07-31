@@ -37,25 +37,6 @@ class Contact extends ROHandler {
         foreach($addresses as $address){
 
 
-            $physical_contact = $this->gXPath->query("ro:physicall[not(@type='streetAddress') and not(@type='postalAddress')]/ro:addressPart[@type='telephoneNumber']", $address);
-
-            foreach($physical_contact as $contact){
-
-                $contacts[] =Array(
-                    'contact_type' => 'telephoneNumber',
-                    'contact_value' => $contact->nodeValue
-                );
-            }
-            $physical_contact = $this->gXPath->query("ro:physicall[not(@type='streetAddress') and not(@type='postalAddress')]/ro:addressPart[@type='faxNumber']", $address);
-
-            foreach($physical_contact as $contact){
-
-                $contacts[] =Array(
-                    'contact_type' => 'faxNumber',
-                    'contact_value' => $contact->nodeValue
-                );
-            }
-
             $physical_contact = $this->gXPath->query("ro:physical[not(@type='streetAddress') and not(@type='postalAddress')]/ro:addressPart[@type='fullName']", $address);
 
             foreach($physical_contact as $contact){
@@ -215,6 +196,25 @@ class Contact extends ROHandler {
 
                 $contacts[] =Array(
                     'contact_type' => 'text',
+                    'contact_value' => $contact->nodeValue
+                );
+            }
+
+            $physical_contact = $this->gXPath->query("ro:physical[not(@type='streetAddress') and not(@type='postalAddress')]/ro:addressPart[@type='telephoneNumber']", $address);
+
+            foreach($physical_contact as $contact){
+
+                $contacts[] =Array(
+                    'contact_type' => 'telephoneNumber',
+                    'contact_value' => $contact->nodeValue
+                );
+            }
+            $physical_contact = $this->gXPath->query("ro:physical[not(@type='streetAddress') and not(@type='postalAddress')]/ro:addressPart[@type='faxNumber']", $address);
+
+            foreach($physical_contact as $contact){
+
+                $contacts[] =Array(
+                    'contact_type' => 'faxNumber',
                     'contact_value' => $contact->nodeValue
                 );
             }
