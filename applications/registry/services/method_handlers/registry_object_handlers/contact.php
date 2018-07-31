@@ -420,7 +420,7 @@ class Contact extends ROHandler {
 
                 $contacts[] =Array(
                     'contact_type' => $type.'_'.$count.'_telephoneNumber',
-                    'contact_value' => $contact->nodeValue
+                    'contact_value' => "Ph: ".$contact->nodeValue
                 );
             }
             $physical_contact = $this->gXPath->query("ro:addressPart[@type='faxNumber']", $address);
@@ -429,7 +429,7 @@ class Contact extends ROHandler {
 
                 $contacts[] =Array(
                     'contact_type' => $type.'_'.$count.'_faxNumber',
-                    'contact_value' => $contact->nodeValue
+                    'contact_value' => "Fax: ".$contact->nodeValue
                 );
             }
             // Fix API for HTML rendering
