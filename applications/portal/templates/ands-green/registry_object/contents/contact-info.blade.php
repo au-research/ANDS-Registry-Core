@@ -1,4 +1,5 @@
 @if($ro->contact)
+
     <?php
     $order = array('electronic_email', 'electronic_url', 'electronic_other');
     $contactInfo = '';
@@ -81,11 +82,12 @@
             elseif(str_replace("electronic_","",$contact['contact_type']) != $contact['contact_type'] && !in_array($contact['contact_type'],$order)){
                 $contactInfo .=  $contact['contact_value'].'<br/>';
             }
-            elseif($contact['contact_type'] == "end") {
+            elseif($contact['contact_type'] == "end" && substr($contactInfo,-15)!= "<br/><br/><br/>") {
                 $contactInfo .="<br/>";
             }
         ?>
     @endforeach
+    <?php $contactInfo = str_replace("<br/><br/><br/>","<br/><br/>",$contactInfo); ?>
     @if(trim($contactInfo)!='' && trim($contactInfo)!='<br/>')
     <div id="contact">
         <h4>Contact Information</h4>

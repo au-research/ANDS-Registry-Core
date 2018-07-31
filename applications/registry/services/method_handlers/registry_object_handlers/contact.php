@@ -36,15 +36,6 @@ class Contact extends ROHandler {
 
         foreach($addresses as $address){
 
-            $physical_contact = $this->gXPath->query("ro:physical[not(@type='streetAddress') and not(@type='postalAddress')]/ro:addressPart[@type='addressLine']", $address);
-
-            foreach($physical_contact as $contact){
-
-                $contacts[] =Array(
-                    'contact_type' => 'addressLine',
-                    'contact_value' => $contact->nodeValue
-                );
-            }
 
             $physical_contact = $this->gXPath->query("ro:physicall[not(@type='streetAddress') and not(@type='postalAddress')]/ro:addressPart[@type='telephoneNumber']", $address);
 
@@ -441,6 +432,11 @@ class Contact extends ROHandler {
                     'contact_value' => $contact->nodeValue
                 );
             }
+            // Fix API for HTML rendering
+            $contacts[] = [
+                'contact_type' => 'end',
+                'contact_value' => ''
+            ];
         }
         return $contacts;
     }
