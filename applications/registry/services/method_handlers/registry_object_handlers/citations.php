@@ -404,6 +404,10 @@ Y2  - '.date("Y-m-d")."
             $query = "//ro:collection/ro:location/ro:address/ro:electronic[@type='url']";
             $type = 'url';
         }
+        elseif($this->gXPath->evaluate("count(//ro:collection/ro:location/ro:address/ro:electronic[@type='uri'])")>0) {
+            $query = "//ro:collection/ro:location/ro:address/ro:electronic[@type='uri']";
+            $type = 'url';
+        }
         if($query!=''){
             $urls = $this->gXPath->query($query);
             foreach($urls as $url) {
