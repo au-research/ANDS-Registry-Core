@@ -221,7 +221,7 @@ class Contact extends ROHandler {
 
             $electronic_contact = $this->gXPath->query("ro:electronic", $address);
             foreach($electronic_contact as $contact){
-                if($contact->getAttribute("type") != "url" || $this->ro->class == 'party'){
+                if(($contact->getAttribute("type") != "url" && $contact->getAttribute("type") != "uri" ) || $this->ro->class == 'party'){
                     // Collection urls are processed by the directaccess handler
                     $contacts[] =Array(
                         'contact_type' => "electronic_".$contact->getAttribute("type"),

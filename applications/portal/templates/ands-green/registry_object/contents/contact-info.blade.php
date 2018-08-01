@@ -1,7 +1,7 @@
 @if($ro->contact)
 
     <?php
-    $order = array('electronic_email', 'electronic_url', 'electronic_other');
+    $order = array('electronic_email', 'electronic_url', 'electronic_uri', 'electronic_other');
     $contactInfo = '';
     $streetAddress = false;
     $streetAddressPrev = 0;
@@ -52,7 +52,7 @@
         <?php
             if($contact['contact_type'] == $o){
 
-                if($contact['contact_type']=='electronic_url'&& $contact['contact_value']!=''){
+                if(($contact['contact_type']=='electronic_url' || $contact['contact_type']=='electronic_uri') && $contact['contact_value']!=''){
                     $contactInfo .= '<a href="'.$contact['contact_value'].'">'.$contact['contact_value'].'</a><br/>';
                 }
                 else{

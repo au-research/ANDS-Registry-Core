@@ -60,7 +60,7 @@ class LinkProvider implements RegistryContentProvider
         $eaLinks = array();
         $ro_id = (string)$record->id;
         $ds_id = (string)$record->data_source_id;
-        $electronic_address = XMLUtil::getElementsByXPath($xml, '//ro:electronic[@type = "url"]');
+        $electronic_address = XMLUtil::getElementsByXPath($xml, '//ro:electronic[@type = "url" or @type = "uri"]');
         foreach ($electronic_address AS $address)
         {
             $type = 'electronic_'.(string)$address["type"];
