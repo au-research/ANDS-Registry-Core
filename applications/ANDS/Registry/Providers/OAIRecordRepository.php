@@ -6,6 +6,7 @@ namespace ANDS\Registry\Providers;
 
 use ANDS\DataSource;
 use ANDS\Registry\Group;
+use ANDS\Registry\Providers\DublinCore\DublinCoreProvider;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\Providers\Scholix\Scholix;
 use ANDS\RegistryObject;
@@ -245,23 +246,12 @@ class OAIRecordRepository implements OAIRepository
             }
             $oaiRecord->setMetadata($metadata);
         } elseif ($metadataFormat == "oai_dc") {
-            // TODO DCI Provider
-
-            $metadata = $this->getLegacyDCI($record->id);
+            $metadata = DublinCoreProvider::get($record);
+            $metadata = XMLUtil::stripXMLHeader($metadata);
+            $metadata = trim($metadata);
             $oaiRecord->setMetadata($metadata);
         }
         return $oaiRecord;
-    }
-
-    /**
-     * TODO deprecate in favor of DCIProvider
-     *
-     * @param $id
-     * @return mixed
-     */
-    private function getLegacyDCI($id)
-    {
-        return "<oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd\"></oai_dc:dc>";
     }
 
     public function listRecordsByToken($token)

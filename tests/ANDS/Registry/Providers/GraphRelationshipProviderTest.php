@@ -312,7 +312,9 @@ class GraphRelationshipProviderTest extends \RegistryTestClass
         $this->assertNotNull($p2s);
     }
 
-    /** @test */
+    /** @test
+     * @throws \Exception
+     */
     function it_should_process_direct_relationship()
     {
         // given 2 records
