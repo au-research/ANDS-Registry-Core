@@ -102,6 +102,35 @@ class IdentifierProvider implements RIFCSProvider
     }
 
     /**
+     * @param RegistryObject $record
+     * @param null $xml
+     * @return array
+     */
+    public static function getRelatedInfoIdentifiers(RegistryObject $record, $xml = null)
+    {
+        if (!$xml) {
+            $xml = $record->getCurrentData()->data;
+        }
+
+        $identifiers = [];
+
+        $xpath = "ro:registryObject/ro:{$record->class}/ro:relatedInfo/ro:identifier";
+
+        foreach (XMLUtil::getElementsByXPath($xml, $xpath) AS $identifier) {
+            $identifierValue = trim((string)$identifier);
+            if ($identifierValue == "") {
+                continue;
+            }
+            $identifiers[] = [
+                'value' => $identifierValue,
+                'type' => trim((string)$identifier['type'])
+            ];
+        }
+
+        return $identifiers;
+    }
+
+    /**
      * Get all identifiers from RIFCS
      * registryObject/:class/citationInfo/citationMetadata/identifier
      *
