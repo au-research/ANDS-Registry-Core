@@ -5,6 +5,7 @@ namespace ANDS\Registry\Providers;
 
 
 use ANDS\RegistryObject;
+use ANDS\Util\XMLUtil;
 
 class MetadataProvider implements RegistryContentProvider
 {
@@ -49,5 +50,109 @@ class MetadataProvider implements RegistryContentProvider
         }
 
         return $data;
+    }
+
+    /**
+     * @param $record
+     * @return string
+     * @throws \Exception
+     */
+    public static function getOriginatingSource($record)
+    {
+        $xml = XMLUtil::getSimpleXMLFromString($record->getCurrentData()->data);
+        return (string) $xml->registryObject->originatingSource;
+    }
+
+    /**
+     * @param RegistryObject $record
+     * @param null $xml
+     * @return array
+     */
+    public static function getDescriptions(RegistryObject $record, $xml = null)
+    {
+        $xml = $xml ? $xml : $record->getCurrentData()->data;
+
+        $descriptions = [];
+        $xpath = "ro:registryObject/ro:{$record->class}/ro:description";
+
+        foreach (XMLUtil::getElementsByXPath($xml, $xpath) AS $description) {
+            $descriptions[] = [
+                'type' => (string) $description["type"],
+                'value' => (string) $description
+            ];
+        };
+
+        return $descriptions;
+    }
+
+    public static function getSpatial(RegistryObject $record, $xml = null)
+    {
+        $xml = $xml ? $xml : $record->getCurrentData()->data;
+        $xpath = "ro:registryObject/ro:{$record->class}/ro:coverage/ro:spatial";
+
+        $results = [];
+        foreach (XMLUtil::getElementsByXPath($xml, $xpath) AS $spatial) {
+            $results[] = [
+                'type' => (string) $spatial['type'],
+                'value' => (string) $spatial
+            ];
+        }
+        return $results;
+    }
+
+    public static function getCoverages(RegistryObject $record, $xml = null)
+    {
+        $xml = $xml ? $xml : $record->getCurrentData()->data;
+        $xpath = "ro:registryObject/ro:{$record->class}/ro:coverage";
+
+        $results = [
+            'spatial' => [],
+            'temporal' => []
+        ];
+
+        foreach (XMLUtil::getElementsByXPath($xml, $xpath) AS $element) {
+            foreach ($element->spatial as $spatial) {
+                $results['spatial'][] = [
+                    'type' => (string) $spatial['type'],
+                    'value' => (string) $spatial
+                ];
+            }
+
+            foreach ($element->temporal as $temporal) {
+                $results['temporal'][] = [
+                    'dateFrom' => (string) $temporal->dateFrom,
+                    'dateTo' => (string) $temporal->dateTo
+                ];
+            }
+
+            $results[] = [
+                'rightsStatement' => [],
+                'licence' => [],
+                'accessRights' => []
+            ];
+        };
+        return $results;
+    }
+
+    /**
+     * TODO fill out rights information
+     * @param RegistryObject $record
+     * @param null $xml
+     * @return array
+     */
+    public static function getRights(RegistryObject $record, $xml = null)
+    {
+        $xml = $xml ? $xml : $record->getCurrentData()->data;
+        $xpath = "ro:registryObject/ro:{$record->class}/ro:rights";
+
+        $results = [];
+        foreach (XMLUtil::getElementsByXPath($xml, $xpath) AS $element) {
+            $results[] = [
+                'rightsStatement' => [],
+                'licence' => [],
+                'accessRights' => []
+            ];
+        };
+        return $results;
     }
 }
