@@ -2,6 +2,8 @@
 namespace ANDS\API\Registry\Handler;
 
 use ANDS\Registry\Providers\OAIRecordRepository;
+use MinhD\OAIPMH\Exception\BadArgumentException;
+use MinhD\OAIPMH\OAIException;
 use MinhD\OAIPMH\ServiceProvider;
 
 class OaiHandler extends Handler
@@ -22,9 +24,10 @@ class OaiHandler extends Handler
         try {
             $response = $provider->get()->getResponse();
         } catch (\Exception $e) {
-            dd(get_exception_msg($e));
+            $exception = new BadArgumentException(get_exception_msg($e));
+            $response = $provider->getExceptionResponse($exception);
+            return (string) $response->getResponse()->getBody();
         }
-
 
         return (string) $response->getBody();
     }

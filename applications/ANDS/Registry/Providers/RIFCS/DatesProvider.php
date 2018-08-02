@@ -22,6 +22,60 @@ class DatesProvider implements RIFCSProvider
         return;
     }
 
+    public static function getDateCoverages(RegistryObject $record, $xml = null)
+    {
+        $xml = $xml ? $xml : $record->getCurrentData()->data;
+        $xpath = "ro:registryObject/ro:{$record->class}/ro:coverage/ro:temporal/ro:date";
+
+        $dates = [];
+        foreach (XMLUtil::getElementsByXPath($xml, $xpath) AS $date) {
+            $dates[] = [
+                'type' => (string) $date['type'],
+                'dateFormat' => (string) $date['dateFormat'],
+                'value' => (string) $date
+            ];
+        }
+        return $dates;
+    }
+
+    public static function humanReadableCoverages($dates)
+    {
+        if (!count($dates)) {
+            return "";
+        }
+
+        $from = null;
+        $to = null;
+
+        $from = collect($dates)->filter(function($date){
+           return $date['type'] === 'dateFrom';
+        })->first();
+
+        $to = collect($dates)->filter(function($date){
+            return $date['type'] === 'dateTo';
+        })->first();
+
+        $other = collect($dates)->first();
+
+        // from date to date
+        // date (only from or to)
+        // date (no from, no to)
+
+        if ($from && $to) {
+            return 'From '. self::formatDate($from['value']) . " to " . self::formatDate($to['value']);
+        } elseif ($from && !$to) {
+            return 'From '. self::formatDate($from['value']);
+        } elseif(!$from && $to) {
+            return self::formatDate($to['value']);
+        } else {
+            return self::formatDate($other);
+        }
+
+        return $from . $to;
+        dd($from);
+
+    }
+
     /**
      * Return the available dates
      *
