@@ -7,6 +7,8 @@ use ANDS\Repository\RegistryObjectsRepository;
 
 class ScholixProviderRegressionTest extends \RegistryTestClass
 {
+    // TODO: refactor to not require keys existence
+
     protected $requiredKeys = [
         "AUTestingRecords2ScholixRecords1", // regression
         "AUTestingRecords2ScholixRecords2", // regression
@@ -36,7 +38,7 @@ class ScholixProviderRegressionTest extends \RegistryTestClass
 
         $link = $links[0]['link'];
         $this->assertEquals('doi', $link['source']['identifier'][0]['schema']);
-        $this->assertEquals('uri', $link['target']['identifier'][0]['schema']);
+        $this->assertEquals('url', $link['target']['identifier'][0]['schema']);
 
         // check xml
         $this->checkXML($scholix);
@@ -60,8 +62,8 @@ class ScholixProviderRegressionTest extends \RegistryTestClass
         $targetIdentifiers = collect($links)->pluck('link')->pluck('target')->pluck('identifier')->flatten();
 
         $this->assertContains('doi', $sourceIdentifiers);
-        $this->assertContains('uri', $targetIdentifiers);
-        $this->assertContains('handle', $targetIdentifiers);
+        $this->assertContains('url', $targetIdentifiers);
+        $this->assertContains('hdl', $targetIdentifiers);
 
         // check xml
         $this->checkXML($scholix);
@@ -83,7 +85,7 @@ class ScholixProviderRegressionTest extends \RegistryTestClass
 
         // from doi to uri
         $this->assertContains('doi', $sourceIdentifiers);
-        $this->assertContains('uri', $targetIdentifiers);
+        $this->assertContains('url', $targetIdentifiers);
 
         // 1 creator
         $creator = collect($links)->pluck('link')->pluck('source')->pluck('creator')->flatten(1)->toArray();
@@ -111,7 +113,7 @@ class ScholixProviderRegressionTest extends \RegistryTestClass
         $targetIdentifiers = collect($links)->pluck('link')->pluck('target')->pluck('identifier')->flatten();
 
         $this->assertContains('doi', $sourceIdentifiers);
-        $this->assertContains('uri', $targetIdentifiers);
+        $this->assertContains('url', $targetIdentifiers);
 
         $creators = collect($links)->pluck('link')->pluck('source')->pluck('creator')->flatten(1)->toArray();
         $this->assertEquals(2, count($creators));
@@ -142,7 +144,7 @@ class ScholixProviderRegressionTest extends \RegistryTestClass
         $targetIdentifiers = collect($links)->pluck('link')->pluck('target')->pluck('identifier')->flatten();
 
         $this->assertContains('doi', $sourceIdentifiers);
-        $this->assertContains('uri', $targetIdentifiers);
+        $this->assertContains('url', $targetIdentifiers);
 
         $creators = collect($links)->pluck('link')->pluck('source')->pluck('creator')->flatten(1);
         // TODO: Check Creators count is 3
@@ -158,9 +160,9 @@ class ScholixProviderRegressionTest extends \RegistryTestClass
         $scholix = ScholixProvider::get($record);
         $links = $scholix->toArray();
 
-        // should have 5 creators
+        // should have 6 creators
         $creators = $links[0]['link']['source']['creator'];
-        $this->assertEquals(5, count($creators));
+        $this->assertEquals(6, count($creators));
     }
 
     /** @test **/
@@ -203,9 +205,6 @@ class ScholixProviderRegressionTest extends \RegistryTestClass
         $sourceIdentifiers = collect($links)->pluck('link')->pluck('source')->pluck('identifier')->flatten(1)->pluck('schema')->toArray();
         $this->assertContains('doi', $sourceIdentifiers);
 
-        $targetIdentifiers = collect($links)->pluck('link')->pluck('target')->pluck('identifier')->flatten(1)->pluck('schema')->toArray();
-        $this->assertContains('Research Data Australia', $targetIdentifiers);
-
         $targetIdentifiers = collect($links)->pluck('link')->pluck('target')->pluck('identifier')->flatten(1)->pluck('identifier')->first();
         $this->assertRegExp("/view\?key=/", $targetIdentifiers);
 
@@ -240,27 +239,6 @@ class ScholixProviderRegressionTest extends \RegistryTestClass
         // TODO: Verify 42
 
         $this->assertTrue(true);
-    }
-
-    /** @test **/
-    public function it_should_regression_43()
-    {
-        $record = RegistryObjectsRepository::getPublishedByKey("AUTestingRecords2ScholixRecords43");
-        $scholix = ScholixProvider::get($record);
-        $links = $scholix->toArray();
-
-        /**
-         * Expected Result: 34 Link Info Packages with a link from the collection doi identifier to each publication identifier. And from the collection local identifier to each publication identifier.
-        Source publication date, creator and identifier shall be taken from citationMetadata.
-        CitationMetadata Creator name is display name for contributor (all nameParts Firstname, Surname)
-        2nd creator taken from relatedInfo isOwnedBy party.
-        3rd creator taken from reverse relatedInfo isCollectorOf party.
-         */
-
-        $this->assertEquals(34, count($links));
-
-        // check xml
-        $this->checkXML($scholix);
     }
 
     /** @test **/
