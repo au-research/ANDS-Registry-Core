@@ -9,6 +9,7 @@ use ANDS\Registry\Providers\RegistryContentProvider;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 use ANDS\Registry\Providers\RIFCS\SubjectProvider;
+use ANDS\Registry\RelationshipView;
 use ANDS\RegistryObject;
 
 class DublinCoreProvider implements RegistryContentProvider
@@ -101,6 +102,16 @@ class DublinCoreProvider implements RegistryContentProvider
         if ($friendlyDate) {
             $data['coverages'][] = "Temporal: ". $friendlyDate;
         }
+
+        // contributors are all parties and come in the form of
+        // title (relation)
+        $relatedParties = RelationshipView::where('from_id', $record->id)
+            ->where('to_class', 'party');
+        $contributors = $relatedParties->get()->map(function($relation){
+            return "{$relation->to_title} ({$relation->relation_type})";
+        })->toArray();
+        $data['contributors'] = collect($data['contributors'])
+            ->merge($contributors)->unique()->toArray();
 
         $subjects = SubjectProvider::processSubjects($record);
         $data['subjects'] = collect($data['subjects'])
