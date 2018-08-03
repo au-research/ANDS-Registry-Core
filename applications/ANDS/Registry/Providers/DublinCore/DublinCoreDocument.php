@@ -97,8 +97,7 @@ class DublinCoreDocument
         }
 
         foreach ($data['contributors'] as $contributor) {
-            $value = $contributor['title'] . " (".$contributor['relation'].")";
-            $root->addChild("dc:contributor", htmlspecialchars($value), $ns);
+            $root->addChild("dc:contributor", $contributor, $ns);
         }
 
         foreach ($data['subjects'] as $subject) {

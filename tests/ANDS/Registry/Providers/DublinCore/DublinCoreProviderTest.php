@@ -204,11 +204,35 @@ class DublinCoreProviderTest extends \RegistryTestClass
             return substr($coverage, 0, strlen("Temporal")) === "Temporal";
         })->toArray());
     }
-    
-    /** @test */
+
+    /** @test
+     * @throws \Exception
+     */
     function it_should_have_contributor_as_related_parties()
     {
-        
+        // given a record
+        $record = $this->stub(RegistryObject::class);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_all_elements.xml')
+        ]);
+
+        // relates to another party
+        $party = $this->stub(RegistryObject::class, ['class' => 'party']);
+        $this->stub(RegistryObject\Relationship::class, [
+            'registry_object_id' => $record->id,
+            'related_object_key' => $party->key,
+            'relation_type' => 'hasOwner'
+        ]);
+
+        // when get dc
+        $dc = DublinCoreProvider::get($record);
+
+        // has a contributor in the form of title (relation)
+        $sml = new \SimpleXMLElement($dc);
+        $sml->registerXPathNamespace("dc", DublinCoreDocument::$DCNamespace);
+        $actual = (string) array_first($sml->xpath('//dc:contributor'));
+        $this->assertEquals("$party->title (hasOwner)", $actual);
     }
 
     /** @test
