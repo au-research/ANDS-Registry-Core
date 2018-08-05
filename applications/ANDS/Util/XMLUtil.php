@@ -251,5 +251,9 @@ class XMLUtil
         return $this->validationMessage;
     }
 
+    public static function stripXMLHeader($xml)
+    {
+        return preg_replace("/<\?xml (.*)\?>/s", "", $xml);
+    }
 
 }

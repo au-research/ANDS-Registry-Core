@@ -5,6 +5,7 @@ namespace ANDS\RegistryObject;
 
 
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
+use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 use ANDS\Util\StrUtil;
 
 trait ExportToCSVTrait
@@ -40,8 +41,11 @@ trait ExportToCSVTrait
             $type = 'auxilary';
         }
 
+        // TODO: doi
+        // TODO: orcid
+
         return [
-            'key:ID' => $this->getResearchGraphID(),
+            'key:ID' => static::researchGraphID($this->id),
             'source' => 'ands.org.au',
             'local_id' => $this->key,
             'title' => StrUtil::sanitize($this->title),
@@ -52,13 +56,19 @@ trait ExportToCSVTrait
             'type' => $type,
             'ands_class' => $this->class,
             'ands_type' => $this->type,
-            'ands_data_source_id' => $this->data_source_id
+            'ands_data_source_id' => $this->data_source_id,
+            'doi' => collect($this->registryObjectIdentifiers)->filter(function($identifier) {
+                return $identifier->identifier_type === "doi";
+            })->pluck('identifier')->first() ?: '',
+            'orcid' => collect($this->registryObjectIdentifiers)->filter(function($identifier) {
+                return $identifier->identifier_type === "orcid";
+            })->pluck('identifier')->first() ?: '',
         ];
     }
 
-    public function getResearchGraphID()
+    public static function researchGraphID($id)
     {
-        return 'researchgraph.org/ands/'.$this->id;
+        return 'researchgraph.org/ands/'. $id;
     }
 
     /**

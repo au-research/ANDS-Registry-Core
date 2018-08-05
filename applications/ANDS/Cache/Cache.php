@@ -59,6 +59,10 @@ class Cache
      */
     public static function remember($key, $minutes, Closure $callback)
     {
+        if (!static::isEnabled()) {
+            return $callback();
+        }
+
         $value = static::cache()->get($key);
 
         if (! is_null($value)) {
@@ -76,6 +80,13 @@ class Cache
     public static function flush()
     {
         return static::cache()->clear();
+    }
+
+    public static function isEnabled()
+    {
+        $config = Config::get('app.cache');
+
+        return $config['enabled'];
     }
 
     /**

@@ -77,6 +77,13 @@ class Router
             $url = $_SERVER['REQUEST_URI'];
         }
 
+        $parsedUrl = parse_url(baseUrl());
+        $path = array_key_exists('path', $parsedUrl) ? $parsedUrl['path'] : null;
+        if ($path && $path !== "/") {
+            $url = str_replace($path, "", $url);
+            $url = str_pad($url, strlen($url) + 1, "/", STR_PAD_LEFT);
+        }
+
         if (!$requestMethod) {
             $requestMethod = $_SERVER['REQUEST_METHOD'];
         }

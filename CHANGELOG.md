@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ANDS Research Data Registry follows a quarterly release cycle
 
+## Release 28.1
+* Minor bug fixes and feature enhancements
+
 ## Release 28
 * Added `RelationshipsGraphProvider` for neo4j integration
 

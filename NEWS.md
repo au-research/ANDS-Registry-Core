@@ -1,3 +1,22 @@
+## Release 28.1
+
+Service Release 28.1 of ANDS Online Services is scheduled for implementation on 7 August 2018 from 8:00am - 12:00pm AEST. This release implements a number of enhancements to  Research Data Australia (RDA), IGSN Service and Research Vocabularies Australia (RVA). Below is the list of all the changes planned for this release.
+
+
+**Research Data Australia (RDA)**
+
+*Only display external link icon on the 'Access the data' button when linking to a page or location outside RDA (CC-2238)
+* Enhancements to relationship graph on the record view page:
+    * add an icon which links to a help document (CC-2235)
+    * add zoom controls (CC-2234)
+* Implementation of a more user friendly display of the record's contact information within the record view page (CC-2233)
+* Publish an updated RDA privacy policy (CC-2209)
+
+**RDA Registry**
+
+* Add user agent to harvest requests to ensure harvest endpoints requiring a user agent can be harvested from (CC-2244)
+
+
 ## Release 28
 
 ANDS Online Services Release 28 is due for implementation on Wednesday, 4 July 2018.  Please find below the summary of all R28 changes with an overview of who, what and how the changes will impact our users. 

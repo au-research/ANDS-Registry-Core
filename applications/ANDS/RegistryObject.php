@@ -39,7 +39,7 @@ class RegistryObject extends Model
     /** @var string */
     protected static $STATUS_PUBLISHED = 'PUBLISHED';
 
-    protected $fillable = ['key', 'title', 'status', 'group', 'data_source_id', 'class', 'type'];
+    protected $fillable = ['key', 'title', 'status', 'group', 'data_source_id', 'class', 'type', 'slug'];
 
 
     /**
@@ -84,7 +84,7 @@ class RegistryObject extends Model
         return $this->hasMany(RegistryObjectAttribute::class, 'registry_object_id', 'registry_object_id');
     }
 
-    public function identifiers()
+    public function registryObjectIdentifiers()
     {
         return $this->hasMany(Identifier::class, 'registry_object_id', 'registry_object_id');
     }

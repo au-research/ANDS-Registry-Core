@@ -6,6 +6,7 @@ namespace ANDS\Registry\Providers;
 
 use ANDS\DataSource;
 use ANDS\Registry\Group;
+use ANDS\Registry\Providers\DublinCore\DublinCoreProvider;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\Providers\Scholix\Scholix;
 use ANDS\RegistryObject;
@@ -13,6 +14,7 @@ use ANDS\RegistryObjectAttribute;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\XMLUtil;
 use Carbon\Carbon;
+use DCIMethod;
 use MinhD\OAIPMH\Exception\BadArgumentException;
 use MinhD\OAIPMH\Exception\CannotDisseminateFormat;
 use MinhD\OAIPMH\Exception\IdDoesNotExistException;
@@ -234,7 +236,7 @@ class OAIRecordRepository implements OAIRepository
         return $oaiRecord;
     }
 
-    private function addMetadata($oaiRecord, $record, $metadataFormat)
+    private function addMetadata(Record $oaiRecord, RegistryObject $record, $metadataFormat)
     {
         if ($metadataFormat == 'rif') {
             $metadata = "<registryObject />";
@@ -244,7 +246,10 @@ class OAIRecordRepository implements OAIRepository
             }
             $oaiRecord->setMetadata($metadata);
         } elseif ($metadataFormat == "oai_dc") {
-            // TODO DCI Provider?
+            $metadata = DublinCoreProvider::get($record);
+            $metadata = XMLUtil::stripXMLHeader($metadata);
+            $metadata = trim($metadata);
+            $oaiRecord->setMetadata($metadata);
         }
         return $oaiRecord;
     }
