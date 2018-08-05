@@ -193,9 +193,6 @@ class Extrif_Extension extends ExtensionBase
 				//$ds->append_log(var_export($xml->asXML(), true));
 				$this->ro->pruneExtrif();
 				$this->ro->updateXML($xml->asXML(),TRUE,'extrif');
-                if($this->ro->status == PUBLISHED){
-                    $this->ro->processLinks();
-                }
 
 				//return $this;
 			}

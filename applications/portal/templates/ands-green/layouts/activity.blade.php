@@ -22,7 +22,7 @@
                                                 [@include('registry_object/contents/existenceDates-list')]
                                             @endif
                                         </h1>
-                                        @if(isset($ro->core['alt_title']))
+                                        @if(isset($ro->core['alt_title']) && sizeof($ro->core['alt_title'])>0)
                                             @foreach($ro->core['alt_title'] as $aTitle)
                                                 @if($aTitle!=$ro->core['title'])
                                                  <small>Also known as:</small> {{$aTitle}}<br />

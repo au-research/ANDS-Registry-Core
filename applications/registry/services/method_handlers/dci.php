@@ -18,6 +18,8 @@ class DCIMethod extends MethodHandler
     public $index = null;
     public $xml = null;
     public $overrideExportable = null;
+    public $gXPath = null;
+
 	//var $params, $options, $formatter; 
    function handle()
    {
@@ -74,15 +76,16 @@ class DCIMethod extends MethodHandler
     function populate_resource($id, $overrideExportable = false) {
 
         //local SOLR index for fast searching
-        $ci =& get_instance();
-        $ci->load->library('solr');
-        $ci->solr->init();
-        $ci->solr->setOpt('q', 'id:'.$id);
-        $this->overrideExportable = $overrideExportable;
-        $result = $ci->solr->executeSearch(true);
-        if(sizeof($result['response']['docs']) == 1) {
-            $this->index = $result['response']['docs'][0];
-        }
+//        $ci =& get_instance();
+//        $ci->load->library('solr');
+//        $ci->solr->init();
+//        $ci->solr->setOpt('q', 'id:'.$id);
+//        $this->overrideExportable = $overrideExportable;
+//        $result = $ci->solr->executeSearch(true);
+//        if(sizeof($result['response']['docs']) == 1) {
+//            $this->index = $result['response']['docs'][0];
+//        }
+
         //local XML resource
         $xml = $this->ro->getSimpleXML();
         $xml = addXMLDeclarationUTF8(($xml->registryObject ? $xml->registryObject->asXML() : $xml->asXML()));

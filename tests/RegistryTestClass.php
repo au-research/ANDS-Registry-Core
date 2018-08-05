@@ -91,12 +91,14 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
     public function stub($class, $attributes = [], $count = 1)
     {
         if ($class == RegistryObject::class) {
+            $title = uniqid();
             $attrs = array_merge([
                 'key' => uniqid(),
-                'title' => uniqid(),
+                'title' => $title,
                 'status' => 'PUBLISHED',
                 'class' => 'collection',
                 'type' => 'dataset',
+                'slug' => str_slug($title),
                 'data_source_id' => $this->dataSource->id
             ], $attributes);
             $record = RegistryObject::create($attrs);

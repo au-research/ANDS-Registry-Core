@@ -4,6 +4,16 @@
         <div class="swatch-white" style="position:relative;">
             <div id="visualisation-overlay" class="visualisation-overlay"></div>
             <div id="visualisation-notice" class="visualisation-overlay">Click to explore relationships graph</div>
+            <div class="visualisation-toolbar">
+                <a href="javascript:;" id="zoom_in" tip="Zoom In" my="left middle" at="right middle"><i class="fa fa-plus"></i></a>
+                <a href="javascript:;" id="zoom_out" tip="Zoom Out" my="left middle" at="right middle"><i class="fa fa-minus"></i></a>
+                <a href="javascript:;" id="zoom_fit" tip="Fit to window" my="left middle" at="right middle"><i class="fa fa-bullseye"></i></a>
+                <a href="javascript:;" id="reset" tip="Reset" my="left middle" at="right middle"><i class="fa fa-refresh"></i></a>
+                <a href="javascript:;" title="Help" tip="Help" my="left middle" at="right middle" class="open_rda_help_modal"
+                   data-help-tab="graphview" data-toggle="modal" data-target="#help_modal">
+                    <i class="fa fa-question-circle"></i> Help
+                </a>
+            </div>
             <div id="graph-viz"></div>
             <a href="" id="toggle-visualisation"><i class="fa fa-sort"></i></a>
         </div>

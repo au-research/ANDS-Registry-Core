@@ -10,6 +10,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\Input;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 class GenericScript implements GenericScriptRunnable
 {
@@ -115,6 +116,22 @@ class GenericScript implements GenericScriptRunnable
     public function getCommand()
     {
         return $this->command;
+    }
+
+    /**
+     * @param $activity
+     * @param $closure
+     */
+    public function timedActivity($activity, $closure)
+    {
+        $this->log("$activity started");
+        $stopwatch = new Stopwatch();
+        $stopwatch->start('event');
+        call_user_func($closure);
+        $event = $stopwatch->stop('event');
+        $second = $event->getDuration() / 1000;
+        $megaBytes = $event->getMemory() / 1000000;
+        $this->log("\n$activity completed. duration: {$second}s. Memory Usage: {$megaBytes} MB");
     }
 }
 

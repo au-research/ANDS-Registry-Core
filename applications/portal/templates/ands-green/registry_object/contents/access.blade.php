@@ -7,7 +7,7 @@ if($ro->core['class']=='service'){
 
 ?>
 @if($ro->directaccess)
-    @if($ro->directaccess[0]['access_type']=='url' && count($ro->directaccess) == 1)
+    @if(($ro->directaccess[0]['access_type']=='url' || $ro->directaccess[0]['access_type']=='uri')  && count($ro->directaccess) == 1)
         @if(isset($ro->directaccess[0]['access_value']['href']))
             <a href="{{trim($ro->directaccess[0]['access_value']['href'])}}" ng-click="$event.preventDefault();access($event)" class="btn btn-lg btn-primary btn-block btn_access"><i class="fa fa-external-link"></i> Access the {{$textStr}}</a>
         @elseif(isset($ro->directaccess[0]['access_value']))
@@ -16,8 +16,8 @@ if($ro->core['class']=='service'){
 
     @endif
 
-    @if($ro->directaccess[0]['access_type']!='url' || count($ro->directaccess) > 1 )
-        <a href="" class="btn btn-lg btn-primary btn-block  btn_access" id="gotodata"><i class="fa fa-external-link"></i> Access the {{$textStr}}</a>
+    @if(($ro->directaccess[0]['access_type']!='url' && $ro->directaccess[0]['access_type']!='uri' ) || count($ro->directaccess) > 1 )
+        <a href="" class="btn btn-lg btn-primary btn-block  btn_access" id="gotodata"><i class="fa fa-chevron-down"></i> Access the {{$textStr}}</a>
         <div id="dataformats" class="formats_block">
         @foreach($ro->directaccess as $access)
             <?php
@@ -63,7 +63,7 @@ if($ro->core['class']=='service'){
     @endif
 @elseif($ro->contact)
 
-    <a href="" class="btn btn-lg btn-primary btn-block btn_access" id="gotodata"><i class="fa fa-external-link"></i>  Access the  {{$textStr}}</a>
+    <a href="" class="btn btn-lg btn-primary btn-block btn_access" id="gotodata"><i class="fa fa-chevron-down"></i>  Access the  {{$textStr}}</a>
     <div id="dataformats">
         <p>Please use the contact information below to request access to this {{$textStr}}.</p>
         @include('registry_object/contents/contact-info')

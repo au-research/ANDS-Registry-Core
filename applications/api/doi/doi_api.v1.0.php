@@ -74,7 +74,8 @@ class Doi_api
             'activate',
             'deactivate',
             'status',
-            'xml'
+            'xml',
+            'doistatus'
         ];
 
         if (in_array($this->params['submodule'], $validDOIRequests)) {
@@ -126,7 +127,6 @@ class Doi_api
         $split = explode('.', $this->params['submodule']);
         $method = $split[0];
         $format = array_key_exists(1, $split) ? $split[1] : 'string';
-
         // setting up the formatter, defaults to string if none is specified
         if ($format == "xml") {
             $this->outputFormat = "text/xml";
@@ -391,9 +391,7 @@ class Doi_api
         $requestBody = '';
         $responselog = array();
         $this->providesOwnResponse = true;
-        $client = 'unknown';
         $arrayFormater = new ArrayFormatter();
-        $dataCiteResponseCode = '200';
 
         if (isset($_SERVER['PHP_AUTH_USER'])) {
             $appID = $_SERVER['PHP_AUTH_USER'];
@@ -402,9 +400,6 @@ class Doi_api
         if (isset($_SERVER['PHP_AUTH_USER'])) {
             $sharedSecret = $_SERVER["PHP_AUTH_PW"];
         }
-
-
-
 
         //If the client has not provided their appid or shared secret - or has provided incorrect ones - then  set up what logging we can and return the datacite error message
         if (!$appID || !$sharedSecret) {
@@ -693,7 +688,7 @@ class Doi_api
             $this->doilog(
                 $arrayFormater->format($responselog),
                 'doi_' . ($manual ? 'm_' : '') . $responselog['activity'],
-                $client
+                $this->client
             );
         }
 

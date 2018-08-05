@@ -8,6 +8,7 @@ use ANDS\Commands\Script\GenericScript;
 use ANDS\Commands\Script\NLAPullBack;
 use ANDS\Commands\Script\ProcessDates;
 use ANDS\Commands\Script\ProcessGroups;
+use ANDS\Commands\Script\ProcessLinksScript;
 use ANDS\Commands\Script\ProcessScholix;
 use ANDS\Commands\Script\ProcessServiceLinksScript;
 use ANDS\Commands\Script\ProcessTitles;
@@ -30,7 +31,8 @@ class RunScriptCommand extends ANDSCommand
         "processServiceLinks" => ProcessServiceLinksScript::class,
         "nlaPullBack" => NLAPullBack::class,
         "dates" => ProcessDates::class,
-        "testScript" => TestScript::class
+        "testScript" => TestScript::class,
+        "processLinks" => ProcessLinksScript::class
     ];
 
     protected function configure()

@@ -10,7 +10,16 @@ return [
     'api_whitelist_ip' => explode(',', env('API_WHITELIST_IP', '')),
     'timezone' => env("TIMEZONE", 'Australia/Canberra'),
 
+    'storage' => [
+        'test' => [
+            'driver' => 'file',
+            'path' => 'tests/resources'
+        ]
+    ],
+
     'cache' => [
+        'enabled' => !!env("CACHE_ENABLED", 0),
+
         'default' => 'file',
 
         'storage' => [
@@ -20,6 +29,5 @@ return [
                 'ttl' => env('CACHE_FILE_TTL', 60)
             ]
         ]
-
     ]
 ];
