@@ -324,6 +324,20 @@ class RegistryObjectsRepository
 
     public static function getPublishedBy($filters)
     {
+        $query = static::getPublishedQuery($filters);
+
+        return $query->get();
+    }
+
+    public static function getCountPublished($filters)
+    {
+        $query = static::getPublishedQuery($filters);
+
+        return $query->count();
+    }
+
+    public static function getPublishedQuery($filters)
+    {
         $query = RegistryObject::where('status', 'PUBLISHED');
 
         // limit and offset
@@ -357,6 +371,22 @@ class RegistryObjectsRepository
             unset($filters['link']);
         }
 
+        // sync_status [UNSYNCED, DESYNCED]
+        // TODO make constants
+        if (array_key_exists('sync_status', $filters) && $filters['sync_status'] != "*") {
+            if ($filters['sync_status'] == "UNSYNCED") {
+                $query = $query->whereNull("synced_at");
+            } elseif ($filters['sync_status'] == "DESYNCED") {
+                $query = $query->whereColumn("synced_at", '<', 'modified_at');
+            } elseif ($filters['sync_status'] == "NEEDSYNC") {
+                $query = $query->where(function($query) {
+                    $query->whereNull('synced_at')->orWhereColumn('synced_at', '<', 'modified_at');
+                });
+            }
+
+            unset($filters['sync_status']);
+        }
+
         // core attributes
         foreach ($filters as $key => $value) {
             if ($value != "*") {
@@ -364,7 +394,10 @@ class RegistryObjectsRepository
             }
         }
 
-        return $query->get();
+//        var_dump($query->getBindings());
+//        dd($query->toSql());
+
+        return $query;
     }
 
     public static function getPublishedRecords($limit, $offset)
