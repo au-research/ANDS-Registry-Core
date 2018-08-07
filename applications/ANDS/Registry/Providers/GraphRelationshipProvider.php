@@ -382,6 +382,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
                     })
                     ->filter(function($node) use ($cluster) {
                         // has the same class and type as the cluster
+                        var_dump($node['properties']['type']);
                         return $node['properties']['class'] === $cluster['class']
                             && $node['properties']['type'] === $cluster['type'];
                     })
@@ -534,7 +535,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
                 'relation' => $record->get('relation'),
                 'labels' => $record->get('labels'),
                 'class' => $record->get('class'),
-                'type' => $record->get('type'),
+                'type' => $record->get('type') ?: "",
                 'count' => $record->get('total')
             ];
         }
@@ -646,6 +647,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
     {
         $nodes = [];
         $links = [];
+
         foreach ($over as $rel) {
 
             $key = md5($rel['relation'] . implode(',', $rel['labels']));

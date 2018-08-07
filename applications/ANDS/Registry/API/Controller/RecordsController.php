@@ -11,6 +11,19 @@ use ANDS\Repository\RegistryObjectsRepository;
 class RecordsController extends HTTPController implements RestfulController
 {
 
+    protected static $validFilters = [
+        'data_source_id',
+        'class',
+        'key',
+        'type',
+        'title',
+        'slug',
+        'group',
+        'identifier',
+        'link',
+        'sync_status'
+    ];
+
     public function index()
     {
         $filters = [
@@ -18,14 +31,14 @@ class RecordsController extends HTTPController implements RestfulController
             'offset' => request('offset', 0)
         ];
 
-        // maybe use as global valid filtering for registry object in general?
-        $validFilters = [
-            'data_source_id', 'class', 'key', 'type', 'title', 'slug', 'group',
-            'identifier', 'link'
-        ];
-
-        foreach ($validFilters as $filter) {
+        foreach (static::$validFilters as $filter) {
             $filters[$filter] = request($filter, '*');
+        }
+
+        if (request('summary')) {
+            return [
+                'count' => RegistryObjectsRepository::getCountPublished($filters)
+            ];
         }
 
         return RegistryObjectsRepository::getPublishedBy($filters);

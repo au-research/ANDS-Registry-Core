@@ -69,7 +69,9 @@ class Cache
             return $value;
         }
 
-        static::cache()->set($key, $value = $callback(), $minutes);
+        $value = $callback();
+
+        static::cache()->set($key, $value, $minutes);
 
         return $value;
     }
