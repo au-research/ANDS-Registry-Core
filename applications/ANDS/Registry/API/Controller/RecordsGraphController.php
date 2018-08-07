@@ -23,12 +23,12 @@ class RecordsGraphController
      */
     public function index($id)
     {
-        $useCache = !!Request::get('cache');
-        if ($useCache) {
+        $disableCache = !! Request::get('cache');
+        if (!$disableCache) {
             // caches by default
             // R28: does not accept custom parameters yet
             return Cache::remember("graph.$id", $this->cacheTTL, function() use ($id){
-                $this->getGraphForRecord($id);
+                return $this->getGraphForRecord($id);
             });
         }
 
