@@ -84,8 +84,6 @@ class RecordsGraphController
 
                 if (in_array($relationType, array_keys(GraphRelationshipProvider::$flippableRelation))) {
                     $relationType = array_search($relationType, GraphRelationshipProvider::$flippableRelation[$relationType]);
-                } elseif (in_array($relationType, array_values(GraphRelationshipProvider::$flippableRelation))){
-                    $relationType = array_search($relationType, GraphRelationshipProvider::$flippableRelation);
                 }
 
                 $filters = [
@@ -96,6 +94,20 @@ class RecordsGraphController
                 ];
 
                 $count = getSolrCountForQuery($filters);
+
+                // if the count is not correct, try flip the relation and get the count again
+                // TODO real fix is to determine if the relation has been flipped, only flip if it has been flipped
+                if ($count === 0 && in_array($relationType, array_values(GraphRelationshipProvider::$flippableRelation))) {
+                    $relationType = array_search($relationType, GraphRelationshipProvider::$flippableRelation);
+                    $filters = [
+                        'class' => $clusterClass,
+                        'type' => $clusterType,
+                        "related_{$searchClass}_id" => $record->id,
+                        'relation' => $relationType
+                    ];
+                    $count = getSolrCountForQuery($filters);
+                }
+
                 $classPlural = StrUtil::plural($clusterClass);
                 $cluster['properties'] = array_merge($cluster['properties'], [
                     'title' => "$count related $classPlural",
