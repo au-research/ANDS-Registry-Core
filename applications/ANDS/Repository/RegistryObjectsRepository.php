@@ -13,6 +13,7 @@ use ANDS\RegistryObject\Relationship;
 use ANDS\RegistryObject\IdentifierRelationship;
 use ANDS\RegistryObject\ImplicitRelationship;
 use ANDS\RecordData;
+use Carbon\Carbon;
 
 class RegistryObjectsRepository
 {
@@ -379,9 +380,16 @@ class RegistryObjectsRepository
             } elseif ($filters['sync_status'] == "DESYNCED") {
                 $query = $query->whereColumn("synced_at", '<', 'modified_at');
             } elseif ($filters['sync_status'] == "NEEDSYNC") {
+                // records that hasn't been synced at all
+                // records that hasn't been synced since it's last modified
+                // records that hasn't been synced in 1 week
+                // records that was not modified today
                 $query = $query->where(function($query) {
-                    $query->whereNull('synced_at')->orWhereColumn('synced_at', '<', 'modified_at');
+                    $query->whereNull('synced_at')
+                        ->orWhereColumn('synced_at', '<', 'modified_at')
+                        ->orWhere('synced_at', '<', Carbon::now()->addWeek(-1));
                 });
+                $query = $query->where('modified_at', '<', Carbon::now()->addDay(-1));
             }
 
             unset($filters['sync_status']);
