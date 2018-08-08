@@ -80,7 +80,9 @@
             </div>
         @endif
 
+        @if($ro->directaccess)
             @include('registry_object/contents/contact-info')
+        @endif
 
 
     </div>
