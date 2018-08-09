@@ -84,6 +84,5 @@
             @include('registry_object/contents/contact-info')
         @endif
 
-
     </div>
 </div>
