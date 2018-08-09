@@ -643,6 +643,11 @@ class Solr
                     break;
                 case 'related_party_one_id':
                 case 'related_party_multi_id':
+                    // find all identical records
+                    if (!is_array($value) && $target = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($value)) {
+                        $duplicates = collect($target->getDuplicateRecords())->pluck('registry_object_id')->toArray();
+                        $value = array_merge([$value], $duplicates);
+                    }
                     $this->setFilterQuery($key, $value);
                     break;
                 case 'related_collection_id':
