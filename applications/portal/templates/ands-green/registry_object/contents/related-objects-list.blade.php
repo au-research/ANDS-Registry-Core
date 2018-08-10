@@ -82,11 +82,11 @@
                 }],
                 onNodeDoubleClick: function(node) {
                     var url = api_url + 'registry/records/' + node.properties.roId + '/graph';
-                    node.loading = true;
+                    neo4jd3.setNodeLoading(node, true);
                     $.getJSON(url, function(data) {
                         var graph = neo4jd3.neo4jDataToD3Data(data);
                         neo4jd3.updateWithD3Data(graph);
-                        node.loading = false;
+                        neo4jd3.setNodeLoading(node, false);
                     });
                 },
                 onLoading: function() {

@@ -527,10 +527,13 @@
                 .attr('fill', '#ffffff')
                 .attr('x', '-12')
                 .attr('y', '-12')
+                .attr('id', function(d){
+                    return 'image_' + d.id
+                })
                 .attr('xlink:href', function(d) {
-                    var imageIcon = icon(d);
-                    return 'data:image/svg+xml;utf8,' + icon2svg(imageIcon);
-                    // return base_url + '/assets/templates/ands-green/fonts/' + icon(d);
+                    // var imageIcon = icon(d);
+                    // return 'data:image/svg+xml;utf8,' + icon2svg(imageIcon);
+                    return base_url + '/assets/templates/ands-green/fonts/' + icon(d);
                 })
         }
 
@@ -1136,16 +1139,27 @@
                         return classes;
                     });
 
-                node.selectAll('image')
-                    .attr('xlink:href', function(d) {
-                        var imageIcon = d.loading ? 'spinner-solid.svg' : icon(d);
-                        return 'data:image/svg+xml;utf8,' + icon2svg(imageIcon);
-                        // return base_url + '/assets/templates/ands-green/fonts/' + imageIcon;
-                    })
-                    .attr('class', function(d) {
-                        return d.loading ? 'spinner' :'';
-                    })
+                // node.selectAll('image')
+                //     .attr('xlink:href', function(d) {
+                //         var imageIcon = d.loading ? 'spinner-solid.svg' : icon(d);
+                //         return 'data:image/svg+xml;utf8,' + icon2svg(imageIcon);
+                //         // return base_url + '/assets/templates/ands-green/fonts/' + imageIcon;
+                //     })
+                //     .attr('class', function(d) {
+                //         return d.loading ? 'spinner' :'';
+                //     })
             }
+        }
+
+        function setNodeLoading(currentNode, isLoading) {
+            node.selectAll('#image_'+currentNode.id)
+                .attr('xlink:href', function(d) {
+                    var imageIcon = isLoading ? 'spinner-solid.svg' : icon(d);
+                    return base_url + '/assets/templates/ands-green/fonts/' + imageIcon;
+                })
+                .attr('class', function(d) {
+                    return isLoading ? 'spinner' :'';
+                })
         }
 
         /**
@@ -1441,6 +1455,7 @@
             zoomFit: zoomFit,
             zoomIn: zoomIn,
             zoomOut: zoomOut,
+            setNodeLoading:setNodeLoading,
             version: version
         };
     }
