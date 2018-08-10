@@ -382,7 +382,6 @@ class GraphRelationshipProvider implements RegistryContentProvider
                     })
                     ->filter(function($node) use ($cluster) {
                         // has the same class and type as the cluster
-                        var_dump($node['properties']['type']);
                         return $node['properties']['class'] === $cluster['class']
                             && $node['properties']['type'] === $cluster['type'];
                     })
