@@ -2227,29 +2227,6 @@ class Data_source extends MX_Controller {
 	    return ($a['quality_level'] < $b['quality_level']) ? -1 : 1;
 	}
 
-
-
-	/* Ben's chart report dashboard (google charts) */
-	function report($id){
-		//$data['report'] = $this->getDataSourceReport($id);
-		$data['title'] = 'Data Source Report';
-		$data['scripts'] = array('ds_chart');
-		$data['js_lib'] = array('core','googleapi');
-		$data['less']=array('charts');
-
-		$this->load->model("data_source/data_sources","ds");
-		$this->load->model("registry_object/registry_objects", "ro");
-
-		// ACL enforcement
-		acl_enforce('REGISTRY_USER');
-		ds_acl_enforce((int)$id);
-
-		$data['status_tabs'] = Registry_objects::$statuses;
-		$data['ds'] = $this->ds->getByID($id);
-
-		$this->load->view('chart_report', $data);
-	}
-
 	public function delete() {
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');

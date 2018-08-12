@@ -103,7 +103,6 @@
 		<ul class="nav nav-pills">
 			<li class="active view page-control"><a href="#!/view/{{ds.id}}">Dashboard</a></li>
 			<li class="mmr page-control"><a href="<?=base_url('data_source/manage_records/');?>/{{ds.id}}">Manage Records</a></li>
-			<li class="report page-control"><a href="<?=base_url('data_source/report/');?>/{{ds.id}}">Reports</a></li>
 			<li class="settings page-control"><a href="#!/settings/{{ds.id}}">Settings</a></li>
 		</ul>
 	</div>
@@ -494,7 +493,6 @@
 		<ul class="nav nav-pills">
 			<li class="view page-control"><a href="#!/view/{{ds.id}}">Dashboard</a></li>
 			<li class="mmr page-control"><a href="<?=base_url('data_source/manage_records/');?>/{{ds.id}}">Manage Records</a></li>
-			<li class="report page-control"><a href="<?=base_url('data_source/report/');?>/{{ds.id}}">Reports</a></li>
 			<li class="active settings page-control"><a href="#!/settings/{{ds.id}}">Settings</a></li>
 		</ul>
 	</div>
@@ -586,7 +584,6 @@
 		<ul class="nav nav-pills">
 			<li class="view page-control"><a href="#!/view/{{ds.id}}">Dashboard</a></li>
 			<li class="mmr page-control"><a href="<?=base_url('data_source/manage_records/');?>/{{ds.id}}">Manage Records</a></li>
-			<li class="report page-control"><a href="<?=base_url('data_source/report/');?>/{{ds.id}}">Reports</a></li>
 			<li class="active settings page-control"><a href="#!/settings/{{ds.id}}">Settings</a></li>
 		</ul>
 	</div>
