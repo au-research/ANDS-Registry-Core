@@ -252,15 +252,6 @@
 					</div>
 				</div>
 
-				<div class="widget-box">
-					<div class="widget-title"><h5>Data Source Quality Summary</h5></div>
-					<div class="widget-content nopadding">
-						<ul class="ro-list">
-							<li ng-repeat="status in ds.qlcounts" ng-click="mmr_link('quality_level', status.level)"><span class="name">Quality Level {{status.level}}</span><span class="num">{{status.count}}</span></li>
-						</ul>
-					</div>
-				</div>
-
 				<?php if ($this->user->hasFunction('REGISTRY_SUPERUSER')): ?>
 				<div class="widget-box">
 					<div class="widget-title"><h5>Data Source Downloaded Path</h5></div>
