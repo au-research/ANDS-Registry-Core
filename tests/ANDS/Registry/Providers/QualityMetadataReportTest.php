@@ -26,7 +26,7 @@ class QualityMetadataReportTest extends \RegistryTestClass
         // when get quality reports
         $report = QualityMetadataProvider::getMetadataReport($record);
 
-        // various CheckType are passing
+        // various CheckType are passing (not all)
         $types = [
             Types\CheckIdentifier::$name,
             Types\CheckLocation::$name,
@@ -166,10 +166,34 @@ class QualityMetadataReportTest extends \RegistryTestClass
         }
     }
 
-    /** @test */
+    /** @test
+     * @throws \Exception
+     */
     function it_validates_services()
     {
-        // TODO
+        // given a service
+        $record = $this->stub(RegistryObject::class, ['class' => 'service']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/service_quality.xml')
+        ]);
+
+        // when get reports
+        $report = QualityMetadataProvider::getMetadataReport($record);
+
+        // each of the following CheckType should pass
+        $types = [
+            Types\CheckIdentifier::$name,
+            Types\CheckLocation::$name,
+            Types\CheckDescription::$name,
+            Types\CheckRights::$name,
+            Types\CheckRelatedInformation::$name,
+            Types\CheckRelatedParties::$name,
+            Types\CheckSubject::$name,
+        ];
+        foreach ($types as $type) {
+            $this->checkType($type, $report);
+        }
     }
 
     /**

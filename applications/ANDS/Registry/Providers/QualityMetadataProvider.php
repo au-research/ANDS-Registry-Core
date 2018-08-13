@@ -40,7 +40,7 @@ class QualityMetadataProvider
         Types\CheckLocation::class,
         Types\CheckDescription::class,
         Types\CheckRights::class,
-        //Types\CheckRelatedInformation::class,
+        Types\CheckRelatedInformation::class,
         Types\CheckRelatedParties::class,
         Types\CheckSubject::class,
     ];
