@@ -52,12 +52,13 @@ class QualityMetadataProvider
         }
 
         // originatingSource is required
-        if (count($sm->xpath('//ro:originatingSource')) === 0) {
+        $originatingSource = (string) $sm->xpath('//ro:originatingSource')[0];
+        if (!trim($originatingSource)) {
             throw new \InvalidArgumentException("originatingSource is mandatory");
         }
 
         // group is required
-        $group = (string) $sm->xpath("//ro:{$class}")[0]['group'];
+        $group = (string) $sm->xpath("//ro:registryObject")[0]['group'];
         if (!trim($group)) {
             throw new \InvalidArgumentException("group is mandatory");
         }
