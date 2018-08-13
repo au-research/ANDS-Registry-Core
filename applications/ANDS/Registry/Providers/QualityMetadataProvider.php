@@ -4,11 +4,9 @@
 namespace ANDS\Registry\Providers;
 
 
-use ANDS\Registry\RelationshipView;
+use ANDS\Registry\Providers\Quality\Types;
 use ANDS\RegistryObject;
 use ANDS\Util\XMLUtil;
-use ANDS\Registry\Providers\RelationshipProvider;
-
 
 /**
  * Class  QualityMetadataProvider
@@ -16,10 +14,6 @@ use ANDS\Registry\Providers\RelationshipProvider;
  */
 class QualityMetadataProvider
 {
-    // constants for metadata reporting
-    public static $PASS = 'pass';
-    public static $FAIL = 'fail';
-
     // future
     private static $attributeKeys = ['quality_level', 'warning_count', 'error_count'];
     // private static $metadataKeys = ['level_html', 'quality_html'];
@@ -97,8 +91,27 @@ class QualityMetadataProvider
     {
         // for collection
         switch ($record->class) {
-            case "collection": return self::collectionMetadataReport($record); break;
-            case "party": return self::partyMetadataReport($record); break;
+            case "collection":
+                return self::reports($record, [
+                    Types\CheckIdentifier::class,
+                    Types\CheckLocation::class,
+                    Types\CheckCitationInfo::class,
+                    Types\CheckRights::class,
+                    Types\CheckRelatedOutputs::class,
+                    Types\CheckRelatedParties::class,
+                    Types\CheckRelatedActivity::class,
+                    Types\CheckRelatedService::class,
+                    Types\CheckSubject::class,
+                    Types\CheckCoverage::class,
+                ]);
+                break;
+            case "party":
+                return self::reports($record, [
+                    Types\CheckIdentifier::class,
+                    // CHECKLOCATIONADRESS,
+                    Types\CheckRelatedParties::class,
+
+                ]); break;
             case "service": return self::serviceMetadataReport($record); break;
             case "activity": return self::activityMetadataReport($record);break;
             default:
@@ -108,113 +121,23 @@ class QualityMetadataProvider
 
     /**
      * @param RegistryObject $record
+     * @param array $checks
      * @return array
      * @throws \Exception
      */
-    public static function collectionMetadataReport(RegistryObject $record)
+    public static function reports(RegistryObject $record, array $checks)
     {
         $xml = $record->getCurrentData()->data;
         $sm = XMLUtil::getSimpleXMLFromString($xml);
+
         $report = [];
-
-        // Includes an identifier such as a DOI, that uniquely identifies the data
-        $report[] = $check = [
-            'msg' => 'Includes an identifier such as a DOI, that uniquely identifies the data',
-            'name' => 'identifier',
-            'status' => count($sm->xpath('//ro:identifier')) ? static::$PASS : static::$FAIL
-        ];
-
-        // Provides access to, or information about how to access, the data being described
-        $report[] = $check = [
-            'msg' => 'Provides access to, or information about how to access, the data being described',
-            'name' => 'location',
-            'status' => count($sm->xpath('//ro:location')) ? static::$PASS : static::$FAIL
-        ];
-
-        // Includes citation information that clearly indicates how the data should be cited when reused
-        $report[] = $check = [
-            'msg' => 'Includes citation information that clearly indicates how the data should be cited when reused',
-            'name' => 'citationInfo',
-            'status' => count($sm->xpath('//ro:citationInfo')) ? static::$PASS : static::$FAIL
-        ];
-
-        // Includes access rights and licence information that specifies how the data may be reused by others
-        $report[] = $check = [
-            'msg' => 'Includes access rights and licence information that specifies how the data may be reused by others',
-            'name' => 'rights',
-            'status' => count($sm->xpath('//ro:rights')) ? static::$PASS : static::$FAIL
-        ];
-
-        // Is connected to related outputs, such as publications, that give context to the data
-        $validRelatedInfoType = [
-            "dataQualityInformation",
-            "metadata",
-            "publication",
-            "provenance",
-            "reuseInformation",
-            "website"
-        ];
-        $relatedInfoTypes = [];
-        foreach ($sm->xpath("//ro:relatedInfo/@type") as $type) {
-            $relatedInfoTypes[] = (string) $type;
+        foreach ($checks as $checkClassName) {
+            /** @var Types\CheckType $check */
+            $check = new $checkClassName($record, $sm);
+            $report[] = $check->toArray();
         }
-        $intersect = array_intersect($validRelatedInfoType, $relatedInfoTypes);
-
-        $report[] = $check = [
-            'msg' => 'Is connected to related outputs, such as publications, that give context to the data',
-            'name' => 'relatedOutputs',
-            'status' => count($intersect) ? static::$PASS : static::$FAIL
-        ];
-
-        // Is connected to people and organisations associated with the data to improve discovery
-        $hasRelatedInfoParties = in_array("party", $relatedInfoTypes);
-        $hasRelatedObjectParties = $record->relationshipViews->where('to_class', 'party')->count() > 0;
-
-        $report[] = $check = [
-            'msg' => 'Is connected to people and organisations associated with the data to improve discovery',
-            'name' => 'relatedParties',
-            'status' => $hasRelatedInfoParties || $hasRelatedObjectParties ? static::$PASS : static::$FAIL
-        ];
-
-        // Is connected to projects associated with the data to improve discovery and provide context
-        $hasRelatedInfoActivity = in_array("activity", $relatedInfoTypes);
-        $hasRelatedbjectActivity = $record->relationshipViews->where('to_class', 'activity')->count() > 0;
-
-        $report[] = $check = [
-            'msg' => 'Is connected to projects associated with the data to improve discovery and provide context',
-            'name' => 'relatedActivities',
-            'status' => $hasRelatedInfoActivity || $hasRelatedbjectActivity ? static::$PASS : static::$FAIL
-        ];
-
-        // Is connected to services that can be used to access or operate on the data
-        $hasRelatedInfoService = in_array("service", $relatedInfoTypes);
-        $hasRelatedbjectService = $record->relationshipViews->where('to_class', 'service')->count() > 0;
-
-        $report[] = $check = [
-            'msg' => 'Is connected to services that can be used to access or operate on the data',
-            'name' => 'relatedServices',
-            'status' => $hasRelatedInfoService || $hasRelatedbjectService ? static::$PASS : static::$FAIL
-        ];
-
-        // Contains subject information to enhance discovery
-        $report[] = $check = [
-            'msg' => 'Contains subject information to enhance discovery',
-            'name' => 'subject',
-            'status' => count($sm->xpath('//ro:subject')) ? static::$PASS : static::$FAIL
-        ];
-
-        // Where relevant,
-        // provides spatial and/or temporal coverage information that helps researchers find data that relates to a
-        // geographical area or time period of interest
-        $report[] = $check = [
-            'msg' => 'Where relevant, provides spatial and/or temporal coverage information that helps researchers find data that relates to a geographical area or time period of interest',
-            'name' => 'coverage',
-            'status' => count($sm->xpath('//ro:coverage')) ? static::$PASS : static::$FAIL
-        ];
-
         return $report;
     }
-
     /**
      * Delete all qualityInfo for a record
      *
