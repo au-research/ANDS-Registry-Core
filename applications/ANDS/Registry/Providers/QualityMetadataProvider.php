@@ -7,6 +7,7 @@ namespace ANDS\Registry\Providers;
 use ANDS\Registry\Providers\Quality\Types;
 use ANDS\RegistryObject;
 use ANDS\Util\XMLUtil;
+use MongoDB\BSON\Type;
 
 /**
  * Class  QualityMetadataProvider
@@ -14,6 +15,47 @@ use ANDS\Util\XMLUtil;
  */
 class QualityMetadataProvider
 {
+    public static $collectionChecks = [
+        Types\CheckIdentifier::class,
+        Types\CheckLocation::class,
+        Types\CheckCitationInfo::class,
+        Types\CheckRights::class,
+        Types\CheckRelatedOutputs::class,
+        Types\CheckRelatedParties::class,
+        Types\CheckRelatedActivity::class,
+        Types\CheckRelatedService::class,
+        Types\CheckSubject::class,
+        Types\CheckCoverage::class,
+    ];
+
+    public static $partyChecks = [
+        Types\CheckIdentifier::class,
+        Types\CheckLocationAddress::class,
+        Types\CheckRelatedActivity::class,
+        Types\CheckRelatedOutputs::class,
+    ];
+
+    public static $serviceChecks = [
+        Types\CheckIdentifier::class,
+        Types\CheckLocation::class,
+        Types\CheckDescription::class,
+        Types\CheckRights::class,
+        //Types\CheckRelatedInformation::class,
+        Types\CheckRelatedParties::class,
+        Types\CheckSubject::class,
+    ];
+
+    public static $activityChecks = [
+        Types\CheckIdentifier::class,
+        Types\CheckLocationAddress::class,
+        Types\CheckRelatedParties::class,
+        Types\CheckRelatedService::class,
+        Types\CheckRelatedOutputs::class,
+        Types\CheckSubject::class,
+        Types\CheckDescription::class,
+        Types\CheckExistenceDate::class
+    ];
+
     // future
     private static $attributeKeys = ['quality_level', 'warning_count', 'error_count'];
     // private static $metadataKeys = ['level_html', 'quality_html'];
@@ -27,6 +69,8 @@ class QualityMetadataProvider
      *
      * @param RegistryObject $record
      */
+
+
     public static function process(RegistryObject $record)
     {
         static::deleteQualityInfo($record);
@@ -92,40 +136,19 @@ class QualityMetadataProvider
         // for collection
         switch ($record->class) {
             case "collection":
-                return self::reports($record, [
-                    Types\CheckIdentifier::class,
-                    Types\CheckLocation::class,
-                    Types\CheckCitationInfo::class,
-                    Types\CheckRights::class,
-                    Types\CheckRelatedOutputs::class,
-                    Types\CheckRelatedParties::class,
-                    Types\CheckRelatedActivity::class,
-                    Types\CheckRelatedService::class,
-                    Types\CheckSubject::class,
-                    Types\CheckCoverage::class,
-                ]);
+                return self::reports($record, self::$collectionChecks);
                 break;
             case "party":
-                return self::reports($record, [
-                    Types\CheckIdentifier::class,
-                    // CHECKLOCATIONADRESS,
-                    Types\CheckRelatedParties::class,
-
-                ]); break;
-            case "service": return self::serviceMetadataReport($record); break;
+                return self::reports($record, self::$partyChecks);
+                break;
+            case "service":
+                return self::reports($record, self::$serviceChecks);
+                break;
             case "activity":
-                return self::reports($record, [
-                    Types\CheckIdentifier::class,
-                    Types\CheckLocationAddress::class,
-                    Types\CheckRelatedParties::class,
-                    Types\CheckRelatedService::class,
-                    Types\CheckRelatedOutputs::class,
-                    Types\CheckSubject::class,
-                    Types\CheckDescription::class,
-                    Types\CheckExistenceDate::class
-                ]); break;
+                return self::reports($record, self::$activityChecks);
+                break;
             default:
-                throw new \InvalidArgumentException("class: $class does not have a metadata report");
+                throw new \InvalidArgumentException("class: {$record->class} does not have a metadata report");
         }
     }
 
@@ -138,12 +161,12 @@ class QualityMetadataProvider
     public static function reports(RegistryObject $record, array $checks)
     {
         $xml = $record->getCurrentData()->data;
-        $sm = XMLUtil::getSimpleXMLFromString($xml);
+        $simpleXML = XMLUtil::getSimpleXMLFromString($xml);
 
         $report = [];
         foreach ($checks as $checkClassName) {
             /** @var Types\CheckType $check */
-            $check = new $checkClassName($record, $sm);
+            $check = new $checkClassName($record, $simpleXML);
             $report[] = $check->toArray();
         }
         return $report;
