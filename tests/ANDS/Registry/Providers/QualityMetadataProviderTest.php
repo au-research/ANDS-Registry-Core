@@ -55,4 +55,24 @@ class QualityMetadataProviderTest extends \RegistryTestClass
         $this->setExpectedException('InvalidArgumentException');
         QualityMetadataProvider::validate($xml);
     }
+
+    /** @test
+     * @throws \Exception
+     */
+    function it_validates_record_without_group()
+    {
+        $xml = Storage::disk('test')->get('rifcs/collection_no_group.xml');
+        $this->setExpectedException('InvalidArgumentException');
+        QualityMetadataProvider::validate($xml);
+    }
+
+    /** @test
+     * @throws \Exception
+     */
+    function it_validates_record_without_originatingSource()
+    {
+        $xml = Storage::disk('test')->get('rifcs/collection_no_originatingSource.xml');
+        $this->setExpectedException('InvalidArgumentException');
+        QualityMetadataProvider::validate($xml);
+    }
 }

@@ -43,14 +43,30 @@ class QualityMetadataProvider
     public static function validate($xml)
     {
         $sm = XMLUtil::getSimpleXMLFromString($xml);
+        $key = (string) $sm->xpath('//ro:key')[0];
+        $class = XMLUtil::getRegistryObjectClass($xml);
+
+        // key is required
+        if (!trim($key)) {
+            throw new \InvalidArgumentException("key is mandatory");
+        }
+
+        // originatingSource is required
+        if (count($sm->xpath('//ro:originatingSource')) === 0) {
+            throw new \InvalidArgumentException("originatingSource is mandatory");
+        }
+
+        // group is required
+        $group = (string) $sm->xpath("//ro:{$class}")[0]['group'];
+        if (!trim($group)) {
+            throw new \InvalidArgumentException("group is mandatory");
+        }
 
         // must have a title (provided by names)
         $names = $sm->xpath('//ro:name');
         if (count($names) === 0) {
             throw new \InvalidArgumentException("title is mandatory");
         }
-
-        $class = XMLUtil::getRegistryObjectClass($xml);
 
         // (collection only) must have a description
         if ($class === "collection" && count($sm->xpath("//ro:description")) === 0) {
