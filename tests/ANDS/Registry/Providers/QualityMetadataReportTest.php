@@ -28,13 +28,13 @@ class QualityMetadataReportTest extends \RegistryTestClass
 
         // various CheckType are passing (not all)
         $types = [
-            Types\CheckIdentifier::$name,
-            Types\CheckLocation::$name,
-            Types\CheckCitationInfo::$name,
-            Types\CheckRelatedService::$name,
-            Types\CheckRelatedOutputs::$name,
-            Types\CheckSubject::$name,
-            Types\CheckCoverage::$name
+            Types\CheckIdentifier::class,
+            Types\CheckLocation::class,
+            Types\CheckCitationInfo::class,
+            Types\CheckRelatedService::class,
+            Types\CheckRelatedOutputs::class,
+            Types\CheckSubject::class,
+            Types\CheckCoverage::class
         ];
         foreach ($types as $type) {
             $this->checkType($type, $report);
@@ -60,7 +60,7 @@ class QualityMetadataReportTest extends \RegistryTestClass
         // when get reports
         $report = QualityMetadataProvider::getMetadataReport($record);
 
-        $this->checkType(Types\CheckRelatedParties::$name, $report);
+        $this->checkType(Types\CheckRelatedParties::class, $report);
     }
 
     /** @test
@@ -82,7 +82,7 @@ class QualityMetadataReportTest extends \RegistryTestClass
         // when get reports
         $report = QualityMetadataProvider::getMetadataReport($record);
 
-        $this->checkType(Types\CheckRelatedActivity::$name, $report);
+        $this->checkType(Types\CheckRelatedActivity::class, $report);
     }
 
     /** @test
@@ -104,8 +104,7 @@ class QualityMetadataReportTest extends \RegistryTestClass
         // when get reports
         $report = QualityMetadataProvider::getMetadataReport($record);
 
-
-        $this->checkType(Types\CheckRelatedService::$name, $report);
+        $this->checkType(Types\CheckRelatedService::class, $report);
     }
 
     /** @test
@@ -124,17 +123,7 @@ class QualityMetadataReportTest extends \RegistryTestClass
         $report = QualityMetadataProvider::getMetadataReport($record);
 
         // each of the following CheckType should pass
-        $types = [
-            Types\CheckIdentifier::$name,
-            Types\CheckLocationAddress::$name,
-            Types\CheckRelatedParties::$name,
-            Types\CheckRelatedService::$name,
-            Types\CheckRelatedOutputs::$name,
-            Types\CheckSubject::$name,
-            Types\CheckDescription::$name,
-            Types\CheckExistenceDate::$name
-        ];
-        foreach ($types as $type) {
+        foreach (QualityMetadataProvider::$activityChecks as $type) {
             $this->checkType($type, $report);
         }
     }
@@ -155,13 +144,7 @@ class QualityMetadataReportTest extends \RegistryTestClass
         $report = QualityMetadataProvider::getMetadataReport($record);
 
         // each of the following CheckType should pass
-        $types = [
-            Types\CheckIdentifier::$name,
-            Types\CheckLocationAddress::$name,
-            Types\CheckRelatedActivity::$name,
-            Types\CheckRelatedOutputs::$name,
-        ];
-        foreach ($types as $type) {
+        foreach (QualityMetadataProvider::$partyChecks as $type) {
             $this->checkType($type, $report);
         }
     }
@@ -182,16 +165,7 @@ class QualityMetadataReportTest extends \RegistryTestClass
         $report = QualityMetadataProvider::getMetadataReport($record);
 
         // each of the following CheckType should pass
-        $types = [
-            Types\CheckIdentifier::$name,
-            Types\CheckLocation::$name,
-            Types\CheckDescription::$name,
-            Types\CheckRights::$name,
-            Types\CheckRelatedInformation::$name,
-            Types\CheckRelatedParties::$name,
-            Types\CheckSubject::$name,
-        ];
-        foreach ($types as $type) {
+        foreach (QualityMetadataProvider::$serviceChecks as $type) {
             $this->checkType($type, $report);
         }
     }

@@ -6,8 +6,6 @@ namespace ANDS\Registry\Providers\Quality\Types;
 
 class CheckRights extends CheckType
 {
-    public static $name = 'rights';
-
     /**
      * Returns the status of the check
      *

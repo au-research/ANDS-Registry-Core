@@ -6,8 +6,6 @@ namespace ANDS\Registry\Providers\Quality\Types;
 
 class CheckLocationAddress extends CheckType
 {
-    public static $name = "locationAddress";
-
     /**
      * Returns the status of the check
      *

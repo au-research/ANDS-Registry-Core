@@ -13,9 +13,6 @@ abstract class CheckType
     public static $PASS = 'pass';
     public static $FAIL = 'fail';
 
-    protected $msg = '';
-    public static $name = 'check';
-
     /** @var RegistryObject */
     protected $record;
 
@@ -50,8 +47,7 @@ abstract class CheckType
     public function toArray() {
         $this->result = $this->check();
         return [
-            'msg' => $this->msg,
-            'name' => static::$name,
+            'name' => get_class($this),
             'status' => $this->result ? static::$PASS : static::$FAIL
         ];
     }

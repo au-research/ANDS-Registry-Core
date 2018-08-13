@@ -6,8 +6,6 @@ namespace ANDS\Registry\Providers\Quality\Types;
 
 class CheckRelatedOutputs extends CheckType
 {
-    public static $name = "relatedOutputs";
-
     /**
      * Returns the status of the check
      *
