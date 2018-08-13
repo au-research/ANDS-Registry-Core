@@ -16,46 +16,6 @@ use ANDS\Util\XMLUtil;
  */
 class QualityMetadataProvider
 {
-    public static $collectionChecks = [
-        Types\CheckIdentifier::class,
-        Types\CheckLocation::class,
-        Types\CheckCitationInfo::class,
-        Types\CheckRights::class,
-        Types\CheckRelatedOutputs::class,
-        Types\CheckRelatedParties::class,
-        Types\CheckRelatedActivity::class,
-        Types\CheckRelatedService::class,
-        Types\CheckSubject::class,
-        Types\CheckCoverage::class,
-    ];
-
-    public static $partyChecks = [
-        Types\CheckIdentifier::class,
-        Types\CheckLocationAddress::class,
-        Types\CheckRelatedActivity::class,
-        Types\CheckRelatedOutputs::class,
-    ];
-
-    public static $serviceChecks = [
-        Types\CheckIdentifier::class,
-        Types\CheckLocation::class,
-        Types\CheckDescription::class,
-        Types\CheckRights::class,
-        Types\CheckRelatedInformation::class,
-        Types\CheckRelatedParties::class,
-        Types\CheckSubject::class,
-    ];
-
-    public static $activityChecks = [
-        Types\CheckIdentifier::class,
-        Types\CheckLocationAddress::class,
-        Types\CheckRelatedParties::class,
-        Types\CheckRelatedService::class,
-        Types\CheckRelatedOutputs::class,
-        Types\CheckSubject::class,
-        Types\CheckDescription::class,
-        Types\CheckExistenceDate::class
-    ];
 
     // future
     private static $attributeKeys = ['quality_level', 'warning_count', 'error_count'];
@@ -134,23 +94,21 @@ class QualityMetadataProvider
      */
     public static function getMetadataReport(RegistryObject $record)
     {
-        // for collection
-        switch ($record->class) {
-            case "collection":
-                return self::reports($record, self::$collectionChecks);
-                break;
-            case "party":
-                return self::reports($record, self::$partyChecks);
-                break;
-            case "service":
-                return self::reports($record, self::$serviceChecks);
-                break;
-            case "activity":
-                return self::reports($record, self::$activityChecks);
-                break;
-            default:
-                throw new \InvalidArgumentException("class: {$record->class} does not have a metadata report");
-        }
+        $checks = self::getChecksForClass($record->class);
+
+        return self::reports($record, $checks);
+    }
+
+    /**
+     * @param $class
+     * @return array
+     * @throws \Exception
+     */
+    public static function getChecksForClass($class)
+    {
+        $config = Config::get('quality.checks');
+
+        return array_keys($config[$class]);
     }
 
     /**
@@ -163,15 +121,17 @@ class QualityMetadataProvider
     {
         $xml = $record->getCurrentData()->data;
         $simpleXML = XMLUtil::getSimpleXMLFromString($xml);
-        $descriptors = Config::get('quality.descriptors');
+        $config = Config::get('quality.checks');
 
         $report = [];
         foreach ($checks as $checkClassName) {
             /** @var Types\CheckType $check */
             $check = new $checkClassName($record, $simpleXML);
             $result = $check->toArray();
-            $result['descriptor'] = isset($descriptors[$record->class][$checkClassName])
-                ? $descriptors[$record->class][$checkClassName]
+
+            // get the descriptor from the config
+            $result['descriptor'] = isset($config[$record->class][$checkClassName])
+                ? $config[$record->class][$checkClassName]
                 : $checkClassName;
             $report[] = $result;
         }

@@ -124,7 +124,7 @@ class QualityMetadataReportTest extends \RegistryTestClass
         $report = QualityMetadataProvider::getMetadataReport($record);
 
         // each of the following CheckType should pass
-        foreach (QualityMetadataProvider::$activityChecks as $type) {
+        foreach (QualityMetadataProvider::getChecksForClass('activity') as $type) {
             $this->checkType($type, $report);
         }
     }
@@ -145,7 +145,7 @@ class QualityMetadataReportTest extends \RegistryTestClass
         $report = QualityMetadataProvider::getMetadataReport($record);
 
         // each of the following CheckType should pass
-        foreach (QualityMetadataProvider::$partyChecks as $type) {
+        foreach (QualityMetadataProvider::getChecksForClass('party') as $type) {
             $this->checkType($type, $report);
         }
     }
@@ -166,7 +166,7 @@ class QualityMetadataReportTest extends \RegistryTestClass
         $report = QualityMetadataProvider::getMetadataReport($record);
 
         // each of the following CheckType should pass
-        foreach (QualityMetadataProvider::$serviceChecks as $type) {
+        foreach (QualityMetadataProvider::getChecksForClass('service') as $type) {
             $this->checkType($type, $report);
         }
     }

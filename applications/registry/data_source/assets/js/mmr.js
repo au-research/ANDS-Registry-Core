@@ -368,7 +368,7 @@ function initLayout(){
                     dataType: 'text',
                     success: function(data, status) {
                         this.set('content.text', data);
-                        formatTip(this);
+                        // formatTip(this);
                     }
                 }
             },
@@ -438,6 +438,7 @@ function formatTip(tt){
     for(var i=1;i<=3;i++){
         $('*[level='+i+']', tooltip).wrapAll('<div class="qa_container" qld="'+i+'"></div>');
     }
+
     //add the toggle header
     $('.qa_container', tooltip).prepend('<div class="toggleQAtip"></div>');
     $('.toggleQAtip', tooltip).each(function(){
