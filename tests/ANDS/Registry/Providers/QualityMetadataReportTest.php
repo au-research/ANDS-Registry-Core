@@ -6,16 +6,7 @@ namespace ANDS\Registry\Providers;
 
 use ANDS\File\Storage;
 use ANDS\RecordData;
-use ANDS\Registry\Providers\Quality\Types\CheckCitationInfo;
-use ANDS\Registry\Providers\Quality\Types\CheckCoverage;
-use ANDS\Registry\Providers\Quality\Types\CheckIdentifier;
-use ANDS\Registry\Providers\Quality\Types\CheckLocation;
-use ANDS\Registry\Providers\Quality\Types\CheckRelatedActivity;
-use ANDS\Registry\Providers\Quality\Types\CheckRelatedOutputs;
-use ANDS\Registry\Providers\Quality\Types\CheckRelatedParties;
-use ANDS\Registry\Providers\Quality\Types\CheckRelatedService;
-use ANDS\Registry\Providers\Quality\Types\CheckSubject;
-use ANDS\Registry\Providers\Quality\Types\CheckType;
+use ANDS\Registry\Providers\Quality\Types;
 use ANDS\RegistryObject;
 
 class QualityMetadataReportTest extends \RegistryTestClass
@@ -37,13 +28,13 @@ class QualityMetadataReportTest extends \RegistryTestClass
 
         // various CheckType are passing
         $types = [
-            CheckIdentifier::$name,
-            CheckLocation::$name,
-            CheckCitationInfo::$name,
-            CheckRelatedService::$name,
-            CheckRelatedOutputs::$name,
-            CheckSubject::$name,
-            CheckCoverage::$name
+            Types\CheckIdentifier::$name,
+            Types\CheckLocation::$name,
+            Types\CheckCitationInfo::$name,
+            Types\CheckRelatedService::$name,
+            Types\CheckRelatedOutputs::$name,
+            Types\CheckSubject::$name,
+            Types\CheckCoverage::$name
         ];
         foreach ($types as $type) {
             $this->checkType($type, $report);
@@ -69,7 +60,7 @@ class QualityMetadataReportTest extends \RegistryTestClass
         // when get reports
         $report = QualityMetadataProvider::getMetadataReport($record);
 
-        $this->checkType(CheckRelatedParties::$name, $report);
+        $this->checkType(Types\CheckRelatedParties::$name, $report);
     }
 
     /** @test
@@ -91,7 +82,7 @@ class QualityMetadataReportTest extends \RegistryTestClass
         // when get reports
         $report = QualityMetadataProvider::getMetadataReport($record);
 
-        $this->checkType(CheckRelatedActivity::$name, $report);
+        $this->checkType(Types\CheckRelatedActivity::$name, $report);
     }
 
     /** @test
@@ -114,7 +105,7 @@ class QualityMetadataReportTest extends \RegistryTestClass
         $report = QualityMetadataProvider::getMetadataReport($record);
 
 
-        $this->checkType(CheckRelatedService::$name, $report);
+        $this->checkType(Types\CheckRelatedService::$name, $report);
     }
 
     /** @test
@@ -134,14 +125,14 @@ class QualityMetadataReportTest extends \RegistryTestClass
 
         // each of the following CheckType should pass
         $types = [
-            CheckIdentifier::$name,
-//            CheckLocationAddress::$name,
-//            'relatedParties',
-//            'relatedService',
-//            'relatedCollections',
-//            'subject',
-//            'description',
-//            'existenceDate'
+            Types\CheckIdentifier::$name,
+            Types\CheckLocationAddress::$name,
+            Types\CheckRelatedParties::$name,
+            Types\CheckRelatedService::$name,
+            Types\CheckRelatedOutputs::$name,
+            Types\CheckSubject::$name,
+            Types\CheckDescription::$name,
+            Types\CheckExistenceDate::$name
         ];
         foreach ($types as $type) {
             $this->checkType($type, $report);
@@ -150,12 +141,12 @@ class QualityMetadataReportTest extends \RegistryTestClass
 
     /**
      * Helper function to quickly check a name type
-     * 
+     *
      * @param $type
      * @param $report
      */
     private function checkType($type, $report) {
         $actual = collect($report)->where('name', $type)->first();
-        $this->assertEquals(CheckType::$PASS, $actual['status'], "$type is passing");
+        $this->assertEquals(Types\CheckType::$PASS, $actual['status'], "$type is passing");
     }
 }

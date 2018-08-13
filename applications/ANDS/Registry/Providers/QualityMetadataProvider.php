@@ -116,13 +116,13 @@ class QualityMetadataProvider
             case "activity":
                 return self::reports($record, [
                     Types\CheckIdentifier::class,
-//                    Types\CheckLocationAddress::class,
+                    Types\CheckLocationAddress::class,
                     Types\CheckRelatedParties::class,
                     Types\CheckRelatedService::class,
                     Types\CheckRelatedOutputs::class,
                     Types\CheckSubject::class,
-//                    Types\CheckDescription::class,
-//                    Types\CheckExistenceDate::class
+                    Types\CheckDescription::class,
+                    Types\CheckExistenceDate::class
                 ]); break;
             default:
                 throw new \InvalidArgumentException("class: $class does not have a metadata report");
