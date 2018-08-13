@@ -36,6 +36,31 @@ class QualityMetadataProvider
     }
 
     /**
+     * @param $xml
+     * @return bool
+     * @throws \Exception
+     */
+    public static function validate($xml)
+    {
+        $sm = XMLUtil::getSimpleXMLFromString($xml);
+
+        // must have a title (provided by names)
+        $names = $sm->xpath('//ro:name');
+        if (count($names) === 0) {
+            throw new \InvalidArgumentException("title is mandatory");
+        }
+
+        $class = XMLUtil::getRegistryObjectClass($xml);
+
+        // (collection only) must have a description
+        if ($class === "collection" && count($sm->xpath("//ro:description")) === 0) {
+            throw new \InvalidArgumentException("description for collection is mandatory");
+        }
+
+        return true;
+    }
+
+    /**
      * Delete all qualityInfo for a record
      *
      * @param $record
