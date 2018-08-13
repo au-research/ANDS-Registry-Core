@@ -4,6 +4,7 @@ namespace ANDS\Registry\Providers;
 
 
 use ANDS\File\Storage;
+use ANDS\Registry\Providers\Quality\QualityMetadataProvider;
 
 class QualityMetadataProviderTest extends \RegistryTestClass
 {

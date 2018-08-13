@@ -117,7 +117,7 @@ date_default_timezone_set('Australia/Melbourne');
 						<div class="widget-title">
 							<h5>Quality Report</h5>
 						</div>
-						<div class="widget-content nopadding">
+						<div class="widget-content">
 							<?php echo $quality_text;?>
 						</div>
 					</div>

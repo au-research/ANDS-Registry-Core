@@ -6,6 +6,7 @@ namespace ANDS\Registry\Providers;
 
 use ANDS\File\Storage;
 use ANDS\RecordData;
+use ANDS\Registry\Providers\Quality\QualityMetadataProvider;
 use ANDS\Registry\Providers\Quality\Types;
 use ANDS\RegistryObject;
 
