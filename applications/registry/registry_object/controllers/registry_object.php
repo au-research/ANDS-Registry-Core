@@ -20,7 +20,12 @@ class Registry_object extends MX_Controller {
 		redirect(registry_url());
 	}
 
-	public function view($ro_id, $revision=''){
+    /**
+     * @param $ro_id
+     * @param string $revision
+     * @throws Exception
+     */
+    public function view($ro_id, $revision=''){
 
 		$this->load->model('registry_object/registry_objects', 'ro');
 		$ro = $this->ro->getByID($ro_id);
@@ -78,10 +83,15 @@ class Registry_object extends MX_Controller {
 			}
 
 			$data['revisions'] = array_slice($ro->getAllRevisions(),0,$this->maxVisibleRevisions);
-			initEloquent();
+
+//			initEloquent();
 			$record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($ro_id);
-			$quality_html = ANDS\Registry\Providers\QualityMetadataProvider::getQualityReportHTML($record);
-			$data['quality_text'] = $quality_html;
+//			$quality_html = \ANDS\Registry\Providers\Quality\QualityMetadataProvider::getQualityReportHTML($record);
+//			$data['quality_text'] = $quality_html;
+
+            $report = \ANDS\Registry\Providers\Quality\QualityMetadataProvider::getMetadataReport($record);
+			$data['quality_text'] = $this->load->view('quality_report', ['report' => $report], true);
+
 			//var_dump($data);
 			//exit();
 			$this->load->view('registry_object_index', $data);
@@ -230,7 +240,7 @@ class Registry_object extends MX_Controller {
 		$manual_publish = ($ds->manual_publish==DB_TRUE) ? true: false;
         initEloquent();
         $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($registry_object_id);
-        $quality_html = ANDS\Registry\Providers\QualityMetadataProvider::getQualityReportHTML($record);
+        $quality_html = \ANDS\Registry\Providers\Quality\QualityMetadataProvider::getQualityReportHTML($record);
 		$response['title'] = 'QA Result';
 		$scripts = preg_split('/(\)\;)|(\;\\n)/', $result, -1, PREG_SPLIT_NO_EMPTY);
 		$response["ro_status"] = "DRAFT";
@@ -335,7 +345,7 @@ class Registry_object extends MX_Controller {
         $ro = $this->ro->getByID($registry_object_id);
         initEloquent();
         $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($registry_object_id);
-        $quality_html = ANDS\Registry\Providers\QualityMetadataProvider::getQualityReportHTML($record);
+        $quality_html = \ANDS\Registry\Providers\Quality\QualityMetadataProvider::getQualityReportHTML($record);
         $result = [
             "status" => 'success',
             "ro_status" => "DRAFT",
@@ -769,14 +779,14 @@ class Registry_object extends MX_Controller {
 	public function get_quality_view(){
 		initEloquent();
 		$record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($this->input->post('ro_id'));
-		$quality_html = ANDS\Registry\Providers\QualityMetadataProvider::getQualityReportHTML($record);
+		$quality_html = \ANDS\Registry\Providers\Quality\QualityMetadataProvider::getQualityReportHTML($record);
 		echo $quality_html;
 	}
 
 	public function get_quality_html(){
 		initEloquent();
 		$record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($this->input->post('ro_id'));
-		$quality_html = ANDS\Registry\Providers\QualityMetadataProvider::getQualityReportHTML($record);
+		$quality_html = \ANDS\Registry\Providers\Quality\QualityMetadataProvider::getQualityReportHTML($record);
 		echo $quality_html;
 	}
 

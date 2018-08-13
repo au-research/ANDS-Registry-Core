@@ -2,7 +2,7 @@
 
 
 namespace ANDS\API\Task\ImportSubTask;
-use ANDS\Registry\Providers\QualityMetadataProvider;
+use ANDS\Registry\Providers\Quality\QualityMetadataProvider;
 use ANDS\Repository\RegistryObjectsRepository;
 
 /**

@@ -1,13 +1,14 @@
 <?php
 
 
-namespace ANDS\Registry\Providers;
+namespace ANDS\Registry\Providers\Quality;
 
 
 use ANDS\Registry\Providers\Quality\Types;
+use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\RegistryObject;
+use ANDS\Util\Config;
 use ANDS\Util\XMLUtil;
-use MongoDB\BSON\Type;
 
 /**
  * Class  QualityMetadataProvider
@@ -162,15 +163,22 @@ class QualityMetadataProvider
     {
         $xml = $record->getCurrentData()->data;
         $simpleXML = XMLUtil::getSimpleXMLFromString($xml);
+        $descriptors = Config::get('quality.descriptors');
 
         $report = [];
         foreach ($checks as $checkClassName) {
             /** @var Types\CheckType $check */
             $check = new $checkClassName($record, $simpleXML);
-            $report[] = $check->toArray();
+            $result = $check->toArray();
+            $result['descriptor'] = isset($descriptors[$record->class][$checkClassName])
+                ? $descriptors[$record->class][$checkClassName]
+                : $checkClassName;
+            $report[] = $result;
         }
+
         return $report;
     }
+
     /**
      * Delete all qualityInfo for a record
      *
