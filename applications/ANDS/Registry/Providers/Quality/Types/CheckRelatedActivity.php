@@ -20,7 +20,7 @@ class CheckRelatedActivity extends CheckType
             $relatedInfoTypes[] = (string) $type;
         }
 
-        $hasRelatedActivities = in_array("party", $relatedInfoTypes);
+        $hasRelatedActivities = in_array("activity", $relatedInfoTypes);
         $relatedActivities = $this->record->relationshipViews->where('to_class', 'activity')->count() > 0;
 
         return $hasRelatedActivities || $relatedActivities;

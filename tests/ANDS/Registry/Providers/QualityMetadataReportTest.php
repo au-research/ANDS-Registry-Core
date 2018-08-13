@@ -139,6 +139,39 @@ class QualityMetadataReportTest extends \RegistryTestClass
         }
     }
 
+    /** @test
+     * @throws \Exception
+     */
+    function it_validates_parties()
+    {
+        // given an activity
+        $record = $this->stub(RegistryObject::class, ['class' => 'party']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/party_quality.xml')
+        ]);
+
+        // when get reports
+        $report = QualityMetadataProvider::getMetadataReport($record);
+
+        // each of the following CheckType should pass
+        $types = [
+            Types\CheckIdentifier::$name,
+            Types\CheckLocationAddress::$name,
+            Types\CheckRelatedActivity::$name,
+            Types\CheckRelatedOutputs::$name,
+        ];
+        foreach ($types as $type) {
+            $this->checkType($type, $report);
+        }
+    }
+
+    /** @test */
+    function it_validates_services()
+    {
+        // TODO
+    }
+
     /**
      * Helper function to quickly check a name type
      *
