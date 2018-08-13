@@ -776,11 +776,14 @@ class Registry_object extends MX_Controller {
     }
 
 
-	public function get_quality_view(){
-		initEloquent();
+    /**
+     * @throws Exception
+     */
+    public function get_quality_view(){
 		$record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($this->input->post('ro_id'));
-		$quality_html = \ANDS\Registry\Providers\Quality\QualityMetadataProvider::getQualityReportHTML($record);
-		echo $quality_html;
+		$report = \ANDS\Registry\Providers\Quality\QualityMetadataProvider::getMetadataReport($record);
+		$html = $this->load->view('quality_report', ['report' => $report], true);
+		echo $html;
 	}
 
 	public function get_quality_html(){

@@ -3,7 +3,7 @@
 use \ANDS\Registry\Providers\Quality\Types;
 
 return [
-    'descriptors' => [
+    'checks' => [
         'collection' => [
             Types\CheckIdentifier::class => 'Includes an <a href="https://documentation.ands.org.au/display/DOC/Identifier">identifier</a> such as a DOI, that uniquely identifies the data',
             Types\CheckLocation::class => 'Provides access to, or information about <a href="https://documentation.ands.org.au/display/DOC/Location">how to access</a>, the data being described',
