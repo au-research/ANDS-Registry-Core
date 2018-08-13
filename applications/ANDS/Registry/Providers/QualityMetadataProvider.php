@@ -57,6 +57,12 @@ class QualityMetadataProvider
             throw new \InvalidArgumentException("description for collection is mandatory");
         }
 
+        // type must not be empty
+        $type = (string) $sm->xpath("//ro:{$class}")[0]['type'];
+        if (!trim($type)) {
+            throw new \InvalidArgumentException("type is mandatory");
+        }
+
         return true;
     }
 

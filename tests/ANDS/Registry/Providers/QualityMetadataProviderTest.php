@@ -45,4 +45,14 @@ class QualityMetadataProviderTest extends \RegistryTestClass
         $xml = Storage::disk('test')->get('rifcs/party_no_description.xml');
         $this->assertTrue(QualityMetadataProvider::validate($xml));
     }
+
+    /** @test
+     * @throws \Exception
+     */
+    function it_validates_record_with_empty_type()
+    {
+        $xml = Storage::disk('test')->get('rifcs/collection_empty_type.xml');
+        $this->setExpectedException('InvalidArgumentException');
+        QualityMetadataProvider::validate($xml);
+    }
 }
