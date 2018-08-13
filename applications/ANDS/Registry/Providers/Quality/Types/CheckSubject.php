@@ -6,7 +6,7 @@ namespace ANDS\Registry\Providers\Quality\Types;
 
 class CheckSubject extends CheckType
 {
-    protected $name = "subject";
+    public static $name = "subject";
 
     /**
      * Returns the status of the check

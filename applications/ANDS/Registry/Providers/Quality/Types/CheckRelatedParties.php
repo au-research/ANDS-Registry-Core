@@ -6,7 +6,7 @@ namespace ANDS\Registry\Providers\Quality\Types;
 
 class CheckRelatedParties extends CheckType
 {
-    protected $name = "relatedParties";
+    public static $name = "relatedParties";
 
     /**
      * Returns the status of the check

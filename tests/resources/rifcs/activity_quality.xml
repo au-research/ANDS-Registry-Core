@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+    <registryObject group="AUTestingRecords3">
+        <key>ACTIVITY_QUALITY</key>
+        <originatingSource>arc.gov.au/general/searchable_data.htm</originatingSource>
+        <activity type="grant">
+            <name type="primary">
+                <namePart>QUALITY_ACTIVITY</namePart>
+            </name>
+            <identifier type="purl">http://AUT.org/au-research/grants/arc/LP0560640AUTx.Grant</identifier>
+            <identifier type="arc">LP0560640AUTx.Grant</identifier>
+            <relatedObject>
+                <key>http://dx.doi.org/10.13039/AUT2.xDept</key>
+                <relation type="isFundedBy"/>
+            </relatedObject>
+            <relatedObject>
+                <key>http://nla.gov.au/nla.party-AUT2</key>
+                <relation type="isManagedBy"/>
+            </relatedObject>
+            <subject type="anzsrc-for">2103</subject>
+            <subject type="local">australian history</subject>
+            <subject type="local">housing</subject>
+            <subject type="local">labour history</subject>
+            <subject type="local">urban history</subject>
+            <subject type="local">veterans</subject>
+            <description type="brief">A better understanding of Australia's past, in particular the forgotten or unusual aspects of our history, is intrinsically valuable and important for the health of the nation. Recovering the history of an innovative and successful partnership between government and the community has the added value of offering numerous policy signposts for future community housing developments.</description>
+            <description type="fundingAmount">$84,858</description>
+            <description type="fundingScheme">Linkage Projects</description>
+            <description type="researchers">Dr PA Pickering</description>
+            <existenceDates>
+                <startDate dateFormat="W3CDTF">2005</startDate>
+                <endDate dateFormat="W3CDTF">2007</endDate>
+            </existenceDates>
+        </activity>
+    </registryObject>
+</registryObjects>

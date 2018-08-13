@@ -14,7 +14,7 @@ abstract class CheckType
     public static $FAIL = 'fail';
 
     protected $msg = '';
-    protected $name = 'check';
+    public static $name = 'check';
 
     /** @var RegistryObject */
     protected $record;
@@ -51,7 +51,7 @@ abstract class CheckType
         $this->result = $this->check();
         return [
             'msg' => $this->msg,
-            'name' => $this->name,
+            'name' => static::$name,
             'status' => $this->result ? static::$PASS : static::$FAIL
         ];
     }
