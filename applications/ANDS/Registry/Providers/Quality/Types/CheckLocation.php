@@ -6,7 +6,7 @@ namespace ANDS\Registry\Providers\Quality\Types;
 
 class CheckLocation extends CheckType
 {
-    protected $name = 'location';
+    public static $name = 'location';
     protected $msg = 'Provides access to, or information about how to access, the data being described';
 
     /**

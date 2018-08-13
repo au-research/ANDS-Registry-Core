@@ -6,7 +6,7 @@ namespace ANDS\Registry\Providers\Quality\Types;
 
 class CheckIdentifier extends CheckType
 {
-    protected $name = 'identifier';
+    public static $name = 'identifier';
     protected $msg = 'Includes an identifier';
 
     /**

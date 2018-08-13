@@ -6,6 +6,15 @@ namespace ANDS\Registry\Providers;
 
 use ANDS\File\Storage;
 use ANDS\RecordData;
+use ANDS\Registry\Providers\Quality\Types\CheckCitationInfo;
+use ANDS\Registry\Providers\Quality\Types\CheckCoverage;
+use ANDS\Registry\Providers\Quality\Types\CheckIdentifier;
+use ANDS\Registry\Providers\Quality\Types\CheckLocation;
+use ANDS\Registry\Providers\Quality\Types\CheckRelatedActivity;
+use ANDS\Registry\Providers\Quality\Types\CheckRelatedOutputs;
+use ANDS\Registry\Providers\Quality\Types\CheckRelatedParties;
+use ANDS\Registry\Providers\Quality\Types\CheckRelatedService;
+use ANDS\Registry\Providers\Quality\Types\CheckSubject;
 use ANDS\Registry\Providers\Quality\Types\CheckType;
 use ANDS\RegistryObject;
 
@@ -26,29 +35,19 @@ class QualityMetadataReportTest extends \RegistryTestClass
         // when get quality reports
         $report = QualityMetadataProvider::getMetadataReport($record);
 
-        // identifier is passing
-        $actual = collect($report)->where('name', 'identifier')->first();
-        $this->assertEquals(CheckType::$PASS, $actual['status'], 'Identifier is passing');
-
-        // location is passing
-        $actual = collect($report)->where('name', 'location')->first();
-        $this->assertEquals(CheckType::$PASS, $actual['status'], 'Location is passing');
-
-        // citationInfo is passing
-        $actual = collect($report)->where('name', 'citationInfo')->first();
-        $this->assertEquals(CheckType::$PASS, $actual['status'], 'CitationInfo is passing');
-
-        // relatedOutputs is passing
-        $actual = collect($report)->where('name', 'relatedOutputs')->first();
-        $this->assertEquals(CheckType::$PASS, $actual['status'], 'RelatedOutputs is passing');
-
-        // subject is passing
-        $actual = collect($report)->where('name', 'subject')->first();
-        $this->assertEquals(CheckType::$PASS, $actual['status'], 'Subject is passing');
-
-        // coverage is passing
-        $actual = collect($report)->where('name', 'coverage')->first();
-        $this->assertEquals(CheckType::$PASS, $actual['status'], 'Coverage is passing');
+        // various CheckType are passing
+        $types = [
+            CheckIdentifier::$name,
+            CheckLocation::$name,
+            CheckCitationInfo::$name,
+            CheckRelatedService::$name,
+            CheckRelatedOutputs::$name,
+            CheckSubject::$name,
+            CheckCoverage::$name
+        ];
+        foreach ($types as $type) {
+            $this->checkType($type, $report);
+        }
     }
 
     /** @test
@@ -70,9 +69,7 @@ class QualityMetadataReportTest extends \RegistryTestClass
         // when get reports
         $report = QualityMetadataProvider::getMetadataReport($record);
 
-        // relatedParties is passing
-        $actual = collect($report)->where('name', 'relatedParties')->first();
-        $this->assertEquals(CheckType::$PASS, $actual['status'], 'relatedParties is passing');
+        $this->checkType(CheckRelatedParties::$name, $report);
     }
 
     /** @test
@@ -94,9 +91,7 @@ class QualityMetadataReportTest extends \RegistryTestClass
         // when get reports
         $report = QualityMetadataProvider::getMetadataReport($record);
 
-        // relatedActivities is passing
-        $actual = collect($report)->where('name', 'relatedActivities')->first();
-        $this->assertEquals(CheckType::$PASS, $actual['status'], 'relatedActivities is passing');
+        $this->checkType(CheckRelatedActivity::$name, $report);
     }
 
     /** @test
@@ -118,8 +113,49 @@ class QualityMetadataReportTest extends \RegistryTestClass
         // when get reports
         $report = QualityMetadataProvider::getMetadataReport($record);
 
-        // relatedServices is passing
-        $actual = collect($report)->where('name', 'relatedServices')->first();
-        $this->assertEquals(CheckType::$PASS, $actual['status'], 'relatedServices is passing');
+
+        $this->checkType(CheckRelatedService::$name, $report);
+    }
+
+    /** @test
+     * @throws \Exception
+     */
+    function it_validates_activities()
+    {
+        // given an activity
+        $record = $this->stub(RegistryObject::class, ['class' => 'activity']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/activity_quality.xml')
+        ]);
+
+        // when get reports
+        $report = QualityMetadataProvider::getMetadataReport($record);
+
+        // each of the following CheckType should pass
+        $types = [
+            CheckIdentifier::$name,
+//            CheckLocationAddress::$name,
+//            'relatedParties',
+//            'relatedService',
+//            'relatedCollections',
+//            'subject',
+//            'description',
+//            'existenceDate'
+        ];
+        foreach ($types as $type) {
+            $this->checkType($type, $report);
+        }
+    }
+
+    /**
+     * Helper function to quickly check a name type
+     * 
+     * @param $type
+     * @param $report
+     */
+    private function checkType($type, $report) {
+        $actual = collect($report)->where('name', $type)->first();
+        $this->assertEquals(CheckType::$PASS, $actual['status'], "$type is passing");
     }
 }

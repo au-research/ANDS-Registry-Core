@@ -6,7 +6,7 @@ namespace ANDS\Registry\Providers\Quality\Types;
 
 class CheckCitationInfo extends CheckType
 {
-    protected $name = 'citationInfo';
+    public static $name = 'citationInfo';
 
     /**
      * Returns the status of the check

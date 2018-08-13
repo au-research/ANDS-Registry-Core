@@ -6,7 +6,7 @@ namespace ANDS\Registry\Providers\Quality\Types;
 
 class CheckRelatedActivity extends CheckType
 {
-    protected $name = "relatedActivities";
+    public static $name = "relatedActivities";
 
     /**
      * Returns the status of the check
