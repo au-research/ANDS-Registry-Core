@@ -125,6 +125,7 @@ class QualityMetadataProvider
 
         $report = [];
         foreach ($checks as $checkClassName) {
+
             /** @var Types\CheckType $check */
             $check = new $checkClassName($record, $simpleXML);
             $result = $check->toArray();

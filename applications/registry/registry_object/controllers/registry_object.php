@@ -214,7 +214,11 @@ class Registry_object extends MX_Controller {
 		$this->load->view("add_registry_object", $data);
 	}
 
-	public function validate($registry_object_id){
+    /**
+     * @param $registry_object_id
+     * @throws Exception
+     */
+    public function validate($registry_object_id){
 		set_exception_handler('json_exception_handler');
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
@@ -239,8 +243,12 @@ class Registry_object extends MX_Controller {
 		$qa = $ds->qa_flag==DB_TRUE ? true : false;
 		$manual_publish = ($ds->manual_publish==DB_TRUE) ? true: false;
         initEloquent();
+
         $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($registry_object_id);
-        $quality_html = \ANDS\Registry\Providers\Quality\QualityMetadataProvider::getQualityReportHTML($record);
+        $report = \ANDS\Registry\Providers\Quality\QualityMetadataProvider::getMetadataReport($record);
+        $quality_html = $this->load->view('quality_report', ['report' => $report], true);
+        $response["qa"] = $quality_html;
+
 		$response['title'] = 'QA Result';
 		$scripts = preg_split('/(\)\;)|(\;\\n)/', $result, -1, PREG_SPLIT_NO_EMPTY);
 		$response["ro_status"] = "DRAFT";
@@ -251,7 +259,7 @@ class Registry_object extends MX_Controller {
 		$response["ro_quality_level"] = $ro->quality_level;
 		$response["approve_required"] = $manual_publish;
 
-		$response["qa"] = $quality_html;
+
 		$response["ro_quality_class"] = ($ro->quality_level >= 2 ? "success" : "important");
 		$response["qa_$ro->quality_level"] = true;
 
