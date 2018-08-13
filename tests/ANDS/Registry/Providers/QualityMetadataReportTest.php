@@ -6,6 +6,7 @@ namespace ANDS\Registry\Providers;
 
 use ANDS\File\Storage;
 use ANDS\RecordData;
+use ANDS\Registry\Providers\Quality\Types\CheckType;
 use ANDS\RegistryObject;
 
 class QualityMetadataReportTest extends \RegistryTestClass
@@ -26,20 +27,28 @@ class QualityMetadataReportTest extends \RegistryTestClass
         $report = QualityMetadataProvider::getMetadataReport($record);
 
         // identifier is passing
-        $identifier = collect($report)->where('name', 'identifier')->first();
-        $this->assertEquals(QualityMetadataProvider::$PASS, $identifier['status'], 'Identifier is passing');
+        $actual = collect($report)->where('name', 'identifier')->first();
+        $this->assertEquals(CheckType::$PASS, $actual['status'], 'Identifier is passing');
 
         // location is passing
-        $location = collect($report)->where('name', 'location')->first();
-        $this->assertEquals(QualityMetadataProvider::$PASS, $location['status'], 'Location is passing');
+        $actual = collect($report)->where('name', 'location')->first();
+        $this->assertEquals(CheckType::$PASS, $actual['status'], 'Location is passing');
 
         // citationInfo is passing
-        $citationInfo = collect($report)->where('name', 'citationInfo')->first();
-        $this->assertEquals(QualityMetadataProvider::$PASS, $citationInfo['status'], 'CitationInfo is passing');
+        $actual = collect($report)->where('name', 'citationInfo')->first();
+        $this->assertEquals(CheckType::$PASS, $actual['status'], 'CitationInfo is passing');
 
         // relatedOutputs is passing
-        $relatedOutputs = collect($report)->where('name', 'relatedOutputs')->first();
-        $this->assertEquals(QualityMetadataProvider::$PASS, $relatedOutputs['status'], 'RelatedOutputs is passing');
+        $actual = collect($report)->where('name', 'relatedOutputs')->first();
+        $this->assertEquals(CheckType::$PASS, $actual['status'], 'RelatedOutputs is passing');
+
+        // subject is passing
+        $actual = collect($report)->where('name', 'subject')->first();
+        $this->assertEquals(CheckType::$PASS, $actual['status'], 'Subject is passing');
+
+        // coverage is passing
+        $actual = collect($report)->where('name', 'coverage')->first();
+        $this->assertEquals(CheckType::$PASS, $actual['status'], 'Coverage is passing');
     }
 
     /** @test
@@ -63,7 +72,7 @@ class QualityMetadataReportTest extends \RegistryTestClass
 
         // relatedParties is passing
         $actual = collect($report)->where('name', 'relatedParties')->first();
-        $this->assertEquals(QualityMetadataProvider::$PASS, $actual['status'], 'relatedParties is passing');
+        $this->assertEquals(CheckType::$PASS, $actual['status'], 'relatedParties is passing');
     }
 
     /** @test
@@ -87,7 +96,7 @@ class QualityMetadataReportTest extends \RegistryTestClass
 
         // relatedActivities is passing
         $actual = collect($report)->where('name', 'relatedActivities')->first();
-        $this->assertEquals(QualityMetadataProvider::$PASS, $actual['status'], 'relatedActivities is passing');
+        $this->assertEquals(CheckType::$PASS, $actual['status'], 'relatedActivities is passing');
     }
 
     /** @test
@@ -111,6 +120,6 @@ class QualityMetadataReportTest extends \RegistryTestClass
 
         // relatedServices is passing
         $actual = collect($report)->where('name', 'relatedServices')->first();
-        $this->assertEquals(QualityMetadataProvider::$PASS, $actual['status'], 'relatedServices is passing');
+        $this->assertEquals(CheckType::$PASS, $actual['status'], 'relatedServices is passing');
     }
 }
