@@ -5,6 +5,7 @@ namespace ANDS;
 
 
 use ANDS\Registry\IdentifierRelationshipView;
+use ANDS\Registry\RelationshipView;
 use ANDS\RegistryObject\ExportToCSVTrait;
 use ANDS\RegistryObject\Identifier;
 use ANDS\RegistryObject\IdentifierRelationship;
@@ -72,6 +73,11 @@ class RegistryObject extends Model
     public function relationships()
     {
         return $this->hasMany(Relationship::class, 'registry_object_id', 'registry_object_id');
+    }
+
+    public function relationshipViews()
+    {
+        return $this->hasMany(RelationshipView::class, 'from_id', 'registry_object_id');
     }
 
     public function identifierRelationships()
