@@ -226,23 +226,14 @@ class Registry_object extends MX_Controller {
 		$this->load->model('registry_object/registry_objects', 'ro');
 		$ro = $this->ro->getByID($registry_object_id);
 
-		try{
-			$xml = $ro->cleanRIFCSofEmptyTags($xml, 'false', true);
-			$result = $ro->transformForQA(wrapRegistryObjects($xml));
-		}
-		catch(Exception $e)
-		{
-			$status = 'error';
-			$error_log = $e->getMessage();
-		}
-
+        $xml = $ro->cleanRIFCSofEmptyTags($xml, 'false', true);
+        $result = $ro->transformForQA(wrapRegistryObjects($xml));
 
 		$this->load->model('data_source/data_sources', 'ds');
 		$ds = $this->ds->getByID($ro->data_source_id);
 
 		$qa = $ds->qa_flag==DB_TRUE ? true : false;
 		$manual_publish = ($ds->manual_publish==DB_TRUE) ? true: false;
-        initEloquent();
 
         $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($registry_object_id);
         $report = \ANDS\Registry\Providers\Quality\QualityMetadataProvider::getMetadataReport($record);
@@ -286,6 +277,7 @@ class Registry_object extends MX_Controller {
 				$response[$matches[0]][] = $match_response;
 			}
 		}
+
         $ro->error_count = $error_count;
         $ro->warning_count = $warning_count;
         $ro->save();

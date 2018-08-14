@@ -44,6 +44,10 @@
                 <title>Related Website</title>
                 <relation type="hasAssociationWith"/>
             </relatedInfo>
+            <relatedInfo type="collection">
+                <title>Related Collection</title>
+                <relation type="hasAssociationWith"/>
+            </relatedInfo>
         </party>
     </registryObject>
 </registryObjects>
