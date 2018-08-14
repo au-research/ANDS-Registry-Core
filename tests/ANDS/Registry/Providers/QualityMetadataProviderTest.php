@@ -4,6 +4,7 @@ namespace ANDS\Registry\Providers;
 
 
 use ANDS\File\Storage;
+use ANDS\Registry\Providers\Quality\Exception;
 use ANDS\Registry\Providers\Quality\QualityMetadataProvider;
 
 class QualityMetadataProviderTest extends \RegistryTestClass
@@ -23,7 +24,7 @@ class QualityMetadataProviderTest extends \RegistryTestClass
      */
     public function validates_records_without_title()
     {
-        $this->setExpectedException('InvalidArgumentException');
+        $this->setExpectedException(Exception\MissingTitle::class);
         $xml = Storage::disk('test')->get('rifcs/collection_no_title.xml');
         QualityMetadataProvider::validate($xml);
     }
@@ -33,7 +34,7 @@ class QualityMetadataProviderTest extends \RegistryTestClass
      */
     function validates_collections_without_description()
     {
-        $this->setExpectedException('InvalidArgumentException');
+        $this->setExpectedException(Exception\MissingDescriptionForCollection::class);
         $xml = Storage::disk('test')->get('rifcs/collection_no_description.xml');
         QualityMetadataProvider::validate($xml);
     }
@@ -53,7 +54,7 @@ class QualityMetadataProviderTest extends \RegistryTestClass
     function it_validates_record_with_empty_type()
     {
         $xml = Storage::disk('test')->get('rifcs/collection_empty_type.xml');
-        $this->setExpectedException('InvalidArgumentException');
+        $this->setExpectedException(Exception\MissingType::class);
         QualityMetadataProvider::validate($xml);
     }
 
@@ -63,7 +64,7 @@ class QualityMetadataProviderTest extends \RegistryTestClass
     function it_validates_record_without_group()
     {
         $xml = Storage::disk('test')->get('rifcs/collection_no_group.xml');
-        $this->setExpectedException('InvalidArgumentException');
+        $this->setExpectedException(Exception\MissingGroup::class);
         QualityMetadataProvider::validate($xml);
     }
 
@@ -73,7 +74,7 @@ class QualityMetadataProviderTest extends \RegistryTestClass
     function it_validates_record_without_originatingSource()
     {
         $xml = Storage::disk('test')->get('rifcs/collection_no_originatingSource.xml');
-        $this->setExpectedException('InvalidArgumentException');
+        $this->setExpectedException(Exception\MissingOriginatingSource::class);
         QualityMetadataProvider::validate($xml);
     }
 }
