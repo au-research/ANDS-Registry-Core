@@ -13,6 +13,11 @@ class CheckRelatedActivity extends CheckType
         'activity' => 'Is connected to <a href="https://documentation.ands.org.au/display/DOC/Activity">activities</a> associated with the activity'
     ];
 
+    protected $message = [
+        'collection' => 'Include any related parties, activities or services that provide context for, or assist discovery of, the data.',
+        'party' => 'Include any related activities or collections that are associated with the party.'
+    ];
+
     /**
      * Returns the status of the check
      *

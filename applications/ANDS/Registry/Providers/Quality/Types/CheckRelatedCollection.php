@@ -13,6 +13,12 @@ class CheckRelatedCollection extends CheckType
         'activity' => ''
     ];
 
+    protected $message = [
+        'activity' => 'Include any related parties, and any related collections or services that are outputs of the activity.',
+        'party' => 'Include any related activities or collections that are associated with the party.',
+        'service' => 'Include any related parties or collections that can be accessed through, or acted upon by, the service.'
+    ];
+
     /**
      * Returns the status of the check
      *

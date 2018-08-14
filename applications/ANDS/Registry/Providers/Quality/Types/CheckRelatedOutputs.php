@@ -10,6 +10,10 @@ class CheckRelatedOutputs extends CheckType
         'collection' => 'Is connected to <a href="https://documentation.ands.org.au/display/DOC/Related+information">related outputs</a>, such as publications, that give context to the data'
     ];
 
+    protected $message = [
+        'collection' => 'Include related information, such as publications, to provide context for the data.'
+    ];
+
     /**
      * Returns the status of the check
      *

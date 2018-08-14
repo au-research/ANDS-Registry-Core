@@ -13,6 +13,11 @@ class CheckRelatedService extends CheckType
         'activity' => 'Is connected to any service that is an output of the activity'
     ];
 
+    protected $message = [
+        'collection' => 'Include any related parties, activities or services that provide context for, or assist discovery of, the data.',
+        'activity' => 'Include any related parties, and any related collections or services that are outputs of the activity.'
+    ];
+
     /**
      * Returns the status of the check
      *

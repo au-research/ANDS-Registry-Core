@@ -13,6 +13,13 @@ class CheckIdentifier extends CheckType
         'party' => 'Includes an <a href="https://documentation.ands.org.au/display/DOC/Identifier">identifier</a> such as an ORCID, that uniquely identifies the party'
     ];
 
+    protected $message = [
+        'collection' => 'Include an identifier, such as a DOI, to uniquely identify the data.',
+        'party' => 'Include an identifier, such as an ORCID, that uniquely identifies the party.',
+        'service' => 'Include an identifier, such as a handle, that uniquely identifies the service.',
+        'activity' => 'Include an identifier, such as a PURL, that uniquely identifies the activity.'
+    ];
+
     /**
      * Returns the status of the check
      *
@@ -20,6 +27,7 @@ class CheckIdentifier extends CheckType
      */
     public function check()
     {
-        return count($this->simpleXML->xpath('//ro:identifier')) > 0;
+        $class = $this->record->class;
+        return count($this->simpleXML->xpath('//ro:'.$class.'/ro:identifier')) > 0;
     }
 }

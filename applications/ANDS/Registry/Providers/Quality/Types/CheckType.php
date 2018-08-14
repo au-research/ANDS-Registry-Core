@@ -25,6 +25,9 @@ abstract class CheckType
     /** @var array */
     protected $descriptor = [];
 
+    /** @var array */
+    protected $message = [];
+
     /**
      * CheckType constructor.
      * @param RegistryObject $record
@@ -53,7 +56,8 @@ abstract class CheckType
         return [
             'name' => get_class($this),
             'status' => $this->result ? static::$PASS : static::$FAIL,
-            'descriptor' => $this->descriptor($this->record->class)
+            'descriptor' => $this->descriptor($this->record->class),
+            'message' => $this->message($this->record->class)
         ];
     }
 
@@ -64,5 +68,14 @@ abstract class CheckType
         }
 
         return array_key_exists($class, $this->descriptor) ? $this->descriptor[$class] : '';
+    }
+
+    public function message($class)
+    {
+        if (array_key_exists($class, $this->message)) {
+            return $this->message[$class];
+        }
+
+        return $this->descriptor($class);
     }
 }

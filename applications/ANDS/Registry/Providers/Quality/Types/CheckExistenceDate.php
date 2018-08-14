@@ -10,6 +10,10 @@ class CheckExistenceDate extends CheckType
         'activity' => 'Includes <a href="https://documentation.ands.org.au/display/DOC/Existence+dates">existence dates</a> for the activity to allow users to narrow their search by date'
     ];
 
+    protected $message = [
+        'activity' => 'Include existence dates for the activity to allow users to search by date.'
+    ];
+
     /**
      * Returns the status of the check
      *
