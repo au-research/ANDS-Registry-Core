@@ -26,7 +26,6 @@ date_default_timezone_set('Australia/Melbourne');
 			<ul class="nav nav-pills" style="margin-right:80px;padding-top:5px;">
 				<li class=""><?php echo anchor('data_source/manage#!/view/'.$ds->id,'Dashboard');?></li>
 				<li class=""><?php echo anchor('data_source/manage_records/'.$ds->id,'Manage Records');?></li>
-				<li class=""><?php echo anchor('data_source/report/'.$ds->id,'Reports');?></li>
 				<li class=""><?php echo anchor('data_source/manage#!/settings/'.$ds->id,'Settings');?></li>
 			</ul>
 						<div class="btn-group">
