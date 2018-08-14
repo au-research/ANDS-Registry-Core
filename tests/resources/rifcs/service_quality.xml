@@ -60,6 +60,10 @@
                 <title>Related Website</title>
                 <identifier type="uri">https://smart-metadata.eis.uow.edu.au/geonetwork/srv/eng/search?&amp;uuid=e33bc002-cc72-42c9-8b5d-8f64d97a168fAUT</identifier>
             </relatedInfo>
+            <relatedInfo type="collection">
+                <title>Related Collection</title>
+                <identifier type="uri">https://smart-metadata.eis.uow.edu.au/geonetwork/srv/eng/search?&amp;uuid=e33bc002-cc72-42c9-8b5d-8f64d97a168fAUT</identifier>
+            </relatedInfo>
             <accessPolicy>https://github.com/smart-facility/petajakarta-web/tree/v1.0.1</accessPolicy>
         </service>
     </registryObject>

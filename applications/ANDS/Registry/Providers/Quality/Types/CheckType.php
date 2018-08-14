@@ -22,6 +22,9 @@ abstract class CheckType
     /** @var boolean */
     private $result;
 
+    /** @var array */
+    protected $descriptor = [];
+
     /**
      * CheckType constructor.
      * @param RegistryObject $record
@@ -46,17 +49,20 @@ abstract class CheckType
      */
     public function toArray() {
         $this->result = $this->check();
+
         return [
             'name' => get_class($this),
-            'status' => $this->result ? static::$PASS : static::$FAIL
+            'status' => $this->result ? static::$PASS : static::$FAIL,
+            'descriptor' => $this->descriptor($this->record->class)
         ];
     }
 
-    /**
-     * @param $msg
-     */
-    public function setMsg($msg)
+    public function descriptor($class)
     {
-        $this->msg = $msg;
+        if (!$this->descriptor) {
+            return '';
+        }
+
+        return array_key_exists($class, $this->descriptor) ? $this->descriptor[$class] : '';
     }
 }
