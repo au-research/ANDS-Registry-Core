@@ -6,6 +6,10 @@ namespace ANDS\Registry\Providers\Quality\Types;
 
 class CheckRelatedInformation extends CheckType
 {
+    protected $descriptor = [
+        'service' => 'Is connected to <a href="https://documentation.ands.org.au/display/DOC/Related+information">related information</a> that supports use of the service, such as additional protocol information'
+    ];
+
     /**
      * Returns the status of the check
      *

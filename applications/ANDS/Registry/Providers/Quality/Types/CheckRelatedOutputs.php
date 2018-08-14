@@ -6,6 +6,10 @@ namespace ANDS\Registry\Providers\Quality\Types;
 
 class CheckRelatedOutputs extends CheckType
 {
+    protected $descriptor = [
+        'collection' => 'Is connected to <a href="https://documentation.ands.org.au/display/DOC/Related+information">related outputs</a>, such as publications, that give context to the data'
+    ];
+
     /**
      * Returns the status of the check
      *
@@ -23,7 +27,7 @@ class CheckRelatedOutputs extends CheckType
         ];
         $relatedInfoTypes = [];
         foreach ($this->simpleXML->xpath("//ro:relatedInfo/@type") as $type) {
-            $relatedInfoTypes[] = (string) $type;
+            $relatedInfoTypes[] = (string)$type;
         }
         $intersect = array_intersect($validRelatedInfoType, $relatedInfoTypes);
 

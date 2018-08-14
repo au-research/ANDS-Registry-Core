@@ -108,7 +108,7 @@ class QualityMetadataProvider
     {
         $config = Config::get('quality.checks');
 
-        return array_keys($config[$class]);
+        return $config[$class];
     }
 
     /**
@@ -121,7 +121,6 @@ class QualityMetadataProvider
     {
         $xml = $record->getCurrentData()->data;
         $simpleXML = XMLUtil::getSimpleXMLFromString($xml);
-        $config = Config::get('quality.checks');
 
         $report = [];
         foreach ($checks as $checkClassName) {
@@ -130,10 +129,6 @@ class QualityMetadataProvider
             $check = new $checkClassName($record, $simpleXML);
             $result = $check->toArray();
 
-            // get the descriptor from the config
-            $result['descriptor'] = isset($config[$record->class][$checkClassName])
-                ? $config[$record->class][$checkClassName]
-                : $checkClassName;
             $report[] = $result;
         }
 
