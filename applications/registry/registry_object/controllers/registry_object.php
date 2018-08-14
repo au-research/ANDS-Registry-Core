@@ -3,6 +3,7 @@ define('SERVICES_MODULE_PATH', REGISTRY_APP_PATH.'services/');
 
 include_once("applications/registry/registry_object/models/_transforms.php");
 use ANDS\DataSource;
+use ANDS\Registry\Providers\Quality\Types;
 use \Transforms as Transforms;
 /**
  * Registry Object controller
@@ -20,7 +21,12 @@ class Registry_object extends MX_Controller {
 		redirect(registry_url());
 	}
 
-	public function view($ro_id, $revision=''){
+    /**
+     * @param $ro_id
+     * @param string $revision
+     * @throws Exception
+     */
+    public function view($ro_id, $revision=''){
 
 		$this->load->model('registry_object/registry_objects', 'ro');
 		$ro = $this->ro->getByID($ro_id);
@@ -78,10 +84,15 @@ class Registry_object extends MX_Controller {
 			}
 
 			$data['revisions'] = array_slice($ro->getAllRevisions(),0,$this->maxVisibleRevisions);
-			initEloquent();
+
+//			initEloquent();
 			$record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($ro_id);
-			$quality_html = ANDS\Registry\Providers\QualityMetadataProvider::getQualityReportHTML($record);
-			$data['quality_text'] = $quality_html;
+//			$quality_html = \ANDS\Registry\Providers\Quality\QualityMetadataProvider::getQualityReportHTML($record);
+//			$data['quality_text'] = $quality_html;
+
+            $report = \ANDS\Registry\Providers\Quality\QualityMetadataProvider::getMetadataReport($record);
+			$data['quality_text'] = $this->load->view('quality_report', ['report' => $report], true);
+
 			//var_dump($data);
 			//exit();
 			$this->load->view('registry_object_index', $data);
@@ -204,7 +215,11 @@ class Registry_object extends MX_Controller {
 		$this->load->view("add_registry_object", $data);
 	}
 
-	public function validate($registry_object_id){
+    /**
+     * @param $registry_object_id
+     * @throws Exception
+     */
+    public function validate($registry_object_id){
 		set_exception_handler('json_exception_handler');
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
@@ -212,25 +227,20 @@ class Registry_object extends MX_Controller {
 		$this->load->model('registry_object/registry_objects', 'ro');
 		$ro = $this->ro->getByID($registry_object_id);
 
-		try{
-			$xml = $ro->cleanRIFCSofEmptyTags($xml, 'false', true);
-			$result = $ro->transformForQA(wrapRegistryObjects($xml));
-		}
-		catch(Exception $e)
-		{
-			$status = 'error';
-			$error_log = $e->getMessage();
-		}
-
+        $xml = $ro->cleanRIFCSofEmptyTags($xml, 'false', true);
+        $result = $ro->transformForQA(wrapRegistryObjects($xml));
 
 		$this->load->model('data_source/data_sources', 'ds');
 		$ds = $this->ds->getByID($ro->data_source_id);
 
 		$qa = $ds->qa_flag==DB_TRUE ? true : false;
 		$manual_publish = ($ds->manual_publish==DB_TRUE) ? true: false;
-        initEloquent();
+
         $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($registry_object_id);
-        $quality_html = ANDS\Registry\Providers\QualityMetadataProvider::getQualityReportHTML($record);
+        $report = \ANDS\Registry\Providers\Quality\QualityMetadataProvider::getMetadataReport($record);
+        $quality_html = $this->load->view('quality_report', ['report' => $report], true);
+        $response["qa"] = $quality_html;
+
 		$response['title'] = 'QA Result';
 		$scripts = preg_split('/(\)\;)|(\;\\n)/', $result, -1, PREG_SPLIT_NO_EMPTY);
 		$response["ro_status"] = "DRAFT";
@@ -241,7 +251,7 @@ class Registry_object extends MX_Controller {
 		$response["ro_quality_level"] = $ro->quality_level;
 		$response["approve_required"] = $manual_publish;
 
-		$response["qa"] = $quality_html;
+
 		$response["ro_quality_class"] = ($ro->quality_level >= 2 ? "success" : "important");
 		$response["qa_$ro->quality_level"] = true;
 
@@ -268,10 +278,57 @@ class Registry_object extends MX_Controller {
 				$response[$matches[0]][] = $match_response;
 			}
 		}
+
         $ro->error_count = $error_count;
         $ro->warning_count = $warning_count;
         $ro->save();
+
         $response["error_count"] = $error_count;
+
+        // CC-2256. Replacing SetWarnings and SetInfos with fail rule from the report
+        // Leaving SetErrors because they are important
+        $response['SetWarnings'] = [];
+        $response['SetInfos'] = [];
+
+        $rule2TabMapping = [
+            Types\CheckIdentifier::class => 'tab_identifiers',
+            Types\CheckDescription::class => 'tab_descriptions_rights',
+            Types\CheckRights::class => 'tab_descriptions_rights',
+            Types\CheckLocation::class => 'tab_locations',
+            Types\CheckLocationAddress::class => 'tab_locations',
+            Types\CheckSubject::class => 'tab_subjects',
+            Types\CheckCoverage::class => 'tab_coverages',
+            Types\CheckRelatedCollection::class => 'tab_relatedObjects',
+            Types\CheckRelatedParties::class => 'tab_relatedObjects',
+            Types\CheckRelatedActivity::class => 'tab_relatedObjects',
+            Types\CheckRelatedService::class => 'tab_relatedObjects',
+            Types\CheckRelatedActivityOutput::class => 'tab_relatedObjects',
+            Types\CheckRelatedInformation::class => 'tabs_relatedInfos',
+            Types\CheckCitationInfo::class => 'tab_citationInfos',
+            Types\CheckRelatedOutputs::class => 'tab_relatedinfos',
+            Types\CheckExistenceDate::class => 'tab_existencedates',
+        ];
+
+        $fails = collect($report)
+            ->where('status', \ANDS\Registry\Providers\Quality\Types\CheckType::$FAIL);
+
+        $response['SetInfos'] = $fails
+            ->map(function($rule) use ($rule2TabMapping){
+                $fieldID = array_key_exists($rule['name'], $rule2TabMapping)
+                    ? $rule2TabMapping[$rule['name']]
+                    : 'tab_admin';
+
+                return [
+                    'field_id' => $fieldID,
+                    'message' => $rule['message']
+                ];
+            });
+
+        $response['SetInfos'] = $response['SetInfos']->unique()->toArray();
+
+        $response['fails'] = $fails->toArray();
+
+
 		echo json_encode($response);
 	}
 
@@ -335,7 +392,7 @@ class Registry_object extends MX_Controller {
         $ro = $this->ro->getByID($registry_object_id);
         initEloquent();
         $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($registry_object_id);
-        $quality_html = ANDS\Registry\Providers\QualityMetadataProvider::getQualityReportHTML($record);
+        $quality_html = \ANDS\Registry\Providers\Quality\QualityMetadataProvider::getQualityReportHTML($record);
         $result = [
             "status" => 'success',
             "ro_status" => "DRAFT",
@@ -766,17 +823,20 @@ class Registry_object extends MX_Controller {
     }
 
 
-	public function get_quality_view(){
-		initEloquent();
+    /**
+     * @throws Exception
+     */
+    public function get_quality_view(){
 		$record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($this->input->post('ro_id'));
-		$quality_html = ANDS\Registry\Providers\QualityMetadataProvider::getQualityReportHTML($record);
-		echo $quality_html;
+		$report = \ANDS\Registry\Providers\Quality\QualityMetadataProvider::getMetadataReport($record);
+		$html = $this->load->view('quality_report', ['report' => $report], true);
+		echo $html;
 	}
 
 	public function get_quality_html(){
 		initEloquent();
 		$record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($this->input->post('ro_id'));
-		$quality_html = ANDS\Registry\Providers\QualityMetadataProvider::getQualityReportHTML($record);
+		$quality_html = \ANDS\Registry\Providers\Quality\QualityMetadataProvider::getQualityReportHTML($record);
 		echo $quality_html;
 	}
 

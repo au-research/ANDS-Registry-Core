@@ -357,7 +357,7 @@ function initLayout(){
             content: {
                 text: 'Loading...', // The text to use whilst the AJAX request is loading
                 title: {
-                    text: 'Quality Report',
+                    text: 'Metadata Content Report',
                     button: 'Close'
                 },
                 ajax: {
@@ -368,11 +368,11 @@ function initLayout(){
                     dataType: 'text',
                     success: function(data, status) {
                         this.set('content.text', data);
-                        formatTip(this);
+                        // formatTip(this);
                     }
                 }
             },
-            position: {viewport: $(window), my:'left center'},
+            position: {viewport: $(window)},
             show: {
                 //event: 'click',
                 ready: true,
@@ -438,6 +438,7 @@ function formatTip(tt){
     for(var i=1;i<=3;i++){
         $('*[level='+i+']', tooltip).wrapAll('<div class="qa_container" qld="'+i+'"></div>');
     }
+
     //add the toggle header
     $('.qa_container', tooltip).prepend('<div class="toggleQAtip"></div>');
     $('.toggleQAtip', tooltip).each(function(){

@@ -103,7 +103,6 @@
 		<ul class="nav nav-pills">
 			<li class="active view page-control"><a href="#!/view/{{ds.id}}">Dashboard</a></li>
 			<li class="mmr page-control"><a href="<?=base_url('data_source/manage_records/');?>/{{ds.id}}">Manage Records</a></li>
-			<li class="report page-control"><a href="<?=base_url('data_source/report/');?>/{{ds.id}}">Reports</a></li>
 			<li class="settings page-control"><a href="#!/settings/{{ds.id}}">Settings</a></li>
 		</ul>
 	</div>
@@ -248,15 +247,6 @@
 					<div class="widget-content nopadding">
 						<ul class="ro-list">
 							<li ng-repeat="status in ds.classcounts" ng-click="mmr_link('class', status.class)"><span class="name"><i class="icon-class icon-{{status.class}}" style="margin-top:-1px;"></i> {{status.name}}</span><span class="num">{{status.count}}</span></li>
-						</ul>
-					</div>
-				</div>
-
-				<div class="widget-box">
-					<div class="widget-title"><h5>Data Source Quality Summary</h5></div>
-					<div class="widget-content nopadding">
-						<ul class="ro-list">
-							<li ng-repeat="status in ds.qlcounts" ng-click="mmr_link('quality_level', status.level)"><span class="name">Quality Level {{status.level}}</span><span class="num">{{status.count}}</span></li>
 						</ul>
 					</div>
 				</div>
@@ -503,7 +493,6 @@
 		<ul class="nav nav-pills">
 			<li class="view page-control"><a href="#!/view/{{ds.id}}">Dashboard</a></li>
 			<li class="mmr page-control"><a href="<?=base_url('data_source/manage_records/');?>/{{ds.id}}">Manage Records</a></li>
-			<li class="report page-control"><a href="<?=base_url('data_source/report/');?>/{{ds.id}}">Reports</a></li>
 			<li class="active settings page-control"><a href="#!/settings/{{ds.id}}">Settings</a></li>
 		</ul>
 	</div>
@@ -595,7 +584,6 @@
 		<ul class="nav nav-pills">
 			<li class="view page-control"><a href="#!/view/{{ds.id}}">Dashboard</a></li>
 			<li class="mmr page-control"><a href="<?=base_url('data_source/manage_records/');?>/{{ds.id}}">Manage Records</a></li>
-			<li class="report page-control"><a href="<?=base_url('data_source/report/');?>/{{ds.id}}">Reports</a></li>
 			<li class="active settings page-control"><a href="#!/settings/{{ds.id}}">Settings</a></li>
 		</ul>
 	</div>
