@@ -114,7 +114,7 @@ date_default_timezone_set('Australia/Melbourne');
 				?>
 					<div class="widget-box">
 						<div class="widget-title">
-							<h5>Quality Report</h5>
+							<h5>Metadata Content Report</h5>
 						</div>
 						<div class="widget-content">
 							<?php echo $quality_text;?>

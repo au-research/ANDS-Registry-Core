@@ -357,7 +357,7 @@ function initLayout(){
             content: {
                 text: 'Loading...', // The text to use whilst the AJAX request is loading
                 title: {
-                    text: 'Quality Report',
+                    text: 'Metadata Content Report',
                     button: 'Close'
                 },
                 ajax: {
@@ -372,7 +372,7 @@ function initLayout(){
                     }
                 }
             },
-            position: {viewport: $(window), my:'left center'},
+            position: {viewport: $(window)},
             show: {
                 //event: 'click',
                 ready: true,
