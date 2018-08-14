@@ -4,6 +4,11 @@
 namespace ANDS\Registry\Providers\Quality;
 
 
+use ANDS\Registry\Providers\Quality\Exception\MissingDescriptionForCollection;
+use ANDS\Registry\Providers\Quality\Exception\MissingGroup;
+use ANDS\Registry\Providers\Quality\Exception\MissingOriginatingSource;
+use ANDS\Registry\Providers\Quality\Exception\MissingTitle;
+use ANDS\Registry\Providers\Quality\Exception\MissingType;
 use ANDS\Registry\Providers\Quality\Types;
 use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\RegistryObject;
@@ -50,38 +55,33 @@ class QualityMetadataProvider
         $key = (string) $sm->xpath('//ro:key')[0];
         $class = XMLUtil::getRegistryObjectClass($xml, $sm);
 
-        // key is required
-        if (!trim($key)) {
-            throw new \InvalidArgumentException("key is mandatory");
-        }
-
         // originatingSource is required
         $originatingSource = (string) $sm->xpath('//ro:originatingSource')[0];
         if (!trim($originatingSource)) {
-            throw new \InvalidArgumentException("originatingSource is mandatory");
+            throw new MissingOriginatingSource("Registry Object 'originatingSource' must have a value");
         }
 
         // group is required
         $group = (string) $sm->xpath("//ro:registryObject")[0]['group'];
         if (!trim($group)) {
-            throw new \InvalidArgumentException("group is mandatory");
+            throw new MissingGroup("Registry Object '@group' must have a value");
         }
 
         // must have a title (provided by names)
         $names = $sm->xpath('//ro:name');
         if (count($names) === 0) {
-            throw new \InvalidArgumentException("title is mandatory");
+            throw new MissingTitle("Registry Object 'name' must have a value");
         }
 
         // (collection only) must have a description
         if ($class === "collection" && count($sm->xpath("//ro:description")) === 0) {
-            throw new \InvalidArgumentException("description for collection is mandatory");
+            throw new MissingDescriptionForCollection("Collection must have a description");
         }
 
         // type must not be empty
         $type = (string) $sm->xpath("//ro:{$class}")[0]['type'];
         if (!trim($type)) {
-            throw new \InvalidArgumentException("type is mandatory");
+            throw new MissingType("Registry Object '@type' must have a value");
         }
 
         return true;
