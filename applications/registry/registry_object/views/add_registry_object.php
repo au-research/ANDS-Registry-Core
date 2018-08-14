@@ -32,23 +32,7 @@
 	{{/action_bar}}
 
 	<hr/>
-	<h5>ANDS Metadata Content - Quality Report</h5>
-
-	<p>
-		<strong>
-			{{#qa_1}}
-				This record meets some of the Metadata Content Requirements  satisfying  minimal requirements for discovery, but does not comply with the Minimum Metadata Content Requirements.
-			{{/qa_1}}
-			{{#qa_2}}
-				Congratulations! This record satisfies the minimum Metadata Content Requirements.
-			{{/qa_2}}
-			{{#qa_3}}
-				Congratulations! This record meets and exceeds the minimum Metadata Content Requirements.
-			{{/qa_3}}
-		</strong>
-	</p>
-
-	This record meets the Metadata Content Requirements for: <span class="label label-{{ro_quality_class}}">Quality Level : {{ro_quality_level}}</span>
+	<h5>Metadata Content Report</h5>
 
 	<div class="qa">
 		{{{qa}}}

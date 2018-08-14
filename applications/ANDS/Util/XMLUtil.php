@@ -256,4 +256,27 @@ class XMLUtil
         return preg_replace("/<\?xml (.*)\?>/s", "", $xml);
     }
 
+    /**
+     * @param $xml
+     * @param null $simpleXML
+     * @return string
+     * @throws Exception
+     */
+    public static function getRegistryObjectClass($xml, $simpleXML = null)
+    {
+        $simpleXML = $simpleXML ?: XMLUtil::getSimpleXMLFromString($xml);
+
+        if (count($simpleXML->xpath("//ro:collection"))) {
+            return "collection";
+        } elseif (count($simpleXML->xpath("//ro:party"))) {
+            return "party";
+        } elseif (count($simpleXML->xpath("//ro:activity"))) {
+            return "activity";
+        } elseif (count($simpleXML->xpath("//ro:service"))) {
+            return "service";
+        } else {
+            throw new \InvalidArgumentException("Unable to discern class from xml");
+        }
+    }
+
 }

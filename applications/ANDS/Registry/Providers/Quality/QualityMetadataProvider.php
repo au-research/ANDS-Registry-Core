@@ -1,13 +1,19 @@
 <?php
 
 
-namespace ANDS\Registry\Providers;
+namespace ANDS\Registry\Providers\Quality;
 
 
-use ANDS\RegistryObject;
-use ANDS\Util\XMLUtil;
+use ANDS\Registry\Providers\Quality\Exception\MissingDescriptionForCollection;
+use ANDS\Registry\Providers\Quality\Exception\MissingGroup;
+use ANDS\Registry\Providers\Quality\Exception\MissingOriginatingSource;
+use ANDS\Registry\Providers\Quality\Exception\MissingTitle;
+use ANDS\Registry\Providers\Quality\Exception\MissingType;
+use ANDS\Registry\Providers\Quality\Types;
 use ANDS\Registry\Providers\RelationshipProvider;
-
+use ANDS\RegistryObject;
+use ANDS\Util\Config;
+use ANDS\Util\XMLUtil;
 
 /**
  * Class  QualityMetadataProvider
@@ -15,6 +21,7 @@ use ANDS\Registry\Providers\RelationshipProvider;
  */
 class QualityMetadataProvider
 {
+
     // future
     private static $attributeKeys = ['quality_level', 'warning_count', 'error_count'];
     // private static $metadataKeys = ['level_html', 'quality_html'];
@@ -28,11 +35,104 @@ class QualityMetadataProvider
      *
      * @param RegistryObject $record
      */
+
+
     public static function process(RegistryObject $record)
     {
         static::deleteQualityInfo($record);
         $quality_report = static::getQualityReport($record);
         static::saveQualityInfo($record, $quality_report);
+    }
+
+    /**
+     * @param $xml
+     * @return bool
+     * @throws \Exception
+     */
+    public static function validate($xml)
+    {
+        $sm = XMLUtil::getSimpleXMLFromString($xml);
+        $key = (string) $sm->xpath('//ro:key')[0];
+        $class = XMLUtil::getRegistryObjectClass($xml, $sm);
+
+        // originatingSource is required
+        $originatingSource = (string) $sm->xpath('//ro:originatingSource')[0];
+        if (!trim($originatingSource)) {
+            throw new MissingOriginatingSource("Registry Object 'originatingSource' must have a value");
+        }
+
+        // group is required
+        $group = (string) $sm->xpath("//ro:registryObject")[0]['group'];
+        if (!trim($group)) {
+            throw new MissingGroup("Registry Object '@group' must have a value");
+        }
+
+        // must have a title (provided by names)
+        $names = $sm->xpath('//ro:name');
+        if (count($names) === 0) {
+            throw new MissingTitle("Registry Object 'name' must have a value");
+        }
+
+        // (collection only) must have a description
+        if ($class === "collection" && count($sm->xpath("//ro:description")) === 0) {
+            throw new MissingDescriptionForCollection("Collection must have a description");
+        }
+
+        // type must not be empty
+        $type = (string) $sm->xpath("//ro:{$class}")[0]['type'];
+        if (!trim($type)) {
+            throw new MissingType("Registry Object '@type' must have a value");
+        }
+
+        return true;
+    }
+
+    /**
+     * @param RegistryObject $record
+     * @return array
+     * @throws \Exception
+     */
+    public static function getMetadataReport(RegistryObject $record)
+    {
+        $checks = self::getChecksForClass($record->class);
+
+        return self::reports($record, $checks);
+    }
+
+    /**
+     * @param $class
+     * @return array
+     * @throws \Exception
+     */
+    public static function getChecksForClass($class)
+    {
+        $config = Config::get('quality.checks');
+
+        return $config[$class];
+    }
+
+    /**
+     * @param RegistryObject $record
+     * @param array $checks
+     * @return array
+     * @throws \Exception
+     */
+    public static function reports(RegistryObject $record, array $checks)
+    {
+        $xml = $record->getCurrentData()->data;
+        $simpleXML = XMLUtil::getSimpleXMLFromString($xml);
+
+        $report = [];
+        foreach ($checks as $checkClassName) {
+
+            /** @var Types\CheckType $check */
+            $check = new $checkClassName($record, $simpleXML);
+            $result = $check->toArray();
+
+            $report[] = $result;
+        }
+
+        return $report;
     }
 
     /**

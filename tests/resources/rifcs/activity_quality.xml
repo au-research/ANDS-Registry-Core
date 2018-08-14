@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+    <registryObject group="AUTestingRecords">
+        <key>ACTIVITY_QUALITY</key>
+        <originatingSource>http://demo.ands.org.au/registry/orca/register_my_data</originatingSource>
+        <activity type="award" dateModified="2013-04-10T23:51:41Z">
+            <name type="primary">
+                <namePart>Quality Level 3</namePart>
+            </name>
+            <identifier type="purl">http://purl.org/au-research/grants/nhmrc/640318AUT</identifier>
+            <location>
+                <address>
+                    <physical type="postalAddress">
+                        <addressPart type="telephoneNumber">123456789</addressPart>
+                    </physical>
+                </address>
+            </location>
+            <relatedObject>
+                <key>Party1</key>
+                <relation type="hasAssociationWith"/>
+            </relatedObject>
+            <relatedObject>
+                <key>Collection1</key>
+                <relation type="hasOutput"/>
+            </relatedObject>
+            <subject type="anzsrc-for">02</subject>
+            <description type="brief">brief desc</description>
+            <existenceDates>
+                <startDate dateFormat="W3CDTF">2013-02-14T00:00:00Z</startDate>
+                <endDate dateFormat="W3CDTF">2013-02-21T00:00:00Z</endDate>
+            </existenceDates>
+            <relatedInfo type="party">
+                <title>AUTParty6</title>
+                <identifier type="orcid">orcid.AUTParty6</identifier>
+                <relation type="isFundedBy"/>
+            </relatedInfo>
+            <relatedInfo type="website">
+                <title>Stuff</title>
+                <identifier type="uri">http://www.smithy.com</identifier>
+                <relation type="hasAssociationWith">
+                    <description>A website relationship</description>
+                </relation>
+            </relatedInfo>
+            <relatedInfo type="collection">
+                <title>Related Info Collection</title>
+                <identifier type="uri">http://www.smithy.com</identifier>
+                <relation type="hasAssociationWith">
+                    <description>A related info collection</description>
+                </relation>
+            </relatedInfo>
+            <existenceDates>
+                <startDate dateFormat="W3CDTF">2009</startDate>
+                <endDate dateFormat="W3CDTF">2009</endDate>
+            </existenceDates>
+        </activity>
+    </registryObject>
+</registryObjects>
