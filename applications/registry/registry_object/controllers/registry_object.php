@@ -3,6 +3,7 @@ define('SERVICES_MODULE_PATH', REGISTRY_APP_PATH.'services/');
 
 include_once("applications/registry/registry_object/models/_transforms.php");
 use ANDS\DataSource;
+use ANDS\Registry\Providers\Quality\Types;
 use \Transforms as Transforms;
 /**
  * Registry Object controller
@@ -281,7 +282,53 @@ class Registry_object extends MX_Controller {
         $ro->error_count = $error_count;
         $ro->warning_count = $warning_count;
         $ro->save();
+
         $response["error_count"] = $error_count;
+
+        // CC-2256. Replacing SetWarnings and SetInfos with fail rule from the report
+        // Leaving SetErrors because they are important
+        $response['SetWarnings'] = [];
+        $response['SetInfos'] = [];
+
+        $rule2TabMapping = [
+            Types\CheckIdentifier::class => 'tab_identifiers',
+            Types\CheckDescription::class => 'tab_descriptions_rights',
+            Types\CheckRights::class => 'tab_descriptions_rights',
+            Types\CheckLocation::class => 'tab_locations',
+            Types\CheckLocationAddress::class => 'tab_locations',
+            Types\CheckSubject::class => 'tab_subjects',
+            Types\CheckCoverage::class => 'tab_coverages',
+            Types\CheckRelatedCollection::class => 'tab_relatedObjects',
+            Types\CheckRelatedParties::class => 'tab_relatedObjects',
+            Types\CheckRelatedActivity::class => 'tab_relatedObjects',
+            Types\CheckRelatedService::class => 'tab_relatedObjects',
+            Types\CheckRelatedActivityOutput::class => 'tab_relatedObjects',
+            Types\CheckRelatedInformation::class => 'tabs_relatedInfos',
+            Types\CheckCitationInfo::class => 'tab_citationInfos',
+            Types\CheckRelatedOutputs::class => 'tab_relatedinfos',
+            Types\CheckExistenceDate::class => 'tab_existencedates',
+        ];
+
+        $fails = collect($report)
+            ->where('status', \ANDS\Registry\Providers\Quality\Types\CheckType::$FAIL);
+
+        $response['SetInfos'] = $fails
+            ->map(function($rule) use ($rule2TabMapping){
+                $fieldID = array_key_exists($rule['name'], $rule2TabMapping)
+                    ? $rule2TabMapping[$rule['name']]
+                    : 'tab_admin';
+
+                return [
+                    'field_id' => $fieldID,
+                    'message' => $rule['message']
+                ];
+            });
+
+        $response['SetInfos'] = $response['SetInfos']->unique()->toArray();
+
+        $response['fails'] = $fails->toArray();
+
+
 		echo json_encode($response);
 	}
 

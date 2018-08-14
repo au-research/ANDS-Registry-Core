@@ -13,6 +13,10 @@ class CheckCoverage extends CheckType
         'activity' => ''
     ];
 
+    protected $message = [
+        'collection' => 'Where relevant, include spatial and/or temporal coverage information for the data.'
+    ];
+
     /**
      * Returns the status of the check
      *

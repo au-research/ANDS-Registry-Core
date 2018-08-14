@@ -10,6 +10,10 @@ class CheckRelatedActivityOutput extends CheckType
         'activity' => 'Is connected to any related <a href="https://documentation.ands.org.au/display/DOC/Collection">collection</a> or <a href="https://documentation.ands.org.au/display/DOC/Service">service</a> that is an output of the activity'
     ];
 
+    protected $message = [
+        'activity' => 'Include any related parties, and any related collections or services that are outputs of the activity.'
+    ];
+
     /**
      * Returns the status of the check
      *

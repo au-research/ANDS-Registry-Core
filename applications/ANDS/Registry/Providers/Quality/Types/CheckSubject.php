@@ -12,6 +12,13 @@ class CheckSubject extends CheckType
         'activity' => 'Contains <a href="https://documentation.ands.org.au/display/DOC/Subject">subject</a> information to associate an activity with collections in the same field'
     ];
 
+    protected $message = [
+        'collection' => 'Include subject information (e.g. an anzsrc-for code) to enhance discovery.',
+        'party' => 'Include subject information (e.g. an anzsrc-for code) to enhance discovery.',
+        'service' => 'Include subject terms (e.g. an anzsrc-for code) that describe the research focus of the service.',
+        'activity' => 'Include subject information (e.g. an anzsrc-for code) to enhance discovery.'
+    ];
+
     /**
      * Returns the status of the check
      *

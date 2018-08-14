@@ -11,6 +11,12 @@ class CheckDescription extends CheckType
         'activity' => 'Includes a <a href="https://documentation.ands.org.au/display/DOC/Description">description</a> of the activity to provide context for related collections'
     ];
 
+    protected $message = [
+        'activity' => 'Include a description of the activity (brief and/or full).',
+        'service' => 'Include a description (brief and/or full) for potential users of the service.
+Include access rights and/or licence information that specifies how the service may be used.'
+    ];
+
     /**
      * Returns the status of the check
      *

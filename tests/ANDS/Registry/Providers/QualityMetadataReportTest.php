@@ -40,6 +40,8 @@ class QualityMetadataReportTest extends \RegistryTestClass
         foreach ($types as $type) {
             $this->checkType($type, $report);
         }
+
+        $this->checkReport($report);
     }
 
     /** @test
@@ -62,6 +64,8 @@ class QualityMetadataReportTest extends \RegistryTestClass
         $report = QualityMetadataProvider::getMetadataReport($record);
 
         $this->checkType(Types\CheckRelatedParties::class, $report);
+
+        $this->checkReport($report);
     }
 
     /** @test
@@ -84,6 +88,8 @@ class QualityMetadataReportTest extends \RegistryTestClass
         $report = QualityMetadataProvider::getMetadataReport($record);
 
         $this->checkType(Types\CheckRelatedActivity::class, $report);
+
+        $this->checkReport($report);
     }
 
     /** @test
@@ -106,6 +112,8 @@ class QualityMetadataReportTest extends \RegistryTestClass
         $report = QualityMetadataProvider::getMetadataReport($record);
 
         $this->checkType(Types\CheckRelatedService::class, $report);
+
+        $this->checkReport($report);
     }
 
     /** @test
@@ -127,6 +135,8 @@ class QualityMetadataReportTest extends \RegistryTestClass
         foreach (QualityMetadataProvider::getChecksForClass('activity') as $type) {
             $this->checkType($type, $report);
         }
+
+        $this->checkReport($report);
     }
 
     /** @test
@@ -148,6 +158,8 @@ class QualityMetadataReportTest extends \RegistryTestClass
         foreach (QualityMetadataProvider::getChecksForClass('party') as $type) {
             $this->checkType($type, $report);
         }
+
+        $this->checkReport($report);
     }
 
     /** @test
@@ -168,6 +180,24 @@ class QualityMetadataReportTest extends \RegistryTestClass
         // each of the following CheckType should pass
         foreach (QualityMetadataProvider::getChecksForClass('service') as $type) {
             $this->checkType($type, $report);
+        }
+
+        $this->checkReport($report);
+    }
+
+    /**
+     * Helper method to check the consistency of the report
+     *
+     * @param $report
+     */
+    private function checkReport($report)
+    {
+        // all of them have descriptor and message and none are blanks
+        foreach ($report as $check) {
+            $this->assertArrayHasKey('descriptor', $check);
+            $this->assertArrayHasKey('message', $check);
+            $this->assertNotEmpty($check['descriptor']);
+            $this->assertNotEmpty($check['message']);
         }
     }
 

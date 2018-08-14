@@ -13,6 +13,11 @@ class CheckLocation extends CheckType
         'activity' => 'Provides access to, or information about <a href="https://documentation.ands.org.au/display/DOC/Location">how to access</a>, the activity being described'
     ];
 
+    protected $message = [
+        'collection' => 'Include a location address to provide access to, or information about how to access, the data.',
+        'activity' => 'Include a location address for the activity, such as a URL to a project web page.'
+    ];
+
     /**
      * Returns the status of the check
      *
