@@ -32,7 +32,7 @@
 	{{/action_bar}}
 
 	<hr/>
-	<h5>ANDS Metadata Content - Quality Report</h5>
+	<h5>Metadata Content Report</h5>
 
 	<div class="qa">
 		{{{qa}}}

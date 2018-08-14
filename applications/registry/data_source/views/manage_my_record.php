@@ -150,7 +150,7 @@
 						<span class="tag gold_status_flag" tip="<h5>Gold Standard</h5><p>The following record has been verified<br/> as an exemplary record <br/>by the ANDS Metadata Assessment Group.</p>"><i class="icon icon-star"></i></span>
 					{{/has_gold}}
 					{{#quality_level}}
-						<span class="tag ql_{{quality_level}} tipQA" ro_id='{{id}}'>{{quality_level}}</span>
+						<span class="tipQA" ro_id='{{id}}'><i class="icon icon-list-alt"/></span>
 					{{/quality_level}}
 					{{#has_error}}
 						<a href="javascript:;" class="btn btn-mini btn-danger tipError" ro_id="{{id}}"><i class="icon-white icon-exclamation-sign"></i></a>
@@ -199,7 +199,7 @@
 				<span class="tag gold_status_flag" tip="<h5>Gold Standard</h5><p>The following record has been verified<br/> as an exemplary record <br/>by the ANDS Metadata Assessment Group.</p>"><i class="icon icon-star"></i></span>
 			{{/has_gold}}
 			{{#quality_level}}
-				<span class="tag ql_{{quality_level}} tipQA" ro_id='{{id}}'>{{quality_level}}</span>
+				<span class="tipQA" ro_id='{{id}}'><i class="icon icon-white icon-list-alt"/></span>
 			{{/quality_level}}
 			{{#has_error}}
 				<a href="javascript:;" class="btn btn-mini btn-danger tipError" ro_id="{{id}}"><i class="icon-white icon-exclamation-sign"></i></a>
