@@ -31,6 +31,7 @@ class XMLUtil
      * @param $xpath
      * @param string $namespace
      * @return \SimpleXMLElement[]
+     * @throws Exception
      */
     public static function getElementsByXPath(
         $xml,
@@ -42,7 +43,12 @@ class XMLUtil
         return $sxml->xpath($xpath);
     }
 
-    public static function getElementsByXPathFromSXML($sxml, $xpath)
+    /**
+     * @param $sxml
+     * @param $xpath
+     * @return mixed
+     */
+    public static function getElementsByXPathFromSXML(\SimpleXMLElement $sxml, $xpath)
     {
         return $sxml->xpath($xpath);
     }
@@ -52,6 +58,7 @@ class XMLUtil
      * @param $element
      * @param string $namespace
      * @return \SimpleXMLElement[]
+     * @throws Exception
      */
     public static function getElementsByName($xml, $element, $namespace = RIFCS_NAMESPACE)
     {
@@ -64,6 +71,7 @@ class XMLUtil
      * @param $element
      * @param string $namespace
      * @return int
+     * @throws Exception
      */
     public static function countElementsByName($xml, $element, $namespace = RIFCS_NAMESPACE)
     {
@@ -115,6 +123,11 @@ class XMLUtil
         return $return;
     }
 
+    /**
+     * @param $xml
+     * @return mixed
+     * @throws Exception
+     */
     public static function unwrapRegistryObject($xml)
     {
         if (strpos($xml, '<registryObjects') === false) {
@@ -122,6 +135,18 @@ class XMLUtil
         }
         $simpleXML = static::getSimpleXMLFromString(static::cleanNameSpace($xml));
         return $simpleXML->registryObject->asXML();
+    }
+
+    /**
+     * @param $xml
+     * @return mixed|string
+     * @throws Exception
+     */
+    public static function ensureWrappingRegistryObjects($xml)
+    {
+        $xml = static::unwrapRegistryObject($xml);
+        $xml = static::wrapRegistryObject($xml);
+        return $xml;
     }
 
     /**
@@ -160,6 +185,12 @@ class XMLUtil
         }
     }
 
+    /**
+     * @param $xml
+     * @param array $params
+     * @return string
+     * @throws Exception
+     */
     public static function getHTMLForm($xml, $params = [])
     {
         try{
@@ -171,7 +202,7 @@ class XMLUtil
             }
             return html_entity_decode($xslt_processor->transformToXML($dom));
         } catch (Exception $e) {
-            throw new Exception($e->getMessage());
+            throw new Exception(get_exception_msg($e));
         }
     }
 
@@ -264,6 +295,8 @@ class XMLUtil
      */
     public static function getRegistryObjectClass($xml, $simpleXML = null)
     {
+        $xml = XMLUtil::unwrapRegistryObject($xml);
+        $xml = XMLUtil::wrapRegistryObject($xml);
         $simpleXML = $simpleXML ?: XMLUtil::getSimpleXMLFromString($xml);
 
         if (count($simpleXML->xpath("//ro:collection"))) {

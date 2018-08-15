@@ -51,8 +51,8 @@ class QualityMetadataProvider
      */
     public static function validate($xml)
     {
+        $xml = XMLUtil::ensureWrappingRegistryObjects($xml);
         $sm = XMLUtil::getSimpleXMLFromString($xml);
-        $key = (string) $sm->xpath('//ro:key')[0];
         $class = XMLUtil::getRegistryObjectClass($xml, $sm);
 
         // originatingSource is required
