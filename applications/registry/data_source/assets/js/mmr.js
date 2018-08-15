@@ -807,20 +807,6 @@ function bindClickables()
                   }];
                   update(selected_ids, attributes);
                 break;
-            case 'set_gold_status_flag':
-                var attributes = [{
-                    name:'gold_status_flag',
-                    value:'t'
-                  }];
-                  update(selected_ids, attributes);
-                break;
-            case 'un_set_gold_status_flag':
-                var attributes = [{
-                    name:'gold_status_flag',
-                    value:'f'
-                  }];
-                  update(selected_ids, attributes);
-                break;
             case 'view':
                 if($(this).attr('ro_id')){
                     window.location = base_url+'registry_object/view/'+$(this).attr('ro_id');
