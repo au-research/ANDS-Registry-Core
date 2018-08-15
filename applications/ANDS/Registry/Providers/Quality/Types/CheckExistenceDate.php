@@ -7,7 +7,7 @@ namespace ANDS\Registry\Providers\Quality\Types;
 class CheckExistenceDate extends CheckType
 {
     protected $descriptor = [
-        'activity' => 'Includes <a href="https://documentation.ands.org.au/display/DOC/Existence+dates">existence dates</a> for the activity to allow users to narrow their search by date'
+        'activity' => 'Includes <a target="_blank" href="https://documentation.ands.org.au/display/DOC/Existence+dates">existence dates</a> for the activity to allow users to narrow their search by date'
     ];
 
     protected $message = [
