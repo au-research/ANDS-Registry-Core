@@ -146,9 +146,6 @@
 					{{#has_flag}}
 						<span class="tag no-border-tag flag" tip="Flagged"><i class="icon icon-flag"></i></span>
 					{{/has_flag}}
-					{{#has_gold}}
-						<span class="tag gold_status_flag" tip="<h5>Gold Standard</h5><p>The following record has been verified<br/> as an exemplary record <br/>by the ANDS Metadata Assessment Group.</p>"><i class="icon icon-star"></i></span>
-					{{/has_gold}}
 					{{#quality_level}}
 						<span class="tipQA" ro_id='{{id}}'><i class="icon icon-list-alt"/></span>
 					{{/quality_level}}
@@ -195,9 +192,6 @@
 			{{#has_flag}}
 				<span class="tag no-border-tag flag" tip="Flagged"><i class="icon icon-flag"></i></span>
 			{{/has_flag}}
-			{{#has_gold}}
-				<span class="tag gold_status_flag" tip="<h5>Gold Standard</h5><p>The following record has been verified<br/> as an exemplary record <br/>by the ANDS Metadata Assessment Group.</p>"><i class="icon icon-star"></i></span>
-			{{/has_gold}}
 			{{#quality_level}}
 				<span class="tipQA" ro_id='{{id}}'><i class="icon icon-white icon-list-alt"/></span>
 			{{/quality_level}}

@@ -33,7 +33,6 @@
 									<p>
 										<span class="tag" tip="Last Modified"><i class="icon icon-time"></i><?php echo date("j F Y, g:i a", (int)$ro->getAttribute('updated')); ?></span>
 										<img class="tag" tip="<?php echo $ro->class;?>" src="<?php echo asset_url('img/'.$ro->class.'.png', 'base');?>"/>
-										<span class="tag gold_status_flag" tip="<h5>Gold Standard</h5><p>The following record has been verified<br/> as an exemplary record <br/>by the ANDS Metadata Assessment Group.</p>"><i class="icon icon-star-empty"></i></span>
 									</p>
 								</div>
 								<div class="btn-group btn-group-vertical right-menu hide">

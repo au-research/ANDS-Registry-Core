@@ -690,7 +690,6 @@ class Data_source extends MX_Controller {
 			array_push($st['menu'], array('action'=>'view', 'display'=>'<i class="icon icon-eye-open"></i> View this Record'));
 			array_push($st['menu'], array('action'=>'edit', 'display'=>'<i class="icon icon-edit"></i> Edit this Record'));
 			array_push($st['menu'], array('action'=>'flag', 'display'=>'Flag'));
-			array_push($st['menu'], array('action'=>'set_gold_status_flag', 'display'=>'Gold Standard'));
 			switch($s){
 				case 'DRAFT':
 					$st['ds_count']=$data_source->count_DRAFT;
@@ -841,9 +840,7 @@ class Data_source extends MX_Controller {
 						);
 				if($item['error_count']>0) $item['has_error'] = true;
 				if($registry_object->flag=='t') $item['has_flag'] = true;
-				if($registry_object->gold_status_flag=='t'){
-					$item['has_gold'] = true;
-				}else if($item['error_count']==0){
+				if($item['error_count']==0){
 					$item['quality_level'] = $registry_object->quality_level;
 				}
 				switch($item['status']){
@@ -934,13 +931,11 @@ class Data_source extends MX_Controller {
 		}
 
 		$hasFlag = false;
-		$hasGold = false;
 		foreach($affected_ids as $id){
 			$ro = $this->ro->getByID($id);
 			if ($ro)
 			{
 				if($ro->flag=='t') $hasFlag = true;
-				if($ro->gold_status_flag=='t') $hasGold = true;
 			}
 		}
 
@@ -1017,19 +1012,6 @@ class Data_source extends MX_Controller {
 					$menu['preview'] = 'Preview in RDA';
 					break;
 				case 'PUBLISHED':
-					$menu['edit'] = 'Edit Record';
-					if ($this->user->hasFunction('REGISTRY_STAFF'))
-					{
-						if($hasGold)
-						{
-							$menu['un_set_gold_status_flag'] = 'Remove Gold Status';
-						}
-						else
-						{
-							$menu['set_gold_status_flag'] = 'Set Gold Status';
-						}
-					}
-
 					$menu['delete'] = 'Delete Record';
 					$menu['rdaview'] = 'View in RDA';
 				break;

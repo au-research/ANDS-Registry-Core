@@ -110,16 +110,6 @@ class Registry_object extends MX_Controller {
 		}
 	}
 
-	public function gold_standard(){
-		$this->load->model('registry_object/registry_objects', 'ro');
-		$gold_ros = $this->ro->getByAttribute('gold_status_flag', 't');
-		$data['ros'] = $gold_ros;
-		$data['title']='Gold Standard Records';
-		$data['js_lib']=array('core');
-		$data['list_title']='Gold Standard Records';
-		$this->load->view('registry_object_list', $data);
-	}
-
 	public function add(){
 		$data['title'] = 'Add Registry Objects';
 		$data['scripts'] = array('add_registry_objects');
@@ -941,12 +931,6 @@ class Registry_object extends MX_Controller {
                 $ro = $this->ro->getByID($id);
                 try {
                     $ro->setAttribute($attr['name'], $attr['value']);
-                    if ($attr['name'] == 'gold_status_flag' && $attr['value'] == 't') {
-                        $ro->setAttribute('quality_level', 4);
-                    }
-                    if ($attr['name'] == 'gold_status_flag' && $attr['value'] == 'f') {
-                        $ro->update_quality_metadata();
-                    }
                     $result['success_count']++;
                 } catch (Exception $e) {
                     $result['status'] = 'error';
@@ -1116,14 +1100,6 @@ class Registry_object extends MX_Controller {
 				{
 					try{
 						$ro->setAttribute($a['name'], $a['value']);
-						if($a['name']=='gold_status_flag'&&$a['value']=='t')
-						{
-							$ro->setAttribute('quality_level',4);
-						}
-						if($a['name']=='gold_status_flag'&&$a['value']=='f')
-						{
-							$ro->update_quality_metadata();
-						}
 						if($a['name']=='status')
 						{
 							$ro->flag = 'f';
