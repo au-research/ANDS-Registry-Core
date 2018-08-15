@@ -7,10 +7,10 @@ namespace ANDS\Registry\Providers\Quality\Types;
 class CheckRelatedService extends CheckType
 {
     protected $descriptor = [
-        'collection' => 'Is connected to <a href="https://documentation.ands.org.au/display/DOC/Service">services</a> that can be used to access or operate on the data',
-        'party' => 'Is connected to any service that is an output of the party',
-        'service' => 'Is connected to any service that is an output of the service',
-        'activity' => 'Is connected to any service that is an output of the activity'
+        'collection' => 'Is connected to <a target="_blank" href="https://documentation.ands.org.au/display/DOC/Service">services</a> that can be used to access or operate on the data',
+        'party' => 'Is connected to any <a target="_blank" href="https://documentation.ands.org.au/display/DOC/Service">services</a> that is an output of the party',
+        'service' => 'Is connected to any <a target="_blank" href="https://documentation.ands.org.au/display/DOC/Service">services</a> that is an output of the service',
+        'activity' => 'Is connected to any <a target="_blank" href="https://documentation.ands.org.au/display/DOC/Service">services</a> that is an output of the activity'
     ];
 
     protected $message = [

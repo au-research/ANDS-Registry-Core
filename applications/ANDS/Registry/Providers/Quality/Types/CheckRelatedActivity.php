@@ -7,10 +7,10 @@ namespace ANDS\Registry\Providers\Quality\Types;
 class CheckRelatedActivity extends CheckType
 {
     protected $descriptor = [
-        'collection' => 'Is connected to <a href="https://documentation.ands.org.au/display/DOC/Activity">projects</a> associated with the data to improve discovery and provide context',
-        'party' => 'Is connected to <a href="https://documentation.ands.org.au/display/DOC/Activity">activities</a> associated with the party',
-        'service' => 'Is connected to <a href="https://documentation.ands.org.au/display/DOC/Activity">activities</a> associated with the service',
-        'activity' => 'Is connected to <a href="https://documentation.ands.org.au/display/DOC/Activity">activities</a> associated with the activity'
+        'collection' => 'Is connected to <a target="_blank" href="https://documentation.ands.org.au/display/DOC/Activity">projects</a> associated with the data to improve discovery and provide context',
+        'party' => 'Is connected to <a target="_blank" href="https://documentation.ands.org.au/display/DOC/Activity">activities</a> associated with the party',
+        'service' => 'Is connected to <a target="_blank" href="https://documentation.ands.org.au/display/DOC/Activity">activities</a> associated with the service',
+        'activity' => 'Is connected to <a target="_blank" href="https://documentation.ands.org.au/display/DOC/Activity">activities</a> associated with the activity'
     ];
 
     protected $message = [

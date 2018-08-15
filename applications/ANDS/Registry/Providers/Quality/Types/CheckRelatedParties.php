@@ -7,10 +7,10 @@ namespace ANDS\Registry\Providers\Quality\Types;
 class CheckRelatedParties extends CheckType
 {
     protected $descriptor = [
-        'collection' => 'Is connected to <a href="https://documentation.ands.org.au/display/DOC/Party">people and organisations</a> associated with the data to improve discovery',
-        'party' => 'Is connected to <a href="https://documentation.ands.org.au/display/DOC/Party">parties</a> associated with the party',
-        'service' => 'Is connected to <a href="https://documentation.ands.org.au/display/DOC/Party">parties</a> associated with the service',
-        'activity' => 'Is connected to <a href="https://documentation.ands.org.au/display/DOC/Party">people</a> associated with the activity'
+        'collection' => 'Is connected to <a target="_blank" href="https://documentation.ands.org.au/display/DOC/Party">people and organisations</a> associated with the data to improve discovery',
+        'party' => 'Is connected to <a target="_blank" href="https://documentation.ands.org.au/display/DOC/Party">parties</a> associated with the party',
+        'service' => 'Is connected to <a target="_blank" href="https://documentation.ands.org.au/display/DOC/Party">parties</a> associated with the service',
+        'activity' => 'Is connected to <a target="_blank" href="https://documentation.ands.org.au/display/DOC/Party">people</a> associated with the activity'
     ];
 
     protected $message = [

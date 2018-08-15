@@ -7,7 +7,7 @@ namespace ANDS\Registry\Providers\Quality\Types;
 class CheckRelatedOutputs extends CheckType
 {
     protected $descriptor = [
-        'collection' => 'Is connected to <a href="https://documentation.ands.org.au/display/DOC/Related+information">related outputs</a>, such as publications, that give context to the data'
+        'collection' => 'Is connected to <a target="_blank" href="https://documentation.ands.org.au/display/DOC/Related+information">related outputs</a>, such as publications, that give context to the data'
     ];
 
     protected $message = [
