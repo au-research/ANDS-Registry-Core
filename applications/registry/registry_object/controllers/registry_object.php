@@ -130,31 +130,25 @@ class Registry_object extends MX_Controller {
 		$this->load->view("add_registry_objects", $data);
 	}
 
-	public function edit($registry_object_id){
+    /**
+     * @param $registry_object_id
+     * @throws Exception
+     */
+    public function edit($registry_object_id){
         acl_enforce('REGISTRY_USER');
+
         initEloquent();
+
         $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($registry_object_id);
+        ds_acl_enforce($record->data_source_id);
+        if (!$record) {
+            throw new Exception("This Registry Object ID does not exist!");
+        }
 
-
-
-		if(!$record) { throw new Exception("This Registry Object ID does not exist!"); }
-
-
-		ds_acl_enforce($record->data_source_id);
         $data_source = \ANDS\Repository\DataSourceRepository::getByID($record->data_source_id);
+        $draftRecord = \ANDS\Repository\RegistryObjectsRepository::getMatchingRecord($record->key, 'DRAFT');
 
-
-        $draft_record = \ANDS\Repository\RegistryObjectsRepository::getMatchingRecord($record->key, 'DRAFT');
-
-
-		if($draft_record == null)
-		{
-
-            $xml = $record->getCurrentData()->data;
-
-            // write the xml payload to the file system
-            $batchID = 'MANUAL-ARO-' . md5($record->key).'-'.time();
-            \ANDS\Payload::write($record->data_source_id, $batchID, $xml);
+        if (!$draftRecord) {
 
             // import Task creation
             $importTask = new \ANDS\API\Task\ImportTask();
@@ -167,41 +161,65 @@ class Registry_object extends MX_Controller {
                         'source' => 'manual',
                         'ds_id' => $record->data_source_id,
                         'user_name' => $this->user->name(),
-                        'batch_id' => $batchID,
                         'targetStatus' => 'DRAFT'
                     ])
                 ])
-                ->enableRunAllSubTask()
-                ->initialiseTask();
+                ->skipLoadingPayload()
+                ->enableRunAllSubTask();
 
+            // write the xml payload to the file system
+            $xml = $record->getCurrentData()->data;
+            $batchID = 'MANUAL-ARO-' . md5($record->key).'-'.time();
+            $path = \ANDS\Payload::write($record->data_source_id, $batchID, $xml);
+            $payload = new \ANDS\Payload($path);
+
+            $importTask->setPayload("customPayload", $payload);
+            $importTask->initialiseTask();
             $importTask->run();
 
             $errorLog = $importTask->getError();
-            if($errorLog == null){
-                $draft_record = \ANDS\Repository\RegistryObjectsRepository::getMatchingRecord($record->key, 'DRAFT');
+            if ($errorLog == null) {
+                $draftRecord = \ANDS\Repository\RegistryObjectsRepository::getMatchingRecord($record->key, 'DRAFT');
+            } else {
+                throw new Exception("Draft Record creation failed. ". join(' ', $errorLog));
             }
 		}
 
-        if($draft_record->registry_object_id != $registry_object_id){
-            header("Location: " . registry_url('registry_object/edit/' . $draft_record->registry_object_id));
+		if (!$draftRecord) {
+            throw new Exception("Draft Record creation failed for record {$record->id}");
+        }
+
+        if ($draftRecord->registry_object_id != $registry_object_id) {
+            header("Location: " . registry_url('registry_object/edit/' . $draftRecord->registry_object_id));
             return;
         }
 
-        $extRif = $draft_record->getCurrentData()->data;
-		$data['extrif'] = $extRif;
+        $extRif = $draftRecord->getCurrentData()->data;
 
-        $params = ["base_url"=>base_url(),
-            "registry_object_id"=>$registry_object_id,
-            "data_source_id"=>$draft_record->data_source_id,
-            "data_source_title"=>$data_source->title,
-            "ro_title"=>$draft_record->title,
-            "ro_class"=>$draft_record->class
+        $data = [
+            'content' => ANDS\Util\XMLUtil::getHTMLForm($extRif, [
+                "base_url" => base_url(),
+                "registry_object_id" => $registry_object_id,
+                "data_source_id" => $draftRecord->data_source_id,
+                "data_source_title" => $data_source->title,
+                "ro_title" => $draftRecord->title,
+                "ro_class" => $draftRecord->class
+            ]),
+            'extrif' => $extRif,
+            'ds' => $data_source,
+            'title' => 'Edit: ' . $draftRecord->title,
+            'scripts' => ['add_registry_object'],
+            'js_lib' => [
+                'core',
+                'tinymce',
+                'ands_datepicker',
+                'prettyprint',
+                'vocab_widget',
+                'orcid_widget',
+                'google_map',
+                'location_capture_widget'
+            ]
         ];
-		$data['content'] = ANDS\Util\XMLUtil::getHTMLForm($data['extrif'], $params);
-		$data['ds'] = $data_source;
-		$data['title'] = 'Edit: '.$draft_record->title;
-		$data['scripts'] = array('add_registry_object');
-		$data['js_lib'] = array('core', 'tinymce', 'ands_datepicker', 'prettyprint','vocab_widget','orcid_widget', 'google_map','location_capture_widget');
 		$this->load->view("add_registry_object", $data);
 	}
 

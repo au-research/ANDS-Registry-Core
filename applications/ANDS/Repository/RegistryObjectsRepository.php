@@ -25,9 +25,6 @@ class RegistryObjectsRepository
      * @param $id
      * @return bool
      */
-
-
-
     public static function deleteRecord($id)
     {
         $importTask = new ImportTask();

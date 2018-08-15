@@ -83,7 +83,7 @@ class ProcessPayload extends ImportSubTask
         try {
             QualityMetadataProvider::validate($registryObject->saveXML());
         } catch (\Exception $e) {
-            $this->log("Error whilst ingesting record with key " . $key . ": " . $e->getMessage());
+            $this->addError("Error whilst ingesting record with key " . $key . ": " . get_exception_msg($e));
 
             if ($e instanceof Exception\MissingGroup) {
                 $this->parent()->incrementTaskData("missingGroupAttributeCount");
