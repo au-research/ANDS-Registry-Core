@@ -45,7 +45,6 @@
 						<button class="btn dropdown-toggle" data-toggle="dropdown">Sort <span class="caret"></span></button>
 						<ul class="dropdown-menu">
 							<li><a href="javascript:;" class="sort" sort="updated" value="">Date Modified <span class="icon"></span></a></li>
-							<li><a href="javascript:;" class="sort" sort="quality_level" value="">Quality Level  <span class="icon"></span></a></li>
 						</ul>
 					</div>
 					<div class="btn-group">
