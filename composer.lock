@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "6fbd2ae24246fa5cd429ff6d695c6f28",
+    "content-hash": "2304ac18c0743a792a4025c25cecada7",
     "packages": [
         {
             "name": "au-research/ands-doi-service",
-            "version": "dev-develop",
+            "version": "dev-feature/CC-2263-task-doi-service-merge-prod-and-test-accounts-for-clients",
             "source": {
                 "type": "git",
                 "url": "https://github.com/au-research/ANDS-DOI-Service.git",
-                "reference": "25c4efcc5a515b34e5d8d3473800eb540d93cca9"
+                "reference": "42720f2e2f4a3449dc3770f016ab3eeac22e4a51"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/au-research/ANDS-DOI-Service/zipball/25c4efcc5a515b34e5d8d3473800eb540d93cca9",
-                "reference": "25c4efcc5a515b34e5d8d3473800eb540d93cca9",
+                "url": "https://api.github.com/repos/au-research/ANDS-DOI-Service/zipball/42720f2e2f4a3449dc3770f016ab3eeac22e4a51",
+                "reference": "42720f2e2f4a3449dc3770f016ab3eeac22e4a51",
                 "shasum": ""
             },
             "require": {
@@ -45,7 +45,7 @@
                 }
             ],
             "description": "ANDS DOI Service library",
-            "time": "2018-07-04T02:35:16+00:00"
+            "time": "2018-08-13T22:59:19+00:00"
         },
         {
             "name": "cebe/markdown",

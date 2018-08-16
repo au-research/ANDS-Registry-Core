@@ -203,15 +203,18 @@ class Mydois extends MX_Controller {
 		$domainList = trim(urlencode($posted['domainList']));
 		$datacite_prefix = 	trim(urlencode($posted['datacite_prefix']));
 		$shared_secret = trim(urlencode($posted['shared_secret']))	;
+        $test_shared_secret = trim(urlencode($posted['test_shared_secret']))	;
         
         // add the client to the repository
         $client = $this->clientRepository->create([
             'ip_address' => $ip,
             'app_id' => sha1($shared_secret.$client_name),
+            'test_app_id' => sha1($test_shared_secret.$client_name),
             'client_name' => urldecode($client_name),
             'client_contact_name' => urldecode($client_contact_name),
             'client_contact_email' => urldecode($client_contact_email),
-            'shared_secret' => $shared_secret
+            'shared_secret' => $shared_secret,
+            'test_shared_secret' => $test_shared_secret
         ]);
         
         $client->addDomains($domainList);
@@ -304,6 +307,7 @@ class Mydois extends MX_Controller {
 		$domainList = trim($posted['domainList']);
 		$datacite_prefix = 	trim($posted['datacite_prefix']);
 		$shared_secret = trim($posted['shared_secret']);
+        $test_shared_secret = trim($posted['shared_secret']);
 
         $clientdata = [
             'client_id' => $client_id,
@@ -311,7 +315,8 @@ class Mydois extends MX_Controller {
             'client_name'  => $client_name,
             'client_contact_name' => $client_contact_name,
             'client_contact_email' => $client_contact_email,
-            'shared_secret' => $shared_secret
+            'shared_secret' => $shared_secret,
+            'test_shared_secret' => $test_shared_secret
         ];
         // update the client metadata
         $this->clientRepository->updateClient($clientdata);
