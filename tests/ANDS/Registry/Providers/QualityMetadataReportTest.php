@@ -185,6 +185,26 @@ class QualityMetadataReportTest extends \RegistryTestClass
         $this->checkReport($report);
     }
 
+    /** @test
+     * @throws \Exception
+     */
+    function it_checks_for_empty_identifier()
+    {
+        // given a collection with an empty identifier tag
+        $record = $this->stub(RegistryObject::class, ['class' => 'service']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_minimal.xml')
+        ]);
+
+        // when get reports
+        $report = QualityMetadataProvider::getMetadataReport($record);
+
+        // it should fail for CheckIdentifier
+        $actual = collect($report)->where('name', Types\CheckIdentifier::class)->first();
+        $this->assertEquals(Types\CheckType::$FAIL, $actual['status'], "CheckIdentifier should fail");
+    }
+
     /**
      * Helper method to check the consistency of the report
      *
