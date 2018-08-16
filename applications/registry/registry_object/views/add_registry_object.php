@@ -32,7 +32,7 @@
 	{{/action_bar}}
 
 	<hr/>
-	<h5>Metadata Content Report</h5>
+	<h5><span class="icon icon-list-alt"></span> Metadata Content Report</h5>
 
 	<div class="qa">
 		{{{qa}}}
