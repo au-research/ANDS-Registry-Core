@@ -850,9 +850,17 @@ class Registry_object extends MX_Controller {
 
 
 	public function get_validation_text(){
-		$this->load->model('registry_objects', 'ro');
-		$ro = $this->ro->getByID($this->input->post('ro_id'));
-		echo $ro->get_validation_text();
+        $this->load->model('registry_objects', 'ro');
+        $ro = $this->ro->getByID($this->input->post('ro_id'));
+
+        $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($this->input->post('ro_id'));
+        $xml = $record->getCurrentData()->data;
+
+        $xml = \ANDS\Util\XMLUtil::unwrapRegistryObject($xml);
+//        $xml = $ro->cleanRIFCSofEmptyTags($xml, 'false', true);
+        $result = $ro->transformForQA(wrapRegistryObjects($xml), null, "html");
+
+        echo $result;
 	}
 
 	public function get_native_record($id){

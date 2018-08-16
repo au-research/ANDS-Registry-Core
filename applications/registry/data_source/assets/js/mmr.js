@@ -408,6 +408,7 @@ function initLayout(){
                         this.set('content.text', data);
                         $('.quality-test-results span').hide();
                         $('.quality-test-results span.error').css({display:'block'}).show();
+                        formatTip(this);
                     }
                 }
             },

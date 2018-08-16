@@ -38,6 +38,26 @@
 			    </xsl:otherwise>
 	    	</xsl:choose>
         </xsl:if>
+		<xsl:if test="string-length(ro:originatingSource) = 0">
+			<xsl:choose>
+				<xsl:when test="$output = 'script'">
+					<xsl:text>SetErrors("tab_mandatoryInformation_type","Originating Source must be specified");</xsl:text>
+				</xsl:when>
+				<xsl:otherwise>
+					<span class="error">Registry Object Originating Source must be specified</span>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:if>
+		<xsl:if test="string-length(ro:collection/ro:description) = 0">
+			<xsl:choose>
+				<xsl:when test="$output = 'script'">
+					<xsl:text>SetErrors("tab_descriptions_rights_type","Collection must have a description");</xsl:text>
+				</xsl:when>
+				<xsl:otherwise>
+					<span class="error">Collection must have a description</span>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:if>
         <xsl:if test="string-length(ro:collection/@type) &gt; 32 or string-length(ro:activity/@type) &gt; 32 or string-length(ro:party/@type) &gt; 32 or string-length(ro:service/@type) &gt; 32">
             <xsl:choose>
 			    <xsl:when test="$output = 'script'">

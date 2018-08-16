@@ -144,6 +144,12 @@ class ProcessPayload extends ImportSubTask
      */
     public function checkPayloadHarvestability()
     {
+        // Let draft records through to save errors
+        // DRAFT records comes via manual entry
+        if ($this->parent()->getTaskData('targetStatus') === "DRAFT") {
+            return;
+        }
+
         foreach ($this->parent()->getPayloads() as &$payload) {
             $path = $payload->getPath();
             $xml = $payload->getContentByStatus($this->payloadOutput);

@@ -243,6 +243,39 @@ class XMLUtil
         return $result;
     }
 
+    /**
+     * @param $xml
+     * @return bool
+     * @throws Exception
+     */
+    public function validateRIFCS($xml)
+    {
+        $doc = new DOMDocument('1.0', 'utf-8');
+        $doc->loadXML($xml);
+        if (!$doc) {
+            throw new Exception("Unable to parse XML. Perhaps your XML file is not well-formed?");
+        }
+
+        // TODO: Does this cache in-memory?
+        libxml_use_internal_errors(true);
+        $validation_status = $doc->schemaValidate(
+            REGISTRY_APP_PATH . "registry_object/schema/registryObjects.xsd"
+        );
+        if ($validation_status === true) {
+            libxml_use_internal_errors(false);
+            return true;
+        } else {
+            $errors = libxml_get_errors();
+            $error_string = '';
+            foreach ($errors as $error) {
+                $error_string .= TAB . "Line " . $error->line . ": " . $error->message;
+            }
+            libxml_clear_errors();
+            libxml_use_internal_errors(false);
+            throw new Exception("Unable to validate XML document against schema: " . NL . $error_string);
+        }
+    }
+
     public function validateRemoteSchema($schema, $payload)
     {
         libxml_use_internal_errors(true);
