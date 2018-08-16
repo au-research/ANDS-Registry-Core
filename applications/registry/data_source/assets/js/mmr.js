@@ -357,7 +357,7 @@ function initLayout(){
             content: {
                 text: 'Loading...', // The text to use whilst the AJAX request is loading
                 title: {
-                    text: 'Metadata Content Report',
+                    text: '<span class="icon icon-list-alt"></span> Metadata Content Report',
                     button: 'Close'
                 },
                 ajax: {
