@@ -35,8 +35,6 @@ class QualityMetadataProvider
      *
      * @param RegistryObject $record
      */
-
-
     public static function process(RegistryObject $record)
     {
         static::deleteQualityInfo($record);
