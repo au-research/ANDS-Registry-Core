@@ -55,7 +55,8 @@
         "ramsey/uuid": "^3.7",
         "graphaware/neo4j-php-client": "^4.0",
         "illuminate/cache": "~5.2.0",
-        "symfony/cache": "^3.4"
+        "symfony/cache": "^3.4",
+        "abraham/twitteroauth": "^0.9.2"
     },
     "repositories": [
         {

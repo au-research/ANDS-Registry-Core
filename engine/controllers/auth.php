@@ -100,6 +100,32 @@ class Auth extends CI_Controller {
 		
 	}
 
+    public function twitter()
+    {
+        $oauthToken = $_GET['oauth_token'];
+        $oauthVerifier = $_GET['oauth_verifier'];
+        $connection = new Abraham\TwitterOAuth\TwitterOAuth("yL3HSMePU8nGo7sagdZ8EzFp3", "gbUsqnDnMkRx3QCL2cVunoM8fCGvciZ0lTjgWgEnIOKi7ibQqN");
+        $access = $connection->oauth("oauth/access_token", ["oauth_verifier" => $oauthVerifier, 'oauth_token' => $oauthToken]);
+
+        $profile = $connection->get('users/show', [
+            'user_id' => $access['user_id']
+        ]);
+
+        $profile = [
+            'identifier' => $access['user_id'],
+            'photoURL' => $profile->profile_image_url_https,
+            'displayName' => $access['screen_name'],
+            'firstName' => 'Minh Duc Nguyen',
+            'lastName' => '',
+            'email' => '',
+            'accessToken' => $access['oauth_token']
+        ];
+
+        $this->load->model('authenticators/twitter_authenticator', 'auth');
+        $this->auth->getUserByProfile($profile);
+        $this->user->refreshAffiliations($this->user->localIdentifier());
+	}
+
 	public function oauth(){
 		if ($_SERVER['REQUEST_METHOD'] === 'GET'){
 			$_GET = $_REQUEST;
