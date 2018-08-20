@@ -65,10 +65,21 @@ class Auth extends CI_Controller {
 		$this->load->view('login', $data);
 	}
 
-	public function authenticate($method = 'built_in') {
+    /**
+     * @param string $method
+     * @throws \Abraham\TwitterOAuth\TwitterOAuthException
+     * @throws Exception
+     */
+    public function authenticate($method = 'built_in') {
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		set_exception_handler('json_exception_handler');
+
+		if ($method === "twitter") {
+		    $url = \ANDS\Authenticator\TwitterAuthenticator::getOauthLink();
+		    redirect($url);
+        }
+
 		$authenticator_class = $method.'_authenticator';
 		
 		if (!file_exists('engine/models/authenticators/'.$authenticator_class.'.php')) {
@@ -84,14 +95,13 @@ class Auth extends CI_Controller {
 		//get parameters from POST
 		$params = array_merge($params, $post);
 
-
 		try {
 			$this->load->model('authenticators/'.$authenticator_class, 'auth');
 			$this->auth->load_params($params);
 			$response = $this->auth->authenticate();
 			$this->user->refreshAffiliations($this->user->localIdentifier());
 
-			if ($this->input->get('redirect')) redirect($redirect);
+			if ($this->input->get('redirect')) redirect($this->input->get('redirect'));
 
 		} catch (Exception $e) {
 			// $this->auth->post_authentication_hook();
@@ -100,26 +110,16 @@ class Auth extends CI_Controller {
 		
 	}
 
+    /**
+     * Callback to /registry/auth/twitter
+     *
+     * @throws Exception
+     */
     public function twitter()
     {
         $oauthToken = $_GET['oauth_token'];
         $oauthVerifier = $_GET['oauth_verifier'];
-        $connection = new Abraham\TwitterOAuth\TwitterOAuth("yL3HSMePU8nGo7sagdZ8EzFp3", "gbUsqnDnMkRx3QCL2cVunoM8fCGvciZ0lTjgWgEnIOKi7ibQqN");
-        $access = $connection->oauth("oauth/access_token", ["oauth_verifier" => $oauthVerifier, 'oauth_token' => $oauthToken]);
-
-        $profile = $connection->get('users/show', [
-            'user_id' => $access['user_id']
-        ]);
-
-        $profile = [
-            'identifier' => $access['user_id'],
-            'photoURL' => $profile->profile_image_url_https,
-            'displayName' => $access['screen_name'],
-            'firstName' => 'Minh Duc Nguyen',
-            'lastName' => '',
-            'email' => '',
-            'accessToken' => $access['oauth_token']
-        ];
+        $profile = \ANDS\Authenticator\TwitterAuthenticator::getProfile($oauthToken, $oauthVerifier);
 
         $this->load->model('authenticators/twitter_authenticator', 'auth');
         $this->auth->getUserByProfile($profile);
