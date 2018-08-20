@@ -53,7 +53,7 @@
 
         vm.refreshDOIs = function(search) {
             if (!search) search = false;
-            APIDOIService.getDOIList(vm.client.app_id, vm.pp, 0, search).then(function(data){
+                APIDOIService.getDOIList(vm.client.app_id, vm.pp, 0, search, vm.client.mode).then(function(data){
                 vm.dois = data.data.dois;
                 vm.total = data.data.total;
                 vm.offset = vm.pp;
