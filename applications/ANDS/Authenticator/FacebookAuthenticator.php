@@ -39,7 +39,7 @@ class FacebookAuthenticator
 
         $accessToken = $helper->getAccessToken();
 
-        $response = $connection->get('/me?fields=id,name,email', $accessToken->getValue());
+        $response = $connection->get('/me?fields=id,name,email,picture', $accessToken->getValue());
         $user = $response->getGraphUser();
         $profile = [
             'identifier' => $user->getId(),
@@ -48,7 +48,8 @@ class FacebookAuthenticator
             'firstName' => $user->getFirstName(),
             'lastName' => $user->getLastName(),
             'email' => $user->getEmail(),
-            'accessToken' => $response->getApp()->getAccessToken()->getValue()
+            'accessToken' => $response->getApp()->getAccessToken()->getValue(),
+            'authentication_service_id' => 'AUTHENTICATION_SOCIAL_FACEBOOK'
         ];
 
         return $profile;

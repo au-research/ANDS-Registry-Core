@@ -85,6 +85,11 @@ class Auth extends CI_Controller {
 		    redirect($url);
         }
 
+        if ($method === "google") {
+		    $url = \ANDS\Authenticator\GoogleAuthenticator::getOauthLink();
+		    redirect($url);
+        }
+
 		$authenticator_class = $method.'_authenticator';
 		
 		if (!file_exists('engine/models/authenticators/'.$authenticator_class.'.php')) {
@@ -144,6 +149,18 @@ class Auth extends CI_Controller {
         $profile = \ANDS\Authenticator\FacebookAuthenticator::getProfile();
 
         $this->load->model('authenticators/facebook_authenticator', 'auth');
+        $this->auth->getUserByProfile($profile);
+        $this->user->refreshAffiliations($this->user->localIdentifier());
+	}
+
+    /**
+     * @throws Exception
+     */
+    public function google()
+    {
+        $profile = \ANDS\Authenticator\GoogleAuthenticator::getProfile($_GET['code']);
+
+        $this->load->model('authenticators/google_authenticator', 'auth');
         $this->auth->getUserByProfile($profile);
         $this->user->refreshAffiliations($this->user->localIdentifier());
 	}

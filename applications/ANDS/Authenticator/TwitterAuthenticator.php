@@ -45,7 +45,8 @@ class TwitterAuthenticator
             'firstName' => 'Minh Duc Nguyen',
             'lastName' => '',
             'email' => '',
-            'accessToken' => $access['oauth_token']
+            'accessToken' => $access['oauth_token'],
+            'authentication_service_id' => 'AUTHENTICATION_SOCIAL_TWITTER'
         ];
 
         return $profile;
