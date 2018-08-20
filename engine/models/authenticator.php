@@ -33,16 +33,18 @@ class Authenticator extends CI_Model {
 
     public function getUserByProfile($profile)
     {
+        $serviceID = $profile['authentication_service_id'];
         $user = $this->cosi_db->get_where('roles',[
             'role_id' => $profile['identifier'],
-            'authentication_service_id' => 'AUTHENTICATION_SOCIAL_TWITTER'
+            'authentication_service_id' => $serviceID
         ]);
+
         if(!$user->num_rows()) {
             //create a new role
             $data = [
                 'role_id' => $profile['identifier'],
                 'role_type_id' => 'ROLE_USER',
-                'authentication_service_id' => 'AUTHENTICATION_SOCIAL_TWITTER',
+                'authentication_service_id' => $serviceID,
                 'enabled' => DB_TRUE,
                 'name' => $profile['displayName'],
                 'oauth_access_token' => $profile['accessToken'],
@@ -50,7 +52,10 @@ class Authenticator extends CI_Model {
                 'email' => ''
             ];
             $this->cosi_db->insert('roles',$data);
-            $user = $this->cosi_db->get_where('roles', ['role_id'=>$profile['identifier'], 'authentication_service_id'=>'AUTHENTICATION_SOCIAL_TWITTER']);
+            $user = $this->cosi_db->get_where('roles', [
+                'role_id' => $profile['identifier'],
+                'authentication_service_id' => $serviceID
+            ]);
         }
         $user = $user->row(1);
         $this->return_roles($user);
