@@ -22,6 +22,7 @@
                 </div>
                 <div class="widget-content"
                     ng-repeat="app_id in vm.client.assoc_doi_app_id | filter:vm.filter track by $index">
+                    <div ng-if="app_id.datacite_prefix !='10.5072'">
                     <dl>
                         <dt>Name</dt>
                         <dd>{{ app_id.client_name }}</dd>
@@ -33,6 +34,18 @@
                         <dd>{{ app_id.app_id }}</dd>
                     </dl>
                     <a href="#/manage/{{ app_id.app_id }}" class="btn btn-primary">Manage</a>
+                    </div>
+                    <dl>
+                        <dt>Name</dt>
+                        <dd>{{ app_id.client_name }}</dd>
+                        <dt>Contact</dt>
+                        <dd>{{ app_id.client_contact_name }}</dd>
+                        <dt>Datacite prefix</dt>
+                        <dd>10.5072/</dd>
+                        <dt>App ID</dt>
+                        <dd>{{ app_id.test_app_id }}</dd>
+                    </dl>
+                    <a href="#/manage/{{app_id.test_app_id }}" class="btn btn-primary">Manage Test</a>
                 </div>
             </div>
         </div>

@@ -1053,6 +1053,11 @@ class Doi_api
             throw new Exception('App ID required');
         }
         $this->client = $this->clientRepository->getByAppID($app_id);
+        if($this->client->app_id == $app_id) {
+            $this->client->mode = "prod";
+        }else{
+            $this->client->mode = "test";
+        }
 
         if (!$this->client) {
             throw new Exception('Invalid App ID');

@@ -307,7 +307,7 @@ class Mydois extends MX_Controller {
 		$domainList = trim($posted['domainList']);
 		$datacite_prefix = 	trim($posted['datacite_prefix']);
 		$shared_secret = trim($posted['shared_secret']);
-        $test_shared_secret = trim($posted['shared_secret']);
+        $test_shared_secret = trim($posted['test_shared_secret']);
 
         $clientdata = [
             'client_id' => $client_id,
