@@ -80,6 +80,11 @@ class Auth extends CI_Controller {
 		    redirect($url);
         }
 
+        if ($method === "facebook") {
+		    $url =\ANDS\Authenticator\FacebookAuthenticator::getOauthLink();
+		    redirect($url);
+        }
+
 		$authenticator_class = $method.'_authenticator';
 		
 		if (!file_exists('engine/models/authenticators/'.$authenticator_class.'.php')) {
@@ -122,6 +127,23 @@ class Auth extends CI_Controller {
         $profile = \ANDS\Authenticator\TwitterAuthenticator::getProfile($oauthToken, $oauthVerifier);
 
         $this->load->model('authenticators/twitter_authenticator', 'auth');
+        $this->auth->getUserByProfile($profile);
+        $this->user->refreshAffiliations($this->user->localIdentifier());
+	}
+
+    /**
+     * @throws \Facebook\Exceptions\FacebookSDKException
+     */
+    public function facebook()
+    {
+        // https://stackoverflow.com/questions/32029116/facebook-sdk-returned-an-error-cross-site-request-forgery-validation-failed-th
+        if(!session_id()) {
+            session_start();
+        }
+
+        $profile = \ANDS\Authenticator\FacebookAuthenticator::getProfile();
+
+        $this->load->model('authenticators/facebook_authenticator', 'auth');
         $this->auth->getUserByProfile($profile);
         $this->user->refreshAffiliations($this->user->localIdentifier());
 	}
