@@ -31,6 +31,31 @@ class Authenticator extends CI_Model {
 		}
 	}
 
+    public function getUserByProfile($profile)
+    {
+        $user = $this->cosi_db->get_where('roles',[
+            'role_id' => $profile['identifier'],
+            'authentication_service_id' => 'AUTHENTICATION_SOCIAL_TWITTER'
+        ]);
+        if(!$user->num_rows()) {
+            //create a new role
+            $data = [
+                'role_id' => $profile['identifier'],
+                'role_type_id' => 'ROLE_USER',
+                'authentication_service_id' => 'AUTHENTICATION_SOCIAL_TWITTER',
+                'enabled' => DB_TRUE,
+                'name' => $profile['displayName'],
+                'oauth_access_token' => $profile['accessToken'],
+                'oauth_data' => json_encode($profile),
+                'email' => ''
+            ];
+            $this->cosi_db->insert('roles',$data);
+            $user = $this->cosi_db->get_where('roles', ['role_id'=>$profile['identifier'], 'authentication_service_id'=>'AUTHENTICATION_SOCIAL_TWITTER']);
+        }
+        $user = $user->row(1);
+        $this->return_roles($user);
+    }
+
 	public function return_roles($user){
 
 		$role = $this->cosi_db->get_where('roles', array('role_id'=>$user->role_id));

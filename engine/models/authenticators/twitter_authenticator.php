@@ -4,10 +4,20 @@
  * Authenticator for Social Accounts / Facebook
  * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
  */
+
+use Abraham\TwitterOAuth\TwitterOAuth;
+
 require_once('engine/models/authenticator.php');
 class Twitter_authenticator extends Authenticator {
 
 	public function authenticate() {
+
+        $connection = new TwitterOAuth("yL3HSMePU8nGo7sagdZ8EzFp3", "gbUsqnDnMkRx3QCL2cVunoM8fCGvciZ0lTjgWgEnIOKi7ibQqN");
+        $requestToken = $connection->oauth("oauth/request_token", ['oauth_callback' => 'http://minhrda.ands.org.au/registry/auth/twitter']);
+        $oauthToken = $requestToken['oauth_token'];
+        $url = $connection->url('oauth/authorize', ['oauth_token' => $oauthToken]);
+        redirect($url);
+
 		$provider = 'Twitter';
 		$this->load->library('HybridAuthLib');
 		try{
