@@ -1022,7 +1022,6 @@ class Doi_api
             ->from('role_relations');
         $query = $roles_db->get();
 
-        dd($query->result());
 
         if ($query->num_rows() > 0) {
             foreach ($query->result() AS $r) {
