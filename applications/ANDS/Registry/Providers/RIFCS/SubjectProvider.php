@@ -4,6 +4,7 @@
 namespace ANDS\Registry\Providers\RIFCS;
 
 
+use ANDS\Cache\Cache;
 use ANDS\RecordData;
 use ANDS\RegistryObject;
 use ANDS\Registry\Providers\MetadataProvider;
@@ -26,7 +27,9 @@ class SubjectProvider implements RIFCSProvider
 
     public static function process(RegistryObject $record)
     {
-        return;
+        return Cache::remember("subjects.{$record->id}", 1440, function () use ($record) {
+            return static::processSubjects($record);
+        });
     }
 
     /**
