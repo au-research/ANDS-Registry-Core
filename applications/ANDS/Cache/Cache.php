@@ -76,6 +76,11 @@ class Cache
         return $value;
     }
 
+    public static function rememberForever($key, Closure $callback)
+    {
+        return static::remember($key, null, $callback);
+    }
+
     /**
      * @return bool
      */
