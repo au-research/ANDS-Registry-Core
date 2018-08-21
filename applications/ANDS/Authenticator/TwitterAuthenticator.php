@@ -38,6 +38,13 @@ class TwitterAuthenticator
             'user_id' => $access['user_id']
         ]);
 
+        /**
+         * The app will need to explicitly ask for the user email
+         * in order to receive user email information
+         * GET account/verify_credentials
+         * @url https://developer.twitter.com/en/docs/accounts-and-users/manage-account-settings/api-reference/get-account-verify_credentials.html
+         */
+
         $profile = [
             'identifier' => $access['user_id'],
             'photoURL' => $profile->profile_image_url_https,
