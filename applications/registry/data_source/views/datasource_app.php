@@ -189,6 +189,7 @@
 							<ul class="dropdown-menu pull-right">
 								<li><a href="" ng-click="open_import_modal('url')"><i class="icon icon-globe"></i> Import from URL</a></li>
 								<li><a href="" ng-click="open_import_modal('xml')"><i class="icon icon-briefcase"></i> Import from Pasted XML</a></li>
+								<li><a href="" ng-click="start_service_discovery()" ng-show="harvester.can_start"><i class="icon icon-wrench"></i> Run Service Discovery</a></li>
 								<!--li><a href="" ng-click="open_import_modal('upload')"><i class="icon icon-file"></i> Import from File</a></li-->
 								<!--li><a href="" ng-click="open_import_modal('path')"><i class="icon icon-download"></i> Import from Harvested Path</a></li-->
 							</ul>

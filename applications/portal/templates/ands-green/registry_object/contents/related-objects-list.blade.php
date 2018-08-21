@@ -17,7 +17,6 @@
             <div id="graph-viz"></div>
             <a href="" id="toggle-visualisation"><i class="fa fa-sort"></i></a>
         </div>
-
         <div class="panel-body swatch-white" style="padding-top:0;">
 
             {{--Related Publications--}}

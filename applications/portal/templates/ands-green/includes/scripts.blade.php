@@ -2,6 +2,7 @@
 	var base_url = "{{base_url()}}";
 	var registry_url = "{{registry_url()}}";
 	var api_url = "{{ api_url()  }}";
+    var is_develop = "{{ is_dev() }}";
 </script>
 
 @if(get_config_item('tracking'))

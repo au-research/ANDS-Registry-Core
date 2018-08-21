@@ -20,6 +20,7 @@ function class_name($text) {
 }
 
 function profile_image() {
+	return false;
 	$ci =& get_instance();
 	if ($ci->user->loggedIn()) {
 		$role_db = $ci->load->database('roles', TRUE);

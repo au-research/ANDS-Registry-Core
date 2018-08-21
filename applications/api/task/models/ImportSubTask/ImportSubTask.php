@@ -16,6 +16,7 @@ class ImportSubTask extends Task
     protected $requireHarvestedRecords = false;
     protected $requireHarvestedOrImportedRecords = false;
     protected $requireDataSource = false;
+    protected $requireImportedCollections = false;
     protected $title = "Import SubTask";
 
     private $dataSource = null;
@@ -44,6 +45,15 @@ class ImportSubTask extends Task
             }
         }
 
+        if ($this->requireImportedCollections) {
+            $importedRecords = $this->parent()->getTaskData("imported_collection_ids");
+            if ($importedRecords === false || $importedRecords === null) {
+                $this->log("Imported Collection Records require for this task");
+                $this->setStatus("COMPLETED");
+                return;
+            }
+        }
+        
         if ($this->requireAffectedRecords) {
             $affectedRecords = $this->parent()->getTaskData("affectedRecords");
             if ($affectedRecords === false || $affectedRecords === null) {

@@ -60,7 +60,7 @@
                 .attr('width', '100%')
                 .attr('height', '100%');
 
-            theBigG = svg.append('g')
+            theBigG = svg.append('g');
 
 
             svgRelationships = theBigG.append('g')
@@ -123,7 +123,7 @@
             theBigG.call(_zoom.transform, d3.zoomIdentity.translate(midX, midY).scale(midScale));
             svg.transition()
                 .duration(750).call(_zoom.transform, d3.zoomIdentity.translate(midX, midY).scale(midScale));
-            return;
+            //return;
         }
 
 
@@ -1138,7 +1138,6 @@
                         }
                         return classes;
                     });
-
                 // node.selectAll('image')
                 //     .attr('xlink:href', function(d) {
                 //         var imageIcon = d.loading ? 'spinner-solid.svg' : icon(d);

@@ -55,6 +55,10 @@ angular.module('ds_app', ['slugifier', 'ui.sortable', 'ui.tinymce', 'ngSanitize'
 			},
 			clear_logs: function(id) {
 				return $http.get(base_url+'/data_source/clear_logs/'+id).then(function(response){return response.data;});
+			},
+			start_service_discovery: function(id) {
+				console.log(base_url+'data_source/discover_import_services/'+id);
+				return $http.get(base_url+'data_source/discover_import_services/'+id).then(function(response){return response.data});
 			}
 		}
 	}).
@@ -732,6 +736,12 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
             $scope.refresh_harvest_status();
             $scope.harvester.busy = true;
         });
+	}
+
+	$scope.start_service_discovery = function() {
+		ds_factory.start_service_discovery($scope.ds.id).then(function (data) {
+			$scope.harvester.busy = true;
+		});
 	}
 
 	$scope.stop_harvest = function() {
