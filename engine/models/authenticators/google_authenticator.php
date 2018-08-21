@@ -2,6 +2,8 @@
 
 /**
  * Authenticator for Social Accounts / Facebook
+ * Deprecated in favor of ANDS\Authenticator\FacebookAuthenticator
+ * TODO Remove
  * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
  */
 require_once('engine/models/authenticator.php');

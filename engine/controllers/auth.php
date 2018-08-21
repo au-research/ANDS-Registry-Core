@@ -66,6 +66,8 @@ class Auth extends CI_Controller {
 	}
 
     /**
+     * /registry/authenticate/:method
+     *
      * @param string $method
      * @throws \Abraham\TwitterOAuth\TwitterOAuthException
      * @throws Exception
@@ -90,6 +92,8 @@ class Auth extends CI_Controller {
 		    redirect($url);
         }
 
+        // built_in, aaf-rapid, linkedin, shibboleth_sp
+
 		$authenticator_class = $method.'_authenticator';
 		
 		if (!file_exists('engine/models/authenticators/'.$authenticator_class.'.php')) {
@@ -108,7 +112,7 @@ class Auth extends CI_Controller {
 		try {
 			$this->load->model('authenticators/'.$authenticator_class, 'auth');
 			$this->auth->load_params($params);
-			$response = $this->auth->authenticate();
+			$this->auth->authenticate();
 			$this->user->refreshAffiliations($this->user->localIdentifier());
 
 			if ($this->input->get('redirect')) redirect($this->input->get('redirect'));
@@ -122,6 +126,7 @@ class Auth extends CI_Controller {
 
     /**
      * Callback to /registry/auth/twitter
+     * oauth1
      *
      * @throws Exception
      */
@@ -131,48 +136,63 @@ class Auth extends CI_Controller {
         $oauthVerifier = $_GET['oauth_verifier'];
         $profile = \ANDS\Authenticator\TwitterAuthenticator::getProfile($oauthToken, $oauthVerifier);
 
-        $this->load->model('authenticators/twitter_authenticator', 'auth');
+        $this->load->model('authenticator', 'auth');
         $this->auth->getUserByProfile($profile);
         $this->user->refreshAffiliations($this->user->localIdentifier());
 	}
 
     /**
+     * Callback to /registry/auth/facebook
+     * oauth2
+     *
      * @throws \Facebook\Exceptions\FacebookSDKException
      */
     public function facebook()
     {
-        // https://stackoverflow.com/questions/32029116/facebook-sdk-returned-an-error-cross-site-request-forgery-validation-failed-th
+        /**
+         * starting the session to prevent csrf failing
+         * @url https://stackoverflow.com/questions/32029116/facebook-sdk-returned-an-error-cross-site-request-forgery-validation-failed-th
+         */
         if(!session_id()) {
             session_start();
         }
 
         $profile = \ANDS\Authenticator\FacebookAuthenticator::getProfile();
 
-        $this->load->model('authenticators/facebook_authenticator', 'auth');
+        $this->load->model('authenticator', 'auth');
         $this->auth->getUserByProfile($profile);
         $this->user->refreshAffiliations($this->user->localIdentifier());
 	}
 
     /**
+     * Callback to /registry/auth/facebook
+     * oauth2
+     *
      * @throws Exception
      */
     public function google()
     {
         $profile = \ANDS\Authenticator\GoogleAuthenticator::getProfile($_GET['code']);
 
-        $this->load->model('authenticators/google_authenticator', 'auth');
+        $this->load->model('authenticator', 'auth');
         $this->auth->getUserByProfile($profile);
         $this->user->refreshAffiliations($this->user->localIdentifier());
 	}
 
-	public function oauth(){
+    /**
+     * registry/oauth/auth
+     * Legacy OAUTH endpoint, uses hybridauth library
+     * DEPRECATED
+     * TODO Remove
+     */
+    public function oauth (){
 		if ($_SERVER['REQUEST_METHOD'] === 'GET'){
 			$_GET = $_REQUEST;
 		}
 		require_once FCPATH.'/assets/lib/hybridauth/index.php';
 	}
 	
-	public function logout(){
+	public function logout (){
 		// Logs the user out and redirects them to the homepage/logout confirmation screen
 		$redirect = $this->input->get('redirect') ? $this->input->get('redirect') : false;
 		$this->user->logout($redirect);

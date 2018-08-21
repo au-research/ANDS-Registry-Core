@@ -2,6 +2,8 @@
 
 /**
  * Authenticator for Social Accounts / Facebook
+ * Deprecated in favor of ANDS\Authenticator\FacebookAuthenticator
+ * TODO Remove
  * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
  */
 
@@ -12,20 +14,9 @@ class Twitter_authenticator extends Authenticator {
 
     /**
      * @return bool|void
-     * @throws \Abraham\TwitterOAuth\TwitterOAuthException
      * @throws Exception
      */
     public function authenticate() {
-
-	    $config = \ANDS\Util\Config::get('oauth.providers.Twitter');
-        $key = $config['keys']['key'];
-        $secret = $config['keys']['secret'];
-        $connection = new TwitterOAuth($key, $secret);
-
-        $requestToken = $connection->oauth("oauth/request_token", ['oauth_callback' => 'http://minhrda.ands.org.au/registry/auth/twitter']);
-        $oauthToken = $requestToken['oauth_token'];
-        $url = $connection->url('oauth/authorize', ['oauth_token' => $oauthToken]);
-        redirect($url);
 
 		$provider = 'Twitter';
 		$this->load->library('HybridAuthLib');
