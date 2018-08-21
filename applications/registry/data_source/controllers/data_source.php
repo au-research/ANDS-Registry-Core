@@ -499,6 +499,59 @@ class Data_source extends MX_Controller {
         $dataSource->appendDataSourceLog($message, 'info', 'IMPORTER');
 	}
 
+	/**
+	 * updating all PUBLISHED records relationship metadata
+	 *
+	 * @param $dataSourceID
+	 */
+	public function discover_import_services($dataSourceID)
+	{
+		initEloquent();
+		$now = time();
+		$batch_id = strtoupper(sha1($now));
+		$dataSource = \ANDS\Repository\DataSourceRepository::getByID($dataSourceID);
+
+		// all published records
+		$records = \ANDS\RegistryObject::where('data_source_id', $dataSourceID)->where('status', PUBLISHED)->where('class', 'collection');
+
+		// getting the count
+		$total = $records->count();
+		if ($total === 0) {
+			return;
+		}
+
+		$ids = $records->get()->pluck('registry_object_id')->toArray();
+
+		// task initialisation
+		$importTask = new \ANDS\API\Task\ImportTask();
+
+		$importTask->init([
+			'name' => "Background Task for $dataSource->title($dataSourceID) ServiceDiscovery",
+			'params' => http_build_query([
+				'ds_id' => $dataSourceID,
+				'batch_id' => $batch_id,
+				'targetStatus' => 'DRAFT',
+				'pipeline' => 'ServiceDiscovery'
+			])
+		]);
+		$importTask->setDb($this->db)->setCI($this);
+		$importTask
+			->skipLoadingPayload()
+			->enableRunAllSubTask()
+			->setTaskData("imported_collection_ids", $ids);
+		$importTask->initialiseTask();
+
+		// sending the task to the background
+		$importTask->sendToBackground();
+
+		// returning the ID and log that
+		$id = $importTask->getId();
+		$message =
+			"Discovering Service Objects for Datasource". NL.
+			"TaskID: $id";
+		$dataSource->appendDataSourceLog($message, 'info', 'SERVICE DISCOVERY');
+	}
+
     /**
      * Update the status of all records that match a particular status
      * @param $dataSourceID

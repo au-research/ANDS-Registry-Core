@@ -438,9 +438,21 @@ URCHIN;
 }
 
 function is_dev(){
-	if(ENVIRONMENT=='development'){
+	if(ENVIRONMENT=='development' || $_SERVER['REMOTE_ADDR'] == env('DEBUGGER_IP')){
 		return true;
 	}else return false;
+}
+
+function safe_dump($var){
+	if(ENVIRONMENT=='development' || $_SERVER['REMOTE_ADDR'] == env('DEBUGGER_IP')){
+		var_dump($var);
+	}
+}
+
+function safe_dd($var){
+	if(ENVIRONMENT=='development' || $_SERVER['REMOTE_ADDR'] == env('DEBUGGER_IP')){
+		dd($var);
+	}
 }
 
 function check_services(){

@@ -97,7 +97,7 @@ class ServiceDiscovery {
                     array_push($linksArray[$url][$ro->key]["full_urls"], $link->link);
                 }
 
-                $relType = static::getRelitionType($link->link_type);
+                $relType = static::getRelationType($link->link_type);
                 array_push($linksArray[$url][$ro->key]["relation"], array("type"=>$relType, "full_url"=>$link->link));
 
                 $identifiers = Identifier::where('registry_object_id',
@@ -209,7 +209,7 @@ class ServiceDiscovery {
 
     }
 
-    private static function getRelitionType($link_type){
+    private static function getRelationType($link_type){
 
     if(strpos($link_type, "relatedInfo_relation_") === 0){
         $tokens = explode("_", $link_type);
