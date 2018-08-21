@@ -17,7 +17,7 @@ class TwitterAuthenticator
     {
         $connection = self::getConnection();
         $requestToken = $connection->oauth("oauth/request_token", [
-            'oauth_callback' => 'http://minhrda.ands.org.au/registry/auth/twitter'
+            'oauth_callback' => baseUrl('registry/auth/twitter')
         ]);
         $oauthToken = $requestToken['oauth_token'];
         return $connection->url('oauth/authorize', ['oauth_token' => $oauthToken]);
