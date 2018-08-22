@@ -27,7 +27,7 @@ class SubjectProvider implements RIFCSProvider
 
     public static function process(RegistryObject $record)
     {
-        return Cache::remember("subjects.{$record->id}", 1440, function () use ($record) {
+        return Cache::file()->remember("subjects.{$record->id}", 1440, function () use ($record) {
             return static::processSubjects($record);
         });
     }
