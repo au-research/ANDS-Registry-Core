@@ -13,9 +13,6 @@ use ANDS\Util\StrUtil;
 
 class RecordsGraphController
 {
-    /** @var int cache time in minutes */
-    protected $cacheTTL = 1440;
-
     /**
      * api/registry/records/:id/graph
      * @param $id
@@ -27,7 +24,7 @@ class RecordsGraphController
         if (!$disableCache) {
             // caches by default
             // R28: does not accept custom parameters yet
-            return Cache::remember("graph.$id", $this->cacheTTL, function() use ($id){
+            return Cache::file()->rememberForever("graph.$id", function() use ($id){
                 return $this->getGraphForRecord($id);
             });
         }
