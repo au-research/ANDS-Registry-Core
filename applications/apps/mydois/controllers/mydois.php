@@ -147,11 +147,11 @@ class Mydois extends MX_Controller {
      */
     private function getTrustedClients(){
         $allClients =  $this->clientRepository->getAll();
-        foreach($allClients as $client){
-            $client["url"] = $this->fabricaUrl  . "/clients/" . strtolower($client->datacite_symbol);
-            $client['domain_list'] = str_replace(","," ",$this->getTrustedClientDomains($client->client_id));
-            $client['datacite_prefix'] = $this->getTrustedClientActivePrefix($client->client_id);
-            $client['not_active_prefixes'] = $this->getTrustedClientNonActivePrefixes($client->client_id);
+        foreach($allClients as $key=>$client){
+                $client["url"] = $this->fabricaUrl . "/clients/" . strtolower($client->datacite_symbol);
+                $client['domain_list'] = str_replace(",", " ", $this->getTrustedClientDomains($client->client_id));
+                $client['datacite_prefix'] = $this->getTrustedClientActivePrefix($client->client_id);
+                $client['not_active_prefixes'] = $this->getTrustedClientNonActivePrefixes($client->client_id);
         }
 
         return $allClients;
@@ -202,7 +202,7 @@ WHERE prod_client.client_name LIKE SUBSTR(test_client.client_name,7) ');
                     $this->fabricaClient->updateClient($client);
                      // updates the client on datacite
                     if($this->fabricaClient->hasError()){
-                        if error occurred return the result message to the user
+                       // if error occurred return the result message to the user
                         $response['responseCode'] = $this->fabricaClient->responseCode;
                         $response['errorMessages'] = $this->fabricaClient->getErrorMessage();
                         $response['Messages'] = $this->fabricaClient->getMessages();
@@ -214,6 +214,7 @@ WHERE prod_client.client_name LIKE SUBSTR(test_client.client_name,7) ');
 
                 //set the merged test account to inactive
                 $deleted_client = $this->clientRepository->deleteClientById($r['test_client_id']);
+
 
                 $combined_ip = array_unique(array_merge( explode(",",$r['ip_address']), explode(",",$r['test_ip_address'])));
                 $r['ip_address'] = str_replace(",", ", ", $r['ip_address']);

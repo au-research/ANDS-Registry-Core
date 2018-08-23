@@ -208,6 +208,7 @@
 			</thead>
 			<tbody>
 			{{#.}}
+			{{#display}}
 				<tr>
 					<td><a href="{{url}}" target="_blank" title="view it in datacite">{{datacite_symbol}}</a></td>
 					<td>{{client_name}}</td>
@@ -223,6 +224,7 @@
 					<a href="javascript:;" class="remove btn btn-small btn-danger" tip="Remove" client_id="{{client_id}}"><i class="icon-white icon-remove"></i></a>
 					</td>
 				</tr>
+				{{/display}}
 			{{/.}}
 			</tbody>
 		</table>  
