@@ -79,6 +79,13 @@
 						<input type="text" name="shared_secret" value="<?php echo substr(md5(rand()), 0, 10); ?>"></input>
 					</div>
 				</div>
+
+				<div class="control-group">
+					<label class="control-label">Test Shared Secret</label>
+					<div class="controls">
+						<input type="text" name="test_shared_secret" value="<?php echo substr(md5(rand()), 0, 10); ?>"></input>
+					</div>
+				</div>
 			</form>
 		</div>
 	</div>
@@ -144,7 +151,13 @@
 					<div class="controls">
 						<input type="text" name="app_id" value="" readonly/>
 					</div>
-				</div>				
+				</div>
+				<div class="control-group">
+					<label class="control-label">Test App Id</label>
+					<div class="controls">
+						<input type="text" name="test_app_id" value="" readonly/>
+					</div>
+				</div>
 				<div class="control-group">
 					<label class="control-label">Shared Secret</label>
 					<div class="controls">
@@ -152,7 +165,15 @@
 						<a href="javascript:;" class="sec_gen btn btn-small" tip="Generate shared secret" sec="<?php  echo substr(md5(rand()), 0, 10); ?>"client_id="{{client_id}}"><i class="icon icon-refresh"> </i></a>
 							 Generate Shared Secret
 					</div>
-				</div>				
+				</div>
+				<div class="control-group">
+					<label class="control-label">Test Shared Secret</label>
+					<div class="controls">
+						<input type="text" name="test_shared_secret" value=""/>
+						<a href="javascript:;" class="test_sec_gen btn btn-small" tip="Generate test shared secret" test_sec="<?php  echo substr(md5(rand()), 0, 10); ?>"client_id="{{client_id}}"><i class="icon icon-refresh"> </i></a>
+						Generate Shared Secret
+					</div>
+				</div>
 			</form>
 		</div>
 	</div>
@@ -177,6 +198,7 @@
 					<th>Client Name </th>
 					<th>Contact Name </th>
 					<th>App ID</th>
+					<th>Test App ID</th>
 					<th>Active Prefix</th>
 					<th>Other Prefixes</th>
 					<th>Domain List</th>
@@ -186,11 +208,13 @@
 			</thead>
 			<tbody>
 			{{#.}}
+			{{#display}}
 				<tr>
 					<td><a href="{{url}}" target="_blank" title="view it in datacite">{{datacite_symbol}}</a></td>
 					<td>{{client_name}}</td>
 					<td>{{client_contact_name}}</td>
 					<td>{{app_id}}</td>
+					<td>{{test_app_id}}</td>
 					<td>{{datacite_prefix}}</td>
 					<td>{{not_active_prefixes}}</td>
 					<td>{{domain_list}}</td>
@@ -200,6 +224,7 @@
 					<a href="javascript:;" class="remove btn btn-small btn-danger" tip="Remove" client_id="{{client_id}}"><i class="icon-white icon-remove"></i></a>
 					</td>
 				</tr>
+				{{/display}}
 			{{/.}}
 			</tbody>
 		</table>  

@@ -1022,7 +1022,6 @@ class Doi_api
             ->from('role_relations');
         $query = $roles_db->get();
 
-        dd($query->result());
 
         if ($query->num_rows() > 0) {
             foreach ($query->result() AS $r) {
@@ -1053,6 +1052,11 @@ class Doi_api
             throw new Exception('App ID required');
         }
         $this->client = $this->clientRepository->getByAppID($app_id);
+        if($this->client->app_id == $app_id) {
+            $this->client->mode = "prod";
+        }else{
+            $this->client->mode = "test";
+        }
 
         if (!$this->client) {
             throw new Exception('Invalid App ID');
@@ -1102,6 +1106,7 @@ class Doi_api
         $limit = $this->ci->input->get('limit') ?: 50;
         $offset = $this->ci->input->get('offset') ?: 0;
         $search = $this->ci->input->get('search') ?: '';
+        $mode = $this->ci->input->get('mode') ?: $this->client->mode;
 
         $query = $this->dois_db
             ->order_by('updated_when', 'desc')
@@ -1111,6 +1116,11 @@ class Doi_api
             ->where('status !=', 'REQUESTED')
             ->select('*');
 
+        if($mode == "prod") {
+            $query = $this->dois_db->where("doi_id NOT LIKE '%10.5072%'");
+        }else{
+            $query = $this->dois_db->where("doi_id LIKE '%10.5072%'");
+        }
         if ($search) {
             $query = $this->dois_db->where("doi_id LIKE '%{$search}%'");
         }
@@ -1125,11 +1135,19 @@ class Doi_api
             $data['dois'][] = $obj;
         }
 
-        $data['total'] = $this->dois_db
-            ->where('client_id', $this->client->client_id)
-            ->where('status !=', 'REQUESTED')
-            ->where("doi_id LIKE '%{$search}%'")
-            ->count_all_results('doi_objects');
+
+        $query2 = $this->dois_db
+        ->where('client_id', $this->client->client_id)
+        ->where('status !=', 'REQUESTED')
+        ->where("doi_id LIKE '%{$search}%'");
+        if($mode == "prod") {
+            $query2 = $this->dois_db->where("doi_id NOT LIKE '%10.5072%'");
+        }else{
+            $query2 = $this->dois_db->where("doi_id LIKE '%10.5072%'");
+        }
+
+        $data['total'] =
+            $this->dois_db->count_all_results('doi_objects');
 
         return $data;
     }
