@@ -151,6 +151,14 @@ function listTrustedClients() {
 	$('#trusted_clients').html('loading');
 	$('#result_msg').html("result").removeClass('label label-important');
 	$.getJSON(apps_url+'mydois/list_trusted_clients/', function(data) {
+		for(var key in data){
+			var client = data[key];
+            if (client.status == 'ACTIVE'){
+                data[key].display=true;
+			}else{
+                data[key].display=false;
+            }
+		}
 		var template = $('#trusted_clients-template').html();
 		var output = Mustache.render(template, data);
 		$('#trusted_clients').html(output).css('opacity', '1');
