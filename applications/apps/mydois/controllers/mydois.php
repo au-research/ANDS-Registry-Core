@@ -57,6 +57,21 @@ class Mydois extends MX_Controller {
         ]);
 	}
 
+
+    /**
+     * mydois/list_trusted
+     * List Trusted Client SPA
+     * Front end for list trusted doi clients app
+     */
+    function merge_trusted(){
+        acl_enforce('SUPERUSER');
+        $this->load->view('merge_clients_index', [
+            'title' => 'Merge Trusted Clients',
+            'scripts' => ['merge_clients'],
+            'js_lib' => ['core', 'dataTables']
+        ]);
+    }
+
     /**
      *
      * to add or edit a client we allow to populate the drop down with unallocatedPrefixLimit of prefixes
@@ -118,17 +133,106 @@ class Mydois extends MX_Controller {
 	}
 
     /**
+     * AJAX entry for mydois/merge_trusted
+     * This function will be called once to merge prod and test datacite accounts as part of Release 29
+     */
+    function merge_trusted_clients(){
+        echo json_encode($this->getMergeClients());
+    }
+
+    /**
      * TODO refactor to ANDS-DOI-SERVICE functionality
      *
      * @return \Illuminate\Database\Eloquent\Collection|static[]
      */
     private function getTrustedClients(){
         $allClients =  $this->clientRepository->getAll();
-        foreach($allClients as $client){
-            $client["url"] = $this->fabricaUrl  . "/clients/" . strtolower($client->datacite_symbol);
-            $client['domain_list'] = str_replace(","," ",$this->getTrustedClientDomains($client->client_id));
-            $client['datacite_prefix'] = $this->getTrustedClientActivePrefix($client->client_id);
-            $client['not_active_prefixes'] = $this->getTrustedClientNonActivePrefixes($client->client_id);
+        foreach($allClients as $key=>$client){
+                $client["url"] = $this->fabricaUrl . "/clients/" . strtolower($client->datacite_symbol);
+                $client['domain_list'] = str_replace(",", " ", $this->getTrustedClientDomains($client->client_id));
+                $client['datacite_prefix'] = $this->getTrustedClientActivePrefix($client->client_id);
+                $client['not_active_prefixes'] = $this->getTrustedClientNonActivePrefixes($client->client_id);
+        }
+
+        return $allClients;
+    }
+
+
+    private function getMergeClients(){
+
+
+       // return $allClients with known prod and test matches;
+
+        $doi_db = $this->load->database('dois', TRUE);
+        $query = $doi_db->query('SELECT `prod_client`.`client_id`,
+	`test_client`.`client_id` as test_client_id,
+    `prod_client`.`client_name`,
+    `test_client`.`client_name` AS test_client_name,
+    `prod_client`.`ip_address`,
+    `test_client`.`ip_address` as test_ip_address,
+    `prod_client`.`app_id`,
+	`test_client`.`app_id` AS test_app_id,
+    `prod_client`.`shared_secret`,
+    `test_client`.`shared_secret` AS test_shared_secret
+FROM dbs_dois.doi_client prod_client, dbs_dois.doi_client test_client 
+WHERE prod_client.client_name LIKE SUBSTR(test_client.client_name,7) ');
+
+       if ($query->num_rows() > 0) {
+            foreach ($query->result_array() AS $r) {
+
+                //lets set up the new top level domain lists
+                $prod_domains = explode(",",$this->getTrustedClientDomains($r['client_id']));
+                $test_domains = explode(",",$this->getTrustedClientDomains($r['test_client_id']));
+                //need to update client_id with new combined list
+                $combined_domains = array_unique(array_merge($prod_domains,$test_domains));
+                $r['combined_domain_list'] = trim(implode(", ",$combined_domains),",");
+                $r['domain_list'] = str_replace(",", ", ", $this->getTrustedClientDomains($r['client_id']));
+                $r['test_domain_list'] = str_replace(",", ", ", $this->getTrustedClientDomains($r['test_client_id']));
+
+                if( trim($r['combined_domain_list']) != trim($r['domain_list'])){
+                    //if we need to update datacite with a different top level domain list
+                    $client = $this->clientRepository->getByID($r['client_id']);
+                    $test_client = $this->clientRepository->getByID($r['test_client_id']);
+
+                    $client->removeClientDomains();
+                    $test_client->removeClientDomains();
+
+                    $client->addDomains(str_replace(", ",",",$r['combined_domain_list']));
+
+                    $this->fabricaClient->updateClient($client);
+                     // updates the client on datacite
+                    if($this->fabricaClient->hasError()){
+                       // if error occurred return the result message to the user
+                        $response['responseCode'] = $this->fabricaClient->responseCode;
+                        $response['errorMessages'] = $this->fabricaClient->getErrorMessage();
+                        $response['Messages'] = $this->fabricaClient->getMessages();
+                        echo json_encode($response);
+                        exit();
+                    }
+
+                }
+
+                //set the merged test account to inactive
+                $deleted_client = $this->clientRepository->deleteClientById($r['test_client_id']);
+
+
+                $combined_ip = array_unique(array_merge( explode(",",$r['ip_address']), explode(",",$r['test_ip_address'])));
+                $r['ip_address'] = str_replace(",", ", ", $r['ip_address']);
+                $r['test_ip_address'] = str_replace(",", ", ", $r['test_ip_address']);
+                $r['combined_ip'] = trim(implode(",", $combined_ip),",");
+
+                // need to update client_id with new combined ip list, test_app_id = $r['test_app_id]', test_shared_secret = $r['test_shared_secret]'
+
+               $query2 = $doi_db->query('UPDATE  doi_client SET test_app_id = "'.$r["test_app_id"].'" ,
+test_shared_secret = "'.$r["test_shared_secret"].'" ,
+ip_address = "'.$r["combined_ip"].'"  WHERE app_id = "'.$r["app_id"].'"');
+
+                //need to update all test dois to the production client_id
+
+                $query3 = $doi_db->query('UPDATE  doi_objects SET client_id = "'.$r["client_id"].'"  WHERE client_id = "'.$r["test_client_id"].'"');
+                $r['combined_ip'] = str_replace(",",", ", $r['combined_ip'] );
+                $allClients[] = $r;
+            }
         }
 
         return $allClients;
@@ -203,15 +307,18 @@ class Mydois extends MX_Controller {
 		$domainList = trim(urlencode($posted['domainList']));
 		$datacite_prefix = 	trim(urlencode($posted['datacite_prefix']));
 		$shared_secret = trim(urlencode($posted['shared_secret']))	;
+        $test_shared_secret = trim(urlencode($posted['test_shared_secret']))	;
         
         // add the client to the repository
         $client = $this->clientRepository->create([
             'ip_address' => $ip,
             'app_id' => sha1($shared_secret.$client_name),
+            'test_app_id' => sha1($test_shared_secret.$client_name),
             'client_name' => urldecode($client_name),
             'client_contact_name' => urldecode($client_contact_name),
             'client_contact_email' => urldecode($client_contact_email),
-            'shared_secret' => $shared_secret
+            'shared_secret' => $shared_secret,
+            'test_shared_secret' => $test_shared_secret
         ]);
         
         $client->addDomains($domainList);
@@ -304,6 +411,7 @@ class Mydois extends MX_Controller {
 		$domainList = trim($posted['domainList']);
 		$datacite_prefix = 	trim($posted['datacite_prefix']);
 		$shared_secret = trim($posted['shared_secret']);
+        $test_shared_secret = trim($posted['test_shared_secret']);
 
         $clientdata = [
             'client_id' => $client_id,
@@ -311,7 +419,8 @@ class Mydois extends MX_Controller {
             'client_name'  => $client_name,
             'client_contact_name' => $client_contact_name,
             'client_contact_email' => $client_contact_email,
-            'shared_secret' => $shared_secret
+            'shared_secret' => $shared_secret,
+            'test_shared_secret' => $test_shared_secret
         ];
         // update the client metadata
         $this->clientRepository->updateClient($clientdata);
