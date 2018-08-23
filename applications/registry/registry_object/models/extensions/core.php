@@ -250,9 +250,6 @@ class Core_extension extends ExtensionBase
 						if ($this->getAttribute('original_status') === 'ASSESSMENT_IN_PROGRESS' || $manuallyAssessed === 'yes') {
 							$this->ro->setAttribute("manually_assessed", 'yes');
 						}
-						if ($this->ro->getAttribute('gold_status_flag') === 't') {
-							$this->ro->setAttribute("gold_status_flag", 'f');
-						}
 
 						$this->ro->harvest_id = $this->getAttribute('harvest_id');
 						$this->ro->save(true);

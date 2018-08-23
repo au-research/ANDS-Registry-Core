@@ -26,7 +26,6 @@ date_default_timezone_set('Australia/Melbourne');
 			<ul class="nav nav-pills" style="margin-right:80px;padding-top:5px;">
 				<li class=""><?php echo anchor('data_source/manage#!/view/'.$ds->id,'Dashboard');?></li>
 				<li class=""><?php echo anchor('data_source/manage_records/'.$ds->id,'Manage Records');?></li>
-				<li class=""><?php echo anchor('data_source/report/'.$ds->id,'Reports');?></li>
 				<li class=""><?php echo anchor('data_source/manage#!/settings/'.$ds->id,'Settings');?></li>
 			</ul>
 						<div class="btn-group">
@@ -115,9 +114,9 @@ date_default_timezone_set('Australia/Melbourne');
 				?>
 					<div class="widget-box">
 						<div class="widget-title">
-							<h5>Quality Report</h5>
+							<h5>Metadata Content Report</h5>
 						</div>
-						<div class="widget-content nopadding">
+						<div class="widget-content">
 							<?php echo $quality_text;?>
 						</div>
 					</div>
