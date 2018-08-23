@@ -261,7 +261,7 @@ class OAIRecordRepository implements OAIRepository
 
     public function listIdentifiers($options)
     {
-        if ($options['metadataPrefix'] == "rif") {
+        if ($options['metadataPrefix'] == "rif" || $options['metadataPrefix'] == "oai_dc") {
             $registryObjects = $this->getRegistryObjects($options);
             $result = [];
 
@@ -287,7 +287,6 @@ class OAIRecordRepository implements OAIRepository
 
         if ($options['metadataPrefix'] == "scholix") {
             return $this->listIdentifiersScholix($options);
-
         }
 
         throw new BadArgumentException("Unknown metadataPrefix {$options['metadataPrefix']}");

@@ -65,10 +65,35 @@ class Auth extends CI_Controller {
 		$this->load->view('login', $data);
 	}
 
-	public function authenticate($method = 'built_in') {
+    /**
+     * /registry/authenticate/:method
+     *
+     * @param string $method
+     * @throws \Abraham\TwitterOAuth\TwitterOAuthException
+     * @throws Exception
+     */
+    public function authenticate($method = 'built_in') {
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		set_exception_handler('json_exception_handler');
+
+		if ($method === "twitter") {
+		    $url = \ANDS\Authenticator\TwitterAuthenticator::getOauthLink();
+		    redirect($url);
+        }
+
+        if ($method === "facebook") {
+		    $url =\ANDS\Authenticator\FacebookAuthenticator::getOauthLink();
+		    redirect($url);
+        }
+
+        if ($method === "google") {
+		    $url = \ANDS\Authenticator\GoogleAuthenticator::getOauthLink();
+		    redirect($url);
+        }
+
+        // built_in, aaf-rapid, linkedin, shibboleth_sp
+
 		$authenticator_class = $method.'_authenticator';
 		
 		if (!file_exists('engine/models/authenticators/'.$authenticator_class.'.php')) {
@@ -84,14 +109,13 @@ class Auth extends CI_Controller {
 		//get parameters from POST
 		$params = array_merge($params, $post);
 
-
 		try {
 			$this->load->model('authenticators/'.$authenticator_class, 'auth');
 			$this->auth->load_params($params);
-			$response = $this->auth->authenticate();
+			$this->auth->authenticate();
 			$this->user->refreshAffiliations($this->user->localIdentifier());
 
-			if ($this->input->get('redirect')) redirect($redirect);
+			if ($this->input->get('redirect')) redirect($this->input->get('redirect'));
 
 		} catch (Exception $e) {
 			// $this->auth->post_authentication_hook();
@@ -100,14 +124,75 @@ class Auth extends CI_Controller {
 		
 	}
 
-	public function oauth(){
+    /**
+     * Callback to /registry/auth/twitter
+     * oauth1
+     *
+     * @throws Exception
+     */
+    public function twitter()
+    {
+        $oauthToken = $_GET['oauth_token'];
+        $oauthVerifier = $_GET['oauth_verifier'];
+        $profile = \ANDS\Authenticator\TwitterAuthenticator::getProfile($oauthToken, $oauthVerifier);
+
+        $this->load->model('authenticator', 'auth');
+        $this->auth->getUserByProfile($profile);
+        $this->user->refreshAffiliations($this->user->localIdentifier());
+	}
+
+    /**
+     * Callback to /registry/auth/facebook
+     * oauth2
+     *
+     * @throws \Facebook\Exceptions\FacebookSDKException
+     */
+    public function facebook()
+    {
+        /**
+         * starting the session to prevent csrf failing
+         * @url https://stackoverflow.com/questions/32029116/facebook-sdk-returned-an-error-cross-site-request-forgery-validation-failed-th
+         */
+        if(!session_id()) {
+            session_start();
+        }
+
+        $profile = \ANDS\Authenticator\FacebookAuthenticator::getProfile();
+
+        $this->load->model('authenticator', 'auth');
+        $this->auth->getUserByProfile($profile);
+        $this->user->refreshAffiliations($this->user->localIdentifier());
+	}
+
+    /**
+     * Callback to /registry/auth/facebook
+     * oauth2
+     *
+     * @throws Exception
+     */
+    public function google()
+    {
+        $profile = \ANDS\Authenticator\GoogleAuthenticator::getProfile($_GET['code']);
+
+        $this->load->model('authenticator', 'auth');
+        $this->auth->getUserByProfile($profile);
+        $this->user->refreshAffiliations($this->user->localIdentifier());
+	}
+
+    /**
+     * registry/oauth/auth
+     * Legacy OAUTH endpoint, uses hybridauth library
+     * DEPRECATED
+     * TODO Remove
+     */
+    public function oauth (){
 		if ($_SERVER['REQUEST_METHOD'] === 'GET'){
 			$_GET = $_REQUEST;
 		}
 		require_once FCPATH.'/assets/lib/hybridauth/index.php';
 	}
 	
-	public function logout(){
+	public function logout (){
 		// Logs the user out and redirects them to the homepage/logout confirmation screen
 		$redirect = $this->input->get('redirect') ? $this->input->get('redirect') : false;
 		$this->user->logout($redirect);

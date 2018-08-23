@@ -31,7 +31,7 @@ class ClearCacheCommand extends ANDSCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->setUp($input, $output);
-        Cache::flush();
+        Cache::file()->flush();
         $this->log("Cache flushed!");
     }
 }
