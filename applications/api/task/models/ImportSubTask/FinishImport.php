@@ -11,6 +11,7 @@ namespace ANDS\API\Task\ImportSubTask;
 use ANDS\DataSource;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository as Repo;
+use Carbon\Carbon;
 
 class FinishImport extends ImportSubTask
 {
@@ -23,6 +24,8 @@ class FinishImport extends ImportSubTask
 
     public function run_task()
     {
+        $this->writeImportSummaryLog();
+
         $dataSource = $this->getDataSource();
 
         $this->parent()->setTaskData(
@@ -101,6 +104,73 @@ class FinishImport extends ImportSubTask
         }
 
         // TODO :update count_ql
+    }
+
+    private function writeImportSummaryLog()
+    {
+        $dataSource = $this->getDataSource();
+        $parentTaskData = collect($this->parent()->getTaskData());
+        $parentBenchmarkData = collect($this->parent()->getBenchmarkData());
+
+        $started = Carbon::parse($this->parent()->dateAdded);
+        $end = Carbon::now();
+
+        // TODO started should be harvest started if there's a harvest
+
+        $payload = [
+            'source' => $parentTaskData->get('source', 'unknown'),
+            'pipeline' => $parentTaskData->get('pipeline', 'unknown'),
+            'status' => $this->parent()->getStatus(),
+
+            'started' => $started->toDateTimeString(),
+            'finished' => $end->toDateTimeString(),
+            'duration' => $end->diffInSeconds($started),
+
+            'datasource' => [
+                'id' => $dataSource->id,
+                'title' => $dataSource->title,
+                'key' => $dataSource->key,
+                'owner' => $dataSource->record_owner ?: ''
+            ],
+
+            'batchID' => $parentTaskData['batchID'],
+            'harvest' => [
+                'id' => $parentTaskData->get('harvest_id'),
+                // TODO harvest benchmark read from summary file
+            ],
+
+            'import' => [
+                'duration_total' => collect($parentBenchmarkData)->map(function($bench) {
+                    return $bench['duration_seconds'];
+                })->sum(),
+                'duration' => collect($parentBenchmarkData)->map(function($bench) {
+                    return $bench['duration_seconds'];
+                })->toArray(),
+                'memory' =>  collect($parentBenchmarkData)->map(function($bench) {
+                    return $bench['memory_mb'];
+                })->toArray()
+            ],
+            'errors' => collect($this->parent()->getError())->implode("\n\n"),
+            'counts' => [
+                'imported' => count($parentTaskData['importedRecords']),
+                'deleted' => count($parentTaskData['deletedRecords']),
+                'inFeed' => $parentTaskData->get('recordsInFeedCount', 0),
+                'created' => $parentTaskData->get('recordsCreatedCount', 0),
+                'updated' => $parentTaskData->get('recordsUpdatedCount', 0),
+                'unchanged' => $parentTaskData->get('recordsNotUpdatedCount', 0),
+                'invalid' => $parentTaskData->get('invalidRegistryObjectsCount', 0),
+                'duplicate_key' => $parentTaskData->get('duplicateKeyinFeedCount', 0),
+                'key_in_other_ds' => $parentTaskData->get('recordsExistOtherDataSourceCount', 0),
+                'missing_key' => $parentTaskData->get('missingRegistryObjectKeyCount', 0),
+                'missing_originating_source' => $parentTaskData->get('missingOriginatingSourceCount', 0),
+                'missing_group' => $parentTaskData->get('missingGroupAttributeCount', 0),
+                'missing_title' => $parentTaskData->get('missingTitleCount', 0),
+                'missing_type' => $parentTaskData->get('missingTypeCount', 0),
+                'missing_collection_description' => $parentTaskData->get('missingDescriptionCollectionCount', 0),
+                'errors' => count($this->parent()->getError()),
+            ]
+        ];
+
     }
 
 }
