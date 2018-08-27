@@ -30,7 +30,7 @@ class CheckRelatedService extends CheckType
             $relatedInfoTypes[] = (string) $type;
         }
 
-        $hasRelatedInfoService = in_array("party", $relatedInfoTypes);
+        $hasRelatedInfoService = in_array("service", $relatedInfoTypes);
         $hasRelatedObjectServices = $this->record->relationshipViews->where('to_class', 'service')->count() > 0;
 
         return $hasRelatedInfoService || $hasRelatedObjectServices;
