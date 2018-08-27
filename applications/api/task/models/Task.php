@@ -24,6 +24,7 @@ class Task
     private $db;
     private $memoryLimit = '256M';
     private $dateFormat = 'Y-m-d | h:i:sa';
+    public $dateAdded;
 
     /**
      * Intialisation of this task
@@ -47,6 +48,7 @@ class Task
         }
 
         $this->lastRun = isset($task['last_run']) ? $task['last_run'] : false;
+        $this->dateAdded = array_key_exists('date_added', $task) ? $task['date_added'] : null;
 
         $this->dateFormat = 'Y-m-d | h:i:sa';
 
@@ -103,6 +105,7 @@ class Task
             'memory' => $event->getMemory(),
             'memory_mb' => $event->getMemory() / 1048576
         ]);
+
         try {
             $this->finalize($start);
         }
@@ -228,8 +231,12 @@ class Task
         return $this;
     }
 
-    public function getTaskData($key)
+    public function getTaskData($key = null)
     {
+        if ($key === null) {
+            return $this->taskData;
+        }
+
         return array_key_exists($key, $this->taskData) ? $this->taskData[$key] : null;
     }
 
