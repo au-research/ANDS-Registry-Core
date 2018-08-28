@@ -62,6 +62,15 @@ class QualityMetadataProviderTest extends \RegistryTestClass
     /** @test
      * @throws \Exception
      */
+    function validates_collections_with_empty_description_but_theres_another_one()
+    {
+        $xml = Storage::disk('test')->get('rifcs/collection_empty_description_valid.xml');
+        $this->assertTrue(QualityMetadataProvider::validate($xml));
+    }
+
+    /** @test
+     * @throws \Exception
+     */
     function it_validates_non_collection_without_description()
     {
         $xml = Storage::disk('test')->get('rifcs/party_no_description.xml');

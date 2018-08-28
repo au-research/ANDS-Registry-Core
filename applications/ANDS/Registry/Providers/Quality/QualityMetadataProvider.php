@@ -78,10 +78,12 @@ class QualityMetadataProvider
         }
 
         // nameParts must have a value
-        foreach ($nameParts as $namePart) {
-            if (! (string) $namePart) {
-                throw new MissingTitle("Registry Object 'name' must have a value");
-            }
+        $strings = collect($nameParts)->map(function ($value) {
+            return (string)$value;
+        })->implode('');
+
+        if (!trim($strings)) {
+            throw new MissingTitle("Registry Object 'name' must have a value");
         }
 
         // (collection only) must have a description
@@ -91,17 +93,14 @@ class QualityMetadataProvider
                 throw new MissingDescriptionForCollection("Collection must have a description");
             }
 
-            foreach ($descriptions as $description) {
-                if (! (string) $description) {
-                    throw new MissingDescriptionForCollection("Collection must have a description");
-                }
+            $strings = collect($descriptions)->map(function ($value) {
+                return (string)$value;
+            })->implode('');
+
+            if (!trim($strings)) {
+                throw new MissingDescriptionForCollection("Collection must have a description");
             }
         }
-        if ($class === "collection" && count($sm->xpath("//ro:description")) === 0) {
-            throw new MissingDescriptionForCollection("Collection must have a description");
-        }
-
-        // (
 
         // type must not be empty
         $type = (string) $sm->xpath("//ro:{$class}")[0]['type'];

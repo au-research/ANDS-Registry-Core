@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+    <registryObject group="AUTestingRecords">
+        <key>AUTESTING_COLLECTION_EMPTY_DESCRIPTION</key>
+        <originatingSource type="">http://demo.ands.org.au/registry/orca/register_my_data</originatingSource>
+        <collection type="collection" dateModified="2013-04-10T23:51:55Z">
+            <description type="brief"></description>
+            <description type="full">this should pass</description>
+            <name type="primary">
+                <namePart>empty description</namePart>
+            </name>
+            <rights>
+                <rightsStatement rightsUri="http://www.rightsuri.com">
+                    Rights Statement Rights Statement
+                </rightsStatement>
+                <licence type="AusGOALRestrictive" rightsUri="http://www.rightsuri.com">LicenceLicenceLicence</licence>
+                <accessRights rightsUri="http://www.rightsuri.com">Access Rights</accessRights>
+            </rights>
+            <rights>
+                <licence type="CC-BY">CC-BY</licence>
+                <accessRights type="open">My Access Rights details are listed here and my data is open</accessRights>
+            </rights>
+        </collection>
+    </registryObject>
+</registryObjects>
