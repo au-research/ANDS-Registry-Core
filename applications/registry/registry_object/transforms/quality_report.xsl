@@ -48,7 +48,7 @@
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:if>
-		<xsl:if test="string-length(ro:collection/ro:description) = 0 or string-length(ro:collection/ro:description) &lt; 9">
+		<xsl:if test="//ro:collection and (string-length(ro:collection/ro:description) = 0 or string-length(ro:collection/ro:description) &lt; 9)">
 			<xsl:choose>
 				<xsl:when test="$output = 'script'">
 					<xsl:text>SetErrors("tab_descriptions_rights","At least one description is required for the collection. The description must be longer than 9 characters.");</xsl:text>
@@ -58,7 +58,7 @@
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:if>
-		<xsl:if test="string-length(ro:collection/ro:name[@type='primary']) = 0">
+		<xsl:if test="//ro:collection and string-length(ro:collection/ro:name[@type='primary']) = 0">
 			<xsl:choose>
 				<xsl:when test="$output = 'script'">
 					<xsl:text>SetErrors("tab_names","At least one primary name is required for the Collection.");</xsl:text>
