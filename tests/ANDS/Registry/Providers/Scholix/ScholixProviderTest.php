@@ -7,6 +7,11 @@ use ANDS\Repository\RegistryObjectsRepository;
 class ScholixProviderTest extends RegistryTestClass
 {
 
+    public function setUp()
+    {
+        $this->markTestSkipped("Requires refactor to keep the data separate. This tests are too risky to run when the database data changes");
+    }
+
     /** @test **/
     public function it_should_return_true_for_scholixable_record()
     {

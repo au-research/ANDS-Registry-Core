@@ -71,9 +71,35 @@ class QualityMetadataProvider
             throw new MissingTitle("Registry Object 'name' must have a value");
         }
 
+        // if there's a name, must have a namePart
+        $nameParts = $sm->xpath('//ro:name/ro:namePart');
+        if (count($nameParts) === 0) {
+            throw new MissingTitle("Registry Object 'name' must have a value");
+        }
+
+        // nameParts must have a value
+        $strings = collect($nameParts)->map(function ($value) {
+            return (string)$value;
+        })->implode('');
+
+        if (!trim($strings)) {
+            throw new MissingTitle("Registry Object 'name' must have a value");
+        }
+
         // (collection only) must have a description
-        if ($class === "collection" && count($sm->xpath("//ro:description")) === 0) {
-            throw new MissingDescriptionForCollection("Collection must have a description");
+        if ($class === "collection") {
+            $descriptions = $sm->xpath("//ro:description");
+            if (count($descriptions) === 0) {
+                throw new MissingDescriptionForCollection("Collection must have a description");
+            }
+
+            $strings = collect($descriptions)->map(function ($value) {
+                return (string)$value;
+            })->implode('');
+
+            if (!trim($strings)) {
+                throw new MissingDescriptionForCollection("Collection must have a description");
+            }
         }
 
         // type must not be empty

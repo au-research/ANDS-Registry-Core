@@ -1,5 +1,5 @@
 <p>
-    Elements shaded green are present in the RIF-CS metadata. Elements shaded yellow are absent. Use this report to identify if there are additional elements that could be included in your records to increase their discoverability, connectedness and impact.
+    Elements shaded green are present in the RIF-CS metadata. Elements shaded yellow are absent. Use this report to identify if there are additional elements that could be included in your records to increase their discoverability, connectedness and <a href="https://documentation.ands.org.au/display/DOC/Metadata+for+Impact%3A+make+RIF-CS+work+for+you" target="_blank">impact</a>.
 </p>
 
 <div class="qa_container">
