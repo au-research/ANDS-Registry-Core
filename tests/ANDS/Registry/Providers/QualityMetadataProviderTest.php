@@ -32,10 +32,30 @@ class QualityMetadataProviderTest extends \RegistryTestClass
     /** @test
      * @throws \Exception
      */
+    function it_validates_record_with_empty_title()
+    {
+        $this->setExpectedException(Exception\MissingTitle::class);
+        $xml = Storage::disk('test')->get('rifcs/collection_empty_title.xml');
+        QualityMetadataProvider::validate($xml);
+    }
+
+    /** @test
+     * @throws \Exception
+     */
     function validates_collections_without_description()
     {
         $this->setExpectedException(Exception\MissingDescriptionForCollection::class);
         $xml = Storage::disk('test')->get('rifcs/collection_no_description.xml');
+        QualityMetadataProvider::validate($xml);
+    }
+
+    /** @test
+     * @throws \Exception
+     */
+    function validates_collections_with_empty_description()
+    {
+        $this->setExpectedException(Exception\MissingDescriptionForCollection::class);
+        $xml = Storage::disk('test')->get('rifcs/collection_empty_description.xml');
         QualityMetadataProvider::validate($xml);
     }
 
@@ -77,4 +97,6 @@ class QualityMetadataProviderTest extends \RegistryTestClass
         $this->setExpectedException(Exception\MissingOriginatingSource::class);
         QualityMetadataProvider::validate($xml);
     }
+
+
 }
