@@ -8,6 +8,7 @@ namespace ANDS\Registry\Providers\ServiceDiscovery;
 use ANDS\RegistryObject;
 use ANDS\RegistryObject\Identifier;
 use ANDS\RegistryObject\Links;
+use ANDS\Repository\RegistryObjectsRepository as Repo;
 
 class ServiceDiscovery {
 
@@ -123,17 +124,52 @@ class ServiceDiscovery {
                 $fullURLs = array_merge($fullURLs, $serviceRelation["full_urls"]);
             }
 
+            $uuid = static::generateUUIDFromString($url);
+            $rifcsB64 = static::getExistingContentasBase64Str($uuid);
             $links[] = [
                 "url" => $url,
+                "uuid" => $uuid,
                 "relations" => $relations,
                 "full_urls" => array_values(array_unique($fullURLs)),
-                "subjects" => $allSubjects
+                "subjects" => $allSubjects,
+                "rifcsB64" => $rifcsB64
             ];
         }
 
         return $links;
     }
-//sourced from http://php.net/manual/en/function.array-unique.php
+// http://guid.us/GUID/PHP
+    private static function generateUUIDFromString($sting){
+        $charid = strtolower(md5($sting));
+        $hyphen = chr(45);// "-"
+        $uuid = substr($charid, 0, 8).$hyphen
+            .substr($charid, 8, 4).$hyphen
+            .substr($charid,12, 4).$hyphen
+            .substr($charid,16, 4).$hyphen
+            .substr($charid,20,12);
+        return $uuid;
+    }
+
+
+    private static function getExistingContentasBase64Str($key_uuid){
+        $matchingRecord = Repo::getMatchingRecord($key_uuid, "DRAFT");
+
+        if($matchingRecord == null){
+            $matchingRecord = Repo::getMatchingRecord($key_uuid, "PUBLISHED");
+        }
+
+        if($matchingRecord !== null){
+            $currentRecordData = $matchingRecord->getCurrentData();
+            if($currentRecordData !== null)
+                return base64_encode($currentRecordData->data);
+        }
+        return "";
+    }
+
+
+
+    //sourced from http://php.net/manual/en/function.array-unique.php
+
     private static function unique_multidim_array($array, $key) {
         $temp_array = array();
         $i = 0;
