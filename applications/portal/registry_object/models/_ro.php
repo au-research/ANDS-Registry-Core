@@ -160,20 +160,20 @@ class _ro
      */
     public function stat()
     {
-//        $ci =& get_instance();
-//        $db = $ci->load->database('portal', true);
-//
-//        $result = $db->get_where('record_stats', array('ro_id' => $this->core['id']));
-//        if ($result->num_rows() == 0) {
-//            //create if not exist
-//            $data = array(
-//                'ro_id' => $this->core['id'],
-//                'ro_slug' => $this->core['slug']
-//            );
-//            $db->insert('record_stats', $data);
-//            $result = $db->get_where('record_stats', array('ro_id' => $this->core['id']));
-//        }
-//        $result_array = $result->result_array();
+        $ci =& get_instance();
+        $db = $ci->load->database('portal', true);
+
+        $result = $db->get_where('record_stats', array('ro_id' => $this->core['id']));
+        if ($result->num_rows() == 0) {
+            //create if not exist
+            $data = array(
+                'ro_id' => $this->core['id'],
+                'ro_slug' => $this->core['slug']
+            );
+            $db->insert('record_stats', $data);
+            $result = $db->get_where('record_stats', array('ro_id' => $this->core['id']));
+        }
+        $result_array = $result->result_array();
         return array();
     }
 

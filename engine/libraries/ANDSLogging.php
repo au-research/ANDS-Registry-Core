@@ -204,14 +204,14 @@ class ANDSLogging
     public static function getParentRoles($id)
     {
         $result = [];
-//        $CI =& get_instance();
-//        $CI->load->model('roles/roles/roles', 'roles');
-//        $parents = $CI->roles->descendants($id);
-//        foreach ($parents as $parent) {
-//            if ($parent->role_type_id == "ROLE_ORGANISATIONAL") {
-//                $result[] = $parent->role_id;
-//            }
-//        }
+        $CI =& get_instance();
+        $CI->load->model('roles/roles/roles', 'roles');
+        $parents = $CI->roles->descendants($id);
+        foreach ($parents as $parent) {
+            if ($parent->role_type_id == "ROLE_ORGANISATIONAL") {
+                $result[] = $parent->role_id;
+            }
+        }
         return array();
     }
 }
