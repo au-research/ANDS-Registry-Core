@@ -192,7 +192,7 @@
 				<span class="tag no-border-tag flag" tip="Flagged"><i class="icon icon-flag"></i></span>
 			{{/has_flag}}
 			{{#quality_level}}
-				<span class="tipQA" ro_id='{{id}}'><i class="icon icon-white icon-list-alt"/></span>
+				<span class="tipQA" ro_id='{{id}}'><i class="icon icon-list-alt"/></span>
 			{{/quality_level}}
 			{{#has_error}}
 				<a href="javascript:;" class="btn btn-mini btn-danger tipError" ro_id="{{id}}"><i class="icon-white icon-exclamation-sign"></i></a>

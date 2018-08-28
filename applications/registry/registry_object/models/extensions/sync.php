@@ -453,14 +453,15 @@ class Sync_extension extends ExtensionBase{
 			$json['subject_value_resolved'][] = html_entity_decode($s['resolved'], ENT_QUOTES);
 			$json['subject_vocab_uri'][] = $s['uri'];
 			$json['subject_type'][] = $s['type'];
-			 if (trim(strtolower($s['type']))=='anzsrc-for') {
+			$type = trim(strtolower($s['type']));
+			 if ($type =='anzsrc-for') {
 			 	$json['subject_anzsrcfor'][] = $s['resolved'];
-			 } else if(trim(strtolower($s['type']))=='anzsrc-seo') {
+			 } else if($type =='anzsrc-seo') {
 			 	$json['subject_anzsrcseo'][] = $s['resolved'];
-			 } else if(trim(strtolower($s['type']))=='gcmd') {
+			 } else if($type =='gcmd') {
                  $json['subject_gcmd'][] = $s['resolved'];
                  $json['tsubject_'.$type][] = $s['resolved'];
-             } else if(trim(strtolower($s['type']))=='iso639-3') {
+             } else if($type =='iso639-3') {
                 $json['subject_iso639-3'][] = $s['resolved'];
              }
 
