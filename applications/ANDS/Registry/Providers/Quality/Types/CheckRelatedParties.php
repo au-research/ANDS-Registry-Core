@@ -4,6 +4,8 @@
 namespace ANDS\Registry\Providers\Quality\Types;
 
 
+use ANDS\Repository\RegistryObjectsRepository;
+
 class CheckRelatedParties extends CheckType
 {
     protected $descriptor = [
@@ -33,6 +35,21 @@ class CheckRelatedParties extends CheckType
 
         $hasRelatedInfoParties = in_array("party", $relatedInfoTypes);
         $hasRelatedObjectParties = $this->record->relationshipViews->where('to_class', 'party')->count() > 0;
+
+        if ($this->record->status === "DRAFT") {
+            $draftHasRelatedParties = collect($this->simpleXML->xpath("//ro:relatedObject/ro:key"))
+                ->map(function($keyField){
+                    return (string) $keyField;
+                })
+                ->map(function($key) {
+                    if ($record = RegistryObjectsRepository::getPublishedByKey($key)) {
+                        return $record->class;
+                    }
+                    return null;
+                })->contains('party');
+
+            return $draftHasRelatedParties || $hasRelatedInfoParties || $hasRelatedObjectParties;
+        }
 
         return $hasRelatedInfoParties || $hasRelatedObjectParties;
     }
