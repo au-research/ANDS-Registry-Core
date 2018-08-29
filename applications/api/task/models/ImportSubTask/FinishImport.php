@@ -15,7 +15,6 @@ use Carbon\Carbon;
 
 class FinishImport extends ImportSubTask
 {
-
     private $harvestStarted;
     private $addToDatasourceLog = true;
 

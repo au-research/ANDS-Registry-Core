@@ -9,6 +9,9 @@ use Carbon\Carbon;
 
 class WriteImportSummary extends ImportSubTask
 {
+    protected $requireDataSource = true;
+    protected $title = "WRITING IMPORT SUMMARY";
+
     public function run_task()
     {
         $dataSource = $this->getDataSource();
@@ -19,20 +22,24 @@ class WriteImportSummary extends ImportSubTask
         $end = Carbon::now();
 
         // TODO started should be harvest started if there's a harvest
+        $harvestSummary = null;
         if ($harvestID = $this->parent()->getHarvestID()) {
             $harvest = Harvest::find($harvestID);
+            $harvestSummary = json_decode($harvest->summary, true);
+            $started = Carbon::parse($harvestSummary['started']);
         }
 
         $payload = [
             'source' => $parentTaskData->get('source', 'unknown'),
             'pipeline' => $parentTaskData->get('pipeline', 'unknown'),
-            'status' => $this->parent()->getStatus(),
 
             'started' => $started->toDateTimeString(),
             'finished' => $end->toDateTimeString(),
             'duration' => $end->diffInSeconds($started),
 
             'batchID' => $parentTaskData['batchID'],
+
+            'harvest' => $harvestSummary,
 
             'datasource' => [
                 'id' => $dataSource->id,
@@ -50,9 +57,10 @@ class WriteImportSummary extends ImportSubTask
                 })->toArray(),
                 'memory' =>  collect($parentBenchmarkData)->map(function($bench) {
                     return $bench['memory_mb'];
-                })->toArray()
+                })->toArray(),
+                'errors' => collect($this->parent()->getError())->implode("\n\n"),
             ],
-            'errors' => collect($this->parent()->getError())->implode("\n\n"),
+
             'counts' => [
                 'imported' => $parentTaskData->get('importedRecords', 0),
                 'deleted' => $parentTaskData->get('deletedRecords', 0),
