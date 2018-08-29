@@ -4,6 +4,8 @@
 namespace ANDS\Registry\Providers\Quality\Types;
 
 
+use ANDS\Repository\RegistryObjectsRepository;
+
 class CheckRelatedService extends CheckType
 {
     protected $descriptor = [
@@ -32,6 +34,21 @@ class CheckRelatedService extends CheckType
 
         $hasRelatedInfoService = in_array("service", $relatedInfoTypes);
         $hasRelatedObjectServices = $this->record->relationshipViews->where('to_class', 'service')->count() > 0;
+
+        if ($this->record->status === "DRAFT") {
+            $draftHasRelatedService = collect($this->simpleXML->xpath("//ro:relatedObject/ro:key"))
+                ->map(function($keyField){
+                    return (string) $keyField;
+                })
+                ->map(function($key) {
+                    if ($record = RegistryObjectsRepository::getPublishedByKey($key)) {
+                        return $record->class;
+                    }
+                    return null;
+                })->contains('service');
+
+            return $draftHasRelatedService || $hasRelatedInfoService || $hasRelatedObjectServices;
+        }
 
         return $hasRelatedInfoService || $hasRelatedObjectServices;
     }
