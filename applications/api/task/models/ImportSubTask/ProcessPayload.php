@@ -8,6 +8,7 @@ use ANDS\Registry\Providers\Quality\QualityMetadataProvider;
 use ANDS\RegistryObject;
 use ANDS\Repository\DataSourceRepository;
 use ANDS\Repository\RegistryObjectsRepository as Repo;
+use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\XMLUtil;
 
 class ProcessPayload extends ImportSubTask
@@ -96,6 +97,17 @@ class ProcessPayload extends ImportSubTask
             } elseif ($e instanceof Exception\MissingDescriptionForCollection) {
                 $this->parent()->incrementTaskData("missingDescriptionCollectionCount");
             }
+
+            // record failed validation, it's draft counterpart must not be deleted
+            // this happens for HandleStatusChange pipeline and targetStatus is PUBLISHED
+            $draftRecord = RegistryObjectsRepository::getDraftByKey($key);
+            $tobeDeleted = $this->parent()->getTaskData('deletedRecords');
+            if ($draftRecord && $tobeDeleted) {
+                $this->parent()->setTaskData("deletedRecords", collect($tobeDeleted)->filter(function($id) use ($draftRecord){
+                    return $id != $draftRecord->id;
+                }));
+                $this->log("Removed id {$draftRecord->id} from deletion due to $key failed processing");
+            };
 
             return false;
         }
