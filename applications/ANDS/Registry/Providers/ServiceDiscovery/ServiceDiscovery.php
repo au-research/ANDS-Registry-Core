@@ -103,7 +103,13 @@ class ServiceDiscovery {
 
                 $identifiers = Identifier::where('registry_object_id',
                     $link->registry_object_id)->get();
-                $linksArray[$url][$ro->key]["related_collection_id"] = static::getPreferredIdentifier($identifiers);
+
+                $preferred_identifiers = static::getPreferredIdentifier($identifiers);
+
+                if(sizeof($preferred_identifiers) == 0)
+                    $linksArray[$url][$ro->key]["related_collection_id"] = array("type" => "local", "identifier" => $ro->key);
+                else
+                    $linksArray[$url][$ro->key]["related_collection_id"] = static::getPreferredIdentifier($identifiers);
             }
         }
 

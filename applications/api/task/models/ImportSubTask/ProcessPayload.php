@@ -79,27 +79,29 @@ class ProcessPayload extends ImportSubTask
         // originatingSource
 
         $key = trim((string) $registryObject->key);
+        // Let draft records through to save errors
+        // DRAFT records comes via manual entry
+        if ($this->parent()->getTaskData('targetStatus') != "DRAFT") {
+            try {
+                QualityMetadataProvider::validate($registryObject->saveXML());
+            } catch (\Exception $e) {
+                $this->addError("Error whilst ingesting record with key " . $key . ": " . get_exception_msg($e));
 
-        try {
-            QualityMetadataProvider::validate($registryObject->saveXML());
-        } catch (\Exception $e) {
-            $this->addError("Error whilst ingesting record with key " . $key . ": " . get_exception_msg($e));
+                if ($e instanceof Exception\MissingGroup) {
+                    $this->parent()->incrementTaskData("missingGroupAttributeCount");
+                } elseif ($e instanceof Exception\MissingOriginatingSource) {
+                    $this->parent()->incrementTaskData("missingOriginatingSourceCount");
+                } elseif ($e instanceof Exception\MissingTitle) {
+                    $this->parent()->incrementTaskData("missingTitleCount");
+                } elseif ($e instanceof Exception\MissingType) {
+                    $this->parent()->incrementTaskData("missingTypeCount");
+                } elseif ($e instanceof Exception\MissingDescriptionForCollection) {
+                    $this->parent()->incrementTaskData("missingDescriptionCollectionCount");
+                }
 
-            if ($e instanceof Exception\MissingGroup) {
-                $this->parent()->incrementTaskData("missingGroupAttributeCount");
-            } elseif ($e instanceof Exception\MissingOriginatingSource) {
-                $this->parent()->incrementTaskData("missingOriginatingSourceCount");
-            } elseif ($e instanceof Exception\MissingTitle) {
-                $this->parent()->incrementTaskData("missingTitleCount");
-            } elseif ($e instanceof Exception\MissingType) {
-                $this->parent()->incrementTaskData("missingTypeCount");
-            } elseif ($e instanceof Exception\MissingDescriptionForCollection) {
-                $this->parent()->incrementTaskData("missingDescriptionCollectionCount");
+                return false;
             }
-
-            return false;
         }
-
         // check matching data source
         $matchingStatusRecord = Repo::getNotDeletedRecordFromOtherDataSourceByKey($key, $this->parent()->dataSourceID);
         
@@ -144,12 +146,6 @@ class ProcessPayload extends ImportSubTask
      */
     public function checkPayloadHarvestability()
     {
-        // Let draft records through to save errors
-        // DRAFT records comes via manual entry
-        if ($this->parent()->getTaskData('targetStatus') === "DRAFT") {
-            return;
-        }
-
         foreach ($this->parent()->getPayloads() as &$payload) {
             $path = $payload->getPath();
             $xml = $payload->getContentByStatus($this->payloadOutput);

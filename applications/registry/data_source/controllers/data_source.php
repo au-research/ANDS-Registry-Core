@@ -517,6 +517,10 @@ class Data_source extends MX_Controller {
 		// getting the count
 		$total = $records->count();
 		if ($total === 0) {
+			$message =
+				"Discovering Service Objects for Datasource". NL.
+				"No PUBLISHED Collections in Datasource";
+			$dataSource->appendDataSourceLog($message, 'info', 'SERVICE DISCOVERY');
 			return;
 		}
 
