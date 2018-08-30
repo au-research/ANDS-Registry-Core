@@ -24,6 +24,11 @@ class CreateServiceRecords extends ImportSubTask
     public function run_task()
     {
         $service_json_file = $this->parent()->getTaskData('services_links');
+        if($service_json_file == '')
+        {
+            $this->log("No Services to generate");
+            return;
+        }
         $service_discovery_service_url = get_config_item('SERVICES_DISCOVERY_SERVICE_URL');
         $serviceProduce = new ServiceProducer($service_discovery_service_url);
 
