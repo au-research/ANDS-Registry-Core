@@ -304,8 +304,8 @@ ip_address = "'.$r["combined_ip"].'"  WHERE app_id = "'.$r["app_id"].'"');
 		$client_name = trim(urlencode($posted['client_name']));
 		$client_contact_name = trim(urlencode($posted['client_contact_name']));
 		$client_contact_email = trim(urlencode($posted['client_contact_email']));
-		$domainList = trim(urlencode($posted['domainList']));
-		$datacite_prefix = 	trim(urlencode($posted['datacite_prefix']));
+		$domainList = trim($posted['domainList']);
+        $datacite_prefix = 	trim(urlencode($posted['datacite_prefix']));
 		$shared_secret = trim(urlencode($posted['shared_secret']))	;
         $test_shared_secret = trim(urlencode($posted['test_shared_secret']))	;
         
