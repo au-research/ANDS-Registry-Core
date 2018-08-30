@@ -128,7 +128,6 @@ $(document).on('click', '#add_confirm', function(){
 
 			$('#add_prefix_select').empty();
 			$.each(data, function (i, item) {
-				console.log(item);
 				$('#add_prefix_select').append($('<option>', {
 					value: item,
 					text : item
