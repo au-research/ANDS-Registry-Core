@@ -10,6 +10,7 @@
         var vm = this;
         vm.tab = "list";
         $scope.base_url = apps_url;
+        $scope.real_base_url = base_url;
         vm.newdoixml = "";
         vm.pp = 50;
 
