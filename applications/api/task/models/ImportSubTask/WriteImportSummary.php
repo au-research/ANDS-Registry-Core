@@ -26,7 +26,7 @@ class WriteImportSummary extends ImportSubTask
         if ($harvestID = $this->parent()->getHarvestID()) {
             $harvest = Harvest::find($harvestID);
             $harvestSummary = json_decode($harvest->summary, true);
-            $started = Carbon::parse($harvestSummary['started']);
+            $started = Carbon::parse($harvestSummary['start']);
         }
 
         $payload = [
@@ -62,8 +62,10 @@ class WriteImportSummary extends ImportSubTask
             ],
 
             'counts' => [
-                'imported' => $parentTaskData->get('importedRecords', 0),
-                'deleted' => $parentTaskData->get('deletedRecords', 0),
+                'imported' => $parentTaskData->get('importedRecords', false)
+                    ? count($parentTaskData->get('importedRecords')) : 0,
+                'deleted' => $parentTaskData->get('deletedRecords', 0)
+                    ? count($parentTaskData->get('deletedRecords')) : 0,
                 'inFeed' => $parentTaskData->get('recordsInFeedCount', 0),
                 'created' => $parentTaskData->get('recordsCreatedCount', 0),
                 'updated' => $parentTaskData->get('recordsUpdatedCount', 0),
