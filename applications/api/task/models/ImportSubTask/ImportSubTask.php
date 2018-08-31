@@ -152,7 +152,15 @@ class ImportSubTask extends Task
      */
     public function getDataSource()
     {
-        return $this->dataSource;
+        if ($this->dataSource) {
+            return $this->dataSource;
+        }
+
+        if ($id = $this->parent()->getDataSourceID()) {
+            return DataSource::find($id);
+        }
+
+        return null;
     }
 
     public function updateProgress($index, $total, $message)
