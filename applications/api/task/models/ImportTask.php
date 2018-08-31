@@ -343,8 +343,8 @@ class ImportTask extends Task
                 $tasks = [
                     "PopulateImportOptions",
                     "FinishImport",
+                    "WriteImportSummary",
                     "ScheduleHarvest",
-                    "WriteImportSummary"
                     //"Report"
                 ];
                 // error will not load payloads
