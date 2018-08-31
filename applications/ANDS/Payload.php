@@ -120,7 +120,7 @@ class Payload
         $directory = $harvestedContentDir.$dataSourceID;
         if (!is_dir($directory)) {
             try {
-                mkdir($directory, 0755, true); // mkdir 0775 doesn't work
+                mkdir($directory, 0775, true); // mkdir 0775 doesn't work
                 chmod($directory, 0775);
             } catch (\Exception $e) {
                 $message = get_exception_msg($e);
