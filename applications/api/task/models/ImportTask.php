@@ -260,8 +260,8 @@ class ImportTask extends Task
                     "IndexPortal",
                     "IndexRelationship",
                     "ProcessGraphRelationships",
+                    "WriteImportSummary",
                     "FinishImport",
-                    "WriteImportSummary"
                 ];
                 break;
             case "PublishingWorkflow":
@@ -374,8 +374,8 @@ class ImportTask extends Task
                     "IndexRelationship",
                     "ServiceDiscovery",
                     "FinishImport",
-                    "ScheduleHarvest",
-                    "WriteImportSummary"
+                    "WriteImportSummary",
+                    "ScheduleHarvest"
                 ];
                 break;
         }
