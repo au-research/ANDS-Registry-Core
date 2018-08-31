@@ -1,14 +1,14 @@
 <?php
 namespace ANDS\API;
 
+use ANDS\Util\ORCIDAPI;
 use \Exception as Exception;
 
-class Orcid2_api
+class Orcid_api
 {
 
     private $client = null;
-    private $OrcidPubApiUrl = "https://pub.sandbox.orcid.org/v2.0/";
-    
+
     public function handle($method = array())
     {
         $this->ci = &get_instance();
@@ -32,34 +32,26 @@ class Orcid2_api
     private function searchOrcid()
     {
         $query = urldecode($this->ci->input->get('q'));
-        $search_endpoint = $this->OrcidPubApiUrl.'search/orcid-bio?q='.urlencode($query);
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $search_endpoint);
-        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-        $result = curl_exec($ch);
-        curl_close($ch);
-        $data= simplexml_load_string($result);
-        return $data;
+        $publicClient = ORCIDAPI::getPublicClient();
+        $data = $publicClient->get('search/?q='.urlencode($query).'&rows=10');
+        $content = json_decode($data->getBody()->getContents(), true);
+        $return = array();
+        foreach($content['result'] as $orcid){
+            $publicClient = ORCIDAPI::getPublicClient();
+            $orcid_info = $publicClient->get($orcid['orcid-identifier']['path']);
+            $extracted = json_decode($orcid_info->getBody()->getContents(), true);
+            $return['orcid-search-results'][] = array("person"=>$extracted['person'],"orcid"=>$orcid['orcid-identifier']['path']);
+        }
+        return $return;
     }
 
     private function lookupOrcid($identifier)
     {
-
-        $lookup_endpoint = $this->OrcidPubApiUrl.$identifier.'/record';
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $lookup_endpoint);
-        curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-        curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-        $result = curl_exec($ch);
-        curl_close($ch);
-        $data= simplexml_load_string($result);
-        return $data;
-
+        $publicClient = ORCIDAPI::getPublicClient();
+        $orcid_info = $publicClient->get($identifier);
+        $extracted = json_decode($orcid_info->getBody()->getContents(), true);
+        $return = array("person"=>$extracted['person'],"orcid"=>$identifier);
+        return $return;
     }
     
     public function __construct()
