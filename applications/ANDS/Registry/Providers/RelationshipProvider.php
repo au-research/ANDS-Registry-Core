@@ -6,6 +6,7 @@ namespace ANDS\Registry\Providers;
 
 use ANDS\RecordData;
 use ANDS\Registry\Connections;
+use ANDS\Registry\IdentifierRelationshipView;
 use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 use ANDS\RegistryObject\Identifier;
 use ANDS\RegistryObject;
@@ -159,7 +160,12 @@ class RelationshipProvider
         }
 
         // reverse identifier relationships
-        // TODO
+        $identifers = collect(IdentifierProvider::get($record))->pluck('value')->toArray();
+        $reverseIdentifierRelationships = IdentifierRelationshipView::where('to_identifier', $identifers)
+            ->where('from_class', $class)->count();
+        if ($reverseIdentifierRelationships) {
+            return true;
+        }
 
         if (RegistryObjectsRepository::isDraftStatus($record->status)) {
 
