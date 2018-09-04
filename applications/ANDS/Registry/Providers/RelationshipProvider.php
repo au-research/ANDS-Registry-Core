@@ -127,22 +127,13 @@ class RelationshipProvider
      *
      * @param RegistryObject $record
      * @param $class
-     * @param array $processed
      * @return bool
+     * @throws \Exception
      */
-    public static function hasRelatedClass(RegistryObject $record, $class, $processed = [])
+    public static function hasRelatedClass(RegistryObject $record, $class)
     {
-        debug("Getting related class for $record->title($record->registry_object_id)");
-
-        if (in_array($record->registry_object_id, $processed)) {
-            return false;
-        }
-
-        // Explicit
-        $explicitProvider = Connections::getStandardProvider();
-
-        // direct
-        $result = $explicitProvider->init()
+        // direct relationships
+        $result = Connections::getStandardProvider()
             ->setFilter('to_class', $class)
             ->setFilter('from_id', $record->registry_object_id)
             ->count();
@@ -151,8 +142,8 @@ class RelationshipProvider
             return true;
         }
 
-        // reverse
-        $result = $explicitProvider->init()
+        // reverse relationships
+        $result = Connections::getStandardProvider()
             ->setFilter('from_class', $class)
             ->setFilter('to_key', $record->key)
             ->count();
@@ -161,35 +152,56 @@ class RelationshipProvider
             return true;
         }
 
+        // direct identifier relationships
+        $directIdentifierRelationships = $record->identifierRelationships->where('to_class', $class)->count();
+        if ($directIdentifierRelationships > 0) {
+            return true;
+        }
+
+        // reverse identifier relationships
+        // TODO
+
+        if (RegistryObjectsRepository::isDraftStatus($record->status)) {
+
+            $simpleXML = XMLUtil::getSimpleXMLFromString($record->getCurrentData()->data);
+
+            // direct
+            $draftHasRelatedClass = collect($simpleXML->xpath("//ro:relatedObject/ro:key"))
+                ->map(function($keyField){
+                    return (string) $keyField;
+                })
+                ->map(function($key) {
+                    if ($record = RegistryObjectsRepository::getPublishedByKey($key)) {
+                        return $record->class;
+                    }
+                    return null;
+                })->contains($class);
+            if ($draftHasRelatedClass) {
+                return true;
+            }
+
+            // reverse should already be handled by the reverse relationship earlier
+        }
+
         // direct implicit
-        $implicitProvider = Connections::getImplicitProvider();
-
-        $result = $implicitProvider->init()
-            ->setFilter('to_class', $class)
-            ->setFilter('from_id', $record->registry_object_id)
-            ->count();
-
-        if ($result > 0) {
-            return true;
-        }
-
-        // reverse implicit
-        $result = $implicitProvider->init()
-            ->setFilter('from_class', $class)
-            ->setFilter('to_id', $record->registry_object_id)
-            ->count();
-
-        if ($result > 0) {
-            return true;
-        }
-
-        // duplicate
-//        $duplicates = $record->getDuplicateRecords();
-//        foreach ($duplicates as $duplicate) {
-//            if (static::hasRelatedClass($duplicate, $class, $processed)) {
-//                return true;
-//            }
-//            $processed[] = $duplicate->registry_object_id;
+//        $implicitProvider = Connections::getImplicitProvider();
+//        $result = $implicitProvider->init()
+//            ->setFilter('to_class', $class)
+//            ->setFilter('from_id', $record->registry_object_id)
+//            ->count();
+//
+//        if ($result > 0) {
+//            return true;
+//        }
+//
+//        // reverse implicit
+//        $result = $implicitProvider->init()
+//            ->setFilter('from_class', $class)
+//            ->setFilter('to_id', $record->registry_object_id)
+//            ->count();
+//
+//        if ($result > 0) {
+//            return true;
 //        }
 
         return false;

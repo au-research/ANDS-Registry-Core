@@ -155,4 +155,21 @@ class MetadataProvider implements RegistryContentProvider
         };
         return $results;
     }
+
+    /**
+     * @param RegistryObject $record
+     * @param null $simpleXML
+     * @return array
+     * @throws \Exception
+     */
+    public static function getRelatedInfoTypes(RegistryObject $record, $simpleXML = null)
+    {
+        $simpleXML = $simpleXML ? $simpleXML : XMLUtil::getSimpleXMLFromString($record->getCurrentData()->data);
+
+        $relatedInfoTypes = [];
+        foreach ($simpleXML->xpath("//ro:relatedInfo/@type") as $type) {
+            $relatedInfoTypes[] = (string) $type;
+        }
+        return $relatedInfoTypes;
+    }
 }
