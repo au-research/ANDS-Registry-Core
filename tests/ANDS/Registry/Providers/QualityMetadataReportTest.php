@@ -71,6 +71,30 @@ class QualityMetadataReportTest extends \RegistryTestClass
     /** @test
      * @throws \Exception
      */
+    function it_passes_reverse_related_party_for_collection()
+    {
+        // given a record
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_minimal.xml')
+        ]);
+
+        // reverse relates to a party
+        $party = $this->stub(RegistryObject::class, ['class' => 'party']);
+        $this->stub(RegistryObject\Relationship::class, ['registry_object_id' => $party->id, 'related_object_key' => $record->key]);
+
+        // when get reports
+        $report = QualityMetadataProvider::getMetadataReport($record);
+
+        $this->checkType(Types\CheckRelatedParties::class, $report);
+
+        $this->checkReport($report);
+    }
+
+    /** @test
+     * @throws \Exception
+     */
     function it_passes_related_object_activity_for_collection()
     {
         // given a record
