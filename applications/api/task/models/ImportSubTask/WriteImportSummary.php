@@ -30,6 +30,8 @@ class WriteImportSummary extends ImportSubTask
         }
 
         $payload = [
+            'event' => 'import',
+
             'source' => $parentTaskData->get('source', 'unknown'),
             'pipeline' => $parentTaskData->get('pipeline', 'unknown'),
 
