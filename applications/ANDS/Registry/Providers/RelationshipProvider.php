@@ -160,12 +160,14 @@ class RelationshipProvider
         }
 
         // reverse identifier relationships
-        $identifers = collect(IdentifierProvider::get($record))->pluck('value')->toArray();
-        $reverseIdentifierRelationships = IdentifierRelationshipView::where('to_identifier', $identifers)
-            ->where('from_class', $class)->count();
-        if ($reverseIdentifierRelationships) {
-            return true;
+        if ($identifers = collect(IdentifierProvider::get($record))->pluck('value')->toArray()) {
+            $reverseIdentifierRelationships = IdentifierRelationshipView::where('to_identifier', $identifers)
+                ->where('from_class', $class)->count();
+            if ($reverseIdentifierRelationships) {
+                return true;
+            }
         }
+
 
         if (RegistryObjectsRepository::isDraftStatus($record->status)) {
 
