@@ -544,7 +544,8 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 
 		if (typeof socket_url == 'undefined' || socket_url == "") return;
 
-		$scope.socket = io(socket_url);
+
+		$scope.socket = io(socket_url, {transports: ['websocket', 'polling', 'flashsocket']});
 
         $scope.socket.on('datasource.'+$scope.ds.id+'.harvest', function(msg){
 		    try {

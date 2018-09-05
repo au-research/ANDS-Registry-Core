@@ -4,6 +4,8 @@
 namespace ANDS\Registry\Providers\Quality\Types;
 
 
+use ANDS\Registry\Providers\MetadataProvider;
+
 class CheckRelatedOutputs extends CheckType
 {
     protected $descriptor = [
@@ -18,6 +20,7 @@ class CheckRelatedOutputs extends CheckType
      * Returns the status of the check
      *
      * @return boolean
+     * @throws \Exception
      */
     public function check()
     {
@@ -29,10 +32,7 @@ class CheckRelatedOutputs extends CheckType
             "reuseInformation",
             "website"
         ];
-        $relatedInfoTypes = [];
-        foreach ($this->simpleXML->xpath("//ro:relatedInfo/@type") as $type) {
-            $relatedInfoTypes[] = (string)$type;
-        }
+        $relatedInfoTypes = MetadataProvider::getRelatedInfoTypes($this->record, $this->simpleXML);
         $intersect = array_intersect($validRelatedInfoType, $relatedInfoTypes);
 
         return count($intersect) > 0;

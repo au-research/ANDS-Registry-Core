@@ -103,12 +103,31 @@ class ProcessPayload extends ImportSubTask
             $draftRecord = RegistryObjectsRepository::getDraftByKey($key);
             $tobeDeleted = $this->parent()->getTaskData('deletedRecords');
             if ($draftRecord && $tobeDeleted) {
-                $this->parent()->setTaskData("deletedRecords", collect($tobeDeleted)->filter(function($id) use ($draftRecord){
-                    return $id != $draftRecord->id;
-                }));
+                $this->parent()->setTaskData("deletedRecords", collect($tobeDeleted)
+                    ->filter(function($id) use ($draftRecord){
+                        return $id != $draftRecord->id;
+                    })
+                );
                 $this->log("Removed id {$draftRecord->id} from deletion due to $key failed processing");
             };
 
+            return false;
+        }
+
+        // check if the draft record to be published has any errors (xslt errors)
+        $draftRecord = RegistryObjectsRepository::getDraftByKey($key);
+        if ($this->parent()->getTaskData('targetStatus') === "PUBLISHED"
+            && $draftRecord
+            && intval($draftRecord->getRegistryObjectAttributeValue("error_count")) > 0
+        ) {
+            $tobeDeleted = $this->parent()->getTaskData('deletedRecords');
+            $this->parent()->setTaskData("deletedRecords", collect($tobeDeleted)
+                ->filter(function($id) use ($draftRecord){
+                    return $id != $draftRecord->id;
+                })
+            );
+            $this->addError("Error whilst ingesting record with key " . $key . ": There are validation errors");
+            $this->log("Removed id {$draftRecord->id} from deletion due to $key failed processing");
             return false;
         }
 

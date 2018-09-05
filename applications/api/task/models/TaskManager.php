@@ -164,6 +164,7 @@ class TaskManager
         if ($query->num_rows() == 0) throw new Exception("Task " . $taskId . " not found!");
         $taskResult = $query->first_row(true);
 
+        /** @var ImportTask $task */
         $task = $this->getTaskObject($taskResult);
 
         $task
@@ -220,7 +221,7 @@ class TaskManager
      * Checks the params for the `class` first
      * then refer to the `name` column to determine the class type
      * @param $taskResult
-     * @return mixed
+     * @return Task
      * @throws Exception
      */
     public function getTaskObject($taskResult)
