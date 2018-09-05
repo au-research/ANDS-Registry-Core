@@ -11,6 +11,7 @@ class Orcid_api
 
     public function handle($method = array())
     {
+        header("Access-Control-Allow-Origin: *");
         $this->ci = &get_instance();
 
         $this->params = array(
