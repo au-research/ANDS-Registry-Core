@@ -4,6 +4,8 @@
 namespace ANDS\Registry\Providers\Quality\Types;
 
 
+use ANDS\Registry\Providers\MetadataProvider;
+use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\Repository\RegistryObjectsRepository;
 
 class CheckRelatedCollection extends CheckType
@@ -25,33 +27,18 @@ class CheckRelatedCollection extends CheckType
      * Returns the status of the check
      *
      * @return boolean
+     * @throws \Exception
      */
     public function check()
     {
-        $relatedInfoTypes = [];
-        foreach ($this->simpleXML->xpath("//ro:relatedInfo/@type") as $type) {
-            $relatedInfoTypes[] = (string) $type;
+        if (in_array('collection', MetadataProvider::getRelatedInfoTypes($this->record, $this->simpleXML))) {
+            return true;
         }
 
-        $hasRelatedInfoCollection = in_array("collection", $relatedInfoTypes);
-        $hasRelatedObjectCollection = $this->record->relationshipViews->where('to_class', 'collection')->count() > 0;
-
-        // for drafts, check the keys in the relatedObject/key for any resolvable collection
-        if ($this->record->status === "DRAFT") {
-            $draftHasRelatedCollection = collect($this->simpleXML->xpath("//ro:relatedObject/ro:key"))
-                ->map(function($keyField){
-                    return (string) $keyField;
-                })
-                ->map(function($key) {
-                    $record = RegistryObjectsRepository::getPublishedByKey($key);
-                    if ($record) {
-                        return $record->class;
-                    }
-                    return null;
-                })->contains('collection');
-            return $draftHasRelatedCollection || $hasRelatedObjectCollection || $hasRelatedInfoCollection;
+        if (RelationshipProvider::hasRelatedClass($this->record, 'collection')) {
+            return true;
         }
 
-        return $hasRelatedObjectCollection || $hasRelatedInfoCollection;
+        return false;
     }
 }
