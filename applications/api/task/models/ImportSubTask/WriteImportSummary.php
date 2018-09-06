@@ -63,6 +63,7 @@ class WriteImportSummary extends ImportSubTask
                     return $bench['memory_mb'];
                 })->toArray(),
                 'errors' => collect($this->parent()->getError())->implode("\n\n"),
+                'errored' => count($this->parent()->getError()) > 0
             ],
 
             'counts' => [
