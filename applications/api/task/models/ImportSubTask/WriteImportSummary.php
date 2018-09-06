@@ -51,6 +51,8 @@ class WriteImportSummary extends ImportSubTask
             ],
 
             'import' => [
+                'target_status' => $parentTaskData->get('targetStatus'),
+                'task_id' => $this->parent()->getId(),
                 'duration_total' => collect($parentBenchmarkData)->map(function($bench) {
                     return $bench['duration_seconds'];
                 })->sum(),
@@ -82,6 +84,8 @@ class WriteImportSummary extends ImportSubTask
                 'missing_type' => $parentTaskData->get('missingTypeCount', 0),
                 'missing_collection_description' => $parentTaskData->get('missingDescriptionCollectionCount', 0),
                 'errors' => count($this->parent()->getError()),
+                'published_before' => $parentTaskData->get('datasourceRecordBeforeCount', 0),
+                'published_after' => $parentTaskData->get('datasourceRecordAfterCount', 0)
             ]
         ];
 
