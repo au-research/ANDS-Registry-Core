@@ -59,6 +59,8 @@
 		    query_text: 'Search Query:',
 		    search_text_btn: 'Search',
 		    close_search_text_btn: '[x]',
+			close_search_text_btn: '[x]',
+			search_loading_text: 'I am Loading...',
 
 		    //custom hooks and handlers
 		    lookup_error_handler: false,
@@ -347,7 +349,7 @@
 		if($.trim(query)==""){
 			$('.orcid_search_result', p).html('Please enter a search string');
 		}else{
-			$('.orcid_search_result', p).html('Loading...');
+			$('.orcid_search_result', p).html(settings.search_loading_text);
 			$.ajax({
 				url:settings.search_endpoint+'?api_key='+settings.api_key+'&q='+encodeURIComponent(query)+'&start=0&rows=10&wt=json&callback=?',
 				dataType: 'jsonp',
