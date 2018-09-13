@@ -60,7 +60,7 @@
 		    search_text_btn: 'Search',
 		    close_search_text_btn: '[x]',
 			close_search_text_btn: '[x]',
-			search_loading_text: 'I am Loading...',
+			search_loading_text: 'Loading...',
 
 		    //custom hooks and handlers
 		    lookup_error_handler: false,
@@ -161,6 +161,12 @@
 				//close button
 				$('.'+settings.search_div_class, p).slideUp();
 			});
+
+			if (settings.auto_search) {
+				_search(settings.auto_search_query, obj, settings)
+			}
+
+
 		}
 		
 		//before_html
