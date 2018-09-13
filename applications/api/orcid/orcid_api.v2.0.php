@@ -1,6 +1,7 @@
 <?php
 namespace ANDS\API;
 
+use ANDS\Cache\Cache;
 use ANDS\Util\ORCIDAPI;
 use \Exception as Exception;
 
@@ -33,17 +34,24 @@ class Orcid_api
     private function searchOrcid()
     {
         $query = urldecode($this->ci->input->get('q'));
-        $publicClient = ORCIDAPI::getPublicClient();
-        $data = $publicClient->get('search/?q='.urlencode($query).'&rows=10');
-        $content = json_decode($data->getBody()->getContents(), true);
-        $return = array();
-        foreach($content['result'] as $orcid){
+
+        return Cache::file()->rememberForever("orcid_api_search.$query", function () use ($query) {
             $publicClient = ORCIDAPI::getPublicClient();
-            $orcid_info = $publicClient->get($orcid['orcid-identifier']['path']);
-            $extracted = json_decode($orcid_info->getBody()->getContents(), true);
-            $return['orcid-search-results'][] = array("person"=>$extracted['person'],"orcid"=>$orcid['orcid-identifier']['path']);
-        }
-        return $return;
+            $data = $publicClient->get('search/?q=' . urlencode($query) . '&rows=10');
+            $content = json_decode($data->getBody()->getContents(), true);
+            $result = array();
+            foreach ($content['result'] as $orcid) {
+                $publicClient = ORCIDAPI::getPublicClient();
+                $orcidID = $orcid['orcid-identifier']['path'];
+                $extracted = Cache::file()->rememberForever("orcid.$orcidID", function () use ($publicClient, $orcidID) {
+                    $orcid_info = $publicClient->get($orcidID);
+                    $result = json_decode($orcid_info->getBody()->getContents(), true);
+                    return $result;
+                });
+                $result['orcid-search-results'][] = array("person" => $extracted['person'], "orcid" => $orcid['orcid-identifier']['path']);
+            }
+            return $result;
+        });
     }
 
     private function lookupOrcid($identifier)
