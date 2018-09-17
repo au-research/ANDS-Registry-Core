@@ -5,10 +5,10 @@
  */
 
 namespace ANDS\API;
-
 use ANDS\Util\Config;
-use Carbon\Carbon;
-use \Exception as Exception;
+use GraphAware\Neo4j\Client\ClientBuilder;
+use Guzzle\Http\Client;
+use Guzzle\Http\Exception\CurlException;
 use Illuminate\Database\Capsule\Manager as DB;
 
 class Status_api
@@ -22,59 +22,56 @@ class Status_api
     /**
      * Handling api/status
      * @param array $method
-     * @return array|bool|mixed
+     * @return array
      */
     public function handle($method = array())
     {
-        $this->params = array(
-            'submodule' => isset($method[1]) ? $method[1] : false,
-            'identifier' => isset($method[2]) ? $method[2] : false,
-            'object_module' => isset($method[3]) ? $method[3] : false,
-        );
-
-        switch (strtolower($this->params['submodule'])) {
-            default:
-                if ($this->params['submodule']) {
-                    return $this->reportFor($this->params['submodule']);
-                } else {
-                    return $this->report();
-                }
-                break;
-        }
-    }
-
-    /**
-     * Handling api/status/:module
-     * @param $module
-     * @return bool|mixed
-     * @throws Exception
-     */
-    private function reportFor($module)
-    {
-        if ($module == 'harvester' || $module == 'task') {
-            return $this->getDaemonStatus($module);
-        } else if($module == 'solr') {
-            return $this->getSOLRStatus() ? array_merge($this->getSOLRStatus(), ['RUNNING'=>true]) : ['RUNNING'=>false];
-        }
-        return false;
-    }
-
-    /**
-     * Handle for api/status/
-     * @return array
-     * @throws Exception
-     */
-    private function report()
-    {
-        $result = [
+        return [
             'database' => $this->getDatabaseStatus(),
-            'harvester' => $this->getDaemonStatus('harvester'),
-            'task' => $this->getDaemonStatus('task'),
-            'solr' => $this->getSOLRStatus() ? array_merge($this->getSOLRStatus(), ['RUNNING'=>true]) : ['RUNNING'=>false]
+            'harvester' => $this->getHarvesterStatus(),
+            'task' => $this->getTaskManagerStatus(),
+            'solr' => $this->getSOLRStatus(),
+            'neo4j' => $this->getNeo4jStatus(),
+            'elasticsearch' => $this->getElasticSearchStatus()
         ];
-        return $result;
     }
 
+    /**
+     * @return array
+     */
+    private function getHarvesterStatus()
+    {
+        $config = Config::get('app.harvester');
+        return $this->getHTTPStatus($config['url']);
+    }
+
+    /**
+     * @return array
+     */
+    private function getTaskManagerStatus()
+    {
+        $config = Config::get('app.taskmanager');
+        return $this->getHTTPStatus($config['url']);
+    }
+
+    /**
+     * Returns the all core status for SOLR
+     *
+     * Hitting admin/cores?action=status
+     * @return array
+     */
+    private function getSOLRStatus()
+    {
+        $response = $this->getHTTPStatus(Config::get('app.solr_url') .'admin/cores?action=status&wt=json');
+        if (array_key_exists('running', $response) && $response['running'] === false) {
+            return $response;
+        }
+        return array_merge(['running' => true], $response['status']);
+    }
+
+    /**
+     * @return array
+     */
     private function getDatabaseStatus()
     {
         initEloquent();
@@ -90,12 +87,12 @@ class Status_api
                 $result[$key] = [
                     'host' => $conn->getConfig('host'),
                     'database' => $conn->getDatabaseName(),
-                    'RUNNING' => true
+                    'running' => true
                 ];
             } catch (\Exception $e) {
                 $result[$key] = [
                     'msg' => $e->getMessage(),
-                    'RUNNING' => false,
+                    'running' => false,
                 ];
             }
         }
@@ -104,60 +101,77 @@ class Status_api
     }
 
     /**
-     * Handle for api/status/:daemon
-     * Supported daemon are harvester|task
-     * @param $daemon
-     * @return bool|mixed
-     * @throws Exception
+     * @return array
      */
-    private function getDaemonStatus($daemon)
+    private function getNeo4jStatus()
     {
-        $status = false;
-        if ($daemon == 'harvester') {
-            $query = $this->db->get_where('configs', ['key' => 'harvester_status']);
-            $queryResult = $query->first_row();
-            if ($queryResult) {
-                $status = json_decode($queryResult->value, true);
-            }
-        } elseif ($daemon == 'task') {
-            $query = $this->db->get_where('configs', ['key' => 'tasks_daemon_status']);
-            $queryResult = $query->first_row();
-            if ($queryResult) {
-                $status = json_decode($queryResult->value, true);
-            }
-        } else {
-            $status = false;
-        }
+        $config = Config::get('neo4j');
 
-        if (!$status) {
+        $client = ClientBuilder::create()
+            ->addConnection('default', "http://{$config['username']}:{$config['password']}@{$config['hostname']}:7474")
+            ->setDefaultTimeout(5)
+            ->build();
+
+        try {
+            $client->getLabels();
+        } catch (\Exception $e) {
             return [
-                'msg' => 'no status available',
-                'runningSince' => 'never',
-                'lastReport' => 'never',
-                'RUNNING' => false
+                'running' => false,
+                'reason' => $e->getMessage()
             ];
         }
 
-        $status['runningSince'] = Carbon::createFromTimestamp((int) $status['start_up_time'])->diffForHumans();
-        $status['lastReport'] = Carbon::createFromTimestamp((int) $status['last_report_timestamp'])->diffForHumans();
-
-        $status['RUNNING'] = (Carbon::createFromTimestamp((int) $status['last_report_timestamp'])->diffInSeconds() > 60) ? false : true;
-
-        return $status;
+        return [
+            'running' => true,
+            'counts' => [
+                'relationships' => $client->run('MATCH (n)-[r]->() RETURN COUNT(r) as count')->firstRecord()->get('count'),
+                'nodes' => $client->run('MATCH (n) RETURN COUNT(n) as count')->firstRecord()->get('count'),
+                'nodes_orphan' => $client->run('MATCH (n) WHERE NOT (n)--() RETURN COUNT(n) as count')->firstRecord()->get('count'),
+            ]
+        ];
     }
 
     /**
-     * Returns the all core status for SOLR
-     * Hitting admin/cores?action=status
-     * @return mixed|bool
+     * @return array
      */
-    private function getSOLRStatus()
+    private function getElasticSearchStatus()
     {
-        $url = get_config_item('solr_url') . 'admin/cores?action=status&wt=json';
-        $contents = @file_get_contents($url);
-        if ($contents) {
-            $contents = json_decode($contents, true);
+        $url = Config::get('app.elasticsearch_url');
+        $response =  $this->getHTTPStatus($url);
+        if (array_key_exists('running', $response) && $response['running'] === false) {
+            return $response;
         }
-        return isset($contents['status']) ? $contents['status'] : false;
+        return array_merge(['running' => true], $response);
     }
+
+    /**
+     * Helper function to return the possible status of a HTTP endpoint
+     *
+     * @param $url
+     * @return array
+     */
+    private function getHTTPStatus($url)
+    {
+        $client = new Client($url);
+        try {
+            $response = $client->get(null)->send();
+
+            if ($response->getStatusCode() != 200) {
+                return [
+                    'running' => false,
+                    'reason' => "response code {$response->getStatusCode()}",
+                    'body' => $response->json()
+                ];
+            }
+
+            return $response->json();
+        } catch (CurlException $e) {
+            return [
+                'running' => false,
+                'reason' => $e->getMessage()
+            ];
+        }
+    }
+
+
 }
