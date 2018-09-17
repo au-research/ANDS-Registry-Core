@@ -65,7 +65,7 @@ abstract class AbstractCacheStorage implements CacheInterface
 
     public function rememberForever($key, Closure $callback)
     {
-        return $this->remember($key, 0, $callback);
+        return $this->remember($key, 525600, $callback);
     }
 
     /**
