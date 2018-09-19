@@ -29,7 +29,7 @@ class Status_api
         return [
             'database' => $this->getDatabaseStatus(),
             'harvester' => $this->getHarvesterStatus(),
-            'task' => $this->getTaskManagerStatus(),
+            'taskmanager' => $this->getTaskManagerStatus(),
             'solr' => $this->getSOLRStatus(),
             'neo4j' => $this->getNeo4jStatus(),
             'elasticsearch' => $this->getElasticSearchStatus()
