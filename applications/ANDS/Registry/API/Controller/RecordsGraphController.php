@@ -35,6 +35,8 @@ class RecordsGraphController
     /**
      * TODO: Refactor to GraphRelationships formatForPortal?
      * TODO: accepts parameters for different options
+     * TODO: fix constructPortalSearchQuery to not use CI SOLR
+     * TODO: fix getSolrCountForFilter to not use CI SOLR
      *
      * @param $id
      * @return array
