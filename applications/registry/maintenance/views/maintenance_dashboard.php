@@ -22,7 +22,7 @@
                     <div class="widget-content">
                         <div ng-repeat="module in modules">
                             <span ng-show="status[module].running" class="icon icon-ok"></span>
-                            <span ng-show="!status[module].running" class="icon icon-ok"></span>
+                            <span ng-show="!status[module].running" class="icon icon-remove"></span>
                             <span ng-bind="module"></span>
                         </div>
                     </div>
@@ -51,7 +51,7 @@
 						<h5>Harvester Status</h5>
 					</div>
 					<div class="widget-content">
-						<dl class="dl dl-horizontal" ng-if="status.harvester.running">
+						<dl class="dl dl-horizontal" ng-show="status.harvester.running">
                             <dt>Uptime</dt>
                             <dd>{{ status.harvester.uptime | number }} seconds</dd>
 
@@ -85,7 +85,7 @@
                         <h5>Task Manager Status</h5>
                     </div>
                     <div class="widget-content">
-                        <dl class="dl dl-horizontal" ng-if="status.taskmanager.running">
+                        <dl class="dl dl-horizontal" ng-show="status.taskmanager.running">
                             <dt>Uptime</dt>
                             <dd>{{ status.taskmanager.uptime | number }} seconds</dd>
 
