@@ -13,21 +13,37 @@
 	</div>
 	
 	<div class="container-fluid">
-		<div class="row-fluid">
+		<div class="row-fluid" ng-show="status">
 			<div class="span4">
-				<div class="widget-box">
-					<div class="widget-title">
-						<h5>Index Status</h5>
-					</div>
-					<div class="widget-content">
-						<dl class="dl">
-							<dt>Solr URL</dt><dd>{{status.solr.url}}</dd>
-						</dl>
-					</div>
-					<div class="widget-content">
-						<?php echo anchor('maintenance/syncmenu', 'Sync Menu', array('class'=>'btn btn-primary')); ?>
-					</div>
-				</div>
+                <div class="widget-box">
+                    <div class="widget-title">
+                        <h5>Status</h5>
+                    </div>
+                    <div class="widget-content">
+                        <div ng-repeat="module in modules">
+                            <span ng-show="status[module].running" class="icon icon-ok"></span>
+                            <span ng-show="!status[module].running" class="icon icon-remove"></span>
+                            <span ng-bind="module"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="widget-box">
+                    <div class="widget-title">
+                        <h5>Neo4j Status</h5>
+                    </div>
+                    <div class="widget-content" ng-show="status.neo4j.running">
+                        <dl class="dl dl-horizontal">
+                            <dt>Relationship</dt>
+                            <dd>{{ status.neo4j.counts.relationships | number }}</dd>
+                            <dt>Node</dt>
+                            <dd>{{ status.neo4j.counts.nodes | number }}</dd>
+                        </dl>
+                    </div>
+                    <div class="widget-content" ng-show="!status.neo4j.running">
+                        <span>{{ status.neo4j.reason }}</span>
+                    </div>
+                </div>
 			</div>
 			<div class="span4">
 				<div class="widget-box">
@@ -35,14 +51,27 @@
 						<h5>Harvester Status</h5>
 					</div>
 					<div class="widget-content">
-						<dl class="dl">
-							<dt>Last Report</dt><dd>{{config.harvester_status.value.last_report_timestamp * 1000 | timeago}}</dd>
-							<dt>Been Running For</dt><dd>{{config.harvester_status.value.start_up_time * 1000 | timeago}}</dd>
-							<dt>Harvest Running</dt><dd>{{config.harvester_status.value.harvests_running}}</dd>
-							<dt>Total Harvest Started</dt><dd>{{config.harvester_status.value.total_harvests_started}}</dd>
-							<dt>Harvest Stopped</dt><dd>{{config.harvester_status.value.harvest_stopped}}</dd>
-							<dt>Harvest Completed</dt><dd>{{config.harvester_status.value.harvest_completed}}</dd>				
-							<dt>Harvest Queued</dt><dd>{{config.harvester_status.value.harvests_queued}}</dd>				
+						<dl class="dl dl-horizontal" ng-show="status.harvester.running">
+                            <dt>Uptime</dt>
+                            <dd>{{ status.harvester.uptime | number }} seconds</dd>
+
+                            <dt>Running Since</dt>
+                            <dd>{{ status.harvester.running_since }}</dd>
+
+                            <dt>Harvests Queued</dt>
+                            <dd>{{ status.harvester.harvests.queued }}</dd>
+
+                            <dt>Harvests Running</dt>
+                            <dd>{{ status.harvester.harvests.running }}</dd>
+
+                            <dt>Harvests Started</dt>
+                            <dd>{{ status.harvester.harvests.started }}</dd>
+
+                            <dt>Harvests Stopped</dt>
+                            <dd>{{ status.harvester.harvests.stopped }}</dd>
+
+                            <dt>Harvests Errored</dt>
+                            <dd>{{ status.harvester.harvests.errored }}</dd>
 						</dl>
 					</div>
 					<div class="widget-content">
@@ -50,20 +79,41 @@
 					</div>
 				</div>
 			</div>
-			<div class="span4">
-				<div class="widget-box">
-					<div class="widget-title">
-						<h5>Admin</h5>
-					</div>
-					<div class="widget-content">
-						<dl class="dl">
-							<dt>Deployment State</dt><dd>{{status.deployment.state}}</dd>
-							<dt>Admin</dt><dd>{{status.admin.name}}</dd>
-							<dt>Admin Email</dt><dd>{{status.admin.email}}</dd>
-						</dl>
-					</div>
-				</div>
-			</div>
+            <div class="span4">
+                <div class="widget-box">
+                    <div class="widget-title">
+                        <h5>Task Manager Status</h5>
+                    </div>
+                    <div class="widget-content">
+                        <dl class="dl dl-horizontal" ng-show="status.taskmanager.running">
+                            <dt>Uptime</dt>
+                            <dd>{{ status.taskmanager.uptime | number }} seconds</dd>
+
+                            <dt>Running Since</dt>
+                            <dd>{{ status.taskmanager.running_since }}</dd>
+
+                            <dt>Tasks Queued</dt>
+                            <dd>{{ status.taskmanager.counts.queued }}</dd>
+
+                            <dt>Tasks Running</dt>
+                            <dd>{{ status.taskmanager.counts.running }}</dd>
+
+                            <dt>Tasks Started</dt>
+                            <dd>{{ status.taskmanager.counts.started }}</dd>
+
+                            <dt>Tasks Completed</dt>
+                            <dd>{{ status.taskmanager.counts.completed }}</dd>
+
+                            <dt>Tasks Stopped</dt>
+                            <dd>{{ status.taskmanager.counts.stopped }}</dd>
+
+                            <dt>Tasks Errored</dt>
+                            <dd>{{ status.taskmanager.counts.errored }}</dd>
+                        </dl>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
 		</div>
 	</div>
 </div>

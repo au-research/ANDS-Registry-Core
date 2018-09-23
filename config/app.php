@@ -17,6 +17,14 @@ return [
         ]
     ],
 
+    'harvester' => [
+        'url' => env('HARVESTER_URL', 'http://localhost:7020')
+    ],
+
+    'taskmanager' => [
+        'url' => env('TASKMANAGER_URL', 'http://localhost:7021')
+    ],
+
     'cache' => [
         'enabled' => !!env("CACHE_ENABLED", 0),
 

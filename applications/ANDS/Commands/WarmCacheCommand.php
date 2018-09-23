@@ -52,6 +52,9 @@ class WarmCacheCommand extends ANDSCommand
             foreach ($records as $record) {
                 /* @var $record RegistryObject */
                 try {
+                    if ($this->isVerbose()) {
+                        $this->log("Processing {$record->id}");
+                    }
                     (new RecordsGraphController())->index($record->id);
                 } catch (\Exception $e) {
                     $this->log("Failed warming cache for record {$record->id}: {$e->getMessage()}", "error");
