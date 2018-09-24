@@ -356,7 +356,6 @@
 			$('.orcid_search_result', p).html('Please enter a search string');
 		}else{
 			$('.orcid_search_result', p).html(settings.search_loading_text);
-			console.log(settings.search_endpoint);
 			$.ajax({
 				url:settings.search_endpoint+'?api_key='+settings.api_key+'&q='+encodeURIComponent(query)+'&start=0&rows=10&wt=json&callback=?',
 				dataType: 'jsonp',
