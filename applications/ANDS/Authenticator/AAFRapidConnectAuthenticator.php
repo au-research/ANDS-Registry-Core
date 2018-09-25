@@ -36,8 +36,9 @@ class AAFRapidConnectAuthenticator
         $displayName = $decoded->{'https://aaf.edu.au/attributes'}->displayname;
         $persistent_id = $decoded->{'https://aaf.edu.au/attributes'}->edupersontargetedid;
 
+        $username = sha1($persistent_id);
         $profile = [
-            'identifier' => $persistent_id,
+            'identifier' => $username,
             'photoURL' => '',
             'displayName' => $displayName,
             'firstName' => '',
