@@ -36,15 +36,13 @@ class Auth extends CI_Controller {
 		// var_dump(get_config_item('aaf_rapidconnect_url'));
 		// var_dump(get_config_item('aaf_rapidconnect_secret'));
 
-		if(get_config_item('aaf_rapidconnect_url') && get_config_item('aaf_rapidconnect_secret')) {
-			$rapid_connect = array(
-				'slug'		=> 'aaf_rapid',
-				'default'	=> true,
-				'display' 	=> 'AAF Rapid Connect',
-				'view' 		=>  $this->load->view('authenticators/aaf_rapid', false, true)
-			);
-			array_push($data['authenticators'], $rapid_connect);
-		}
+        $rapid_connect = array(
+            'slug'		=> 'aaf_rapid',
+            'default'	=> true,
+            'display' 	=> 'AAF Rapid Connect',
+            'view' 		=>  $this->load->view('authenticators/aaf_rapid', false, true)
+        );
+        array_push($data['authenticators'], $rapid_connect);
 
 		$data['default_authenticator'] = false;
 		foreach($data['authenticators'] as $auth) {
@@ -67,6 +65,9 @@ class Auth extends CI_Controller {
 
     /**
      * /registry/authenticate/:method
+     *
+     * TODO Deprecate in favor of explicit controllers
+     * TODO BuiltInAuthenticator
      *
      * @param string $method
      * @throws \Abraham\TwitterOAuth\TwitterOAuthException
@@ -139,7 +140,23 @@ class Auth extends CI_Controller {
         $this->load->model('authenticator', 'auth');
         $this->auth->getUserByProfile($profile);
         $this->user->refreshAffiliations($this->user->localIdentifier());
-	}
+    }
+
+    /**
+     * Callback to /registry/auth/rapidconnect
+     * AAF RapidConnect
+     *
+     * @throws Exception
+     */
+    public function rapidconnect()
+    {
+        $jwt = $_POST['assertion'];
+        $profile = \ANDS\Authenticator\AAFRapidConnectAuthenticator::getProfile($jwt);
+
+        $this->load->model('authenticator', 'auth');
+        $this->auth->getUserByProfile($profile);
+        $this->user->refreshAffiliations($this->user->localIdentifier());
+    }
 
     /**
      * Callback to /registry/auth/facebook
@@ -153,7 +170,7 @@ class Auth extends CI_Controller {
          * starting the session to prevent csrf failing
          * @url https://stackoverflow.com/questions/32029116/facebook-sdk-returned-an-error-cross-site-request-forgery-validation-failed-th
          */
-        if(!session_id()) {
+        if (!session_id()) {
             session_start();
         }
 
@@ -162,7 +179,7 @@ class Auth extends CI_Controller {
         $this->load->model('authenticator', 'auth');
         $this->auth->getUserByProfile($profile);
         $this->user->refreshAffiliations($this->user->localIdentifier());
-	}
+    }
 
     /**
      * Callback to /registry/auth/facebook
@@ -177,7 +194,7 @@ class Auth extends CI_Controller {
         $this->load->model('authenticator', 'auth');
         $this->auth->getUserByProfile($profile);
         $this->user->refreshAffiliations($this->user->localIdentifier());
-	}
+    }
 
     /**
      * registry/oauth/auth
