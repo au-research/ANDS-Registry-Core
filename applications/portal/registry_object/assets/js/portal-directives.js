@@ -337,6 +337,11 @@ app.directive('mappreview', function($log, uiGmapGoogleMapApi){
 					var mapDim = {height:200,width:328};
 					src +='&zoom='+getBoundsZoomLevel(bounds, mapDim);
 
+					// key
+					if (google_api_key) {
+            src +="&key="+google_api_key
+					}
+
 					scope.static_img_src = src;
 					// $log.debug(src);
 				}

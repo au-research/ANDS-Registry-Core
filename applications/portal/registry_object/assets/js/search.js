@@ -9,11 +9,10 @@ app.config(function($interpolateProvider, $locationProvider, $logProvider){
 	$logProvider.debugEnabled(true);
 });
 
-
-app.config(function(uiGmapGoogleMapApiProvider) {
-    uiGmapGoogleMapApiProvider.configure({
-        //    key: 'your api key',
-        v: '3.17',
-        libraries: 'weather,drawing,geometry,visualization'
-    });
-});
+app.config(function (uiGmapGoogleMapApiProvider) {
+  uiGmapGoogleMapApiProvider.configure({
+    key: google_api_key,
+    v: '3.17',
+    libraries: 'weather,drawing,geometry,visualization'
+  })
+})

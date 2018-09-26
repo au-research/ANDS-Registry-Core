@@ -2,6 +2,7 @@
 	var base_url = "{{base_url()}}";
 	var registry_url = "{{registry_url()}}";
 	var api_url = "{{ api_url()  }}";
+	var google_api_key = "{{ \ANDS\Util\Config::get('app.google_api_key') ?: ''  }}"
 </script>
 
 @if(get_config_item('tracking'))
@@ -69,7 +70,7 @@
         @elseif($l=='mustache')
             <script src="{{asset_url('lib/mustache/mustache.min.js', 'core')}}"></script>
         @elseif($l=='map')
-            <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=drawing&amp;sensor=false"></script>
+            <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?{{ \ANDS\Util\Config::get('app.google_api_key') ? 'key='.\ANDS\Util\Config::get('app.google_api_key') : ''  }}&libraries=drawing&amp;sensor=false"></script>
         @elseif($l=='ngupload')
             <script type="text/javascript" src="{{asset_url('lib/ng-file-upload/angular-file-upload-all.min.js','core')}}"></script>
         @endif

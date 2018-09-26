@@ -10,6 +10,8 @@ return [
     'api_whitelist_ip' => env('API_WHITELIST_IP', ''),
     'timezone' => env("TIMEZONE", 'Australia/Canberra'),
 
+    'google_api_key' => env('GOOGLE_API_KEY', null),
+
     'storage' => [
         'test' => [
             'driver' => 'file',
