@@ -186,7 +186,7 @@ $base_url = str_replace('/apps','/registry',base_url());
             <script src="<?php echo asset_url('lib/colorbox/jquery.colorbox-min.js', 'base');?>" type="text/javascript"></script>
 
         <?php elseif($lib=="socket.io"):?>
-            <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+            <script src="<?php echo asset_url('lib/socket.io.min.js', 'base'); ?>"></script>
 
         <?php endif; ?>
 
