@@ -12,6 +12,7 @@ use ANDS\DOI\DOIServiceProvider;
 use ANDS\DOI\Formatter\ArrayFormatter;
 use ANDS\DOI\Formatter\JSONFormatter;
 use ANDS\DOI\Formatter\StringFormatter;
+use ANDS\DOI\MdsClient;
 use ANDS\DOI\Model\Doi;
 use ANDS\DOI\Repository\ClientRepository;
 use ANDS\DOI\Repository\DoiRepository;
@@ -151,7 +152,7 @@ class DoiBulkTask extends Task
 
         $config = Config::get('datacite');
         $clientUsername = $config['name_prefix'] . "." . $config['name_middle'] . str_pad($client->client_id, 2, '-', STR_PAD_LEFT);
-        $dataciteClient = new DataCiteClient(
+        $dataciteClient = new MdsClient(
             $clientUsername, $config['password']
         );
 
