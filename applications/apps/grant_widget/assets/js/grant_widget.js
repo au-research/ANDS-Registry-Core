@@ -527,7 +527,7 @@
 				}
 
 			});
-                if(matches == '0')
+                if(matches == '')
                 {
                     $('.grant_search_result', p).html(settings.nohits_msg);
                 }
