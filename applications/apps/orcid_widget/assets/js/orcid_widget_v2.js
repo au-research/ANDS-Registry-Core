@@ -368,20 +368,24 @@
 							$.each(data['orcid-search-results'], function(){
 								var titleStr = "";
 								this.person.orcid =  this.orcid;
+								var given = '';
+								var family = '';
 								if(settings.tooltip) titleStr = 'title="'+_constructORCIDHTML(this.person,settings)+'"';
 								var orcid = this.orcid;
-								if(this.person.name['given-names']) {
-									var given = this.person.name['given-names']['value'] || '';
-								}else{
-									var given = '';
-								}
-								if(this.person.name['family-name']){
-									var family = this.person.name['family-name']['value'] || '';
-								}else{
-									var family = '';
-								}
-								if( family == '' && given == '' && this.person.name['credit-name']){
-									given = this.person.name['credit-name']['value'];
+								if(this.person.name) {
+									if (this.person.name['given-names']) {
+										var given = this.person.name['given-names']['value'] || '';
+									} else {
+										var given = '';
+									}
+									if (this.person.name['family-name']) {
+										var family = this.person.name['family-name']['value'] || '';
+									} else {
+										var family = '';
+									}
+									if (family == '' && given == '' && this.person.name['credit-name']) {
+										given = this.person.name['credit-name']['value'];
+									}
 								}
 								html+='<li>';
 								html+='<a class="select_orcid_search_result preview" '+titleStr+' orcid-id="'+orcid+'">'+given+' '+family+'</a>';
