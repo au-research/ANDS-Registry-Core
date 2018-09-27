@@ -112,6 +112,9 @@
                         </dl>
                         <div class="clearfix"></div>
                     </div>
+                    <div class="widget-content">
+                        <?php echo anchor(apps_url('sync_manager'), 'Sync Manager', ['class' => 'btn btn-primary']); ?>
+                    </div>
                 </div>
             </div>
 		</div>
