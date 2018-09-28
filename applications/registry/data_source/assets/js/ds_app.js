@@ -540,35 +540,39 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 		});
 	}
 
+  /**
+	 * Binding the socket.io interface
+	 * graceful degrade if socket is not defined well
+   */
 	$scope.bindSocket = function() {
 
-		if (typeof socket_url == 'undefined' || socket_url == "") return;
+		if (typeof socket_url === 'undefined' || socket_url === "" || typeof io === "undefined") return;
 
+    $scope.socket = io(socket_url, {transports: ['websocket', 'polling', 'flashsocket']})
 
-		$scope.socket = io(socket_url, {transports: ['websocket', 'polling', 'flashsocket']});
+		// update datasource.id.harvest on message
+    $scope.socket.on('datasource.' + $scope.ds.id + '.harvest', function (msg) {
+      try {
+        $scope.harvester = JSON.parse(msg)
+        $scope.refreshHarvesterButtons()
+        $scope.refreshHarvesterMessage()
+        $scope.$apply()
+      } catch (err) {
+        console.error(err, msg)
+      }
+    })
 
-        $scope.socket.on('datasource.'+$scope.ds.id+'.harvest', function(msg){
-		    try {
-                var harvest = JSON.parse(msg);
-                $scope.harvester = harvest;
-                $scope.refreshHarvesterButtons();
-                $scope.refreshHarvesterMessage();
-                $scope.$apply();
-            } catch (err ) {
-                console.error(err, msg);
-            }
-		});
-
-        $scope.socket.on('datasource.'+$scope.ds.id+'.log', function(msg){
-            try {
-                var log = JSON.parse(msg);
-                $scope.ds.logs.unshift(log);
-                $scope.ds.latest_log = $scope.ds.logs[0].id;
-                $scope.process_logs();
-            } catch (err) {
-                console.error(err, msg);
-            }
-        });
+		// update datasource.id.log on message
+    $scope.socket.on('datasource.' + $scope.ds.id + '.log', function (msg) {
+      try {
+        var log = JSON.parse(msg)
+        $scope.ds.logs.unshift(log)
+        $scope.ds.latest_log = $scope.ds.logs[0].id
+        $scope.process_logs()
+      } catch (err) {
+        console.error(err, msg)
+      }
+    })
 	}
 
 	$scope.get($routeParams.id);
