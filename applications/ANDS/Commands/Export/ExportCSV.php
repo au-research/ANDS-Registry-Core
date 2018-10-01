@@ -8,6 +8,7 @@ use ANDS\Commands\ANDSCommand;
 use ANDS\DataSource;
 use ANDS\Registry\IdentifierRelationshipView;
 use ANDS\Registry\Providers\GraphRelationshipProvider;
+use ANDS\Registry\Providers\RIFCS\SubjectProvider;
 use ANDS\Registry\Relation;
 use ANDS\Registry\RelationshipView;
 use ANDS\RegistryObject;
@@ -36,6 +37,7 @@ class ExportCSV extends ANDSCommand
             ->addOption('identical', null, InputOption::VALUE_NONE, "Identical Relations")
             ->addOption('relatedInfoRelations', null, InputOption::VALUE_NONE, "Related Info Relations")
             ->addOption('relatedInfoNodes', null, InputOption::VALUE_NONE, "Related Info Nodes")
+            ->addOption('subjectsRelations', null, InputOption::VALUE_NONE, "Related Subjects")
             ->addOption('importPath', 'i', InputOption::VALUE_REQUIRED, "Import Path", env("NEO4J_IMPORT_PATH", "/tmp/"))
             ->addOption('format', 'f', InputOption::VALUE_REQUIRED, "Export Format", RegistryObject::$CSV_NEO_GRAPH)
         ;
@@ -90,6 +92,12 @@ class ExportCSV extends ANDSCommand
         if ($input->getOption('relatedInfoNodes')) {
             return $this->timedActivity("Exporting RelatedInfo Nodes", function() {
                return $this->exportRelatedInfoNodes();
+            });
+        }
+
+        if ($input->getOption('subjectsRelations')) {
+            return $this->timedActivity("Exporting Subjects Relations", function() {
+                return $this->exportDirectSubjects();
             });
         }
 
@@ -155,6 +163,60 @@ class ExportCSV extends ANDSCommand
 
                     // stream to file
                     fputcsv($fp, $row);
+
+                } catch (\Exception $e) {
+                    $this->log("Failed exporting record {$record->id}: {$e->getMessage()}", "error");
+                }
+
+                $progressBar->advance(1);
+            }
+        });
+        $progressBar->finish();
+        fclose($fp);
+
+        $this->log("\nNodes written to $filePath", "info");
+    }
+
+    private function exportDirectSubjects()
+    {
+        $name = "anzsrc-for";
+        $this->wipe($name);
+        $filePath = $this->importPath."$name.csv";
+        $fp = fopen($filePath, "a");
+
+        $records = RegistryObject::where('status', 'PUBLISHED')->orderBy('registry_object_id');
+        $progressBar = new ProgressBar($this->getOutput(), $records->count());
+
+        // stream into file
+        $first = true;
+        $records->chunk(10000, function($records) use ($progressBar, $fp, &$first) {
+            foreach ($records as $record) {
+                /* @var $record RegistryObject */
+
+                try {
+                    $subjects = SubjectProvider::process($record);
+
+                    $rows = collect($subjects)
+                        ->filter(function($subject) {
+                            return $subject['type'] === 'anzsrc-for';
+                        })->pluck('uri')->map(function($uri) use ($record) {
+                            return [
+                                'from_key' => RegistryObject::researchGraphID($record->id),
+                                'to_key' => $uri,
+                                'label' => 'relatedTo'
+                            ];
+                        });
+
+                    foreach ($rows as $row) {
+                        // insert header if first
+                        if ($first) {
+                            fputcsv($fp, array_keys($row));
+                            $first = false;
+                        }
+
+                        // stream to file
+                        fputcsv($fp, $row);
+                    }
 
                 } catch (\Exception $e) {
                     $this->log("Failed exporting record {$record->id}: {$e->getMessage()}", "error");

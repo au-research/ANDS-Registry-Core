@@ -31,5 +31,6 @@ $application->add(new \ANDS\Commands\Export\ExportCSV());
 $application->add(new \ANDS\Commands\DataSourceProcessCommand());
 $application->add(new \ANDS\Commands\ClearCacheCommand());
 $application->add(new \ANDS\Commands\WarmCacheCommand());
+$application->add(new \ANDS\Commands\Export\ExportRoles());
 
 $application->run();

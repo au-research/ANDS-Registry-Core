@@ -43,5 +43,13 @@ return [
             "keys"    => ["key" => "", "secret" => ""]
         ],
 
+        "AAF_RapidConnect" => [
+            "enabled" => env("AAF_RAPIDCONNECT_URL") ? true : false,
+            "keys" => [
+                "url" => env("AAF_RAPIDCONNECT_URL", ""),
+                "secret" => env("AAF_RAPIDCONNECT_SECRET", "")
+            ]
+        ]
+
     ]
 ];

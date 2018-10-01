@@ -9,6 +9,11 @@ class ScholixProviderRegressionTest extends \RegistryTestClass
 {
     // TODO: refactor to not require keys existence
 
+    public function setUp()
+    {
+        $this->markTestSkipped("Requires refactor to keep the data separate. This tests are too risky to run when the database data changes");
+    }
+
     protected $requiredKeys = [
         "AUTestingRecords2ScholixRecords1", // regression
         "AUTestingRecords2ScholixRecords2", // regression

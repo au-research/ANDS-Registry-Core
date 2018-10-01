@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class IdentifierRelationshipView extends Model
 {
-    protected $table = "identifier_relationships";
+    protected $table = "identifier_relationships_all_status";
     protected $primaryKey = null;
     public $timestamps = false;
 

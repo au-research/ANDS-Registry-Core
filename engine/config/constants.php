@@ -117,12 +117,16 @@ define('ONE_MONTH', 30*ONE_DAY);
 define('CONTRIBUTOR_PAGE_TEMPLATE', 'contributor');
 define('CONTRIBUTOR_PAGE_KEY_PREFIX', 'a61e9d0d');
 
-define('REGISTRY_APP_PATH', 'applications/registry/');
-define('PORTAL_APP_PATH', 'applications/portal/');
-define('API_APP_PATH', 'applications/api/');
-define('APPS_APP_PATH', 'applications/apps/');
-define('TEST_APP_PATH', 'applications/test/');
-define('CACHE_PATH', 'engine/cache');
+if (!defined('BASE')) {
+    define('BASE', dirname(__file__). '../../../');
+}
+
+define('REGISTRY_APP_PATH', BASE .'applications/registry/');
+define('PORTAL_APP_PATH',  BASE .'applications/portal/');
+define('API_APP_PATH',  BASE .'applications/api/');
+define('APPS_APP_PATH',  BASE .'applications/apps/');
+define('TEST_APP_PATH',  BASE .'applications/test/');
+define('CACHE_PATH',  BASE .'engine/cache');
 
 define('NATIVE_HARVEST_FORMAT_TYPE','nativeHarvestData');
 

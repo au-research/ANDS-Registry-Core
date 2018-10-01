@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 ANDS Research Data Registry follows a quarterly release cycle
 
+## Release 29
+* Updated social login integrations
+* Updated AAF/RapidConnect integrations
+* Replacement of Metadata Quality Report with new Metadata Content Report
+* Single client minting for DOI
+
 ## Release 28.1
 * Minor bug fixes and feature enhancements
 

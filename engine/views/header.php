@@ -117,8 +117,6 @@ if(get_config_item('environment_logo')){
                     <li class=""><?php echo anchor(registry_url('registry_object/add'), '<i class="icon icon-plus"></i> Add New Record');?></li>
                     <li class="divider"></li>
                     <li class=""><?php echo anchor(portal_url(), '<i class="icon-globe icon"></i> Research Data Australia',array("target"=>"_blank"));?></li>
-                    <li class="divider"></li>
-                    <li class=""><?php echo anchor(registry_url('registry_object/gold_standard'), 'Gold Standard Records');?></li>
                   </ul>
                 </li>
               <?php endif; ?>

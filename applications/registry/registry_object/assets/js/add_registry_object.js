@@ -661,7 +661,7 @@ function initEditForm(){
 								//console.log($('.record_title'));
 								//$('.record_title').html(data.title);
 								$('#response_result').html(output);
-								formatQA($('#response_result .qa'));
+								//formatQA($('#response_result .qa'));
 
 
 								//change title
@@ -813,7 +813,7 @@ function validate(){
 			var template = $('#save-record-template').html();
 			var output = Mustache.render(template, data);
 			$('#response_result').html(output);
-			formatQA($('#response_result .qa'));
+			//formatQA($('#response_result .qa'));
 		}
 	});
 }

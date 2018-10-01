@@ -1,0 +1,1 @@
+ALTER TABLE `harvests` ADD `summary` TEXT;

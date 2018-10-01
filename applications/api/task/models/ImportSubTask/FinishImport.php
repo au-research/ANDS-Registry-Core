@@ -11,10 +11,10 @@ namespace ANDS\API\Task\ImportSubTask;
 use ANDS\DataSource;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository as Repo;
+use Carbon\Carbon;
 
 class FinishImport extends ImportSubTask
 {
-
     private $harvestStarted;
     private $addToDatasourceLog = true;
 

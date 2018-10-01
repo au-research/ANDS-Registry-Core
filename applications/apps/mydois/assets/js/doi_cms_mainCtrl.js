@@ -10,6 +10,7 @@
         var vm = this;
         vm.tab = "list";
         $scope.base_url = apps_url;
+        $scope.real_base_url = base_url;
         vm.newdoixml = "";
         vm.pp = 50;
 
@@ -20,6 +21,7 @@
         if ($location.search().tab) vm.tab = $location.search().tab;
 
         vm.client = client.data.client;
+
         $scope.$watch('vm.tab', function(newv){
             vm.changeTab(newv);
         });
@@ -35,6 +37,7 @@
                     });
                     break;
                 case 'mint':
+                    if(vm.client.mode=="test"){vm.client.datacite_prefix="10.5072";}
                     if(vm.client.datacite_prefix=="10.5072"){
                         var test_str = "TEST_DOI_";
                     }else{
@@ -51,7 +54,7 @@
 
         vm.refreshDOIs = function(search) {
             if (!search) search = false;
-            APIDOIService.getDOIList(vm.client.app_id, vm.pp, 0, search).then(function(data){
+                APIDOIService.getDOIList(vm.client.app_id, vm.pp, 0, search, vm.client.mode).then(function(data){
                 vm.dois = data.data.dois;
                 vm.total = data.data.total;
                 vm.offset = vm.pp;
