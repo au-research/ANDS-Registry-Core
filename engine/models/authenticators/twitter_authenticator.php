@@ -2,12 +2,22 @@
 
 /**
  * Authenticator for Social Accounts / Facebook
+ * Deprecated in favor of ANDS\Authenticator\FacebookAuthenticator
+ * TODO Remove
  * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
  */
+
+use Abraham\TwitterOAuth\TwitterOAuth;
+
 require_once('engine/models/authenticator.php');
 class Twitter_authenticator extends Authenticator {
 
-	public function authenticate() {
+    /**
+     * @return bool|void
+     * @throws Exception
+     */
+    public function authenticate() {
+
 		$provider = 'Twitter';
 		$this->load->library('HybridAuthLib');
 		try{

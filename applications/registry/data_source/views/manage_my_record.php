@@ -12,7 +12,6 @@
 		<ul class="nav nav-pills">
 			<li class=""><?php echo anchor('data_source/manage#!/view/'.$ds->id,'Dashboard');?></li>
 			<li class="active mmr"><a href="#">Manage Records</a></li>
-			<li class=""><?php echo anchor('data_source/report/'.$ds->id,'Reports');?></li>
 			<li class=""><?php echo anchor('data_source/manage#!/settings/'.$ds->id,'Settings');?></li>
 		</ul>
 	</div>
@@ -20,7 +19,7 @@
 	<div id="breadcrumb">
 		<div class="pull-right">
 			<span class="label"><i class="icon-question-sign icon-white"></i><a class="youtube" href="http://www.youtube.com/watch?v=cuVQfTyBbNk" style="color:white;" > New to this screen? Take a tour!</a></span>&nbsp;
-			<span class="label"><i class="icon-question-sign icon-white"></i> <a target="_blank" style="color:white;" href="http://services.ands.org.au/documentation/MMRHelp/"> Help</a></span>
+			<span class="label"><i class="icon-question-sign icon-white"></i> <a target="_blank" style="color:white;" href="https://documentation.ands.org.au/display/DOC/Manage+Records"> Help</a></span>
 		</div>
 		<?php echo anchor('/', '<i class="icon-home"></i> Home', array('class'=>'tip-bottom', 'title'=>'Go to Home'))?>
 		<?php echo anchor('data_source/manage/', 'Manage My Data Sources');?>
@@ -46,7 +45,6 @@
 						<button class="btn dropdown-toggle" data-toggle="dropdown">Sort <span class="caret"></span></button>
 						<ul class="dropdown-menu">
 							<li><a href="javascript:;" class="sort" sort="updated" value="">Date Modified <span class="icon"></span></a></li>
-							<li><a href="javascript:;" class="sort" sort="quality_level" value="">Quality Level  <span class="icon"></span></a></li>
 						</ul>
 					</div>
 					<div class="btn-group">
@@ -72,11 +70,6 @@
 							<li <?php echo 'class="'.($ds->count_party > 0 ? '' : 'disabled').'"';?>><a href="javascript:;" class="filter" name="class" value="party">Parties (<?php echo $ds->count_party;?>)<span class="icon"></span></a></li>
 							<li <?php echo 'class="'.($ds->count_service > 0 ? '' : 'disabled').'"';?>><a href="javascript:;" class="filter" name="class" value="service">Services (<?php echo $ds->count_service;?>)<span class="icon"></span></a></li>
 							<li <?php echo 'class="'.($ds->count_activity > 0 ? '' : 'disabled').'"';?>><a href="javascript:;" class="filter" name="class" value="activity">Activities (<?php echo $ds->count_activity;?>)<span class="icon"></span></a></li>
-							<li class="divider"></li>
-							<li <?php echo 'class="'.($ds->count_level_1 > 0 ? '' : 'disabled').'"';?>><a href="javascript:;" class="filter" name="quality_level" value="1">Quality Level 1 (<?php echo $ds->count_level_1;?>)<span class="icon"></span></a></li>
-							<li <?php echo 'class="'.($ds->count_level_2 > 0 ? '' : 'disabled').'"';?>><a href="javascript:;" class="filter" name="quality_level" value="2">Quality Level 2 (<?php echo $ds->count_level_2;?>)<span class="icon"></span></a></li>
-							<li <?php echo 'class="'.($ds->count_level_3 > 0 ? '' : 'disabled').'"';?>><a href="javascript:;" class="filter" name="quality_level" value="3">Quality Level 3 (<?php echo $ds->count_level_3;?>)<span class="icon"></span></a></li>
-							<li <?php echo 'class="'.($ds->count_level_4 > 0 ? '' : 'disabled').'"';?>><a href="javascript:;" class="filter" name="quality_level" value="4">Gold Standard (<?php echo $ds->count_level_4;?>)<span class="icon"></span></a></li>
 							<li class="divider"></li>
 							<li><a href="javascript:;" class="filter" name="flag" value="t">Flagged Records <span class="icon"></span></a></li>
 							<li><a href="javascript:;" class="filter" name="tag" value="1">Records with Tags <span class="icon"></span></a></li>
@@ -152,11 +145,8 @@
 					{{#has_flag}}
 						<span class="tag no-border-tag flag" tip="Flagged"><i class="icon icon-flag"></i></span>
 					{{/has_flag}}
-					{{#has_gold}}
-						<span class="tag gold_status_flag" tip="<h5>Gold Standard</h5><p>The following record has been verified<br/> as an exemplary record <br/>by the ANDS Metadata Assessment Group.</p>"><i class="icon icon-star"></i></span>
-					{{/has_gold}}
 					{{#quality_level}}
-						<span class="tag ql_{{quality_level}} tipQA" ro_id='{{id}}'>{{quality_level}}</span>
+						<span class="tipQA" ro_id='{{id}}'><i class="icon icon-list-alt"/></span>
 					{{/quality_level}}
 					{{#has_error}}
 						<a href="javascript:;" class="btn btn-mini btn-danger tipError" ro_id="{{id}}"><i class="icon-white icon-exclamation-sign"></i></a>
@@ -201,11 +191,8 @@
 			{{#has_flag}}
 				<span class="tag no-border-tag flag" tip="Flagged"><i class="icon icon-flag"></i></span>
 			{{/has_flag}}
-			{{#has_gold}}
-				<span class="tag gold_status_flag" tip="<h5>Gold Standard</h5><p>The following record has been verified<br/> as an exemplary record <br/>by the ANDS Metadata Assessment Group.</p>"><i class="icon icon-star"></i></span>
-			{{/has_gold}}
 			{{#quality_level}}
-				<span class="tag ql_{{quality_level}} tipQA" ro_id='{{id}}'>{{quality_level}}</span>
+				<span class="tipQA" ro_id='{{id}}'><i class="icon icon-list-alt"/></span>
 			{{/quality_level}}
 			{{#has_error}}
 				<a href="javascript:;" class="btn btn-mini btn-danger tipError" ro_id="{{id}}"><i class="icon-white icon-exclamation-sign"></i></a>

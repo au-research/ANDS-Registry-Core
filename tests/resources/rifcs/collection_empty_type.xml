@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+    <registryObject group="AUTestingRecords">
+        <key>AUTESTING_MINIMAL_COLLECTION</key>
+        <originatingSource type="">http://demo.ands.org.au/registry/orca/register_my_data</originatingSource>
+        <collection type="" dateModified="2013-04-10T23:51:55Z">
+            <name type="primary">
+                <namePart>Minimal valid description</namePart>
+            </name>
+            <description type="brief">Minimal description</description>
+        </collection>
+    </registryObject>
+</registryObjects>

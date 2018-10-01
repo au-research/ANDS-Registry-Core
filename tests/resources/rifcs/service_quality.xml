@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+    <registryObject group="AUTestingRecords">
+        <key>AUTestingRecords4BemV5oyqsNe2loXTafq114J1C0oaXZ4p4</key>
+        <originatingSource type="">https://researchdata.ands.org.au/registry//orca/register_my_data</originatingSource>
+        <service type="report">
+            <name type="primary">
+                <namePart>(AUTestingRecords)PetaJakarta Web</namePart>
+            </name>
+            <location>
+                <address>
+                    <electronic type="email">
+                        <value>Aalbersberg@usp.ac.fj</value>
+                    </electronic>
+                    <physical type="postalAddress">
+                        <addressPart type="addressLine">UNSW Built Environment</addressPart>
+                        <addressPart type="addressLine">Sydney NSW 2052</addressPart>
+                        <addressPart type="addressLine">Australia</addressPart>
+                    </physical>
+                    <physical type="streetAddress">
+                        <addressPart type="addressLine">Level 3, West Wing</addressPart>
+                        <addressPart type="addressLine">Red Centre Building</addressPart>
+                        <addressPart type="addressLine">Kensington Campus</addressPart>
+                        <addressPart type="addressLine">Sydney, Australia</addressPart>
+                    </physical>
+                    <physical type="">
+                        <addressPart type="telephoneNumber">123 456</addressPart>
+                        <addressPart type="faxNumber">789 101112</addressPart>
+                        <addressPart type="text">my address text element</addressPart>
+                        <addressPart type="addressLine">my address line</addressPart>
+                    </physical>
+                </address>
+            </location>
+            <description type="full">&lt;p&gt;&lt;strong&gt;Web files for PetaJakarta.org&lt;/strong&gt;&lt;/p&gt;
+                &lt;p&gt;&lt;a href=&quot;http://petajakarta.org/banjir&quot;&gt;petajakarta.org/banjir&lt;/a&gt; is an open source, community-led platform to collect and disseminate information about flooding and critical water infrastructure in Jakarta. The platform runs on the open source software known as &lt;a href=&quot;http://cognicity.info/&quot;&gt;CogniCity&lt;/a&gt;, and petajakarta-web comprises the web pages and client-side code to make it work. This GeoSocial Intelligence framework allows data to be collected and disseminated by community members through their location-enabled mobile devices to map information about flooding and water infrastructure in real-time.&lt;/p&gt;</description>
+            <rights>
+                <licence type="GPL">GNU General Public License</licence>
+                <accessRights type="open">Open</accessRights>
+            </rights>
+            <identifier type="doi">10.5281/zenodo.33783AUT</identifier>
+            <location>
+                <address>
+                    <electronic type="url">
+                        <value>https://petajakarta.org/banjir/en/</value>
+                    </electronic>
+                </address>
+            </location>
+            <subject type="anzsrc-for">090903</subject>
+            <subject type="anzsrc-for">080709</subject>
+            <subject type="anzsrc-for">080502</subject>
+            <relatedInfo type="metadata">
+                <title>SMART Metadata Record</title>
+                <identifier type="uri">https://smart-metadata.eis.uow.edu.au/geonetwork/srv/eng/search?&amp;uuid=e33bc002-cc72-42c9-8b5d-8f64d97a168fAUT</identifier>
+            </relatedInfo>
+            <relatedInfo type="party">
+                <title>Related Researcher</title>
+                <relation type="hasAssociationWith"/>
+            </relatedInfo>
+            <relatedInfo type="website">
+                <title>Related Website</title>
+                <identifier type="uri">https://smart-metadata.eis.uow.edu.au/geonetwork/srv/eng/search?&amp;uuid=e33bc002-cc72-42c9-8b5d-8f64d97a168fAUT</identifier>
+            </relatedInfo>
+            <relatedInfo type="collection">
+                <title>Related Collection</title>
+                <identifier type="uri">https://smart-metadata.eis.uow.edu.au/geonetwork/srv/eng/search?&amp;uuid=e33bc002-cc72-42c9-8b5d-8f64d97a168fAUT</identifier>
+            </relatedInfo>
+            <accessPolicy>https://github.com/smart-facility/petajakarta-web/tree/v1.0.1</accessPolicy>
+        </service>
+    </registryObject>
+</registryObjects>

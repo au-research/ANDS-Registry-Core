@@ -3,6 +3,7 @@ define('SERVICES_MODULE_PATH', REGISTRY_APP_PATH.'services/');
 
 include_once("applications/registry/registry_object/models/_transforms.php");
 use ANDS\DataSource;
+use ANDS\Registry\Providers\Quality\Types;
 use \Transforms as Transforms;
 /**
  * Registry Object controller
@@ -20,7 +21,12 @@ class Registry_object extends MX_Controller {
 		redirect(registry_url());
 	}
 
-	public function view($ro_id, $revision=''){
+    /**
+     * @param $ro_id
+     * @param string $revision
+     * @throws Exception
+     */
+    public function view($ro_id, $revision=''){
 
 		$this->load->model('registry_object/registry_objects', 'ro');
 		$ro = $this->ro->getByID($ro_id);
@@ -78,10 +84,15 @@ class Registry_object extends MX_Controller {
 			}
 
 			$data['revisions'] = array_slice($ro->getAllRevisions(),0,$this->maxVisibleRevisions);
-			initEloquent();
+
+//			initEloquent();
 			$record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($ro_id);
-			$quality_html = ANDS\Registry\Providers\QualityMetadataProvider::getQualityReportHTML($record);
-			$data['quality_text'] = $quality_html;
+//			$quality_html = \ANDS\Registry\Providers\Quality\QualityMetadataProvider::getQualityReportHTML($record);
+//			$data['quality_text'] = $quality_html;
+
+            $report = \ANDS\Registry\Providers\Quality\QualityMetadataProvider::getMetadataReport($record);
+			$data['quality_text'] = $this->load->view('quality_report', ['report' => $report], true);
+
 			//var_dump($data);
 			//exit();
 			$this->load->view('registry_object_index', $data);
@@ -97,16 +108,6 @@ class Registry_object extends MX_Controller {
 		if($format=='pane'){
 			$this->load->view('registry_object_preview_pane', $data);
 		}
-	}
-
-	public function gold_standard(){
-		$this->load->model('registry_object/registry_objects', 'ro');
-		$gold_ros = $this->ro->getByAttribute('gold_status_flag', 't');
-		$data['ros'] = $gold_ros;
-		$data['title']='Gold Standard Records';
-		$data['js_lib']=array('core');
-		$data['list_title']='Gold Standard Records';
-		$this->load->view('registry_object_list', $data);
 	}
 
 	public function add(){
@@ -129,31 +130,25 @@ class Registry_object extends MX_Controller {
 		$this->load->view("add_registry_objects", $data);
 	}
 
-	public function edit($registry_object_id){
+    /**
+     * @param $registry_object_id
+     * @throws Exception
+     */
+    public function edit($registry_object_id){
         acl_enforce('REGISTRY_USER');
+
         initEloquent();
+
         $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($registry_object_id);
+        ds_acl_enforce($record->data_source_id);
+        if (!$record) {
+            throw new Exception("This Registry Object ID does not exist!");
+        }
 
-
-
-		if(!$record) { throw new Exception("This Registry Object ID does not exist!"); }
-
-
-		ds_acl_enforce($record->data_source_id);
         $data_source = \ANDS\Repository\DataSourceRepository::getByID($record->data_source_id);
+        $draftRecord = \ANDS\Repository\RegistryObjectsRepository::getMatchingRecord($record->key, 'DRAFT');
 
-
-        $draft_record = \ANDS\Repository\RegistryObjectsRepository::getMatchingRecord($record->key, 'DRAFT');
-
-
-		if($draft_record == null)
-		{
-
-            $xml = $record->getCurrentData()->data;
-
-            // write the xml payload to the file system
-            $batchID = 'MANUAL-ARO-' . md5($record->key).'-'.time();
-            \ANDS\Payload::write($record->data_source_id, $batchID, $xml);
+        if (!$draftRecord) {
 
             // import Task creation
             $importTask = new \ANDS\API\Task\ImportTask();
@@ -166,45 +161,73 @@ class Registry_object extends MX_Controller {
                         'source' => 'manual',
                         'ds_id' => $record->data_source_id,
                         'user_name' => $this->user->name(),
-                        'batch_id' => $batchID,
                         'targetStatus' => 'DRAFT'
                     ])
                 ])
-                ->enableRunAllSubTask()
-                ->initialiseTask();
+                ->skipLoadingPayload()
+                ->enableRunAllSubTask();
 
+            // write the xml payload to the file system
+            $xml = $record->getCurrentData()->data;
+            $batchID = 'MANUAL-ARO-' . md5($record->key).'-'.time();
+            $path = \ANDS\Payload::write($record->data_source_id, $batchID, $xml);
+            $payload = new \ANDS\Payload($path);
+
+            $importTask->setPayload("customPayload", $payload);
+            $importTask->initialiseTask();
             $importTask->run();
 
             $errorLog = $importTask->getError();
-            if($errorLog == null){
-                $draft_record = \ANDS\Repository\RegistryObjectsRepository::getMatchingRecord($record->key, 'DRAFT');
+            if ($errorLog == null) {
+                $draftRecord = \ANDS\Repository\RegistryObjectsRepository::getMatchingRecord($record->key, 'DRAFT');
+            } else {
+                throw new Exception("Draft Record creation failed. ". join(' ', $errorLog));
             }
 		}
 
-        if($draft_record->registry_object_id != $registry_object_id){
-            header("Location: " . registry_url('registry_object/edit/' . $draft_record->registry_object_id));
+		if (!$draftRecord) {
+            throw new Exception("Draft Record creation failed for record {$record->id}");
+        }
+
+        if ($draftRecord->registry_object_id != $registry_object_id) {
+            header("Location: " . registry_url('registry_object/edit/' . $draftRecord->registry_object_id));
             return;
         }
 
-        $extRif = $draft_record->getCurrentData()->data;
-		$data['extrif'] = $extRif;
+        $extRif = $draftRecord->getCurrentData()->data;
 
-        $params = ["base_url"=>base_url(),
-            "registry_object_id"=>$registry_object_id,
-            "data_source_id"=>$draft_record->data_source_id,
-            "data_source_title"=>$data_source->title,
-            "ro_title"=>$draft_record->title,
-            "ro_class"=>$draft_record->class
+        $data = [
+            'content' => ANDS\Util\XMLUtil::getHTMLForm($extRif, [
+                "base_url" => base_url(),
+                "registry_object_id" => $registry_object_id,
+                "data_source_id" => $draftRecord->data_source_id,
+                "data_source_title" => $data_source->title,
+                "ro_title" => $draftRecord->title,
+                "ro_class" => $draftRecord->class
+            ]),
+            'extrif' => $extRif,
+            'ds' => $data_source,
+            'title' => 'Edit: ' . $draftRecord->title,
+            'scripts' => ['add_registry_object'],
+            'js_lib' => [
+                'core',
+                'tinymce',
+                'ands_datepicker',
+                'prettyprint',
+                'vocab_widget',
+                'orcid_widget',
+                'google_map',
+                'location_capture_widget'
+            ]
         ];
-		$data['content'] = ANDS\Util\XMLUtil::getHTMLForm($data['extrif'], $params);
-		$data['ds'] = $data_source;
-		$data['title'] = 'Edit: '.$draft_record->title;
-		$data['scripts'] = array('add_registry_object');
-		$data['js_lib'] = array('core', 'tinymce', 'ands_datepicker', 'prettyprint','vocab_widget','orcid_widget', 'google_map','location_capture_widget');
 		$this->load->view("add_registry_object", $data);
 	}
 
-	public function validate($registry_object_id){
+    /**
+     * @param $registry_object_id
+     * @throws Exception
+     */
+    public function validate($registry_object_id){
 		set_exception_handler('json_exception_handler');
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
@@ -212,25 +235,20 @@ class Registry_object extends MX_Controller {
 		$this->load->model('registry_object/registry_objects', 'ro');
 		$ro = $this->ro->getByID($registry_object_id);
 
-		try{
-			$xml = $ro->cleanRIFCSofEmptyTags($xml, 'false', true);
-			$result = $ro->transformForQA(wrapRegistryObjects($xml));
-		}
-		catch(Exception $e)
-		{
-			$status = 'error';
-			$error_log = $e->getMessage();
-		}
-
+        $xml = $ro->cleanRIFCSofEmptyTags($xml, 'false', true);
+        $result = $ro->transformForQA(wrapRegistryObjects($xml));
 
 		$this->load->model('data_source/data_sources', 'ds');
 		$ds = $this->ds->getByID($ro->data_source_id);
 
 		$qa = $ds->qa_flag==DB_TRUE ? true : false;
 		$manual_publish = ($ds->manual_publish==DB_TRUE) ? true: false;
-        initEloquent();
+
         $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($registry_object_id);
-        $quality_html = ANDS\Registry\Providers\QualityMetadataProvider::getQualityReportHTML($record);
+        $report = \ANDS\Registry\Providers\Quality\QualityMetadataProvider::getMetadataReport($record);
+        $quality_html = $this->load->view('quality_report', ['report' => $report], true);
+        $response["qa"] = $quality_html;
+
 		$response['title'] = 'QA Result';
 		$scripts = preg_split('/(\)\;)|(\;\\n)/', $result, -1, PREG_SPLIT_NO_EMPTY);
 		$response["ro_status"] = "DRAFT";
@@ -241,7 +259,7 @@ class Registry_object extends MX_Controller {
 		$response["ro_quality_level"] = $ro->quality_level;
 		$response["approve_required"] = $manual_publish;
 
-		$response["qa"] = $quality_html;
+
 		$response["ro_quality_class"] = ($ro->quality_level >= 2 ? "success" : "important");
 		$response["qa_$ro->quality_level"] = true;
 
@@ -268,11 +286,72 @@ class Registry_object extends MX_Controller {
 				$response[$matches[0]][] = $match_response;
 			}
 		}
+
         $ro->error_count = $error_count;
         $ro->warning_count = $warning_count;
         $ro->save();
+
         $response["error_count"] = $error_count;
+
+        // CC-2256. Replacing SetWarnings and SetInfos with fail rule from the report
+        // Leaving SetErrors because they are important
+        $response['SetWarnings'] = [];
+        $response['SetInfos'] = [];
+
+        // Removing the SetInfos as well, only errors exist for the tabs now
+        // $response = $this->getInfosTabMessages($response, $report);
+
 		echo json_encode($response);
+	}
+
+    /**
+     * Helper method to generate the SetInfos from a metadata quality reports
+     *
+     * @param $response
+     * @param $report
+     * @return mixed
+     */
+    private function getInfosTabMessages($response, $report)
+    {
+        $rule2TabMapping = [
+            Types\CheckIdentifier::class => 'tab_identifiers',
+            Types\CheckDescription::class => 'tab_descriptions_rights',
+            Types\CheckRights::class => 'tab_descriptions_rights',
+            Types\CheckLocation::class => 'tab_locations',
+            Types\CheckLocationAddress::class => 'tab_locations',
+            Types\CheckSubject::class => 'tab_subjects',
+            Types\CheckCoverage::class => 'tab_coverages',
+            Types\CheckRelatedCollection::class => 'tab_relatedObjects',
+            Types\CheckRelatedParties::class => 'tab_relatedObjects',
+            Types\CheckRelatedActivity::class => 'tab_relatedObjects',
+            Types\CheckRelatedService::class => 'tab_relatedObjects',
+            Types\CheckRelatedActivityOutput::class => 'tab_relatedObjects',
+            Types\CheckRelatedInformation::class => 'tabs_relatedInfos',
+            Types\CheckCitationInfo::class => 'tab_citationInfos',
+            Types\CheckRelatedOutputs::class => 'tab_relatedinfos',
+            Types\CheckExistenceDate::class => 'tab_existencedates',
+        ];
+
+        $fails = collect($report)
+            ->where('status', \ANDS\Registry\Providers\Quality\Types\CheckType::$FAIL);
+
+        $response['SetInfos'] = $fails
+            ->map(function($rule) use ($rule2TabMapping){
+                $fieldID = array_key_exists($rule['name'], $rule2TabMapping)
+                    ? $rule2TabMapping[$rule['name']]
+                    : 'tab_admin';
+
+                return [
+                    'field_id' => $fieldID,
+                    'message' => $rule['message']
+                ];
+            });
+
+        $response['SetInfos'] = $response['SetInfos']->unique()->toArray();
+
+        $response['fails'] = $fails->toArray();
+
+        return $response;
 	}
 
     /**
@@ -335,7 +414,7 @@ class Registry_object extends MX_Controller {
         $ro = $this->ro->getByID($registry_object_id);
         initEloquent();
         $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($registry_object_id);
-        $quality_html = ANDS\Registry\Providers\QualityMetadataProvider::getQualityReportHTML($record);
+        $quality_html = \ANDS\Registry\Providers\Quality\QualityMetadataProvider::getQualityReportHTML($record);
         $result = [
             "status" => 'success',
             "ro_status" => "DRAFT",
@@ -474,7 +553,6 @@ class Registry_object extends MX_Controller {
         $xml .= "<key>".$data['registry_object_key']."</key>".NL;
         $xml .= "<originatingSource type=''>".$data['originating_source']."</originatingSource>".NL;
         $xml .= "<".$data['ro_class']." type='".$data['type']."'>".NL;
-        $xml .= "<name type='primary'><namePart>No Name/Title</namePart></name>";
         $xml .= "<description type=''></description>";
         $xml .= "<identifier type=''></identifier>";
         if($data['ro_class']=='collection') $xml .="<dates type=''></dates>";
@@ -766,25 +844,36 @@ class Registry_object extends MX_Controller {
     }
 
 
-	public function get_quality_view(){
-		initEloquent();
+    /**
+     * @throws Exception
+     */
+    public function get_quality_view(){
 		$record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($this->input->post('ro_id'));
-		$quality_html = ANDS\Registry\Providers\QualityMetadataProvider::getQualityReportHTML($record);
-		echo $quality_html;
+		$report = \ANDS\Registry\Providers\Quality\QualityMetadataProvider::getMetadataReport($record);
+		$html = $this->load->view('quality_report', ['report' => $report], true);
+		echo $html;
 	}
 
 	public function get_quality_html(){
 		initEloquent();
 		$record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($this->input->post('ro_id'));
-		$quality_html = ANDS\Registry\Providers\QualityMetadataProvider::getQualityReportHTML($record);
+		$quality_html = \ANDS\Registry\Providers\Quality\QualityMetadataProvider::getQualityReportHTML($record);
 		echo $quality_html;
 	}
 
 
 	public function get_validation_text(){
-		$this->load->model('registry_objects', 'ro');
-		$ro = $this->ro->getByID($this->input->post('ro_id'));
-		echo $ro->get_validation_text();
+        $this->load->model('registry_objects', 'ro');
+        $ro = $this->ro->getByID($this->input->post('ro_id'));
+
+        $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($this->input->post('ro_id'));
+        $xml = $record->getCurrentData()->data;
+
+        $xml = \ANDS\Util\XMLUtil::unwrapRegistryObject($xml);
+//        $xml = $ro->cleanRIFCSofEmptyTags($xml, 'false', true);
+        $result = $ro->transformForQA(wrapRegistryObjects($xml), null, "html");
+
+        echo $result;
 	}
 
 	public function get_native_record($id){
@@ -881,12 +970,6 @@ class Registry_object extends MX_Controller {
                 $ro = $this->ro->getByID($id);
                 try {
                     $ro->setAttribute($attr['name'], $attr['value']);
-                    if ($attr['name'] == 'gold_status_flag' && $attr['value'] == 't') {
-                        $ro->setAttribute('quality_level', 4);
-                    }
-                    if ($attr['name'] == 'gold_status_flag' && $attr['value'] == 'f') {
-                        $ro->update_quality_metadata();
-                    }
                     $result['success_count']++;
                 } catch (Exception $e) {
                     $result['status'] = 'error';
@@ -1056,14 +1139,6 @@ class Registry_object extends MX_Controller {
 				{
 					try{
 						$ro->setAttribute($a['name'], $a['value']);
-						if($a['name']=='gold_status_flag'&&$a['value']=='t')
-						{
-							$ro->setAttribute('quality_level',4);
-						}
-						if($a['name']=='gold_status_flag'&&$a['value']=='f')
-						{
-							$ro->update_quality_metadata();
-						}
 						if($a['name']=='status')
 						{
 							$ro->flag = 'f';

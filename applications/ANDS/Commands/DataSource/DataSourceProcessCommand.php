@@ -6,7 +6,7 @@ namespace ANDS\Commands;
 
 use ANDS\Registry\Providers\GraphRelationshipProvider;
 use ANDS\Registry\Providers\LinkProvider;
-use ANDS\Registry\Providers\QualityMetadataProvider;
+use ANDS\Registry\Providers\Quality\QualityMetadataProvider;
 use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\Registry\Providers\RIFCS\CoreMetadataProvider;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;

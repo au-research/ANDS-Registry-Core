@@ -38,6 +38,36 @@
 			    </xsl:otherwise>
 	    	</xsl:choose>
         </xsl:if>
+		<xsl:if test="string-length(ro:originatingSource) = 0">
+			<xsl:choose>
+				<xsl:when test="$output = 'script'">
+					<xsl:text>SetErrors("tab_mandatoryInformation_type","Originating Source must be specified");</xsl:text>
+				</xsl:when>
+				<xsl:otherwise>
+					<span class="error">Registry Object Originating Source must be specified</span>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:if>
+		<xsl:if test="//ro:collection and (string-length(ro:collection/ro:description) = 0 or string-length(ro:collection/ro:description) &lt; 9)">
+			<xsl:choose>
+				<xsl:when test="$output = 'script'">
+					<xsl:text>SetErrors("tab_descriptions_rights","At least one description is required for the collection. The description must be longer than 9 characters.");</xsl:text>
+				</xsl:when>
+				<xsl:otherwise>
+					<span class="error">At least one description is required for the collection. The description must be longer than 9 characters.</span>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:if>
+		<xsl:if test="//ro:collection and string-length(ro:collection/ro:name[@type='primary']) = 0">
+			<xsl:choose>
+				<xsl:when test="$output = 'script'">
+					<xsl:text>SetErrors("tab_names","At least one primary name is required for the Collection.");</xsl:text>
+				</xsl:when>
+				<xsl:otherwise>
+					<span class="error">At least one primary name is required for the Collection.</span>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:if>
         <xsl:if test="string-length(ro:collection/@type) &gt; 32 or string-length(ro:activity/@type) &gt; 32 or string-length(ro:party/@type) &gt; 32 or string-length(ro:service/@type) &gt; 32">
             <xsl:choose>
 			    <xsl:when test="$output = 'script'">

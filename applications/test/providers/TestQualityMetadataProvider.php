@@ -3,7 +3,7 @@
 
 namespace ANDS\Test;
 
-use ANDS\Registry\Providers\QualityMetadataProvider;
+use ANDS\Registry\Providers\Quality\QualityMetadataProvider;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 

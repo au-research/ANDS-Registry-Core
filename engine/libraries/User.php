@@ -46,7 +46,7 @@ class User {
 			AUTH_USER_FRIENDLY_NAME	 => $role['name'],
 			AUTH_METHOD 			 =>	$role['authentication_service_id'],
 			AUTH_DOMAIN 			 =>	$role['auth_domain']
-		));			
+		));
 		
 		//return all affiliations if you are super user
 		$this->cosi_db = $this->CI->load->database('roles', true);

@@ -261,6 +261,7 @@ class ImportTask extends Task
                     "IndexRelationship",
                     "ProcessGraphRelationships",
                     "FinishImport",
+                    "WriteImportSummary"
                 ];
                 break;
             case "PublishingWorkflow":
@@ -342,7 +343,8 @@ class ImportTask extends Task
                 $tasks = [
                     "PopulateImportOptions",
                     "FinishImport",
-                    "ScheduleHarvest"
+                    "WriteImportSummary",
+                    "ScheduleHarvest",
                     //"Report"
                 ];
                 // error will not load payloads
@@ -372,7 +374,8 @@ class ImportTask extends Task
                     "IndexRelationship",
                     "ServiceDiscovery",
                     "FinishImport",
-                    "ScheduleHarvest",
+                    "WriteImportSummary",
+                    "ScheduleHarvest"
                 ];
                 break;
         }
@@ -668,6 +671,9 @@ class ImportTask extends Task
             "missingRegistryObjectKeyCount" => "Invalid due to Missing key",
             "missingOriginatingSourceCount" => "Invalid due to missing OriginatingSource",
             "missingGroupAttributeCount" => "Invalid missing group Attribute",
+            "missingTitleCount" => "Invalid due to missing name",
+            "missingTypeCount" => "Invalid due to missing type",
+            "missingDescriptionCollectionCount" => "Invalid due to missing description for collection",
             "recordsCreatedCount" => "New Records Created",
             "recordsUpdatedCount" => "Records updated",
             "refreshHarvestStatus" => "Refresh Harvest Status",

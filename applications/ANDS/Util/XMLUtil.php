@@ -18,7 +18,7 @@ if (!defined("NL")) {
 }
 
 if (!defined("REGISTRY_APP_PATH")) {
-    define('REGISTRY_APP_PATH', 'applications/registry/');
+    define('REGISTRY_APP_PATH', "applications/registry/");
 }
 
 class XMLUtil
@@ -31,6 +31,7 @@ class XMLUtil
      * @param $xpath
      * @param string $namespace
      * @return \SimpleXMLElement[]
+     * @throws Exception
      */
     public static function getElementsByXPath(
         $xml,
@@ -42,7 +43,12 @@ class XMLUtil
         return $sxml->xpath($xpath);
     }
 
-    public static function getElementsByXPathFromSXML($sxml, $xpath)
+    /**
+     * @param $sxml
+     * @param $xpath
+     * @return mixed
+     */
+    public static function getElementsByXPathFromSXML(\SimpleXMLElement $sxml, $xpath)
     {
         return $sxml->xpath($xpath);
     }
@@ -52,6 +58,7 @@ class XMLUtil
      * @param $element
      * @param string $namespace
      * @return \SimpleXMLElement[]
+     * @throws Exception
      */
     public static function getElementsByName($xml, $element, $namespace = RIFCS_NAMESPACE)
     {
@@ -64,6 +71,7 @@ class XMLUtil
      * @param $element
      * @param string $namespace
      * @return int
+     * @throws Exception
      */
     public static function countElementsByName($xml, $element, $namespace = RIFCS_NAMESPACE)
     {
@@ -115,6 +123,11 @@ class XMLUtil
         return $return;
     }
 
+    /**
+     * @param $xml
+     * @return mixed
+     * @throws Exception
+     */
     public static function unwrapRegistryObject($xml)
     {
         if (strpos($xml, '<registryObjects') === false) {
@@ -122,6 +135,18 @@ class XMLUtil
         }
         $simpleXML = static::getSimpleXMLFromString(static::cleanNameSpace($xml));
         return $simpleXML->registryObject->asXML();
+    }
+
+    /**
+     * @param $xml
+     * @return mixed|string
+     * @throws Exception
+     */
+    public static function ensureWrappingRegistryObjects($xml)
+    {
+        $xml = static::unwrapRegistryObject($xml);
+        $xml = static::wrapRegistryObject($xml);
+        return $xml;
     }
 
     /**
@@ -160,6 +185,12 @@ class XMLUtil
         }
     }
 
+    /**
+     * @param $xml
+     * @param array $params
+     * @return string
+     * @throws Exception
+     */
     public static function getHTMLForm($xml, $params = [])
     {
         try{
@@ -171,7 +202,7 @@ class XMLUtil
             }
             return html_entity_decode($xslt_processor->transformToXML($dom));
         } catch (Exception $e) {
-            throw new Exception($e->getMessage());
+            throw new Exception(get_exception_msg($e));
         }
     }
 
@@ -210,6 +241,39 @@ class XMLUtil
             $this->validationMessage = $error->message;
         }
         return $result;
+    }
+
+    /**
+     * @param $xml
+     * @return bool
+     * @throws Exception
+     */
+    public function validateRIFCS($xml)
+    {
+        $doc = new DOMDocument('1.0', 'utf-8');
+        $doc->loadXML($xml);
+        if (!$doc) {
+            throw new Exception("Unable to parse XML. Perhaps your XML file is not well-formed?");
+        }
+
+        // TODO: Does this cache in-memory?
+        libxml_use_internal_errors(true);
+        $validation_status = $doc->schemaValidate(
+            REGISTRY_APP_PATH . "registry_object/schema/registryObjects.xsd"
+        );
+        if ($validation_status === true) {
+            libxml_use_internal_errors(false);
+            return true;
+        } else {
+            $errors = libxml_get_errors();
+            $error_string = '';
+            foreach ($errors as $error) {
+                $error_string .= TAB . "Line " . $error->line . ": " . $error->message;
+            }
+            libxml_clear_errors();
+            libxml_use_internal_errors(false);
+            throw new Exception("Unable to validate XML document against schema: " . NL . $error_string);
+        }
     }
 
     public function validateRemoteSchema($schema, $payload)
@@ -254,6 +318,31 @@ class XMLUtil
     public static function stripXMLHeader($xml)
     {
         return preg_replace("/<\?xml (.*)\?>/s", "", $xml);
+    }
+
+    /**
+     * @param $xml
+     * @param null $simpleXML
+     * @return string
+     * @throws Exception
+     */
+    public static function getRegistryObjectClass($xml, $simpleXML = null)
+    {
+        $xml = XMLUtil::unwrapRegistryObject($xml);
+        $xml = XMLUtil::wrapRegistryObject($xml);
+        $simpleXML = $simpleXML ?: XMLUtil::getSimpleXMLFromString($xml);
+
+        if (count($simpleXML->xpath("//ro:collection"))) {
+            return "collection";
+        } elseif (count($simpleXML->xpath("//ro:party"))) {
+            return "party";
+        } elseif (count($simpleXML->xpath("//ro:activity"))) {
+            return "activity";
+        } elseif (count($simpleXML->xpath("//ro:service"))) {
+            return "service";
+        } else {
+            throw new \InvalidArgumentException("Unable to discern class from xml");
+        }
     }
 
 }

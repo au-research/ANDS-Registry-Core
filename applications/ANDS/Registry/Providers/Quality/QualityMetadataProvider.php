@@ -1,13 +1,19 @@
 <?php
 
 
-namespace ANDS\Registry\Providers;
+namespace ANDS\Registry\Providers\Quality;
 
 
-use ANDS\RegistryObject;
-use ANDS\Util\XMLUtil;
+use ANDS\Registry\Providers\Quality\Exception\MissingDescriptionForCollection;
+use ANDS\Registry\Providers\Quality\Exception\MissingGroup;
+use ANDS\Registry\Providers\Quality\Exception\MissingOriginatingSource;
+use ANDS\Registry\Providers\Quality\Exception\MissingTitle;
+use ANDS\Registry\Providers\Quality\Exception\MissingType;
+use ANDS\Registry\Providers\Quality\Types;
 use ANDS\Registry\Providers\RelationshipProvider;
-
+use ANDS\RegistryObject;
+use ANDS\Util\Config;
+use ANDS\Util\XMLUtil;
 
 /**
  * Class  QualityMetadataProvider
@@ -15,6 +21,7 @@ use ANDS\Registry\Providers\RelationshipProvider;
  */
 class QualityMetadataProvider
 {
+
     // future
     private static $attributeKeys = ['quality_level', 'warning_count', 'error_count'];
     // private static $metadataKeys = ['level_html', 'quality_html'];
@@ -33,6 +40,123 @@ class QualityMetadataProvider
         static::deleteQualityInfo($record);
         $quality_report = static::getQualityReport($record);
         static::saveQualityInfo($record, $quality_report);
+    }
+
+    /**
+     * @param $xml
+     * @return bool
+     * @throws \Exception
+     */
+    public static function validate($xml)
+    {
+        $xml = XMLUtil::ensureWrappingRegistryObjects($xml);
+        $sm = XMLUtil::getSimpleXMLFromString($xml);
+        $class = XMLUtil::getRegistryObjectClass($xml, $sm);
+
+        // originatingSource is required
+        $originatingSource = (string) $sm->xpath('//ro:originatingSource')[0];
+        if (!trim($originatingSource)) {
+            throw new MissingOriginatingSource("Registry Object 'originatingSource' must have a value");
+        }
+
+        // group is required
+        $group = (string) $sm->xpath("//ro:registryObject")[0]['group'];
+        if (!trim($group)) {
+            throw new MissingGroup("Registry Object '@group' must have a value");
+        }
+
+        // must have a title (provided by names)
+        $names = $sm->xpath('//ro:name');
+        if (count($names) === 0) {
+            throw new MissingTitle("Registry Object 'name' must have a value");
+        }
+
+        // if there's a name, must have a namePart
+        $nameParts = $sm->xpath('//ro:name/ro:namePart');
+        if (count($nameParts) === 0) {
+            throw new MissingTitle("Registry Object 'name' must have a value");
+        }
+
+        // nameParts must have a value
+        $strings = collect($nameParts)->map(function ($value) {
+            return (string)$value;
+        })->implode('');
+
+        if (!trim($strings)) {
+            throw new MissingTitle("Registry Object 'name' must have a value");
+        }
+
+        // (collection only) must have a description
+        if ($class === "collection") {
+            $descriptions = $sm->xpath("//ro:description");
+            if (count($descriptions) === 0) {
+                throw new MissingDescriptionForCollection("Collection must have a description");
+            }
+
+            $strings = collect($descriptions)->map(function ($value) {
+                return (string)$value;
+            })->implode('');
+
+            if (!trim($strings)) {
+                throw new MissingDescriptionForCollection("Collection must have a description");
+            }
+        }
+
+        // type must not be empty
+        $type = (string) $sm->xpath("//ro:{$class}")[0]['type'];
+        if (!trim($type)) {
+            throw new MissingType("Registry Object '@type' must have a value");
+        }
+
+        return true;
+    }
+
+    /**
+     * @param RegistryObject $record
+     * @return array
+     * @throws \Exception
+     */
+    public static function getMetadataReport(RegistryObject $record)
+    {
+        $checks = self::getChecksForClass($record->class);
+
+        return self::reports($record, $checks);
+    }
+
+    /**
+     * @param $class
+     * @return array
+     * @throws \Exception
+     */
+    public static function getChecksForClass($class)
+    {
+        $config = Config::get('quality.checks');
+
+        return $config[$class];
+    }
+
+    /**
+     * @param RegistryObject $record
+     * @param array $checks
+     * @return array
+     * @throws \Exception
+     */
+    public static function reports(RegistryObject $record, array $checks)
+    {
+        $xml = $record->getCurrentData()->data;
+        $simpleXML = XMLUtil::getSimpleXMLFromString($xml);
+
+        $report = [];
+        foreach ($checks as $checkClassName) {
+
+            /** @var Types\CheckType $check */
+            $check = new $checkClassName($record, $simpleXML);
+            $result = $check->toArray();
+
+            $report[] = $result;
+        }
+
+        return $report;
     }
 
     /**
@@ -236,9 +360,7 @@ class QualityMetadataProvider
                 "message" => "The " . ucfirst($record->class) . " must be related to at least one Collection record."
             ];
 
-            if (RelationshipProvider::hasRelatedClass($record,
-                    'collection') == false
-            ) {
+            if (RelationshipProvider::hasRelatedClass($record,'collection') == false) {
                 $passed = "fail";
                 $level_data['relatedObject'] = [
                     "passed" => "fail",
@@ -257,9 +379,7 @@ class QualityMetadataProvider
                 "message" => "The " . ucfirst($record->class) . " must be related to at least one Party record."
             ];
 
-            if (RelationshipProvider::hasRelatedClass($record,
-                    'party') == false
-            ) {
+            if (RelationshipProvider::hasRelatedClass($record,'party') == false) {
                 $passed = "fail";
                 $level_data['relatedObject'] = [
                     "passed" => "fail",
@@ -375,9 +495,7 @@ class QualityMetadataProvider
                 "message" => "It is recommended that the " . ucfirst($record->class) . " be related to at least one Activity record."
             ];
 
-            if (RelationshipProvider::hasRelatedClass($record,
-                    'activity') == false
-            ) {
+            if (RelationshipProvider::hasRelatedClass($record, 'activity') == false) {
                 $passed = "fail";
                 $level_data['relatedObject'] = [
                     "passed" => "fail",
@@ -393,9 +511,7 @@ class QualityMetadataProvider
                 "qa_id" => "REC_RELATED_OBJECT_COLLECTION",
                 "message" => "The " . ucfirst($record->class) . " must be related to at least one Collection record if available."
             ];
-            if (RelationshipProvider::hasRelatedClass($record,
-                    'collection') == false
-            ) {
+            if (RelationshipProvider::hasRelatedClass($record, 'collection') == false) {
                 $passed = "fail";
                 $level_data['relatedObject'] = [
                     "passed" => "fail",
@@ -431,9 +547,7 @@ class QualityMetadataProvider
                 "qa_id" => "REC_RELATED_OBJECT_ACTIVITY",
                 "message" => "The " . ucfirst($record->class) . " must be related to at least one Activity record where available."
             ];
-            if (RelationshipProvider::hasRelatedClass($record,
-                    'activity') == false
-            ) {
+            if (RelationshipProvider::hasRelatedClass($record, 'activity') == false) {
                 $passed = "fail";
                 $level_data['relatedObject'] = [
                     "passed" => "fail",
@@ -553,9 +667,7 @@ class QualityMetadataProvider
                 "qa_id" => "REC_RELATED_OBJECT_PARTY",
                 "message" => "It is recommended that the " . ucfirst($record->class) . " be related to at least one Party record."
             ];
-            if (RelationshipProvider::hasRelatedClass($record,
-                    'party') == false
-            ) {
+            if (RelationshipProvider::hasRelatedClass($record, 'party') == false) {
                 $passed = "fail";
                 $level_data['relatedObject'] = [
                     "passed" => "fail",

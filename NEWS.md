@@ -1,3 +1,20 @@
+## Release 29
+
+Release 29 of ANDS Online Services is scheduled for implementation on **3 October 2018**, between 8am and 12pm AEST. This release implements a number of enhancements to Research Data Australia (RDA), DOI Service, IGSN Service, and Research Vocabularies Australia (RVA). Below is the list of all the changes planned for this release.
+
+**Research Data Australia (RDA)**
+
+* Update Social Login API Integration
+
+**RDA Registry**
+
+* Replacement of Metadata Quality Report with new Metdata Content Report (CC-2184)
+* Upgrade the ORCID widget to use V2.0 of the ORCID API (CC-2243)
+
+**DOI Service**
+
+* Implement a single client account for both Production and Test minting (CC-2211)
+
 ## Release 28.1
 
 Service Release 28.1 of ANDS Online Services is scheduled for implementation on 7 August 2018 from 8:00am - 12:00pm AEST. This release implements a number of enhancements to  Research Data Australia (RDA), IGSN Service and Research Vocabularies Australia (RVA). Below is the list of all the changes planned for this release.
@@ -5,7 +22,7 @@ Service Release 28.1 of ANDS Online Services is scheduled for implementation on
 
 **Research Data Australia (RDA)**
 
-*Only display external link icon on the 'Access the data' button when linking to a page or location outside RDA (CC-2238)
+* Only display external link icon on the 'Access the data' button when linking to a page or location outside RDA (CC-2238)
 * Enhancements to relationship graph on the record view page:
     * add an icon which links to a help document (CC-2235)
     * add zoom controls (CC-2234)
