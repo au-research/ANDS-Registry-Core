@@ -67,6 +67,15 @@ class PopulateImportOptions extends ImportSubTask
             Repo::getCountByDataSourceIDAndStatus($this->parent()->dataSourceID,
             $this->parent()->getTaskData("targetStatus")
             ));
+
+        // PUBLISHED count before harvest
+        $this->parent()->setTaskData("datasourcePublishedBeforeCount",
+            Repo::getCountByDataSourceIDAndStatus(
+                $this->parent()->dataSourceID,
+                "PUBLISHED"
+            )
+        );
+
         // record count after harvest
 
         $this->parent()->setTaskData("refreshHarvestStatust", 0);
