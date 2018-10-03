@@ -32,6 +32,15 @@ class FinishImport extends ImportSubTask
             )
         );
 
+        // PUBLISHED count after harvest
+        $this->parent()->setTaskData(
+            "datasourcePublishedAfterCount",
+            Repo::getCountByDataSourceIDAndStatus(
+                $this->parent()->dataSourceID,
+                "PUBLISHED"
+            )
+        );
+
         if ($this->addToDatasourceLog) {
             $this->updateDataSourceLogs($dataSource);
         }
