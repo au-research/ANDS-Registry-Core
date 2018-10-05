@@ -40,7 +40,7 @@
     },
     "require": {
         "illuminate/database": "5.2.*",
-        "au-research/ands-doi-service": "dev-develop",
+        "au-research/ands-doi-service": "dev-master",
         "predis/predis": "^1.1",
         "symfony/stopwatch": "^3.1",
         "monolog/monolog": "^1.19",
