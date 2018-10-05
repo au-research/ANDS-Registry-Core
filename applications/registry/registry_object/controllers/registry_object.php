@@ -298,6 +298,21 @@ class Registry_object extends MX_Controller {
         $response['SetWarnings'] = [];
         $response['SetInfos'] = [];
 
+        // Removing the SetInfos as well, only errors exist for the tabs now
+        // $response = $this->getInfosTabMessages($response, $report);
+
+		echo json_encode($response);
+	}
+
+    /**
+     * Helper method to generate the SetInfos from a metadata quality reports
+     *
+     * @param $response
+     * @param $report
+     * @return mixed
+     */
+    private function getInfosTabMessages($response, $report)
+    {
         $rule2TabMapping = [
             Types\CheckIdentifier::class => 'tab_identifiers',
             Types\CheckDescription::class => 'tab_descriptions_rights',
@@ -336,8 +351,7 @@ class Registry_object extends MX_Controller {
 
         $response['fails'] = $fails->toArray();
 
-
-		echo json_encode($response);
+        return $response;
 	}
 
     /**

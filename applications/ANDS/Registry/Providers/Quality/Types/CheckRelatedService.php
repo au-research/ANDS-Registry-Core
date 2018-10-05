@@ -4,6 +4,10 @@
 namespace ANDS\Registry\Providers\Quality\Types;
 
 
+use ANDS\Registry\Providers\MetadataProvider;
+use ANDS\Registry\Providers\RelationshipProvider;
+use ANDS\Repository\RegistryObjectsRepository;
+
 class CheckRelatedService extends CheckType
 {
     protected $descriptor = [
@@ -22,17 +26,18 @@ class CheckRelatedService extends CheckType
      * Returns the status of the check
      *
      * @return boolean
+     * @throws \Exception
      */
     public function check()
     {
-        $relatedInfoTypes = [];
-        foreach ($this->simpleXML->xpath("//ro:relatedInfo/@type") as $type) {
-            $relatedInfoTypes[] = (string) $type;
+        if (in_array('service', MetadataProvider::getRelatedInfoTypes($this->record, $this->simpleXML))) {
+            return true;
         }
 
-        $hasRelatedInfoService = in_array("party", $relatedInfoTypes);
-        $hasRelatedObjectServices = $this->record->relationshipViews->where('to_class', 'service')->count() > 0;
+        if (RelationshipProvider::hasRelatedClass($this->record, 'service')) {
+            return true;
+        }
 
-        return $hasRelatedInfoService || $hasRelatedObjectServices;
+        return false;
     }
 }

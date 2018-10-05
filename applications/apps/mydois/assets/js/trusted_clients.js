@@ -98,8 +98,10 @@ $(document).on('click', '#add_confirm', function(){
 			$('#edit_trusted_client_form input[name=ip_address]').val(data['ip_address']);
 			$('#edit_trusted_client_form input[name=domainList]').val(data['domain_list']);
 			$('#edit_trusted_client_form input[name=app_id]').val(data['app_id']);
+			$('#edit_trusted_client_form input[name=test_app_id]').val(data['test_app_id']);
 			$('#edit_trusted_client_form select[name=datacite_prefix]').val(data['datacite_prefix']);
 			$('#edit_trusted_client_form input[name=shared_secret]').val(data['shared_secret']);
+			$('#edit_trusted_client_form input[name=test_shared_secret]').val(data['test_shared_secret']);
 			$('#edit_trusted_client_modal').modal('show');
 
             $('#prefix_select').empty();
@@ -115,6 +117,9 @@ $(document).on('click', '#add_confirm', function(){
 }).on('click', '.sec_gen', function(){
 	var sec = $(this).attr('sec');
 	$('#edit_trusted_client_form input[name=shared_secret]').val(sec)
+}).on('click', '.test_sec_gen', function(){
+	var test_sec = $(this).attr('test_sec');
+	$('#edit_trusted_client_form input[name=test_shared_secret]').val(test_sec)
 }).on('click', '#add_trusted_client_btn', function(){
 	$.ajax({
 		url:apps_url+'mydois/get_available_prefixes',
@@ -123,7 +128,6 @@ $(document).on('click', '#add_confirm', function(){
 
 			$('#add_prefix_select').empty();
 			$.each(data, function (i, item) {
-				console.log(item);
 				$('#add_prefix_select').append($('<option>', {
 					value: item,
 					text : item
@@ -146,6 +150,14 @@ function listTrustedClients() {
 	$('#trusted_clients').html('loading');
 	$('#result_msg').html("result").removeClass('label label-important');
 	$.getJSON(apps_url+'mydois/list_trusted_clients/', function(data) {
+		for(var key in data){
+			var client = data[key];
+            if (client.status == 'ACTIVE'){
+                data[key].display=true;
+			}else{
+                data[key].display=false;
+            }
+		}
 		var template = $('#trusted_clients-template').html();
 		var output = Mustache.render(template, data);
 		$('#trusted_clients').html(output).css('opacity', '1');

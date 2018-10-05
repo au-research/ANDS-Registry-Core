@@ -4,6 +4,10 @@
 namespace ANDS\Registry\Providers\Quality\Types;
 
 
+use ANDS\Registry\Providers\MetadataProvider;
+use ANDS\Registry\Providers\RelationshipProvider;
+use ANDS\Repository\RegistryObjectsRepository;
+
 class CheckRelatedCollection extends CheckType
 {
     protected $descriptor = [
@@ -23,17 +27,18 @@ class CheckRelatedCollection extends CheckType
      * Returns the status of the check
      *
      * @return boolean
+     * @throws \Exception
      */
     public function check()
     {
-        $relatedInfoTypes = [];
-        foreach ($this->simpleXML->xpath("//ro:relatedInfo/@type") as $type) {
-            $relatedInfoTypes[] = (string) $type;
+        if (in_array('collection', MetadataProvider::getRelatedInfoTypes($this->record, $this->simpleXML))) {
+            return true;
         }
 
-        $hasRelatedInfoCollection = in_array("collection", $relatedInfoTypes);
-        $hasRelatedObjectCollection = $this->record->relationshipViews->where('to_class', 'collection')->count() > 0;
+        if (RelationshipProvider::hasRelatedClass($this->record, 'collection')) {
+            return true;
+        }
 
-        return $hasRelatedObjectCollection || $hasRelatedInfoCollection;
+        return false;
     }
 }

@@ -32,8 +32,8 @@
 
 		var defaults = {
 		    //location (absolute URL) of the jsonp proxy
-		    search_endpoint: 'http://researchdata.ands.org.au/registry/services/api/getGrants/?',
-		   	lookup_endpoint: 'http://researchdata.ands.org.au/registry/services/api/getGrants/?id=',
+		    search_endpoint: 'https://researchdata.ands.org.au/registry/services/api/getGrants/?',
+		   	lookup_endpoint: 'https://researchdata.ands.org.au/registry/services/api/getGrants/?id=',
 
 		    //auto _lookup once init
 		    pre_lookup: false,
@@ -68,6 +68,7 @@
 		    lookup_error_handler: false,
 		    lookup_success_handler: false,
 		    post_lookup_success_handler: false,
+			custom_select_handler:false,
 
 		    //auto close the search box once a value is chosen
 		    auto_close_search: true,
@@ -480,14 +481,18 @@
 							$('.grant_search_result', p).html(html);
 						}
 					}
-					$('.select_grant_search_result', p).on('click', function(){
-						obj.val($(this).attr('grant-id'));
-						_lookup(obj, settings);
-						if(settings.auto_close_search) $('#'+settings._wid).slideUp();
+					if(settings.custom_select_handler && (typeof settings.custom_select_handler === 'function')){
+						settings.custom_select_handler(data, obj, settings);
+					}else {
+						$('.select_grant_search_result', p).on('click', function () {
+							obj.val($(this).attr('grant-id'));
+							_lookup(obj, settings);
+							if (settings.auto_close_search) $('#' + settings._wid).slideUp();
 
-                        $(document.body).scrollTop($('#return'+settings._wid).offset().top -100);
+							$(document.body).scrollTop($('#return' + settings._wid).offset().top - 100);
 
-					});
+						});
+					}
 					if(settings.tooltip){
 						$('.preview').each(function(){
    								$(this).qtip({
@@ -522,7 +527,7 @@
 				}
 
 			});
-                if(matches == '0')
+                if(matches == '')
                 {
                     $('.grant_search_result', p).html(settings.nohits_msg);
                 }

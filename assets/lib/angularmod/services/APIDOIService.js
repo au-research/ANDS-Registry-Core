@@ -12,7 +12,7 @@
                     'doi/client/', {'app_id': app_id, }
                 );
             },
-            getDOIList: function (app_id, limit, offset, search) {
+            getDOIList: function (app_id, limit, offset, search,mode) {
                 if (!limit) limit = 5;
                 if (!offset) offset = 0;
                 if (!search) search = '';
@@ -21,7 +21,8 @@
                         'app_id': app_id,
                         'limit': limit,
                         'offset': offset,
-                        'search' : search
+                        'search' : search,
+                        'mode' : mode
                     }
                 );
             },

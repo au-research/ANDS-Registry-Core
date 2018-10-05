@@ -72,7 +72,9 @@ class DataSourcesRecordsController extends HTTPController implements RestfulCont
 
         $batchID = "MANUAL-URL-".str_slug($url).'-'.time();
         Payload::write($dataSource->data_source_id, $batchID, $content);
-        $task =  Importer::instantImportRecordFromBatchID($dataSource, $batchID);
+        $task =  Importer::instantImportRecordFromBatchID($dataSource, $batchID, [
+            'source' => 'ds_api'
+        ]);
         return $task->toArray();
     }
 }

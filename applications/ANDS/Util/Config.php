@@ -12,7 +12,6 @@ class Config
      *
      * @param $name
      * @return mixed
-     * @throws \Exception
      */
     public static function get($name)
     {
@@ -28,7 +27,8 @@ class Config
         $filePath = dirname(__DIR__) . "/../../config/$name.php";
 
         if (!file_exists($filePath)) {
-            throw new \Exception("Configuration $name does not exists");
+            // TODO: log error
+            return null;
         }
 
         $configuration = include(dirname(__DIR__) . "/../../config/$name.php");

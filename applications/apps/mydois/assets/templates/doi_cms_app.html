@@ -2,10 +2,15 @@
     <h1>{{ vm.client.client_name }}</h1>
 </div>
 <div id="breadcrumb" style="clear:both;">
-    <a href="{{ base_url }}"><i class="icon-home"></i> Home</a>
-    <a href="{{ base_url}}mydois">Digital Object Identifiers</a>
-    <a href="{{ base_url}}mydois/app/#/?app_id={{ vm.client.client_id }}" class="current">
-        {{ vm.client.client_name }} <small class="muted">({{ vm.client.app_id }})</small>
+    <a href="{{ real_base_url }}"><i class="icon-home"></i> Home</a>
+    <a href="{{ base_url }}mydois">Digital Object Identifiers</a>
+    <a ng-if="vm.client.mode == 'test'" href="{{ base_url }}mydois#/manage/{{ vm.client.test_app_id }}" class="current">
+        {{ vm.client.client_name }}
+    <a ng-if="vm.client.mode != 'test'" href="{{ base_url }}mydois#/manage/{{ vm.client.app_id }}" class="current">
+        {{ vm.client.client_name }}
+
+        <small class="muted" ng-if="vm.client.mode == 'test'">({{ vm.client.test_app_id }})</small>
+        <small class="muted" ng-if="vm.client.mode!='test'">({{ vm.client.app_id }})</small>
     </a>
 </div>
 <div class="container-fluid">
@@ -22,7 +27,8 @@
             </ul>
         </div>
         <div class="widget-content" ng-if="vm.tab=='list'">
-            <h3>Listing DOIs for {{ vm.client.client_name }} <small>({{ vm.client.app_id }})</small></h3>
+            <h3>Listing DOIs for {{ vm.client.client_name }} <small ng-if="vm.client.mode =='test'">({{ vm.client.test_app_id }})</small>
+                <small ng-if="vm.client.mode != 'test'">({{ vm.client.app_id }})</small></h3>
 
             <form class="form-search" ng-submit="vm.refreshDOIs(vm.filter)">
                 <div class="input-append">

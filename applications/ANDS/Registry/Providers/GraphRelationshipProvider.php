@@ -9,6 +9,7 @@ use ANDS\Registry\RelationshipView;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\Config;
+use ANDS\Util\StrUtil;
 use GraphAware\Common\Result\Result;
 use GraphAware\Common\Result\ResultCollection;
 use GraphAware\Common\Type\Node;
@@ -235,7 +236,8 @@ class GraphRelationshipProvider implements RegistryContentProvider
     public static function getMergeLinkQuery(RegistryObject $record, RegistryObject $to, $relationship)
     {
         // flip the relation if flippable
-        $relation_type = $relationship->relation_type;
+        $relation_type = $relationship->relation_type ?: 'hasAssociationWith';
+
         if (in_array($relation_type, array_keys(static::$flippableRelation))) {
             $flipped = static::$flippableRelation[$relation_type];
             return 'MATCH (b:RegistryObject {roId:"'.$to->id.'"}) MATCH (a:RegistryObject {roId:"'.$record->id.'"}) MERGE (b)-[:`'.$flipped.'`]->(a)';
@@ -260,7 +262,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
         $id = $relationship->related_object_identifier;
 
         // flip the relation if match
-        $relation_type = $relationship->relation_type;
+        $relation_type = $relationship->relation_type ?: 'hasAssociationWith';
         if (in_array($relation_type, array_keys(static::$flippableRelation))) {
             $flipped = static::$flippableRelation[$relation_type];
             return 'MATCH (b:RelatedInfo {identifier:"'.$id.'"}) MATCH (a:RegistryObject {roId:"'.$record->id.'"}) MERGE (b)-[:`'.$flipped.'`]->(a)';

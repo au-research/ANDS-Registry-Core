@@ -31,9 +31,8 @@
 
 		var defaults = {
 		    //location (absolute URL) of the jsonp proxy
-		    //search_endpoint: 'https://pub.orcid.org/v1.1/search/orcid-bio?q=',
-            search_endpoint: 'https://researchdata.ands.org.au/api/orcid.jsonp/search/',
-		   	lookup_endpoint: 'https://researchdata.ands.org.au/api/orcid.jsonp/lookup/',
+            search_endpoint: 'https://researchdata.ands.org.au/api/v2.0/orcid.jsonp/search/',
+		   	lookup_endpoint: 'https://researchdata.ands.org.au/api/v2.0/orcid.jsonp/lookup/',
 
 		    //auto _lookup once init
 		    pre_lookup: false,
@@ -60,11 +59,14 @@
 		    query_text: 'Search Query:',
 		    search_text_btn: 'Search',
 		    close_search_text_btn: '[x]',
+			close_search_text_btn: '[x]',
+			search_loading_text: 'Loading...',
 
 		    //custom hooks and handlers
 		    lookup_error_handler: false,
 		    lookup_success_handler: false,
 		    post_lookup_success_handler: false,
+			custom_select_handler:false,
 
 		    //auto close the search box once a value is chosen
 		    auto_close_search: true
@@ -159,6 +161,12 @@
 				//close button
 				$('.'+settings.search_div_class, p).slideUp();
 			});
+
+			if (settings.auto_search) {
+				_search(settings.auto_search_query, obj, settings)
+			}
+
+
 		}
 		
 		//before_html
@@ -189,7 +197,8 @@
 					settings.lookup_success_handler(data, obj, settings);
 				}else{
 					_clean(obj, settings);
-					var html = _constructORCIDHTML(data['orcid-profile'],settings);
+					data['person'].orcid = data.orcid;
+					var html = _constructORCIDHTML(data['person'],settings);
 					var result_div = $('<div>').addClass(settings.result_success_class).html(html);
 					obj.p.append(result_div);
 					if(settings.post_lookup_success_handler && (typeof settings.post_lookup_success_handler ==='function')){
@@ -218,104 +227,103 @@
 	 */
 
 	function _constructORCIDHTML(obj,settings) {
-
 		var resStr = '';
 		resStr += "<div class='"+settings.info_box_class+"'>"
 		resStr += "<h6>ORCID Identifier</h6>";
-		var orcid = eval(obj['orcid-identifier']);
-		resStr += orcid.path;
-		if(obj['orcid-bio']['biography'])
+		var orcid = obj.orcid;
+		resStr += orcid;
+		if(typeof(obj.biography) !== "undefined" && obj.biography!=null)
 		{
-            if(typeof(obj['orcid-bio']['biography'])=='string')
+            if(typeof obj.biography['content']=='string')
 			{
 				resStr += "<h6>Biography</h6>";
-				var biography = obj['orcid-bio']['biography']
+				var biography = obj.biography['content'];
 				biography = biography.replace(/"/g,'&quot;');		
 				resStr +="<p>"+biography+"</p>";
 			}
 		}
 		    					    	
-		if(obj['orcid-bio']['personal-details'])
+		if(obj.name)
 		{
 			resStr +="<h6>Personal Details</h6>"		 					    		
 			resStr +="<p>";
-				if(obj['orcid-bio']['personal-details']['credit-name'])
-					resStr +="Credit name: "+obj['orcid-bio']['personal-details']['credit-name']+" <br />";
-				if(obj['orcid-bio']['personal-details']['family-name']) 					    
-					resStr +="Family name: "+obj['orcid-bio']['personal-details']['family-name']+" <br />";
-				if(obj['orcid-bio']['personal-details']['given-names'])  					    
-					resStr +="Given names: "+obj['orcid-bio']['personal-details']['given-names']+" <br />";
-				if(obj['orcid-bio']['personal-details']['other-names'] && obj['orcid-bio']['personal-details']['other-names'].length)
-				{    console.log(obj)
+				if(obj.name['credit-name'])
+					resStr +="Credit name: "+obj.name['credit-name']['value']+" <br />";
+				if(obj.name['family-name'])
+					resStr +="Family name: "+obj.name['family-name']['value']+" <br />";
+				if(obj.name['given-names'])
+					resStr +="Given names: "+obj.name['given-names']['value']+" <br />";
+				if(obj.name['other-names'] && obj.name['other-names'].length)
+				{
 					resStr +="Other names: ";
 
 					var count = 0;
-					for(i=0; i< (obj['orcid-bio']['personal-details']['other-names'].length -1);i++)
+					for(i=0; i< (obj.name['other-names'].length -1);i++)
 					{
-						resStr += obj['orcid-bio']['personal-details']['other-names']['other-name'][i] + ", ";
+						resStr += obj.name['other-names']['other-name'][i] + ", ";
 						count++;
 					}
-						resStr += obj['orcid-bio']['personal-details']['other-names']['other-name'][count] + "<br />";
+						resStr += obj.name['other-names']['other-name'][count] + "<br />";
 				} 	
 			}
-
-			if(obj['orcid-bio']['keywords'])
+			if(obj.keywords)
 			{
-                var wordsString = obj['orcid-bio']['keywords']['keyword'];
+				var wordsString = obj.keywords['keyword'];
 
-                if(typeof(wordsString)=='string'){
-                    var wordArray = wordsString.split(',');
-                }else{
-                    var wordArray = wordsString;
-                }
-
-				resStr +="<h6>Keywords</h6>"
-				var count = 0;	
-				for(i=0; i< (wordArray.length -1);i++)
-				{
-					resStr += wordArray[i] + ", ";
-					count++;
-				}
-				resStr += wordArray[count] + "<br />";
+					if (typeof(wordsString) == 'string') {
+						var wordArray = wordsString.split(',');
+					} else {
+						var wordArray = wordsString;
+					}
+					if (wordArray.length > 0) {
+						resStr += "<h6>Keywords</h6>"
+						var count = 0;
+						for (i = 0; i < (wordArray.length - 1); i++) {
+							resStr += wordArray[i]['content'] + ", ";
+							count++;
+						}
+						resStr += wordArray[count]['content'] + "<br />";
+					}
 			}
-
-			if(obj['orcid-bio']['researcher-urls'] && obj['orcid-bio']['researcher-urls'].length)
+		resStr += "</div>";
+			//return resStr;
+			if(obj['researcher-urls'] && obj['researcher-urls'].length)
 			{ 					    		
 				resStr +="<h6>Research URLs</h6>"
 				var count = 0;
-                if(obj['orcid-bio']['researcher-urls']['researcher-url']){
-                    for(i=0; i< (obj['orcid-bio']['researcher-urls']['researcher-url'].length -1);i++)
+                if(obj['researcher-urls']['researcher-url']){
+                    for(i=0; i< (obj['researcher-urls']['researcher-url'].length -1);i++)
                     {
-                        if(obj['orcid-bio']['researcher-urls']['researcher-url'][i]['url']!='')
-                            resStr += "URL : " + obj['orcid-bio']['researcher-urls']['researcher-url'][i]['url'] + "<br /> ";
-                        if(obj['orcid-bio']['researcher-urls']['researcher-url'][i]['url-name'])
-                            resStr += "URL Name : " + obj['orcid-bio']['researcher-urls']['researcher-url'][i]['url-name'] + "<br /> ";
+                        if(obj['researcher-urls']['researcher-url'][i]['url']!='')
+                            resStr += "URL : " + obj['researcher-urls']['researcher-url'][i]['url'] + "<br /> ";
+                        if(obj['researcher-urls']['researcher-url'][i]['url-name'])
+                            resStr += "URL Name : " + obj['researcher-urls']['researcher-url'][i]['url-name'] + "<br /> ";
                         count++;
                     }
                 }
                 if(count===0){
-                    if(obj['orcid-bio']['researcher-urls']['researcher-url']['url'])
+                    if(obj['researcher-urls']['researcher-url']['url'])
                     {
-                        if(obj['orcid-bio']['researcher-urls']['researcher-url']['url']!='')
-                            resStr += "URL : " + obj['orcid-bio']['researcher-urls']['researcher-url']['url'] + "<br />";
+                        if(obj['researcher-urls']['researcher-url']['url']!='')
+                            resStr += "URL : " + obj['researcher-urls']['researcher-url']['url'] + "<br />";
                     }
-                    if(obj['orcid-bio']['researcher-urls']['researcher-url']['url-name'])
+                    if(obj['researcher-urls']['researcher-url']['url-name'])
                     {
-                        if(obj['orcid-bio']['researcher-urls']['researcher-url']['url-name']!='')
-                            resStr += "URL Name : " + obj['orcid-bio']['researcher-urls']['researcher-url']['url-name'] + "<br />";
+                        if(obj['researcher-urls']['researcher-url']['url-name']!='')
+                            resStr += "URL Name : " + obj['researcher-urls']['researcher-url']['url-name'] + "<br />";
                     }
 
                 }else{
 
-                    if(obj['orcid-bio']['researcher-urls']['researcher-url'][count]['url'])
+                    if(obj['researcher-urls']['researcher-url'][count]['url'])
                     {
-                        if(obj['orcid-bio']['researcher-urls']['researcher-url'][count]['url']!='')
-                            resStr += "URL : " + obj['orcid-bio']['researcher-urls']['researcher-url'][count]['url'] + "<br />";
+                        if(obj['researcher-urls']['researcher-url'][count]['url']!='')
+                            resStr += "URL : " + obj['researcher-urls']['researcher-url'][count]['url'] + "<br />";
                     }
-                    if(obj['orcid-bio']['researcher-urls']['researcher-url'][count]['url-name'])
+                    if(obj['researcher-urls']['researcher-url'][count]['url-name'])
                     {
-                        if(obj['orcid-bio']['researcher-urls']['researcher-url'][count]['url-name']!='')
-                            resStr += "URL Name : " + obj['orcid-bio']['researcher-urls']['researcher-url'][count]['url-name'] + "<br />";
+                        if(obj['researcher-urls']['researcher-url'][count]['url-name']!='')
+                            resStr += "URL Name : " + obj['researcher-urls']['researcher-url'][count]['url-name'] + "<br />";
                     }
                 }
 			} 					    					    					    						    	
@@ -347,7 +355,7 @@
 		if($.trim(query)==""){
 			$('.orcid_search_result', p).html('Please enter a search string');
 		}else{
-			$('.orcid_search_result', p).html('Loading...');
+			$('.orcid_search_result', p).html(settings.search_loading_text);
 			$.ajax({
 				url:settings.search_endpoint+'?api_key='+settings.api_key+'&q='+encodeURIComponent(query)+'&start=0&rows=10&wt=json&callback=?',
 				dataType: 'jsonp',
@@ -357,12 +365,28 @@
 					}else{
 						if(data['orcid-search-results']){
 							var html='<ul>';
-							$.each(data['orcid-search-results']['orcid-search-result'], function(){
+							$.each(data['orcid-search-results'], function(){
 								var titleStr = "";
-								if(settings.tooltip) titleStr = 'title="'+_constructORCIDHTML(this['orcid-profile'],settings)+'"';
-								var orcid = this['orcid-profile']['orcid-identifier'].path;
-								var given = this['orcid-profile']['orcid-bio']['personal-details']['given-names'] || '';
-								var family = this['orcid-profile']['orcid-bio']['personal-details']['family-name'] || '';
+								this.person.orcid =  this.orcid;
+								var given = '';
+								var family = '';
+								if(settings.tooltip) titleStr = 'title="'+_constructORCIDHTML(this.person,settings)+'"';
+								var orcid = this.orcid;
+								if(this.person.name) {
+									if (this.person.name['given-names']) {
+										var given = this.person.name['given-names']['value'] || '';
+									} else {
+										var given = '';
+									}
+									if (this.person.name['family-name']) {
+										var family = this.person.name['family-name']['value'] || '';
+									} else {
+										var family = '';
+									}
+									if (family == '' && given == '' && this.person.name['credit-name']) {
+										given = this.person.name['credit-name']['value'];
+									}
+								}
 								html+='<li>';
 								html+='<a class="select_orcid_search_result preview" '+titleStr+' orcid-id="'+orcid+'">'+given+' '+family+'</a>';
 								html+='</li>';
@@ -373,11 +397,15 @@
 							$('.orcid_search_result', p).html(settings.nohits_msg);
 						}
 					}
-					$('.select_orcid_search_result', p).on('click', function(){
-						obj.val($(this).attr('orcid-id'));
-						_lookup(obj, settings);
-						if(settings.auto_close_search) _search_form(obj, settings);
-					});
+					if(settings.custom_select_handler && (typeof settings.custom_select_handler === 'function')) {
+						settings.custom_select_handler(data,obj,settings);
+					}else {
+						$('.select_orcid_search_result', p).on('click', function () {
+							obj.val($(this).attr('orcid-id'));
+							_lookup(obj, settings);
+							if (settings.auto_close_search) _search_form(obj, settings);
+						});
+					}
 					if(settings.tooltip){
 						$('.preview').each(function(){       
    								$(this).qtip({
@@ -440,3 +468,4 @@
     });
 
 })( jQuery );
+
