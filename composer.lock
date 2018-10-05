@@ -66,12 +66,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/au-research/ANDS-DOI-Service.git",
-                "reference": "31aad9784acaebd12fa9f7189632d4079e1d0f6c"
+                "reference": "66143f490d8b5710b3034ace2daa92d66338299c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/au-research/ANDS-DOI-Service/zipball/31aad9784acaebd12fa9f7189632d4079e1d0f6c",
-                "reference": "31aad9784acaebd12fa9f7189632d4079e1d0f6c",
+                "url": "https://api.github.com/repos/au-research/ANDS-DOI-Service/zipball/66143f490d8b5710b3034ace2daa92d66338299c",
+                "reference": "66143f490d8b5710b3034ace2daa92d66338299c",
                 "shasum": ""
             },
             "require": {
@@ -99,7 +99,7 @@
                 }
             ],
             "description": "ANDS DOI Service library",
-            "time": "2018-09-28T00:12:01+00:00"
+            "time": "2018-10-05T00:02:35+00:00"
         },
         {
             "name": "cebe/markdown",
