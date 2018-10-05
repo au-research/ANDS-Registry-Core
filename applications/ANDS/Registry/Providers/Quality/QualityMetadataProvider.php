@@ -71,9 +71,35 @@ class QualityMetadataProvider
             throw new MissingTitle("Registry Object 'name' must have a value");
         }
 
+        // if there's a name, must have a namePart
+        $nameParts = $sm->xpath('//ro:name/ro:namePart');
+        if (count($nameParts) === 0) {
+            throw new MissingTitle("Registry Object 'name' must have a value");
+        }
+
+        // nameParts must have a value
+        $strings = collect($nameParts)->map(function ($value) {
+            return (string)$value;
+        })->implode('');
+
+        if (!trim($strings)) {
+            throw new MissingTitle("Registry Object 'name' must have a value");
+        }
+
         // (collection only) must have a description
-        if ($class === "collection" && count($sm->xpath("//ro:description")) === 0) {
-            throw new MissingDescriptionForCollection("Collection must have a description");
+        if ($class === "collection") {
+            $descriptions = $sm->xpath("//ro:description");
+            if (count($descriptions) === 0) {
+                throw new MissingDescriptionForCollection("Collection must have a description");
+            }
+
+            $strings = collect($descriptions)->map(function ($value) {
+                return (string)$value;
+            })->implode('');
+
+            if (!trim($strings)) {
+                throw new MissingDescriptionForCollection("Collection must have a description");
+            }
         }
 
         // type must not be empty
@@ -334,9 +360,7 @@ class QualityMetadataProvider
                 "message" => "The " . ucfirst($record->class) . " must be related to at least one Collection record."
             ];
 
-            if (RelationshipProvider::hasRelatedClass($record,
-                    'collection') == false
-            ) {
+            if (RelationshipProvider::hasRelatedClass($record,'collection') == false) {
                 $passed = "fail";
                 $level_data['relatedObject'] = [
                     "passed" => "fail",
@@ -355,9 +379,7 @@ class QualityMetadataProvider
                 "message" => "The " . ucfirst($record->class) . " must be related to at least one Party record."
             ];
 
-            if (RelationshipProvider::hasRelatedClass($record,
-                    'party') == false
-            ) {
+            if (RelationshipProvider::hasRelatedClass($record,'party') == false) {
                 $passed = "fail";
                 $level_data['relatedObject'] = [
                     "passed" => "fail",
@@ -473,9 +495,7 @@ class QualityMetadataProvider
                 "message" => "It is recommended that the " . ucfirst($record->class) . " be related to at least one Activity record."
             ];
 
-            if (RelationshipProvider::hasRelatedClass($record,
-                    'activity') == false
-            ) {
+            if (RelationshipProvider::hasRelatedClass($record, 'activity') == false) {
                 $passed = "fail";
                 $level_data['relatedObject'] = [
                     "passed" => "fail",
@@ -491,9 +511,7 @@ class QualityMetadataProvider
                 "qa_id" => "REC_RELATED_OBJECT_COLLECTION",
                 "message" => "The " . ucfirst($record->class) . " must be related to at least one Collection record if available."
             ];
-            if (RelationshipProvider::hasRelatedClass($record,
-                    'collection') == false
-            ) {
+            if (RelationshipProvider::hasRelatedClass($record, 'collection') == false) {
                 $passed = "fail";
                 $level_data['relatedObject'] = [
                     "passed" => "fail",
@@ -529,9 +547,7 @@ class QualityMetadataProvider
                 "qa_id" => "REC_RELATED_OBJECT_ACTIVITY",
                 "message" => "The " . ucfirst($record->class) . " must be related to at least one Activity record where available."
             ];
-            if (RelationshipProvider::hasRelatedClass($record,
-                    'activity') == false
-            ) {
+            if (RelationshipProvider::hasRelatedClass($record, 'activity') == false) {
                 $passed = "fail";
                 $level_data['relatedObject'] = [
                     "passed" => "fail",
@@ -651,9 +667,7 @@ class QualityMetadataProvider
                 "qa_id" => "REC_RELATED_OBJECT_PARTY",
                 "message" => "It is recommended that the " . ucfirst($record->class) . " be related to at least one Party record."
             ];
-            if (RelationshipProvider::hasRelatedClass($record,
-                    'party') == false
-            ) {
+            if (RelationshipProvider::hasRelatedClass($record, 'party') == false) {
                 $passed = "fail";
                 $level_data['relatedObject'] = [
                     "passed" => "fail",

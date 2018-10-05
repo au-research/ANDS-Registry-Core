@@ -48,6 +48,13 @@
                     <description>A related info collection</description>
                 </relation>
             </relatedInfo>
+            <relatedInfo type="service">
+                <title>Related Info Service</title>
+                <identifier type="uri">http://www.smithy.com</identifier>
+                <relation type="hasAssociationWith">
+                    <description>A related info service</description>
+                </relation>
+            </relatedInfo>
             <existenceDates>
                 <startDate dateFormat="W3CDTF">2009</startDate>
                 <endDate dateFormat="W3CDTF">2009</endDate>

@@ -7,14 +7,24 @@ return [
     'elasticsearch_url' => env('ELASTICSEARCH_URL', 'http://localhost:9200/'),
     'socket_url' => env('SOCKET_URL', 'https://localhost:3001/'),
 
-    'api_whitelist_ip' => explode(',', env('API_WHITELIST_IP', '')),
+    'api_whitelist_ip' => env('API_WHITELIST_IP', ''),
     'timezone' => env("TIMEZONE", 'Australia/Canberra'),
+
+    'google_api_key' => env('GOOGLE_API_KEY', null),
 
     'storage' => [
         'test' => [
             'driver' => 'file',
             'path' => 'tests/resources'
         ]
+    ],
+
+    'harvester' => [
+        'url' => env('HARVESTER_URL', 'http://localhost:7020')
+    ],
+
+    'taskmanager' => [
+        'url' => env('TASKMANAGER_URL', 'http://localhost:7021')
     ],
 
     'cache' => [

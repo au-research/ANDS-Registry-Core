@@ -19,7 +19,7 @@
 	<div id="breadcrumb">
 		<div class="pull-right">
 			<span class="label"><i class="icon-question-sign icon-white"></i><a class="youtube" href="http://www.youtube.com/watch?v=cuVQfTyBbNk" style="color:white;" > New to this screen? Take a tour!</a></span>&nbsp;
-			<span class="label"><i class="icon-question-sign icon-white"></i> <a target="_blank" style="color:white;" href="http://services.ands.org.au/documentation/MMRHelp/"> Help</a></span>
+			<span class="label"><i class="icon-question-sign icon-white"></i> <a target="_blank" style="color:white;" href="https://documentation.ands.org.au/display/DOC/Manage+Records"> Help</a></span>
 		</div>
 		<?php echo anchor('/', '<i class="icon-home"></i> Home', array('class'=>'tip-bottom', 'title'=>'Go to Home'))?>
 		<?php echo anchor('data_source/manage/', 'Manage My Data Sources');?>
@@ -192,7 +192,7 @@
 				<span class="tag no-border-tag flag" tip="Flagged"><i class="icon icon-flag"></i></span>
 			{{/has_flag}}
 			{{#quality_level}}
-				<span class="tipQA" ro_id='{{id}}'><i class="icon icon-white icon-list-alt"/></span>
+				<span class="tipQA" ro_id='{{id}}'><i class="icon icon-list-alt"/></span>
 			{{/quality_level}}
 			{{#has_error}}
 				<a href="javascript:;" class="btn btn-mini btn-danger tipError" ro_id="{{id}}"><i class="icon-white icon-exclamation-sign"></i></a>

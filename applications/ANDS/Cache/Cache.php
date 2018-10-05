@@ -10,94 +10,26 @@ use Closure;
 class Cache
 {
     /**
-     * @param $key
-     * @return mixed|null
+     * @return AbstractCacheStorage
      */
-    public static function get($key)
+    public static function file()
     {
-        try {
-            return static::cache()->get($key);
-        } catch (\Exception $e) {
-            return null;
-        }
+        return static::driver('file');
     }
 
     /**
-     * @param $key
-     * @param $value
-     * @param $minutes
-     * @return bool
+     * @param $type
+     * @return AbstractCacheStorage
      */
-    public static function put($key, $value, $minutes)
-    {
-        return static::cache()->set($key, $value, $minutes * 60);
-    }
-
-    /**
-     * @param $key
-     * @return bool
-     */
-    public static function has($key)
-    {
-        return static::cache()->has($key);
-    }
-
-    /**
-     * @param $key
-     * @return bool
-     */
-    public static function forget($key)
-    {
-        return static::cache()->delete($key);
-    }
-
-    /**
-     * @param $key
-     * @param $minutes
-     * @param $callback
-     * @return mixed|null
-     */
-    public static function remember($key, $minutes, Closure $callback)
-    {
-        if (!static::isEnabled()) {
-            return $callback();
-        }
-
-        $value = static::cache()->get($key);
-
-        if (! is_null($value)) {
-            return $value;
-        }
-
-        $value = $callback();
-
-        static::cache()->set($key, $value, $minutes);
-
-        return $value;
-    }
-
-    /**
-     * @return bool
-     */
-    public static function flush()
-    {
-        return static::cache()->clear();
-    }
-
-    public static function isEnabled()
+    public static function driver($type)
     {
         $config = Config::get('app.cache');
 
-        return $config['enabled'];
-    }
+        if ($type === "file") {
+            $file = $config['storage']['file'];
+            return new FileCache($file['path'], $file['namespace'], $file['ttl']);
+        }
 
-    /**
-     * @return \Symfony\Component\Cache\Simple\AbstractCache
-     */
-    public static function cache()
-    {
-        $config = Config::get('app.cache');
-
-        return CacheManager::driver($config['default']);
+        return null;
     }
 }

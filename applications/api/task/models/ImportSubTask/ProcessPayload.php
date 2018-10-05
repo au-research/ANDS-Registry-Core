@@ -8,6 +8,7 @@ use ANDS\Registry\Providers\Quality\QualityMetadataProvider;
 use ANDS\RegistryObject;
 use ANDS\Repository\DataSourceRepository;
 use ANDS\Repository\RegistryObjectsRepository as Repo;
+use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\XMLUtil;
 
 class ProcessPayload extends ImportSubTask
@@ -79,38 +80,66 @@ class ProcessPayload extends ImportSubTask
         // originatingSource
 
         $key = trim((string) $registryObject->key);
-        // Let draft records through to save errors
-        // DRAFT records comes via manual entry
-        if ($this->parent()->getTaskData('targetStatus') != "DRAFT") {
-            try {
-                QualityMetadataProvider::validate($registryObject->saveXML());
-            } catch (\Exception $e) {
-                $this->addError("Error whilst ingesting record with key " . $key . ": " . get_exception_msg($e));
 
-                if ($e instanceof Exception\MissingGroup) {
-                    $this->parent()->incrementTaskData("missingGroupAttributeCount");
-                } elseif ($e instanceof Exception\MissingOriginatingSource) {
-                    $this->parent()->incrementTaskData("missingOriginatingSourceCount");
-                } elseif ($e instanceof Exception\MissingTitle) {
-                    $this->parent()->incrementTaskData("missingTitleCount");
-                } elseif ($e instanceof Exception\MissingType) {
-                    $this->parent()->incrementTaskData("missingTypeCount");
-                } elseif ($e instanceof Exception\MissingDescriptionForCollection) {
-                    $this->parent()->incrementTaskData("missingDescriptionCollectionCount");
-                }
+        try {
+            QualityMetadataProvider::validate($registryObject->saveXML());
+        } catch (\Exception $e) {
+            $this->addError("Error whilst ingesting record with key " . $key . ": " . get_exception_msg($e));
 
-                return false;
+            if ($e instanceof Exception\MissingGroup) {
+                $this->parent()->incrementTaskData("missingGroupAttributeCount");
+            } elseif ($e instanceof Exception\MissingOriginatingSource) {
+                $this->parent()->incrementTaskData("missingOriginatingSourceCount");
+            } elseif ($e instanceof Exception\MissingTitle) {
+                $this->parent()->incrementTaskData("missingTitleCount");
+            } elseif ($e instanceof Exception\MissingType) {
+                $this->parent()->incrementTaskData("missingTypeCount");
+            } elseif ($e instanceof Exception\MissingDescriptionForCollection) {
+                $this->parent()->incrementTaskData("missingDescriptionCollectionCount");
             }
+
+            // record failed validation, it's draft counterpart must not be deleted
+            // this happens for HandleStatusChange pipeline and targetStatus is PUBLISHED
+            $draftRecord = RegistryObjectsRepository::getDraftByKey($key);
+            $tobeDeleted = $this->parent()->getTaskData('deletedRecords');
+            if ($draftRecord && $tobeDeleted) {
+                $this->parent()->setTaskData("deletedRecords", collect($tobeDeleted)
+                    ->filter(function($id) use ($draftRecord){
+                        return $id != $draftRecord->id;
+                    })
+                );
+                $this->log("Removed id {$draftRecord->id} from deletion due to $key failed processing");
+            };
+
+            return false;
         }
+
+        // check if the draft record to be published has any errors (xslt errors)
+        $draftRecord = RegistryObjectsRepository::getDraftByKey($key);
+        if ($this->parent()->getTaskData('targetStatus') === "PUBLISHED"
+            && $draftRecord
+            && intval($draftRecord->getRegistryObjectAttributeValue("error_count")) > 0
+        ) {
+            $tobeDeleted = $this->parent()->getTaskData('deletedRecords');
+            $this->parent()->setTaskData("deletedRecords", collect($tobeDeleted)
+                ->filter(function($id) use ($draftRecord){
+                    return $id != $draftRecord->id;
+                })
+            );
+            $this->addError("Error whilst ingesting record with key " . $key . ": There are validation errors");
+            $this->log("Removed id {$draftRecord->id} from deletion due to $key failed processing");
+            return false;
+        }
+
         // check matching data source
         $matchingStatusRecord = Repo::getNotDeletedRecordFromOtherDataSourceByKey($key, $this->parent()->dataSourceID);
-        
+
         if ($matchingStatusRecord) {
             $this->log("Record key:($matchingStatusRecord->key) exists in a different data source");
             $this->parent()->incrementTaskData("recordsExistOtherDataSourceCount");
             return false;
         }
-        
+
         // find the current record data belongs to the record with the same status_group as the dataSourceDefaultStatus
         $matchingStatusRecord = Repo::getMatchingRecord(
             $key, $this->parent()
@@ -133,9 +162,9 @@ class ProcessPayload extends ImportSubTask
                 // @todo I can say something here for logging, already exists latest version
                 return false;
             }
-//            else {
-//                $this->log("New record data found for $matchingStatusRecord->key, ($hash and $newHash)");
-//            }
+            //            else {
+            //                $this->log("New record data found for $matchingStatusRecord->key, ($hash and $newHash)");
+            //            }
         }
 
         return true;
@@ -146,6 +175,12 @@ class ProcessPayload extends ImportSubTask
      */
     public function checkPayloadHarvestability()
     {
+        // Let draft records through to save errors
+        // DRAFT records comes via manual entry
+        if ($this->parent()->getTaskData('targetStatus') === "DRAFT") {
+            return;
+        }
+
         foreach ($this->parent()->getPayloads() as &$payload) {
             $path = $payload->getPath();
             $xml = $payload->getContentByStatus($this->payloadOutput);

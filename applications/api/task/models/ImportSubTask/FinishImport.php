@@ -11,10 +11,10 @@ namespace ANDS\API\Task\ImportSubTask;
 use ANDS\DataSource;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository as Repo;
+use Carbon\Carbon;
 
 class FinishImport extends ImportSubTask
 {
-
     private $harvestStarted;
     private $addToDatasourceLog = true;
 
@@ -29,6 +29,15 @@ class FinishImport extends ImportSubTask
             "datasourceRecordAfterCount",
             Repo::getCountByDataSourceIDAndStatus($this->parent()->dataSourceID,
                 $this->parent()->getTaskData("targetStatus")
+            )
+        );
+
+        // PUBLISHED count after harvest
+        $this->parent()->setTaskData(
+            "datasourcePublishedAfterCount",
+            Repo::getCountByDataSourceIDAndStatus(
+                $this->parent()->dataSourceID,
+                "PUBLISHED"
             )
         );
 

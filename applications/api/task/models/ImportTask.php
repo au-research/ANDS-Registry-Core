@@ -261,6 +261,7 @@ class ImportTask extends Task
                     "IndexRelationship",
                     "ProcessGraphRelationships",
                     "FinishImport",
+                    "WriteImportSummary"
                 ];
                 break;
             case "PublishingWorkflow":
@@ -342,7 +343,8 @@ class ImportTask extends Task
                 $tasks = [
                     "PopulateImportOptions",
                     "FinishImport",
-                    "ScheduleHarvest"
+                    "WriteImportSummary",
+                    "ScheduleHarvest",
                     //"Report"
                 ];
                 // error will not load payloads
@@ -394,7 +396,8 @@ class ImportTask extends Task
                     "ProcessAffectedRelationships",
                     "IndexRelationship",
                     "FinishImport",
-                    "ScheduleHarvest",
+                    "WriteImportSummary",
+                    "ScheduleHarvest"
                 ];
                 break;
         }
