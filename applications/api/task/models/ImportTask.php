@@ -351,6 +351,29 @@ class ImportTask extends Task
                 $this->skipLoadingPayload();
                 $this->setTaskData("skipLoadingPayload", true);
                 break;
+            case "ServiceDiscovery":
+                $tasks = [
+                    "ServiceDiscovery",
+                    "CreateServiceRecords",
+                    "PopulateImportOptions",
+                    "ValidatePayload",
+                    "ProcessPayload",
+                    "Ingest",
+                    "ProcessCoreMetadata",
+                    "ProcessIdentifiers",
+                    "ProcessLinks",
+                    "ProcessRelationships",
+                    "ProcessGraphRelationships",
+                    "ProcessGrantsRelationship",
+                    "ProcessQualityMetadata",
+                    "IndexPortal",
+                    "PopulateAffectedList",
+                    "ProcessScholix",
+                    "ProcessAffectedRelationships",
+                    "IndexRelationship",
+                    "FinishImport",
+                ];
+                break;
             case "default":
             default:
                 $tasks = [
@@ -372,7 +395,6 @@ class ImportTask extends Task
                     "ProcessScholix",
                     "ProcessAffectedRelationships",
                     "IndexRelationship",
-                    "ServiceDiscovery",
                     "FinishImport",
                     "WriteImportSummary",
                     "ScheduleHarvest"

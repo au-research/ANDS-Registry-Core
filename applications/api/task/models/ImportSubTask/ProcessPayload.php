@@ -133,13 +133,13 @@ class ProcessPayload extends ImportSubTask
 
         // check matching data source
         $matchingStatusRecord = Repo::getNotDeletedRecordFromOtherDataSourceByKey($key, $this->parent()->dataSourceID);
-        
+
         if ($matchingStatusRecord) {
             $this->log("Record key:($matchingStatusRecord->key) exists in a different data source");
             $this->parent()->incrementTaskData("recordsExistOtherDataSourceCount");
             return false;
         }
-        
+
         // find the current record data belongs to the record with the same status_group as the dataSourceDefaultStatus
         $matchingStatusRecord = Repo::getMatchingRecord(
             $key, $this->parent()
@@ -162,9 +162,9 @@ class ProcessPayload extends ImportSubTask
                 // @todo I can say something here for logging, already exists latest version
                 return false;
             }
-//            else {
-//                $this->log("New record data found for $matchingStatusRecord->key, ($hash and $newHash)");
-//            }
+            //            else {
+            //                $this->log("New record data found for $matchingStatusRecord->key, ($hash and $newHash)");
+            //            }
         }
 
         return true;

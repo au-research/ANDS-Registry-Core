@@ -11,11 +11,10 @@ class ServiceDiscoveryTest extends \RegistryTestClass
     /** @test **/
     public function test_get_links_for_datasource() {
 
-        $links = ServiceDiscovery::getServiceLinksForDatasource(52);
+        $links = ServiceDiscovery::getServiceLinksForDatasource(12);
 //        $this->assertEquals(1756, count($links));
         $links = ServiceDiscovery::processLinks($links);
         $links = ServiceDiscovery::formatLinks($links);
-
         $this->assertNotEmpty($links);
     }
 

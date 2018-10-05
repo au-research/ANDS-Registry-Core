@@ -164,6 +164,8 @@ class _ro
         $db = $ci->load->database('portal', true);
 
         $result = $db->get_where('record_stats', array('ro_id' => $this->core['id']));
+        if($result == null)
+            return array();
         if ($result->num_rows() == 0) {
             //create if not exist
             $data = array(
@@ -173,8 +175,7 @@ class _ro
             $db->insert('record_stats', $data);
             $result = $db->get_where('record_stats', array('ro_id' => $this->core['id']));
         }
-        $result_array = $result->result_array();
-        return $result_array[0];
+        return $result->result_array();
     }
 
     /**
