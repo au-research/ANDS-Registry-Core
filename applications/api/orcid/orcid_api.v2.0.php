@@ -43,12 +43,16 @@ class Orcid_api
             foreach ($content['result'] as $orcid) {
                 $publicClient = ORCIDAPI::getPublicClient();
                 $orcidID = $orcid['orcid-identifier']['path'];
-                $extracted = Cache::file()->rememberForever("orcid.$orcidID", function () use ($publicClient, $orcidID) {
-                    $orcid_info = $publicClient->get($orcidID);
-                    $result = json_decode($orcid_info->getBody()->getContents(), true);
-                    return $result;
-                });
-                $result['orcid-search-results'][] = array("person" => $extracted['person'], "orcid" => $orcid['orcid-identifier']['path']);
+                try {
+                    $extracted = Cache::file()->rememberForever("orcid.$orcidID", function () use ($publicClient, $orcidID) {
+                        $orcid_info = $publicClient->get($orcidID);
+                        $result = json_decode($orcid_info->getBody()->getContents(), true);
+                        return $result;
+                    });
+                    $result['orcid-search-results'][] = array("person" => $extracted['person'], "orcid" => $orcid['orcid-identifier']['path']);
+                } catch (\Exception $e) {
+                    continue;
+                }
             }
             return $result;
         });

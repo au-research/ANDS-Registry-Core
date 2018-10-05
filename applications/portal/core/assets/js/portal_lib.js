@@ -15211,14 +15211,13 @@ app.config(function($interpolateProvider, $locationProvider, $logProvider){
 	$logProvider.debugEnabled(true);
 });
 
-
-app.config(function(uiGmapGoogleMapApiProvider) {
-    uiGmapGoogleMapApiProvider.configure({
-        //    key: 'your api key',
-        v: '3.17',
-        libraries: 'weather,drawing,geometry,visualization'
-    });
-});;angular.module('portal-filters', [])
+app.config(function (uiGmapGoogleMapApiProvider) {
+  uiGmapGoogleMapApiProvider.configure({
+    key: google_api_key,
+    v: '3.17',
+    libraries: 'weather,drawing,geometry,visualization'
+  })
+});angular.module('portal-filters', [])
 	.filter('filter_name', function(){
 		return function(text) {
 			switch(text) {
@@ -16037,6 +16036,11 @@ app.directive('mappreview', function($log, uiGmapGoogleMapApi){
 
 					var mapDim = {height:200,width:328};
 					src +='&zoom='+getBoundsZoomLevel(bounds, mapDim);
+
+					// key
+					if (google_api_key) {
+            src +="&key="+google_api_key
+					}
 
 					scope.static_img_src = src;
 					// $log.debug(src);
