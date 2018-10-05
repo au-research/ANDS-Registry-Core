@@ -20,10 +20,15 @@ function class_name($text) {
 }
 
 function profile_image() {
+
 	$ci =& get_instance();
 	if ($ci->user->loggedIn()) {
 		$role_db = $ci->load->database('roles', TRUE);
 		$result = $role_db->get_where('roles', array('role_id'=>$ci->user->localIdentifier()));
+
+		if($result == null)
+			return false;
+
 		if ($result->num_rows() > 0) {
 			$r = $result->first_row();
 			if ($r->oauth_data) {

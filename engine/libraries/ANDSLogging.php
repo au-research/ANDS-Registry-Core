@@ -212,6 +212,6 @@ class ANDSLogging
                 $result[] = $parent->role_id;
             }
         }
-        return $result;
+        return array();
     }
 }
