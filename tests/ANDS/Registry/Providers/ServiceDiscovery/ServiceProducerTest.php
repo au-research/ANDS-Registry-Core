@@ -26,6 +26,8 @@ class ServiceProducerTest extends \RegistryTestClass
     /** @test */
     public function test_get_rif_from_services_json()
     {
+        $this->markTestSkipped("Require better test data");
+
         $sJson = Storage::disk('test')->get('servicesDiscovery/services.json');
         $serviceProducer = new ServiceProducer(\ANDS\Util\Config::get('app.services_registry_url'));
         $serviceProducer->processServices($sJson);
