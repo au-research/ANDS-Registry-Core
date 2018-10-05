@@ -67,10 +67,10 @@ class Task
 
         $this->hook_start();
 
-        if ($this->getStatus() === "STOPPED") {
-            $this->log("Task is STOPPED");
-            return;
-        }
+//        if ($this->getStatus() === "STOPPED") {
+//            $this->log("Task is STOPPED");
+//            return;
+//        }
 
         $this
             ->setStatus('RUNNING')
