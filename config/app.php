@@ -12,6 +12,8 @@ return [
 
     'google_api_key' => env('GOOGLE_API_KEY', null),
 
+    'services_registry_url' => env('SERVICES_DISCOVERY_SERVICE_URL', null),
+
     'storage' => [
         'test' => [
             'driver' => 'file',
