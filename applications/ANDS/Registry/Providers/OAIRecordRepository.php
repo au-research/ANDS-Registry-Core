@@ -143,7 +143,7 @@ class OAIRecordRepository implements OAIRepository
         foreach ($records as $record) {
             $oaiRecord = new Record(
                 $this->oaiIdentifierPrefix.$record->id,
-                DatesProvider::getCreatedDate($record, $this->getDateFormat())
+                DatesProvider::getUpdatedAt($record, $this->getDateFormat())
             );
 
             // set

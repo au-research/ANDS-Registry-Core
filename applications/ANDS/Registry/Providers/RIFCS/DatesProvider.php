@@ -338,5 +338,10 @@ class DatesProvider implements RIFCSProvider
         $record->save();
     }
 
+    public static function getUpdatedAt($record, $getDateFormat)
+    {
+        return Carbon::parse($record->updated_at)->format($getDateFormat);
+    }
+
 
 }
