@@ -119,7 +119,7 @@ class XMLUtil
 
         if (strpos($xml, '<registryObjects') === false) {
             if ($includeXMLDeclaration) {
-                $return = '<?xml version="1.0" encoding="UTF-8"?>';
+                $return = '<?xml version="1.0" encoding="UTF-8"?><registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">';
             } else {
                 $return = '<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">' . NL;
             }

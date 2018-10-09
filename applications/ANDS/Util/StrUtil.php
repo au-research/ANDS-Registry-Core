@@ -69,6 +69,11 @@ class StrUtil
         return $str;
     }
 
+    public static function xmlSafe($str)
+    {
+        return str_replace('&', '&amp;', $str);
+    }
+
     public static function escape($str)
     {
         return strip_slashes($str);
