@@ -110,13 +110,19 @@ class XMLUtil
 
     /**
      * @param $xml
+     * @param bool $includeXMLDeclaration
      * @return string
      */
-    public static function wrapRegistryObject($xml)
+    public static function wrapRegistryObject($xml, $includeXMLDeclaration = true)
     {
         $return = $xml;
+
         if (strpos($xml, '<registryObjects') === false) {
-            $return = '<?xml version="1.0" encoding="UTF-8"?>' . NL . '<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">' . NL;
+            if ($includeXMLDeclaration) {
+                $return = '<?xml version="1.0" encoding="UTF-8"?>';
+            } else {
+                $return = '<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">' . NL;
+            }
             $return .= $xml;
             $return .= '</registryObjects>';
         }

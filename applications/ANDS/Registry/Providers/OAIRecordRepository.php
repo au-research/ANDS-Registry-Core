@@ -15,12 +15,13 @@ use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\XMLUtil;
 use Carbon\Carbon;
 use DCIMethod;
-use MinhD\OAIPMH\Exception\BadArgumentException;
-use MinhD\OAIPMH\Exception\CannotDisseminateFormat;
-use MinhD\OAIPMH\Exception\IdDoesNotExistException;
-use MinhD\OAIPMH\Interfaces\OAIRepository;
-use MinhD\OAIPMH\Record;
-use MinhD\OAIPMH\Set;
+use ANDS\OAI\Exception\BadArgumentException;
+use ANDS\OAI\Exception\CannotDisseminateFormat;
+use ANDS\OAI\Exception\IdDoesNotExistException;
+use ANDS\OAI\Interfaces\OAIRepository;
+use ANDS\OAI\Exception\OAIException;
+use ANDS\OAI\Record;
+use ANDS\OAI\Set;
 
 class OAIRecordRepository implements OAIRepository
 {
@@ -242,7 +243,7 @@ class OAIRecordRepository implements OAIRepository
             $metadata = "<registryObject />";
             $recordMetadata = MetadataProvider::getSelective($record, ['recordData']);
             if (array_key_exists('recordData', $recordMetadata)) {
-                $metadata = XMLUtil::unwrapRegistryObject($recordMetadata['recordData']);
+                $metadata = XMLUtil::wrapRegistryObject(XMLUtil::unwrapRegistryObject($recordMetadata['recordData']), false);
             }
             $oaiRecord->setMetadata($metadata);
         } elseif ($metadataFormat == "oai_dc") {
@@ -507,5 +508,13 @@ class OAIRecordRepository implements OAIRepository
             $oaiRecord->addSet($set);
         }
         return $oaiRecord;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFormats()
+    {
+        return $this->formats;
     }
 }
