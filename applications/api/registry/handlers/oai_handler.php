@@ -4,8 +4,8 @@ namespace ANDS\API\Registry\Handler;
 
 use ANDS\Cache\Cache;
 use ANDS\Registry\Providers\OAIRecordRepository;
-use MinhD\OAIPMH\Exception\BadArgumentException;
-use MinhD\OAIPMH\ServiceProvider;
+use ANDS\OAI\Exception\BadArgumentException;
+use ANDS\OAI\ServiceProvider;
 
 class OaiHandler extends Handler
 {
@@ -16,20 +16,17 @@ class OaiHandler extends Handler
     {
         $this->getParentAPI()->providesOwnResponse();
         $options = $_GET;
-        return Cache::file()->remember('oai.' . md5(json_encode($options)), static::$cacheDuration,
-            function () use ($options) {
-                return $this->handleOAIRequest($options);
-            });
+        return $this->handleOAIRequest($options);
     }
 
     /**
      * Handle the OAI Request
-     * Using MinhD\OAIPMH\ServiceProvider
+     * Using ANDS\OAI\ServiceProvider
      *
      * @param $options
      * @return string
      */
-    private function handleOAIRequest($options)
+    public function handleOAIRequest($options)
     {
         $provider = new ServiceProvider(
             new OAIRecordRepository()
