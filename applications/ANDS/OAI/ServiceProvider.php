@@ -3,6 +3,7 @@
 namespace ANDS\OAI;
 
 use ANDS\Commands\Script\ProcessScholix;
+use ANDS\OAI\Exception\CannotDisseminateFormat;
 use ANDS\OAI\Exception\OAIException;
 use Carbon\Carbon;
 use DOMDocument;
@@ -399,6 +400,12 @@ class ServiceProvider
         }
 
         $options = $this->collectOptions();
+
+        $validPrefixes = array_keys($this->repository->getFormats());
+        if (!in_array($this->options['metadataPrefix'], $validPrefixes)) {
+            throw new CannotDisseminateFormat();
+        }
+
 
         $records = $this->repository->listRecords($options);
         if (count($records['records']) == 0) {

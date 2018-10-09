@@ -12,6 +12,7 @@ interface OAIRepository
     public function listRecordsByToken($token);
     public function listMetadataFormats($identifier = null);
     public function listIdentifiers($options);
+    public function getFormats();
 
     // helper
     public function getDateFormat();
