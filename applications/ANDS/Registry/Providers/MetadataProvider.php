@@ -4,6 +4,8 @@
 namespace ANDS\Registry\Providers;
 
 
+use ANDS\Registry\Connections;
+use ANDS\Registry\RelationshipView;
 use ANDS\RegistryObject;
 use ANDS\Util\XMLUtil;
 
@@ -100,6 +102,20 @@ class MetadataProvider implements RegistryContentProvider
         return $results;
     }
 
+    public static function getAddress(RegistryObject $record, $xml = null)
+    {
+        $xml = $xml ? $xml : $record->getCurrentData()->data;
+
+        $results = [];
+        foreach (XMLUtil::getElementsByXPath($xml, '//ro:address/ro:electronic') as $electronic) {
+            $results[] = [
+                'type' => (string) $electronic['type'],
+                'value' => (string) $electronic->value
+            ];
+        }
+        return $results;
+    }
+
     public static function getCoverages(RegistryObject $record, $xml = null)
     {
         $xml = $xml ? $xml : $record->getCurrentData()->data;
@@ -148,9 +164,18 @@ class MetadataProvider implements RegistryContentProvider
         $results = [];
         foreach (XMLUtil::getElementsByXPath($xml, $xpath) AS $element) {
             $results[] = [
-                'rightsStatement' => [],
-                'licence' => [],
-                'accessRights' => []
+                'rightsStatement' => [
+                    'uri' => (string) $element->rightsStatement['rightsUri'],
+                    'value' => (string) $element->rightsStatement
+                ],
+                'licence' => [
+                    'uri' => (string) $element->licence['rightsUri'],
+                    'value' => (string) $element->licence
+                ],
+                'accessRights' => [
+                    'uri' => (string) $element->accessRights['rightsUri'],
+                    'value' => (string) $element->accessRights
+                ]
             ];
         };
         return $results;
@@ -164,12 +189,181 @@ class MetadataProvider implements RegistryContentProvider
      */
     public static function getRelatedInfoTypes(RegistryObject $record, $simpleXML = null)
     {
-        $simpleXML = $simpleXML ? $simpleXML : XMLUtil::getSimpleXMLFromString($record->getCurrentData()->data);
+        $simpleXML = $simpleXML ? $simpleXML : MetadataProvider::getSimpleXML($record);
 
         $relatedInfoTypes = [];
         foreach ($simpleXML->xpath("//ro:relatedInfo/@type") as $type) {
             $relatedInfoTypes[] = (string) $type;
         }
         return $relatedInfoTypes;
+    }
+
+    /**
+     * Get publisher for the record
+     * Spec for DCI
+     * @param RegistryObject $record
+     * @param null $simpleXML
+     * @return string
+     * @throws \Exception
+     */
+    public static function getPublisher(RegistryObject $record, $simpleXML = null)
+    {
+        /**
+         * registryObject:collection:citationInfo:citationMetadata:publisher
+            OR registryObject@Group
+         */
+        $simpleXML = $simpleXML ? $simpleXML : MetadataProvider::getSimpleXML($record);
+
+        // registryObject:collection:citationInfo:citationMetadata:publisher
+        $publisher = $simpleXML->xpath('//ro:citationInfo/ro:citationMetadata/ro:publisher');
+        if (count($publisher) > 0 && $elem = array_pop($publisher)) {
+            return (string) $elem;
+        }
+
+        return $record->group;
+    }
+
+    /**
+     * @param RegistryObject $record
+     * @param null $simpleXML
+     * @return null|string
+     * @throws \Exception
+     */
+    public static function getVersion(RegistryObject $record, $simpleXML = null)
+    {
+        $simpleXML = $simpleXML ? $simpleXML : MetadataProvider::getSimpleXML($record);
+
+        // registryObject:collection:citationInfo:citationMetadata:version
+        $version = $simpleXML->xpath('//ro:citationInfo/ro:citationMetadata/ro:version');
+        if (count($version) > 0 && $elem = array_pop($version)) {
+            return (string) $elem;
+        }
+
+        return null;
+    }
+
+    /**
+     * Get the Source URL for a record
+     * Spec for DCI
+     *
+     * @param RegistryObject $record
+     * @param null $simpleXML
+     * @return array|null
+     * @throws \Exception
+     */
+    public static function getSourceURL(RegistryObject $record, $simpleXML = null)
+    {
+        /**
+         *registryObject:collection:citationInfo:citationMetadata:identifier: type="doi"
+        OR registryObject:collection:citationInfo:citationMetadata:identifier: type="handle"
+        OR registryObject:collection:citationInfo:citationMetadata:identifier: type="uri"
+        OR registryObject:collection:citationInfo:citationMetadata:identifier: type="purl"
+        OR registryObject:collection:identifier:type="doi"
+        OR registryObject:collection:identifier:type="handle"
+        OR registryObject:collection:identifier:type="uri"
+        OR registryObject:collection:identifier:type="purl"
+        OR registryObject:collection:citationInfo:citationMetadata:identifier: type="url"
+        OR registryObject:collection:location:address:electronic:type="url"
+         */
+        $simpleXML = $simpleXML ? $simpleXML : MetadataProvider::getSimpleXML($record);
+
+        $xpaths = [
+            "//ro:citationMetadata/ro:identifier[@type='doi']",
+            "//ro:citationMetadata/ro:identifier[@type='handle']",
+            "//ro:citationMetadata/ro:identifier[@type='uri']",
+            "//ro:citationMetadata/ro:identifier[@type='purl']",
+            "//ro:collection/ro:identifier[@type='doi']",
+            "//ro:collection/ro:identifier[@type='handle']",
+            "//ro:collection/ro:identifier[@type='uri']",
+            "//ro:collection/ro:identifier[@type='purl']",
+            "//ro:citationMetadata/ro:identifier[@type='url']",
+            "//ro:location/ro:address/ro:electronic[@type='url']",
+        ];
+
+        foreach ($xpaths as $xpath) {
+            $source = $simpleXML->xpath($xpath);
+            if (count($source) && $elem = array_pop($source)) {
+                $value = (string) $elem;
+                if (trim($value) == "") {
+                    continue;
+                }
+                return [
+                    'type' => (string)$elem['type'],
+                    'value' => $value
+                ];
+            }
+        }
+
+        return null;
+    }
+
+    public static function getAuthors(RegistryObject $record, $simpleXML = null)
+    {
+        $simpleXML = $simpleXML ? $simpleXML : MetadataProvider::getSimpleXML($record);
+
+        /**
+         * registryObject:collection:citationInfo:citationMetadata:contributor
+        OR relatedObject:Party:name:relationType=IsPrincipalInvestigatorOf
+        OR relatedObject:Party:name:relationType=author
+        OR relatedObject:Party:name:relationType=coInvestigator
+        OR relatedObject:Party:name:relationType=isOwnedBy
+        OR relatedObject:Party:name:relationType=hasCollector
+        OR registryObject@Group
+         */
+
+        $authors = [];
+
+        $author = $simpleXML->xpath('//ro:citationInfo/ro:citationMetadata/ro:contributor');
+        if (count($author) > 0 && $elem = array_pop($author)) {
+            // TODO format name by namepart type
+            $authors[] = [
+                'relation' => 'Contributor',
+                'name' => (string) $elem,
+                'id' => null
+            ];
+        }
+
+        $validRelationTypes = ['IsPrincipalInvestigatorOf', 'author', 'coInvestigator', 'isOwnedBy', 'hasCollector'];
+
+        // direct
+        $direct = RelationshipView::where('from_id', $record->id)
+            ->whereIn('relation_type', $validRelationTypes)
+            ->take(50)->get();
+        foreach ($direct as $relation) {
+            $authors[] = [
+                'relation' => $relation['relation_type'],
+                'name' => (string) $relation['to_title'],
+                'id' => $relation['to_id']
+            ];
+        }
+
+        // reverse
+        $reverse = RelationshipView::where('to_key', $record->key)
+            ->whereIn('relation_type', $validRelationTypes)
+            ->take(50)->get();
+        foreach ($reverse as $relation) {
+            $authors[] = [
+                'relation' => $relation['relation_type'],
+                'name' => (string) $relation['from_title'],
+                'id' => $relation['from_id']
+            ];
+        }
+
+        // TODO registryObject@Group
+
+        return $authors;
+    }
+
+    /**
+     * Useful helper function to get simplexml for a record
+     * Use for fallback when simplexml is not provided
+     *
+     * @param RegistryObject $record
+     * @return \SimpleXMLElement
+     * @throws \Exception
+     */
+    public static function getSimpleXML(RegistryObject $record)
+    {
+        return XMLUtil::getSimpleXMLFromString($record->getCurrentData()->data);
     }
 }
