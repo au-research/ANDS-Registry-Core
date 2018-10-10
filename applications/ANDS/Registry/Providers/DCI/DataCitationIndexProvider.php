@@ -7,8 +7,12 @@ namespace ANDS\Registry\Providers\DCI;
 use ANDS\Registry\Providers\MetadataProvider;
 use ANDS\Registry\Providers\RegistryContentProvider;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
+use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
+use ANDS\Registry\Providers\ScholixProvider;
 use ANDS\RegistryObject;
+use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\StrUtil;
+use ANDS\Util\XMLUtil;
 use SimpleXMLElement;
 
 class DataCitationIndexProvider implements RegistryContentProvider
@@ -18,7 +22,13 @@ class DataCitationIndexProvider implements RegistryContentProvider
 
     public $record;
     public $dom;
+
+    /** @var SimpleXMLElement */
     public $DCIRoot;
+
+    /** @var SimpleXMLElement */
+    public $xml;
+
     public $gXPath;
 
     /**
@@ -45,12 +55,15 @@ class DataCitationIndexProvider implements RegistryContentProvider
         $provider->DCIRoot = new SimpleXMLElement("<DataRecord></DataRecord>");
         $provider->dom = dom_import_simplexml($provider->DCIRoot);
 
+        $xml = $record->getCurrentData()->data;
+
         // gxpath
         $rifDom = new \DOMDocument();
-        $rifDom->loadXML($record->getCurrentData()->data);
+        $rifDom->loadXML($xml);
         $provider->gXPath = new \DOMXpath($rifDom); // TODO
         $provider->gXPath->registerNamespace('ro', 'http://ands.org.au/standards/rif-cs/registryObjects');
 
+        $provider->sxml = XMLUtil::getSimpleXMLFromString($xml);
 
         $dci = $provider->getDCI();
 
@@ -83,9 +96,9 @@ class DataCitationIndexProvider implements RegistryContentProvider
 
     private function getDCI() {
         $this->getHeader();
-        $this->getBibliographicData($this->getSourceUrl());
+        $this->getBibliographicData();
         $this->getAbstract();
-//        $this->getRightsAndLicencing();
+        $this->getRightsAndLicencing();
 //        $this->getParentDataRef();
 //        $this->getDescriptorsData();
 //        $this->getFundingInfo();
@@ -99,176 +112,82 @@ class DataCitationIndexProvider implements RegistryContentProvider
     {
         $header = $this->DCIRoot->addChild('Header');
         $header->addChild('DateProvided', date('Y-m-d', time()));
-        $header->addChild('RepositoryName', str_replace('&', '&amp;', $this->record->group));
-        $header->addChild('Owner', str_replace('&', '&amp;', $this->record->group));
-        $header->addChild('RecordIdentifier', str_replace('&', '&amp;', $this->record->key));
+        $header->addChild('RepositoryName', StrUtil::xmlSafe($this->record->group));
+        $header->addChild('Owner', StrUtil::xmlSafe($this->record->group));
+        $header->addChild('RecordIdentifier', StrUtil::xmlSafe($this->record->key));
     }
 
-    private function getBibliographicData($sourceUrl)
+    /**
+     * @throws \Exception
+     */
+    private function getBibliographicData()
     {
         $bibliographicData = $this->DCIRoot->addChild('BibliographicData');
-//        $authorList = $bibliographicData->addChild('AuthorList');
-//        $this->getAuthors($authorList); // TODO
+
+        // BibliographicData/TitleList/ItemTitle
+        // BibliographicData/TitleList/ItemTitle@TitleType
         $titleList = $bibliographicData->addChild('TitleList');
-        $title = $titleList->addChild("ItemTitle", str_replace('&', '&amp;', $this->record->title));
+        $title = $titleList->addChild("ItemTitle", StrUtil::xmlSafe($this->record->title));
         $title['TitleType'] = "English title";
+
+        // BibliographicData/AuthorList/Author
+        $authors = MetadataProvider::getAuthors($this->record, $this->sxml);
+        $authorList = $bibliographicData->addChild('AuthorList');
+        $seq = 1;
+        foreach ($authors as $author) {
+            $authorElement = $authorList->addChild("Author");
+            $authorElement['seq'] = $seq++;
+            $authorElement['AuthorRole'] = format_relationship($this->record->class, $author['relation'], "EXPLICIT", 'party');
+            $authorElement->addChild('AuthorName', $author['name']);
+
+            $party = RegistryObjectsRepository::getRecordByID($author['id']);
+            if (!$party) {
+                continue;
+            }
+
+            foreach ($addresses = MetadataProvider::getAddress($party) as $address) {
+                // BibliographicData/AuthorList/Author/AuthorEmail
+                if ($address['type'] === 'email') {
+                    $authorElement->addChild('AuthorEmail', $address['value']);
+                }
+
+                // TODO BibliographicData/AuthorList/Author/AuthorAddress
+            }
+
+            // BibliographicData/AuthorList/Author/AuthorID
+            foreach ($identifiers = IdentifierProvider::get($party) as $identifier) {
+                $authorID = $authorElement->addChild('AuthorID', $identifier['value']);
+                $authorID['type'] = $identifier['type'];
+            }
+        }
+
+        // BibliographicData/Source
         $source = $bibliographicData->addChild('Source');
 
-        $source->addChild("SourceURL", str_replace('&', '&amp;', $sourceUrl));
-//        $source->addChild("SourceRepository" , str_replace('&', '&amp;',$this->citation_handler->getPublisher())); // TODO
+        // BibliographicData/Source/SourceURL
+        $sourceURL = MetadataProvider::getSourceURL($this->record, $this->sxml);
+        // TODO format url based on the type (probably)
+        $source->addChild("SourceURL", StrUtil::xmlSafe($sourceURL['value']));
 
+        // BibliographicData/Source/Publisher
+        $publisher = MetadataProvider::getPublisher($this->record, $this->sxml);
+        $source->addChild("SourceRepository" , StrUtil::xmlSafe($publisher));
+
+        // BibliographicData/Source/CreatedDate
         if($publicationDate = DatesProvider::getPublicationDate($this->record)) {
             $source->addChild("CreatedDate" , $publicationDate);
         }
-        // TODO
-//        $version  = $this->citation_handler->getVersion();
-//        if($version) {
-//            $source->addChild("Version" , $version);
-//        }
 
+        // BibliographicData/Source/Version
+        if ($version = MetadataProvider::getVersion($this->record, $this->sxml)) {
+            $source->addChild("Version" , $version);
+        }
+
+        // BibliographicData/LanguageList/Language
         $languageList = $bibliographicData->addChild('LanguageList');
         $languageList->addChild("Language", "English");
     }
 
-    private function getAuthors($authorList){
-        $seq = 0;
-        $tempered = false;
-        if(count($this->xml->xpath('//citationMetadata/contributor')) > 0){
-            foreach($this->xml->xpath('//citationMetadata/contributor') as $contributor){
-                $nameParts = Array();
-                foreach($contributor->namePart as $namePart){
-                    $nameParts[] = array(
-                        'namePart_type' => (string)$namePart['type'],
-                        'name' => (string)$namePart
-                    );
-                }
-                $eAuthor = $authorList->addChild("Author");
-                $cSeq = intval((string)$contributor['seq']);
-                if($cSeq == 0  || $cSeq == '') // if empty or 0 we have to increment the sequence in-house
-                {
-                    $cSeq = ++$seq;
-                    $tempered = true; // was dirty so we're fixin it
-                }
-                elseif($cSeq <= $seq && $tempered == true) // if this number is less than seq AND we are fixin in
-                {
-                    $cSeq = ++$seq;
-                }
-                if($cSeq > $seq){
-                    $seq = $cSeq; //store the largest current sequence number
-                }
-
-
-                $eAuthor['seq'] = $cSeq;
-
-                $eAuthor['AuthorRole'] = "Contributor";
-                $eAuthor->addChild('AuthorName', str_replace('&', '&amp;',formatName($nameParts)));
-            }
-        }
-        else{
-            $forDCI = true;
-            $relationshipTypeArray = array('IsPrincipalInvestigatorOf','hasPrincipalInvestigator','principalInvestigator','author','coInvestigator','isOwnedBy','hasCollector');
-            $classArray = array('party');
-            $authors = $this->ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray, $forDCI);
-            if($authors)
-            {
-                $seq = 1;
-                foreach($authors as $author)
-                {
-                    $eAuthor = $authorList->addChild("Author");
-                    $eAuthor['seq'] = $seq++;
-                    //return format_relationship($class, $relationshipText, $altered,$to_class);
-                    $eAuthor['AuthorRole'] = format_relationship("collection",(string)$author["relation_type"], (string)$author['origin'], 'party');
-                    $eAuthor->addChild('AuthorName', $author['title']);
-                    if(isset($author['addresses']))
-                    {
-                        $authorAddress = $eAuthor->addChild('AuthorAddress');
-                        foreach($author['addresses'] as $addr){
-                            $authorAddress->addChild('AddressString', str_replace('&', '&amp;',(string) $addr));
-                            break;
-                        }
-                    }
-                    if(isset($author['electronic_addresses']))
-                    {
-                        foreach($author['electronic_addresses'] as $addr){
-                            $eAuthor->addChild('AuthorEmail', str_replace('&', '&amp;', (string) $addr));
-                            break;
-                        }
-                    }
-                    if(isset($author['identifiers']) && sizeof($author['identifiers'] > 0))
-                    {
-                        foreach($author['identifiers'] as $id){
-                            $authorId = $eAuthor->addChild('AuthorID', trim(str_replace('&', '&amp;', $id[0])));
-                            $authorId['type'] = $id[1];
-                        }
-                    }
-                }
-            }
-            else{
-                $eAuthor = $authorList->addChild("Author");
-                $eAuthor['seq'] = '1';
-                $eAuthor->addChild('AuthorName', str_replace('&', '&amp;', $this->ro->group));
-            }
-        }
-    }
-
-
-    private function getSourceUrl($output = null)
-    {
-        $sourceUrl = '';
-        $query = '';
-        if($this->gXPath->evaluate("count(//ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='doi'])")>0) {
-            $query = "//ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='doi']";
-            $type = 'doi';
-        }
-        elseif($this->gXPath->evaluate("count(//ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='handle'])")>0) {
-            $query = "//ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='handle']";
-            $type = 'handle';
-        }
-        elseif($this->gXPath->evaluate("count(//ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='uri'])")>0) {
-            $query = "//ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='uri']";
-            $type = 'uri';
-        }
-        elseif($this->gXPath->evaluate("count(//ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='purl'])")>0) {
-            $query = "//ro:collection/ro:citationInfo/ro:citationMetadata/ro:identifier[@type='purl']";
-            $type = 'purl';
-        }
-        elseif($this->gXPath->evaluate("count(//ro:collection/ro:identifier[@type='doi'])")>0) {
-            $query = "//ro:collection/ro:identifier[@type='doi']";
-            $type = 'doi';
-        }
-        elseif($this->gXPath->evaluate("count(//ro:collection/ro:identifier[@type='handle'])")>0) {
-            $query = "//ro:collection/ro:identifier[@type='handle']";
-            $type = 'handle';
-        }
-        elseif($this->gXPath->evaluate("count(//ro:collection/ro:identifier[@type='uri'])")>0) {
-            $query = "//ro:collection/ro:identifier[@type='uri']";
-            $type = 'uri';
-        }
-        elseif($this->gXPath->evaluate("count(//ro:collection/ro:identifier[@type='purl'])")>0) {
-            $query = "//ro:collection/ro:identifier[@type='purl']";
-            $type = 'purl';
-        }
-        elseif($this->gXPath->evaluate("count(//ro:collection/ro:citationInfo/ro:citationMetadata/ro:url)")>0) {
-            $query = "//ro:collection/ro:citationInfo/ro:citationMetadata/ro:url";
-            $type = 'url';
-        }
-        elseif($this->gXPath->evaluate("count(//ro:collection/ro:location/ro:address/ro:electronic[@type='url'])")>0) {
-            $query = "//ro:collection/ro:location/ro:address/ro:electronic[@type='url']";
-            $type = 'url';
-        }
-        elseif($this->gXPath->evaluate("count(//ro:collection/ro:location/ro:address/ro:electronic[@type='uri'])")>0) {
-            $query = "//ro:collection/ro:location/ro:address/ro:electronic[@type='uri']";
-            $type = 'url';
-        }
-        if($query!=''){
-            $urls = $this->gXPath->query($query);
-            foreach($urls as $url) {
-                $sourceUrl = trim($url->nodeValue);
-            }
-        }
-
-        return  $sourceUrl;
-    }
 
     /**
      * registryObject:collection:description:type="full"
@@ -292,8 +211,17 @@ class DataCitationIndexProvider implements RegistryContentProvider
                 return array_search($description['type'], $validTypes);
             })->first();
 
-        $abstract = $abstract['value'] ?: 'Not available';
+        $abstract = null ? 'Not available' : $abstract['value'];
         $this->DCIRoot->addChild('Abstract', StrUtil::xmlSafe($abstract));
+    }
+
+    private function getRightsAndLicencing()
+    {
+        foreach ($rights = MetadataProvider::getRights($this->record) as $right) {
+            $licensing = $this->DCIRoot->addChild('Rights_Licensing');
+            $licensing->addChild('RightsStatement', $right['rightsStatement']['value']);
+            $licensing->addChild('LicenseStatement', $right['licence']['value']);
+        }
     }
 
 }
