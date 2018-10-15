@@ -69,7 +69,7 @@
     <div class="panel swatch-white">
         <div class="panel-heading">Data Profile</div>
         <div  class="panel-body">
-            {{$group['title']}}  has <a href="{{ base_url('search') }}#!/class=collection/group={{ rawurlencode($group['title']) }}">{{$group['counts']}} data records</a>  in Research Data Australia,
+            {{$group['title']}}  has <a href="{{ base_url('search') }}#!/class=collection/group={{ rawurlencode($group['title']) }}">{{$group['counts']}} data records</a> in Research Data Australia,
             which cover {{sizeof($group['facet']['subjects'])}} subjects areas {{$subjects_list}} and involve  <a href="{{base_url()}}search#!/group={{$group['title']}}/type=group/class=party">{{$group['groups_count']}} group(s)</a>.
             All of the information provided by  {{$group['title']}} can be accessed from the box on the right hand side of this page.
         </div>
@@ -132,7 +132,10 @@
     <div class="panel-body">
         <ul class="listy">
             @if($group['facet']['class']['collection']!=0)
-                <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=collection">{{class_name('collection')}} <small>({{$group['facet']['class']['collection']}})</small></a></li>
+                <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=collection">{{class_name('collection_data')}} <small>({{$group['facet']['class']['collection']-$group['facet']['types']['software']}})</small></a></li>
+            @endif
+            @if($group['facet']['types']['software']!=0)
+                <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=collection">{{class_name('collection_software')}} <small>({{$group['facet']['types']['software']}})</small></a></li>
             @endif
             @if($group['facet']['class']['party']!=0)
                 <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=party">{{class_name('party')}} <small>({{$group['facet']['class']['party']}})</small></a></li>
