@@ -21,7 +21,6 @@ use SimpleXMLElement;
 
 class DataCitationIndexProvider implements RegistryContentProvider
 {
-
     protected $namespace = "https://clarivate.com/products/web-of-science/web-science-form/data-citation-index/";
 
     public $record;
@@ -43,7 +42,34 @@ class DataCitationIndexProvider implements RegistryContentProvider
      */
     public static function process(RegistryObject $record)
     {
-        // TODO: Implement process() method.
+        // only provide dci if the data source is allowed
+        $allow = $record->datasource->getDataSourceAttributeValue('export_dci');
+        if (!$allow) {
+            return false;
+        }
+
+        // get dci and then save it
+        $dci = static::get($record);
+
+        // if there's an existing, update it
+        if ($existing = DCI::where('registry_object_id', $record->id)->first()) {
+            $existing->data = $dci;
+            $existing->save();
+            return true;
+        }
+
+        // if not, create it
+        $model = new DCI;
+        $model->setRawAttributes([
+            'data' => $dci,
+            'hash' => md5($dci),
+            'registry_object_id' => $record->id,
+            'registry_object_group' => $record->group,
+            'registry_object_data_source_id' => $record->data_source_id,
+        ]);
+        $model->save();
+
+        return true;
     }
 
     /**

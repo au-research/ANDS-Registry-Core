@@ -221,4 +221,29 @@ class DataCitationIndexProviderTest extends \RegistryTestClass
         $this->assertNotEmpty($sml->xpath('//ParentDataRef'));
         $this->assertEquals($parent->key, (string) array_first($sml->xpath('//ParentDataRef')));
     }
+
+    /** @test */
+    function it_provides_dci_only_for_ds_that_has_the_flag()
+    {
+        // given a record
+        $record = $this->stub(RegistryObject::class);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_all_elements.xml')
+        ]);
+        CoreMetadataProvider::process($record);
+
+        // when get dci it won't proceed
+        $this->assertFalse(DataCitationIndexProvider::process($record));
+
+        // but when the data source flag is turned on
+        $record->datasource->setDataSourceAttribute('export_dci', DB_TRUE);
+
+        // it returns true
+        $this->assertTrue(DataCitationIndexProvider::process($record));
+
+        // there's an entry in the database
+        $dci = DCI::where('registry_object_id', $record->id);
+        $this->assertNotEmpty($dci->get());
+    }
 }
