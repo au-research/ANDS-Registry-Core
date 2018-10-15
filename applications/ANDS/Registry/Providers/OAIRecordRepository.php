@@ -483,10 +483,13 @@ class OAIRecordRepository implements OAIRepository
         $result = [];
         foreach ($records['records'] as $record) {
             $oaiRecord = new Record(
-                $record->scholix_identifier,
+                $record->registryObject->key,
                 Carbon::parse($record->updated_at)->format($this->getDateFormat())
             );
-            $oaiRecord = $this->addScholixSets($oaiRecord, $record);
+            $dataSourceID = $record->registry_object_data_source_id;
+            $oaiRecord->addSet(
+                new Set("datasource:". $dataSourceID, $dataSourceID)
+            );
             $oaiRecord->setMetadata($record->data);
 
             $result[] = $oaiRecord;
