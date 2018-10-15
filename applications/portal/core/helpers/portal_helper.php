@@ -12,6 +12,8 @@ function subjectSortResolved($a, $b) {
 function class_name($text) {
 	switch($text) {
 		case 'collection': return 'Datasets'; break;
+        case 'collection_data': return 'Data'; break;
+        case 'collection_software':return 'Software'; break;
 		case 'party': return 'People and Organisations'; break;
 		case 'service': return 'Tools and Services'; break;
 		case 'activity': return 'Grants and Projects'; break;
