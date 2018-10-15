@@ -131,6 +131,8 @@
             <subject type="local">localSubject</subject>
             <subject type="anzsrc-seo">830201</subject>
             <subject type="anzsrc-for">0303</subject>
+            <subject type="AU-ANL:PEAU">au-anl:peau subject</subject>
+            <subject type="orcid">0000-0000-0001</subject>
             <relatedInfo type="metadata">
                 <title>Related Info Title</title>
                 <identifier type="doi">10.1234567882484</identifier>
