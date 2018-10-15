@@ -356,6 +356,14 @@ class Data_source extends MX_Controller {
 				$new_value = '';
 			}
 
+            if ($attrib == "export_dci") {
+                if ($new_value === DB_FALSE || $new_value === "") {
+                    \ANDS\Registry\Providers\DCI\DCI::where('registry_object_data_source_id', $ds->id)->delete();
+                } else {
+                    $this->queueDCIGenerationTask($ds->id);
+                }
+            }
+
 			//detect qa_flag changed to false
 			if($attrib=='qa_flag' && ($new_value=='f' || !$new_value || $new_value==DB_FALSE) && $new_value != $ds->{$attrib}){
 
@@ -392,6 +400,8 @@ class Data_source extends MX_Controller {
             if ($attrib == "allow_reverse_external_links" && $new_value != $ds->{$attrib}) {
                 $resetPrimaryRelationships = true;
             }
+
+            // handle dci
 
       //some value are not meant to be updated
       $blocked_value = array('data_source_id', 'created', 'key');
@@ -605,6 +615,54 @@ class Data_source extends MX_Controller {
         $id = $importTask->getId();
         $message =
             "Updating $total records to $newStatus as per data source settings changes". NL.
+            "TaskID: $id";
+        $dataSource->appendDataSourceLog($message, 'info', 'IMPORTER');
+	}
+
+    public function queueDCIGenerationTask($dataSourceID)
+    {
+        initEloquent();
+        $dataSource = \ANDS\Repository\DataSourceRepository::getByID($dataSourceID);
+
+        //TODO: check dataSource existence?
+
+        // find all records matching the oldStatus
+        $records = \ANDS\RegistryObject::where('data_source_id', $dataSourceID)
+            ->where('status', 'PUBLISHED');
+
+        // getting the count
+        $total = $records->count();
+        if ($total === 0) {
+            return;
+        }
+
+        // get a list of ids of the affected records
+        $ids = $records->get()->pluck('registry_object_id')->toArray();
+
+        // task initialisation
+        $importTask = new \ANDS\API\Task\ImportTask();
+        $importTask->init([
+            'name' => "Background Task for $dataSource->title($dataSourceID) Generating DCI for $total records",
+            'params' => http_build_query([
+                'ds_id' => $dataSourceID,
+                'targetStatus' => 'PUBLISHED',
+                'pipeline' => 'MetadataGenerationWorkflow'
+            ])
+        ]);
+        $importTask->setDb($this->db)->setCI($this);
+        $importTask
+            ->skipLoadingPayload()
+            ->enableRunAllSubTask()
+            ->setTaskData("affectedRecords", $ids);
+        $importTask->initialiseTask();
+
+        // sending the task to the background
+        $importTask->sendToBackground();
+
+        // returning the ID and log that
+        $id = $importTask->getId();
+        $message =
+            "Generating DCI for $total records as per data source settings changes". NL.
             "TaskID: $id";
         $dataSource->appendDataSourceLog($message, 'info', 'IMPORTER');
 	}

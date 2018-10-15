@@ -21,7 +21,7 @@ use SimpleXMLElement;
 
 class DataCitationIndexProvider implements RegistryContentProvider
 {
-    protected $namespace = "https://clarivate.com/products/web-of-science/web-science-form/data-citation-index/";
+    public static $namespace = "https://clarivate.com/products/web-of-science/web-science-form/data-citation-index/";
 
     public $record;
     public $dom;
