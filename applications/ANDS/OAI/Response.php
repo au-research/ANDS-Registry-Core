@@ -18,13 +18,14 @@ class Response
     {
         $this->content = new \DOMDocument('1.0', 'UTF-8');
         $this->content->formatOutput = true;
-        $documentElement = $this->content->createElementNS('http://www.openarchives.org/OAI/2.0/', "oai:OAI-PMH");
-        $documentElement->setAttribute('xmlns:oai', 'http://www.openarchives.org/OAI/2.0/');
+        $documentElement = $this->content->createElementNS('http://www.openarchives.org/OAI/2.0/', "OAI-PMH");
+        $documentElement->setAttribute('xmlns', 'http://www.openarchives.org/OAI/2.0/');
         $documentElement->setAttributeNS(
             "http://www.w3.org/2001/XMLSchema-instance",
             'xsi:schemaLocation',
             'http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd'
         );
+
         $this->content->appendChild($documentElement);
     }
 
@@ -69,6 +70,9 @@ class Response
             $dom->loadXML($this->content->saveXML());
             $xml = $dom->saveXML();
         }
+
+        $xml = str_replace("<default:", "<", $xml);
+        $xml = str_replace("</default:", "</", $xml);
 
         return new \GuzzleHttp\Psr7\Response(
             $this->status,

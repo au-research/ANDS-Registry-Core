@@ -177,7 +177,7 @@ class ServiceProvider
         if (array_key_exists('metadataPrefix', $options)) {
             $formats = $this->repository->getFormats();
             $xmlns = $formats[$options['metadataPrefix']]['metadataNamespace'];
-            $response->getContent()->documentElement->setAttribute("xmlns", $xmlns);
+            $response->getContent()->documentElement->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:default', $xmlns);
         }
 
         return $response;
@@ -449,12 +449,10 @@ class ServiceProvider
             }
 
             $el = $response->createElement('metadata');
-
-            $scholix = new DOMDocument();
-            $scholix->loadXml($data['metadata'], LIBXML_NSCLEAN);
-
+            $doc = new DOMDocument();
+            $doc->loadXml($data['metadata'], LIBXML_NSCLEAN);
             $el->appendChild(
-                $response->getContent()->importNode($scholix->documentElement, true)
+                $response->getContent()->importNode($doc->documentElement, true)
             );
 
             $recordNode->appendChild($el);
