@@ -277,7 +277,7 @@ class OAIRecordRepository implements OAIRepository
             foreach ($registryObjects['records'] as $record) {
                 $oaiRecord = new Record(
                     "oai:ands.org.au:{$record->id}",
-                    DatesProvider::getCreatedDate($record, $this->getDateFormat())
+                    DatesProvider::getUpdatedAt($record, $this->getDateFormat())
                 );
 
                 // set
@@ -403,6 +403,22 @@ class OAIRecordRepository implements OAIRepository
                     }
                     break;
             }
+        }
+
+        // from
+        if (array_key_exists('from', $options) && $options['from']) {
+            $records = $records->where(
+                'modified_at', '>',
+                Carbon::parse($options['from'])->toDateTimeString()
+            );
+        }
+
+        // until
+        if (array_key_exists('until', $options) && $options['until']) {
+            $records = $records->where(
+                'modified_at', '<',
+                Carbon::parse($options['until'])->toDateTimeString()
+            );
         }
 
         $total = $records->count();
