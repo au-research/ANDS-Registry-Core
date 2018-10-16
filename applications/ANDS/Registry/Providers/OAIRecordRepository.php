@@ -62,7 +62,7 @@ class OAIRecordRepository implements OAIRepository
             'baseURL' => $this->getBaseUrl(),
             'protocolVersion' => '2.0',
             'adminEmail' => 'services@ands.org.au',
-            'earliestDateStamp' => $earliestDate,
+            'earliestDatestamp' => $earliestDate,
             'deletedRecord' => 'transient',
             'granularity' => 'YYYY-MM-DDThh:mm:ssZ'
         ];
@@ -389,11 +389,15 @@ class OAIRecordRepository implements OAIRepository
         }
 
         // until
-        if (array_key_exists('until', $options) && $options['until']) {
-            $records = $records->where(
-                'updated_at', '<',
-                    Carbon::parse($options['until'])->toDateTimeString()
-            );
+        if (array_key_exists('until', $options)) {
+            $until = Carbon::parse($options['until']);
+            $until = $until->isStartOfDay() ? $until->addDay(1) : $until;
+            if (array_key_exists('until', $options) && $options['until']) {
+                $records = $records->where(
+                    'updated_at', '<=',
+                    $until->toDateTimeString()
+                );
+            }
         }
 
         $count = $records->count();
@@ -438,18 +442,23 @@ class OAIRecordRepository implements OAIRepository
         // from
         if (array_key_exists('from', $options) && $options['from']) {
             $records = $records->where(
-                'modified_at', '>',
+                'modified_at', '>=',
                 Carbon::parse($options['from'])->toDateTimeString()
             );
         }
 
         // until
-        if (array_key_exists('until', $options) && $options['until']) {
-            $records = $records->where(
-                'modified_at', '<',
-                Carbon::parse($options['until'])->toDateTimeString()
-            );
+        if (array_key_exists('until', $options)) {
+            $until = Carbon::parse($options['until']);
+            $until = $until->isStartOfDay() ? $until->addDay(1) : $until;
+            if (array_key_exists('until', $options) && $options['until']) {
+                $records = $records->where(
+                    'modified_at', '<=',
+                    $until->toDateTimeString()
+                );
+            }
         }
+
 
         $total = $records->count();
 
@@ -600,11 +609,15 @@ class OAIRecordRepository implements OAIRepository
         }
 
         // until
-        if (array_key_exists('until', $options) && $options['until']) {
-            $records = $records->where(
-                'updated_at', '<',
-                Carbon::parse($options['until'])->toDateTimeString()
-            );
+        if (array_key_exists('until', $options)) {
+            $until = Carbon::parse($options['until']);
+            $until = $until->isStartOfDay() ? $until->addDay(1) : $until;
+            if (array_key_exists('until', $options) && $options['until']) {
+                $records = $records->where(
+                    'updated_at', '<=',
+                    $until->toDateTimeString()
+                );
+            }
         }
 
         $count = $records->count();
