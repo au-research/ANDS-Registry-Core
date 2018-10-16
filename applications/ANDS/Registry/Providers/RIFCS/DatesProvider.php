@@ -7,6 +7,7 @@ use ANDS\RecordData;
 use ANDS\Registry\Providers\MetadataProvider;
 use ANDS\Registry\Providers\RIFCSProvider;
 use ANDS\RegistryObject;
+use ANDS\Util\Config;
 use ANDS\Util\XMLUtil;
 use Carbon\Carbon;
 use DateTime;
@@ -341,6 +342,15 @@ class DatesProvider implements RIFCSProvider
     public static function getUpdatedAt($record, $getDateFormat)
     {
         return Carbon::parse($record->updated_at)->format($getDateFormat);
+    }
+
+    /**
+     * @param $time
+     * @return Carbon
+     */
+    public static function parse($time)
+    {
+        return Carbon::parse($time)->setTimezone(Config::get('app.timezone'));
     }
 
 

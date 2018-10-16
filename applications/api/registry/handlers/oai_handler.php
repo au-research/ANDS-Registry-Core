@@ -6,6 +6,7 @@ use ANDS\Cache\Cache;
 use ANDS\Registry\Providers\OAIRecordRepository;
 use ANDS\OAI\Exception\BadArgumentException;
 use ANDS\OAI\ServiceProvider;
+use ANDS\Util\Config;
 
 class OaiHandler extends Handler
 {
@@ -14,6 +15,7 @@ class OaiHandler extends Handler
 
     public function handle()
     {
+        date_default_timezone_set(Config::get('app.timezone'));
         $this->getParentAPI()->providesOwnResponse();
         $options = array_merge($_GET, $_POST);
         return $this->handleOAIRequest($options);
