@@ -267,10 +267,14 @@ class ServiceProvider
         // check if there should be more
         // assign resumption token if true
         if (($sets['offset'] + $sets['limit']) < $sets['total']) {
-            $resumptionToken = $this->encodeToken(
+            $token = $this->encodeToken(
                 [ 'offset' => $sets['offset'] + $sets['limit'] ]
             );
-            $response = $this->addResumptionToken($response, $resumptionToken, $sets['offset'], $sets['total']);
+
+            $resumptionToken = $response->createElement("resumptionToken", $token);
+            $resumptionToken->setAttribute("completeListSize", $sets['total']);
+            $resumptionToken->setAttribute("cursor", $sets['offset']);
+            $element->appendChild($resumptionToken);
         }
 
         return $response;
@@ -303,10 +307,16 @@ class ServiceProvider
         $cursor = $records['offset'] + $records['limit'];
         if ( $cursor <= $records['total']) {
             $options['offset'] = $records['offset'] + $records['limit'];
-            $resumptionToken = $this->encodeToken(
+            $token = $this->encodeToken(
                 array_merge($options)
             );
-            $response = $this->addResumptionToken($response, $resumptionToken, $cursor, $records['total']);
+
+            $resumptionToken = $response->createElement("resumptionToken", $token);
+            $resumptionToken->setAttribute("completeListSize", $records['total']);
+            $resumptionToken->setAttribute("cursor", $cursor);
+            $element->appendChild($resumptionToken);
+
+//            $response = $this->addResumptionToken($element, $resumptionToken, $cursor, $records['total']);
         }
 
         return $response;
@@ -466,10 +476,15 @@ class ServiceProvider
         if ( $cursor <= $records['total']) {
             $options['offset'] = $records['offset'] + $records['limit'];
 
-            $resumptionToken = $this->encodeToken(
+            $token = $this->encodeToken(
                 array_merge($options)
             );
-            $response = $this->addResumptionToken($response, $resumptionToken, $cursor, $records['total']);
+
+            $resumptionToken = $response->createElement("resumptionToken", $token);
+            $resumptionToken->setAttribute("completeListSize", $records['total']);
+            $resumptionToken->setAttribute("cursor", $cursor);
+            $element->appendChild($resumptionToken);
+
         }
 
         return $response;
