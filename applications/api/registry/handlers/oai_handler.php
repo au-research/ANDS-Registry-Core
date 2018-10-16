@@ -15,7 +15,7 @@ class OaiHandler extends Handler
     public function handle()
     {
         $this->getParentAPI()->providesOwnResponse();
-        $options = $_GET;
+        $options = array_merge($_GET, $_POST);
         return $this->handleOAIRequest($options);
     }
 

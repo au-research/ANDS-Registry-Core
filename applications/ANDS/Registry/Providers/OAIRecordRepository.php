@@ -215,13 +215,12 @@ class OAIRecordRepository implements OAIRepository
     private function addSets(Record $oaiRecord, RegistryObject $record)
     {
         $dataSource = $record->datasource;
-        $escapedDSTitle = htmlspecialchars($dataSource->title, ENT_XML1);
         $groupName = $record->group;
 
         $oaiRecord
             ->addSet(new Set("class:{$record->class}"))
             ->addSet(new Set("datasource:". $dataSource->data_source_id))
-            ->addSet(new Set("datasource:". $escapedDSTitle));
+            ->addSet(new Set("datasource:". $this->nameBackwardCompat($dataSource->title)));
 
         if ($group = Group::where('title', $groupName)->first()) {
             $oaiRecord
