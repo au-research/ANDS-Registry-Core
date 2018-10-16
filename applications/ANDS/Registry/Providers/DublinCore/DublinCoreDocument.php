@@ -73,7 +73,7 @@ class DublinCoreDocument
         $ns = self::$DCNamespace;
 
         $root = new \SimpleXMLElement("<oai_dc:dc 
-        xmlns:dc='{$ns}' xmlns:oai_dc='http://www.openarchives.org/OAI/2.0/oai_dc/' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd'></oai_dc:dc>", LIBXML_NOERROR, false, 'http://purl.org/dc/elements/1.1/', true);
+        xmlns:dc='{$ns}' xmlns:oai_dc='http://www.openarchives.org/OAI/2.0/oai_dc/' xmlns='http://www.openarchives.org/OAI/2.0/oai_dc/' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation='http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd'></oai_dc:dc>", LIBXML_NOERROR, false, 'http://purl.org/dc/elements/1.1/', true);
 
         $root->addChild("dc:title", $data['title'], $ns);
         $root->addChild("dc:publisher", $data['publisher'], $ns);
