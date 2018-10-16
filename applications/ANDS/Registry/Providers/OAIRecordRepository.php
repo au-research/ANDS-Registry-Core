@@ -5,6 +5,7 @@ namespace ANDS\Registry\Providers;
 
 
 use ANDS\DataSource;
+use ANDS\OAI\Exception\NoRecordsMatch;
 use ANDS\Registry\Group;
 use ANDS\Registry\Providers\DCI\DataCitationIndexProvider;
 use ANDS\Registry\Providers\DCI\DCI;
@@ -222,30 +223,31 @@ class OAIRecordRepository implements OAIRepository
         $escapedDSTitle = htmlspecialchars($dataSource->title, ENT_XML1);
         $groupName = $record->group;
 
-        $sets = [
-            new Set("class:{$record->class}", $record->class),
-            new Set("datasource:". $dataSource->data_source_id, $escapedDSTitle),
-        ];
+        $oaiRecord
+            ->addSet(new Set("class:{$record->class}"))
+            ->addSet(new Set("datasource:". $dataSource->data_source_id))
+            ->addSet(new Set("datasource:". $escapedDSTitle));
 
-        // group by id
-        $group = Group::where('title', $groupName)->first();
-        if ($group) {
-            $sets[] = new Set("group:".$group->id, $group);
+        if ($group = Group::where('title', $groupName)->first()) {
+            $oaiRecord
+                ->addSet(new Set("group:".$group->id))
+                ->addSet(new Set("group:".$this->nameBackwardCompat($group->title)))
+                ->addSet(new Set("group:".$this->groupNameBWCompat($group->title)));
         }
 
-        // data source backward compat
-        $name = str_replace(" ", "-", $escapedDSTitle);
-        $sets[] = new Set("datasource:$name", $escapedDSTitle);
-
-        // group backward compat
-        $name = str_replace(" ", "-", $groupName);
-        $name = urlencode($name);
-        $sets[] = new Set("group:$name", $groupName);
-
-        foreach ($sets as $set) {
-            $oaiRecord->addSet($set);
-        }
         return $oaiRecord;
+    }
+
+    private function nameBackwardCompat($name)
+    {
+        return str_replace(" ", "-", $name);
+    }
+
+    private function groupNameBWCompat($name)
+    {
+        $name = str_replace(" ", "0x20", $name);
+        $name = urlencode($name);
+        return $name;
     }
 
     private function addMetadata(Record $oaiRecord, RegistryObject $record, $metadataFormat)
@@ -332,15 +334,24 @@ class OAIRecordRepository implements OAIRepository
     {
         $records = Scholix::limit($options['limit'])->offset($options['offset']);
 
-        // set
         if (array_key_exists('set', $options) && $options['set']) {
             $set = $options['set'];
             $set = explode(':', $set);
 
-            if ($set[0] == "datasource") {
-                $records = $records->where('registry_object_data_source_id', $set[1]);
-            } else {
-                throw new BadArgumentException();
+            $opt = $set[0];
+            $value = $set[1];
+
+            switch ($opt) {
+                case "datasource":
+                    if ($value = $this->getDataSourceID($value)) {
+                        $records = $records->where('registry_object_data_source_id', $value);
+                    }
+                    break;
+                case "group":
+                    if ($value = $this->getGroupName($value)) {
+                        $records = $records->where('registry_object_group', $value);
+                    }
+                    break;
             }
         }
 
@@ -437,6 +448,12 @@ class OAIRecordRepository implements OAIRepository
             return $group->title;
         }
 
+        // group:Curtin-University
+        if ($group = Group::where('title', str_replace('-', ' ', $value))->first()) {
+            return $group->title;
+        }
+
+        // group:Curtin0x20University
         $name = str_replace("0x20", " ", $value);
         if ($group = Group::where('title', $name)->first()) {
             return $group->title;
@@ -482,14 +499,13 @@ class OAIRecordRepository implements OAIRepository
 
         $result = [];
         foreach ($records['records'] as $record) {
+
             $oaiRecord = new Record(
                 $record->registryObject->key,
                 Carbon::parse($record->updated_at)->format($this->getDateFormat())
             );
-            $dataSourceID = $record->registry_object_data_source_id;
-            $oaiRecord->addSet(
-                new Set("datasource:". $dataSourceID, $dataSourceID)
-            );
+
+            $oaiRecord = $this->addDCISets($oaiRecord, $record);
             $oaiRecord->setMetadata($record->data);
 
             $result[] = $oaiRecord;
@@ -510,12 +526,27 @@ class OAIRecordRepository implements OAIRepository
         // set
         if (array_key_exists('set', $options) && $options['set']) {
             $set = $options['set'];
+            $set = urldecode($set);
             $set = explode(':', $set);
 
-            if ($set[0] == "datasource") {
-                $records = $records->where('registry_object_data_source_id', $set[1]);
-            } else {
-                throw new BadArgumentException();
+            $opt = $set[0];
+            $value = $set[1];
+
+            switch ($opt) {
+                case "datasource":
+                    if ($value = $this->getDataSourceID($value)) {
+                        $records = $records->where('registry_object_data_source_id', $value);
+                    } else {
+                        throw new NoRecordsMatch();
+                    }
+                    break;
+                case "group":
+                    if ($value = $this->getGroupName($value)) {
+                        $records = $records->where('registry_object_group', $value);
+                    } else {
+                        throw new NoRecordsMatch();
+                    }
+                    break;
             }
         }
 
@@ -575,18 +606,37 @@ class OAIRecordRepository implements OAIRepository
 
     private function addScholixSets(Record $oaiRecord, Scholix $record)
     {
-//        $group = Group::where('title', $record->registry_object_group)->first();
-//        $dataSource = DataSource::find($record->registry_object_data_source_id)->first();
-//        $class = $record->getAttribute("registry_object_class");
-        $dataSourceID = $record->getAttribute("registry_object_data_source_id");
-        $sets = [
-//            new Set("class:". $class, $class),
-//            new Set("group:". $group->id, $group->title),
-            new Set("datasource:". $dataSourceID, $dataSourceID)
-        ];
-        foreach ($sets as $set) {
-            $oaiRecord->addSet($set);
+        if ($dataSource = DataSource::find($record->registry_object_data_source_id)) {
+            $oaiRecord
+                ->addSet(new Set("datasource:". $dataSource->id))
+                ->addSet(new Set("datasource:". $this->nameBackwardCompat($dataSource->title)));
         }
+
+        if ($group = Group::where('title', $record->registry_object_group)->first()) {
+            $oaiRecord
+                ->addSet(new Set("group:".$group->id))
+                ->addSet(new Set("group:".$this->nameBackwardCompat($group->title)))
+                ->addSet(new Set("group:".$this->groupNameBWCompat($group->title)));
+        }
+
+        return $oaiRecord;
+    }
+
+    private function addDCISets(Record $oaiRecord, DCI $record)
+    {
+        if ($dataSource = DataSource::find($record->registry_object_data_source_id)) {
+            $oaiRecord
+                ->addSet(new Set("datasource:". $dataSource->id))
+                ->addSet(new Set("datasource:". $this->nameBackwardCompat($dataSource->title)));
+        }
+
+        if ($group = Group::where('title', $record->registry_object_group)->first()) {
+            $oaiRecord
+                ->addSet(new Set("group:".$group->id))
+                ->addSet(new Set("group:".$this->nameBackwardCompat($group->title)))
+                ->addSet(new Set("group:".$this->groupNameBWCompat($group->title)));
+        }
+
         return $oaiRecord;
     }
 
@@ -596,5 +646,14 @@ class OAIRecordRepository implements OAIRepository
     public function getFormats()
     {
         return $this->formats;
+    }
+
+    private function getGroupID($name)
+    {
+        if ($group = Group::where('title', $name)->first()) {
+            return $group->id;
+        }
+
+        return null;
     }
 }

@@ -14,7 +14,7 @@ class Set
      * @param string $setSpec
      * @param string $setName
      */
-    public function __construct($setSpec, $setName)
+    public function __construct($setSpec, $setName = "")
     {
         $this->setSpec = $setSpec;
         $this->setName = $setName;
