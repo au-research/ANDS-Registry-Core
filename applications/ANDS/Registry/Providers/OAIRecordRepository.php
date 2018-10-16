@@ -73,6 +73,17 @@ class OAIRecordRepository implements OAIRepository
         return baseUrl("api/registry/oai");
     }
 
+    /**
+     * Returns the response for ListSets verb
+     *
+     * Get all possible sets and then limit, offset them
+     * There's no pagination natively support for this since there's no
+     * table for sets
+     *
+     * @param int $limit
+     * @param int $offset
+     * @return array
+     */
     public function listSets($limit = 0, $offset = 0)
     {
         $sets = [];
@@ -83,33 +94,17 @@ class OAIRecordRepository implements OAIRepository
             $sets[] = new Set("class:{$class}", $class);
         }
 
-        // data source
-        $dataSources = DataSource::all();
-        foreach ($dataSources as $ds) {
-
-            // name with dashes instead of space
-            $title = htmlspecialchars($ds->title, ENT_XML1);
-            $name = str_replace(" ", "-", $title);
-            $sets[] = new Set("datasource:$name", $ds->title);
-
-            // id
+        foreach ($dataSources = DataSource::orderBy('title')->get() as $ds) {
             $sets[] = new Set("datasource:{$ds->data_source_id}", $ds->title);
         }
 
-        // group
-        $groups = Group::all();
-        foreach ($groups as $group) {
-
-            // name with 0x20
-            $title = htmlspecialchars($group->title, ENT_XML1);
-            $name = str_replace(" ", "0x20", $title);
-            $sets[] = new Set("group:$name", $group->title);
-
-            // id
+        foreach ($groups = Group::orderBy('title')->get() as $group) {
             $sets[] = new Set("group:{$group->id}", $group->title);
         }
 
         $total = count($sets);
+
+        $sets = array_splice($sets, $offset, $limit);
 
         return compact('total', 'sets', 'limit', 'offset');
     }
