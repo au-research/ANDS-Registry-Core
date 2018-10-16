@@ -29,7 +29,7 @@ use ANDS\OAI\Set;
 
 class OAIRecordRepository implements OAIRepository
 {
-    public $dateFormat = "Y-m-d\\Th:m:s\\Z";
+    public $dateFormat = "Y-m-d\\Th:i:s\\Z";
     protected $oaiIdentifierPrefix = "oai:ands.org.au::";
     protected $formats = [
         "rif" => [
@@ -384,7 +384,7 @@ class OAIRecordRepository implements OAIRepository
         // from
         if (array_key_exists('from', $options) && $options['from']) {
             $records = $records->where(
-                'updated_at', '>',
+                'updated_at', '>=',
                     DatesProvider::parse($options['from'])->toDateTimeString()
             );
         }
@@ -604,7 +604,7 @@ class OAIRecordRepository implements OAIRepository
         // from
         if (array_key_exists('from', $options) && $options['from']) {
             $records = $records->where(
-                'updated_at', '>',
+                'updated_at', '>=',
                 DatesProvider::parse($options['from'])->toDateTimeString()
             );
         }

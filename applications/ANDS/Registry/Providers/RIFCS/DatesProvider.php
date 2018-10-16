@@ -341,7 +341,7 @@ class DatesProvider implements RIFCSProvider
 
     public static function getUpdatedAt($record, $getDateFormat)
     {
-        return Carbon::parse($record->updated_at)->format($getDateFormat);
+        return Carbon::parse($record->modified_at)->setTimezone('UTC')->format($getDateFormat);
     }
 
     /**
