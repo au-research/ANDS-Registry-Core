@@ -361,12 +361,18 @@ class ServiceProvider
             $metadataNode->appendChild($fragment);
         }
 
-
         $element->appendChild($recordNode);
 
         return $element;
     }
 
+    /**
+     * Useful function for collecting options
+     * Decode resumptionToken if presented
+     *
+     * @return array|mixed
+     * @throws BadResumptionToken
+     */
     private function collectOptions()
     {
         $options = array_merge([
@@ -390,22 +396,27 @@ class ServiceProvider
         return $options;
     }
 
+    /**
+     * Response for ListRecords verb
+     *
+     * @return Response
+     * @throws OAIException
+     */
     private function listRecords()
     {
         $response = $this->getCommonResponse();
         $set = null;
 
-        if (!array_key_exists('metadataPrefix', $this->options) && !array_key_exists('resumptionToken', $this->options)) {
+        $options = $this->collectOptions();
+
+        if (!array_key_exists('metadataPrefix', $options) && !array_key_exists('resumptionToken', $this->options)) {
             throw new BadArgumentException("bad argument: Missing required argument 'metadataPrefix'");
         }
 
-        $options = $this->collectOptions();
-
         $validPrefixes = array_keys($this->repository->getFormats());
-        if (!in_array($this->options['metadataPrefix'], $validPrefixes)) {
+        if (!in_array($options['metadataPrefix'], $validPrefixes)) {
             throw new CannotDisseminateFormat();
         }
-
 
         $records = $this->repository->listRecords($options);
         if (count($records['records']) == 0) {
@@ -438,31 +449,14 @@ class ServiceProvider
 
             $el = $response->createElement('metadata');
 
-//            $metadataNode = $recordNode->appendChild($response->createElementNS("http://ands.org.au/standards/rif-cs/registryObjects" ))
-//            $fragment = $response->getContent()->createDocumentFragment();
-//            $fragment->appendXML($data['metadata']);
-//            $metadataNode->appendChild($fragment);
-
-
-
-
             $scholix = new DOMDocument();
             $scholix->loadXml($data['metadata'], LIBXML_NSCLEAN);
-
-//            $el->appendChild()
 
             $el->appendChild(
                 $response->getContent()->importNode($scholix->documentElement, true)
             );
 
-            $metadataNode = $recordNode->appendChild($el);
-
-//            $dom = $response->getContent();
-////            $dom->setAttribute('xmlns:rif', 'http://ands.org.au/standards/rif-cs/registryObjects');
-//            $fragment = $dom->createElementNS("http://ands.org.au/standards/rif-cs/registryObjects", "rif:registryObjects");
-//            $fragment->setAttribute('xmlns', 'http://ands.org.au/standards/rif-cs/registryObjects');
-//
-//            $metadataNode->appendChild($fragment);
+            $recordNode->appendChild($el);
 
 
             $element->appendChild($recordNode);
@@ -472,6 +466,7 @@ class ServiceProvider
         $cursor = $records['offset'] + $records['limit'];
         if ( $cursor <= $records['total']) {
             $options['offset'] = $records['offset'] + $records['limit'];
+
             $resumptionToken = $this->encodeToken(
                 array_merge($options)
             );
