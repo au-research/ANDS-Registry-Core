@@ -259,6 +259,10 @@ class OAIRecordRepository implements OAIRepository
             $metadata = XMLUtil::stripXMLHeader($metadata);
             $metadata = trim($metadata);
             $oaiRecord->setMetadata($metadata);
+        } elseif ($metadataFormat == "dci") {
+            if ($dci = DCI::where('registry_object_id', $record->id)->first()) {
+                $oaiRecord->setMetadata($dci->data);
+            }
         }
         return $oaiRecord;
     }
@@ -298,6 +302,10 @@ class OAIRecordRepository implements OAIRepository
             return $this->listIdentifiersScholix($options);
         }
 
+        if ($options['metadataPrefix'] == "dci") {
+            return $this->listIdentifiersDCI($options);
+        }
+
         throw new BadArgumentException("Unknown metadataPrefix {$options['metadataPrefix']}");
 
     }
@@ -314,6 +322,29 @@ class OAIRecordRepository implements OAIRepository
                 Carbon::parse($record->updated_at)->format($this->getDateFormat())
             );
             $oaiRecord = $this->addScholixSets($oaiRecord, $record);
+            $result[] = $oaiRecord;
+        }
+
+        return [
+            'total' => $records['total'],
+            'records' => $result,
+            'limit' => $options['limit'],
+            'offset' => $options['offset']
+        ];
+    }
+
+    private function listIdentifiersDCI($options)
+    {
+        $result = [];
+
+        $records = $this->getDCIRecords($options);
+
+        foreach ($records['records'] as $record) {
+            $oaiRecord = new Record(
+                $this->oaiIdentifierPrefix.$record->registryObject->id,
+                Carbon::parse($record->updated_at)->format($this->getDateFormat())
+            );
+            $oaiRecord = $this->addDCISets($oaiRecord, $record);
             $result[] = $oaiRecord;
         }
 
@@ -512,7 +543,7 @@ class OAIRecordRepository implements OAIRepository
         foreach ($records['records'] as $record) {
 
             $oaiRecord = new Record(
-                $record->registryObject->key,
+                $this->oaiIdentifierPrefix.$record->registryObject->id,
                 Carbon::parse($record->updated_at)->format($this->getDateFormat())
             );
 
