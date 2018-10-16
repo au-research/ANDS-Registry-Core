@@ -385,13 +385,13 @@ class OAIRecordRepository implements OAIRepository
         if (array_key_exists('from', $options) && $options['from']) {
             $records = $records->where(
                 'updated_at', '>=',
-                    DatesProvider::parse($options['from'])->toDateTimeString()
+                    Carbon::parse($options['from'])->toDateTimeString()
             );
         }
 
         // until
         if (array_key_exists('until', $options)) {
-            $until = DatesProvider::parse($options['until']);
+            $until = Carbon::parse($options['until']);
             $until = $until->isStartOfDay() ? $until->addDay(1) : $until;
             if (array_key_exists('until', $options) && $options['until']) {
                 $records = $records->where(
@@ -444,13 +444,13 @@ class OAIRecordRepository implements OAIRepository
         if (array_key_exists('from', $options) && $options['from']) {
             $records = $records->where(
                 'modified_at', '>=',
-                DatesProvider::parse($options['from'])->toDateTimeString()
+                Carbon::parse($options['from'])->toDateTimeString()
             );
         }
 
         // until
         if (array_key_exists('until', $options)) {
-            $until = DatesProvider::parse($options['until']);
+            $until = Carbon::parse($options['until']);
             $until = $until->isStartOfDay() ? $until->addDay(1) : $until;
             if (array_key_exists('until', $options) && $options['until']) {
                 $records = $records->where(
@@ -528,7 +528,7 @@ class OAIRecordRepository implements OAIRepository
         foreach ($records['records'] as $record) {
             $oaiRecord = new Record(
                 $record->scholix_identifier,
-                DatesProvider::parse($record->updated_at)->format($this->getDateFormat())
+                Carbon::parse($record->updated_at)->format($this->getDateFormat())
             );
             $oaiRecord = $this->addScholixSets($oaiRecord, $record);
             $oaiRecord->setMetadata($record->data);
@@ -553,7 +553,7 @@ class OAIRecordRepository implements OAIRepository
 
             $oaiRecord = new Record(
                 $this->oaiIdentifierPrefix.$record->registryObject->id,
-                DatesProvider::parse($record->updated_at)->format($this->getDateFormat())
+                Carbon::parse($record->updated_at)->format($this->getDateFormat())
             );
 
             $oaiRecord = $this->addDCISets($oaiRecord, $record);
@@ -605,13 +605,13 @@ class OAIRecordRepository implements OAIRepository
         if (array_key_exists('from', $options) && $options['from']) {
             $records = $records->where(
                 'updated_at', '>=',
-                DatesProvider::parse($options['from'])->toDateTimeString()
+                Carbon::parse($options['from'])->toDateTimeString()
             );
         }
 
         // until
         if (array_key_exists('until', $options)) {
-            $until = DatesProvider::parse($options['until']);
+            $until = Carbon::parse($options['until']);
             $until = $until->isStartOfDay() ? $until->addDay(1) : $until;
             if (array_key_exists('until', $options) && $options['until']) {
                 $records = $records->where(
@@ -651,7 +651,7 @@ class OAIRecordRepository implements OAIRepository
 
         $oaiRecord = new Record(
             $identifier,
-            DatesProvider::parse($record->created_at)->format($this->getDateFormat())
+            Carbon::parse($record->created_at)->format($this->getDateFormat())
         );
         $oaiRecord = $this->addScholixSets($oaiRecord, $record);
         $oaiRecord->setMetadata($record->data);
