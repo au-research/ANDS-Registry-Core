@@ -281,6 +281,7 @@ class ServiceProvider
         $response = $this->getCommonResponse();
 
         $options = $this->collectOptions();
+
         if (!array_key_exists("metadataPrefix", $options)) {
             throw new BadArgumentException("Missing required metadataPrefix argument");
         }
