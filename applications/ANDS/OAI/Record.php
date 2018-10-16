@@ -53,9 +53,10 @@ class Record
         ];
     }
 
-    public function addSet($set)
+    public function addSet(Set $set)
     {
         $this->specs[] = $set;
+        return $this;
     }
 
 }
