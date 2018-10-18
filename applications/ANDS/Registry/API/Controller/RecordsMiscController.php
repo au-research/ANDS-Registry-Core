@@ -28,7 +28,7 @@ class RecordsMiscController
         $record = RegistryObjectsRepository::getRecordByID($id);
         $scholix = \ANDS\Registry\Providers\ScholixProvider::get($record);
 
-        $wt = Request::get('wt', 'json');
+        $wt = Request::get('wt', 'xml');
         switch ($wt) {
             case "json":
                 return $scholix->toJson();

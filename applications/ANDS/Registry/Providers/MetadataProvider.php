@@ -316,7 +316,14 @@ class MetadataProvider implements RegistryContentProvider
         return null;
     }
 
-    public static function getAuthors(RegistryObject $record, $simpleXML = null)
+    /**
+     * @param RegistryObject $record
+     * @param null $simpleXML
+     * @param bool $takeFirst
+     * @return array
+     * @throws \Exception
+     */
+    public static function getAuthors(RegistryObject $record, $simpleXML = null, $takeFirst = false)
     {
         $simpleXML = $simpleXML ? $simpleXML : MetadataProvider::getSimpleXML($record);
 
@@ -337,9 +344,13 @@ class MetadataProvider implements RegistryContentProvider
             // TODO format name by namepart type
             $authors[] = [
                 'relation' => 'Contributor',
-                'name' => (string) $elem,
+                'name' => (string) $elem->namePart,
                 'id' => null
             ];
+        }
+
+        if (count($authors) && $takeFirst) {
+            return $authors;
         }
 
         $validRelationTypes = ['IsPrincipalInvestigatorOf', 'author', 'coInvestigator', 'isOwnedBy', 'hasCollector'];
@@ -356,6 +367,10 @@ class MetadataProvider implements RegistryContentProvider
             ];
         }
 
+        if (count($authors) && $takeFirst) {
+            return $authors;
+        }
+
         // reverse
         $reverse = RelationshipView::where('to_key', $record->key)
             ->whereIn('relation_type', $validRelationTypes)
@@ -366,6 +381,10 @@ class MetadataProvider implements RegistryContentProvider
                 'name' => (string) $relation['from_title'],
                 'id' => $relation['from_id']
             ];
+        }
+
+        if (count($authors) && $takeFirst) {
+            return $authors;
         }
 
         // TODO registryObject@Group
