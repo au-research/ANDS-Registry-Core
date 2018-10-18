@@ -15233,6 +15233,7 @@ app.config(function (uiGmapGoogleMapApiProvider) {
 				case 'group': return 'Data Provider'; break;
 				case 'license_class': return 'Licence'; break;
 				case 'type': return 'Type'; break;
+                case 'collection_type': return 'Type'; break;
 				case 'subject_vocab_uri': return 'Subject Vocabulary URI'; break;
 				case 'anzsrc-for': return 'Subjects ANZSRC-FOR'; break;
 				case 'anzsrc-seo': return 'Subjects ANZSRC-SEO'; break;
@@ -15334,6 +15335,8 @@ app.config(function (uiGmapGoogleMapApiProvider) {
                 case 'THREDDS:WMS': case 'thredds:wms':return 'THREDDS Web Map Service'; break;
                 case 'THREDDS:OPeNDAP': case 'thredds:opendap':return 'THREDDS OPeNDAP'; break;
                 case 'contactCustodian': return 'Contact Custodian'; break;
+                case '-type:software': return 'Data'; break;
+                case 'type:software': return 'Software'; break;
 				default:
 					return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 					break;
@@ -15713,7 +15716,7 @@ queryBuilder.filter('getDisplayFor', function($log){
 					angular.forEach(newv, function(content, index) {
 						scope.facet = (content.name == scope.type ? content : scope.facet);
 					});
-					// $log.debug(scope.facet);
+					//$log.debug(scope.facet);
 				}
 			});
 
@@ -16756,7 +16759,7 @@ app.directive('focusMe', function($timeout, $parse) {
         $scope.showFacet = function(facet) {
             var allowed = [];
             if ($scope.filters['class']=='collection') {
-                allowed = ['subjects', 'group', 'access_rights', 'license_class', 'temporal', 'spatial', 'access_methods_ss'];
+                allowed = ['subjects', 'group', 'access_rights', 'license_class', 'temporal', 'spatial', 'access_methods_ss','collection_type'];
             } else if($scope.filters['class']=='activity') {
                 allowed = ['type', 'activity_status', 'subjects', 'administering_institution', 'funders', 'funding_scheme', 'commencement_to', 'commencement_from', 'completion_to', 'completion_from', 'funding_amount'];
             } else if ($scope.filters['class'] == 'service') {
@@ -17551,7 +17554,7 @@ app.directive('focusMe', function($timeout, $parse) {
                 {'name': 'help', 'display': '<i class="fa fa-question-circle"></i> Help'}
             ],
 
-            collection_facet_order: ['group', 'access_rights', 'access_methods_ss','license_class', 'type'],
+            collection_facet_order: ['collection_type','group', 'access_rights', 'access_methods_ss','license_class'],
             activity_facet_order: ['type', 'activity_status', 'funding_scheme', 'administering_institution', 'funders'],
 
             ingest: function (hash) {
@@ -17624,11 +17627,19 @@ app.directive('focusMe', function($timeout, $parse) {
             construct_facets: function (result, sclass) {
                 var facets = [];
 
+
                 //other facet fields
                 if (result.error)  console.log(result);
                 angular.forEach(result.facet_counts.facet_fields, function (item, index) {
                     facets[index] = [];
                     for (var i = 0; i < result.facet_counts.facet_fields[index].length; i += 2) {
+                        var fa = {
+                            name: result.facet_counts.facet_fields[index][i],
+                            value: result.facet_counts.facet_fields[index][i + 1]
+                        };
+                        facets[index].push(fa);
+                    }
+                    for (var i = 0; i < result.facet_counts.facet_queries[index].length; i += 2) {
                         var fa = {
                             name: result.facet_counts.facet_fields[index][i],
                             value: result.facet_counts.facet_fields[index][i + 1]

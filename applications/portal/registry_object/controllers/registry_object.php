@@ -1069,6 +1069,10 @@ class Registry_object extends MX_Controller
             ->setOpt('f.earliest_year.facet.sort', 'count asc')
             ->setOpt('f.latest_year.facet.sort', 'count');
 
+        $this->solr
+            ->setFacetOpt('query', '-type:software')
+            ->setFacetOpt('query', 'type:software');
+
         /**
          * Set facets based on class
          * todo clean this up
@@ -1081,8 +1085,11 @@ class Registry_object extends MX_Controller
             }
         } elseif ($default_class == 'collection') {
             foreach ($this->components['facet'] as $facet) {
-                if ($facet != 'temporal' && $facet != 'spatial') {
+                if ($facet != 'temporal' && $facet != 'spatial' && $facet != 'collection_type') {
                     $this->solr->setFacetOpt('field', $facet);
+                }
+                if($facet == 'collection_type'){
+                    $this->solr->setFacetOpt('query',$facet);
                 }
             }
         } else {

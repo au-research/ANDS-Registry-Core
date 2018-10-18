@@ -130,7 +130,7 @@
                 <li ng-repeat="v in value track by $index"  class="listTruncate">
                     <a href="" ng-click="toggleFilter(name, v, true)" ng-if="name=='related_collection_id'|| name=='related_party_one_id'||name=='related_party_multi_id' || name=='related_service_id' || name=='related_activity_id'"><span resolve-ro roid="v"></span><small><i class="fa fa-remove" tip="Remove Item"></i></small>  </a>
                     <a href="" ng-click="toggleFilter(name, v, true)" ng-if="name=='nottype'"><span resolve-ro roid="v"></span><small><i class="fa fa-remove" tip="Remove Item"></i></small>  </a>
-                    <a href="" ng-click="toggleFilter(name, v, true)" ng-if="name!='related_collection_id'&& name!='related_party_one_id'&& name!='related_party_multi_id' && name!='related_service_id' && name!='related_activity_id' && name!='nottype'">[[ v|truncate:30 ]]<small><i class="fa fa-remove" tip="Remove Item"></i></small> </a>
+                    <a href="" ng-click="toggleFilter(name, v, true)" ng-if="name!='related_collection_id'&& name!='related_party_one_id'&& name!='related_party_multi_id' && name!='related_service_id' && name!='related_activity_id' && name!='nottype'">[[ v | formatFacet | truncate:30 ]]<small><i class="fa fa-remove" tip="Remove Item"></i></small> </a>
                 </li>
             </ul>
             <ul class="listy no-bottom" ng-show="isArray(value)===false && (name!='anzsrc-for' && name!='anzsrc-seo') && name!='nottype'">
@@ -183,6 +183,9 @@
     </div>
 
     <div facet-search facets="facets" type="type" ng-if="showFacet('type')"></div>
+
+    <div facet-search facets="facets" type="collection_type" ng-if="showFacet('collection_type')"></div>
+
     <div facet-search facets="facets" type="activity_status" ng-if="showFacet('activity_status')"></div>
 
     <!-- Subject Facet -->
