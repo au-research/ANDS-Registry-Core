@@ -4,6 +4,8 @@ namespace ANDS\Repository;
 
 use ANDS\API\Task\ImportTask;
 use ANDS\DataSource;
+use ANDS\Registry\Providers\DCI\DCI;
+use ANDS\Registry\Providers\Scholix\Scholix;
 use ANDS\RegistryObject;
 use ANDS\RegistryObjectAttribute;
 use ANDS\RegistryObject\Links;
@@ -70,6 +72,12 @@ class RegistryObjectsRepository
 
             //delete links
             Links::where('registry_object_id', $record->registry_object_id)->delete();
+
+            // delete scholix documents
+            Scholix::where('registry_object_id', $record->registry_object_id)->delete();
+
+            // delete dci documents
+            DCI::where('registry_object_id', $record->registry_object_id)->delete();
 
             // delete record
             $record->delete();

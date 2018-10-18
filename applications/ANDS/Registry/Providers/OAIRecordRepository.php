@@ -6,6 +6,8 @@ namespace ANDS\Registry\Providers;
 
 use ANDS\DataSource;
 use ANDS\Registry\Group;
+use ANDS\Registry\Providers\DCI\DataCitationIndexProvider;
+use ANDS\Registry\Providers\DCI\DCI;
 use ANDS\Registry\Providers\DublinCore\DublinCoreProvider;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\Providers\Scholix\Scholix;
@@ -42,6 +44,11 @@ class OAIRecordRepository implements OAIRepository
             'metadataPrefix' => 'scholix',
             'schema' => 'https://raw.githubusercontent.com/scholix/schema/master/xsd/scholix.xsd',
             'metadataNamespace' => 'http://www.scholix.org'
+        ],
+        "dci" => [
+            'metadataPrefix' => 'dci',
+            'schema' => 'https://clarivate.com/products/web-of-science/web-science-form/data-citation-index/',
+            'metadataNamespace' => 'https://clarivate.com/products/web-of-science/web-science-form/data-citation-index/'
         ]
     ];
 
@@ -133,6 +140,10 @@ class OAIRecordRepository implements OAIRepository
 
         if ($metadataPrefix == "scholix") {
             return $this->listScholixRecords($options);
+        }
+
+        if ($metadataPrefix == "dci") {
+            return $this->listDCIRecords($options);
         }
 
         $registryObjects = $this->getRegistryObjects($options);
@@ -443,7 +454,6 @@ class OAIRecordRepository implements OAIRepository
      */
     private function listScholixRecords($options)
     {
-
         $records = $this->getScholixRecords($options);
 
         $result = [];
@@ -463,6 +473,76 @@ class OAIRecordRepository implements OAIRepository
             'records' => $result,
             'limit' => $options['limit'],
             'offset' => $options['offset']
+        ];
+    }
+
+    private function listDCIRecords($options)
+    {
+        $records = $this->getDCIRecords($options);
+
+        $result = [];
+        foreach ($records['records'] as $record) {
+            $oaiRecord = new Record(
+                $record->registryObject->key,
+                Carbon::parse($record->updated_at)->format($this->getDateFormat())
+            );
+            $dataSourceID = $record->registry_object_data_source_id;
+            $oaiRecord->addSet(
+                new Set("datasource:". $dataSourceID, $dataSourceID)
+            );
+            $oaiRecord->setMetadata($record->data);
+
+            $result[] = $oaiRecord;
+        }
+
+        return [
+            'total' => $records['total'],
+            'records' => $result,
+            'limit' => $options['limit'],
+            'offset' => $options['offset']
+        ];
+    }
+
+    private function getDCIRecords($options)
+    {
+        $records = DCI::limit($options['limit'])->offset($options['offset']);
+
+        // set
+        if (array_key_exists('set', $options) && $options['set']) {
+            $set = $options['set'];
+            $set = explode(':', $set);
+
+            if ($set[0] == "datasource") {
+                $records = $records->where('registry_object_data_source_id', $set[1]);
+            } else {
+                throw new BadArgumentException();
+            }
+        }
+
+        // from
+        if (array_key_exists('from', $options) && $options['from']) {
+            $records = $records->where(
+                'updated_at', '>',
+                Carbon::parse($options['from'])->toDateTimeString()
+            );
+        }
+
+        // until
+        if (array_key_exists('until', $options) && $options['until']) {
+            $records = $records->where(
+                'updated_at', '<',
+                Carbon::parse($options['until'])->toDateTimeString()
+            );
+        }
+
+        $count = $records->count();
+        if ($count == 0) {
+            $count = DCI::count();
+        }
+
+        return [
+            'total' => $count,
+            'records' => $records->get()
         ];
     }
 

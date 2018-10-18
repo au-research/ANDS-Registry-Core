@@ -65,6 +65,9 @@ class RegistryObject extends Model
         return $this->hasMany(RecordData::class, 'registry_object_id', 'registry_object_id');
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
     public function datasource()
     {
         return $this->belongsTo(DataSource::class, 'data_source_id', 'data_source_id');
