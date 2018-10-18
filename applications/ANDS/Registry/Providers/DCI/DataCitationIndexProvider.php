@@ -48,6 +48,10 @@ class DataCitationIndexProvider implements RegistryContentProvider
             return false;
         }
 
+        if (!static::isValid($record)) {
+            return false;
+        }
+
         // get dci and then save it
         $dci = static::get($record);
 
@@ -80,6 +84,10 @@ class DataCitationIndexProvider implements RegistryContentProvider
      */
     public static function get(RegistryObject $record)
     {
+        if (!static::isValid($record)) {
+            return null;
+        }
+
         $provider = new static;
         $provider->record = $record;
         $provider->DCIRoot = new SimpleXMLElement("<DataRecord></DataRecord>");
@@ -99,6 +107,26 @@ class DataCitationIndexProvider implements RegistryContentProvider
 
         // TODO: clean up
         return $provider->dom->ownerDocument->saveXML($provider->dom->ownerDocument->documentElement, LIBXML_NOXMLDECL);
+    }
+
+    /**
+     * Checks if a record is dci-able
+     *
+     * @param RegistryObject $record
+     * @return bool
+     */
+    public static function isValid(RegistryObject $record)
+    {
+        if ($record->class != "collection") {
+            return false;
+        }
+
+        $acceptedTypes = ['collection', 'repository', 'dataset'];
+        if (!in_array(strtolower($record->type), $acceptedTypes)) {
+            return false;
+        }
+
+        return true;
     }
 
     private function build() {
