@@ -69,7 +69,7 @@
     <div class="panel swatch-white">
         <div class="panel-heading">Data Profile</div>
         <div  class="panel-body">
-            {{$group['title']}}  has <a href="{{ base_url('search') }}#!/class=collection/group={{ rawurlencode($group['title']) }}">{{$group['counts']}} data records</a> in Research Data Australia,
+            {{$group['title']}}  has <a href="{{ base_url('search') }}#!/class=collection/group={{ rawurlencode($group['title']) }}">{{$group['counts'] - $group['facet']['types']['software']}} data records</a> in Research Data Australia,
             which cover {{sizeof($group['facet']['subjects'])}} subjects areas {{$subjects_list}} and involve  <a href="{{base_url()}}search#!/group={{$group['title']}}/type=group/class=party">{{$group['groups_count']}} group(s)</a>.
             All of the information provided by  {{$group['title']}} can be accessed from the box on the right hand side of this page.
         </div>
