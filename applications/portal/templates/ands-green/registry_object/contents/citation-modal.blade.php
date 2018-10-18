@@ -31,6 +31,9 @@
                             <dd>
                                 {{$citation['contributors']}}
                                 ({{$citation['date']}}): {{$citation['title']}}.
+                                @if(isset($citation['version']) && trim($citation['version'])!='')
+                                    {{$citation['version']}}.
+                                @endif
                                 {{$citation['publisher']}}.
                                 @if(isset($citation['identifierResolved']['href']))
                                 <br /><a href="{{$citation['identifierResolved']['href']}}">{{$citation['identifier']}}</a>
