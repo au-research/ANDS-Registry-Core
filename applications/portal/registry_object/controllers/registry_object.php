@@ -951,6 +951,28 @@ class Registry_object extends MX_Controller
     }
 
     /**
+     * Search View for collections of type software
+     * Displaying the search view for software type records
+     *
+     * @return HTML
+     */
+    function software()
+    {
+        //redirect to the correct URL to add software type to the search query
+        redirect('search/#!/q=/collection_type=type%3Asoftware/');
+
+        // Prevent indexing of this page by search engines
+        $this->output->set_header('X-Robots-Tag: noindex, nofollow');
+
+        $this->load->library('blade');
+        $this->blade
+            ->set('lib', array('ui-events', 'angular-ui-map', 'google-map'))
+            ->set('search', true)//to disable the global search
+            ->render('registry_object/search');
+    }
+
+
+    /**
      * Search View for Subjects Browser
      * Displaying the search view for the current component
      *
