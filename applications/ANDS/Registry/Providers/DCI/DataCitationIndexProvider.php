@@ -140,7 +140,7 @@ class DataCitationIndexProvider implements RegistryContentProvider
         $title['TitleType'] = "English title";
 
         // BibliographicData/AuthorList/Author
-        $authors = MetadataProvider::getAuthors($this->record, $this->sxml);
+        $authors = MetadataProvider::getAuthors($this->record, $this->sxml, true);
         $authorList = $bibliographicData->addChild('AuthorList');
         $seq = 1;
         foreach ($authors as $author) {
@@ -160,10 +160,6 @@ class DataCitationIndexProvider implements RegistryContentProvider
             foreach ($addresses = MetadataProvider::getElectronicAddress($party, $partyXML) as $address) {
                 if ($address['type'] === 'email') {
                     $authorElement->addChild('AuthorEmail', $address['value']);
-                }
-
-                if ($address['type'] === "postalAddress") {
-
                 }
             }
 
