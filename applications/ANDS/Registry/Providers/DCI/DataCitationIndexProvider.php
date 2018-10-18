@@ -4,11 +4,15 @@
 namespace ANDS\Registry\Providers\DCI;
 
 
+use ANDS\Registry\Providers\GrantsConnectionsProvider;
 use ANDS\Registry\Providers\MetadataProvider;
 use ANDS\Registry\Providers\RegistryContentProvider;
+use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
+use ANDS\Registry\Providers\RIFCS\SubjectProvider;
 use ANDS\Registry\Providers\ScholixProvider;
+use ANDS\Registry\RelationshipView;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\StrUtil;
@@ -17,8 +21,7 @@ use SimpleXMLElement;
 
 class DataCitationIndexProvider implements RegistryContentProvider
 {
-
-    protected $namespace = "https://clarivate.com/products/web-of-science/web-science-form/data-citation-index/";
+    public static $namespace = "https://clarivate.com/products/web-of-science/web-science-form/data-citation-index/";
 
     public $record;
     public $dom;
@@ -27,7 +30,7 @@ class DataCitationIndexProvider implements RegistryContentProvider
     public $DCIRoot;
 
     /** @var SimpleXMLElement */
-    public $xml;
+    public $sxml;
 
     public $gXPath;
 
@@ -39,7 +42,34 @@ class DataCitationIndexProvider implements RegistryContentProvider
      */
     public static function process(RegistryObject $record)
     {
-        // TODO: Implement process() method.
+        // only provide dci if the data source is allowed
+        $allow = $record->datasource->getDataSourceAttributeValue('export_dci');
+        if (!$allow) {
+            return false;
+        }
+
+        // get dci and then save it
+        $dci = static::get($record);
+
+        // if there's an existing, update it
+        if ($existing = DCI::where('registry_object_id', $record->id)->first()) {
+            $existing->data = $dci;
+            $existing->save();
+            return true;
+        }
+
+        // if not, create it
+        $model = new DCI;
+        $model->setRawAttributes([
+            'data' => $dci,
+            'hash' => md5($dci),
+            'registry_object_id' => $record->id,
+            'registry_object_group' => $record->group,
+            'registry_object_data_source_id' => $record->data_source_id,
+        ]);
+        $model->save();
+
+        return true;
     }
 
     /**
@@ -65,44 +95,23 @@ class DataCitationIndexProvider implements RegistryContentProvider
 
         $provider->sxml = XMLUtil::getSimpleXMLFromString($xml);
 
-        $dci = $provider->getDCI();
-
-//        $xml = $record->getCurrentData()->data;
-//
-//        // DOM
-//        $root = new SimpleXMLElement("<DataRecord></DataRecord>");
-//        $dom = dom_import_simplexml($root);
-//
-//        // TODO: hasTag excludeDCI
-//
-//        // TODO: data source attribute check
-//
-//        $header = $root->addChild('Header');
-//        static::getHeader($header, $record);
-//
-//        $bibliographicData = $root->addChild('BibliographicData');
-//        static::getBibliographicData($bibliographicData);
-
-        // getAbstract
-        // getRightsAndLicencing
-        // getParentDataRef
-        // getDescriptorsData
-        // getFundingInfo
-        // getCitationList
+        $provider->build();
 
         // TODO: clean up
         return $provider->dom->ownerDocument->saveXML($provider->dom->ownerDocument->documentElement, LIBXML_NOXMLDECL);
     }
 
-    private function getDCI() {
+    private function build() {
         $this->getHeader();
         $this->getBibliographicData();
         $this->getAbstract();
         $this->getRightsAndLicencing();
-//        $this->getParentDataRef();
-//        $this->getDescriptorsData();
-//        $this->getFundingInfo();
-//        $this->getCitationList();
+        $this->getParentDataRef();
+        $this->getDescriptorsData();
+        $this->getFundingInfo();
+        $this->getCitationList();
+        $this->getMethodologyList();
+        $this->getNamedPersonList();
     }
 
     /**
@@ -145,17 +154,30 @@ class DataCitationIndexProvider implements RegistryContentProvider
                 continue;
             }
 
-            foreach ($addresses = MetadataProvider::getAddress($party) as $address) {
-                // BibliographicData/AuthorList/Author/AuthorEmail
+            $partyXML = $party->getCurrentData()->data;
+
+            // BibliographicData/AuthorList/Author/AuthorEmail
+            foreach ($addresses = MetadataProvider::getElectronicAddress($party, $partyXML) as $address) {
                 if ($address['type'] === 'email') {
                     $authorElement->addChild('AuthorEmail', $address['value']);
                 }
 
-                // TODO BibliographicData/AuthorList/Author/AuthorAddress
+                if ($address['type'] === "postalAddress") {
+
+                }
+            }
+
+            // BibliographicData/AuthorList/Author/AuthorAddress
+            $addresses = MetadataProvider::getPhysicalAddress($party, $partyXML);
+            if (count($addresses) > 0) {
+                $authorAddress = $authorElement->addChild('AuthorAddress');
+                foreach ($addresses as $address) {
+                    $authorAddress->addChild('AddressString', StrUtil::xmlSafe($address['value']));
+                }
             }
 
             // BibliographicData/AuthorList/Author/AuthorID
-            foreach ($identifiers = IdentifierProvider::get($party) as $identifier) {
+            foreach ($identifiers = IdentifierProvider::get($party, $partyXML) as $identifier) {
                 $authorID = $authorElement->addChild('AuthorID', $identifier['value']);
                 $authorID['type'] = $identifier['type'];
             }
@@ -219,8 +241,209 @@ class DataCitationIndexProvider implements RegistryContentProvider
     {
         foreach ($rights = MetadataProvider::getRights($this->record) as $right) {
             $licensing = $this->DCIRoot->addChild('Rights_Licensing');
-            $licensing->addChild('RightsStatement', $right['rightsStatement']['value']);
+            $rightsText = $right['rightsStatement']['value']
+                . ' '. $right['rightsStatement']['uri'] . ' ' . $right['accessRights']['value'];
+            $licensing->addChild('RightsStatement', $rightsText);
             $licensing->addChild('LicenseStatement', $right['licence']['value']);
+        }
+    }
+
+    private function getDescriptorsData()
+    {
+        $descriptor = $this->DCIRoot->addChild('DescriptorsData');
+
+        // DataType
+        $descriptor->addChild('DataType', $this->record->type);
+
+        // Keywords
+        $subjects = SubjectProvider::getSubjects($this->record);
+        if (count($subjects) > 0) {
+            $keywordsList = $descriptor->addChild('KeywordsList');
+            foreach ($subjects as $subject) {
+                $keywordsList->addChild('Keyword', StrUtil::xmlSafe($subject['value']));
+            }
+        }
+
+        $coverages = MetadataProvider::getCoverages($this->record);
+
+        // Spatial
+        if (count($coverages['spatial']) > 0) {
+            $geographicalData = $descriptor->addChild('GeographicalData');
+            foreach ($coverages['spatial'] as $spatial) {
+                $geographicalData->addChild('GeographicalLocation', StrUtil::xmlSafe($spatial['value']));
+            }
+        }
+
+        // Temporal
+        if (count($coverages['temporal']) > 0) {
+
+            $froms = collect([]);
+            $tos = collect([]);
+
+            foreach ($coverages['temporal'] as $temporal) {
+                $froms = $froms->merge(collect($temporal)->filter(function($date){
+                    return $date['type'] === 'dateFrom';
+                })->pluck('value'));
+                $tos = $froms->merge(collect($temporal)->filter(function($date){
+                    return $date['type'] === 'dateTo';
+                })->pluck('value'));
+            }
+
+            $froms = $froms->map(function($date){
+                return DatesProvider::formatDate($date);
+            })->sort();
+            $tos = $tos->map(function($date){
+                return DatesProvider::formatDate($date);
+            })->sort();
+
+            $TimeperiodList = $descriptor->addChild('TimeperiodList');
+            if ($froms->count()) {
+                $earliest = $TimeperiodList->addChild('TimePeriod', $froms->first());
+                $earliest['TimeSpan'] = 'Start';
+            }
+            if ($tos->count()) {
+                $latest = $TimeperiodList->addChild('TimePeriod', $tos->last());
+                $latest['TimeSpan'] = 'End';
+            }
+        }
+    }
+
+    private function getParentDataRef()
+    {
+        $direct = RelationshipView::where('from_id', $this->record->id)
+            ->where('relation_type', 'isPartOf')
+            ->where('to_class', 'collection')
+            ->get();
+
+        foreach ($direct as $relation) {
+            $this->DCIRoot->addChild('ParentDataRef', StrUtil::xmlSafe($relation->to_key));
+        }
+    }
+
+    private function getCitationList()
+    {
+        $relatedInfoPublications = XMLUtil::getElementsByXPathFromSXML($this->sxml, "//ro:relatedInfo[@type='publication']");
+        if (count($relatedInfoPublications) === 0) {
+            return;
+        }
+
+        $citationList = $this->DCIRoot->addChild("CitationList");
+
+        foreach ($relatedInfoPublications as $pub) {
+            $citation = $citationList->addChild('Citation');
+            $citationText = $citation->addChild('CitationText');
+            $citation['CitationType'] = "Citing Ref";
+            $text = (string) $pub->title;
+            $text .= $pub->identifier['type'] === 'uri'
+                ? ' &lt;'. (string) $pub->identifier.'&gt;'
+                : ' &lt;'.(string) $pub->identifier['type'].':'.(string) $pub->identifier.'&gt;';
+            $text .= $pub->notes ? '('.(string) $pub->notes.')' : '';
+            $citationText->addChild("CitationString", $text);
+        }
+    }
+
+    private function getFundingInfo()
+    {
+        // FundingInfo/FundingInfoList/ParsedFunding
+        $direct = RelationshipView::where('from_id', $this->record->id)
+            ->where('to_class', 'activity')
+            ->where('relation_type', 'isOutputOf')
+            ->get();
+        // reverse?
+
+        if (count($direct) === 0) {
+            return;
+        }
+
+        // building a list of fundingInfos before adding to the DCIRoot
+        // because some activity might not have a funder and/or grant number
+        $fundingInfos = [];
+        foreach ($direct as $relation) {
+            $activity = RegistryObjectsRepository::getRecordByID($relation->to_id);
+
+            // registryObject:activity:identifier[@type='arc' or 'nhmrc']
+            $identifiers = IdentifierProvider::get($activity);
+            $grantID = collect($identifiers)->filter(function($identifier){
+                return in_array($identifier['type'], ['arc', 'nhmrc']);
+            })->first();
+            if (!$grantID) {
+                continue;
+            }
+
+            $fundingInfo = [
+                'GrantNumber' => $grantID['value']
+            ];
+
+            if ($funder = RelationshipProvider::getFunder($activity)){
+                $fundingInfo['FundingOrganization'] = $funder->title;
+            }
+
+            $fundingInfos[] = $fundingInfo;
+        }
+
+        if (count($fundingInfos) === 0) {
+            return;
+        }
+
+        // FundingInfo/FundingInfoList/ParsedFunding/GrantNumber
+        // FundingInfo/FundingInfoList/ParsedFunding/FundingOrganisation
+        $FundingInfo = $this->DCIRoot->addChild('FundingInfo');
+        $FundingInfoList = $FundingInfo->addChild('FundingInfoList');
+        foreach ($fundingInfos as $fundingInfo) {
+            $ParsedFunding = $FundingInfoList->addChild('ParsedFunding');
+            $ParsedFunding->addChild('GrantNumber', $fundingInfo['GrantNumber']);
+            if (isset($fundingInfo['FundingOrganization'])) {
+                $ParsedFunding->addChild('FundingOrganisation', $fundingInfo['FundingOrganization']);
+            }
+        }
+
+    }
+
+    /**
+     * MethodologyList/Methodology
+     * registryObject:collection:relatedInfo:type="reuseInformation"
+     */
+    private function getMethodologyList()
+    {
+        $reuseInfo = $this->sxml->xpath("//ro:relatedInfo[@type='reuseInformation']");
+        if (!count($reuseInfo)) {
+            return;
+        }
+
+        $MethodologyList = $this->DCIRoot->addChild('MethodologyList');
+        foreach ($reuseInfo as $info) {
+            $methodology = implode(NL, [
+                $info->title ? (string) $info->title : "",
+                $info->identifier ? (string) $info->identifier : "",
+                $info->notes ? (string) $info->notes : ""
+            ]);
+            $MethodologyList->addChild("Methodology", $methodology);
+        }
+    }
+
+    /**
+     *  registryObject:collection:subject:type="AU-ANL:PEAU"
+        AND
+        registryObject:collection:subject:type="orcid"
+     */
+    private function getNamedPersonList()
+    {
+        $subjects = SubjectProvider::getSubjects($this->record);
+        if (!count($subjects)) {
+            return;
+        }
+
+        $valid = collect($subjects)->filter(function($subject) {
+            return in_array($subject['type'], ['AU-ANL:PEAU', 'orcid']);
+        });
+
+        if (!count($valid)) {
+            return;
+        }
+
+        $NamedPersonList = $this->DCIRoot->addChild('NamedPersonList');
+        foreach ($valid as $subject) {
+            $NamedPersonList->addChild('NamedPerson', $subject['value']);
         }
     }
 

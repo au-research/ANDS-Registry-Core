@@ -8,6 +8,7 @@ use ANDS\RecordData;
 use ANDS\Registry\Connections;
 use ANDS\Registry\IdentifierRelationshipView;
 use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
+use ANDS\Registry\RelationshipView;
 use ANDS\RegistryObject\Identifier;
 use ANDS\RegistryObject;
 use ANDS\RegistryObject\ImplicitRelationship;
@@ -796,6 +797,24 @@ class RelationshipProvider
     public static function getDuplicateRecordsFromIdentifiers($identifiers)
     {
         return Identifier::whereIn('identifier', $identifiers)->get()->pluck('registry_object_id')->unique()->toArray();
+    }
+
+    /**
+     * @param $activity
+     * @return RegistryObject|null
+     */
+    public static function getFunder($activity)
+    {
+        $direct = RelationshipView::where('from_id', $activity->id)
+            ->where('to_class', 'party')
+            ->where('relation_type', 'isFundedBy')
+            ->first();
+
+        if (count($direct)) {
+            return RegistryObjectsRepository::getRecordByID($direct->to_id);
+        }
+
+        return null;
     }
 
 }

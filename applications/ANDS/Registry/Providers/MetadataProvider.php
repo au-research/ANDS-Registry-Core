@@ -102,7 +102,7 @@ class MetadataProvider implements RegistryContentProvider
         return $results;
     }
 
-    public static function getAddress(RegistryObject $record, $xml = null)
+    public static function getElectronicAddress(RegistryObject $record, $xml = null)
     {
         $xml = $xml ? $xml : $record->getCurrentData()->data;
 
@@ -111,6 +111,20 @@ class MetadataProvider implements RegistryContentProvider
             $results[] = [
                 'type' => (string) $electronic['type'],
                 'value' => (string) $electronic->value
+            ];
+        }
+        return $results;
+    }
+
+    public static function getPhysicalAddress(RegistryObject $record, $xml = null)
+    {
+        $xml = $xml ? $xml : $record->getCurrentData()->data;
+
+        $results = [];
+        foreach (XMLUtil::getElementsByXPath($xml, '//ro:address/ro:physical') as $address) {
+            $results[] = [
+                'type' => (string) $address['type'],
+                'value' => (string) $address->addressPart
             ];
         }
         return $results;
@@ -135,10 +149,15 @@ class MetadataProvider implements RegistryContentProvider
             }
 
             foreach ($element->temporal as $temporal) {
-                $results['temporal'][] = [
-                    'dateFrom' => (string) $temporal->dateFrom,
-                    'dateTo' => (string) $temporal->dateTo
-                ];
+                $dates = [];
+                foreach ($temporal->date as $date) {
+                    $dates[] = [
+                        'type' => (string) $date['type'],
+                        'format' => (string) $date['format'],
+                        'value' => (string) $date
+                    ];
+                }
+                $results['temporal'][] = $dates;
             }
 
             $results[] = [

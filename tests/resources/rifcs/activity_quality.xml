@@ -8,6 +8,7 @@
                 <namePart>Quality Level 3</namePart>
             </name>
             <identifier type="purl">http://purl.org/au-research/grants/nhmrc/640318AUT</identifier>
+            <identifier type="arc">grant-id</identifier>
             <location>
                 <address>
                     <physical type="postalAddress">

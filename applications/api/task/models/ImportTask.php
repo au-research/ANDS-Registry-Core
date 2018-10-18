@@ -287,6 +287,11 @@ class ImportTask extends Task
                     "FinishImport",
                 ];
                 break;
+            case "MetadataGenerationWorkflow":
+                $tasks = [
+                    "ProcessScholix"
+                ];
+                break;
             case "UpdateRelationshipWorkflow":
                 $tasks = [
                     "ProcessIdentifiers",
