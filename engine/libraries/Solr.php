@@ -426,6 +426,19 @@ class Solr
                         if ($value != 'all') $this->setOpt('fq', '+type:("' . $value . '")');
                     }
                     break;
+                case 'collection_type':
+                    if (is_array($value)) {
+                      $this->setOpt('fq', '+type:*');
+                    } else {
+                        if(stripslashes(urldecode($value))=='-type:software') {
+                            $this->setOpt('fq', '-type:("software")');
+                            $this->setOpt('facet.query', '-type:software');
+                        }else if (stripslashes(urldecode($value))=='type:software'){
+                            $this->setOpt('fq', 'type:("software")');
+                            $this->setOpt('facet.query', 'type:software');
+                        }
+                    }
+                    break;
                 case 'nottype':
                     $this->setOpt('fq', '-type:("'.$value.'")');
                     break;
