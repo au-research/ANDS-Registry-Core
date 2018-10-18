@@ -14,6 +14,7 @@ angular.module('portal-filters', [])
 				case 'group': return 'Data Provider'; break;
 				case 'license_class': return 'Licence'; break;
 				case 'type': return 'Type'; break;
+                case 'collection_type': return 'Type'; break;
 				case 'subject_vocab_uri': return 'Subject Vocabulary URI'; break;
 				case 'anzsrc-for': return 'Subjects ANZSRC-FOR'; break;
 				case 'anzsrc-seo': return 'Subjects ANZSRC-SEO'; break;
@@ -36,6 +37,7 @@ angular.module('portal-filters', [])
 				case 'gcmd': return 'GCMD Keyword'; break;
 				case 'iso639-3': return 'iso639-3 Language'; break;
 				case 'lcsh': return 'LCSH'; break;
+				case 'Type:software': return 'Software'; break;
 				case 'keywords': return 'Keyword'; break;
 				case 'refine': return 'Keyword'; break;
 				case 'subject_value_resolved': return 'Subject'; break;
@@ -101,24 +103,69 @@ angular.module('portal-filters', [])
 	})
 	.filter('formatFacet', function () {
 		return function (str) {
-			switch (str) {
-				case 'OGC:WMTS': case 'ogc:wmts': return 'OGC Web Map Tile Service'; break;
-				case 'OGC:WFS': case 'ogc:wfs': return 'OGC Web Feature Service'; break;
-				case 'OGC:WMS': case 'ogc:wms': return 'OGC Web Map Service'; break;
-				case 'OGC:WCS': case 'ogc:wcs': return 'OGC Web Coverage Service'; break;
-                case 'OGC:WPS': case 'ogc:wps': return 'OGC Web Processing Service'; break;
-                case 'landingPage': return 'Landing Page'; break;
-				case 'directDownload': return 'Direct Download'; break;
-				case 'GeoServer': return 'GeoServer'; break;
-				case 'THREDDS': case 'thredds': return 'THREDDS'; break;
-                case 'THREDDS:WCS': case 'thredds:wcs': return 'THREDDS Web Coverage Service'; break;
-                case 'THREDDS:WMS': case 'thredds:wms':return 'THREDDS Web Map Service'; break;
-                case 'THREDDS:OPeNDAP': case 'thredds:opendap':return 'THREDDS OPeNDAP'; break;
-                case 'contactCustodian': return 'Contact Custodian'; break;
-				default:
-					return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
-					break;
-			}
+			if(typeof(str) == "string") {
+				switch (str) {
+					case 'OGC:WMTS':
+					case 'ogc:wmts':
+						return 'OGC Web Map Tile Service';
+						break;
+					case 'OGC:WFS':
+					case 'ogc:wfs':
+						return 'OGC Web Feature Service';
+						break;
+					case 'OGC:WMS':
+					case 'ogc:wms':
+						return 'OGC Web Map Service';
+						break;
+					case 'OGC:WCS':
+					case 'ogc:wcs':
+						return 'OGC Web Coverage Service';
+						break;
+					case 'OGC:WPS':
+					case 'ogc:wps':
+						return 'OGC Web Processing Service';
+						break;
+					case 'landingPage':
+						return 'Landing Page';
+						break;
+					case 'directDownload':
+						return 'Direct Download';
+						break;
+					case 'GeoServer':
+						return 'GeoServer';
+						break;
+					case 'THREDDS':
+					case 'thredds':
+						return 'THREDDS';
+						break;
+					case 'THREDDS:WCS':
+					case 'thredds:wcs':
+						return 'THREDDS Web Coverage Service';
+						break;
+					case 'THREDDS:WMS':
+					case 'thredds:wms':
+						return 'THREDDS Web Map Service';
+						break;
+					case 'THREDDS:OPeNDAP':
+					case 'thredds:opendap':
+						return 'THREDDS OPeNDAP';
+						break;
+					case 'contactCustodian':
+						return 'Contact Custodian';
+						break;
+					case '-type:software':
+						return 'Data';
+						break;
+					case 'type:software':
+						return 'Software';
+						break;
+					default:
+						return str.replace(/\w\S*/g, function (txt) {
+							return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+						});
+						break;
+				}
+			}else{ return " ";}
 		}
 	})
 	.filter('getLabelFor', function($log){

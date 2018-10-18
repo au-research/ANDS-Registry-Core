@@ -10,6 +10,6 @@
             <input type="checkbox" ng-checked="isFacet(facet.name, item.name)" ng-click="toggleFilter(facet.name, item.name, true)">
             <a href="" title="[[ item.name ]]" xtip="[[ item.name ]]" ng-click="toggleFilter(facet.name, item.name, true)" >[[item.name  | formatFacet |  truncate:30]] <small>[[item.value]]</small></a>
         </li>
-        <li ng-if="facet.value.length > 5 || filterExists(facet.name)"><a href="" ng-click="advanced(facet.name)">View More</a></li>
+        <li ng-if="(facet.value.length > 5 || filterExists(facet.name)) && facet.name!='collection_type'"><a href="" ng-click="advanced(facet.name)">View More</a></li>
     </ul>
 </div>
