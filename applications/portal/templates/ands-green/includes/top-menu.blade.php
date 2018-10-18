@@ -26,6 +26,7 @@
                         <li><a href="{{portal_url('theme/services')}}"><i class="fa fa-wrench icon-portal"></i> Services and Tools</a></li>
                         <li><a href="{{portal_url('grants')}}"><i class="fa fa-flask icon-portal"></i> Grants and Projects</a></li>
                         <li><a href="{{portal_url('theme/open-data')}}"><i class="fa fa-unlock icon-portal"></i> Open data</a></li>
+                        <li><a href="{{portal_url('software')}}"><i class="fa fa-file-code-o icon-portal"></i> Software</a></li>
                         <li><a href="{{portal_url('theme/highlighting-ands-projects')}}"><i class="fa fa-sun-o icon-portal"></i> Program Highlights</a></li>
 
                     </ul>
