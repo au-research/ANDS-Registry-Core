@@ -49,6 +49,8 @@ class DataCitationIndexProvider implements RegistryContentProvider
         }
 
         if (!static::isValid($record)) {
+            // a record might not be valid anymore (type change), remove
+            DCI::where('registry_object_id', $record->id)->delete();
             return false;
         }
 
@@ -212,8 +214,10 @@ class DataCitationIndexProvider implements RegistryContentProvider
 
         // BibliographicData/Source/SourceURL
         $sourceURL = MetadataProvider::getSourceURL($this->record, $this->sxml);
-        // TODO format url based on the type (probably)
-        $source->addChild("SourceURL", StrUtil::xmlSafe($sourceURL['value']));
+        $url = $sourceURL['type'] === "doi" ?
+            end(explode('doi.org/', $sourceURL['value'])) :
+            $sourceURL['value'];
+        $source->addChild("SourceURL", StrUtil::xmlSafe($url));
 
         // BibliographicData/Source/Publisher
         $publisher = MetadataProvider::getPublisher($this->record, $this->sxml);
