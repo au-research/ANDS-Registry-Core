@@ -318,10 +318,10 @@ class DataCitationIndexProvider implements RegistryContentProvider
             }
 
             $froms = $froms->map(function($date){
-                return DatesProvider::formatDate($date);
+                return DatesProvider::formatDate($date, 'Y-m-d H:i:s');
             })->sort();
             $tos = $tos->map(function($date){
-                return DatesProvider::formatDate($date);
+                return DatesProvider::formatDate($date, 'Y-m-d H:i:s');
             })->sort();
 
             $TimeperiodList = $descriptor->addChild('TimeperiodList');
