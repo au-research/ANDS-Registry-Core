@@ -226,8 +226,10 @@ class OAIRecordRepository implements OAIRepository
         if ($group = Group::where('title', $groupName)->first()) {
             $oaiRecord
                 ->addSet(new Set("group:".$group->id))
-                ->addSet(new Set("group:".$this->nameBackwardCompat($group->title)))
-                ->addSet(new Set("group:".$this->groupNameBWCompat($group->title)));
+                ->addSet(new Set("group:".$this->nameBackwardCompat($group->title)));
+            if ($this->groupNameBWCompat($group->title) != $this->nameBackwardCompat($group->title)) {
+                $oaiRecord->addSet(new Set("group:" . $this->groupNameBWCompat($group->title)));
+            }
         }
 
         return $oaiRecord;
@@ -670,8 +672,10 @@ class OAIRecordRepository implements OAIRepository
         if ($group = Group::where('title', $record->registry_object_group)->first()) {
             $oaiRecord
                 ->addSet(new Set("group:".$group->id))
-                ->addSet(new Set("group:".$this->nameBackwardCompat($group->title)))
-                ->addSet(new Set("group:".$this->groupNameBWCompat($group->title)));
+                ->addSet(new Set("group:".$this->nameBackwardCompat($group->title)));
+            if ($this->groupNameBWCompat($group->title) != $this->nameBackwardCompat($group->title)) {
+                $oaiRecord->addSet(new Set("group:" . $this->groupNameBWCompat($group->title)));
+            }
         }
 
         return $oaiRecord;
@@ -688,8 +692,10 @@ class OAIRecordRepository implements OAIRepository
         if ($group = Group::where('title', $record->registry_object_group)->first()) {
             $oaiRecord
                 ->addSet(new Set("group:".$group->id))
-                ->addSet(new Set("group:".$this->nameBackwardCompat($group->title)))
-                ->addSet(new Set("group:".$this->groupNameBWCompat($group->title)));
+                ->addSet(new Set("group:".$this->nameBackwardCompat($group->title)));
+            if ($this->groupNameBWCompat($group->title) != $this->nameBackwardCompat($group->title)) {
+                $oaiRecord->addSet(new Set("group:" . $this->groupNameBWCompat($group->title)));
+            }
         }
 
         return $oaiRecord;
