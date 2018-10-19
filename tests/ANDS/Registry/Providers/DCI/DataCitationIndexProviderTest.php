@@ -101,7 +101,7 @@ class DataCitationIndexProviderTest extends \RegistryTestClass
         $record = $this->stub(RegistryObject::class);
         $this->stub(RecordData::class, [
             'registry_object_id' => $record->id,
-            'data' => Storage::disk('test')->get('rifcs/collection_all_elements.xml')
+            'data' => Storage::disk('test')->get('rifcs/collection_no_description.xml')
         ]);
 
         // with an author (party)
