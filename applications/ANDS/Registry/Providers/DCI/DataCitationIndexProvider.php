@@ -4,6 +4,7 @@
 namespace ANDS\Registry\Providers\DCI;
 
 
+use ANDS\File\Storage;
 use ANDS\Registry\Providers\GrantsConnectionsProvider;
 use ANDS\Registry\Providers\MetadataProvider;
 use ANDS\Registry\Providers\RegistryContentProvider;
@@ -17,6 +18,7 @@ use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\StrUtil;
 use ANDS\Util\XMLUtil;
+use Carbon\Carbon;
 use SimpleXMLElement;
 
 class DataCitationIndexProvider implements RegistryContentProvider
@@ -131,6 +133,14 @@ class DataCitationIndexProvider implements RegistryContentProvider
         return true;
     }
 
+    public static function validate($dciXML)
+    {
+        $util = new XMLUtil();
+        $schemaPath = Storage::disk('schema')->getPath('dci/DCI schema_providers_V4.4_120116.xsd');
+        $result = $util->validateFileSchema($schemaPath, $dciXML);
+        return !$result ? $util->getValidationMessage() : $result;
+    }
+
     private function build() {
         $this->getHeader();
         $this->getBibliographicData();
@@ -163,11 +173,7 @@ class DataCitationIndexProvider implements RegistryContentProvider
     {
         $bibliographicData = $this->DCIRoot->addChild('BibliographicData');
 
-        // BibliographicData/TitleList/ItemTitle
-        // BibliographicData/TitleList/ItemTitle@TitleType
-        $titleList = $bibliographicData->addChild('TitleList');
-        $title = $titleList->addChild("ItemTitle", StrUtil::xmlSafe($this->record->title));
-        $title['TitleType'] = "English title";
+
 
         // BibliographicData/AuthorList/Author
         $authors = MetadataProvider::getAuthors($this->record, $this->sxml, true);
@@ -209,6 +215,12 @@ class DataCitationIndexProvider implements RegistryContentProvider
             }
         }
 
+        // BibliographicData/TitleList/ItemTitle
+        // BibliographicData/TitleList/ItemTitle@TitleType
+        $titleList = $bibliographicData->addChild('TitleList');
+        $title = $titleList->addChild("ItemTitle", StrUtil::xmlSafe($this->record->title));
+        $title['TitleType'] = "English title";
+
         // BibliographicData/Source
         $source = $bibliographicData->addChild('Source');
 
@@ -225,7 +237,7 @@ class DataCitationIndexProvider implements RegistryContentProvider
 
         // BibliographicData/Source/CreatedDate
         if($publicationDate = DatesProvider::getPublicationDate($this->record)) {
-            $source->addChild("CreatedDate" , $publicationDate);
+            $source->addChild("CreatedDate" , Carbon::parse($publicationDate)->format('Y-m-d'));
         }
 
         // BibliographicData/Source/Version
@@ -251,17 +263,17 @@ class DataCitationIndexProvider implements RegistryContentProvider
     private function getAbstract()
     {
         $descriptions = MetadataProvider::getDescriptions($this->record);
-        $validTypes = ['full', 'brief', 'SignificanceStatement', 'Notes', "Lineage"];
-        $abstract = collect($descriptions)
+        $validTypes = ['full', 'brief', 'significanceStatement', 'notes', "lineage"];
+        $abstracts = collect($descriptions)
             ->filter(function ($description) use ($validTypes) {
                 // get only the descriptions that has those types
-                return in_array($description['type'], $validTypes);
+                return in_array(strtolower($description['type']), $validTypes);
             })->sortBy(function ($description) use ($validTypes) {
                 // sort the descriptions by the order of the valid Types
-                return array_search($description['type'], $validTypes);
-            })->first();
+                return array_search(strtolower($description['type']), $validTypes);
+            })->pluck('value');
 
-        $abstract = null ? 'Not available' : $abstract['value'];
+        $abstract = !$abstracts->count() ? 'Not available' : implode(NL, $abstracts->toArray());
         $this->DCIRoot->addChild('Abstract', StrUtil::xmlSafe($abstract));
     }
 
@@ -280,9 +292,6 @@ class DataCitationIndexProvider implements RegistryContentProvider
     {
         $descriptor = $this->DCIRoot->addChild('DescriptorsData');
 
-        // DataType
-        $descriptor->addChild('DataType', $this->record->type);
-
         // Keywords
         $subjects = SubjectProvider::getSubjects($this->record);
         if (count($subjects) > 0) {
@@ -291,6 +300,9 @@ class DataCitationIndexProvider implements RegistryContentProvider
                 $keywordsList->addChild('Keyword', StrUtil::xmlSafe($subject['value']));
             }
         }
+
+        // DataType
+        $descriptor->addChild('DataType', $this->record->type);
 
         $coverages = MetadataProvider::getCoverages($this->record);
 
