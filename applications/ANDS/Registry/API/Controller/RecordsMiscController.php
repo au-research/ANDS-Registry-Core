@@ -50,6 +50,13 @@ class RecordsMiscController
         $this->printXML($dci);
     }
 
+    public function dciValidate($id)
+    {
+        $record = RegistryObjectsRepository::getRecordByID($id);
+        $dci = DataCitationIndexProvider::get($record);
+        return DataCitationIndexProvider::validate($dci);
+    }
+
     public function orcidValidate($id)
     {
         $record = RegistryObjectsRepository::getRecordByID($id);

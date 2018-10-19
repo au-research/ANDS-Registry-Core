@@ -18,6 +18,10 @@ return [
         'test' => [
             'driver' => 'file',
             'path' => 'tests/resources'
+        ],
+        'schema' => [
+            'driver' => 'file',
+            'path' => 'etc/schema'
         ]
     ],
 

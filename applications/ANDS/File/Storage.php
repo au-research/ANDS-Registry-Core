@@ -30,12 +30,17 @@ class Storage
 
     public function get($fileName)
     {
-        return file_get_contents($this->path . $fileName);
+        return file_get_contents($this->getPath($fileName));
     }
 
     public function put($fileName, $fileContent)
     {
         return file_put_contents($this->path . $fileName, $fileContent);
+    }
+
+    public function getPath($fileName)
+    {
+        return $this->path . $fileName;
     }
 
 }

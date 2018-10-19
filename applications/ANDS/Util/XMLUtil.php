@@ -237,6 +237,7 @@ class XMLUtil
             $xml = new \DOMDocument();
             $xml->loadXML($payload);
         } Catch (\Exception $e) {
+
             $this->validationMessage = $e->getMessage();
             return false;
         }
@@ -295,6 +296,25 @@ class XMLUtil
         }
 
         $result = $xml->schemaValidate($schema);
+        foreach (libxml_get_errors() as $error) {
+            $this->validationMessage = $error->message;
+        }
+        return $result;
+    }
+
+    public function validateFileSchema($schemaPath, $payload)
+    {
+        libxml_use_internal_errors(true);
+        try {
+            $xml = new \DOMDocument();
+            $xml->loadXML($payload);
+        } Catch (\Exception $e) {
+
+            $this->validationMessage = $e->getMessage();
+            return false;
+        }
+
+        $result = $xml->schemaValidate($schemaPath);
         foreach (libxml_get_errors() as $error) {
             $this->validationMessage = $error->message;
         }
