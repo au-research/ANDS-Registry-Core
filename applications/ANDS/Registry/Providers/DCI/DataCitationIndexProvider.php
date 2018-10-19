@@ -279,12 +279,17 @@ class DataCitationIndexProvider implements RegistryContentProvider
 
     private function getRightsAndLicencing()
     {
-        foreach ($rights = MetadataProvider::getRights($this->record) as $right) {
+        $rights = MetadataProvider::getRights($this->record);
+        $rightsStatement = collect($rights)->pluck('rightsStatement')->pluck('value')->filter(function($item){
+            return trim($item) != "" || $item != null;
+        })->first();
+        $licenseStatement = collect($rights)->pluck('licence')->pluck('value')->filter(function($item){
+            return trim($item) != "" || $item != null;
+        })->first();
+        if ($rightsStatement || $licenseStatement) {
             $licensing = $this->DCIRoot->addChild('Rights_Licensing');
-            $rightsText = $right['rightsStatement']['value']
-                . ' '. $right['rightsStatement']['uri'] . ' ' . $right['accessRights']['value'];
-            $licensing->addChild('RightsStatement', $rightsText);
-            $licensing->addChild('LicenseStatement', $right['licence']['value']);
+            $licensing->addChild('RightsStatement', $rightsStatement);
+            $licensing->addChild('LicenseStatement', $licenseStatement);
         }
     }
 
