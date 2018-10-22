@@ -263,7 +263,7 @@ class DataCitationIndexProvider implements RegistryContentProvider
     private function getAbstract()
     {
         $descriptions = MetadataProvider::getDescriptions($this->record);
-        $validTypes = ['full', 'brief', 'significanceStatement', 'notes', "lineage"];
+        $validTypes = ['full', 'brief', 'significancestatement', 'notes', 'note', "lineage"];
         $abstracts = collect($descriptions)
             ->filter(function ($description) use ($validTypes) {
                 // get only the descriptions that has those types
