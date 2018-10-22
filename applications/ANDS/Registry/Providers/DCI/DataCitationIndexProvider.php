@@ -62,6 +62,7 @@ class DataCitationIndexProvider implements RegistryContentProvider
         // if there's an existing, update it
         if ($existing = DCI::where('registry_object_id', $record->id)->first()) {
             $existing->data = $dci;
+            $existing->updated_at = $record->modified_at;
             $existing->save();
             return true;
         }
@@ -74,6 +75,7 @@ class DataCitationIndexProvider implements RegistryContentProvider
             'registry_object_id' => $record->id,
             'registry_object_group' => $record->group,
             'registry_object_data_source_id' => $record->data_source_id,
+            'updated_at' => $record->modified_at
         ]);
         $model->save();
 
@@ -225,7 +227,7 @@ class DataCitationIndexProvider implements RegistryContentProvider
         // BibliographicData/Source/SourceURL
         $sourceURL = MetadataProvider::getSourceURL($this->record, $this->sxml);
         $url = $sourceURL['type'] === "doi" ?
-            end(explode('doi.org/', $sourceURL['value'])) :
+            collect(explode('doi.org/', $sourceURL['value']))->last() :
             $sourceURL['value'];
         $source->addChild("SourceURL", StrUtil::xmlSafe($url));
 
