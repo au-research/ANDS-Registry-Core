@@ -339,18 +339,19 @@ class DatesProvider implements RIFCSProvider
         $record->save();
     }
 
-    public static function getUpdatedAt($record, $getDateFormat)
+    public static function getUpdatedAt($record, $getDateFormat = 'Y-m-d', $timezone = null)
     {
-        return Carbon::parse($record->modified_at)->setTimezone(Config::get('app.timezone'))->format($getDateFormat);
+        $timezone = $timezone ?: Config::get('app.timezone');
+        return Carbon::parse($record->modified_at)->setTimezone($timezone)->format($getDateFormat);
     }
 
     /**
      * @param $time
      * @return Carbon
      */
-    public static function parse($time)
+    public static function parseUTCToLocal($time)
     {
-        return Carbon::parse($time)->setTimezone(Config::get('app.timezone'));
+        return Carbon::parse($time, 'UTC')->setTimezone(Config::get('app.timezone'));
     }
 
 
