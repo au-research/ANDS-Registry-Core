@@ -326,12 +326,29 @@ class DataCitationIndexProvider implements RegistryContentProvider
     private function getRightsAndLicencing()
     {
         $rights = MetadataProvider::getRights($this->record);
-        $rightsStatement = collect($rights)->pluck('rightsStatement')->pluck('value')->filter(function($item){
-            return trim($item) != "" || $item != null;
-        })->first();
-        $licenseStatement = collect($rights)->pluck('licence')->pluck('value')->filter(function($item){
-            return trim($item) != "" || $item != null;
-        })->first();
+
+        $rightsStatement = collect($rights)
+            ->pluck('rightsStatement')->map(function($item){
+                return $item['value'] . $item['uri'];
+            })->filter(function($item){
+                return trim($item) != "";
+            });
+        $accessRights = collect($rights)
+            ->pluck('accessRights')->map(function($item){
+                return $item['value'] . $item['uri'];
+            })->filter(function($item){
+                return trim($item) != "";
+            });
+        $licenseStatement = collect($rights)
+            ->pluck('licence')->map(function($item){
+                return $item['value'] . $item['uri'];
+            })->filter(function($item){
+                return trim($item) != "";
+            });
+
+        $rightsStatement = collect($rightsStatement)->merge($accessRights)->implode(' ');
+        $licenseStatement = collect($licenseStatement)->implode(' ');
+
         if ($rightsStatement || $licenseStatement) {
             $licensing = $this->DCIRoot->addChild('Rights_Licensing');
             $licensing->addChild('RightsStatement', $rightsStatement);
