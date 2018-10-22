@@ -177,6 +177,8 @@ class DataCitationIndexProvider implements RegistryContentProvider
 
         // BibliographicData/AuthorList/Author
         $authors = MetadataProvider::getAuthors($this->record, $this->sxml, true);
+        // only get 1 authors
+        $authors = count($authors) > 0 ? [$authors[0]] : [];
         $authorList = $bibliographicData->addChild('AuthorList');
         $seq = 1;
         foreach ($authors as $author) {
