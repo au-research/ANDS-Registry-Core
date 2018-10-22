@@ -382,7 +382,7 @@ class ServiceProvider
      * Decode resumptionToken if presented
      *
      * @return array|mixed
-     * @throws BadResumptionToken
+     * @throws OAIException
      */
     private function collectOptions()
     {
@@ -396,11 +396,21 @@ class ServiceProvider
 
 
         if ($this->requestHas("resumptionToken")) {
+
+            // resumptionToken is exclusive
+            $valid = ['verb', 'resumptionToken'];
+            foreach (array_keys($this->options) as $key) {
+                if (!in_array($key, $valid)) {
+                    throw new BadArgumentException("`{$key}` is not expected when resumptionToken is present");
+                }
+            }
+
             $data = $this->decodeToken($this->requestValue('resumptionToken'));
             if ($data === null) {
                 // corrupted resumptionToken
                 throw new BadResumptionToken();
             }
+
             $options = $data;
         }
 
