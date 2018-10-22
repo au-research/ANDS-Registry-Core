@@ -1,6 +1,8 @@
 <?php
 if($ro->core['class']=='service'){
     $textStr = 'service';
+}elseif($ro->core['class']=='collection'&& $ro->core['type']=='software'){
+    $textStr = 'software';
 }else{
     $textStr = 'data';
 }
