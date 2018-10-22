@@ -173,12 +173,8 @@ class DataCitationIndexProvider implements RegistryContentProvider
     {
         $bibliographicData = $this->DCIRoot->addChild('BibliographicData');
 
-
-
         // BibliographicData/AuthorList/Author
-        $authors = MetadataProvider::getAuthors($this->record, $this->sxml, true);
-        // only get 1 authors
-        $authors = count($authors) > 0 ? [$authors[0]] : [];
+        $authors = static::getAuthors($this->record, $this->sxml);
         $authorList = $bibliographicData->addChild('AuthorList');
         $seq = 1;
         foreach ($authors as $author) {
@@ -250,6 +246,54 @@ class DataCitationIndexProvider implements RegistryContentProvider
         // BibliographicData/LanguageList/Language
         $languageList = $bibliographicData->addChild('LanguageList');
         $languageList->addChild("Language", "English");
+    }
+
+    /**
+     * @param RegistryObject $record
+     * @param null $simpleXML
+     * @return array
+     * @throws \Exception
+     */
+    public static function getAuthors(RegistryObject $record, $simpleXML = null)
+    {
+        $simpleXML = $simpleXML ? $simpleXML : MetadataProvider::getSimpleXML($record);
+
+        /**
+         * registryObject:collection:citationInfo:citationMetadata:contributor
+        OR relatedObject:Party:name:relationType=IsPrincipalInvestigatorOf
+        OR relatedObject:Party:name:relationType=author
+        OR relatedObject:Party:name:relationType=coInvestigator
+        OR relatedObject:Party:name:relationType=isOwnedBy
+        OR relatedObject:Party:name:relationType=hasCollector
+        OR registryObject@Group
+         */
+        $authors = [];
+
+        $author = $simpleXML->xpath('//ro:citationInfo/ro:citationMetadata/ro:contributor');
+        if (count($author) > 0 && $elem = array_pop($author)) {
+            // TODO format name by namepart type
+            $authors[] = [
+                'relation' => 'Contributor',
+                'name' => (string) $elem->namePart,
+                'id' => null
+            ];
+        }
+
+        if (count($authors)) {
+            return $authors;
+        }
+
+        $validRelationTypes = ['IsPrincipalInvestigatorOf', 'author', 'coInvestigator', 'isOwnedBy', 'hasCollector'];
+        foreach ($validRelationTypes as $relationType) {
+            $authors = array_merge($authors, RelationshipProvider::getRelationByType($record, [$relationType]));
+            if (count($authors)) {
+                return $authors;
+            }
+        }
+
+        // TODO registryObject@Group
+
+        return $authors;
     }
 
 
