@@ -151,7 +151,7 @@ class OAIRecordRepository implements OAIRepository
         foreach ($records as $record) {
             $oaiRecord = new Record(
                 $this->oaiIdentifierPrefix.$record->id,
-                DatesProvider::getUpdatedAt($record, $this->getDateFormat())
+                DatesProvider::getUpdatedAt($record, $this->getDateFormat(), 'UTC')
             );
 
             // set
@@ -283,7 +283,7 @@ class OAIRecordRepository implements OAIRepository
             foreach ($registryObjects['records'] as $record) {
                 $oaiRecord = new Record(
                     "oai:ands.org.au:{$record->id}",
-                    DatesProvider::getUpdatedAt($record, $this->getDateFormat())
+                    DatesProvider::getUpdatedAt($record, $this->getDateFormat(), 'UTC')
                 );
 
                 // set
@@ -321,7 +321,7 @@ class OAIRecordRepository implements OAIRepository
         foreach ($records['records'] as $record) {
             $oaiRecord = new Record(
                 $record->scholix_identifier,
-                DatesProvider::parse($record->updated_at)->format($this->getDateFormat())
+                Carbon::parse($record->updated_at)->setTimezone('UTC')->format($this->getDateFormat())
             );
             $oaiRecord = $this->addScholixSets($oaiRecord, $record);
             $result[] = $oaiRecord;
@@ -344,7 +344,7 @@ class OAIRecordRepository implements OAIRepository
         foreach ($records['records'] as $record) {
             $oaiRecord = new Record(
                 $this->oaiIdentifierPrefix.$record->registryObject->id,
-                DatesProvider::parse($record->updated_at)->format($this->getDateFormat())
+                Carbon::parse($record->updated_at)->setTimezone('UTC')->format($this->getDateFormat())
             );
             $oaiRecord = $this->addDCISets($oaiRecord, $record);
             $result[] = $oaiRecord;
@@ -387,14 +387,15 @@ class OAIRecordRepository implements OAIRepository
         if (array_key_exists('from', $options) && $options['from']) {
             $records = $records->where(
                 'updated_at', '>=',
-                    Carbon::parse($options['from'])->toDateTimeString()
+                    DatesProvider::parseUTCToLocal($options['from'])->toDateTimeString()
             );
         }
 
         // until
         if (array_key_exists('until', $options)) {
-            $until = Carbon::parse($options['until']);
+            $until = Carbon::parse($options['until'], 'UTC');
             $until = $until->isStartOfDay() ? $until->addDay(1) : $until;
+            $until = $until->setTimezone(Config::get('app.timezone'));
             if (array_key_exists('until', $options) && $options['until']) {
                 $records = $records->where(
                     'updated_at', '<=',
@@ -446,14 +447,15 @@ class OAIRecordRepository implements OAIRepository
         if (array_key_exists('from', $options) && $options['from']) {
             $records = $records->where(
                 'modified_at', '>=',
-                Carbon::parse($options['from'])->toDateTimeString()
+                DatesProvider::parseUTCToLocal($options['from'])->toDateTimeString()
             );
         }
 
         // until
         if (array_key_exists('until', $options)) {
-            $until = Carbon::parse($options['until']);
+            $until = Carbon::parse($options['until'], 'UTC');
             $until = $until->isStartOfDay() ? $until->addDay(1) : $until;
+            $until = $until->setTimezone(Config::get('app.timezone'));
             if (array_key_exists('until', $options) && $options['until']) {
                 $records = $records->where(
                     'modified_at', '<=',
@@ -530,7 +532,7 @@ class OAIRecordRepository implements OAIRepository
         foreach ($records['records'] as $record) {
             $oaiRecord = new Record(
                 $record->scholix_identifier,
-                Carbon::parse($record->updated_at)->format($this->getDateFormat())
+                Carbon::parse($record->updated_at)->setTimezone('UTC')->format($this->getDateFormat())
             );
             $oaiRecord = $this->addScholixSets($oaiRecord, $record);
             $oaiRecord->setMetadata($record->data);
@@ -555,7 +557,7 @@ class OAIRecordRepository implements OAIRepository
 
             $oaiRecord = new Record(
                 $this->oaiIdentifierPrefix.$record->registryObject->id,
-                Carbon::parse($record->updated_at)->format($this->getDateFormat())
+                Carbon::parse($record->updated_at)->setTimezone('UTC')->format($this->getDateFormat())
             );
 
             $oaiRecord = $this->addDCISets($oaiRecord, $record);
@@ -607,14 +609,15 @@ class OAIRecordRepository implements OAIRepository
         if (array_key_exists('from', $options) && $options['from']) {
             $records = $records->where(
                 'updated_at', '>=',
-                Carbon::parse($options['from'])->toDateTimeString()
+                DatesProvider::parseUTCToLocal($options['from'])->toDateTimeString()
             );
         }
 
         // until
         if (array_key_exists('until', $options)) {
-            $until = Carbon::parse($options['until']);
+            $until = Carbon::parse($options['until'], 'UTC');
             $until = $until->isStartOfDay() ? $until->addDay(1) : $until;
+            $until = $until->setTimezone(Config::get('app.timezone'));
             if (array_key_exists('until', $options) && $options['until']) {
                 $records = $records->where(
                     'updated_at', '<=',
