@@ -216,6 +216,37 @@ class RelationshipProvider
         return false;
     }
 
+    public static function getRelationByType(RegistryObject $record, array $relations)
+    {
+        $results = [];
+
+        // direct
+        $direct = RelationshipView::where('from_id', $record->id)
+            ->whereIn('relation_type', $relations)
+            ->take(50)->get();
+        foreach ($direct as $relation) {
+            $results[] = [
+                'relation' => $relation['relation_type'],
+                'name' => (string) $relation['to_title'],
+                'id' => $relation['to_id']
+            ];
+        }
+
+        // reverse
+        $reverse = RelationshipView::where('to_key', $record->key)
+            ->whereIn('relation_type', $relations)
+            ->take(50)->get();
+        foreach ($reverse as $relation) {
+            $results[] = [
+                'relation' => $relation['relation_type'],
+                'name' => (string) $relation['from_title'],
+                'id' => $relation['from_id']
+            ];
+        }
+
+        return $results;
+    }
+
     /**
      * Delete Relationship and IdentifierRelationships
      * Clean up before a processing
