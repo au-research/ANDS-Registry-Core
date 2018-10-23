@@ -302,8 +302,9 @@ class MetadataProvider implements RegistryContentProvider
         foreach ($xpaths as $xpath) {
             $source = $simpleXML->xpath($xpath);
             if (count($source) && $elem = array_pop($source)) {
-                $value = (string) $elem;
-                if (trim($value) == "") {
+                $value = $elem->value ? (string)$elem->value : (string)$elem;
+                $value = trim($value);
+                if ($value == "") {
                     continue;
                 }
                 return [
