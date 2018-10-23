@@ -226,6 +226,7 @@ class DataCitationIndexProvider implements RegistryContentProvider
 
         // BibliographicData/Source/SourceURL
         $sourceURL = MetadataProvider::getSourceURL($this->record, $this->sxml);
+
         $url = $sourceURL['type'] === "doi" ?
             collect(explode('doi.org/', $sourceURL['value']))->last() :
             $sourceURL['value'];
