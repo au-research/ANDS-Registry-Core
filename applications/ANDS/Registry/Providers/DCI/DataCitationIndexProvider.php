@@ -368,7 +368,8 @@ class DataCitationIndexProvider implements RegistryContentProvider
         if (count($subjects) > 0) {
             $keywordsList = $descriptor->addChild('KeywordsList');
             foreach ($subjects as $subject) {
-                $keywordsList->addChild('Keyword', StrUtil::xmlSafe($subject['value']));
+                $subjectText = array_key_exists('resolved', $subject) ? $subject['resolved'] : $subject['value'];
+                $keywordsList->addChild('Keyword', StrUtil::xmlSafe($subjectText));
             }
         }
 
