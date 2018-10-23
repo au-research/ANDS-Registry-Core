@@ -176,7 +176,7 @@ class DataCitationIndexProvider implements RegistryContentProvider
         $bibliographicData = $this->DCIRoot->addChild('BibliographicData');
 
         // BibliographicData/AuthorList/Author
-        $authors = static::getAuthors($this->record, $this->sxml);
+        $authors = $this->getAuthors($this->record, $this->sxml);
         $authorList = $bibliographicData->addChild('AuthorList');
         $seq = 1;
         foreach ($authors as $author) {
@@ -256,7 +256,7 @@ class DataCitationIndexProvider implements RegistryContentProvider
      * @return array
      * @throws \Exception
      */
-    public static function getAuthors(RegistryObject $record, $simpleXML = null)
+    public function getAuthors(RegistryObject $record, $simpleXML = null)
     {
         $simpleXML = $simpleXML ? $simpleXML : MetadataProvider::getSimpleXML($record);
 
