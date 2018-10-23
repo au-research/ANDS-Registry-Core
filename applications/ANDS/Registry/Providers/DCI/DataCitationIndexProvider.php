@@ -364,7 +364,7 @@ class DataCitationIndexProvider implements RegistryContentProvider
         $descriptor = $this->DCIRoot->addChild('DescriptorsData');
 
         // Keywords
-        $subjects = SubjectProvider::getSubjects($this->record);
+        $subjects = SubjectProvider::processSubjects($this->record);
         if (count($subjects) > 0) {
             $keywordsList = $descriptor->addChild('KeywordsList');
             foreach ($subjects as $subject) {
