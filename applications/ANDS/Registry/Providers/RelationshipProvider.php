@@ -233,8 +233,11 @@ class RelationshipProvider
         }
 
         // reverse
+        $reverseRelationTypes = collect($relations)->map(function($item){
+            return getReverseRelationshipString($item);
+        })->toArray();
         $reverse = RelationshipView::where('to_key', $record->key)
-            ->whereIn('relation_type', $relations)
+            ->whereIn('relation_type', $reverseRelationTypes)
             ->take(50)->get();
         foreach ($reverse as $relation) {
             $results[] = [
