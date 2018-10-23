@@ -4,6 +4,7 @@ namespace ANDS\Registry\API\Controller;
 
 use ANDS\Registry\API\Request;
 use ANDS\Registry\Providers\DCI\DataCitationIndexProvider;
+use ANDS\Registry\Providers\DublinCore\DublinCoreProvider;
 use ANDS\Registry\Providers\ORCID\ORCIDProvider;
 use ANDS\Registry\Providers\ORCID\ORCIDRecord;
 use ANDS\Repository\RegistryObjectsRepository;
@@ -14,6 +15,13 @@ class RecordsMiscController
     {
         $record = RegistryObjectsRepository::getRecordByID($id);
         $xml = $record->getCurrentData()->data;
+        $this->printXML($xml);
+    }
+
+    public function oai_dc($id)
+    {
+        $record = RegistryObjectsRepository::getRecordByID($id);
+        $xml = DublinCoreProvider::get($record);
         $this->printXML($xml);
     }
 
