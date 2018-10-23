@@ -241,7 +241,7 @@ class RelationshipProvider
             ->take(50)->get();
         foreach ($reverse as $relation) {
             $results[] = [
-                'relation' => $relation['relation_type'],
+                'relation' => getReverseRelationshipString($relation['relation_type']),
                 'name' => (string) $relation['from_title'],
                 'id' => $relation['from_id']
             ];
