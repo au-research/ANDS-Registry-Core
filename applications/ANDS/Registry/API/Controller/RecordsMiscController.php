@@ -10,6 +10,13 @@ use ANDS\Repository\RegistryObjectsRepository;
 
 class RecordsMiscController
 {
+    public function rifcs($id)
+    {
+        $record = RegistryObjectsRepository::getRecordByID($id);
+        $xml = $record->getCurrentData()->data;
+        $this->printXML($xml);
+    }
+
     /**
      * GET api/registry/records/:id/orcid
      * Use for debugging purposes
