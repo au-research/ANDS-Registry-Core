@@ -332,13 +332,13 @@ class DataCitationIndexProvider implements RegistryContentProvider
 
         $rightsStatement = collect($rights)
             ->pluck('rightsStatement')->map(function($item){
-                return $item['value'] . $item['uri'];
+                return $item['value'] ." ". $item['uri'];
             })->filter(function($item){
                 return trim($item) != "";
             });
         $accessRights = collect($rights)
             ->pluck('accessRights')->map(function($item){
-                return $item['value'] . $item['uri'];
+                return $item['value'] ." ". $item['uri'];
             })->filter(function($item){
                 return trim($item) != "";
             });
