@@ -10,6 +10,7 @@ class Response
     private $headers = ['Content-Type' => 'application/xml'];
     private $content = null;
     private $pretty = true;
+    private $errors = [];
 
     /**
      * OAIResponse constructor.
@@ -53,12 +54,21 @@ class Response
         return $element;
     }
 
+    /**
+     * @param $nameSpace
+     * @param $name
+     * @param null $value
+     * @return \DOMElement
+     */
     public function createElementNS($nameSpace, $name, $value = null)
     {
         $element = $this->content->createElementNS($nameSpace, $name, htmlspecialchars($value, ENT_XML1));
         return $element;
     }
 
+    /**
+     * @return \GuzzleHttp\Psr7\Response
+     */
     public function getResponse()
     {
         $xml = $this->content->saveXML();
@@ -67,7 +77,7 @@ class Response
             $dom = new \DOMDocument("1.0");
             $dom->preserveWhiteSpace = false;
             $dom->formatOutput = true;
-            $dom->loadXML($this->content->saveXML());
+            $dom->loadXML($xml);
             $xml = $dom->saveXML();
         }
 
@@ -81,8 +91,37 @@ class Response
         );
     }
 
+    /**
+     * @return \DOMDocument|null
+     */
     public function getContent()
     {
         return $this->content;
+    }
+
+    /**
+     * @param $error
+     * @return Response
+     */
+    public function setError($error)
+    {
+        $this->errors[] = $error;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getErrors()
+    {
+        return $this->errors;
+    }
+
+    /**
+     * @return bool
+     */
+    public function errored()
+    {
+        return count($this->errors) > 0;
     }
 }
