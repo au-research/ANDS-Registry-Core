@@ -104,7 +104,6 @@ class ServiceProvider
      */
     public function get()
     {
-
         $verb = null;
         if (array_key_exists('verb', $this->options)) {
             $verb = $this->options['verb'];
@@ -155,6 +154,7 @@ class ServiceProvider
         }
 
         $response = $this->getCommonResponse($includeRequestAttribute);
+        $response->setError($exception->getErrorName(). ' '. $exception->getMessage());
         $error = $response->addElement('error', $exception->getMessage());
         $error->setAttribute('code', $exception->getErrorName());
         return $response;

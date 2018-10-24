@@ -18,7 +18,26 @@ class OaiHandler extends Handler
         date_default_timezone_set(Config::get('app.timezone'));
         $this->getParentAPI()->providesOwnResponse();
         $options = array_merge($_GET, $_POST);
-        return $this->handleOAIRequest($options);
+
+        $provider = new ServiceProvider(new OAIRecordRepository());
+        $provider->setOptions($options);
+
+        try {
+            $response = $provider->get();
+        } catch (\Exception $e) {
+            $exception = new BadArgumentException(get_exception_msg($e));
+            $response = $provider->getExceptionResponse($exception);
+            return (string)$response->getResponse()->getBody();
+        }
+
+        monolog([
+            'event' => $response->errored() ? 'error' : $options['verb'],
+            'errors' => implode(' ', $response->getErrors()),
+            'errored' => $response->errored(),
+            'request' => $options
+        ], "oai_api", "info", true);
+
+        return (string)$response->getResponse()->getBody();
     }
 
     /**
@@ -27,6 +46,7 @@ class OaiHandler extends Handler
      *
      * @param $options
      * @return string
+     * @throws \ANDS\OAI\Exception\OAIException
      */
     public function handleOAIRequest($options)
     {
