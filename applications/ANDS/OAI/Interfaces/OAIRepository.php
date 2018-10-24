@@ -4,6 +4,7 @@ namespace ANDS\OAI\Interfaces;
 
 interface OAIRepository
 {
+    public function getBaseUrl();
     public function identify();
     public function listSets($limit = 0, $offset = 0);
     public function listSetsByToken($token);
