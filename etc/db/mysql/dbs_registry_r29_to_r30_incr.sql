@@ -49,4 +49,4 @@ VIEW `dbs_registry`.`identifier_relationships_all_status` AS
       LEFT JOIN `dbs_registry`.`registry_object_identifiers` `roidn` ON (((`roir`.`related_object_identifier` = `roidn`.`identifier`)
                                                                           AND (`roir`.`related_object_identifier_type` = `roidn`.`identifier_type`))))
       LEFT JOIN `dbs_registry`.`registry_objects` `rot` ON ((`roidn`.`registry_object_id` = `rot`.`registry_object_id`)))
-  WHERE ros.status != 'DELETED' AND rot.status != 'DELETED';
+  WHERE ros.status != 'DELETED' AND (`rot`.`status` IS NULL OR `rot`.`status` = 'DELETED');
