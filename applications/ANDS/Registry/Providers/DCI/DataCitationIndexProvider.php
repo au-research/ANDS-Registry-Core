@@ -344,7 +344,7 @@ class DataCitationIndexProvider implements RegistryContentProvider
             });
         $licenseStatement = collect($rights)
             ->pluck('licence')->map(function($item){
-                return $item['value'] . $item['uri'];
+                return $item['value'] ." ". $item['uri'];
             })->filter(function($item){
                 return trim($item) != "";
             });
