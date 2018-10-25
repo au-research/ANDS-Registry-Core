@@ -276,7 +276,7 @@ class OAIRecordRepository implements OAIRepository
 
     public function listIdentifiers($options)
     {
-        if ($options['metadataPrefix'] == "rif" || $options['metadataPrefix'] == "oai_dc") {
+        if (in_array($options['metadataPrefix'], ['rif', 'oai_dc'])) {
             $registryObjects = $this->getRegistryObjects($options);
             $result = [];
 
@@ -287,7 +287,7 @@ class OAIRecordRepository implements OAIRepository
                 );
 
                 // set
-                $oaiRecord->addSet(new Set("class:{$record->class}", $record->class));
+                $oaiRecord = $this->addSets($oaiRecord, $record);
 
                 $result[] = $oaiRecord;
             }

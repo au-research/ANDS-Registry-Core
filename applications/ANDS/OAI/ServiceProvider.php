@@ -2,7 +2,6 @@
 
 namespace ANDS\OAI;
 
-use ANDS\Commands\Script\ProcessScholix;
 use ANDS\OAI\Exception\CannotDisseminateFormat;
 use ANDS\OAI\Exception\OAIException;
 use Carbon\Carbon;
@@ -40,6 +39,11 @@ class ServiceProvider
         $this->baseUrl = $baseUrl;
     }
 
+    /**
+     * @param $key
+     * @param $value
+     * @return $this
+     */
     public function setOption($key, $value)
     {
         $this->options[$key] = $value;
@@ -95,11 +99,11 @@ class ServiceProvider
     }
 
     /**
-     *
+     * @return Response
+     * @throws OAIException
      */
     public function get()
     {
-
         $verb = null;
         if (array_key_exists('verb', $this->options)) {
             $verb = $this->options['verb'];
@@ -138,6 +142,7 @@ class ServiceProvider
     /**
      * @param OAIException $exception
      * @return Response
+     * @throws OAIException
      */
     public function getExceptionResponse(OAIException $exception)
     {
@@ -149,11 +154,17 @@ class ServiceProvider
         }
 
         $response = $this->getCommonResponse($includeRequestAttribute);
+        $response->setError($exception->getErrorName(). ' '. $exception->getMessage());
         $error = $response->addElement('error', $exception->getMessage());
         $error->setAttribute('code', $exception->getErrorName());
         return $response;
     }
 
+    /**
+     * @param bool $includeRequestAttributes
+     * @return Response
+     * @throws OAIException
+     */
     private function getCommonResponse($includeRequestAttributes = true)
     {
         $response = new Response;
@@ -177,22 +188,17 @@ class ServiceProvider
         if (array_key_exists('metadataPrefix', $options)) {
             $formats = $this->repository->getFormats();
             $xmlns = $formats[$options['metadataPrefix']]['metadataNamespace'];
-            $response->getContent()->documentElement->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:default', $xmlns);
+            $response->getContent()->documentElement->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:default',
+                $xmlns);
         }
 
         return $response;
     }
 
-    private function addResumptionToken(Response $response, $token, $offset = 0, $total = 0)
-    {
-        $node = $response->addElement('resumptionToken', $token);
-        if ($total > 0) {
-            $node->setAttribute('cursor', $offset);
-            $node->setAttribute('completeListSize', $total);
-        }
-        return $response;
-    }
-
+    /**
+     * @return Response
+     * @throws OAIException
+     */
     private function identify()
     {
         $response = $this->getCommonResponse();
@@ -206,6 +212,10 @@ class ServiceProvider
         return $response;
     }
 
+    /**
+     * @return Response
+     * @throws OAIException
+     */
     private function listMetadataFormats()
     {
         $response = $this->getCommonResponse();
@@ -230,16 +240,28 @@ class ServiceProvider
         return $response;
     }
 
+    /**
+     * @param $key
+     * @return bool
+     */
     private function requestHas($key)
     {
         return array_key_exists($key, $this->options);
     }
 
+    /**
+     * @param $key
+     * @return mixed
+     */
     private function requestValue($key)
     {
         return $this->options[$key];
     }
 
+    /**
+     * @return Response
+     * @throws OAIException
+     */
     private function listSets()
     {
         $response = $this->getCommonResponse();
@@ -254,6 +276,8 @@ class ServiceProvider
         $sets = $this->repository->listSets($this->limit, $offset);
 
         $element = $response->addElement('ListSets');
+
+        /* @var $set Set */
         foreach ($sets['sets'] as $set) {
             $node = $response->createElement('set');
             foreach ($set->toArray() as $k => $v) {
@@ -268,7 +292,7 @@ class ServiceProvider
         // assign resumption token if true
         if (($sets['offset'] + $sets['limit']) < $sets['total']) {
             $token = $this->encodeToken(
-                [ 'offset' => $sets['offset'] + $sets['limit'] ]
+                ['offset' => $sets['offset'] + $sets['limit']]
             );
 
             $resumptionToken = $response->createElement("resumptionToken", $token);
@@ -280,6 +304,10 @@ class ServiceProvider
         return $response;
     }
 
+    /**
+     * @return Response
+     * @throws OAIException
+     */
     private function listIdentifiers()
     {
         $response = $this->getCommonResponse();
@@ -295,17 +323,28 @@ class ServiceProvider
             throw new NoRecordsMatch();
         }
 
-        $element = $response->addElement('ListRecords');
-        foreach($records['records'] as $record) {
-            $recordNode = $element->appendChild(
-                $response->createElement('record')
+        $element = $response->addElement('ListIdentifiers');
+        foreach ($records['records'] as $record) {
+            $data = $record->toArray();
+            $headerNode = $element->appendChild($response->createElement('header'));
+            $headerNode->appendChild(
+                $response->createElement('identifier', $data['identifier'])
             );
-            $recordNode = $this->addOaiRecordResponse($recordNode, $record, $response);
+            $headerNode->appendChild(
+                $response->createElement('datestamp', $data['datestamp'])
+            );
+
+            /* @var $spec Set */
+            foreach ($data['specs'] as $spec) {
+                $headerNode->appendChild(
+                    $response->createElement('setSpec', $spec->getSetSpec())
+                );
+            }
         }
 
         // resumptionToken
         $cursor = $records['offset'] + $records['limit'];
-        if ( $cursor <= $records['total']) {
+        if ($cursor <= $records['total']) {
             $options['offset'] = $records['offset'] + $records['limit'];
             $token = $this->encodeToken(
                 array_merge($options)
@@ -316,12 +355,16 @@ class ServiceProvider
             $resumptionToken->setAttribute("cursor", $cursor);
             $element->appendChild($resumptionToken);
 
-//            $response = $this->addResumptionToken($element, $resumptionToken, $cursor, $records['total']);
+            //            $response = $this->addResumptionToken($element, $resumptionToken, $cursor, $records['total']);
         }
 
         return $response;
     }
 
+    /**
+     * @return Response
+     * @throws OAIException
+     */
     private function getRecord()
     {
         // TODO: metadataPrefix & identifier
@@ -342,7 +385,13 @@ class ServiceProvider
         return $response;
     }
 
-    private function addOaiRecordResponse(\DOMNode $element, $record, Response $response)
+    /**
+     * @param \DOMNode $element
+     * @param Record $record
+     * @param Response $response
+     * @return \DOMNode
+     */
+    private function addOaiRecordResponse(\DOMNode $element, Record $record, Response $response)
     {
         $data = $record->toArray();
         $recordNode = $element->appendChild(
@@ -358,6 +407,8 @@ class ServiceProvider
             ->appendChild(
                 $response->createElement('datestamp', $data['datestamp'])
             );
+
+        /* @var $spec Set */
         foreach ($data['specs'] as $spec) {
             $headerNode
                 ->appendChild(
@@ -445,6 +496,8 @@ class ServiceProvider
         }
 
         $element = $response->addElement('ListRecords');
+
+        /* @var $record Record */
         foreach ($records['records'] as $record) {
             $data = $record->toArray();
 
@@ -461,6 +514,8 @@ class ServiceProvider
                 ->appendChild(
                     $response->createElement('datestamp', $data['datestamp'])
                 );
+
+            /* @var $spec Set */
             foreach ($data['specs'] as $spec) {
                 $headerNode
                     ->appendChild(
@@ -477,13 +532,12 @@ class ServiceProvider
 
             $recordNode->appendChild($el);
 
-
             $element->appendChild($recordNode);
         }
 
         // resumptionToken
         $cursor = $records['offset'] + $records['limit'];
-        if ( $cursor <= $records['total']) {
+        if ($cursor <= $records['total']) {
             $options['offset'] = $records['offset'] + $records['limit'];
 
             $token = $this->encodeToken(
@@ -500,14 +554,22 @@ class ServiceProvider
         return $response;
     }
 
-    private function encodeToken($data)
+    /**
+     * @param $token
+     * @return string
+     */
+    public static function encodeToken($token)
     {
-        return base64_encode(json_encode($data, true));
+        return base64_encode(json_encode($token, true));
     }
 
-    private function decodeToken($data)
+    /**
+     * @param $token
+     * @return mixed
+     */
+    public static function decodeToken($token)
     {
-        return json_decode(base64_decode($data), true);
+        return json_decode(base64_decode($token), true);
     }
 
     /**
