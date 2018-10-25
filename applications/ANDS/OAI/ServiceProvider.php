@@ -323,12 +323,23 @@ class ServiceProvider
             throw new NoRecordsMatch();
         }
 
-        $element = $response->addElement('ListRecords');
+        $element = $response->addElement('ListIdentifiers');
         foreach ($records['records'] as $record) {
-            $recordNode = $element->appendChild(
-                $response->createElement('record')
+            $data = $record->toArray();
+            $headerNode = $element->appendChild($response->createElement('header'));
+            $headerNode->appendChild(
+                $response->createElement('identifier', $data['identifier'])
             );
-            $recordNode = $this->addOaiRecordResponse($recordNode, $record, $response);
+            $headerNode->appendChild(
+                $response->createElement('datestamp', $data['datestamp'])
+            );
+
+            /* @var $spec Set */
+            foreach ($data['specs'] as $spec) {
+                $headerNode->appendChild(
+                    $response->createElement('setSpec', $spec->getSetSpec())
+                );
+            }
         }
 
         // resumptionToken
