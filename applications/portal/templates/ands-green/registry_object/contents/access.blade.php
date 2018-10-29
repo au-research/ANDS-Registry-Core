@@ -35,12 +35,12 @@ if($ro->core['class']=='service'){
             $preText='';
             if($access['access_type']=='directDownload')
             {
-                $preText='Download data <br/>';
+                $preText='Download '.$textStr.' <br/>';
             }
             elseif($access['access_type']=='landingPage'){
-                $preText='Access data via landing page </br >';
+                $preText='Access '.$textStr.' via landing page </br >';
             }elseif($access['access_type']=='viaService'){
-                $preText='Access data online via tools </br >';
+                $preText='Access '.$textStr.' online via tools </br >';
             }
 
             $tip = ' tip="'.$access['title']."<br />";
