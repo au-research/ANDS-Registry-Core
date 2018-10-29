@@ -132,10 +132,10 @@
     <div class="panel-body">
         <ul class="listy">
             @if($group['facet']['class']['collection']!=0)
-                <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=collection">{{class_name('collection_data')}} <small>({{$group['facet']['class']['collection']-$group['facet']['types']['software']}})</small></a></li>
+                <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=collection/collection_type=-type:software/">{{class_name('collection_data')}} <small>({{$group['facet']['class']['collection']-$group['facet']['types']['software']}})</small></a></li>
             @endif
             @if($group['facet']['types']['software']!=0)
-                <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=collection">{{class_name('collection_software')}} <small>({{$group['facet']['types']['software']}})</small></a></li>
+                <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=collection/collection_type=type:software/">{{class_name('collection_software')}} <small>({{$group['facet']['types']['software']}})</small></a></li>
             @endif
             @if($group['facet']['class']['party']!=0)
                 <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=party">{{class_name('party')}} <small>({{$group['facet']['class']['party']}})</small></a></li>
