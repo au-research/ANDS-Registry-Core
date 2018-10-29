@@ -453,7 +453,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
 
         // going down
         $result = $client->run('
-            MATCH (n)<-[r:identicalTo|:isPartOf|:hasPart|:isOutputOf|:isProductOf|:isFundedBy*1..]-(n2)
+            MATCH (n:RegistryObject)<-[r:identicalTo|:isPartOf|:hasPart|:isOutputOf|:isProductOf|:isFundedBy*1..]-(n2)
             WHERE n.roId={id}
             RETURN * LIMIT 100', [
             'id' => $id
@@ -473,7 +473,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
 
         // going up
         $result = $client->run('
-            MATCH (n)-[r:identicalTo|:isPartOf|:hasPart|:isOutputOf|:isProductOf|:isFundedBy*1..]->(n2)
+            MATCH (n:RegistryObject)-[r:identicalTo|:isPartOf|:hasPart|:isOutputOf|:isProductOf|:isFundedBy*1..]->(n2)
             WHERE n.roId={id}
             RETURN * LIMIT 100', [
                 'id' => $id
@@ -552,7 +552,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
     public static function getNodeByID($id)
     {
         $client = static::db();
-        $result = $client->run("MATCH (n {roId: {roId}}) RETURN n", ['roId' => (string) $id]);
+        $result = $client->run("MATCH (n:RegistryObject {roId: {roId}}) RETURN n", ['roId' => (string) $id]);
         if (count($result->records()) == 0) {
             return null;
         }
