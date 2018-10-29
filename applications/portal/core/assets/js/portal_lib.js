@@ -15256,6 +15256,7 @@ app.config(function (uiGmapGoogleMapApiProvider) {
 				case 'gcmd': return 'GCMD Keyword'; break;
 				case 'iso639-3': return 'iso639-3 Language'; break;
 				case 'lcsh': return 'LCSH'; break;
+				case 'Type:software': return 'Software'; break;
 				case 'keywords': return 'Keyword'; break;
 				case 'refine': return 'Keyword'; break;
 				case 'subject_value_resolved': return 'Subject'; break;
@@ -15321,26 +15322,69 @@ app.config(function (uiGmapGoogleMapApiProvider) {
 	})
 	.filter('formatFacet', function () {
 		return function (str) {
-			switch (str) {
-				case 'OGC:WMTS': case 'ogc:wmts': return 'OGC Web Map Tile Service'; break;
-				case 'OGC:WFS': case 'ogc:wfs': return 'OGC Web Feature Service'; break;
-				case 'OGC:WMS': case 'ogc:wms': return 'OGC Web Map Service'; break;
-				case 'OGC:WCS': case 'ogc:wcs': return 'OGC Web Coverage Service'; break;
-                case 'OGC:WPS': case 'ogc:wps': return 'OGC Web Processing Service'; break;
-                case 'landingPage': return 'Landing Page'; break;
-				case 'directDownload': return 'Direct Download'; break;
-				case 'GeoServer': return 'GeoServer'; break;
-				case 'THREDDS': case 'thredds': return 'THREDDS'; break;
-                case 'THREDDS:WCS': case 'thredds:wcs': return 'THREDDS Web Coverage Service'; break;
-                case 'THREDDS:WMS': case 'thredds:wms':return 'THREDDS Web Map Service'; break;
-                case 'THREDDS:OPeNDAP': case 'thredds:opendap':return 'THREDDS OPeNDAP'; break;
-                case 'contactCustodian': return 'Contact Custodian'; break;
-                case '-type:software': return 'Data'; break;
-                case 'type:software': return 'Software'; break;
-				default:
-					return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
-					break;
-			}
+			if(typeof(str) == "string") {
+				switch (str) {
+					case 'OGC:WMTS':
+					case 'ogc:wmts':
+						return 'OGC Web Map Tile Service';
+						break;
+					case 'OGC:WFS':
+					case 'ogc:wfs':
+						return 'OGC Web Feature Service';
+						break;
+					case 'OGC:WMS':
+					case 'ogc:wms':
+						return 'OGC Web Map Service';
+						break;
+					case 'OGC:WCS':
+					case 'ogc:wcs':
+						return 'OGC Web Coverage Service';
+						break;
+					case 'OGC:WPS':
+					case 'ogc:wps':
+						return 'OGC Web Processing Service';
+						break;
+					case 'landingPage':
+						return 'Landing Page';
+						break;
+					case 'directDownload':
+						return 'Direct Download';
+						break;
+					case 'GeoServer':
+						return 'GeoServer';
+						break;
+					case 'THREDDS':
+					case 'thredds':
+						return 'THREDDS';
+						break;
+					case 'THREDDS:WCS':
+					case 'thredds:wcs':
+						return 'THREDDS Web Coverage Service';
+						break;
+					case 'THREDDS:WMS':
+					case 'thredds:wms':
+						return 'THREDDS Web Map Service';
+						break;
+					case 'THREDDS:OPeNDAP':
+					case 'thredds:opendap':
+						return 'THREDDS OPeNDAP';
+						break;
+					case 'contactCustodian':
+						return 'Contact Custodian';
+						break;
+					case '-type:software':
+						return 'Data';
+						break;
+					case 'type:software':
+						return 'Software';
+						break;
+					default:
+						return str.replace(/\w\S*/g, function (txt) {
+							return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+						});
+						break;
+				}
+			}else{ return " ";}
 		}
 	})
 	.filter('getLabelFor', function($log){
@@ -15716,7 +15760,7 @@ queryBuilder.filter('getDisplayFor', function($log){
 					angular.forEach(newv, function(content, index) {
 						scope.facet = (content.name == scope.type ? content : scope.facet);
 					});
-					//$log.debug(scope.facet);
+					// $log.debug(scope.facet);
 				}
 			});
 
@@ -16121,9 +16165,7 @@ app.directive('focusMe', function($timeout, $parse) {
       });
     }
   };
-})
-
-;;app.factory('vocab_factory', function($http, $log){
+});;app.factory('vocab_factory', function($http, $log){
 	return {
 		tree : {},
 		subjects: {},
@@ -16956,7 +16998,6 @@ app.directive('focusMe', function($timeout, $parse) {
             delete $scope.prefilters2[name];
             search_factory.search_no_record($scope.prefilters2).then(function(data){
                 $scope.prefacets2 = search_factory.construct_facets(data, $scope.prefilters['class']);
-                console.log($scope.prefacets2);
             });
 
             $scope.presearch();
@@ -17510,6 +17551,7 @@ app.directive('focusMe', function($timeout, $parse) {
 
             advanced_fields: [
                 {'name': 'terms', 'display': 'Search Terms', 'active': true},
+                {'name': 'collection_type', 'display': 'Type'},
                 {'name': 'subject', 'display': 'Subject'},
                 {'name': 'group', 'display': 'Data Provider'},
                 {'name': 'access_rights', 'display': 'Access'},
@@ -17554,7 +17596,7 @@ app.directive('focusMe', function($timeout, $parse) {
                 {'name': 'help', 'display': '<i class="fa fa-question-circle"></i> Help'}
             ],
 
-            collection_facet_order: ['collection_type','group', 'access_rights', 'access_methods_ss','license_class'],
+            collection_facet_order: ['collection_type','group', 'access_rights', 'access_methods_ss','license_class','type'],
             activity_facet_order: ['type', 'activity_status', 'funding_scheme', 'administering_institution', 'funders'],
 
             ingest: function (hash) {
@@ -17627,7 +17669,6 @@ app.directive('focusMe', function($timeout, $parse) {
             construct_facets: function (result, sclass) {
                 var facets = [];
 
-
                 //other facet fields
                 if (result.error)  console.log(result);
                 angular.forEach(result.facet_counts.facet_fields, function (item, index) {
@@ -17639,12 +17680,16 @@ app.directive('focusMe', function($timeout, $parse) {
                         };
                         facets[index].push(fa);
                     }
-                    for (var i = 0; i < result.facet_counts.facet_queries[index].length; i += 2) {
+                });
+
+                facets['collection_type'] =[];
+                angular.forEach(result.facet_counts.facet_queries, function (item, index) {
+                    if(item > 0) {
                         var fa = {
-                            name: result.facet_counts.facet_fields[index][i],
-                            value: result.facet_counts.facet_fields[index][i + 1]
+                            name: index,
+                            value: item
                         };
-                        facets[index].push(fa);
+                        facets['collection_type'].push(fa);
                     }
                 });
 
