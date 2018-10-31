@@ -88,6 +88,13 @@ class StrUtil
         return preg_replace( "/\r|\n/", " ", $str);
     }
 
+    public static function escapeCypher($str)
+    {
+        $str = addcslashes($str, "\"'\\");
+        $str = static::removeNewlines($str);
+        return $str;
+    }
+
     /**
      * Remove stop words defined in this file
      * For indexing purposes

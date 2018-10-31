@@ -6,12 +6,14 @@ namespace ANDS\Commands;
 
 use ANDS\Registry\API\Controller\RecordsController;
 use ANDS\Registry\API\Controller\RecordsGraphController;
+use ANDS\Registry\Providers\GraphRelationshipProvider;
 use ANDS\RegistryObject;
 use ANDS\Util\Config;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 class WarmCacheCommand extends ANDSCommand
 {
@@ -36,6 +38,9 @@ class WarmCacheCommand extends ANDSCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        ini_set('memory_limit', '2048M');
+        ini_set('max_execution_time', 2 * ONE_HOUR);
+
         $this->setUp($input, $output);
 
         return $this->timedActivity("Warming Graph Cache", function() {
