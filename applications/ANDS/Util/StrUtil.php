@@ -18,7 +18,11 @@ class StrUtil
     public static function getIconFor($class, $type = null)
     {
         if ($class === 'collection') {
-            return "fa-folder-open";
+            if($type === 'software'){
+                return "fa-file-code-o";
+            }else {
+                return "fa-folder-open";
+            }
         }
 
         if ($class === "activity") {
