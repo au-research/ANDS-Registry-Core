@@ -32,7 +32,7 @@ class RunScriptCommand extends ANDSCommand
         "nlaPullBack" => NLAPullBack::class,
         "dates" => ProcessDates::class,
         "testScript" => TestScript::class,
-        "processLinks" => ProcessLinksScript::class
+        "processLinks" => ProcessLinksScript::class,
     ];
 
     protected function configure()
