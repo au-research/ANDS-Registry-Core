@@ -218,7 +218,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
         }
         $sets = implode(', ', $sets);
 
-        $id = $relationship->related_object_identifier;
+        $id = StrUtil::escapeCypher($relationship->related_object_identifier);
 
         // settings properties are cheap on neo4j
         return "MERGE (n:{$labels} {identifier: \"{$id}\" }) ON CREATE SET {$sets} ON MATCH SET {$sets} RETURN n";
@@ -259,7 +259,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
         RegistryObject\IdentifierRelationship $relationship
     ) {
 
-        $id = $relationship->related_object_identifier;
+        $id = StrUtil::escapeCypher($relationship->related_object_identifier);
 
         // flip the relation if match
         $relation_type = $relationship->relation_type ?: 'hasAssociationWith';
@@ -312,11 +312,18 @@ class GraphRelationshipProvider implements RegistryContentProvider
 
         // the direct relations CYPHER query is reused in various places
         // TODO: if not found, return default
-        $directQuery = "MATCH (n:RegistryObject)-[r]-(direct) WHERE n.roId={id}";
+        $directQuery = "MATCH (n:RegistryObject)-[r]-(direct:RegistryObject) WHERE n.roId={id}";
         if (static::$enableIdentical) {
-            $directQuery = "MATCH (n:RegistryObject)-[:identicalTo*0..]-(identical:RegistryObject) WHERE n.roId={id}
-            WITH collect(identical.roId)+collect(n.roId) AS identicalIDs
-            MATCH (n:RegistryObject)-[r]-(direct) WHERE n.roId IN identicalIDs";
+
+//            $directQuery = "MATCH (n:RegistryObject)-[:identicalTo*0..10]-(identical:RegistryObject) WHERE n.roId={id}
+//            WITH collect(identical.roId)+collect(n.roId) AS identicalIDs
+//            MATCH (n:RegistryObject)-[r]-(direct) WHERE n.roId IN [$identicalIDsCypher]";
+
+            $identicalIDs = RegistryObjectsRepository::getRecordByID($id)->getDuplicateRecords()->pluck('registry_object_id')->toArray();
+            $identicalIDsCypher = collect($identicalIDs)->map(function($item) {
+                return '"' . $item . '"';
+            })->implode(", ");
+            $directQuery = "MATCH (n:RegistryObject)-[r]-(direct) WHERE n.roId IN [$identicalIDsCypher]";
         }
 
         $over = [];

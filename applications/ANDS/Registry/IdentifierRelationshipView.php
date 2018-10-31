@@ -28,9 +28,9 @@ class IdentifierRelationshipView extends Model
             'identifierType' => $this->to_identifier_type,
             'class' => 'RelatedInfo',
             'type' => $this->to_related_info_type,
-            'identifier' => StrUtil::removeNewlines($this->to_identifier),
+            'identifier' => StrUtil::escapeCypher($this->to_identifier),
             'title' => StrUtil::sanitize($this->relation_to_title),
-            'url' => StrUtil::removeNewlines($url),
+            'url' => StrUtil::escapeCypher($url),
             'description' => StrUtil::sanitize($this->related_description)
         ];
     }
