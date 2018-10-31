@@ -778,7 +778,10 @@ angular.module("ui.bootstrap",["ui.bootstrap.tpls","ui.bootstrap.transition","ui
         }
 
         function getFontIconForNode(node) {
-            if (node.labels.has('collection')) {
+            if (node.labels.has('collection') && node.labels.has('software') ) {
+                return 'fa-file-code-o';
+            }
+            else if (node.labels.has('collection')) {
                 return 'fa-folder-open';
             } else if(node.labels.has('party') && (node.labels.has('group'))) {
                 return 'fa-group';
