@@ -313,7 +313,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
 
         // the direct relations CYPHER query is reused in various places
         // TODO: if not found, return default
-        $directQuery = "MATCH (n:RegistryObject)-[r]-(direct:RegistryObject) WHERE n.roId={id}";
+        $directQuery = "MATCH (n:RegistryObject)-[r]-(direct) WHERE n.roId={id}";
         $record = RegistryObjectsRepository::getRecordByID($id);
         if (static::$enableIdentical && $record) {
 
