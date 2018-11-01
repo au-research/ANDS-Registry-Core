@@ -522,6 +522,10 @@ class ExportCSV extends ANDSCommand
                 $row = $relation->toCSV();
                 $row[':LABEL'] = str_replace('`', '', $row[':LABEL']);
 
+                // escape for csv
+                $row['identifier'] = str_replace('\"', '""', $row['identifier']);
+                $row['url'] = str_replace('\"', '""', $row['identifier']);
+
                 // insert header if first
                 if ($first) {
                     fputcsv($fp, array_keys($row));
