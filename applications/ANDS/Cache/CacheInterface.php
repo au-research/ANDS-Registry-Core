@@ -14,4 +14,5 @@ interface CacheInterface
     public function flush();
     public function remember($key, $minutes, Closure $callback);
     public function rememberForever($key, Closure $callback);
+    public function enabled();
 }
