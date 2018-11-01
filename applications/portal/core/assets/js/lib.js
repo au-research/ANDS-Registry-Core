@@ -705,8 +705,11 @@ angular.module("ui.bootstrap",["ui.bootstrap.tpls","ui.bootstrap.transition","ui
         };
 
         function getNodeFill(node, colors) {
-            if (node.labels.has('collection')) {
-                return "#EB6E1F";
+            if (node.labels.has('software') && node.labels.has('collection')) {
+                return "#727883";
+            }
+            else if(node.labels.has('collection')) {
+                return "#EB6E1F" ;
             } else if(node.labels.has('party')) {
                 return "#62CC9E";
             } else if (node.labels.has('activity')) {
@@ -778,7 +781,7 @@ angular.module("ui.bootstrap",["ui.bootstrap.tpls","ui.bootstrap.transition","ui
         }
 
         function getFontIconForNode(node) {
-            if (node.labels.has('collection') && node.labels.has('software') ) {
+            if(node.labels.has('collection') && node.labels.has('software')){
                 return 'fa-file-code-o';
             }
             else if (node.labels.has('collection')) {
@@ -1062,6 +1065,9 @@ angular.module("ui.bootstrap",["ui.bootstrap.tpls","ui.bootstrap.transition","ui
             if (d.labels.has('party') && d.labels.has('group')) {
                 return options.iconMap['group'];
             }
+            if (d.labels.has('collection') && d.labels.has('software')) {
+                return options.iconMap['software'];
+            }
 
             // find first icon
             var iconable = d.labels.find(function(label, index) {
@@ -1086,6 +1092,7 @@ angular.module("ui.bootstrap",["ui.bootstrap.tpls","ui.bootstrap.transition","ui
         function fontAwesomeSVGs() {
             return {
                 'user' : 'user-solid.svg',
+                'software' : 'file-code-o.svg',
                 'group,users': 'users-solid.svg',
                 'collection': 'folder-open-solid.svg',
                 'service' : 'wrench-solid.svg',
@@ -1492,6 +1499,9 @@ angular.module("ui.bootstrap",["ui.bootstrap.tpls","ui.bootstrap.transition","ui
                     return '<svg aria-hidden="true" data-prefix="fas" data-icon="users" class="svg-inline--fa fa-users fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="white" d="M96 224c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm448 0c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm32 32h-64c-17.6 0-33.5 7.1-45.1 18.6 40.3 22.1 68.9 62 75.1 109.4h66c17.7 0 32-14.3 32-32v-32c0-35.3-28.7-64-64-64zm-256 0c61.9 0 112-50.1 112-112S381.9 32 320 32 208 82.1 208 144s50.1 112 112 112zm76.8 32h-8.3c-20.8 10-43.9 16-68.5 16s-47.6-6-68.5-16h-8.3C179.6 288 128 339.6 128 403.2V432c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48v-28.8c0-63.6-51.6-115.2-115.2-115.2zm-223.7-13.4C161.5 263.1 145.6 256 128 256H64c-35.3 0-64 28.7-64 64v32c0 17.7 14.3 32 32 32h65.9c6.3-47.4 34.9-87.3 75.2-109.4z"></path></svg>';
                 case 'wrench-solid.svg':
                     return '<svg aria-hidden="true" data-prefix="fas" data-icon="wrench" class="svg-inline--fa fa-wrench fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="white" d="M507.73 109.1c-2.24-9.03-13.54-12.09-20.12-5.51l-74.36 74.36-67.88-11.31-11.31-67.88 74.36-74.36c6.62-6.62 3.43-17.9-5.66-20.16-47.38-11.74-99.55.91-136.58 37.93-39.64 39.64-50.55 97.1-34.05 147.2L18.74 402.76c-24.99 24.99-24.99 65.51 0 90.5 24.99 24.99 65.51 24.99 90.5 0l213.21-213.21c50.12 16.71 107.47 5.68 147.37-34.22 37.07-37.07 49.7-89.32 37.91-136.73zM64 472c-13.25 0-24-10.75-24-24 0-13.26 10.75-24 24-24s24 10.74 24 24c0 13.25-10.75 24-24 24z"></path></svg>';
+                case 'file-code-o.svg':
+                    return '<svg aria-hidden="true" data-prefix="far" data-icon="file-code" class="svg-inline--fa fa-file-code fa-w-12" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="white" d="M369.941 97.941l-83.882-83.882A48 48 0 0 0 252.118 0H48C21.49 0 0 21.49 0 48v416c0 26.51 21.49 48 48 48h288c26.51 0 48-21.49 48-48V131.882a48 48 0 0 0-14.059-33.941zM332.118 128H256V51.882L332.118 128zM48 464V48h160v104c0 13.255 10.745 24 24 24h104v288H48zm101.677-115.115L116.854 320l32.822-28.885a8.793 8.793 0 0 0 .605-12.624l-17.403-18.564c-3.384-3.613-8.964-3.662-12.438-.401L62.78 313.58c-3.703 3.474-3.704 9.367.001 12.84l57.659 54.055a8.738 8.738 0 0 0 6.012 2.381 8.746 8.746 0 0 0 6.427-2.782l17.403-18.563a8.795 8.795 0 0 0-.605-12.626zm84.284-127.85l-24.401-7.084a8.796 8.796 0 0 0-10.905 5.998L144.04 408.061c-1.353 4.66 1.338 9.552 5.998 10.905l24.403 7.084c4.68 1.355 9.557-1.354 10.905-5.998l54.612-188.112c1.354-4.66-1.337-9.552-5.997-10.905zm87.258 92.545l-57.658-54.055c-3.526-3.307-9.099-3.165-12.439.401l-17.403 18.563a8.795 8.795 0 0 0 .605 12.625L267.146 320l-32.822 28.885a8.793 8.793 0 0 0-.605 12.624l17.403 18.564a8.797 8.797 0 0 0 12.439.401h-.001l57.66-54.055c3.703-3.473 3.703-9.366-.001-12.839z"></path></svg>';
+
                 default:
                     return '';
             }
