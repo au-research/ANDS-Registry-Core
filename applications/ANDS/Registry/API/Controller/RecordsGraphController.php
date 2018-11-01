@@ -108,6 +108,7 @@ class RecordsGraphController
                 }
 
                 $classPlural = StrUtil::plural($clusterClass);
+                if($clusterType == 'software') $classPlural = "software records";
                 $cluster['properties'] = array_merge($cluster['properties'], [
                     'title' => "$count related $classPlural",
                     'url' => constructPortalSearchQuery($filters),
