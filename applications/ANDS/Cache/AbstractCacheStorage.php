@@ -4,6 +4,7 @@
 namespace ANDS\Cache;
 
 
+use ANDS\Util\Config;
 use Closure;
 use Psr\SimpleCache\InvalidArgumentException;
 
@@ -50,6 +51,10 @@ abstract class AbstractCacheStorage implements CacheInterface
 
     public function remember($key, $minutes, Closure $callback)
     {
+        if (! $this->enabled()) {
+            return $callback();
+        }
+
         $value = $this->get($key);
 
         if (! is_null($value)) {
@@ -61,6 +66,12 @@ abstract class AbstractCacheStorage implements CacheInterface
         $this->put($key, $value, $minutes);
 
         return $value;
+    }
+
+    public function enabled()
+    {
+        $config = Config::get('app.cache.enabled');
+        return $config['enabled'];
     }
 
     public function rememberForever($key, Closure $callback)
