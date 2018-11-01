@@ -706,7 +706,7 @@ angular.module("ui.bootstrap",["ui.bootstrap.tpls","ui.bootstrap.transition","ui
 
         function getNodeFill(node, colors) {
             if (node.labels.has('software') && node.labels.has('collection')) {
-                return "#727883";
+                return "#858c99";
             }
             else if(node.labels.has('collection')) {
                 return "#EB6E1F" ;
@@ -733,6 +733,7 @@ angular.module("ui.bootstrap",["ui.bootstrap.tpls","ui.bootstrap.transition","ui
             var html = '<div class="swatch-white">';
             html += '<h4>';
             html += '<i class="fa '+getFontIconForNode(node)+' icon-portal" style="margin-right:4px;"></i>';
+
             if (node.properties.type) {
                 html += '<span style="margin-right:5px;color:#EB6E1F">'+capitalizeFirstLetter(node.properties.type)+'</span>';
             }
@@ -743,7 +744,7 @@ angular.module("ui.bootstrap",["ui.bootstrap.tpls","ui.bootstrap.transition","ui
                 }
                 html += '</a>';
             } else if (node.properties.identifier) {
-                html += node.properties.title;
+                html += node.properties.title ;
             } else if (node.properties.count && !node.labels.has('RelatedInfo')) {
                 html += '<a target="_blank" href="'+node.properties.url+'">' + node.properties.count + " related " + getReadableTypeForNode(node) + '</a>';
             } else if (node.properties.count && node.labels.has('RelatedInfo')) {
@@ -751,14 +752,16 @@ angular.module("ui.bootstrap",["ui.bootstrap.tpls","ui.bootstrap.transition","ui
                 html += node.properties.count + " related " + getReadableTypeForNode(node);
             }
             html += '</h4>';
-          //   html += '<p>LABELS: '+JSON.stringify(node.labels)+'</p>';
-          //   html += '<p>PROPERTIES: '+JSON.stringify(node.properties)+'</p>';
+            //html += '<p>LABELS: '+JSON.stringify(node.labels)+'</p>';
+            //html += '<p>PROPERTIES: '+JSON.stringify(node.properties)+'</p>';
             html += '</div>';
             return html;
         }
 
         function getReadableTypeForNode(node) {
-            if (node.labels.has('dataset')) {
+            if (node.labels.has('software')) {
+                return 'software records';
+            } else if (node.labels.has('dataset')) {
                 return 'datasets';
             } else if(node.labels.has('party') && (node.labels.has('group'))) {
                 return 'organisations';
