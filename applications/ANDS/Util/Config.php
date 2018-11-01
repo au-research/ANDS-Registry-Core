@@ -27,6 +27,7 @@ class Config
         if (strpos($name, ".") > 0) {
             $parts = explode('.', $name);
             $name = $parts[0];
+            $config = $parts[1];
         }
 
         // name should now be the config name
@@ -45,7 +46,6 @@ class Config
         // fetch the configuration that is already loaded (should)
         $configuration = self::$data[$name];
 
-        // dot notation
         // TODO cater for multiple dot app.config.cache.something
         if ($config && array_key_exists($config, $configuration)) {
             return $configuration[$config];
