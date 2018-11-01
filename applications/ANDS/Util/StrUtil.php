@@ -86,6 +86,11 @@ class StrUtil
         return $str;
     }
 
+    public static function escapeCSV($str)
+    {
+        return str_replace('"', '""', $str);
+    }
+
     /**
      * Remove stop words defined in this file
      * For indexing purposes
