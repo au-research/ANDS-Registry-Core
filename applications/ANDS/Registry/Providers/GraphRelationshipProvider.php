@@ -137,6 +137,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
         $result = retry(function() use ($client, $stack){
              return $client->runStack($stack);
         }, 5, 3);
+
         // retries for 3 times with a delay of 5 seconds in between.
         // This is due to neo4j can run into DEADLOCK issue when multiple threads are updating the same node properties
 
@@ -313,17 +314,18 @@ class GraphRelationshipProvider implements RegistryContentProvider
         // the direct relations CYPHER query is reused in various places
         // TODO: if not found, return default
         $directQuery = "MATCH (n:RegistryObject)-[r]-(direct:RegistryObject) WHERE n.roId={id}";
-        if (static::$enableIdentical) {
+        $record = RegistryObjectsRepository::getRecordByID($id);
+        if (static::$enableIdentical && $record) {
 
 //            $directQuery = "MATCH (n:RegistryObject)-[:identicalTo*0..10]-(identical:RegistryObject) WHERE n.roId={id}
 //            WITH collect(identical.roId)+collect(n.roId) AS identicalIDs
 //            MATCH (n:RegistryObject)-[r]-(direct) WHERE n.roId IN [$identicalIDsCypher]";
 
-            $identicalIDs = RegistryObjectsRepository::getRecordByID($id)->getDuplicateRecords()->pluck('registry_object_id')->toArray();
+            $identicalIDs = $record->getDuplicateRecords()->pluck('registry_object_id')->toArray();
             $identicalIDsCypher = collect($identicalIDs)->map(function($item) {
                 return '"' . $item . '"';
             })->implode(", ");
-            $directQuery = "MATCH (n:RegistryObject)-[r]-(direct) WHERE n.roId IN [$identicalIDsCypher]";
+            $directQuery = count($identicalIDs) > 0 ? "MATCH (n:RegistryObject)-[r]-(direct) WHERE n.roId IN [$identicalIDsCypher]" : $directQuery;
         }
 
         $over = [];

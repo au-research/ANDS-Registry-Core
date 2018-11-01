@@ -27,7 +27,8 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
 
         restore_error_handler();
 
-        date_default_timezone_set(\ANDS\Util\Config::get('app.timezone'));
+        $timezone = \ANDS\Util\Config::get('app.timezone');
+        date_default_timezone_set($timezone);
 
         foreach ($this->requiredKeys as $key) {
             $this->ensureKeyExist($key);
