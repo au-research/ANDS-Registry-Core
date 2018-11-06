@@ -10,7 +10,7 @@ class LinkProviderTest extends \RegistryTestClass
 {
 
     protected $requiredKeys = [
-        'OdPos6tCNy5Zw0WVfKwkZGpDOsdfdscRNImDnpjCIfsssHWwt16PcW'
+        'Collection2_demo'
     ];
 
     /** @test **/
@@ -27,13 +27,13 @@ class LinkProviderTest extends \RegistryTestClass
 
     /** @test **/
     public function test_it_sould_create_Links() {
-        $collectionkey = 'OdPos6tCNy5Zw0WVfKwkZGpDOsdfdscRNImDnpjCIfsssHWwt16PcW';
-        //$collectionkey = 'Collection2_demo';
+        //$collectionkey = 'OdPos6tCNy5Zw0WVfKwkZGpDOsdfdscRNImDnpjCIfsssHWwt16PcW';
+        $collectionkey = 'Collection2_demo';
         $record = RegistryObjectsRepository::getPublishedByKey($collectionkey);
         LinkProvider::process($record);
 
         $links = Links::where('registry_object_id', $record->registry_object_id)->get();
-        $this->assertEquals(count($links), 8);
+        $this->assertEquals(count($links), 13);
     }
 
     /** @test **/
@@ -48,9 +48,6 @@ class LinkProviderTest extends \RegistryTestClass
         {
             $this->assertEquals($clean, LinkProvider::cleanUrl($dirty));
         }
-
-
-
     }
 
 }
