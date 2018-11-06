@@ -10,7 +10,7 @@ class LinkProviderTest extends \RegistryTestClass
 {
 
     protected $requiredKeys = [
-        'Collection2_demo'
+        'OdPos6tCNy5Zw0WVfKwkZGpDOsdfdscRNImDnpjCIfsssHWwt16PcW'
     ];
 
     /** @test **/
@@ -27,13 +27,30 @@ class LinkProviderTest extends \RegistryTestClass
 
     /** @test **/
     public function test_it_sould_create_Links() {
-        // $collectionkey = 'AUTestingRecords3RelatedCollectionDatasetRelObj1';
-        $collectionkey = 'Collection2_demo';
+        $collectionkey = 'OdPos6tCNy5Zw0WVfKwkZGpDOsdfdscRNImDnpjCIfsssHWwt16PcW';
+        //$collectionkey = 'Collection2_demo';
         $record = RegistryObjectsRepository::getPublishedByKey($collectionkey);
         LinkProvider::process($record);
 
         $links = Links::where('registry_object_id', $record->registry_object_id)->get();
-        $this->assertEquals(count($links), 13);
+        $this->assertEquals(count($links), 8);
+    }
+
+    /** @test **/
+    public function test_it_sould_clean_urls() {
+        $dirtyUrls  = array(
+            "http://google.com...." => "http://google.com",
+            "(([[http://google.com,.,.,.,]" => "http://google.com",
+            "(([[http://google.com]]]]]" => "http://google.com",
+            "(([[http://google.com?1=2&amp;4=5]]]]]" => "http://google.com?1=2&4=5"
+        );
+        foreach($dirtyUrls as $dirty=>$clean)
+        {
+            $this->assertEquals($clean, LinkProvider::cleanUrl($dirty));
+        }
+
+
+
     }
 
 }
