@@ -5,6 +5,8 @@ namespace ANDS\Commands;
 
 
 use ANDS\DOI\DataCiteClient;
+use ANDS\DOI\MdsClient;
+use ANDS\DOI\FabricaClient;
 use ANDS\DOI\DOIServiceProvider;
 use ANDS\DOI\Model\Client;
 use ANDS\DOI\Model\Doi;
@@ -55,6 +57,10 @@ class DOISyncCommand extends Command
             $this->identify($input, $output);
         }
 
+        if ($command == "deleteDOIs") {
+            $this->deleteDOIs($input, $output);
+        }
+
         if ($command == "process") {
             $this->process($input, $output);
         }
@@ -67,6 +73,40 @@ class DOISyncCommand extends Command
             $this->processWrongDOI($input, $output);
         }
         return;
+    }
+
+    private function deleteDOIs(InputInterface $input, OutputInterface $output){
+
+        $clientModel = new Client;
+        $clientModel->setConnection('dois');
+        $clients = $clientModel->get();
+
+        if ($id = $input->getArgument('id')) {
+            $client = $clientModel->find($id);
+            if (!$client) {
+                $output->writeln("<error>Error client $id not found</error>");
+                die();
+            }
+            $clients = [ $client ];
+        }
+
+        $progressBar = new ProgressBar($output, count($clients));
+        foreach ($clients as $client) {
+            //only want to process active clients - also client 72 has well over 200000 dois so cannot be listed from datacite
+            if($client->status=='ACTIVE' && $client->client_id!=72) {
+                $stat = $this->getStat($client);
+                $progressBar->advance(1);
+                if (count($stat['db_missing']) > 0) {
+                    foreach ($stat['db_missing'] as $missing) {
+                        $this->log("Deleting " . $missing);
+                        $dataciteClient = $this->getDataciteClient($client);
+                        $dataciteClient->setDataciteUrl("https://app.datacite.org/");
+                        $dataciteClient->deleteDOI($missing, $dataciteClient);
+                    }
+                }
+            }
+        }
+        $progressBar->finish();
     }
 
     private function identify(InputInterface $input, OutputInterface $output)
@@ -84,20 +124,22 @@ class DOISyncCommand extends Command
             }
             $clients = [ $client ];
         }
-
         $data = [];
         $progressBar = new ProgressBar($output, count($clients));
         foreach ($clients as $client) {
-            $stat = $this->getStat($client);
-            $data[] = [
-                'client' => $client,
-                'stat' => $stat
-            ];
-            $progressBar->advance(1);
-//            $display = collect($stat)->filter(function($item, $key) {
-//                return strpos($key, 'count') !== false;
-//            })->toArray();
-//            $this->displayStat($client, $display, $output);
+            //only want to process active clients - also client 72 has well over 200000 dois so cannot be listed from datacite
+            if($client->status=='ACTIVE' && $client->client_id!=72) {
+                $stat = $this->getStat($client);
+                $data[] = [
+                    'client' => $client,
+                    'stat' => $stat
+                ];
+                $progressBar->advance(1);
+                $display = collect($stat)->filter(function ($item, $key) {
+                    return strpos($key, 'count') !== false;
+                })->toArray();
+                $this->displayStat($client, $display, $output);
+            }
         }
         $progressBar->finish();
 
@@ -195,7 +237,7 @@ class DOISyncCommand extends Command
 
         $databaseDOIs = $doiModel
             ->where('client_id', $client->client_id)
-            ->whereIn('status', ['ACTIVE', 'INACTIVE', 'REQUESTED'])
+            ->whereIn('status', ['ACTIVE', 'INACTIVE', 'RESERVED', 'RESERVED_INACTIVE'])
             ->lists('doi_id')
             ->map(function($item) {
                 return strtoupper($item);
@@ -203,22 +245,26 @@ class DOISyncCommand extends Command
                 return strpos($item, "10.5072") === false;
             })->toArray();
 
+
         $dataciteClient = $this->getDataciteClient($client);
 
-        $allDataciteMintedDOIs = trim($dataciteClient->get(""));
-        $allDataciteMintedDOIs = explode("\n", $allDataciteMintedDOIs);
+        $dataciteClient->setDataciteUrl("https://app.datacite.org/");
 
-        $allDataciteMintedDOIs = collect($allDataciteMintedDOIs)
+        $allDataciteMintedClientDOIs = $dataciteClient->getDOIs("");
+
+        $allDataciteMintedDOIs = collect($allDataciteMintedClientDOIs)
             ->filter(function($item) {
                 return strpos($item, "10.5072") === false;
             })->filter(function($item) {
-                return trim($item) != "";
+                return trim(strtoupper($item)) != "";
             })->toArray();
 
         $difference = array_unique(array_merge(
             array_diff($databaseDOIs, $allDataciteMintedDOIs),
             array_diff($allDataciteMintedDOIs, $databaseDOIs)
         ));
+
+
 
         $missingInDatabase = collect($difference)
             ->filter(function($item) use ($databaseDOIs) {
@@ -229,6 +275,7 @@ class DOISyncCommand extends Command
             ->filter(function($item) use ($allDataciteMintedDOIs) {
                 return !in_array($item, $allDataciteMintedDOIs);
             })->toArray();
+
 
         return [
             'count_db' => count($databaseDOIs),
@@ -253,12 +300,8 @@ class DOISyncCommand extends Command
     {
         $config = Config::get('datacite');
 
-        $clientUsername = $config['name_prefix'] . "." . $config['name_middle'] . str_pad($client->client_id, 2, '-', STR_PAD_LEFT);
-        $dataciteClient = new DataCiteClient(
-            $clientUsername,
-            $password = $config['password']
-        );
-        $dataciteClient->setDataciteUrl($config['base_url']);
+        $dataciteClient = new FabricaClient($client->datacite_symbol, $config['password']);
+
         return $dataciteClient;
     }
 
@@ -432,7 +475,7 @@ class DOISyncCommand extends Command
         $output->writeln("$client->client_name ($client->client_id) has ".$stat['count_db']. " DOIs to update");
         if($stat['count_db']>0) {
             $wrongDOIs = $stat['dois'];
-            
+
             $config = Config::get('database');
 
             $clientRepository = new ClientRepository(
