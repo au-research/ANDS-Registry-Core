@@ -5,6 +5,7 @@ namespace ANDS\API\Task\ImportSubTask;
 
 
 use ANDS\DataSource\Harvest;
+use ANDS\Util\Config;
 use Carbon\Carbon;
 
 class WriteImportSummary extends ImportSubTask
@@ -17,9 +18,10 @@ class WriteImportSummary extends ImportSubTask
         $dataSource = $this->getDataSource();
         $parentTaskData = collect($this->parent()->getTaskData());
         $parentBenchmarkData = collect($this->parent()->getBenchmarkData());
+        $timeZone = Config::get('app.timezone');
 
         $started = Carbon::parse($this->parent()->dateAdded);
-        $end = Carbon::now();
+        $end = Carbon::now(new \DateTimeZone($timeZone));
 
         // TODO started should be harvest started if there's a harvest
         $harvestSummary = null;
