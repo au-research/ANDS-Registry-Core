@@ -64,7 +64,7 @@ class LinkProvider implements RegistryContentProvider
         foreach ($electronic_address AS $address)
         {
             $type = 'electronic_'.(string)$address["type"];
-            $value = trim((string)$address->value[0]);
+            $value = static::cleanUrl((string)$address->value[0]);
             if ($value != '') {
                 array_push($eaLinks, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$value,'status'=>'NEW')));
             }
@@ -82,7 +82,7 @@ class LinkProvider implements RegistryContentProvider
         foreach ($citation_metadata AS $cm)
         {
             $type = 'citation_metadata_url';
-            $value = trim((string)$cm->url[0]);
+            $value = static::cleanUrl((string)$cm->url[0]);
             if ($value != '') {
                 array_push($cUrls, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$value,'status'=>'NEW')));
             }
@@ -102,7 +102,7 @@ class LinkProvider implements RegistryContentProvider
             preg_match_all($regex, html_entity_decode($desc), $matches);
             $type = 'description_link';
             foreach($matches[0] as $url){
-                $url = trim($url,"):.,");
+                $url = static::cleanUrl($url);
                 if ($url != '') {
                     array_push($descLinks, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$url,'status'=>'NEW')));
                 }
@@ -168,7 +168,7 @@ class LinkProvider implements RegistryContentProvider
             $rmParent = $rm->xpath('..');
             $rType = strtolower((string) $rm['type']);
             $type = $rmParent[0]->getName() . '_relation_' . $rType. '_url';
-            $value = trim ((string)$rm->url[0]);
+            $value = static::cleanUrl((string)$rm->url[0]);
             if ($value != '') {
                 array_push($rUrls, json_encode(array('registry_object_id'=>$ro_id, 'data_source_id'=>$ds_id,'link_type'=>$type,'link'=>$value,'status'=>'NEW')));
             }
@@ -290,6 +290,12 @@ class LinkProvider implements RegistryContentProvider
             $eLinksArray[] = json_encode($link);
         }
         return $eLinksArray;
+    }
+
+    public static function cleanUrl($url)
+    {
+        $url = str_replace("&amp;", "&", trim($url," []():.,"));
+        return $url;
     }
 
     /**
