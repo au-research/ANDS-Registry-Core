@@ -187,9 +187,10 @@ class Importer
 
         $importTask->setCI($ci =& get_instance());
         $importTask->setDb($ci->db);
-        $importTask->sendToBackground();
 
-        if (!$background) {
+        if ($background) {
+            $importTask->sendToBackground();
+        } else {
             $importTask->run();
         }
 
