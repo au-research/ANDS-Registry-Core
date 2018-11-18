@@ -176,8 +176,9 @@ class TitleProvider implements RIFCSProvider
             if (array_key_exists('value', $item) && is_string($item['value'])) {
                 return $item['value'];
             }
-
-            return "";
+            return null;
+        })->filter(function ($item){
+            return $item != null;
         })->toArray();
     }
 
