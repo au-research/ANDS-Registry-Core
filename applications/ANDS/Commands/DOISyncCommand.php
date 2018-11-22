@@ -72,6 +72,7 @@ class DOISyncCommand extends Command
         if ($command == "processWrongDOI") {
             $this->processWrongDOI($input, $output);
         }
+
         return;
     }
 
@@ -98,10 +99,20 @@ class DOISyncCommand extends Command
                 $progressBar->advance(1);
                 if (count($stat['db_missing']) > 0) {
                     foreach ($stat['db_missing'] as $missing) {
-                        $this->log("Deleting " . $missing);
-                        $dataciteClient = $this->getDataciteClient($client);
-                        $dataciteClient->setDataciteUrl("https://app.datacite.org/");
-                        $dataciteClient->deleteDOI($missing, $dataciteClient);
+                        //Let's check that our logs via elasticsearch to see if we have minted it
+                        $check = file_get_contents("http://ands2.anu.edu.au:9200/doi_api-*/_search?source={%22from%22:0,%22size%22:1,%22query%22:{%22bool%22:{%22must%22:[{%22bool%22:{%22must%22:[{%22match%22:{%22doc.@fields.response.doi%22:%22".$missing."%22}},{%22match%22:{%22doc.@fields.event%22:%22doi_mint%22}},{%22match%22:{%22doc.@fields.response.messagecode%22:%22MT001%22}}]}}]}}}}");
+                        $parsed = json_decode($check,TRUE);
+                        $firstDoi = $parsed["hits"]["hits"][0]["_source"]["doc"]["@fields"]["response"]["doi"];
+                        $firstCode = $parsed["hits"]["hits"][0]["_source"]["doc"]["@fields"]["response"]["responsecode"];
+                        if(strtoupper($firstDoi) == strtoupper($missing) && $firstCode == "MT001") {
+                            $this->log("Need to add doi ".$missing." to the db");
+                            $this->addMissingDOI($missing, $client);
+                        }else{
+                            $this->log("Deleting " . $missing);
+                            $dataciteClient = $this->getDataciteClient($client);
+                            $dataciteClient->setDataciteUrl("https://app.datacite.org/");
+                            $dataciteClient->deleteDOI($missing, $dataciteClient);
+                        }
                     }
                 }
             }
@@ -385,20 +396,15 @@ class DOISyncCommand extends Command
     private function addMissingDOI($id, Client $client)
     {
         $this->log("Fixing $id");
-        $dataciteClient = $this->getDataciteClient($client);
-        $url = $dataciteClient->get($id);
 
-        $xml = $dataciteClient->request($dataciteClient->getDataciteUrl() . 'metadata/'. $id);
-        if (!$xml || $xml == "dataset inactive") {
-            $this->log("<error>Failed $id No XML found or dataset inactive</error>");
-            return;
-        }
         $status = "ACTIVE";
 
         $metadata = json_decode(file_get_contents("https://api.datacite.org/works/$id"), true);
         if (is_array_empty($metadata['data'])) {
             $this->log("$id No Metadata found");
         }
+        $xml = base64_decode($metadata["data"]["attributes"]["xml"]);
+        $url = $metadata["data"]["attributes"]["url"];
 
         date_default_timezone_set('UTC');
         $updated_when = Carbon::createFromTimestamp(1)->format("Y-m-d H:i:s");
@@ -406,7 +412,7 @@ class DOISyncCommand extends Command
 
         if (array_key_exists('attributes', $metadata['data'])) {
             $updated_when = Carbon::parse($metadata['data']['attributes']['updated'])->format("Y-m-d H:i:s");
-            $created_when = Carbon::parse($metadata['data']['attributes']['deposited'])->format("Y-m-d H:i:s");
+            $created_when = Carbon::parse($metadata['data']['attributes']['registered'])->format("Y-m-d H:i:s");
         }
 
         if (!$url) {
