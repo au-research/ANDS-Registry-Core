@@ -31,7 +31,7 @@ class ServiceProducer {
             'Accept' => 'application/xml',
         ];
         $response = "";
-        $request = $this->http->post('/processServices', $headers, $service_json_file);
+        $request = $this->http->post('processServices', $headers, $service_json_file);
 
         try {
             $response = $request->send();
@@ -42,6 +42,10 @@ class ServiceProducer {
             $this->responseCode = $e->getCode();
         }
         catch (ServerErrorResponseException $e){
+            $this->errors[] = $e->getResponse()->json();
+            $this->responseCode = $e->getCode();
+        }
+        catch (\Exception $e) {
             $this->errors[] = $e->getResponse()->json();
             $this->responseCode = $e->getCode();
         }
@@ -56,7 +60,7 @@ class ServiceProducer {
             'Accept' => 'application/xml',
         ];
         try {
-            $response = $this->http->get('/getRifService', $headers, ["query" => ['url'=>$url, 'type' => $type]])->send();
+            $response = $this->http->get('getRifService', $headers, ["query" => ['url'=>$url, 'type' => $type]])->send();
             $this->responseCode = $response->getStatusCode();
         }
         catch (ClientErrorResponseException $e) {
