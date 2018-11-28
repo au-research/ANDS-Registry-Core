@@ -13,9 +13,18 @@ use ANDS\Repository\RegistryObjectsRepository as Repo;
 class ServiceDiscovery {
 
 
-    public static function getServiceLinksForDatasource($data_source_id){
-
-        $links = Links::where('data_source_id', $data_source_id)->get();
+    /**
+     * Returns all links that maybe servicable
+     *
+     * @param $data_source_id
+     * @return \Illuminate\Support\Collection
+     */
+    public static function getServiceLinksForDatasource($data_source_id)
+    {
+        $links = collect(Links::where('data_source_id', $data_source_id)->where('link_type', 'LIKE', 'identifier_uri_link%')->get())
+            ->merge(Links::where('data_source_id', $data_source_id)->where('link_type', 'LIKE', 'electronic%')->get())
+            ->merge(Links::where('data_source_id', $data_source_id)->where('link_type', 'LIKE', 'relatedInfo%')->get())
+            ->unique();
         return $links;
     }
 
@@ -211,7 +220,7 @@ class ServiceDiscovery {
         return array("type"=>$identifiers[0]->identifier_type, "identifier"=>$identifiers[0]->identifier);
     }
 
-    private static function getBaseUrl($url){
+    public static function getBaseUrl($url){
         $parsed_url = parse_url($url);
 
         $scheme   = isset($parsed_url['scheme']) ? $parsed_url['scheme'] . '://' : '';
@@ -223,32 +232,36 @@ class ServiceDiscovery {
 
     }
 
-    private static function isServiceLink($link){
-        $supported_services = [
-            "wms",
-            "wfs",
-            "ogc",
-            "wcs",
-            "wps",
-            "wmts"
-           // "geonetwork",
-          //  "geoserver"
-        ];
-        $supported_types = array("identifier_uri_link", "electronic", "relatedInfo");
+    /**
+     * Check if a Link is a service link
+     * TODO refactor to collection for readability
+     * TODO make tests
+     *
+     * @param Links $link
+     * @return bool
+     */
+    public static function isServiceLink(Links $link)
+    {
+        // check if the link type is supported
         $supported = false;
-
-        foreach($supported_types as $a) {
-            if (stripos($link->link_type, $a) !== false)
+        $supported_types = ["identifier_uri_link", "electronic", "relatedInfo"];
+        foreach ($supported_types as $a) {
+            if (stripos($link->link_type, $a) !== false) {
                 $supported = true;
+            }
         }
-        if(!$supported){ return false;}
+        if (!$supported) {
+            return false;
+        }
 
-        foreach($supported_services as $a) {
-            if (stripos($link->link, $a) !== false)
+        // check if the base url of the service is "serviceable"
+        $supported_services = ["wms", "wfs", "ogc", "wcs", "wps", "wmts", "ows"];
+        foreach ($supported_services as $a) {
+            if (stripos(static::getBaseUrl($link->link), $a) !== false) {
                 return true;
+            }
         }
         return false;
-
     }
 
     private static function getRelationType($link_type){
