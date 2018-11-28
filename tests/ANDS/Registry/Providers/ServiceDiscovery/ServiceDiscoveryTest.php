@@ -2,20 +2,48 @@
 
 
 use ANDS\Registry\Providers\ServiceDiscovery\ServiceDiscovery;
+use ANDS\Registry\Providers\ServiceDiscovery\ServiceProducer;
 use ANDS\RegistryObject;
 use ANDS\RegistryObject\Links;
 use ANDS\Repository\RegistryObjectsRepository;
 
 class ServiceDiscoveryTest extends \RegistryTestClass
 {
+    public function setUp()
+    {
+        parent::setUp();
+        ini_set('memory_limit', '1024M');
+    }
+
     /** @test **/
     public function test_get_links_for_datasource() {
 
-        $links = ServiceDiscovery::getServiceLinksForDatasource(12);
-//        $this->assertEquals(1756, count($links));
-        $links = ServiceDiscovery::processLinks($links);
-        $links = ServiceDiscovery::formatLinks($links);
+        $this->markTestSkipped("Big integration tests, should only be ran during development");
+
+        \ANDS\Cache\Cache::file()->forget('testLinksAODN');
+        $links = \ANDS\Cache\Cache::file()->rememberForever('testLinksAODN', function() {
+            $links = ServiceDiscovery::getServiceLinksForDatasource(10);
+            $links = ServiceDiscovery::processLinks($links);
+            $links = ServiceDiscovery::formatLinks($links);
+            return $links;
+        });
+        $this->assertTrue(\ANDS\Cache\Cache::file()->has('testLinksAODN'));
+        $links = \ANDS\Cache\Cache::file()->get('testLinksAODN');
+
+        $service_discovery_service_url = get_config_item('SERVICES_DISCOVERY_SERVICE_URL');
+        $serviceProduce = new ServiceProducer($service_discovery_service_url);
+        $serviceProduce->processServices(json_encode($links));
+        $serviceCount = $serviceProduce->getServiceCount();
+
         $this->assertNotEmpty($links);
+    }
+
+    /** @test */
+    function it_gets_base_url()
+    {
+        $url = "http://www.cmar.csiro.au/geoserver/wms?&CQL_FILTER=SURVEY_NAME%20%3D%20%27ALBA196909%27";
+        $baseUrl = ServiceDiscovery::getBaseUrl($url);
+        $this->assertEquals($baseUrl, "http://www.cmar.csiro.au/geoserver/wms");
     }
 
 //    /** @test **/
