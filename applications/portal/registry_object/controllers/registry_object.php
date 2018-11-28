@@ -415,12 +415,15 @@ class Registry_object extends MX_Controller
         }
 
         // construct the correct search query for each type of related
-        $relatedArray = ['data', 'programs', 'grants_projects', 'services', 'organisations', 'researchers'];
+        $relatedArray = ['data', 'software','programs', 'grants_projects', 'services', 'organisations', 'researchers'];
         foreach ($relatedArray as $rr) {
             $query = [];
             switch ($rr) {
                 case "data":
                     $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'collection', 'sort' => 'score desc'];
+                    break;
+                case "software":
+                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'collection', 'type' => 'software', 'sort' => 'score desc'];
                     break;
                 case "programs":
                     $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'activity', 'type' => 'program', 'sort' => 'score desc'];
