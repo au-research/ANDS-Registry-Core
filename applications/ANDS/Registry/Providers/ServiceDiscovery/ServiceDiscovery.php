@@ -88,7 +88,7 @@ class ServiceDiscovery {
                 }
 
                 $subjects = \ANDS\Registry\Providers\RIFCS\SubjectProvider::getSubjects($ro);
-                $allSubjects = static::unique_multidim_array(array_merge($allSubjects, $subjects), "value");
+                $allSubjects = array_values(array_merge($allSubjects, $subjects));
 
                 if(!isset($linksArray[$url][$ro->key])){
                     $linksArray[$url][$ro->key] = array(
@@ -146,7 +146,7 @@ class ServiceDiscovery {
                 "uuid" => $uuid,
                 "relations" => $relations,
                 "full_urls" => array_values(array_unique($fullURLs)),
-                "subjects" => $allSubjects,
+                "subjects" => collect($allSubjects)->unique('value')->values()->toArray(),
                 "rifcsB64" => $rifcsB64
             ];
         }
