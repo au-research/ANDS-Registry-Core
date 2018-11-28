@@ -559,11 +559,11 @@ class Data_source extends MX_Controller {
 		$importTask->sendToBackground();
 
 		// returning the ID and log that
-		$id = $importTask->getId();
-		$message =
-			"Discovering Service Objects for Datasource". NL.
-			"TaskID: $id";
-		$dataSource->appendDataSourceLog($message, 'info', 'SERVICE DISCOVERY');
+//		$id = $importTask->getId();
+//		$message =
+//			"Discovering Service Objects for Datasource". NL.
+//			"TaskID: $id";
+//		$dataSource->appendDataSourceLog($message, 'info', 'SERVICE DISCOVERY');
 	}
 
     /**
