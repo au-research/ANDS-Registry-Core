@@ -420,7 +420,7 @@ class Registry_object extends MX_Controller
             $query = [];
             switch ($rr) {
                 case "data":
-                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'collection', 'sort' => 'score desc'];
+                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'collection', 'collection_type' => '-type:software','sort' => 'score desc'];
                     break;
                 case "software":
                     $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'collection', 'type' => 'software', 'sort' => 'score desc'];
