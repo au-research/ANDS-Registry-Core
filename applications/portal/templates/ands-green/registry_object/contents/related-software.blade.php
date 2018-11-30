@@ -21,7 +21,7 @@
                     </li>
             @endforeach
             @if($related['software']['count'] > 5)
-                <li><a href="{{ $related['data']['searchUrl'] }}">View all {{ $related['software']['count'] }} related software</a></li>
+                <li><a href="{{ $related['software']['searchUrl'] }}">View all {{ $related['software']['count'] }} related software</a></li>
             @endif
         </ul>
     </div>
