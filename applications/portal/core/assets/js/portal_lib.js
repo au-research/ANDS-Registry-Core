@@ -17032,7 +17032,7 @@ app.directive('focusMe', function($timeout, $parse) {
         });
 
         $scope.cleanPrefilters = function() {
-            var cleanOut = ['year_from', 'year_to', 'group', 'subject', 'access_rights', 'license_class', 'temporal', 'spatial', 'type', 'group', 'activity_status', 'administering_institution', 'date_range', 'funders', 'funding_scheme', 'funding_amount'];
+            var cleanOut = ['year_from', 'year_to', 'group', 'subject', 'access_rights', 'license_class', 'temporal', 'spatial', 'type', 'group', 'activity_status', 'administering_institution', 'date_range', 'funders', 'funding_scheme', 'funding_amount', 'collection_type'];
             angular.forEach(cleanOut, function(f) {
                 delete $scope.prefilters[f];
             });
@@ -17057,7 +17057,7 @@ app.directive('focusMe', function($timeout, $parse) {
                 $scope.query = '';
                 $scope.filters['q'] = '';
             }
-            //$log.debug($scope.filters);
+          //  $log.debug($scope.filters);
             $scope.filters['p'] = 1;
             $scope.filters['advanced'] = true;
             $scope.hashChange();
@@ -17065,12 +17065,11 @@ app.directive('focusMe', function($timeout, $parse) {
         };
 
         $scope.togglePreFilter = function(type, value, execute) {
-            // $log.debug('toggling', type,value);
             if($scope.prefilters[type]) {
-                if($scope.prefilters[type]==value) {
+                if($scope.prefilters[type]===value) {
                     $scope.clearPreFilter(type,value);
                 } else {
-                    if($scope.prefilters[type].indexOf(value)==-1) {
+                    if($scope.prefilters[type].indexOf(value)==-1 || ($scope.prefilters[type].indexOf(value)==1 && $scope.prefilters[type].indexOf("-")==0)) {
                         $scope.addPreFilter(type, value);
                     } else {
                         $scope.clearPreFilter(type,value);
@@ -17083,7 +17082,6 @@ app.directive('focusMe', function($timeout, $parse) {
         };
 
         $scope.addPreFilter = function(type, value) {
-            // $log.debug('adding', type,value);
             if($scope.prefilters[type]){
                 if(typeof $scope.prefilters[type]=='string') {
                     var old = $scope.prefilters[type];
@@ -17097,7 +17095,7 @@ app.directive('focusMe', function($timeout, $parse) {
         };
 
         $scope.clearPreFilter = function(type, value, execute) {
-            // $log.debug('clearing', type,value);
+         //   $log.debug('clearing', type,value);
             if(typeof $scope.prefilters[type]!='object') {
                 if(type=='q') $scope.q = '';
                 delete $scope.prefilters[type];
