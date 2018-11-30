@@ -46,20 +46,25 @@ class ServiceDiscoveryTest extends \RegistryTestClass
         $this->assertEquals($baseUrl, "http://www.cmar.csiro.au/geoserver/wms");
     }
 
-//    /** @test **/
-//    public function test_get_links_for_record() {
-//     $collectionkey = 'AIMS/0419a746-ddc1-44d2-86e7-e5c402473956';
-//    //$collectionkey = 'AIMS/e4cdfaf2-bbb1-44c7-8a07-cf9ffdab747f';
-//    $record = RegistryObjectsRepository::getPublishedByKey($collectionkey);
-//
-//    $links = ServiceDiscovery::getServiceLinksForRegistryObject($record);
-//
-//    $this->assertEquals(6, count($links));
-//
-//        $links = ServiceDiscovery::processLinks($links);
-//       $links = ServiceDiscovery::formatLinks($links);
-//        echo(json_encode($links));
-//    }
+    /** @test **/
+    public function test_get_links_for_record() {
+
+        $this->markTestSkipped("Should only be ran during development");
+     $collectionkey = 'AUTestingRecords2ExampleCollectionForLargeNumberRelations31ServiceDiscovery';
+    //$collectionkey = 'AIMS/e4cdfaf2-bbb1-44c7-8a07-cf9ffdab747f';
+    $record = RegistryObjectsRepository::getPublishedByKey($collectionkey);
+
+    $links = ServiceDiscovery::getServiceLinksForRegistryObject($record);
+
+    $this->assertEquals(6, count($links));
+
+        $links = ServiceDiscovery::processLinks($links);
+       $links = ServiceDiscovery::formatLinks($links);
+        echo(json_encode($links));
+    }
+
+
+
 //
 //
 //    /** @test **/
