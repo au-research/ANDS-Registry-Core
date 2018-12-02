@@ -132,7 +132,7 @@ class ProcessPayload extends ImportSubTask
         }
 
         // check matching data source
-        $this->log("Checking Matching Records $key");
+        // $this->log("Checking Matching Records $key");
         $matchingStatusRecord = Repo::getNotDeletedRecordFromOtherDataSourceByKey($key, $this->parent()->dataSourceID);
 
         if ($matchingStatusRecord) {

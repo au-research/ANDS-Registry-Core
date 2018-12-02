@@ -86,9 +86,11 @@ class ServiceDiscovery {
                 if(!isset($linksArray[$url])){
                     $linksArray[$url] = array();
                 }
-
+                if(!isset($allSubjects[$url])){
+                    $allSubjects[$url] = array();
+                }
                 $subjects = \ANDS\Registry\Providers\RIFCS\SubjectProvider::getSubjects($ro);
-                $allSubjects = array_values(array_merge($allSubjects, $subjects));
+                $allSubjects[$url] = array_values(array_merge($allSubjects[$url], $subjects));
 
                 if(!isset($linksArray[$url][$ro->key])){
                     $linksArray[$url][$ro->key] = array(
@@ -146,7 +148,7 @@ class ServiceDiscovery {
                 "uuid" => $uuid,
                 "relations" => $relations,
                 "full_urls" => array_values(array_unique($fullURLs)),
-                "subjects" => collect($allSubjects)->unique('value')->values()->toArray(),
+                "subjects" => collect($allSubjects[$url])->unique('value')->values()->toArray(),
                 "rifcsB64" => $rifcsB64
             ];
         }
