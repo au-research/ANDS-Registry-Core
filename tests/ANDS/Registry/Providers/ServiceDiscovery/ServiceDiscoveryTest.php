@@ -38,6 +38,25 @@ class ServiceDiscoveryTest extends \RegistryTestClass
         $this->assertNotEmpty($links);
     }
 
+
+    /** @test **/
+    public function test_get_links_for_datasource_61() {
+        $this->markTestSkipped("Big integration tests, should only be ran during development");
+
+
+        $links = ServiceDiscovery::getServiceLinksForDatasource(61);
+        $links = ServiceDiscovery::processLinks($links);
+        $links = ServiceDiscovery::formatLinks($links);
+
+       // $service_discovery_service_url = get_config_item('SERVICES_DISCOVERY_SERVICE_URL');
+      //  $serviceProduce = new ServiceProducer($service_discovery_service_url);
+      //  $serviceProduce->processServices(json_encode($links));
+      //  $serviceCount = $serviceProduce->getServiceCount();
+
+        $this->assertNotEmpty($links);
+    }
+
+
     /** @test */
     function it_gets_base_url()
     {
