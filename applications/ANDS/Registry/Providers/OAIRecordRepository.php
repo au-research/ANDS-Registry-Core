@@ -5,26 +5,31 @@ namespace ANDS\Registry\Providers;
 
 
 use ANDS\DataSource;
+use ANDS\OAI\Exception\NoRecordsMatch;
 use ANDS\Registry\Group;
+use ANDS\Registry\Providers\DCI\DataCitationIndexProvider;
+use ANDS\Registry\Providers\DCI\DCI;
 use ANDS\Registry\Providers\DublinCore\DublinCoreProvider;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\Providers\Scholix\Scholix;
 use ANDS\RegistryObject;
 use ANDS\RegistryObjectAttribute;
 use ANDS\Repository\RegistryObjectsRepository;
+use ANDS\Util\Config;
 use ANDS\Util\XMLUtil;
 use Carbon\Carbon;
 use DCIMethod;
-use MinhD\OAIPMH\Exception\BadArgumentException;
-use MinhD\OAIPMH\Exception\CannotDisseminateFormat;
-use MinhD\OAIPMH\Exception\IdDoesNotExistException;
-use MinhD\OAIPMH\Interfaces\OAIRepository;
-use MinhD\OAIPMH\Record;
-use MinhD\OAIPMH\Set;
+use ANDS\OAI\Exception\BadArgumentException;
+use ANDS\OAI\Exception\CannotDisseminateFormat;
+use ANDS\OAI\Exception\IdDoesNotExistException;
+use ANDS\OAI\Interfaces\OAIRepository;
+use ANDS\OAI\Exception\OAIException;
+use ANDS\OAI\Record;
+use ANDS\OAI\Set;
 
 class OAIRecordRepository implements OAIRepository
 {
-    public $dateFormat = "Y-m-d\\Th:m:s\\Z";
+    public $dateFormat = "Y-m-d\\Th:i:s\\Z";
     protected $oaiIdentifierPrefix = "oai:ands.org.au::";
     protected $formats = [
         "rif" => [
@@ -41,6 +46,11 @@ class OAIRecordRepository implements OAIRepository
             'metadataPrefix' => 'scholix',
             'schema' => 'https://raw.githubusercontent.com/scholix/schema/master/xsd/scholix.xsd',
             'metadataNamespace' => 'http://www.scholix.org'
+        ],
+        "dci" => [
+            'metadataPrefix' => 'dci',
+            'schema' => 'https://clarivate.com/products/web-of-science/web-science-form/data-citation-index/',
+            'metadataNamespace' => 'https://clarivate.com/products/web-of-science/web-science-form/data-citation-index/'
         ]
     ];
 
@@ -53,7 +63,7 @@ class OAIRecordRepository implements OAIRepository
             'baseURL' => $this->getBaseUrl(),
             'protocolVersion' => '2.0',
             'adminEmail' => 'services@ands.org.au',
-            'earliestDateStamp' => $earliestDate,
+            'earliestDatestamp' => $earliestDate,
             'deletedRecord' => 'transient',
             'granularity' => 'YYYY-MM-DDThh:mm:ssZ'
         ];
@@ -64,6 +74,17 @@ class OAIRecordRepository implements OAIRepository
         return baseUrl("api/registry/oai");
     }
 
+    /**
+     * Returns the response for ListSets verb
+     *
+     * Get all possible sets and then limit, offset them
+     * There's no pagination natively support for this since there's no
+     * table for sets
+     *
+     * @param int $limit
+     * @param int $offset
+     * @return array
+     */
     public function listSets($limit = 0, $offset = 0)
     {
         $sets = [];
@@ -74,33 +95,17 @@ class OAIRecordRepository implements OAIRepository
             $sets[] = new Set("class:{$class}", $class);
         }
 
-        // data source
-        $dataSources = DataSource::all();
-        foreach ($dataSources as $ds) {
-
-            // name with dashes instead of space
-            $title = htmlspecialchars($ds->title, ENT_XML1);
-            $name = str_replace(" ", "-", $title);
-            $sets[] = new Set("datasource:$name", $ds->title);
-
-            // id
+        foreach ($dataSources = DataSource::orderBy('title')->get() as $ds) {
             $sets[] = new Set("datasource:{$ds->data_source_id}", $ds->title);
         }
 
-        // group
-        $groups = Group::all();
-        foreach ($groups as $group) {
-
-            // name with 0x20
-            $title = htmlspecialchars($group->title, ENT_XML1);
-            $name = str_replace(" ", "0x20", $title);
-            $sets[] = new Set("group:$name", $group->title);
-
-            // id
+        foreach ($groups = Group::orderBy('title')->get() as $group) {
             $sets[] = new Set("group:{$group->id}", $group->title);
         }
 
         $total = count($sets);
+
+        $sets = array_splice($sets, $offset, $limit);
 
         return compact('total', 'sets', 'limit', 'offset');
     }
@@ -134,6 +139,10 @@ class OAIRecordRepository implements OAIRepository
             return $this->listScholixRecords($options);
         }
 
+        if ($metadataPrefix == "dci") {
+            return $this->listDCIRecords($options);
+        }
+
         $registryObjects = $this->getRegistryObjects($options);
         $records = $registryObjects['records'];
         $total = $registryObjects['total'];
@@ -142,7 +151,7 @@ class OAIRecordRepository implements OAIRepository
         foreach ($records as $record) {
             $oaiRecord = new Record(
                 $this->oaiIdentifierPrefix.$record->id,
-                DatesProvider::getCreatedDate($record, $this->getDateFormat())
+                DatesProvider::getUpdatedAt($record, $this->getDateFormat(), 'UTC')
             );
 
             // set
@@ -207,33 +216,35 @@ class OAIRecordRepository implements OAIRepository
     private function addSets(Record $oaiRecord, RegistryObject $record)
     {
         $dataSource = $record->datasource;
-        $escapedDSTitle = htmlspecialchars($dataSource->title, ENT_XML1);
         $groupName = $record->group;
 
-        $sets = [
-            new Set("class:{$record->class}", $record->class),
-            new Set("datasource:". $dataSource->data_source_id, $escapedDSTitle),
-        ];
+        $oaiRecord
+            ->addSet(new Set("class:{$record->class}"))
+            ->addSet(new Set("datasource:". $dataSource->data_source_id))
+            ->addSet(new Set("datasource:". $this->nameBackwardCompat($dataSource->title)));
 
-        // group by id
-        $group = Group::where('title', $groupName)->first();
-        if ($group) {
-            $sets[] = new Set("group:".$group->id, $group);
+        if ($group = Group::where('title', $groupName)->first()) {
+            $oaiRecord
+                ->addSet(new Set("group:".$group->id))
+                ->addSet(new Set("group:".$this->nameBackwardCompat($group->title)));
+            if ($this->groupNameBWCompat($group->title) != $this->nameBackwardCompat($group->title)) {
+                $oaiRecord->addSet(new Set("group:" . $this->groupNameBWCompat($group->title)));
+            }
         }
 
-        // data source backward compat
-        $name = str_replace(" ", "-", $escapedDSTitle);
-        $sets[] = new Set("datasource:$name", $escapedDSTitle);
-
-        // group backward compat
-        $name = str_replace(" ", "-", $groupName);
-        $name = urlencode($name);
-        $sets[] = new Set("group:$name", $groupName);
-
-        foreach ($sets as $set) {
-            $oaiRecord->addSet($set);
-        }
         return $oaiRecord;
+    }
+
+    private function nameBackwardCompat($name)
+    {
+        return str_replace(" ", "-", $name);
+    }
+
+    private function groupNameBWCompat($name)
+    {
+        $name = str_replace(" ", "0x20", $name);
+        $name = urlencode($name);
+        return $name;
     }
 
     private function addMetadata(Record $oaiRecord, RegistryObject $record, $metadataFormat)
@@ -242,7 +253,7 @@ class OAIRecordRepository implements OAIRepository
             $metadata = "<registryObject />";
             $recordMetadata = MetadataProvider::getSelective($record, ['recordData']);
             if (array_key_exists('recordData', $recordMetadata)) {
-                $metadata = XMLUtil::unwrapRegistryObject($recordMetadata['recordData']);
+                $metadata = XMLUtil::wrapRegistryObject(XMLUtil::unwrapRegistryObject($recordMetadata['recordData']), false);
             }
             $oaiRecord->setMetadata($metadata);
         } elseif ($metadataFormat == "oai_dc") {
@@ -250,6 +261,10 @@ class OAIRecordRepository implements OAIRepository
             $metadata = XMLUtil::stripXMLHeader($metadata);
             $metadata = trim($metadata);
             $oaiRecord->setMetadata($metadata);
+        } elseif ($metadataFormat == "dci") {
+            if ($dci = DCI::where('registry_object_id', $record->id)->first()) {
+                $oaiRecord->setMetadata($dci->data);
+            }
         }
         return $oaiRecord;
     }
@@ -261,18 +276,18 @@ class OAIRecordRepository implements OAIRepository
 
     public function listIdentifiers($options)
     {
-        if ($options['metadataPrefix'] == "rif" || $options['metadataPrefix'] == "oai_dc") {
+        if (in_array($options['metadataPrefix'], ['rif', 'oai_dc'])) {
             $registryObjects = $this->getRegistryObjects($options);
             $result = [];
 
             foreach ($registryObjects['records'] as $record) {
                 $oaiRecord = new Record(
                     "oai:ands.org.au:{$record->id}",
-                    DatesProvider::getCreatedDate($record, $this->getDateFormat())
+                    DatesProvider::getUpdatedAt($record, $this->getDateFormat(), 'UTC')
                 );
 
                 // set
-                $oaiRecord->addSet(new Set("class:{$record->class}", $record->class));
+                $oaiRecord = $this->addSets($oaiRecord, $record);
 
                 $result[] = $oaiRecord;
             }
@@ -289,6 +304,10 @@ class OAIRecordRepository implements OAIRepository
             return $this->listIdentifiersScholix($options);
         }
 
+        if ($options['metadataPrefix'] == "dci") {
+            return $this->listIdentifiersDCI($options);
+        }
+
         throw new BadArgumentException("Unknown metadataPrefix {$options['metadataPrefix']}");
 
     }
@@ -302,9 +321,32 @@ class OAIRecordRepository implements OAIRepository
         foreach ($records['records'] as $record) {
             $oaiRecord = new Record(
                 $record->scholix_identifier,
-                Carbon::parse($record->updated_at)->format($this->getDateFormat())
+                Carbon::parse($record->updated_at)->setTimezone('UTC')->format($this->getDateFormat())
             );
             $oaiRecord = $this->addScholixSets($oaiRecord, $record);
+            $result[] = $oaiRecord;
+        }
+
+        return [
+            'total' => $records['total'],
+            'records' => $result,
+            'limit' => $options['limit'],
+            'offset' => $options['offset']
+        ];
+    }
+
+    private function listIdentifiersDCI($options)
+    {
+        $result = [];
+
+        $records = $this->getDCIRecords($options);
+
+        foreach ($records['records'] as $record) {
+            $oaiRecord = new Record(
+                $this->oaiIdentifierPrefix.$record->registryObject->id,
+                Carbon::parse($record->updated_at)->setTimezone('UTC')->format($this->getDateFormat())
+            );
+            $oaiRecord = $this->addDCISets($oaiRecord, $record);
             $result[] = $oaiRecord;
         }
 
@@ -320,32 +362,46 @@ class OAIRecordRepository implements OAIRepository
     {
         $records = Scholix::limit($options['limit'])->offset($options['offset']);
 
-        // set
         if (array_key_exists('set', $options) && $options['set']) {
             $set = $options['set'];
             $set = explode(':', $set);
 
-            if ($set[0] == "datasource") {
-                $records = $records->where('registry_object_data_source_id', $set[1]);
-            } else {
-                throw new BadArgumentException();
+            $opt = $set[0];
+            $value = $set[1];
+
+            switch ($opt) {
+                case "datasource":
+                    if ($value = $this->getDataSourceID($value)) {
+                        $records = $records->where('registry_object_data_source_id', $value);
+                    }
+                    break;
+                case "group":
+                    if ($value = $this->getGroupName($value)) {
+                        $records = $records->where('registry_object_group', $value);
+                    }
+                    break;
             }
         }
 
         // from
         if (array_key_exists('from', $options) && $options['from']) {
             $records = $records->where(
-                'updated_at', '>',
-                    Carbon::parse($options['from'])->toDateTimeString()
+                'updated_at', '>=',
+                    DatesProvider::parseUTCToLocal($options['from'])->toDateTimeString()
             );
         }
 
         // until
-        if (array_key_exists('until', $options) && $options['until']) {
-            $records = $records->where(
-                'updated_at', '<',
-                    Carbon::parse($options['until'])->toDateTimeString()
-            );
+        if (array_key_exists('until', $options)) {
+            $until = Carbon::parse($options['until'], 'UTC');
+            $until = $until->isStartOfDay() ? $until->addDay(1) : $until;
+            $until = $until->setTimezone(Config::get('app.timezone'));
+            if (array_key_exists('until', $options) && $options['until']) {
+                $records = $records->where(
+                    'updated_at', '<=',
+                    $until->toDateTimeString()
+                );
+            }
         }
 
         $count = $records->count();
@@ -387,6 +443,28 @@ class OAIRecordRepository implements OAIRepository
             }
         }
 
+        // from
+        if (array_key_exists('from', $options) && $options['from']) {
+            $records = $records->where(
+                'modified_at', '>=',
+                DatesProvider::parseUTCToLocal($options['from'])->toDateTimeString()
+            );
+        }
+
+        // until
+        if (array_key_exists('until', $options)) {
+            $until = Carbon::parse($options['until'], 'UTC');
+            $until = $until->isStartOfDay() ? $until->addDay(1) : $until;
+            $until = $until->setTimezone(Config::get('app.timezone'));
+            if (array_key_exists('until', $options) && $options['until']) {
+                $records = $records->where(
+                    'modified_at', '<=',
+                    $until->toDateTimeString()
+                );
+            }
+        }
+
+
         $total = $records->count();
 
         $limit = $options['limit'];
@@ -425,6 +503,12 @@ class OAIRecordRepository implements OAIRepository
             return $group->title;
         }
 
+        // group:Curtin-University
+        if ($group = Group::where('title', str_replace('-', ' ', $value))->first()) {
+            return $group->title;
+        }
+
+        // group:Curtin0x20University
         $name = str_replace("0x20", " ", $value);
         if ($group = Group::where('title', $name)->first()) {
             return $group->title;
@@ -442,14 +526,13 @@ class OAIRecordRepository implements OAIRepository
      */
     private function listScholixRecords($options)
     {
-
         $records = $this->getScholixRecords($options);
 
         $result = [];
         foreach ($records['records'] as $record) {
             $oaiRecord = new Record(
                 $record->scholix_identifier,
-                Carbon::parse($record->updated_at)->format($this->getDateFormat())
+                Carbon::parse($record->updated_at)->setTimezone('UTC')->format($this->getDateFormat())
             );
             $oaiRecord = $this->addScholixSets($oaiRecord, $record);
             $oaiRecord->setMetadata($record->data);
@@ -462,6 +545,95 @@ class OAIRecordRepository implements OAIRepository
             'records' => $result,
             'limit' => $options['limit'],
             'offset' => $options['offset']
+        ];
+    }
+
+    private function listDCIRecords($options)
+    {
+        $records = $this->getDCIRecords($options);
+
+        $result = [];
+        foreach ($records['records'] as $record) {
+
+            $oaiRecord = new Record(
+                $this->oaiIdentifierPrefix.$record->registryObject->id,
+                Carbon::parse($record->updated_at)->setTimezone('UTC')->format($this->getDateFormat())
+            );
+
+            $oaiRecord = $this->addDCISets($oaiRecord, $record);
+            $oaiRecord->setMetadata($record->data);
+
+            $result[] = $oaiRecord;
+        }
+
+        return [
+            'total' => $records['total'],
+            'records' => $result,
+            'limit' => $options['limit'],
+            'offset' => $options['offset']
+        ];
+    }
+
+    private function getDCIRecords($options)
+    {
+        $records = DCI::limit($options['limit'])->offset($options['offset']);
+
+        // set
+        if (array_key_exists('set', $options) && $options['set']) {
+            $set = $options['set'];
+            $set = urldecode($set);
+            $set = explode(':', $set);
+
+            $opt = $set[0];
+            $value = $set[1];
+
+            switch ($opt) {
+                case "datasource":
+                    if ($value = $this->getDataSourceID($value)) {
+                        $records = $records->where('registry_object_data_source_id', $value);
+                    } else {
+                        throw new NoRecordsMatch();
+                    }
+                    break;
+                case "group":
+                    if ($value = $this->getGroupName($value)) {
+                        $records = $records->where('registry_object_group', $value);
+                    } else {
+                        throw new NoRecordsMatch();
+                    }
+                    break;
+            }
+        }
+
+        // from
+        if (array_key_exists('from', $options) && $options['from']) {
+            $records = $records->where(
+                'updated_at', '>=',
+                DatesProvider::parseUTCToLocal($options['from'])->toDateTimeString()
+            );
+        }
+
+        // until
+        if (array_key_exists('until', $options)) {
+            $until = Carbon::parse($options['until'], 'UTC');
+            $until = $until->isStartOfDay() ? $until->addDay(1) : $until;
+            $until = $until->setTimezone(Config::get('app.timezone'));
+            if (array_key_exists('until', $options) && $options['until']) {
+                $records = $records->where(
+                    'updated_at', '<=',
+                    $until->toDateTimeString()
+                );
+            }
+        }
+
+        $count = $records->count();
+        if ($count == 0) {
+            $count = DCI::count();
+        }
+
+        return [
+            'total' => $count,
+            'records' => $records->get()
         ];
     }
 
@@ -494,18 +666,58 @@ class OAIRecordRepository implements OAIRepository
 
     private function addScholixSets(Record $oaiRecord, Scholix $record)
     {
-//        $group = Group::where('title', $record->registry_object_group)->first();
-//        $dataSource = DataSource::find($record->registry_object_data_source_id)->first();
-//        $class = $record->getAttribute("registry_object_class");
-        $dataSourceID = $record->getAttribute("registry_object_data_source_id");
-        $sets = [
-//            new Set("class:". $class, $class),
-//            new Set("group:". $group->id, $group->title),
-            new Set("datasource:". $dataSourceID, $dataSourceID)
-        ];
-        foreach ($sets as $set) {
-            $oaiRecord->addSet($set);
+        if ($dataSource = DataSource::find($record->registry_object_data_source_id)) {
+            $oaiRecord
+                ->addSet(new Set("datasource:". $dataSource->id))
+                ->addSet(new Set("datasource:". $this->nameBackwardCompat($dataSource->title)));
         }
+
+        if ($group = Group::where('title', $record->registry_object_group)->first()) {
+            $oaiRecord
+                ->addSet(new Set("group:".$group->id))
+                ->addSet(new Set("group:".$this->nameBackwardCompat($group->title)));
+            if ($this->groupNameBWCompat($group->title) != $this->nameBackwardCompat($group->title)) {
+                $oaiRecord->addSet(new Set("group:" . $this->groupNameBWCompat($group->title)));
+            }
+        }
+
         return $oaiRecord;
+    }
+
+    private function addDCISets(Record $oaiRecord, DCI $record)
+    {
+        if ($dataSource = DataSource::find($record->registry_object_data_source_id)) {
+            $oaiRecord
+                ->addSet(new Set("datasource:". $dataSource->id))
+                ->addSet(new Set("datasource:". $this->nameBackwardCompat($dataSource->title)));
+        }
+
+        if ($group = Group::where('title', $record->registry_object_group)->first()) {
+            $oaiRecord
+                ->addSet(new Set("group:".$group->id))
+                ->addSet(new Set("group:".$this->nameBackwardCompat($group->title)));
+            if ($this->groupNameBWCompat($group->title) != $this->nameBackwardCompat($group->title)) {
+                $oaiRecord->addSet(new Set("group:" . $this->groupNameBWCompat($group->title)));
+            }
+        }
+
+        return $oaiRecord;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFormats()
+    {
+        return $this->formats;
+    }
+
+    private function getGroupID($name)
+    {
+        if ($group = Group::where('title', $name)->first()) {
+            return $group->id;
+        }
+
+        return null;
     }
 }

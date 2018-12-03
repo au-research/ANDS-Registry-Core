@@ -28,6 +28,10 @@
         <td>Service</td>
     </tr>
     <tr>
+        <td><img src="{{ asset_url('images/help/graph/image021.png', 'core') }}" alt=""></td>
+        <td>Software</td>
+    </tr>
+    <tr>
         <td><img src="{{ asset_url('images/help/graph/image010.png', 'core') }}" alt=""></td>
         <td>Publication</td>
     </tr>
@@ -60,7 +64,12 @@
 <h3>Zooming in & out</h3>
 <p>If you have a mouse with a scroll wheel you can use this to zoom the graph view in and out. When using this method the graph will zoom in and out from the location of the mouse pointer. You can use this feature to easily zoom into specific parts of the graph by positioning your pointer over the area of interest and then scrolling.
 </p>
-<p>If you don’t have a mouse with a scroll wheel you can use the zoom buttons to zoom the graph view in and out.  Use this method in combination with the ‘Repositioning the graph’ instructions to achieve the desired view.</p>
+<p>If you don’t have a mouse with a scroll wheel you can use the zoom buttons <i class="fa fa-plus fa-border"/> <i class="fa fa-minus fa-border"/> to zoom the graph view in and out.  Use this method in combination with the ‘Repositioning the graph’ instructions to achieve the desired view.</p>
+
+<h3>Centring the graph</h3>
+<p>The zoom and reposition features described above can lead to the graph being dragged out of view or zoomed out until it is not visible. The ‘Fit to window’ button <i class="fa fa-bullseye fa-border" />  will centre the graph and resize the view to fit within the window.</p>
+
+
 
 <h3>Isolating a node’s relationships</h3>
 <p>To highlight a node’s relationships, simply hover your mouse pointer over the node. This will grey out any nodes which are not directly related. </p>
@@ -70,7 +79,10 @@
 <p>
     Single non-primary nodes often have relationships to nodes that are not directly related to the primary node (the record being viewed in Research Data Australia) and are therefore not initially displayed in the graph view.  To load additional relationships, double click on a single node. A processing icon will be displayed while the system attempts to load any additional relationships. If no relationships exist for the clicked node the current graph view will simply refresh.
 </p>
-
+<h3>Resetting the graph</h3>
+<p>
+The graph can become quite busy after expanding the relationships of a few nodes. The ‘Reset’ button <i class="fa fa-refresh fa-border"/>  provides a quick way of resetting the graph to its initial configuration without the need for refreshing the whole page.
+</p>
 <h3>Viewing the type and title of a single node</h3>
 <p>
     To view a node’s type and title, hover your mouse pointer over the node. This will display a tooltip with the values. Where a record exists in Research Data Australia or an external link is present the title for the node will be displayed as a hyperlink. Click the link to navigate to the object.

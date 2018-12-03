@@ -12,6 +12,8 @@ function subjectSortResolved($a, $b) {
 function class_name($text) {
 	switch($text) {
 		case 'collection': return 'Datasets'; break;
+        case 'collection_data': return 'Data'; break;
+        case 'collection_software':return 'Software'; break;
 		case 'party': return 'People and Organisations'; break;
 		case 'service': return 'Tools and Services'; break;
 		case 'activity': return 'Grants and Projects'; break;
@@ -20,10 +22,15 @@ function class_name($text) {
 }
 
 function profile_image() {
+
 	$ci =& get_instance();
 	if ($ci->user->loggedIn()) {
 		$role_db = $ci->load->database('roles', TRUE);
 		$result = $role_db->get_where('roles', array('role_id'=>$ci->user->localIdentifier()));
+
+		if($result == null)
+			return false;
+
 		if ($result->num_rows() > 0) {
 			$r = $result->first_row();
 			if ($r->oauth_data) {

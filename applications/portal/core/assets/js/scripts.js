@@ -385,14 +385,21 @@ jQuery(document).ready(function( $ ) {
         }
     }
 
-    //Feedback button
-    window.ATL_JQ_PAGE_PROPS =  {
+  // Requires jQuery!
+  jQuery.ajax({
+    url: "https://jira.ands.org.au/s/fa9c094ec4b2c10d80d7b8abe3ff2778-T/oboj49/712004/b631a3e63f12bafb8e515b7232486d1c/2.0.31/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector-embededjs/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector-embededjs.js?locale=en-UK&collectorId=4d89e3f4",
+    type: "get",
+    cache: true,
+    dataType: "script"
+  });
+
+  window.ATL_JQ_PAGE_PROPS =  {
     "triggerFunction": function(showCollectorDialog) {
-        //Requries that jQuery is available!
-        jQuery(".feedback_button, .myCustomTrigger").click(function(e) {
-            e.preventDefault();
-            showCollectorDialog();
-        });
+      //Requires that jQuery is available!
+      jQuery(".feedback_button, .myCustomTrigger").unbind().click(function(e) {
+        e.preventDefault();
+        showCollectorDialog();
+      });
     }};
 
 });

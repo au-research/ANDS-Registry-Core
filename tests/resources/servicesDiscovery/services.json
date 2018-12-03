@@ -1,0 +1,3545 @@
+[
+    {
+        "url": "http://neii.bom.gov.au/services/solarclim/wms/data/monClim_gloHorExp1Hou.nc",
+        "relations": [
+            {
+                "key": "NEII/34b50bab-8124-4c78-a1d1-a0a83601ec56",
+                "title": "Australian Gridded Solar Climatology Web Data Services",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "34b50bab-8124-4c78-a1d1-a0a83601ec56"
+                },
+                "types": [
+                    "identifier_uri_link"
+                ],
+                "relation": [
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://neii.bom.gov.au/services/solarclim/wms/data/monClim_gloHorExp1Hou.nc?service=WMS&version=1.3.0&request=GetCapabilities"
+                    }
+                ]
+            }
+        ],
+        "full_urls": [
+            "http://neii.bom.gov.au/services/solarclim/wms/data/monClim_gloHorExp1Hou.nc?service=WMS&version=1.3.0&request=GetCapabilities"
+        ],
+        "subjects": [
+            {
+                "type": "local",
+                "value": "WMS",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "OPeNDAP",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Gridded",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Satellite",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Solar",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Radiation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Meteorology",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "National Environmental Information Infrastructure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "neii.gov.au",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "040107",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Web Service",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "topography",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Earth Sciences",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "04",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "environment",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "inlandWaters",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "society",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "WFS",
+                "uri": ""
+            }
+        ]
+    },
+    {
+        "url": "http://neii.bom.gov.au/services/solarclim/wms/data/monClim_dirNorExp1Hou.nc",
+        "relations": [
+            {
+                "key": "NEII/34b50bab-8124-4c78-a1d1-a0a83601ec56",
+                "title": "Australian Gridded Solar Climatology Web Data Services",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "34b50bab-8124-4c78-a1d1-a0a83601ec56"
+                },
+                "types": [
+                    "identifier_uri_link"
+                ],
+                "relation": [
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://neii.bom.gov.au/services/solarclim/wms/data/monClim_dirNorExp1Hou.nc?service=WMS&version=1.3.0&request=GetCapabilities"
+                    }
+                ]
+            }
+        ],
+        "full_urls": [
+            "http://neii.bom.gov.au/services/solarclim/wms/data/monClim_dirNorExp1Hou.nc?service=WMS&version=1.3.0&request=GetCapabilities"
+        ],
+        "subjects": [
+            {
+                "type": "local",
+                "value": "WMS",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "OPeNDAP",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Gridded",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Satellite",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Solar",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Radiation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Meteorology",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "National Environmental Information Infrastructure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "neii.gov.au",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "040107",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Web Service",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "topography",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Earth Sciences",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "04",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "environment",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "inlandWaters",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "society",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "WFS",
+                "uri": ""
+            }
+        ]
+    },
+    {
+        "url": "http://neii.bom.gov.au/services/solarclim/wms/data/monClim_gloHorExp1Day.nc",
+        "relations": [
+            {
+                "key": "NEII/34b50bab-8124-4c78-a1d1-a0a83601ec56",
+                "title": "Australian Gridded Solar Climatology Web Data Services",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "34b50bab-8124-4c78-a1d1-a0a83601ec56"
+                },
+                "types": [
+                    "identifier_uri_link"
+                ],
+                "relation": [
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://neii.bom.gov.au/services/solarclim/wms/data/monClim_gloHorExp1Day.nc?service=WMS&version=1.3.0&request=GetCapabilities"
+                    }
+                ]
+            }
+        ],
+        "full_urls": [
+            "http://neii.bom.gov.au/services/solarclim/wms/data/monClim_gloHorExp1Day.nc?service=WMS&version=1.3.0&request=GetCapabilities"
+        ],
+        "subjects": [
+            {
+                "type": "local",
+                "value": "WMS",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "OPeNDAP",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Gridded",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Satellite",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Solar",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Radiation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Meteorology",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "National Environmental Information Infrastructure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "neii.gov.au",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "040107",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Web Service",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "topography",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Earth Sciences",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "04",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "environment",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "inlandWaters",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "society",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "WFS",
+                "uri": ""
+            }
+        ]
+    },
+    {
+        "url": "http://neii.bom.gov.au/services/solarclim/wms/data/monClim_dirNorExp1Day.nc",
+        "relations": [
+            {
+                "key": "NEII/34b50bab-8124-4c78-a1d1-a0a83601ec56",
+                "title": "Australian Gridded Solar Climatology Web Data Services",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "34b50bab-8124-4c78-a1d1-a0a83601ec56"
+                },
+                "types": [
+                    "identifier_uri_link"
+                ],
+                "relation": [
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://neii.bom.gov.au/services/solarclim/wms/data/monClim_dirNorExp1Day.nc?service=WMS&version=1.3.0&request=GetCapabilities"
+                    }
+                ]
+            }
+        ],
+        "full_urls": [
+            "http://neii.bom.gov.au/services/solarclim/wms/data/monClim_dirNorExp1Day.nc?service=WMS&version=1.3.0&request=GetCapabilities"
+        ],
+        "subjects": [
+            {
+                "type": "local",
+                "value": "WMS",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "OPeNDAP",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Gridded",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Satellite",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Solar",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Radiation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Meteorology",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "National Environmental Information Infrastructure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "neii.gov.au",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "040107",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Web Service",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "topography",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Earth Sciences",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "04",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "environment",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "inlandWaters",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "society",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "WFS",
+                "uri": ""
+            }
+        ]
+    },
+    {
+        "url": "http://neii.bom.gov.au/services/solarclim/wms/data/annClim_gloHorExp1Day.nc",
+        "relations": [
+            {
+                "key": "NEII/34b50bab-8124-4c78-a1d1-a0a83601ec56",
+                "title": "Australian Gridded Solar Climatology Web Data Services",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "34b50bab-8124-4c78-a1d1-a0a83601ec56"
+                },
+                "types": [
+                    "identifier_uri_link"
+                ],
+                "relation": [
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://neii.bom.gov.au/services/solarclim/wms/data/annClim_gloHorExp1Day.nc?service=WMS&version=1.3.0&request=GetCapabilities"
+                    }
+                ]
+            }
+        ],
+        "full_urls": [
+            "http://neii.bom.gov.au/services/solarclim/wms/data/annClim_gloHorExp1Day.nc?service=WMS&version=1.3.0&request=GetCapabilities"
+        ],
+        "subjects": [
+            {
+                "type": "local",
+                "value": "WMS",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "OPeNDAP",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Gridded",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Satellite",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Solar",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Radiation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Meteorology",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "National Environmental Information Infrastructure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "neii.gov.au",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "040107",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Web Service",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "topography",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Earth Sciences",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "04",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "environment",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "inlandWaters",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "society",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "WFS",
+                "uri": ""
+            }
+        ]
+    },
+    {
+        "url": "http://neii.bom.gov.au/services/solarclim/wms/data/annClim_dirNorExp1Day.nc",
+        "relations": [
+            {
+                "key": "NEII/34b50bab-8124-4c78-a1d1-a0a83601ec56",
+                "title": "Australian Gridded Solar Climatology Web Data Services",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "34b50bab-8124-4c78-a1d1-a0a83601ec56"
+                },
+                "types": [
+                    "identifier_uri_link"
+                ],
+                "relation": [
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://neii.bom.gov.au/services/solarclim/wms/data/annClim_dirNorExp1Day.nc?service=WMS&version=1.3.0&request=GetCapabilities"
+                    }
+                ]
+            }
+        ],
+        "full_urls": [
+            "http://neii.bom.gov.au/services/solarclim/wms/data/annClim_dirNorExp1Day.nc?service=WMS&version=1.3.0&request=GetCapabilities"
+        ],
+        "subjects": [
+            {
+                "type": "local",
+                "value": "WMS",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "OPeNDAP",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Gridded",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Satellite",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Solar",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Radiation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Meteorology",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "National Environmental Information Infrastructure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "neii.gov.au",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "040107",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Web Service",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "topography",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Earth Sciences",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "04",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "environment",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "inlandWaters",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "society",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "WFS",
+                "uri": ""
+            }
+        ]
+    },
+    {
+        "url": "http://www.ga.gov.au/gis/services/topography/AusHydro/MapServer/WMSServer",
+        "relations": [
+            {
+                "key": "NEII/e294b68a-eb97-49af-863d-9feffe15c370",
+                "title": "AusHydro WMS",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "e294b68a-eb97-49af-863d-9feffe15c370"
+                },
+                "types": [
+                    "identifier_uri_link"
+                ],
+                "relation": [
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://www.ga.gov.au/gis/services/topography/AusHydro/MapServer/WMSServer?request=GetCapabilities&service=WMS"
+                    }
+                ]
+            }
+        ],
+        "full_urls": [
+            "http://www.ga.gov.au/gis/services/topography/AusHydro/MapServer/WMSServer?request=GetCapabilities&service=WMS"
+        ],
+        "subjects": [
+            {
+                "type": "local",
+                "value": "WMS",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "OPeNDAP",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Gridded",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Satellite",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Solar",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Radiation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Meteorology",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "National Environmental Information Infrastructure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "neii.gov.au",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "040107",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Web Service",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "topography",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Earth Sciences",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "04",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "environment",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "inlandWaters",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "society",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "WFS",
+                "uri": ""
+            }
+        ]
+    },
+    {
+        "url": "http://www.environment.gov.au/mapping/services/ogc_services/Key_Ecological_Features/MapServer/WMSServer",
+        "relations": [
+            {
+                "key": "NEII/baabcdcf-e620-4d9e-b273-91d1de3ec107",
+                "title": "Marine Key Ecological Features",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "baabcdcf-e620-4d9e-b273-91d1de3ec107"
+                },
+                "types": [
+                    "identifier_uri_link"
+                ],
+                "relation": [
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://www.environment.gov.au/mapping/services/ogc_services/Key_Ecological_Features/MapServer/WMSServer"
+                    }
+                ]
+            }
+        ],
+        "full_urls": [
+            "http://www.environment.gov.au/mapping/services/ogc_services/Key_Ecological_Features/MapServer/WMSServer"
+        ],
+        "subjects": [
+            {
+                "type": "local",
+                "value": "WMS",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "OPeNDAP",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Gridded",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Satellite",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Solar",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Radiation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Meteorology",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "National Environmental Information Infrastructure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "neii.gov.au",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "040107",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Web Service",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "topography",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Earth Sciences",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "04",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "environment",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "inlandWaters",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "society",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "WFS",
+                "uri": ""
+            }
+        ]
+    },
+    {
+        "url": "http://www.environment.gov.au/mapping/services/ogc_services/Key_Ecological_Features_named/MapServer/WMSServer",
+        "relations": [
+            {
+                "key": "NEII/baabcdcf-e620-4d9e-b273-91d1de3ec107",
+                "title": "Marine Key Ecological Features",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "baabcdcf-e620-4d9e-b273-91d1de3ec107"
+                },
+                "types": [
+                    "identifier_uri_link"
+                ],
+                "relation": [
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://www.environment.gov.au/mapping/services/ogc_services/Key_Ecological_Features_named/MapServer/WMSServer"
+                    }
+                ]
+            }
+        ],
+        "full_urls": [
+            "http://www.environment.gov.au/mapping/services/ogc_services/Key_Ecological_Features_named/MapServer/WMSServer"
+        ],
+        "subjects": [
+            {
+                "type": "local",
+                "value": "WMS",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "OPeNDAP",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Gridded",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Satellite",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Solar",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Radiation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Meteorology",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "National Environmental Information Infrastructure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "neii.gov.au",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "040107",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Web Service",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "topography",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Earth Sciences",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "04",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "environment",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "inlandWaters",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "society",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "WFS",
+                "uri": ""
+            }
+        ]
+    },
+    {
+        "url": "http://www.environment.gov.au/mapping/services/ogc_services/Key_Ecological_Features/MapServer/WFSServer",
+        "relations": [
+            {
+                "key": "NEII/baabcdcf-e620-4d9e-b273-91d1de3ec107",
+                "title": "Marine Key Ecological Features",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "baabcdcf-e620-4d9e-b273-91d1de3ec107"
+                },
+                "types": [
+                    "identifier_uri_link"
+                ],
+                "relation": [
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://www.environment.gov.au/mapping/services/ogc_services/Key_Ecological_Features/MapServer/WFSServer"
+                    }
+                ]
+            }
+        ],
+        "full_urls": [
+            "http://www.environment.gov.au/mapping/services/ogc_services/Key_Ecological_Features/MapServer/WFSServer"
+        ],
+        "subjects": [
+            {
+                "type": "local",
+                "value": "WMS",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "OPeNDAP",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Gridded",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Satellite",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Solar",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Radiation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Meteorology",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "National Environmental Information Infrastructure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "neii.gov.au",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "040107",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Web Service",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "topography",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Earth Sciences",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "04",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "environment",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "inlandWaters",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "society",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "WFS",
+                "uri": ""
+            }
+        ]
+    },
+    {
+        "url": "http://www.environment.gov.au/mapping/services/ogc_services/capad/MapServer/WMSServer",
+        "relations": [
+            {
+                "key": "NEII/9984a9fd-3dd0-4e38-bfbd-7e788fa851a1",
+                "title": "Collaborative Australian Protected Areas Database (CAPAD) 2014",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "9984a9fd-3dd0-4e38-bfbd-7e788fa851a1"
+                },
+                "types": [
+                    "identifier_uri_link"
+                ],
+                "relation": [
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://www.environment.gov.au/mapping/services/ogc_services/capad/MapServer/WMSServer"
+                    }
+                ]
+            }
+        ],
+        "full_urls": [
+            "http://www.environment.gov.au/mapping/services/ogc_services/capad/MapServer/WMSServer"
+        ],
+        "subjects": [
+            {
+                "type": "local",
+                "value": "WMS",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "OPeNDAP",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Gridded",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Satellite",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Solar",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Radiation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Meteorology",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "National Environmental Information Infrastructure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "neii.gov.au",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "040107",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Web Service",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "topography",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Earth Sciences",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "04",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "environment",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "inlandWaters",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "society",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "WFS",
+                "uri": ""
+            }
+        ]
+    },
+    {
+        "url": "http://www.environment.gov.au/mapping/services/ogc_services/capad/MapServer/WFSServer",
+        "relations": [
+            {
+                "key": "NEII/9984a9fd-3dd0-4e38-bfbd-7e788fa851a1",
+                "title": "Collaborative Australian Protected Areas Database (CAPAD) 2014",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "9984a9fd-3dd0-4e38-bfbd-7e788fa851a1"
+                },
+                "types": [
+                    "identifier_uri_link"
+                ],
+                "relation": [
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://www.environment.gov.au/mapping/services/ogc_services/capad/MapServer/WFSServer"
+                    }
+                ]
+            }
+        ],
+        "full_urls": [
+            "http://www.environment.gov.au/mapping/services/ogc_services/capad/MapServer/WFSServer"
+        ],
+        "subjects": [
+            {
+                "type": "local",
+                "value": "WMS",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "OPeNDAP",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Gridded",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Satellite",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Solar",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Radiation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Meteorology",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "National Environmental Information Infrastructure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "neii.gov.au",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "040107",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Web Service",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "topography",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Earth Sciences",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "04",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "environment",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "inlandWaters",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "society",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "WFS",
+                "uri": ""
+            }
+        ]
+    },
+    {
+        "url": "http://www.environment.gov.au/mapping/services/ogc_services/Important_Wetlands/MapServer/WMSServer",
+        "relations": [
+            {
+                "key": "NEII/ANZCW0501003820",
+                "title": "Directory of Important Wetlands in Australia (DIWA) Spatial Database",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "ANZCW0501003820"
+                },
+                "types": [
+                    "identifier_uri_link"
+                ],
+                "relation": [
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://www.environment.gov.au/mapping/services/ogc_services/Important_Wetlands/MapServer/WMSServer"
+                    }
+                ]
+            }
+        ],
+        "full_urls": [
+            "http://www.environment.gov.au/mapping/services/ogc_services/Important_Wetlands/MapServer/WMSServer"
+        ],
+        "subjects": [
+            {
+                "type": "local",
+                "value": "WMS",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "OPeNDAP",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Gridded",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Satellite",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Solar",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Radiation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Meteorology",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "National Environmental Information Infrastructure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "neii.gov.au",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "040107",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Web Service",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "topography",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Earth Sciences",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "04",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "environment",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "inlandWaters",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "society",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "WFS",
+                "uri": ""
+            }
+        ]
+    },
+    {
+        "url": "http://www.environment.gov.au/mapping/services/ogc_services/Important_Wetlands/MapServer/WFSServer",
+        "relations": [
+            {
+                "key": "NEII/ANZCW0501003820",
+                "title": "Directory of Important Wetlands in Australia (DIWA) Spatial Database",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "ANZCW0501003820"
+                },
+                "types": [
+                    "identifier_uri_link"
+                ],
+                "relation": [
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://www.environment.gov.au/mapping/services/ogc_services/Important_Wetlands/MapServer/WFSServer"
+                    }
+                ]
+            }
+        ],
+        "full_urls": [
+            "http://www.environment.gov.au/mapping/services/ogc_services/Important_Wetlands/MapServer/WFSServer"
+        ],
+        "subjects": [
+            {
+                "type": "local",
+                "value": "WMS",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "OPeNDAP",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Gridded",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Satellite",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Solar",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Radiation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Meteorology",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "National Environmental Information Infrastructure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "neii.gov.au",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "040107",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Web Service",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "topography",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Earth Sciences",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "04",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "environment",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "inlandWaters",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "society",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "WFS",
+                "uri": ""
+            }
+        ]
+    },
+    {
+        "url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1D_SST",
+        "relations": [
+            {
+                "key": "NEII/a927dd64-8998-47b1-ab5b-6f97bf626fc0",
+                "title": "ReefTemp Next Generation Web Data Services",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "a927dd64-8998-47b1-ab5b-6f97bf626fc0"
+                },
+                "types": [
+                    "identifier_uri_link"
+                ],
+                "relation": [
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1D_SST?service=WMS&version=1.3.0&request=GetCapabilities"
+                    }
+                ]
+            }
+        ],
+        "full_urls": [
+            "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1D_SST?service=WMS&version=1.3.0&request=GetCapabilities"
+        ],
+        "subjects": [
+            {
+                "type": "local",
+                "value": "WMS",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "OPeNDAP",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Gridded",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Satellite",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Solar",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Radiation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Meteorology",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "National Environmental Information Infrastructure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "neii.gov.au",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "040107",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Web Service",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "topography",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Earth Sciences",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "04",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "environment",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "inlandWaters",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "society",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "WFS",
+                "uri": ""
+            }
+        ]
+    },
+    {
+        "url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1D_DHD",
+        "relations": [
+            {
+                "key": "NEII/a927dd64-8998-47b1-ab5b-6f97bf626fc0",
+                "title": "ReefTemp Next Generation Web Data Services",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "a927dd64-8998-47b1-ab5b-6f97bf626fc0"
+                },
+                "types": [
+                    "identifier_uri_link"
+                ],
+                "relation": [
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1D_DHD?service=WMS&version=1.3.0&request=GetCapabilities"
+                    }
+                ]
+            }
+        ],
+        "full_urls": [
+            "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1D_DHD?service=WMS&version=1.3.0&request=GetCapabilities"
+        ],
+        "subjects": [
+            {
+                "type": "local",
+                "value": "WMS",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "OPeNDAP",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Gridded",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Satellite",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Solar",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Radiation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Meteorology",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "National Environmental Information Infrastructure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "neii.gov.au",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "040107",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Web Service",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "topography",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Earth Sciences",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "04",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "environment",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "inlandWaters",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "society",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "WFS",
+                "uri": ""
+            }
+        ]
+    },
+    {
+        "url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1D_ERR",
+        "relations": [
+            {
+                "key": "NEII/a927dd64-8998-47b1-ab5b-6f97bf626fc0",
+                "title": "ReefTemp Next Generation Web Data Services",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "a927dd64-8998-47b1-ab5b-6f97bf626fc0"
+                },
+                "types": [
+                    "identifier_uri_link"
+                ],
+                "relation": [
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1D_ERR?service=WMS&version=1.3.0&request=GetCapabilities"
+                    }
+                ]
+            }
+        ],
+        "full_urls": [
+            "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1D_ERR?service=WMS&version=1.3.0&request=GetCapabilities"
+        ],
+        "subjects": [
+            {
+                "type": "local",
+                "value": "WMS",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "OPeNDAP",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Gridded",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Satellite",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Solar",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Radiation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Meteorology",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "National Environmental Information Infrastructure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "neii.gov.au",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "040107",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Web Service",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "topography",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Earth Sciences",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "04",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "environment",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "inlandWaters",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "society",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "WFS",
+                "uri": ""
+            }
+        ]
+    },
+    {
+        "url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1W",
+        "relations": [
+            {
+                "key": "NEII/a927dd64-8998-47b1-ab5b-6f97bf626fc0",
+                "title": "ReefTemp Next Generation Web Data Services",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "a927dd64-8998-47b1-ab5b-6f97bf626fc0"
+                },
+                "types": [
+                    "identifier_uri_link"
+                ],
+                "relation": [
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1W?service=WMS&version=1.3.0&request=GetCapabilities"
+                    }
+                ]
+            }
+        ],
+        "full_urls": [
+            "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1W?service=WMS&version=1.3.0&request=GetCapabilities"
+        ],
+        "subjects": [
+            {
+                "type": "local",
+                "value": "WMS",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "OPeNDAP",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Gridded",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Satellite",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Solar",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Radiation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Meteorology",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "National Environmental Information Infrastructure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "neii.gov.au",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "040107",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Web Service",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "topography",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Earth Sciences",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "04",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "environment",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "inlandWaters",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "society",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "WFS",
+                "uri": ""
+            }
+        ]
+    },
+    {
+        "url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1M",
+        "relations": [
+            {
+                "key": "NEII/a927dd64-8998-47b1-ab5b-6f97bf626fc0",
+                "title": "ReefTemp Next Generation Web Data Services",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "a927dd64-8998-47b1-ab5b-6f97bf626fc0"
+                },
+                "types": [
+                    "identifier_uri_link"
+                ],
+                "relation": [
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1M?service=WMS&version=1.3.0&request=GetCapabilities"
+                    }
+                ]
+            }
+        ],
+        "full_urls": [
+            "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1M?service=WMS&version=1.3.0&request=GetCapabilities"
+        ],
+        "subjects": [
+            {
+                "type": "local",
+                "value": "WMS",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "OPeNDAP",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Gridded",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Satellite",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Solar",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Radiation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Meteorology",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "National Environmental Information Infrastructure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "neii.gov.au",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "040107",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Web Service",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "topography",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Earth Sciences",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "04",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "environment",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "inlandWaters",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "society",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "WFS",
+                "uri": ""
+            }
+        ]
+    },
+    {
+        "url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P6M",
+        "relations": [
+            {
+                "key": "NEII/a927dd64-8998-47b1-ab5b-6f97bf626fc0",
+                "title": "ReefTemp Next Generation Web Data Services",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "a927dd64-8998-47b1-ab5b-6f97bf626fc0"
+                },
+                "types": [
+                    "identifier_uri_link"
+                ],
+                "relation": [
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P6M?service=WMS&version=1.3.0&request=GetCapabilities"
+                    }
+                ]
+            }
+        ],
+        "full_urls": [
+            "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P6M?service=WMS&version=1.3.0&request=GetCapabilities"
+        ],
+        "subjects": [
+            {
+                "type": "local",
+                "value": "WMS",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "OPeNDAP",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Gridded",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Satellite",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Solar",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Radiation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Meteorology",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "National Environmental Information Infrastructure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "neii.gov.au",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "040107",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Web Service",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "topography",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Earth Sciences",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "04",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "environment",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "inlandWaters",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "society",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "WFS",
+                "uri": ""
+            }
+        ]
+    },
+    {
+        "url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1A",
+        "relations": [
+            {
+                "key": "NEII/a927dd64-8998-47b1-ab5b-6f97bf626fc0",
+                "title": "ReefTemp Next Generation Web Data Services",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "a927dd64-8998-47b1-ab5b-6f97bf626fc0"
+                },
+                "types": [
+                    "identifier_uri_link"
+                ],
+                "relation": [
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1A?service=WMS&version=1.3.0&request=GetCapabilities"
+                    }
+                ]
+            }
+        ],
+        "full_urls": [
+            "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1A?service=WMS&version=1.3.0&request=GetCapabilities"
+        ],
+        "subjects": [
+            {
+                "type": "local",
+                "value": "WMS",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "OPeNDAP",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Gridded",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Satellite",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Solar",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Radiation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Meteorology",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "National Environmental Information Infrastructure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "neii.gov.au",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "040107",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Web Service",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "topography",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Earth Sciences",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "04",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "environment",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "inlandWaters",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "society",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "WFS",
+                "uri": ""
+            }
+        ]
+    },
+    {
+        "url": "http://www.environment.gov.au/mapping/services/ogc_services/World_Heritage_Areas_label/MapServer/WMSServer",
+        "relations": [
+            {
+                "key": "NEII/6C54FE6C-2773-47C6-8CBC-4722F29081EF",
+                "title": "Australia, World Heritage Areas",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "6C54FE6C-2773-47C6-8CBC-4722F29081EF"
+                },
+                "types": [
+                    "identifier_uri_link"
+                ],
+                "relation": [
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://www.environment.gov.au/mapping/services/ogc_services/World_Heritage_Areas_label/MapServer/WMSServer"
+                    }
+                ]
+            }
+        ],
+        "full_urls": [
+            "http://www.environment.gov.au/mapping/services/ogc_services/World_Heritage_Areas_label/MapServer/WMSServer"
+        ],
+        "subjects": [
+            {
+                "type": "local",
+                "value": "WMS",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "OPeNDAP",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Gridded",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Satellite",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Solar",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Radiation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Meteorology",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "National Environmental Information Infrastructure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "neii.gov.au",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "040107",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Web Service",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "topography",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Earth Sciences",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "04",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "environment",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "inlandWaters",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "society",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "WFS",
+                "uri": ""
+            }
+        ]
+    },
+    {
+        "url": "http://www.environment.gov.au/mapping/services/ogc_services/World_Heritage_Areas_label/MapServer/WFSServer",
+        "relations": [
+            {
+                "key": "NEII/6C54FE6C-2773-47C6-8CBC-4722F29081EF",
+                "title": "Australia, World Heritage Areas",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "6C54FE6C-2773-47C6-8CBC-4722F29081EF"
+                },
+                "types": [
+                    "identifier_uri_link"
+                ],
+                "relation": [
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://www.environment.gov.au/mapping/services/ogc_services/World_Heritage_Areas_label/MapServer/WFSServer"
+                    }
+                ]
+            }
+        ],
+        "full_urls": [
+            "http://www.environment.gov.au/mapping/services/ogc_services/World_Heritage_Areas_label/MapServer/WFSServer"
+        ],
+        "subjects": [
+            {
+                "type": "local",
+                "value": "WMS",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "OPeNDAP",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Gridded",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Satellite",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Solar",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Radiation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Meteorology",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "National Environmental Information Infrastructure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "neii.gov.au",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "040107",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Web Service",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "topography",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Earth Sciences",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "04",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "environment",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "inlandWaters",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "society",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "WFS",
+                "uri": ""
+            }
+        ]
+    },
+    {
+        "url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P1D",
+        "relations": [
+            {
+                "key": "NEII/3440bced-e383-4f39-8991-820aeb9097cb",
+                "title": "eReefs Marine Water Quality Web Data Services",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "3440bced-e383-4f39-8991-820aeb9097cb"
+                },
+                "types": [
+                    "identifier_uri_link"
+                ],
+                "relation": [
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P1D?service=WMS&version=1.3.0&request=GetCapabilities"
+                    }
+                ]
+            }
+        ],
+        "full_urls": [
+            "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P1D?service=WMS&version=1.3.0&request=GetCapabilities"
+        ],
+        "subjects": [
+            {
+                "type": "local",
+                "value": "WMS",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "OPeNDAP",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Gridded",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Satellite",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Solar",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Radiation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Meteorology",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "National Environmental Information Infrastructure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "neii.gov.au",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "040107",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Web Service",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "topography",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Earth Sciences",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "04",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "environment",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "inlandWaters",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "society",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "WFS",
+                "uri": ""
+            }
+        ]
+    },
+    {
+        "url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P1W",
+        "relations": [
+            {
+                "key": "NEII/3440bced-e383-4f39-8991-820aeb9097cb",
+                "title": "eReefs Marine Water Quality Web Data Services",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "3440bced-e383-4f39-8991-820aeb9097cb"
+                },
+                "types": [
+                    "identifier_uri_link"
+                ],
+                "relation": [
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P1W?service=WMS&version=1.3.0&request=GetCapabilities"
+                    }
+                ]
+            }
+        ],
+        "full_urls": [
+            "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P1W?service=WMS&version=1.3.0&request=GetCapabilities"
+        ],
+        "subjects": [
+            {
+                "type": "local",
+                "value": "WMS",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "OPeNDAP",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Gridded",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Satellite",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Solar",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Radiation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Meteorology",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "National Environmental Information Infrastructure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "neii.gov.au",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "040107",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Web Service",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "topography",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Earth Sciences",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "04",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "environment",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "inlandWaters",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "society",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "WFS",
+                "uri": ""
+            }
+        ]
+    },
+    {
+        "url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P1M",
+        "relations": [
+            {
+                "key": "NEII/3440bced-e383-4f39-8991-820aeb9097cb",
+                "title": "eReefs Marine Water Quality Web Data Services",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "3440bced-e383-4f39-8991-820aeb9097cb"
+                },
+                "types": [
+                    "identifier_uri_link"
+                ],
+                "relation": [
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P1M?service=WMS&version=1.3.0&request=GetCapabilities"
+                    }
+                ]
+            }
+        ],
+        "full_urls": [
+            "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P1M?service=WMS&version=1.3.0&request=GetCapabilities"
+        ],
+        "subjects": [
+            {
+                "type": "local",
+                "value": "WMS",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "OPeNDAP",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Gridded",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Satellite",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Solar",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Radiation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Meteorology",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "National Environmental Information Infrastructure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "neii.gov.au",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "040107",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Web Service",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "topography",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Earth Sciences",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "04",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "environment",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "inlandWaters",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "society",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "WFS",
+                "uri": ""
+            }
+        ]
+    },
+    {
+        "url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P6M",
+        "relations": [
+            {
+                "key": "NEII/3440bced-e383-4f39-8991-820aeb9097cb",
+                "title": "eReefs Marine Water Quality Web Data Services",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "3440bced-e383-4f39-8991-820aeb9097cb"
+                },
+                "types": [
+                    "identifier_uri_link"
+                ],
+                "relation": [
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P6M?service=WMS&version=1.3.0&request=GetCapabilities"
+                    }
+                ]
+            }
+        ],
+        "full_urls": [
+            "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P6M?service=WMS&version=1.3.0&request=GetCapabilities"
+        ],
+        "subjects": [
+            {
+                "type": "local",
+                "value": "WMS",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "OPeNDAP",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Gridded",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Satellite",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Solar",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Radiation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Meteorology",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "National Environmental Information Infrastructure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "neii.gov.au",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "040107",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Web Service",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "topography",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Earth Sciences",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "04",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "environment",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "inlandWaters",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "society",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "WFS",
+                "uri": ""
+            }
+        ]
+    },
+    {
+        "url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P1A",
+        "relations": [
+            {
+                "key": "NEII/3440bced-e383-4f39-8991-820aeb9097cb",
+                "title": "eReefs Marine Water Quality Web Data Services",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "3440bced-e383-4f39-8991-820aeb9097cb"
+                },
+                "types": [
+                    "identifier_uri_link"
+                ],
+                "relation": [
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P1A?service=WMS&version=1.3.0&request=GetCapabilities"
+                    }
+                ]
+            }
+        ],
+        "full_urls": [
+            "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P1A?service=WMS&version=1.3.0&request=GetCapabilities"
+        ],
+        "subjects": [
+            {
+                "type": "local",
+                "value": "WMS",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "OPeNDAP",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Gridded",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Satellite",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Solar",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Radiation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Meteorology",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "National Environmental Information Infrastructure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "neii.gov.au",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "040107",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Web Service",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "topography",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Earth Sciences",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "04",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "environment",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "inlandWaters",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "society",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "WFS",
+                "uri": ""
+            }
+        ]
+    },
+    {
+        "url": "http://geofabric.bom.gov.au/simplefeatures/ows",
+        "relations": [
+            {
+                "key": "NEII/8b0f74b4-675a-43f9-9c2b-0fbee00f31d7",
+                "title": "Australian Hydrological Geospatial Fabric (Geofabric) Web Data Services",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "8b0f74b4-675a-43f9-9c2b-0fbee00f31d7"
+                },
+                "types": [
+                    "identifier_uri_link"
+                ],
+                "relation": [
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://geofabric.bom.gov.au/simplefeatures/ows?service=wfs&version=2.0.0&request=GetCapabilities"
+                    },
+                    {
+                        "type": "hasAssociationWith",
+                        "full_url": "http://geofabric.bom.gov.au/simplefeatures/ows?service=wms&version=1.3.0&request=GetCapabilities"
+                    }
+                ]
+            }
+        ],
+        "full_urls": [
+            "http://geofabric.bom.gov.au/simplefeatures/ows?service=wfs&version=2.0.0&request=GetCapabilities",
+            "http://geofabric.bom.gov.au/simplefeatures/ows?service=wms&version=1.3.0&request=GetCapabilities"
+        ],
+        "subjects": [
+            {
+                "type": "local",
+                "value": "WMS",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "OPeNDAP",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Gridded",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Satellite",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Solar",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Radiation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Meteorology",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "National Environmental Information Infrastructure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "neii.gov.au",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "040107",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Web Service",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "topography",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "Earth Sciences",
+                "uri": ""
+            },
+            {
+                "type": "anzsrc-for",
+                "value": "04",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "environment",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "inlandWaters",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "society",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "WFS",
+                "uri": ""
+            }
+        ]
+    }
+]

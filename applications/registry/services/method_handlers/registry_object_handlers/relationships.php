@@ -21,6 +21,7 @@ class Relationships extends ROHandler
     {
         $result = array(
             'data' => $this->getRelatedFromIndex('data'),
+            'software' => $this->getRelatedFromIndex('software'),
             'publications' => $this->getRelatedFromIndex('publications'),
 
             'programs' => $this->getRelatedFromIndex('programs'),
@@ -99,6 +100,11 @@ class Relationships extends ROHandler
         switch ($type) {
             case "data":
                 $ci->solr->setOpt('fq', '+to_class:collection');
+                $ci->solr->setOpt('fq', '-to_type:software');
+                break;
+            case "software":
+                $ci->solr->setOpt('fq', '+to_class:collection');
+                $ci->solr->setOpt('fq', '+to_type:software');
                 break;
             case "programs":
                 $ci->solr->setOpt('fq', '+to_class:activity');

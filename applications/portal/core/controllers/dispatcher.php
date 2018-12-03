@@ -57,6 +57,11 @@ class Dispatcher extends MX_Controller {
             $params = array($action_model);
             echo Modules::run(implode("/",$params));
             return;
+        }else if($params[0]=='software') {
+            $action_model = $this->config->item('default_model').'/software';
+            $params = array($action_model);
+            echo Modules::run(implode("/",$params));
+            return;
         } else {
 
 			// If no match, assume it is a SLUG view request

@@ -91,6 +91,7 @@
 
             advanced_fields: [
                 {'name': 'terms', 'display': 'Search Terms', 'active': true},
+                {'name': 'collection_type', 'display': 'Type'},
                 {'name': 'subject', 'display': 'Subject'},
                 {'name': 'group', 'display': 'Data Provider'},
                 {'name': 'access_rights', 'display': 'Access'},
@@ -135,7 +136,7 @@
                 {'name': 'help', 'display': '<i class="fa fa-question-circle"></i> Help'}
             ],
 
-            collection_facet_order: ['group', 'access_rights', 'access_methods_ss','license_class', 'type'],
+            collection_facet_order: ['collection_type','group', 'access_rights', 'access_methods_ss','license_class','type'],
             activity_facet_order: ['type', 'activity_status', 'funding_scheme', 'administering_institution', 'funders'],
 
             ingest: function (hash) {
@@ -218,6 +219,17 @@
                             value: result.facet_counts.facet_fields[index][i + 1]
                         };
                         facets[index].push(fa);
+                    }
+                });
+
+                facets['collection_type'] =[];
+                angular.forEach(result.facet_counts.facet_queries, function (item, index) {
+                    if(item > 0) {
+                        var fa = {
+                            name: index,
+                            value: item
+                        };
+                        facets['collection_type'].push(fa);
                     }
                 });
 

@@ -415,12 +415,15 @@ class Registry_object extends MX_Controller
         }
 
         // construct the correct search query for each type of related
-        $relatedArray = ['data', 'programs', 'grants_projects', 'services', 'organisations', 'researchers'];
+        $relatedArray = ['data', 'software','programs', 'grants_projects', 'services', 'organisations', 'researchers'];
         foreach ($relatedArray as $rr) {
             $query = [];
             switch ($rr) {
                 case "data":
-                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'collection', 'sort' => 'score desc'];
+                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'collection', 'collection_type' => '-type:software','sort' => 'score desc'];
+                    break;
+                case "software":
+                    $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'collection', 'type' => 'software', 'sort' => 'score desc'];
                     break;
                 case "programs":
                     $query = ['related_' . $searchClass . '_id' => $ro->id, 'class' => 'activity', 'type' => 'program', 'sort' => 'score desc'];
@@ -951,6 +954,28 @@ class Registry_object extends MX_Controller
     }
 
     /**
+     * Search View for collections of type software
+     * Displaying the search view for software type records
+     *
+     * @return HTML
+     */
+    function software()
+    {
+        //redirect to the correct URL to add software type to the search query
+        redirect('search/#!/q=/collection_type=type%3Asoftware/');
+
+        // Prevent indexing of this page by search engines
+        $this->output->set_header('X-Robots-Tag: noindex, nofollow');
+
+        $this->load->library('blade');
+        $this->blade
+            ->set('lib', array('ui-events', 'angular-ui-map', 'google-map'))
+            ->set('search', true)//to disable the global search
+            ->render('registry_object/search');
+    }
+
+
+    /**
      * Search View for Subjects Browser
      * Displaying the search view for the current component
      *
@@ -1069,6 +1094,10 @@ class Registry_object extends MX_Controller
             ->setOpt('f.earliest_year.facet.sort', 'count asc')
             ->setOpt('f.latest_year.facet.sort', 'count');
 
+        $this->solr
+            ->setFacetOpt('query', '-type:software')
+            ->setFacetOpt('query', 'type:software');
+
         /**
          * Set facets based on class
          * todo clean this up
@@ -1081,8 +1110,11 @@ class Registry_object extends MX_Controller
             }
         } elseif ($default_class == 'collection') {
             foreach ($this->components['facet'] as $facet) {
-                if ($facet != 'temporal' && $facet != 'spatial') {
+                if ($facet != 'temporal' && $facet != 'spatial' && $facet != 'collection_type') {
                     $this->solr->setFacetOpt('field', $facet);
+                }
+                if($facet == 'collection_type'){
+                    $this->solr->setFacetOpt('query',$facet);
                 }
             }
         } else {

@@ -5,6 +5,7 @@ namespace ANDS\Commands\RegistryObject;
 
 
 use ANDS\Commands\ANDSCommand;
+use ANDS\Registry\Providers\DCI\DataCitationIndexProvider;
 use ANDS\Registry\Providers\GraphRelationshipProvider;
 use ANDS\Registry\Providers\LinkProvider;
 use ANDS\Registry\Providers\Quality\QualityMetadataProvider;
@@ -31,7 +32,8 @@ class RegistryObjectProcessCommand extends ANDSCommand
         'title' => TitleProvider::class,
         'core' => CoreMetadataProvider::class,
         'date' => DatesProvider::class,
-        'graph' => GraphRelationshipProvider::class
+        'graph' => GraphRelationshipProvider::class,
+        'dci' => DataCitationIndexProvider::class
     ];
 
     protected function configure()

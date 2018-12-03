@@ -2,7 +2,6 @@
     <h4>Related Data</h4>
     <ul class="list-unstyled">
         @foreach($related['data']['docs'] as $col)
-            @if(isset($col['to_id']))
                 <li>
                     <i class="fa fa-folder-open icon-portal"></i>
                     <small>{{ $col['display_relationship'] }}</small>
@@ -19,11 +18,10 @@
                         {{$col['to_title']}}
                     </a>
                 </li>
-            @endif
         @endforeach
-
-        @if($related['data']['count'] > 5)
+        @if($related['data']['count']> 5)
             <li><a href="{{ $related['data']['searchUrl'] }}">View all {{ $related['data']['count'] }} related data</a></li>
         @endif
     </ul>
 </div>
+

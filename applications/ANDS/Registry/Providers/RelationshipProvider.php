@@ -8,6 +8,7 @@ use ANDS\RecordData;
 use ANDS\Registry\Connections;
 use ANDS\Registry\IdentifierRelationshipView;
 use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
+use ANDS\Registry\RelationshipView;
 use ANDS\RegistryObject\Identifier;
 use ANDS\RegistryObject;
 use ANDS\RegistryObject\ImplicitRelationship;
@@ -213,6 +214,40 @@ class RelationshipProvider
 //        }
 
         return false;
+    }
+
+    public static function getRelationByType(RegistryObject $record, array $relations)
+    {
+        $results = [];
+
+        // direct
+        $direct = RelationshipView::where('from_id', $record->id)
+            ->whereIn('relation_type', $relations)
+            ->take(50)->get();
+        foreach ($direct as $relation) {
+            $results[] = [
+                'relation' => $relation['relation_type'],
+                'name' => (string) $relation['to_title'],
+                'id' => $relation['to_id']
+            ];
+        }
+
+        // reverse
+        $reverseRelationTypes = collect($relations)->map(function($item){
+            return getReverseRelationshipString($item);
+        })->toArray();
+        $reverse = RelationshipView::where('to_key', $record->key)
+            ->whereIn('relation_type', $reverseRelationTypes)
+            ->take(50)->get();
+        foreach ($reverse as $relation) {
+            $results[] = [
+                'relation' => getReverseRelationshipString($relation['relation_type']),
+                'name' => (string) $relation['from_title'],
+                'id' => $relation['from_id']
+            ];
+        }
+
+        return $results;
     }
 
     /**
@@ -796,6 +831,24 @@ class RelationshipProvider
     public static function getDuplicateRecordsFromIdentifiers($identifiers)
     {
         return Identifier::whereIn('identifier', $identifiers)->get()->pluck('registry_object_id')->unique()->toArray();
+    }
+
+    /**
+     * @param $activity
+     * @return RegistryObject|null
+     */
+    public static function getFunder($activity)
+    {
+        $direct = RelationshipView::where('from_id', $activity->id)
+            ->where('to_class', 'party')
+            ->where('relation_type', 'isFundedBy')
+            ->first();
+
+        if (count($direct)) {
+            return RegistryObjectsRepository::getRecordByID($direct->to_id);
+        }
+
+        return null;
     }
 
 }

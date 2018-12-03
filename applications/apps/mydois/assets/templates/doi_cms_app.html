@@ -54,11 +54,12 @@
                     <tr ng-repeat="doi in vm.dois">
                         <td class="word-wrap">
                             <small><strong>{{ doi.title }}</strong></small><br/>
-                            <a target="_blank" href="{{ doi.url }}">{{ doi.url }}</a>
+                            <a ng-if="doi.doi_id.indexOf('10.5072/') == -1" target="_blank" href="{{ doi.url }}">{{ doi.url }}</a>
+                            <span ng-if="doi.doi_id.indexOf('10.5072/') == 0">{{ doi.url }}</span>
                         </td>
                         <td>
-                            <a target="_blank" href="http://dx.doi.org/{{ doi.doi_id }}" ng-if="doi.status!='RESERVED'">{{ doi.doi_id }}</a>
-                            <span ng-if="doi.status=='RESERVED'">{{ doi.doi_id }}</span>
+                            <a target="_blank" href="http://dx.doi.org/{{ doi.doi_id }}" ng-if="doi.status!='RESERVED' && doi.doi_id.indexOf('10.5072/') == -1">{{ doi.doi_id }}</a>
+                            <span ng-if="doi.status=='RESERVED' || doi.doi_id.indexOf('10.5072/') == 0">{{ doi.doi_id }}</span>
                         </td>
                         <td>
                             <div class="btn-group">

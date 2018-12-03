@@ -418,6 +418,4 @@ app.directive('focusMe', function($timeout, $parse) {
       });
     }
   };
-})
-
-;
+});
