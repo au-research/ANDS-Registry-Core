@@ -118,7 +118,7 @@ class ServiceDiscovery {
                 $preferred_identifiers = static::getPreferredIdentifier($identifiers);
 
                 if(sizeof($preferred_identifiers) == 0)
-                    $linksArray[$url][$ro->key]["related_collection_id"] = array("type" => "local", "identifier" => $ro->key);
+                    $linksArray[$url][$ro->key]["related_collection_id"] = array("type" => "local-key", "identifier" => $ro->key);
                 else
                     $linksArray[$url][$ro->key]["related_collection_id"] = static::getPreferredIdentifier($identifiers);
             }
