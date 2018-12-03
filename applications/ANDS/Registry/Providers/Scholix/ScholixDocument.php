@@ -190,8 +190,8 @@ class ScholixDocument
         if (array_key_exists('identifier', $link['source'])) {
             foreach ($link['source']['identifier'] as $identifier) {
                 $str .= "<Identifier>";
-                $str .= "<ID>" . $identifier['identifier'] . "</ID>";
-                $str .= "<IDScheme>" . $identifier['schema'] . "</IDScheme>";
+                $str .= "<ID>" . htmlspecialchars($identifier['identifier']) . "</ID>";
+                $str .= "<IDScheme>" . htmlspecialchars($identifier['schema']) . "</IDScheme>";
                 $str .= "</Identifier>";
             }
         }
@@ -208,8 +208,8 @@ class ScholixDocument
                 if (array_key_exists('identifier', $creator)) {
                     foreach ($creator['identifier'] as $identifier) {
                         $str .= "<Identifier>";
-                        $str .= "<ID>" . $identifier['identifier'] . "</ID>";
-                        $str .= "<IDScheme>" . $identifier['schema'] . "</IDScheme>";
+                        $str .= "<ID>" . htmlspecialchars($identifier['identifier']) . "</ID>";
+                        $str .= "<IDScheme>" . htmlspecialchars($identifier['schema']) . "</IDScheme>";
                         $str .= "</Identifier>";
                     }
                 }
@@ -242,7 +242,7 @@ class ScholixDocument
             foreach ($link['target']['identifier'] as $identifier) {
                 $str .= "<Identifier>";
                 $str .= "<ID>" . htmlspecialchars($identifier['identifier']) . "</ID>";
-                $str .= "<IDScheme>" . $identifier['schema'] . "</IDScheme>";
+                $str .= "<IDScheme>" . htmlspecialchars($identifier['schema']) . "</IDScheme>";
                 $str .= "</Identifier>";
             }
         }
@@ -261,8 +261,8 @@ class ScholixDocument
                 if (array_key_exists('identifier', $creator)) {
                     foreach ($creator['identifier'] as $identifier) {
                         $str .= "<Identifier>";
-                        $str .= "<ID>" . $identifier['identifier'] . "</ID>";
-                        $str .= "<Scheme>" . $identifier['schema'] . "</Scheme>";
+                        $str .= "<ID>" . htmlspecialchars($identifier['identifier']) . "</ID>";
+                        $str .= "<Scheme>" . htmlspecialchars($identifier['schema']) . "</Scheme>";
                         $str .= "</Identifier>";
                     }
                 }

@@ -523,14 +523,22 @@ class ServiceProvider
                     );
             }
 
-            $el = $response->createElement('metadata');
-            $doc = new DOMDocument();
-            $doc->loadXml($data['metadata'], LIBXML_NSCLEAN);
-            $el->appendChild(
-                $response->getContent()->importNode($doc->documentElement, true)
-            );
+            try {
+                $el = $response->createElement('metadata');
+                $doc = new DOMDocument();
+                $doc->loadXml($data['metadata'], LIBXML_NSCLEAN);
+                $el->appendChild(
+                    $response->getContent()->importNode($doc->documentElement, true)
+                );
 
-            $recordNode->appendChild($el);
+                $recordNode->appendChild($el);
+            } catch (\Exception $e) {
+                monolog([
+                    'event' => 'error',
+                    'message' => "OAI-PMH Error:". get_exception_msg($e)
+                ], 'error', 'error', true);
+            }
+
 
             $element->appendChild($recordNode);
         }
