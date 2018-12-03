@@ -59,6 +59,6 @@ class CreateServiceRecords extends ImportSubTask
         $this->parent()->loadPayload();
         $this->parent()->setTaskData('payload', $filePath);
 
-
+        $this->parent()->updateHarvest(["importer_message" => "Generated $serviceCount rifcs service records"]);
     }
 }

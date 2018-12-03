@@ -56,5 +56,7 @@ class ServiceDiscovery extends ImportSubTask
         $this->log("Writing link to {$filePath}");
         file_put_contents($filePath, json_encode($links, true));
         $this->parent()->setTaskData('services_links', $filePath);
+
+        $this->parent()->updateHarvest(["importer_message" => "Service Discovery"]);
     }
 }

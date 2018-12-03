@@ -543,6 +543,7 @@ class Data_source extends MX_Controller {
 			'name' => "Background Task for $dataSource->title($dataSourceID) ServiceDiscovery",
 			'params' => http_build_query([
 				'ds_id' => $dataSourceID,
+				'harvest_id' => $dataSource->harvest->harvest_id,
 				'batch_id' => $batch_id,
 				'targetStatus' => 'DRAFT',
 				'pipeline' => 'ServiceDiscovery'
