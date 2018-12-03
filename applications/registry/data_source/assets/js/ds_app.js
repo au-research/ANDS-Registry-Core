@@ -57,7 +57,6 @@ angular.module('ds_app', ['slugifier', 'ui.sortable', 'ui.tinymce', 'ngSanitize'
 				return $http.get(base_url+'/data_source/clear_logs/'+id).then(function(response){return response.data;});
 			},
 			start_service_discovery: function(id) {
-				console.log(base_url+'data_source/discover_import_services/'+id);
 				return $http.get(base_url+'data_source/discover_import_services/'+id).then(function(response){return response.data});
 			}
 		}
@@ -573,6 +572,7 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
         $scope.ds.logs.unshift(log)
         $scope.ds.latest_log = $scope.ds.logs[0].id
         $scope.process_logs()
+        $scope.$apply()
       } catch (err) {
         console.error(err, msg)
       }

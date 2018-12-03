@@ -377,6 +377,7 @@ class ImportTask extends Task
                     "ProcessAffectedRelationships",
                     "IndexRelationship",
                     "FinishImport",
+                    "ScheduleHarvest"
                 ];
                 break;
             case "default":
