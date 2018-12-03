@@ -1,4 +1,6 @@
-@if($ro->core['class']=='collection')
+@if($ro->core['type']=='software')
+    <i class="fa fa-file-code-o icon-portal"></i>
+@elseif($ro->core['class']=='collection')
     <i class="fa fa-folder-open icon-portal"></i>
 @elseif($ro->core['class']=='activity')
     <i class="fa fa-flask icon-portal"></i>

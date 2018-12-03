@@ -124,6 +124,7 @@ class Groups extends CI_Model {
 			->setOpt('fq', '+group:("'.$group['title'].'")')
 			->setFacetOpt('field','class')
 			->setFacetOpt('field', 'subject_value_resolved')
+            ->setFacetOpt('field', 'type')
 			->setFacetOpt('limit', '-1')
 			->setFacetOpt('sort', 'count')
             ->setOpt('rows', 0)
@@ -134,6 +135,7 @@ class Groups extends CI_Model {
 		//classes
 		$group['facet']['class'] = array();
 		$classes = $this->solr->getFacetResult('class');
+		$group['facet']['types'] = $this->solr->getFacetResult('type');
         $expectedClasses = ['collection', 'party', 'activity', 'service'];
         foreach ($expectedClasses as $class) {
             if (!array_key_exists($class, $classes)) {

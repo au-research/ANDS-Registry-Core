@@ -3,6 +3,20 @@ All notable changes to this project will be documented in this file.
 
 ANDS Research Data Registry follows a quarterly release cycle
 
+## Release 30
+
+* Addition of a ‘Type’ facet in the collection search that allows users to filter by software and data.
+* New software icon and label in the title bar on the RDA view page.
+* Change the ‘Access the Data’ button label to ‘Access the software’ in a software record view page.
+* Addition of a ‘Software’ theme page and associated Explore menu item.
+* In the Contributor Page, add ‘Software’ to the organisation’s list of contributed records
+* If alternative name is empty or is not used in the record, do not display 'Also known as:' under the record title in RDA record view page
+* Performance improvements made to the indexing, querying and caching functionality of the graph to improve response times and stability.
+* Functionality that allows users to extract OGC services from within their metadata feeds will be added to the Data Source Dashboard import options.
+  Upon running the process, the system will attempt to find OGC service ('wms', 'wfs', 'ogc', 'wcs', 'wps', 'wmts' & 'ows') URLs within the current published collections within the datasource. Where the system can successfully communicate with a discovered service via a 'getCapabilities' request, the system will generate a RIF-CS record and import it into the data source as a draft record. Users can then review and edit the generated records before publishing them.
+* New OAI-PMH service
+
+
 ## Release 29
 * Updated social login integrations
 * Updated AAF/RapidConnect integrations

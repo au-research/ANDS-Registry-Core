@@ -1,6 +1,13 @@
 @if($ro->directaccess)
+    <?php
+    if($ro->core['type']=='software'){
+        $access_string = 'software';
+    }else{
+        $access_string = 'data';
+    }
+    ?>
     <div class="panel panel-primary panel-content swatch-white">
-        <div id="data"><h4> Access data </h4></div>
+        <div id="data"><h4> Access {{$access_string}} </h4></div>
         @foreach($ro->directaccess as $access)
             <?php
             $title = $access['title'];
@@ -16,12 +23,12 @@
 
             if($access['access_type']=='directDownload')
             {
-                $preText='Download data <br/>';
+                $preText='Download {{$access_string}} <br/>';
             }
             elseif($access['access_type']=='landingPage'){
-                $preText='Access data via landing page </br >';
+                $preText='Access {{$access_string}} via landing page </br >';
             }elseif($access['access_type']=='viaService'){
-                $preText='Access data online via tools </br >';
+                $preText='Access {{$access_string}} online via tools </br >';
             }
 
             $tip = ' tip="'.$access['title']."<br />";

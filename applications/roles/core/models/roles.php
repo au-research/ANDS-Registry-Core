@@ -198,6 +198,10 @@ class Roles extends CI_Model {
                     ->where('role_relations.child_role_id !=', $role_id)
                     ->get();
 
+        if($result == null)
+            return array();
+
+
         if($result->num_rows() > 0){
             foreach($result->result() as $r){
                 if(trim($r->role_type_id)=='ROLE_DOI_APPID' && $include_doi){

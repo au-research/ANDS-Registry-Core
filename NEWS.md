@@ -1,3 +1,19 @@
+## Release 30
+
+ANDS Online Services Release 30 is due for implementation on Tuesday, 4 December 2018.  Please find below the summary of all Release 30 changes with an overview of who, what and how the changes will impact our users.
+
+**Research Data Australia (RDA)**
+
+* Promote visibility and enhance display of collection type 'software' in RDA
+* Fix bug where citationMetadata version is not included in citation text.
+* Hide 'Also known as' label under the record title if an alternative name is empty or not used
+* Optimise relationship graph for better performance and stability.
+
+**RDA Registry**
+
+* Add service discovery workflow into Data Source Dashboard import options
+* Rewrite of OAI-PMH service to improve performance and fix memory issues.
+
 ## Release 29
 
 Release 29 of ANDS Online Services is scheduled for implementation on **3 October 2018**, between 8am and 12pm AEST. This release implements a number of enhancements to Research Data Australia (RDA), DOI Service, IGSN Service, and Research Vocabularies Australia (RVA). Below is the list of all the changes planned for this release.

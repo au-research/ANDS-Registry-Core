@@ -4,6 +4,7 @@
 namespace ANDS\API\Task\ImportSubTask;
 
 
+use ANDS\Registry\Providers\DCI\DataCitationIndexProvider;
 use ANDS\Registry\Providers\ScholixProvider;
 use ANDS\Repository\RegistryObjectsRepository;
 
@@ -40,6 +41,11 @@ class ProcessScholix extends ImportSubTask
                 continue;
             }
             ScholixProvider::process($record);
+
+            // piggyback this provider on this record
+            // TODO maybe refactor into a dedicated (extra) metadata processor for various records
+            DataCitationIndexProvider::process($record);
+
             $this->updateProgress($index, $total, "Processed ($index/$total) $record->title($roID)");
         }
     }

@@ -168,7 +168,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
         $client = static::db();
         $stack = $client->stack();
         foreach ($records as $record) {
-            return $client->run("MATCH (n:RegistryObject {roId:\"{$record->id}\"}) OPTIONAL MATCH (n)-[r]-() DELETE n, r");
+            $stack->push("MATCH (n:RegistryObject {roId:\"{$record->id}\"}) OPTIONAL MATCH (n)-[r]-() DELETE n, r");
         }
         return $client->runStack($stack);
     }

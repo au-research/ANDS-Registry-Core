@@ -17,7 +17,6 @@
             <div id="graph-viz"></div>
             <a href="" id="toggle-visualisation"><i class="fa fa-sort"></i></a>
         </div>
-
         <div class="panel-body swatch-white" style="padding-top:0;">
 
             {{--Related Publications--}}
@@ -27,6 +26,10 @@
 
             @if (isset($related['data']) && sizeof($related['data']['docs']) > 0)
                 @include('registry_object/contents/related-data')
+            @endif
+
+            @if (isset($related['software']) && sizeof($related['software']['docs']) > 0)
+                @include('registry_object/contents/related-software')
             @endif
 
             @if (isset($related['organisations']) && sizeof($related['organisations']['docs']) > 0)

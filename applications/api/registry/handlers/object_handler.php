@@ -5,6 +5,7 @@ use ANDS\API\Task\ImportTask;
 use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\Config;
+use ANDS\Util\IPValidator;
 use \Exception as Exception;
 use \XSLTProcessor as XSLTProcessor;
 
@@ -167,8 +168,8 @@ class ObjectHandler extends Handler{
                     throw new Exception("Whitelist IP not configured properly. This operation is unsafe.");
                 }
                 $ip = $this->getIPAddress();
-                if (!in_array($ip, $whitelist)) {
-                    throw new Exception("IP: $ip is not whitelist for this behavior");
+                if (!IPValidator::validate($ip, $whitelist)) {
+                    throw new Exception("IP: $ip is not whitelisted for this behavior");
                 }
 
                 if ($m1 == "sync") {
