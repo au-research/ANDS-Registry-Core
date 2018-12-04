@@ -9,7 +9,7 @@ app.controller('viewController', function($scope, $log, $modal, profile_factory,
 
 	//get stat
 	record_factory.stat($scope.ro.id).then(function(data){
-		if (data.id) $scope.ro.stat = data;
+	    if(data[0].id); $scope.ro.stat = data[0];
 	});
 
     $scope.access = function(event) {

@@ -23,6 +23,7 @@ class ServiceProducer {
     public function __construct($service_url)
     {
         $this->http = new GuzzleClient($service_url);
+        $this->http->setDefaultOption('verify', false);
     }
     
     function processServices($service_json_file){
@@ -40,14 +41,17 @@ class ServiceProducer {
         catch (ClientErrorResponseException $e) {
             $this->errors = $e->getResponse()->json();
             $this->responseCode = $e->getCode();
+            return;
         }
         catch (ServerErrorResponseException $e){
             $this->errors[] = $e->getResponse()->json();
             $this->responseCode = $e->getCode();
+            return;
         }
         catch (\Exception $e) {
-            $this->errors[] = $e->getResponse()->json();
+            $this->errors[] = $e->getMessage();
             $this->responseCode = $e->getCode();
+            return;
         }
         $this->response = $response->xml()->asXML();
     }

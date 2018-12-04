@@ -177,7 +177,7 @@
 										    <h4 ng-if="name=='q' && prefilters.cq">Search Terms</h4>
 										    <ul class="listy no-bottom" ng-show="isArray(value) && (name!='anzsrc-for' && name!='anzsrc-seo')">
 										        <li ng-repeat="v in value track by $index">
-										            <a href="" ng-click="togglePreFilter(name, v, true)">[[ v  |  formatFacet | truncate:30 ]]<small><i class="fa fa-remove" tip="Remove Item"></i></small> </a>
+										            <a href="" ng-click="togglePreFilter(name, v, true)">[[ v | truncate:30 ]]<small><i class="fa fa-remove" tip="Remove Item"></i></small> </a>
 										        </li>
 										    </ul>
 										    <ul class="listy no-bottom" ng-show="isArray(value)===false && (name!='anzsrc-for' && name!='anzsrc-seo') && value!=''">
