@@ -104,59 +104,60 @@ angular.module('portal-filters', [])
 	.filter('formatFacet', function () {
 		return function (str) {
 			if(typeof(str) == "string") {
+                str = str.toUpperCase();
 				switch (str) {
 					case 'OGC:WMTS':
-					case 'ogc:wmts':
 						return 'OGC Web Map Tile Service';
 						break;
 					case 'OGC:WFS':
-					case 'ogc:wfs':
 						return 'OGC Web Feature Service';
 						break;
 					case 'OGC:WMS':
-					case 'ogc:wms':
 						return 'OGC Web Map Service';
 						break;
 					case 'OGC:WCS':
-					case 'ogc:wcs':
 						return 'OGC Web Coverage Service';
 						break;
 					case 'OGC:WPS':
-					case 'ogc:wps':
 						return 'OGC Web Processing Service';
 						break;
-					case 'landingPage':
+					case 'LANDINGPAGE':
 						return 'Landing Page';
 						break;
-					case 'directDownload':
+					case 'DIRECTDOWNLOAD':
 						return 'Direct Download';
 						break;
-					case 'GeoServer':
+					case 'GEOSERVER':
 						return 'GeoServer';
 						break;
 					case 'THREDDS':
-					case 'thredds':
 						return 'THREDDS';
 						break;
 					case 'THREDDS:WCS':
-					case 'thredds:wcs':
 						return 'THREDDS Web Coverage Service';
 						break;
 					case 'THREDDS:WMS':
-					case 'thredds:wms':
 						return 'THREDDS Web Map Service';
 						break;
-					case 'THREDDS:OPeNDAP':
-					case 'thredds:opendap':
+					case 'THREDDS:OPENDAP':
 						return 'THREDDS OPeNDAP';
 						break;
-					case 'contactCustodian':
+					case 'ESRI:ARCGIS:GPSERVER':
+						return 'ArcGIS GPS Server';
+						break;
+					case 'ESRI:ARCGIS:IMAGESERVER':
+						return 'ArcGIS Image Server';
+						break;
+					case 'ESRI:ARCGIS:MAPSERVER':
+						return 'ArcGIS Map Server';
+						break;
+					case 'CONTACTCUSTODIAN':
 						return 'Contact Custodian';
 						break;
-					case '-type:software':
+					case '-TYPE:SOFTWARE':
 						return 'Data';
 						break;
-					case 'type:software':
+					case 'TYPE:SOFTWARE':
 						return 'Software';
 						break;
 					default:
