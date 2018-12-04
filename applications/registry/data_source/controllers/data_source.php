@@ -539,6 +539,8 @@ class Data_source extends MX_Controller {
 		// task initialisation
 		$importTask = new \ANDS\API\Task\ImportTask();
 
+		// FIXME: $dataSource->harvest->harvest_id is NULL if datasource never had a harvest!!
+
 		$importTask->init([
 			'name' => "Background Task for $dataSource->title($dataSourceID) ServiceDiscovery",
 			'params' => http_build_query([
