@@ -17,8 +17,8 @@
  * jQuery plugin for Grant Widget integration
  * @author Liz Woods <liz.woods@ands.org.au>
  */
-;(function($) {
 
+;(function($) {
 
 	//settings
     var WIDGET_NAME = "ANDS Grant service";
@@ -33,12 +33,12 @@
 		var defaults = {
 		    //location (absolute URL) of the jsonp proxy
 
-           // search_endpoint: 'http://researchdata.ands.org.au/api/v2.0/registry.jsonp/grants/?',
-           // lookup_endpoint: 'http://researchdata.ands.org.au/api/v2.0/registry.jsonp/grants/?',
+           // search_endpoint: 'http://devl.ands.org.au/liz/registry/api/v2.0/registry.jsonp/activities/grant?',
+          //  lookup_endpoint: 'http://devl.ands.org.au/liz/registry/api/v2.0/registry.jsonp/activities/grant?',
             // this has been inserted just for testing purposes
 
-            search_endpoint: 'http://researchdata.ands.org.au/api/v2.0/registry.jsonp/grants/?',
-            lookup_endpoint: 'http://researchdata.ands.org.au/api/v2.0/registry.jsonp/grants/?',
+            search_endpoint: 'http://researchdata.ands.org.au/api/v2.0/registry.jsonp/activities/grant?',
+            lookup_endpoint: 'http://researchdata.ands.org.au/api/v2.0/registry.jsonp/activities/grant?',
             api_key: 'public',
 		    //auto _lookup once init
 		    pre_lookup: false,
@@ -67,7 +67,7 @@
             //allow custom settings for the funders and search fields
             funder_lists: false,
             funders: '',
-            search_fields: '{"search_fields":["title","person","principalInvestigator","institution","description","id"]}',
+            search_fields: '{"search_fields":["title","researcher","principalInvestigator","institution","description","identifier"]}',
 
 		    //custom hooks and handlers
 		    lookup_error_handler: false,
@@ -239,8 +239,9 @@
 	function _lookup(obj, settings){
         $('.'+settings.uid).slideUp()
 		var value = obj.val().replace('http://','');
+        var val = encodeURIComponent(value);
 		$.ajax({
-			url:settings.lookup_endpoint+'api_key='+settings.api_key+'&id='+encodeURIComponent(value)+'&callback=?',
+			url:settings.lookup_endpoint+'api_key='+settings.api_key+'&id='+val+'&callback=?',
 			dataType: 'JSONP',
 			timeout: 1000,
 			success: function(data){
@@ -249,7 +250,7 @@
 					settings.lookup_success_handler(data, obj, settings);
 				}else{
 					_clean(obj, settings);
-					var html = _constructGrantHTML(data.recordData,settings);
+					var html = _constructGrantHTML(data.records,settings);
 					var result_div = $('<div>').addClass(settings.result_success_class).html(html);
 					obj.p.append(result_div);
 					if(settings.post_lookup_success_handler && (typeof settings.post_lookup_success_handler ==='function')){
@@ -297,19 +298,19 @@
                 description = description.replace(/"/g,'&quot;');
                 resStr +="<p>"+description+"</p>";
             }
-            if(obj[0]['identifier'][0])
+            if(obj[0]['identifiers'][0])
             {
                 var i;
-                var identifier = obj[0]['identifier'][0];
+                var identifier = obj[0]['identifiers'][0];
 
 
                 resStr += "<h6>Identifier</h6>";
 
                 resStr +="<p>"+identifier+"</p>";
-                obj[0]['identifier'] = identifier
+                obj[0]['identifiers'] = identifier
             }
 
-            if(obj[0]['funder'] || obj[0]['managingInstitution'] ||obj[0]['researchers'] ||obj[0]['principalInvestigator']  ){
+            if(obj[0]['funder'] || obj[0]['managingInstitution'] ||obj[0]['researchers'] ||obj[0]['principalInvestigator'] ||obj[0]['person']  ){
                 resStr += "<h6>Relationships</h6>";
             }
                 if(obj[0]['funder'] && typeof(obj[0]['funder'])=='string')
@@ -368,6 +369,20 @@
                 resStr +="</p>";
             }
 
+            if(obj[0]['person'] && typeof(obj[0]['person'])=='string')
+            {
+                resStr +="<p>Researchers</p>";
+                resStr +="<p>"+obj[0]['person']+"</p>";
+            }else if (obj[0]['person'] && typeof(obj[0]['person'])=='object'){
+                resStr +="<p>Researchers</p><p>";
+                for(i=0;i<obj[0]['person'].length;i++)
+                {
+                    resStr +=obj[0]['person'][i]+", ";
+                }
+                resStr = resStr.replace(/(^\s*,)|(,\s*$)/g, '');
+                resStr +="</p>";
+            }
+
         }
         else if(obj.length==0)
         {
@@ -389,12 +404,11 @@
         if(obj.length==1)
         {
 
-            if(obj[0]['identifier'])
+            if(obj[0]['identifiers'])
             {
-                //console.log(obj[0]['identifier']);
                 var identifier = '';
-                if(typeof(obj[0]['identifier'])!="string"){
-                    var identifier = obj[0]['identifier'][0];
+                if(typeof(obj[0]['identifiers'])!="string"){
+                    var identifier = obj[0]['identifiers'][0];
                 }
             }
 
@@ -435,21 +449,24 @@
             var matches = '';
 			$('.grant_search_result', p).html('Loading...');
             var html = '';
-            for(i=0;i<thefields['search_fields'].length;i++)
-            {       $.ajax({
-				    url:settings.search_endpoint+'api_key='+settings.api_key+'&'+thefields['search_fields'][i]+"="+encodeURIComponent(query)+funder_list+'&start=0&rows=999&callback=?',
+            // setting up a defferred so that the function doesn't drop through with a O found response before the ajax is returned
+            var dfd = new $.Deferred();
+            for(i=0;i<thefields['search_fields'].length;i++) {
+            	field = thefields['search_fields'][i];
+            	$.ajax({
+				    url:settings.search_endpoint+'api_key='+settings.api_key+'&'+field+"="+encodeURIComponent(query)+funder_list+'&start=0&rows=999&callback=?',
                     indexValue: i,
 				    dataType: 'JSONP',
 				    success: function(data){
 					if(settings.success_handler && (typeof settings.success_handler === 'function')){
 						settings.success_handler(data, obj, settings);
 					}else{
+                        matches += data.numFound
 						if(data.numFound>0){
-                            matches += data.numFound
                             html += '<a class="show_list" id="'+this.indexValue+settings._wid+'"> + </a>'+data.numFound+" found in <i>"+ thefields['search_fields'][this.indexValue]+"</i><br />";
 							html +='<div id="div_'+this.indexValue+settings._wid+'" class="listdiv" style="display:none"><ul>';
 
-							$.each(data.recordData, function(){
+							$.each(data.records, function(){
  								var titleStr = "";
                                 var obj = new Array(this);
                                 var identifier = _getIdentifier(obj,settings);
@@ -467,9 +484,7 @@
 						obj.val($(this).attr('grant-id'));
 						_lookup(obj, settings);
 						if(settings.auto_close_search) $('#'+settings._wid).slideUp();
-
                         $(document.body).scrollTop($('#return'+settings._wid).offset().top -100);
-
 					});
 					if(settings.tooltip){
 						$('.preview').each(function(){
@@ -495,6 +510,7 @@
     							});
     					});
 					}
+
 				},
 				error: function(xhr){
 					if(settings.error_handler && (typeof settings.error_handler === 'function')){
@@ -504,11 +520,14 @@
 					}
 				}
 
+
 			});
-                if(matches == '0')
-                {
-                    $('.grant_search_result', p).html(settings.nohits_msg);
-                }
+
+            }
+            return dfd.promise();
+            if(matches == 0 && i == thefields['search_fields'].length)
+            {
+                $('.grant_search_result', p).html(settings.nohits_msg);
             }
         }
 
@@ -590,10 +609,12 @@
         if($('#div_'+theUl).css('display')=='none')
         {
             $('#'+theUl).html(' - ')
+            $('#div_'+theUl).show();
         }else{
             $('#'+theUl).html(' + ')
+            $('#div_'+theUl).hide();
         }
-        $('#div_'+theUl).show();
+
     });
 
 })( jQuery );
