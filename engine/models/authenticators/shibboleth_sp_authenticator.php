@@ -71,7 +71,7 @@ class Shibboleth_sp_authenticator extends Authenticator {
                 if(isset($_SERVER['persistent-id'])) $message .= 'With the persistent ID of: '.$_SERVER['persistent-id'].'.';
                 if(isset($_SERVER['shib-shared-token'])) $message .= 'With the shared token of: '.$_SERVER['shib-shared-token'].'.';
                 if(isset($_SERVER['mail'])) $message .= 'With the email of: '.$email.'.';
-                $to = get_config_item('site_admin_email');
+                $to = \ANDS\Util\config::get('app.site_admin_email');
                 $headers  = 'MIME-Version: 1.0' . "\r\n";
                 $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
                 mail($to, $subject, $message, $headers);

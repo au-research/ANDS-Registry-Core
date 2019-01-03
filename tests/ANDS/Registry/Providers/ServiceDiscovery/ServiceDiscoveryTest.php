@@ -30,7 +30,7 @@ class ServiceDiscoveryTest extends \RegistryTestClass
         $this->assertTrue(\ANDS\Cache\Cache::file()->has('testLinksAODN'));
         $links = \ANDS\Cache\Cache::file()->get('testLinksAODN');
 
-        $service_discovery_service_url = get_config_item('SERVICES_DISCOVERY_SERVICE_URL');
+        $service_discovery_service_url = \ANDS\Util\config::get('app.services_registry_url');
         $serviceProduce = new ServiceProducer($service_discovery_service_url);
         $serviceProduce->processServices(json_encode($links));
         $serviceCount = $serviceProduce->getServiceCount();

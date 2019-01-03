@@ -20,9 +20,9 @@ if(file_exists('assets/shared/dashboard_news/dashboard.html')){
 }
 
 
-if(get_config_item('environment_name'))
+if(\ANDS\Util\config::get('app.environment_name'))
 {
-  $site_title = get_config_item('environment_name').' Home';
+  $site_title = \ANDS\Util\config::get('app.environment_name').' Home';
 }
 else
 {
