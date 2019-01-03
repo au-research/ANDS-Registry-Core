@@ -59,7 +59,7 @@ class Config
      *
      * @param $name
      */
-    public static function load($name)
+    protected static function load($name)
     {
         $configuration = include(dirname(__DIR__) . "/../../config/{$name}.php");
         self::$data[$name] = $configuration;
