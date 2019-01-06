@@ -17,7 +17,7 @@ class Core_extension extends ExtensionBase
 		// Initialise the core attributes (these are the attributes from the
 		// registry_objects table as opposed to others in _attributes)
 		$query = $this->db->join("`registry_objects` `ro`", 'ro.registry_object_id = ra.registry_object_id')
-							->get_where("`registry_object_attributes` `ra`", array('ra.registry_object_id' => $this->id));
+							->get_where("`registry_object_attributes` `ra`", array('ra.registry_object_id' => $this->id,'ra.attribute !=' => 'type' ));
 		//echo $this->id;
         //echo "hello world";
 
