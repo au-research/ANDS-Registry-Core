@@ -107,7 +107,7 @@ class BaseChecker:
         Arguments:
         scheme -- The URL scheme, e.g., either "http" or "https".
         host -- The host name, or IP address.
-        port -- The port number, or None to use the default.
+        port -- The port number, as an int, or None to use the default.
         path -- The rest of the URL path. It must begin with a slash.
         Return value:
         The resulting absolute URL.
@@ -115,7 +115,7 @@ class BaseChecker:
         if path.startswith('http'):
             return path
         if port:
-            return scheme + "://" + host + ":" + port + path
+            return scheme + "://" + host + ":" + str(port) + path
         else:
             return scheme + "://" + host + path
 
