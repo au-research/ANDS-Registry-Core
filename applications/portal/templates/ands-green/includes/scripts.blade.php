@@ -35,21 +35,7 @@
 
 <!-- Include the angularJS library since every page will needs it for the search script -->
 @if(is_dev())
-    <script src="{{asset_url('lib/angular/angular.min.js', 'core')}}"></script>
-    <script src="{{asset_url('lib/angular-route/angular-route.min.js', 'core')}}"></script>
-    <script src="{{asset_url('lib/angular-sanitize/angular-sanitize.min.js', 'core')}}"></script>
-    <script src="{{asset_url('lib/angular-animate/angular-animate.min.js', 'core')}}"></script>
-    <script src="{{asset_url('lib/angular-ui-utils/ui-utils.min.js', 'core')}}"></script>
-    <script src="{{asset_url('lib/angular-bootstrap/ui-bootstrap.min.js', 'core')}}"></script>
-    <script src="{{asset_url('lib/angular-bootstrap/ui-bootstrap-tpls.min.js', 'core')}}"></script>
-    <script src="{{asset_url('lib/angular-loading-bar/build/loading-bar.min.js', 'core')}}"></script>
-
-    <script src="{{ asset_url('ands-green/js/d3.min.js', 'templates') }}"></script>
-    <script src="{{ asset_url('ands-green/js/neo4jd3/js/neo4jd3.js', 'templates') }}"></script>
-
-    <script src="{{asset_url('ands-green/js/packages.min.js','templates')}}"></script>
-    <script src="{{asset_url('lib/qtip2/jquery.qtip.js', 'core')}}"></script>
-    <script src="{{asset_url('js/scripts.js', 'core')}}"></script>
+    <script src="{{ asset_url('js/lib.js','core') }}"></script>
 @else
     <script src="{{ asset_url('js/lib.min.js','core') }}"></script>
 @endif
@@ -78,18 +64,7 @@
 @endif
 
 @if(is_dev())
-    <script src="{{asset_url('lib/lodash/dist/lodash.min.js', 'core')}}"></script>
-    <script src="{{asset_url('lib/angular-google-maps/dist/angular-google-maps.js', 'core')}}"></script>
-    <script src="{{asset_url('lib/angular-lz-string/angular-lz-string.js', 'core')}}"></script>
-    <script src="{{asset_url('registry_object/js/record_components.js', 'full_base_path')}}"></script>
-    <script src="{{asset_url('profile/js/profile_components.js', 'full_base_path')}}"></script>
-    <script src="{{asset_url('registry_object/js/search.js', 'full_base_path')}}"></script>
-    <script src="{{asset_url('registry_object/js/portal-filters.js', 'full_base_path')}}"></script>
-    <script src="{{asset_url('registry_object/js/query_builder.js', 'full_base_path')}}"></script>
-    <script src="{{asset_url('registry_object/js/portal-directives.js', 'full_base_path')}}"></script>
-    <script src="{{asset_url('registry_object/js/vocab-factory.js', 'full_base_path')}}"></script>
-    <script src="{{asset_url('registry_object/js/search_controller.js', 'full_base_path')}}"></script>
-    <script src="{{asset_url('registry_object/js/search-factory.js', 'full_base_path')}}"></script>
+    <script src="{{ asset_url('js/portal_lib.js','core') }}"></script>
 @else
     <script src="{{ asset_url('js/portal_lib.js', 'core') }}"></script>
 @endif
