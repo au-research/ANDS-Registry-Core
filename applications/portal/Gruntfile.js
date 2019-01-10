@@ -3,8 +3,7 @@ module.exports = function (grunt) {
   //configuration goes here
   var yeomanConfig = {
     assets: 'core/assets',
-    templates: 'templates',
-    vocab_asset: 'vocabs/assets'
+    templates: 'templates'
   }
 
   grunt.initConfig({
@@ -100,24 +99,40 @@ module.exports = function (grunt) {
     },
     watch: {
       styles: {
-        files: ['**/*.less', '**/*.css'],
-        tasks: ['less', 'concat:styles']
+        files: ['**/*.less', '**/*.css', '!core/assets/dist/*.css'],
+        tasks: ['less', 'concat:styles', 'clean', 'assets_versioning']
       },
       scripts: {
         files: [
           'registry_object/**/*.js',
-          'profile/**/*.js'
+          'profile/**/*.js',
+          'core/assets/js/*.js',
+          '!core/assets/dist/*.js'
         ],
-        tasks: ['concat:portal_lib']
+        tasks: ['concat:lib', 'concat:portal_lib', 'clean', 'assets_versioning']
+      }
+    },
+    clean: ['<%=yeoman.assets %>/dist'],
+    assets_versioning: {
+      css: {
+        options: {
+          tag: 'hash',
+          versionsMapFile: '<%=yeoman.assets %>/dist/manifest.json',
+          versionsMapTrimPath: 'core/assets/dist/'
+        },
+        files: {
+          '<%=yeoman.assets %>/dist/lib.js': ['<%=yeoman.assets %>/js/lib.js'],
+          '<%=yeoman.assets %>/dist/portal_lib.js': ['<%=yeoman.assets %>/js/portal_lib.js'],
+          '<%=yeoman.assets %>/dist/portal.combine.css': ['<%= yeoman.assets %>/css/portal.combine.css']
+        }
       }
     }
   })
   require('load-grunt-tasks')(grunt)
-  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-watch')
+  grunt.loadNpmTasks('grunt-assets-versioning')
 
-
-  grunt.registerTask('default', ['less', 'concat'])
+  grunt.registerTask('default', ['less', 'concat', 'clean', 'assets_versioning'])
   grunt.registerTask('dev', ['default'])
   grunt.registerTask('prod', ['default', 'uglify'])
-
 }

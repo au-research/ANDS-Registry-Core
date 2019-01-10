@@ -2,6 +2,26 @@
 
 use MinhD\SolrClient\SolrClient;
 
+function dist_url($path)
+{
+    $manifestLocation = __DIR__. '/../assets/dist/manifest.json';
+
+    if (!file_exists($manifestLocation)) {
+        // TODO: manifest file cannot be found, log problem
+        return "";
+    }
+
+    $manifest = json_decode(file_get_contents($manifestLocation), true);
+    foreach ($manifest as $revision) {
+        if ($revision['originalPath'] === $path) {
+            return asset_url($revision['versionedPath'], 'dist');
+        }
+    }
+
+    // TODO $path not found in manifest, log problem
+    return "";
+}
+
 function subjectSortResolved($a, $b) {
     if ($a['resolved'] == $b['resolved']) {
         return 0;

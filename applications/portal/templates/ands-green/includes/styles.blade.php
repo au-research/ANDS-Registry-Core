@@ -1,2 +1,2 @@
-<link rel="stylesheet" type="text/css" href="{{asset_url('css/portal.combine.css', 'core')}}" media="screen">
-<link rel="stylesheet" type="text/css" href="{{asset_url('css/print.css', 'core')}}" media="print">
+<link rel="stylesheet" type="text/css" href="{{ dist_url('portal.combine.css') }}" media="screen">
+<link rel="stylesheet" type="text/css" href="{{ asset_url('css/print.css', 'core') }}" media="print">
