@@ -30,14 +30,12 @@
           })();
         </script>
     @endif
-
 @endif
 
-<!-- Include the angularJS library since every page will needs it for the search script -->
 @if(is_dev())
-    <script src="{{ asset_url('js/lib.js','core') }}"></script>
+    <script src="{{ dist_url('lib.js') }}"></script>
 @else
-    <script src="{{ asset_url('js/lib.min.js','core') }}"></script>
+    <script src="{{ dist_url('lib.js') }}"></script>
 @endif
 
 @if(isset($lib))
@@ -64,9 +62,9 @@
 @endif
 
 @if(is_dev())
-    <script src="{{ asset_url('js/portal_lib.js','core') }}"></script>
+    <script src="{{ dist_url('portal_lib.js') }}"></script>
 @else
-    <script src="{{ asset_url('js/portal_lib.js', 'core') }}"></script>
+    <script src="{{ dist_url('portal_lib.js') }}"></script>
 @endif
 
 <script type="text/javascript" src="https://jira.ands.org.au/s/d41d8cd98f00b204e9800998ecf8427e/en_AUc8oc9c-1988229788/6265/77/1.4.7/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=d9610dcf"></script>
