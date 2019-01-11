@@ -48,12 +48,10 @@
     "@bower_components/jquery": "jquery/jquery-dist#2.1.3",
     "@bower_components/jquery-colorbox": "jackmoore/colorbox#^1.5.14",
     "@bower_components/jquery-ui": "components/jqueryui#~1.11.2",
-    "@bower_components/less.js": "less/less.js#~2.2.0",
     "@bower_components/lodash": "lodash/lodash#4.2.0",
     "@bower_components/mustache": "janl/mustache.js#~1.0.0",
     "@bower_components/qtip2": "qTip2/bower#~2.2.1",
-    "@bower_components/rangy": "timdown/rangy-release#^1.2.0",
-    "mustache": "1.0.0"
+    "@bower_components/rangy": "timdown/rangy-release#^1.2.0"
   },
   "engines": {
     "yarn": ">= 1.0.0"

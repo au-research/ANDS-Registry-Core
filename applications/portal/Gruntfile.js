@@ -27,9 +27,12 @@ module.exports = function (grunt) {
           '<%= yeoman.templates %>/ands-green/assets/css/swatch-black.css',
           '<%= yeoman.templates %>/ands-green/assets/css/swatch-ands-green.css',
           '<%= yeoman.templates %>/ands-green/assets/css/fonts.min.css',
-          '<%= yeoman.assets %>/lib/dynatree/src/skin/ui.dynatree.css',
-          '<%= yeoman.assets %>/lib/qtip2/jquery.qtip.css',
+
+          '<%= yeoman.assets %>/vendor/dynatree/src/skin/ui.dynatree.css',
+          '<%= yeoman.assets %>/vendor/qtip2/jquery.qtip.css',
+
           '<%= yeoman.assets %>/lib/angular-loading-bar/build/loading-bar.min.css',
+
           '<%= yeoman.templates %>/ands-green/js/neo4jd3/css/font-awesome.min.css',
           '<%= yeoman.templates %>/ands-green/js/neo4jd3/css/neo4jd3.css',
           '<%= yeoman.templates %>/ands-green/assets/css/ands.css',
@@ -41,8 +44,8 @@ module.exports = function (grunt) {
         options: {separator: ';'},
         src: [
           '<%=yeoman.templates %>/ands-green/assets/js/packages.min.js',
-          '<%=yeoman.assets %>/lib/qtip2/jquery.qtip.js',
-          '<%=yeoman.assets %>/lib/mustache/mustache.min.js',
+          '<%=yeoman.assets %>/vendor/qtip2/jquery.qtip.js',
+          '<%=yeoman.assets %>/vendor/mustache/mustache.min.js',
           '<%=yeoman.assets %>/lib/jquery-colorbox/jquery.colorbox-min.js',
 
           '<%=yeoman.assets %>/lib/angular/angular.min.js',
@@ -56,7 +59,7 @@ module.exports = function (grunt) {
           '<%=yeoman.assets %>/lib/angular-google-maps/dist/angular-google-maps.js',
           '<%=yeoman.assets %>/lib/angular-lz-string/angular-lz-string.js',
 
-          '<%=yeoman.assets %>/lib/lodash/dist/lodash.min.js',
+          '<%=yeoman.assets %>/vendor/lodash/dist/lodash.min.js',
           '<%=yeoman.templates %>/ands-green/assets/js/d3.min.js',
           '<%=yeoman.templates %>/ands-green/assets/js/neo4jd3/js/neo4jd3.js'
         ],
