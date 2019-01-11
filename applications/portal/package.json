@@ -16,17 +16,17 @@
     "url": "https://github.com/au-research/ANDS-Registry-Core/issues"
   },
   "devDependencies": {
-    "grunt": "~0.4.1",
+    "grunt": "1.0.3",
     "grunt-assets-versioning": "^1.0.6",
-    "grunt-concurrent": "~0.3.1",
+    "grunt-concurrent": "2.3.1",
     "grunt-contrib-clean": "^2.0.0",
-    "grunt-contrib-compass": "~0.5.0",
-    "grunt-contrib-compress": "~0.5.2",
-    "grunt-contrib-concat": "~0.3.0",
-    "grunt-contrib-cssmin": "~0.6.2",
-    "grunt-contrib-less": "~0.8.1",
-    "grunt-contrib-uglify": "~0.2.4",
-    "grunt-contrib-watch": "~0.5.3",
-    "load-grunt-tasks": "~0.1.0"
+    "grunt-contrib-compass": "1.1.1",
+    "grunt-contrib-compress": "1.4.3",
+    "grunt-contrib-concat": "1.0.1",
+    "grunt-contrib-cssmin": "3.0.0",
+    "grunt-contrib-less": "2.0.0",
+    "grunt-contrib-uglify": "4.0.0",
+    "grunt-contrib-watch": "1.1.0",
+    "load-grunt-tasks": "4.0.0"
   }
 }

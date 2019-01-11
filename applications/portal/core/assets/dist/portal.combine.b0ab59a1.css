@@ -21373,10 +21373,10 @@ h1.bordered:after{
   font-style: 'italic';
 }
 .project {
-  background-color: #ffffff;
+  background-color: white;
 }
 .grant {
-  background-color: #ffffff;
+  background-color: white;
 }
 .icon-portal {
   color: #eb7700 !important;
@@ -21614,7 +21614,7 @@ div.vertical-center span.vertical-center {
   position: relative;
   top: 50%;
   font-size: 25px;
-  color: #cccccc;
+  color: #ccc;
 }
 .logo-place {
   margin: 0 auto;
@@ -21781,7 +21781,7 @@ ul.listy li a small {
   color: white;
 }
 .search-section a:hover {
-  color: #cccccc;
+  color: #ccc;
 }
 .search-section h1 {
   color: white;
