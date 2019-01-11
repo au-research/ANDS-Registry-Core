@@ -41,22 +41,22 @@
 @if(isset($lib))
 	@foreach($lib as $l)
 		@if($l=='jquery-ui')
-			<script type="text/javascript" src="{{asset_url('lib/jquery-ui/jquery-ui.js', 'core')}}"></script>
+			<script type="text/javascript" src="{{asset_url('vendor/jquery-ui/jquery-ui.js', 'core')}}"></script>
 		@elseif($l=='dynatree')
-			<script type="text/javascript" src="{{asset_url('lib/dynatree/dist/jquery.dynatree.js', 'core')}}"></script>
+			<script type="text/javascript" src="{{asset_url('vendor/dynatree/dist/jquery.dynatree.js', 'core')}}"></script>
         @elseif($l=='textAngular')
-        	<link rel='stylesheet' href="{{asset_url('lib/textAngular/src/textAngular.css', 'core')}}">
-            <script src="{{asset_url('lib/textAngular/dist/textAngular-rangy.min.js', 'core')}}"></script>
-            <script src="{{asset_url('lib/textAngular/dist/textAngular-sanitize.min.js', 'core')}}"></script>
-            <script src="{{asset_url('lib/textAngular/dist/textAngular.min.js', 'core')}}"></script>
+        	<link rel='stylesheet' href="{{asset_url('vendor/textAngular/src/textAngular.css', 'core')}}">
+            <script src="{{asset_url('vendor/textAngular/dist/textAngular-rangy.min.js', 'core')}}"></script>
+            <script src="{{asset_url('vendor/textAngular/dist/textAngular-sanitize.min.js', 'core')}}"></script>
+            <script src="{{asset_url('vendor/textAngular/dist/textAngular.min.js', 'core')}}"></script>
         @elseif($l=='colorbox')
-            <script src="{{asset_url('lib/colorbox/jquery.colorbox-min.js', 'core')}}"></script>
+            <script src="{{asset_url('vendor/colorbox/jquery.colorbox-min.js', 'core')}}"></script>
         @elseif($l=='mustache')
-            <script src="{{asset_url('lib/mustache/mustache.min.js', 'core')}}"></script>
+            <script src="{{asset_url('vendor/mustache/mustache.min.js', 'core')}}"></script>
         @elseif($l=='map')
             <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?{{ \ANDS\Util\Config::get('app.google_api_key') ? 'key='.\ANDS\Util\Config::get('app.google_api_key') : ''  }}&libraries=drawing&amp;sensor=false"></script>
         @elseif($l=='ngupload')
-            <script type="text/javascript" src="{{asset_url('lib/ng-file-upload/angular-file-upload-all.min.js','core')}}"></script>
+            <script type="text/javascript" src="{{asset_url('vendor/ng-file-upload/angular-file-upload-all.min.js','core')}}"></script>
         @endif
 	@endforeach
 @endif
@@ -69,29 +69,9 @@
 
 <script type="text/javascript" src="https://jira.ands.org.au/s/d41d8cd98f00b204e9800998ecf8427e/en_AUc8oc9c-1988229788/6265/77/1.4.7/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=d9610dcf"></script>
 
-<!--
-    Minh:
-    Fix for the lodash module that the angular-google-maps: "~2.0.12" component hasn't update yet.
-    Basically lodash >= 4.2.0 renamed the contains function into includes
-    this is for backward compatibility
--->
 <script>
     _.contains = _.includes;
 </script>
-
-@if(is_dev())
-    <!-- LESS.JS for development only-->
-    <script>
-      less = {
-        env: "development",
-        async: false,
-        fileAsync: false,
-        poll: 1000,
-        logLevel:0
-      };
-    </script>
-    <script src="{{asset_url('lib/less.js/dist/less.min.js', 'core')}}"></script>
-@endif
 
 @if(isset($scripts))
 	@foreach($scripts as $script)
