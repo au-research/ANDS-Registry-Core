@@ -40,6 +40,9 @@ module.exports = function (grunt) {
       lib: {
         options: {separator: ';'},
         src: [
+          '<%=yeoman.templates %>/ands-green/assets/js/packages.min.js',
+          '<%=yeoman.assets %>/lib/qtip2/jquery.qtip.js',
+
           '<%=yeoman.assets %>/lib/angular/angular.min.js',
           '<%=yeoman.assets %>/lib/angular-route/angular-route.min.js',
           '<%=yeoman.assets %>/lib/angular-sanitize/angular-sanitize.min.js',
@@ -48,22 +51,19 @@ module.exports = function (grunt) {
           '<%=yeoman.assets %>/lib/angular-bootstrap/ui-bootstrap.min.js',
           '<%=yeoman.assets %>/lib/angular-bootstrap/ui-bootstrap-tpls.min.js',
           '<%=yeoman.assets %>/lib/angular-loading-bar/build/loading-bar.min.js',
+          '<%=yeoman.assets %>/lib/angular-google-maps/dist/angular-google-maps.js',
+          '<%=yeoman.assets %>/lib/angular-lz-string/angular-lz-string.js',
 
+          '<%=yeoman.assets %>/lib/lodash/dist/lodash.min.js',
           '<%=yeoman.templates %>/ands-green/assets/js/d3.min.js',
-          '<%=yeoman.templates %>/ands-green/assets/js/neo4jd3/js/neo4jd3.js',
-
-          '<%=yeoman.templates %>/ands-green/assets/js/packages.min.js',
-          '<%=yeoman.assets %>/lib/qtip2/jquery.qtip.js',
-          '<%=yeoman.assets %>/js/scripts.js'
+          '<%=yeoman.templates %>/ands-green/assets/js/neo4jd3/js/neo4jd3.js'
         ],
         dest: '<%=yeoman.assets %>/js/lib.js'
       },
       portal_lib: {
         options: {separator: ';'},
         src: [
-          '<%=yeoman.assets %>/lib/lodash/dist/lodash.min.js',
-          '<%=yeoman.assets %>/lib/angular-google-maps/dist/angular-google-maps.js',
-          '<%=yeoman.assets %>/lib/angular-lz-string/angular-lz-string.js',
+          '<%=yeoman.assets %>/js/scripts.js',
           'registry_object/assets/js/record_components.js',
           'profile/assets/js/profile_components.js',
           'registry_object/assets/js/search.js',
