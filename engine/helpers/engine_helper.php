@@ -7,8 +7,29 @@ use Symfony\Component\Filesystem\Filesystem;
 
 function get_config_item($name) {
 
-    return null;
 
+    if (env($name)) {
+        return env($name);
+    }
+	$_ci =& get_instance();
+	if($_ci->config->item($name)) {
+		return $_ci->config->item($name);
+	} else {
+		//it's in the database table
+		$result = $_ci->db->get_where('configs', array('key'=>$name));
+		if($result && $result->num_rows() > 0) {
+			$result_array = $result->result_array();
+			$result_item = $result_array[0];
+			if($result_item['type']=='json') {
+				$string = trim(preg_replace('/\s+/', ' ', $result_item['value']));
+				return json_decode($string, true);
+			} else {
+				return $result_item['value'];
+			}
+		} else {
+			return false;
+		}
+	}
 }
 
 function get_global_config_item($name) {
