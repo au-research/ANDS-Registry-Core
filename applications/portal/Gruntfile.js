@@ -46,7 +46,7 @@ module.exports = function (grunt) {
           '<%=yeoman.templates %>/ands-green/assets/js/packages.min.js',
           '<%=yeoman.assets %>/vendor/qtip2/jquery.qtip.js',
           '<%=yeoman.assets %>/vendor/mustache/mustache.min.js',
-          '<%=yeoman.assets %>/lib/jquery-colorbox/jquery.colorbox-min.js',
+          '<%=yeoman.assets %>/vendor/colorbox/jquery.colorbox-min.js',
 
           '<%=yeoman.assets %>/lib/angular/angular.min.js',
           '<%=yeoman.assets %>/lib/angular-route/angular-route.min.js',
