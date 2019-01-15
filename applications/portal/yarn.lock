@@ -82,10 +82,6 @@
   version "1.0.0"
   resolved "https://codeload.github.com/janl/mustache.js/tar.gz/2ba7481d41e356869dc2db695ccc4a0cf3ce38cd"
 
-"@bower_components/qtip2@qTip2/bower#~2.2.1":
-  version "0.0.0"
-  resolved "https://codeload.github.com/qTip2/bower/tar.gz/2f67997b5449bb4dea568e82966fb35dc11fb84e"
-
 "@bower_components/rangy@timdown/rangy-release#^1.2.0":
   version "0.0.0"
   resolved "https://codeload.github.com/timdown/rangy-release/tar.gz/a9518d3d6142b7fe58fd47ddd6a1068f7eb52a0b"
