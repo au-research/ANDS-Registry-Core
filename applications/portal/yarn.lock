@@ -60,12 +60,6 @@
   dependencies:
     ev-emitter "^1.0.0"
 
-"@bower_components/jquery-colorbox@jackmoore/colorbox#^1.5.14":
-  version "1.6.4"
-  resolved "https://codeload.github.com/jackmoore/colorbox/tar.gz/bac78120c6ca9e63370cc317ab6f400129cd6608"
-  dependencies:
-    jquery ">=1.3.2"
-
 "@bower_components/jquery-ui@components/jqueryui#~1.11.2":
   version "1.11.4"
   resolved "https://codeload.github.com/components/jqueryui/tar.gz/c34f8dbf3ba57b3784b93f26119f436c0e8288e1"
@@ -1017,10 +1011,6 @@ isexe@^2.0.0:
 isstream@~0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/isstream/-/isstream-0.1.2.tgz#47e63f7af55afa6f92e1500e690eb8b8529c099a"
-
-jquery@>=1.3.2:
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.3.1.tgz#958ce29e81c9790f31be7792df5d4d95fc57fbca"
 
 js-yaml@~3.5.2:
   version "3.5.5"
