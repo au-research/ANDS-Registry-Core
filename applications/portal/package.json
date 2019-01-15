@@ -50,7 +50,6 @@
     "@bower_components/jquery-ui": "components/jqueryui#~1.11.2",
     "@bower_components/lodash": "lodash/lodash#4.2.0",
     "@bower_components/mustache": "janl/mustache.js#~1.0.0",
-    "@bower_components/qtip2": "qTip2/bower#~2.2.1",
     "@bower_components/rangy": "timdown/rangy-release#^1.2.0"
   },
   "engines": {
