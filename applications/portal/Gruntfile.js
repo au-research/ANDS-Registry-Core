@@ -131,13 +131,24 @@ module.exports = function (grunt) {
           '<%=yeoman.assets %>/dist/portal.combine.css': ['<%= yeoman.assets %>/css/portal.combine.css']
         }
       }
+    },
+    copy: {
+      main: {
+        files: [
+          {
+            expand:true,
+            cwd: '<%=yeoman.assets %>/css/',
+            src: '*.gif',
+            dest: '<%=yeoman.assets %>/dist/',
+            filter: 'isFile'
+          }
+        ]
+      }
     }
   })
   require('load-grunt-tasks')(grunt)
-  grunt.loadNpmTasks('grunt-contrib-watch')
-  grunt.loadNpmTasks('grunt-assets-versioning')
 
-  grunt.registerTask('default', ['less', 'concat', 'clean', 'assets_versioning'])
+  grunt.registerTask('default', ['less', 'concat', 'clean', 'assets_versioning', 'copy'])
   grunt.registerTask('dev', ['default'])
   grunt.registerTask('prod', ['default', 'uglify'])
 }
