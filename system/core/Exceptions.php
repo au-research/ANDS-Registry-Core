@@ -167,7 +167,9 @@ class CI_Exceptions {
 	 */
 	function show_php_error($severity, $message, $filepath, $line)
 	{
-		$severity = ( ! isset($this->levels[$severity])) ? $severity : $this->levels[$severity];
+
+	    //dd($filepath);
+	    $severity = ( ! isset($this->levels[$severity])) ? $severity : $this->levels[$severity];
 
 		$filepath = str_replace("\\", "/", $filepath);
 
@@ -183,7 +185,7 @@ class CI_Exceptions {
 			ob_end_flush();
 		}
 		ob_start();
-		$buffer = ob_get_contents();
+		$buffer = ob_get_clean();
 		throw new Exception ($buffer);
 		ob_end_clean();
 	}

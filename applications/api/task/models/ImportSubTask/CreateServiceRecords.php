@@ -29,7 +29,7 @@ class CreateServiceRecords extends ImportSubTask
             $this->log("No Services to generate");
             return;
         }
-        $service_discovery_service_url = get_config_item('SERVICES_DISCOVERY_SERVICE_URL');
+        $service_discovery_service_url = \ANDS\Util\config::get('app.services_registry_url');
         $serviceProduce = new ServiceProducer($service_discovery_service_url);
 
         // Generate the services in the right format
@@ -43,7 +43,7 @@ class CreateServiceRecords extends ImportSubTask
         }
         $this->log("Generated $serviceCount rifcs service records");
 
-        $harvestedContentDir = get_config_item('harvested_contents_path');
+        $harvestedContentDir = \ANDS\Util\config::get('app.harvested_contents_path');
 
         $harvestedContentDir = rtrim($harvestedContentDir, '/') . '/';
         $batchID = $this->parent()->getTaskData("batchID");

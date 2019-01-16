@@ -75,8 +75,8 @@
         // Each object has keys "id", "label", and "mode".
         // For id other than "local", there will also be
         // keys "resolvingService" and "uriprefix".
-        // The data comes from the top-level global_config.php's
-        // $ENV['vocab_resolving_services'] setting.
+        // The data comes from the config/vocab.php's
+        // 'vocab_resolving_services' setting.
         // For legacy reasons, the resolvingService setting
         // typically ends with a slash, but the vocab widget
         // requires a repository setting _without_ a trailing
