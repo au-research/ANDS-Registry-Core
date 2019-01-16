@@ -36,6 +36,7 @@ class ISO19115_3Provider implements RegistryContentProvider
             'hash' => md5($iso),
             'schema' => static::$schema,
             'registry_object_id' => $record->id,
+            'registry_object_group' => $record->group,
             'registry_object_key' => $record->key,
             'registry_object_data_source_id' => $record->data_source_id,
             'updated_at' => date("Y-m-d G:i:s")

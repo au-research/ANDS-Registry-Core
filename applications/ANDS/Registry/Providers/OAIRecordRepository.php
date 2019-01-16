@@ -26,6 +26,7 @@ use ANDS\OAI\Interfaces\OAIRepository;
 use ANDS\OAI\Exception\OAIException;
 use ANDS\OAI\Record;
 use ANDS\OAI\Set;
+use ANDS\RegistryObject\AltSchemaVersion;
 
 class OAIRecordRepository implements OAIRepository
 {
@@ -51,6 +52,11 @@ class OAIRecordRepository implements OAIRepository
             'metadataPrefix' => 'dci',
             'schema' => 'https://clarivate.com/products/web-of-science/web-science-form/data-citation-index/',
             'metadataNamespace' => 'https://clarivate.com/products/web-of-science/web-science-form/data-citation-index/'
+        ],
+        "iso19115-3" => [
+            'metadataPrefix' => 'iso19115-3',
+            'schema' => 'http://standards.iso.org/iso/19115/-3/mdb/1.0/mdb.xsd',
+            'metadataNamespace' => 'http://standards.iso.org/iso/19115/-3/mdb/1.0'
         ]
     ];
 
@@ -141,6 +147,10 @@ class OAIRecordRepository implements OAIRepository
 
         if ($metadataPrefix == "dci") {
             return $this->listDCIRecords($options);
+        }
+
+        if ($metadataPrefix == 'iso19115-3'){
+            return $this->listISO19115_3Records($options);
         }
 
         $registryObjects = $this->getRegistryObjects($options);
@@ -685,6 +695,115 @@ class OAIRecordRepository implements OAIRepository
     }
 
     private function addDCISets(Record $oaiRecord, DCI $record)
+    {
+        if ($dataSource = DataSource::find($record->registry_object_data_source_id)) {
+            $oaiRecord
+                ->addSet(new Set("datasource:". $dataSource->id))
+                ->addSet(new Set("datasource:". $this->nameBackwardCompat($dataSource->title)));
+        }
+
+        if ($group = Group::where('title', $record->registry_object_group)->first()) {
+            $oaiRecord
+                ->addSet(new Set("group:".$group->id))
+                ->addSet(new Set("group:".$this->nameBackwardCompat($group->title)));
+            if ($this->groupNameBWCompat($group->title) != $this->nameBackwardCompat($group->title)) {
+                $oaiRecord->addSet(new Set("group:" . $this->groupNameBWCompat($group->title)));
+            }
+        }
+
+        return $oaiRecord;
+    }
+
+
+    private function listISO19115_3Records($options){
+        $records = $this->getISO19115_3Records($options);
+
+        $result = [];
+        foreach ($records['records'] as $record) {
+
+            $oaiRecord = new Record(
+                $this->oaiIdentifierPrefix.$record->registryObject->id,
+                Carbon::parse($record->updated_at)->setTimezone('UTC')->format($this->getDateFormat())
+            );
+            $oaiRecord = $this->addAltSchemaVersionsSets($oaiRecord, $record);
+            $oaiRecord->setMetadata($record->data);
+
+            $result[] = $oaiRecord;
+        }
+
+        return [
+            'total' => $records['total'],
+            'records' => $result,
+            'limit' => $options['limit'],
+            'offset' => $options['offset']
+        ];
+    }
+
+    private function getISO19115_3Records($options)
+    {
+        $records = AltSchemaVersion::where('schema', 'iso19115-3')->limit($options['limit'])->offset($options['offset']);
+
+        // set
+        if (array_key_exists('set', $options) && $options['set']) {
+            $set = $options['set'];
+            $set = urldecode($set);
+            $set = explode(':', $set);
+
+            $opt = $set[0];
+            $value = $set[1];
+
+            switch ($opt) {
+                case "datasource":
+                    if ($value = $this->getDataSourceID($value)) {
+                        $records = $records->where('registry_object_data_source_id', $value);
+                    } else {
+                        throw new NoRecordsMatch();
+                    }
+                    break;
+                case "group":
+                    if ($value = $this->getGroupName($value)) {
+                        $records = $records->where('registry_object_group', $value);
+                    } else {
+                        throw new NoRecordsMatch();
+                    }
+                    break;
+            }
+        }
+
+        // from
+        if (array_key_exists('from', $options) && $options['from']) {
+            $records = $records->where(
+                'updated_at', '>=',
+                DatesProvider::parseUTCToLocal($options['from'])->toDateTimeString()
+            );
+        }
+
+        // until
+        if (array_key_exists('until', $options)) {
+            $until = Carbon::parse($options['until'], 'UTC');
+            $until = $until->isStartOfDay() ? $until->addDay(1) : $until;
+            $until = $until->setTimezone(Config::get('app.timezone'));
+            if (array_key_exists('until', $options) && $options['until']) {
+                $records = $records->where(
+                    'updated_at', '<=',
+                    $until->toDateTimeString()
+                );
+            }
+        }
+
+        $count = $records->count();
+        if ($count == 0) {
+            $count = DCI::count();
+        }
+
+        return [
+            'total' => $count,
+            'records' => $records->get()
+        ];
+    }
+
+
+    private function addAltSchemaVersionsSets(Record $oaiRecord, AltSchemaVersion $record)
     {
         if ($dataSource = DataSource::find($record->registry_object_data_source_id)) {
             $oaiRecord

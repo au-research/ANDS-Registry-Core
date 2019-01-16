@@ -4,6 +4,7 @@ USE dbs_registry;
 CREATE TABLE `alt_schema_versions` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `registry_object_id` mediumint(8) NOT NULL,
+  `registry_object_group` varchar(255) NOT NULL,
   `registry_object_key` varchar(255) NOT NULL,
   `registry_object_data_source_id` mediumint(8) NOT NULL,
   `schema` varchar(45) NOT NULL,
