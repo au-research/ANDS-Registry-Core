@@ -6,6 +6,8 @@
  * Index functionality
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
  */
+use ANDS\Util\Config as ConfigUtil;
+
 class Solr
 {
 
@@ -36,9 +38,9 @@ class Solr
      */
     function init()
     {
-        $this->solr_url = get_config_item('solr_url');
+        $this->solr_url = ConfigUtil::get('app.solr_url');
         $this->fixSolrUrl();
-        $this->coreMapping = get_config_item('solr_core_mapping');
+        $this->coreMapping = ConfigUtil::get('solr_core_mapping');
 
         //default to portal core, until told otherwise
         $this->setCore('portal');
@@ -76,6 +78,7 @@ class Solr
      * Caveat: need a solr separator between host and core
      */
     private function fixSolrUrl(){
+       // dd($this->solr_url);
         $chunks = explode('/',$this->solr_url);
         while (end($chunks) == "") array_pop($chunks);
         if (end($chunks) != "solr") {

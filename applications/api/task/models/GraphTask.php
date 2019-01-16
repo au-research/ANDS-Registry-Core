@@ -24,7 +24,7 @@ class GraphTask extends Task
     public function run_task()
     {
         $this->ci =& get_instance();
-        $neo4jConf = get_config_item('neo4j');
+        $neo4jConf = \ANDS\Util\config::get('neo4j');
 
         try {
             $this->loadParams();

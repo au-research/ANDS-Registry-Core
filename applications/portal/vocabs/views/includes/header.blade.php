@@ -5,8 +5,8 @@
 
 	<meta content="width=device-width, initial-scale=1.0" name="viewport">
 	<meta content="yes" name="apple-mobile-web-app-capable">
-	@if(get_config_item('environment_name'))
-	<meta property="og:site_name" content="{{ get_config_item('environment_name') }}" />
+	@if(\ANDS\Util\config::get('app.environment_name'))
+	<meta property="og:site_name" content="{{ \ANDS\Util\config::get('app.environment_name') }}" />
 	@else
 	<meta property="og:site_name" content="Research Vocabularies Australia" />
 	@endif
@@ -44,7 +44,7 @@
 
 <!-- Environment Indicator -->
 @if(ENVIRONMENT!='production')
-	<div class="environment" style="background:{{get_config_item('environment_colour')}};color:white;padding:5px 10px;">
-		<h3>{{get_config_item('environment_name')}} - {{ENVIRONMENT}}</h3>
+	<div class="environment" style="background:{{\ANDS\Util\config::get('app.environment_colour')}};color:white;padding:5px 10px;">
+		<h3>{{\ANDS\Util\config::get('app.environment_name')}} - {{ENVIRONMENT}}</h3>
 	</div>
 @endif

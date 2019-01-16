@@ -42,7 +42,7 @@ class ServiceDiscovery extends ImportSubTask
         $links = ServiceDiscoveryProvider::formatLinks($links);
         $this->log("Discovered " . count($links) . " links");
 
-        $harvestedContentDir = get_config_item('harvested_contents_path');
+        $harvestedContentDir =\ANDS\Util\config::get('app.harvested_contents_path');
 
         $harvestedContentDir = rtrim($harvestedContentDir, '/') . '/';
         $batchID = $this->parent()->getTaskData("batchID");

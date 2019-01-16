@@ -14,11 +14,11 @@ $js_lib = !isset($js_lib) ? array() : $js_lib;
 $title = !isset($title) ? "" : $title;
 $base_url = str_replace('/apps','',base_url());
 // Page header style is blue if the environment is not Production
-if(get_config_item('environment_name'))
+if(\ANDS\Util\config::get('app.environment_name'))
 {
-  $environment_name = get_config_item('environment_name');
+  $environment_name = \ANDS\Util\config::get('app.environment_name');
   $logo_title = 'Back to '.$environment_name.' Home';
-  $environment_colour = get_config_item('environment_colour');
+  $environment_colour = \ANDS\Util\config::get('app.environment_colour');
   $environment_header_style = " style='border-top: 4px solid " . ($environment_colour ?: "#0088cc") . ";'";
 }
 else
@@ -29,11 +29,9 @@ else
   $logo_title = 'Back to ANDS Online Services Home';
 }
 
-if(get_config_item('environment_logo')){
-  $environment_logo = get_config_item('environment_logo');
-}else{
-  $environment_logo = asset_url('/img/ands_logo_white.png', 'base');
-}
+
+  $environment_logo = asset_url(\ANDS\Util\config::get('app.environment_logo'), 'base');
+
 
 ?>
 <!DOCTYPE html>
@@ -126,7 +124,7 @@ if(get_config_item('environment_logo')){
                   <a class="dropdown-toggle" data-toggle="dropdown" href="#">My Identifiers <b class="caret"></b></a>
                   <ul class="dropdown-menu pull-right">
 
-                    <?php if (mod_enabled('pids') && get_config_item('gPIDS_URL_PREFIX')): ?>
+                    <?php if (mod_enabled('pids') && \ANDS\Util\config::get('pids.url_prefix')): ?>
                       <li>
                         <?php echo anchor(apps_url('pids'), 'Identify My Data (PIDS)');?>
                       </li>

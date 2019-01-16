@@ -4,32 +4,10 @@ use Illuminate\Cache\CacheManager;
 use Illuminate\Container\Container;
 use MinhD\SolrClient\SolrClient;
 use Symfony\Component\Filesystem\Filesystem;
+use ANDS\Util\Config as ConfigUtil;
 
 function get_config_item($name) {
-
-    if (env($name)) {
-        return env($name);
-    }
-
-	$_ci =& get_instance();
-	if($_ci->config->item($name)) {
-		return $_ci->config->item($name);
-	} else {
-		//it's in the database table
-		$result = $_ci->db->get_where('configs', array('key'=>$name));
-		if($result && $result->num_rows() > 0) {
-			$result_array = $result->result_array();
-			$result_item = $result_array[0];
-			if($result_item['type']=='json') {
-				$string = trim(preg_replace('/\s+/', ' ', $result_item['value']));
-				return json_decode($string, true);
-			} else {
-				return $result_item['value'];
-			}
-		} else {
-			return false;
-		}
-	}
+    dd($name);
 }
 
 function get_global_config_item($name) {
@@ -118,7 +96,7 @@ function mod_enforce($module_name)
 	$CI =& get_instance();
 	if(!in_array($module_name, $CI->config->item(ENGINE_ENABLED_MODULE_LIST)))
 	{
-		die('This module is not enabled. Check your configuration item: $ENV[ENGINE_ENABLED_MODULE_LIST]['.$module_name.'] (global_config.php)');
+		die('This module is not enabled. Check your configuration item: $ENV[ENGINE_ENABLED_MODULE_LIST]['.$module_name.'] (config/app.php)');
 	}
 }
 
@@ -225,17 +203,17 @@ function error_level_tostring($errno)
 function notifySiteAdmin($errno, $errstr, $errfile, $errline)
 {
 	$_ci =& get_instance();
-	if($_ci->config->item('site_admin_email') && $_ci->config->item('site_admin_email') != '<admin @ email>')
+	if($_ci->config->item('app.site_admin_email') && $_ci->config->item('app.site_admin_email') != '<admin @ email>')
 	{
-		$siteAdmin = (get_config_item('site_admin') ? get_config_item('site_admin') : 'Site Admin');
+		$siteAdmin = (ConfigUtil::get('app.site_admin') ? ConfigUtil::get('app.site_admin') : 'Site Admin');
 
-		$siteInstance = (get_config_item('environment_name') ? get_config_item('environment_name') : 'Site Instance');
-		$siteState = (get_config_item('deployment_state') ? " (".get_config_item('deployment_state').")" : '');
+		$siteInstance = (ConfigUtil::get('app.environment_name') ? ConfigUtil::get('app.environment_name') : 'Site Instance');
+		$siteState = (ConfigUtil::get('app.deployment_state') ? " (".ConfigUtil::get('app.deployment_state').")" : '');
 
 
 		$email = $_ci->load->library('email');
-		$email->from(get_config_item('site_admin_email'), $siteAdmin);
-		$email->to(get_config_item('site_admin_email'));
+		$email->from(ConfigUtil::get('app.site_admin_email'), $siteAdmin);
+		$email->to(ConfigUtil::get('app.site_admin_email'));
 		$errDisp = error_level_tostring($errno);
 
 		$email->subject($errDisp.' occured on ' .$siteInstance.$siteState);
@@ -301,7 +279,9 @@ function asset_url( $path, $loc = 'modules')
 		return baseUrl().'assets/shared/'.$path;
 	} else if( $loc == 'core'){
 		return base_url( 'assets/core/' . $path );
-	} else if ($loc == 'modules'){
+	} elseif ($loc == "dist") {
+	  return base_url('assets/core/dist/'. $path);
+    } else if ($loc == 'modules'){
 	    $CI =& get_instance();
 		if ($module_path = $CI->router->fetch_module()){
 			return base_url( 'assets/' . $module_path . "/" . $path );
@@ -316,6 +296,8 @@ function asset_url( $path, $loc = 'modules')
 	} else if ($loc == 'full_base_path') {
 		return base_url('assets/'.$path);
 	}
+
+	return null;
 }
 
 function registry_url($suffix='')
@@ -457,12 +439,12 @@ function safe_dd($var){
 
 function check_services(){
 	$CI =& get_instance();
-	$solr_status = curl_post(get_config_item('solr_url').'admin/ping?wt=json', '', array());
+	$solr_status = curl_post(ConfigUtil::get('app.solr_url').'admin/ping?wt=json', '', array());
 	$solr_status = json_decode($solr_status, true);
 
 	$data['message'] = '';
 	if(!$solr_status){
-		$data['message'] = 'SOLR Service is unreachable. please check the SOLR URL in global config: '. $CI->config->item('solr_url');
+		$data['message'] = 'SOLR Service is unreachable. please check the SOLR URL in app config: '. ConfigUtil::get('app.solr_url');
 	}else if($solr_status['responseHeader']['status']!=0){
 		$data['message'] = 'SOLR ping service returns '.$solr_status['responseHeader']['status'].', please check your SOLR configuration';
 	}else{
@@ -515,6 +497,8 @@ function alphasort_byattr_title($a, $b) {
 }
 
 function monolog($message, $logger = "activity", $type = "info", $allowBot = false) {
+    return;
+    //dd($message);
     if (function_exists('get_instance')) {
         $CI =& get_instance();
         if (!class_exists('ANDSLogging')) {
@@ -527,8 +511,8 @@ function monolog($message, $logger = "activity", $type = "info", $allowBot = fal
 
 function debug($message, $type = "debug") {
 
-    $env = get_config_item('ENVIRONMENT');
-//    $debug = get_config_item('debug');
+    $env = ConfigUtil::get('app.deployment_state');
+//    $debug = ConfigUtil::get('app.debug');
     $debug = true;
 
     if ($env === "production" || $debug === false) {
@@ -578,15 +562,15 @@ function ulog_email($subject='', $message='', $logger='activity', $type='info') 
 
 	$_ci =& get_instance();
 
-	$siteAdmin = (get_config_item('site_admin') ? get_config_item('site_admin') : 'Site Admin');
-	$siteInstance = (get_config_item('environment_name') ? get_config_item('environment_name') : 'Site Instance');
-	$siteState = (get_config_item('deployment_state') ? " (".get_config_item('deployment_state').")" : '');
+	$siteAdmin = (ConfigUtil::get('app.site_admin') ? ConfigUtil::get('app.site_admin') : 'Site Admin');
+	$siteInstance = (ConfigUtil::get('app.environment_name') ? ConfigUtil::get('app.environment_name') : 'Site Instance');
+	$siteState = (ConfigUtil::get('app.deployment_state') ? " (".ConfigUtil::get('app.deployment_state').")" : '');
 
 	$email = $_ci->load->library('email');
 	// CC-1201 Remove site_admin_email as the sender, which should defaulted to apache@host
 	// CC-1201 Default sender to noreply@host
 	$email->from('noreply@researchdata.ands.org.au', $siteAdmin);
-	$email->to(get_config_item('site_admin_email'));
+	$email->to(ConfigUtil::get('app.site_admin_email'));
 
 	$email->subject($subject);
 	$email->message($message);

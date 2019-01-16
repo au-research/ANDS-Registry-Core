@@ -220,8 +220,9 @@ class Blade
 
             return $content;
         } catch (Exception $e) {
-            echo $e->getMessage(). $this->template_stack[0];
-            // var_dump($this->template_stack);
+
+            echo get_exception_msg($e). $this->template_stack[0];
+             var_dump($this->template_stack);
         }
         
     }
@@ -323,6 +324,7 @@ class Blade
         }
 
         ob_start();
+
         eval(' ?>' . $template . '<?php ');
         $content = ob_get_clean();
 
