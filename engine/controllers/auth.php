@@ -24,7 +24,7 @@ class Auth extends CI_Controller {
 			)
 		);
 
-		if(get_config_item('shibboleth_sp')) {
+		if(\ANDS\Util\config::get('app.shibboleth_sp') === true) {
 			$shibboleth_sp =  array(
 				'slug'		=>'shibboleth_sp',
 				'display'	=> 'Shibboleth SP',
@@ -46,7 +46,7 @@ class Auth extends CI_Controller {
 
 		$data['default_authenticator'] = false;
 		foreach($data['authenticators'] as $auth) {
-			if(isset($auth['default']) && $auth['default']===true) {
+			if(isset($auth['default']) && $auth['default'] ===  true) {
 				$data['default_authenticator'] = $auth['slug'];
 				break;
 			}
@@ -224,7 +224,7 @@ class Auth extends CI_Controller {
 		$this->CI =& get_instance();
 		$data['redirect'] = '';
 		$data['authenticators'] = array(gCOSI_AUTH_METHOD_BUILT_IN => 'Built-in Authentication', gCOSI_AUTH_METHOD_LDAP=>'LDAP');
-		if (get_config_item('shibboleth_sp')=='true') {
+		if (\ANDS\Util\config::get('app.shibboleth_sp') === true) {
 			$data['authenticators'][gCOSI_AUTH_METHOD_SHIBBOLETH] = 'Australian Access Federation (AAF) credentials';
 			$data['default_authenticator'] = gCOSI_AUTH_METHOD_SHIBBOLETH;
 		} else {

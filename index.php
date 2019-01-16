@@ -18,6 +18,8 @@
  * NOTE: If you change these, also change the error_reporting() code below
  *
  */
+use ANDS\Util\Config as ConfigUtil;
+
 if (!file_exists('./vendor/autoload.php')) {
     die("Installation incompleted. vendor directory missing. Try running composer install");
 }
@@ -31,34 +33,35 @@ $dotenv = new Dotenv\Dotenv(__DIR__);
 $result = $dotenv->load();
 
 // bootstrap the application, eloquent default database connection is now available globally
-//include_once "./applications/ANDS/bootstrap.php";
+// include_once "./applications/ANDS/bootstrap.php";
 
 // Pull in the global imports
 $eDBCONF = array();
-require_once('./global_config.php');
+
+
+define('ENVIRONMENT', ConfigUtil::get('app.deployment_state'));
+date_default_timezone_set(env('TIMEZONE', ConfigUtil::get('app.timezone')));
+define('PROTOCOL', ConfigUtil::get('app.protocol'));
 if(isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/bot|crawl|slurp|spider/i', $_SERVER['HTTP_USER_AGENT']) === 0 && isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] !="POST")
 {
-    if($ENV['protocol'] == 'https://'){
+    if(PROTOCOL == 'https://'){
         if((!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != "on")){
-            $redirect = $ENV['protocol'].$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+            $redirect = PROTOCOL.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
             header("HTTP/1.1 301 Moved Permanently");
             header("Location: $redirect");
             return;
         }
     }
-    if($ENV['protocol'] == 'http://'){
+    if(PROTOCOL == 'http://'){
         if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === "on"){
-            $redirect = $ENV['protocol'].$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+            $redirect = PROTOCOL.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
             header("HTTP/1.1 301 Moved Permanently");
             header("Location: $redirect");
             return;
         }
     }
 }
-define('ENVIRONMENT', $ENV['deployment_state']);
 
-// timezone settings
-date_default_timezone_set(env('TIMEZONE', 'Australia/Canberra'));
 
 /*
  *---------------------------------------------------------------
@@ -68,6 +71,8 @@ date_default_timezone_set(env('TIMEZONE', 'Australia/Canberra'));
  * Different environments will require different levels of error reporting.
  * By default development will show errors but testing and live will hide them.
  */
+
+
 
 if (defined('ENVIRONMENT'))
 {
@@ -241,7 +246,10 @@ if (defined('ENVIRONMENT'))
  * And away we go...
  *
  */
-define("BASE", "./");
+
+if (!defined('BASE')) {
+    define("BASE", "./");
+}
 initEloquent();
 require_once APPPATH.'libraries/RegistryPlugin.php';
 require_once BASEPATH.'core/CodeIgniter.php';

@@ -129,7 +129,7 @@ class HandleStatusChange extends ImportSubTask
 
         //save this to file
         $batchID = 'PUBLISH-' . time();
-        $path = get_config_item('harvested_contents_path') . '/' . $record->data_source_id . '/' . $batchID . '.xml';
+        $path = \ANDS\Util\config::get('app.harvested_contents_path') . '/' . $record->data_source_id . '/' . $batchID . '.xml';
         file_put_contents($path, $recordData);
 
         $importTask = new ImportTask();
@@ -149,7 +149,7 @@ class HandleStatusChange extends ImportSubTask
         // save this to file
         // TODO: use payload write instead
         $batchID = 'CLONE-' . time();
-        $path = get_config_item('harvested_contents_path') . '/' . $record->data_source_id . '/' . $batchID . '.xml';
+        $path = \ANDS\Util\config::get('app.harvested_contents_path') . '/' . $record->data_source_id . '/' . $batchID . '.xml';
         file_put_contents($path, $recordData);
 
         $importTask = new ImportTask();
