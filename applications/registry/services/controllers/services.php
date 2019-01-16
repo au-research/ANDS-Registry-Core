@@ -12,6 +12,9 @@ define('SERVICES_MODULE_PATH', REGISTRY_APP_PATH.'services/');
  * @package ands/services
  * 
  */
+
+use ANDS\Util\Config as ConfigUtil;
+
 class Services extends MX_Controller {
 	
 	var $reserved_pages = array('register','query_schema');
@@ -117,7 +120,7 @@ class Services extends MX_Controller {
                 'sector'=>$this->input->post('sector'),
                 'ip'=>$this->input->ip_address());
 
-            $base_url=$this->config->item('default_base_url');
+            $base_url= ConfigUtil::get('app.default_base_url');
 
             $curl = curl_init();
             curl_setopt_array($curl, array(
@@ -186,7 +189,7 @@ class Services extends MX_Controller {
 	{
 
 		// Get the default values (partially malformed requests)
-		$method = $this->config->item('services_default_method');
+		$method = ConfigUtil::get('services.services_default_method');
 		$format = null;
 
 		// Grab the values from the parameter array

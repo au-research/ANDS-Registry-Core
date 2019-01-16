@@ -4,6 +4,8 @@
  * This controller main purpose is to display static pages
  * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
  */
+
+use ANDS\Util\Config as ConfigUtil;
 class Page extends MX_Controller
 {
 
@@ -183,7 +185,7 @@ class Page extends MX_Controller
     public function sitemap($page = '')
     {
         parse_str($_SERVER['QUERY_STRING'], $_GET);
-        $solr_url = get_config_item('solr_url');
+        $solr_url = ConfigUtil::get('app.solr_url');
         $ds = '';
         if (isset($_GET['ds'])) {
             $ds = $_GET['ds'];

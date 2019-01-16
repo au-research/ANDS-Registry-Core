@@ -15,10 +15,10 @@ class TroveAPI
     function __construct()
     {
         $this->ci =& get_instance();
-        if ($url = get_config_item('trove_api_url')) {
+        if ($url = \ANDS\Util\config::get('nla.trove_api_url')) {
             $this->apiUrl = $url;
         }
-        $this->apiKey = get_config_item('trove_api_key');
+        $this->apiKey = \ANDS\Util\config::get('nla.trove_api_key');
 
         if (!$this->apiKey) {
             throw new Exception('Trove API Key required for this functionality');

@@ -20,13 +20,4 @@ class TestEngineHelper extends UnitTest
         $this->assertTrue(true);
     }
 
-    /**
-     * @name Test get_config_item
-     * @note base_url must equals to config
-     */
-    public function test_get_config_item()
-    {
-
-    }
-
 }
