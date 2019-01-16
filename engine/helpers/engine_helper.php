@@ -301,7 +301,9 @@ function asset_url( $path, $loc = 'modules')
 		return baseUrl().'assets/shared/'.$path;
 	} else if( $loc == 'core'){
 		return base_url( 'assets/core/' . $path );
-	} else if ($loc == 'modules'){
+	} elseif ($loc == "dist") {
+	  return base_url('assets/core/dist/'. $path);
+    } else if ($loc == 'modules'){
 	    $CI =& get_instance();
 		if ($module_path = $CI->router->fetch_module()){
 			return base_url( 'assets/' . $module_path . "/" . $path );
@@ -316,6 +318,8 @@ function asset_url( $path, $loc = 'modules')
 	} else if ($loc == 'full_base_path') {
 		return base_url('assets/'.$path);
 	}
+
+	return null;
 }
 
 function registry_url($suffix='')
