@@ -819,7 +819,7 @@ class Vocabs extends MX_Controller
 
                 //clear all vocabs before adding
                 $this->load->library('solr');
-                $vocab_config = get_config_item('vocab_config');
+                $vocab_config = \ANDS\Util\config::get('vocab.vocab_config');
                 if (!$vocab_config['solr_url']) {
                     throw new Exception('Indexer URL for Vocabulary '
                                         . 'module is not configured correctly');
@@ -1063,7 +1063,7 @@ class Vocabs extends MX_Controller
 
         //load necessary stuff
         $this->load->library('solr');
-        $vocab_config = get_config_item('vocab_config');
+        $vocab_config = \ANDS\Util\config::get('vocab.vocab_config');
         if (!$vocab_config['solr_url']) {
             throw new Exception('Indexer URL for Vocabulary module '
                                 . 'is not configured correctly');

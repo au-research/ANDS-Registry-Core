@@ -172,8 +172,8 @@ class Vocab_api
         $this->ci = &get_instance();
         require_once BASE . 'vendor/autoload.php';
         // some constants
-        $solr_base = get_config_item('solr_url');
-        $sissvoc_base = get_config_item('sissvoc_url');
+        $solr_base = \ANDS\Util\config::get('app.solr_url');
+        $sissvoc_base = \ANDS\Util\config::get('vocab.sissvoc_url');
         if (isset($solr_base) && !empty($solr_base)) {
             define("SOLR_URL", $solr_base . "select?wt=phps&rows=0&q=subject_vocab_uri%%3A(%%22%s%%22)+%s+%s");
         }

@@ -9,6 +9,10 @@
  * @package ands/datasource
  *
  */
+
+use ANDS\Util\Config as ConfigUtil;
+
+
 class Maintenance extends MX_Controller
 {
 
@@ -422,16 +426,16 @@ class Maintenance extends MX_Controller
         $data = array();
 
         $data['solr'] = array(
-            'url' => get_config_item('solr_url')
+            'url' => ConfigUtil::get('app.solr_url')
         );
 
         $data['deployment'] = array(
-            'state' => get_config_item('deployment_state')
+            'state' => ConfigUtil::get('app.deployment_state')
         );
 
         $data['admin'] = array(
-            'name' => get_config_item('site_admin'),
-            'email' => get_config_item('site_admin_email')
+            'name' => ConfigUtil::get('app.site_admin'),
+            'email' => ConfigUtil::get('app.site_admin_email')
         );
 
         echo json_encode($data);
