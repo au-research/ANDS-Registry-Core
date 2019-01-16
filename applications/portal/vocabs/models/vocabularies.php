@@ -683,7 +683,7 @@ class Vocabularies extends CI_Model
 
         //clear SOLR index
         $this->load->library('solr');
-        $vocab_config = get_config_item('vocab_config');
+        $vocab_config = \ANDS\Util\config::get('vocab.vocab_config');
         if (!$vocab_config['solr_url']) {
             throw new Exception('Indexer URL for Vocabulary module '
                                 . 'is not configured correctly');
@@ -810,7 +810,7 @@ class Vocabularies extends CI_Model
     public function runToolkitTask($task_id)
     {
         //hit Toolkit
-        $vocab_config = get_config_item('vocab_config');
+        $vocab_config = \ANDS\Util\config::get('vocab.vocab_config');
         $toolkit_url = $vocab_config['toolkit_url'];
         $content = @file_get_contents($toolkit_url . 'runTask/' . $task_id);
         return $content;

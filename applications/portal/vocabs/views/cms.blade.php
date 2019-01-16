@@ -13,8 +13,8 @@
 @endif
 @stop
 @section('script')
-  var vocab_resolving_services = {{json_encode(get_config_item('vocab_resolving_services'))}};
-  var subject_vocab_proxy = {{json_encode(get_config_item('subject_vocab_proxy'))}};
+  var vocab_resolving_services = {{json_encode(\ANDS\Util\config::get('vocab.vocab_resolving_services'))}};
+  var subject_vocab_proxy = {{json_encode(\ANDS\Util\config::get('app.subject_vocab_proxy'))}};
 @stop
 @section('content')
 <section ng-controller="addVocabsCtrl" class="section swatch-white">
