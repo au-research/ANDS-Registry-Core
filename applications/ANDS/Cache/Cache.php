@@ -28,6 +28,9 @@ class Cache
         if ($type === "file") {
             $file = $config['storage']['file'];
             return new FileCache($file['path'], $file['namespace'], $file['ttl']);
+        } elseif ($type === "graph") {
+            $file = $config['storage']['file'];
+            return new FileCache($file['path'], 'graph', $file['ttl']);
         }
 
         return null;
