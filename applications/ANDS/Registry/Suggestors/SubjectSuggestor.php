@@ -12,7 +12,7 @@ use MinhD\SolrClient\SolrClient;
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
  * @package ANDS\Registry\Suggestors
  */
-class SubjectSuggestor
+class SubjectSuggestor implements RegistryObjectSuggestor
 {
 
     private $solr;

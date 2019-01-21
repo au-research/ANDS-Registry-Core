@@ -44,11 +44,26 @@ return [
 
         'default' => 'file',
 
-        'storage' => [
+        'drivers' => [
             'file' => [
                 'namespace' => env('CACHE_FILE_NS', 'ands'),
                 'path' => env('CACHE_FILE_PATH', 'engine/cache/storage'),
                 'ttl' => env('CACHE_FILE_TTL', 60)
+            ]
+        ],
+
+        'store' => [
+            'file' => [
+                'driver' => 'file',
+                'namespace' => 'ands'
+            ],
+            'graph' => [
+                'driver' => 'file',
+                'namespace' => 'graph',
+            ],
+            'suggestions' => [
+                'driver' => 'file',
+                'namespace' => 'suggestions'
             ]
         ]
     ],
