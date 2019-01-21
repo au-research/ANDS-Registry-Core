@@ -11,11 +11,17 @@ class User_view_behavior_suggestor extends _GenericSuggestor
     {
         $id = $this->ro->id;
 
-        $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($id);
+        $cacheKey = "ro.$id.user_view_behavior_suggestor";
 
-        $suggestor = new \ANDS\Registry\Suggestors\UserDataSuggestor();
-        $suggestions = $suggestor->suggest($record);
+        // cache for 1w
+        $cacheDuration = 60 * 1440 * 7;
 
-        return $suggestions;
+        return \ANDS\Cache\Cache::driver('suggestions')->remember($cacheKey, $cacheDuration, function() use ($id){
+            $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($id);
+            $suggestor = new \ANDS\Registry\Suggestors\UserDataSuggestor();
+            $suggestions = $suggestor->suggest($record);
+            return $suggestions;
+        });
+
     }
 }
