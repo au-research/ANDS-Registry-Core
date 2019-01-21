@@ -13,25 +13,34 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class ClearCacheCommand extends ANDSCommand
 {
-//    private $driver = null;
+    private $driver = null;
 
     protected function configure()
     {
-        $config = Config::get('app.cache');
-        $this->driver = $config['default'];
-
         $this
             ->setName('cache:flush')
-            ->setDescription('Flush the default cache')
+            ->setDescription('Flush cache')
             ->setHelp("This command allows you to clear the cache")
-//            ->addOption('driver', 'd', InputOption::VALUE_OPTIONAL, "driver", $this->driver)
+            ->addOption('driver', 'd', InputOption::VALUE_OPTIONAL, "driver", $this->driver)
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->setUp($input, $output);
-        Cache::file()->flush();
-        $this->log("Cache flushed!");
+
+        $driver = $input->getOption('driver');
+        if (!$driver) {
+            $this->log("Driver must be specified with -d");
+            return;
+        }
+
+        $cache = Cache::driver($driver);
+        if (!$cache) {
+            $this->log("Driver $driver is not implemented");
+        }
+
+        $cache->flush();
+        $this->log("Cache $driver flushed!");
     }
 }
