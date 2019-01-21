@@ -25,13 +25,19 @@ class Cache
     {
         $config = Config::get('app.cache');
 
-        if ($type === "file") {
-            $file = $config['storage']['file'];
-            return new FileCache($file['path'], $file['namespace'], $file['ttl']);
-        } elseif ($type === "graph") {
-            $file = $config['storage']['file'];
-            return new FileCache($file['path'], 'graph', $file['ttl']);
+        if (!in_array($type, array_keys($config['store']))) {
+            return null;
         }
+
+        $store = $config['store'][$type];
+
+        $driver = $store['driver'];
+        if ($driver === "file") {
+            $driverConfig = array_merge($config['drivers']['file'], $store);
+            return new FileCache($driverConfig['path'], $driverConfig['namespace'], $driverConfig['ttl']);
+        }
+
+        // implement other type of driver, ie. redis
 
         return null;
     }
