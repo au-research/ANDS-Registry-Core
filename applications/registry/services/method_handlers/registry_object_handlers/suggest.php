@@ -123,7 +123,6 @@ class Suggest extends ROHandler {
         return $result;
 	}
 
-
     // Get an individual record out of the merged suggestor results
     private function getRecord($id, $score, $sourceArray){
         foreach($sourceArray as $record){
