@@ -12,7 +12,7 @@ use ANDS\RegistryObject\AltSchemaVersion;
 
 class ISO19115_3Provider implements RegistryContentProvider
 {
-    private static $schema = 'iso19115-3';
+    private static $schema_uri = 'http://standards.iso.org/iso/19115/-3/mdb/1.0';
 
     public static function process(RegistryObject $record)
     {
@@ -22,27 +22,26 @@ class ISO19115_3Provider implements RegistryContentProvider
 
         $iso = static::generateISO($record->getCurrentData()->data);
 
-        if ($existing = AltSchemaVersion::where('registry_object_id', $record->id)->where('schema', static::$schema)->first()) {
-            $existing->data = $iso;
-            $existing->hash = md5($iso);
-            $existing->updated_at = date("Y-m-d G:i:s");
-            $existing->save();
-            return true;
+        $schema = \ANDS\Registry\Schema::where('uri', static::$schema_uri)->first();
+
+        if($schema == null){
+
+            $schema = new Schema();
+            $schema->setRawAttributes([
+                'prefix' => Schema::getPrefix(static::$schema_uri),
+                'uri' => static::$schema_uri
+            ]);
+            $schema->save();
         }
 
-        $new = new AltSchemaVersion;
-        $new->setRawAttributes([
-            'data' => $iso,
-            'hash' => md5($iso),
-            'schema' => static::$schema,
-            'registry_object_id' => $record->id,
-            'registry_object_group' => $record->group,
-            'registry_object_key' => $record->key,
-            'registry_object_data_source_id' => $record->data_source_id,
-            'updated_at' => date("Y-m-d G:i:s")
-        ]);
-        $new->save();
 
+
+
+        $record->addVersion($iso, static::$schema_uri);
+
+        $existingVersion = $record->getVersionBySchemaURI(static::$schema_uri);
+
+        dd($existingVersion->updated_at);
         return true;
 
     }
@@ -50,19 +49,19 @@ class ISO19115_3Provider implements RegistryContentProvider
 
     public static function get(RegistryObject $record)
     {
-        $existing = AltSchemaVersion::where('registry_object_id', $record->id)->where('schema', static::$schema)->first();
+        $existingVersion = $record->getVersionBySchemaURI(static::$schema_uri);
 
-        if ($existing) {
-            if ($record->modified_at > $existing->updated_at) {
+        if ($existingVersion) {
+            if ($record->modified_at > $existingVersion->updated_at) {
                 static::process($record);
-                $existing = AltSchemaVersion::where('registry_object_id', $record->id)->where('schema', static::$schema)->first();
+                $existingVersion = $record->getVersionBySchemaURI(static::$schema_uri);
             }
-            return $existing->data;
+            return $existingVersion->data;
         }
 
         if(static::process($record)){
-            $existing = AltSchemaVersion::where('registry_object_id', $record->id)->where('schema', static::$schema)->first();
-            return $existing->data;
+            $existingVersion = $record->getVersionBySchemaURI(static::$schema_uri);
+            return $existingVersion->data;
         }
 
         return null;

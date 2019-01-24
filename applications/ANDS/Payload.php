@@ -15,6 +15,7 @@ class Payload
     private $path;
     private $path_validated;
     private $path_processed;
+    private $path_original;
 
     /**
      * ImportPayload constructor.
@@ -34,6 +35,7 @@ class Payload
     {
         $this->path_validated = is_file($this->path.'.validated') ? $this->path.'.validated' : null;
         $this->path_processed = is_file($this->path.'.processed') ? $this->path.'.processed' : null;
+        $this->path_original = is_file($this->path.'.tmp') ? $this->path.'.tmp' : null;
     }
 
     /**
@@ -45,8 +47,11 @@ class Payload
         switch ($status) {
             case "unvalidated":
             case "original":
-                return file_get_contents($this->path);
-                break;
+                if ($this->path_original != null) {
+                    return file_get_contents($this->path_original);
+                }
+                return null;
+            break;
             case "validated":
                 if ($this->path_validated != null) {
                     return file_get_contents($this->path_validated);
@@ -92,7 +97,8 @@ class Payload
         return [
             'path' => $this->path,
             'path_validated' => $this->path_validated,
-            'path_processed' => $this->path_processed
+            'path_processed' => $this->path_processed,
+            'path_original' => $this->path_original,
         ];
     }
 
