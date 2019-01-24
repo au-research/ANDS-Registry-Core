@@ -117,7 +117,7 @@ class Import extends MX_Controller {
 	 */
 	private function import_via_path($id, $batch) {
 		if(!$batch) throw new Exception('Batch ID expected');
-		$dir = get_config_item('harvested_contents_path');
+		$dir = \ANDS\Util\config::get('app.harvested_contents_path');
 		$dir = rtrim($dir, '/') . '/';
 		if(!$dir) throw new Exception('Harvested Contents Path not configured');
 
@@ -360,7 +360,7 @@ class Import extends MX_Controller {
 	public function analyze($id=false, $batch=false) {
 		if(!$id) throw new Exception('Data source ID expected');
 		if(!$batch) throw new Exception('Batch ID expected');
-		$dir = get_config_item('harvested_contents_path');
+		$dir = \ANDS\Util\config::get('app.harvested_contents_path');
 		$dir = rtrim($dir, '/') . '/';
 		if(!$dir) throw new Exeption('Harvested Contents Path not configured');
 
@@ -392,7 +392,7 @@ class Import extends MX_Controller {
 	public function miniImport($id=false, $batch=false, $file=false) {
 		if(!$id) throw new Exception('Data source ID expected');
 		if(!$batch) throw new Exception('Batch ID expected');
-		$dir = get_config_item('harvested_contents_path');
+		$dir = \ANDS\Util\config::get('app.harvested_contents_path');
 		$dir = rtrim($dir, '/') . '/';
 		if(!$dir) throw new Exeption('Harvested Contents Path not configured');
 
@@ -554,7 +554,7 @@ class Import extends MX_Controller {
 
 	public function list_files($id=false) {
 		if(!$id) throw new Exception('Data Source ID required');
-		$dir = get_config_item('harvested_contents_path');
+		$dir = \ANDS\Util\config::get('app.harvested_contents_path');
 		$dir = rtrim($dir, '/') . '/';
 		if(!$dir) throw new Exception('Harvested Contents Path not configured');
 
