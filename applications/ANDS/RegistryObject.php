@@ -7,9 +7,11 @@ namespace ANDS;
 use ANDS\Registry\IdentifierRelationshipView;
 use ANDS\Registry\RelationshipView;
 use ANDS\RegistryObject\ExportToCSVTrait;
+use ANDS\RegistryObject\HasVersions;
 use ANDS\RegistryObject\Identifier;
 use ANDS\RegistryObject\IdentifierRelationship;
 use ANDS\RegistryObject\Metadata;
+use ANDS\RegistryObject\RegistryObjectVersion;
 use ANDS\RegistryObject\Relationship;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\XMLUtil;
@@ -18,7 +20,10 @@ use Illuminate\Database\Eloquent\Model;
 class RegistryObject extends Model
 {
     /** traits */
-    use ExportToCSVTrait;
+    use ExportToCSVTrait, HasVersions;
+
+    protected $versionRelationModel = RegistryObjectVersion::class;
+    protected $versionRelationForeignKey = 'registry_object_id';
 
     protected $table = "registry_objects";
     protected $primaryKey = "registry_object_id";
@@ -351,4 +356,6 @@ class RegistryObject extends Model
     {
         return baseUrl("view/?key={$this->key}");
     }
+
+
 }

@@ -83,9 +83,11 @@ trait ManagePayload
     /**
      * Load the payload specified in the parent task
      * to the parent payloads array
+     * @param $fileExtension the file extension we want to load from harvested contents
      * TODO: need a better file searching mechanism than scan_dir
      */
-    public function loadPayload()
+
+    public function loadPayload($fileExtention = 'xml')
     {
         $this->payloads = [];
         $path = $this->getHarvestedPath();
@@ -93,7 +95,7 @@ trait ManagePayload
         $this->log("Payload path: ". $path);
         
         if (!is_dir($path)) {
-            $path = $path . '.xml';
+            $path = $path . '.' . $fileExtention;
             // $this->log('Loading payload from file: ' . $path);
             $this->loadPayloadFromFile($path);
         } else {
@@ -101,7 +103,7 @@ trait ManagePayload
             $directory = scandir($path);
             $files = array();
             foreach ($directory as $f) {
-                if (endsWith($f, '.xml')) {
+                if (endsWith($f, '.' . $fileExtention)) {
                     $files[] = $f;
                     $this->loadPayloadFromFile($path.'/'.$f);
                 }
@@ -110,6 +112,8 @@ trait ManagePayload
 
         return $this;
     }
+
+
 
     public function skipLoadingPayload()
     {
