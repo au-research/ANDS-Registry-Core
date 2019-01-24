@@ -2,6 +2,8 @@
 
 global $ENV;
 
+
+
 /* What authencation class should we use to power the login/ACL? */
 $config['authentication_class'] = "role_authentication";
 
@@ -9,30 +11,32 @@ $config['authentication_class'] = "role_authentication";
 $config['example_ds_key'] = 'example_data_source';
 $config['example_ds_title'] = 'DataSource Example with 4 Registry Objects';
 
-// Merge in the config options from global_config.php
-$config = array_merge($config, $ENV);
-$config[ENGINE_ENABLED_MODULE_LIST] = &$config['ENABLED_MODULES'];
+
+$config[ENGINE_ENABLED_MODULE_LIST] = \ANDS\Util\config::get('app.enabled_modules');
 
 
 //default locale for character type conversion, instead of C or POSIX
 setlocale(LC_CTYPE, 'en_AU');
 
 // Fix URL resolution issues with aboslute URLs (for now...)
-if (isset($config['default_base_url']))
-{
-	if (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off' && strpos($config['default_base_url'],"https:") == FALSE)
-	{
-		$default_base_url = str_replace("http:","https:",$config['default_base_url']);
-	}
-	else
-	{
-		$default_base_url = $config['default_base_url'];
-	}
-}
-else
-{
-	die("Must specify an \$ENV['default_base_url'] in global_config.php");
-}
+
+$config['default_base_url'] = \ANDS\Util\config::get('app.default_base_url');
+
+//if (isset($config['default_base_url']))
+//{
+//	if (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off' && strpos($config['default_base_url'],"https:") == FALSE)
+//	{
+//		$default_base_url = str_replace("http:","https:",$config['default_base_url']);
+//	}
+//	else
+//	{
+//		$default_base_url = $config['default_base_url'];
+//	}
+//}
+//else
+//{
+//	die("Must specify an 'default_base_url' in config/app.php");
+//}
 
 /* For multiple-application environments, this "app" will be matched
 by the $_GET['app'] which is rewritten in .htaccess. The array key is
@@ -402,7 +406,7 @@ $config['sess_match_useragent'] = FALSE;
 |
 */
 $config['cookie_prefix']	= "ands_";
-$config['cookie_domain']	= isset($ENV['cookie_domain']) ? $ENV['cookie_domain'] : ".ands.org.au";
+$config['cookie_domain']	= \ANDS\Util\config::get('app.cookie_domain') ? \ANDS\Util\config::get('app.cookie_domain') : ".ands.org.au";
 $config['cookie_path']		= "/";
 $config['cookie_secure']	= FALSE;
 
@@ -499,7 +503,6 @@ $default_base_url .= '://'. (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'
 $default_base_url .= str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
 */
 
-$config['default_base_url'] = $default_base_url;
 
 $config['app_routes'] = array();
 // Portal is the default app
@@ -512,7 +515,7 @@ if (!array_key_exists($_GET['app'], $application_directives))
 if (isset($application_directives[$_GET['app']]))
 {
 	$active_application = $application_directives[$_GET['app']]['active_application'];
-	$base_url = str_replace("%%BASEURL%%/", $default_base_url, $application_directives[$_GET['app']]['base_url']);
+	$base_url = str_replace("%%BASEURL%%/", $config['default_base_url'], $application_directives[$_GET['app']]['base_url']);
 	$_SERVER['SCRIPT_NAME'] = dirname($_SERVER['SCRIPT_NAME']) . "/" . $active_application . '/';
 
 	/* What is the default controller for this app? (will be inserted as the default route) */

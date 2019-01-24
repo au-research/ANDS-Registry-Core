@@ -121,7 +121,7 @@ class Payload
      */
     public static function write($dataSourceID, $batchID, $content)
     {
-        $harvestedContentDir = get_config_item('HARVESTED_CONTENTS');
+        $harvestedContentDir = \ANDS\Util\config::get('app.harvested_contents_path');
         $harvestedContentDir = rtrim($harvestedContentDir, '/') . '/';
         $directory = $harvestedContentDir.$dataSourceID;
         if (!is_dir($directory)) {
