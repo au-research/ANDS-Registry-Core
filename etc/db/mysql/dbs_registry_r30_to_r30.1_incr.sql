@@ -35,3 +35,15 @@ CREATE TABLE `registry_object_versions` (
   -- foreign key (`registry_object_id`) REFERENCES `registry_objects`.`id`,
   INDEX (`version_id`,`registry_object_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+CREATE VIEW `alt_schema_versions` AS
+SELECT `ro`.`registry_object_id` ,`ro`.`key` ,`ro`.`group` ,`ro`.`data_source_id` as `registry_object_data_source_id`
+,`ro`.`class`, `v`.`data`, `v`.`created_at`, `v`.`updated_at`, `v`.`origin`, `sch`.`prefix`, `sch`.`uri`
+from ((`versions` `v`
+left join `registry_object_versions` `rov`
+on((`v`.`id` = `rov`.`version_id`)))
+left join `registry_objects` `ro`
+on((`ro`.`registry_object_id` = `rov`.`registry_object_id`)))
+left join `schemas` `sch`
+on((`sch`.`id` = `v`.`schema_id`))
+where (`ro`.`status` = 'PUBLISHED') and `sch`.`exportable` = TRUE;

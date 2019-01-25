@@ -149,7 +149,9 @@ class OAIRecordRepository implements OAIRepository
             return $this->listDCIRecords($options);
         }
 
-        if ($metadataPrefix == 'iso19115-3'){
+        // TODO chenge it to elseif ($metadataPrefix != 'rif') and provide any alt versions by their prefix
+        if ($metadataPrefix == "iso19115-3")
+        {
             return $this->listISO19115_3Records($options);
         }
 
@@ -741,7 +743,7 @@ class OAIRecordRepository implements OAIRepository
 
     private function getISO19115_3Records($options)
     {
-        $records = AltSchemaVersion::where('schema', 'iso19115-3')->limit($options['limit'])->offset($options['offset']);
+        $records = AltSchemaVersion::where('prefix', 'iso19115-3')->limit($options['limit'])->offset($options['offset']);
 
         // set
         if (array_key_exists('set', $options) && $options['set']) {
