@@ -19,7 +19,6 @@ class IngestNativeSchemaTest extends \RegistryTestClass
 
 
         foreach ($mdNodes as $mdNode) {
-            $namespaceURI = 'http://standards.iso.org/iso/19115/-3/mdb/1.0';
             $identifier = '';
             echo $mdNode->nodeName;
             echo $mdNode->namespaceURI;

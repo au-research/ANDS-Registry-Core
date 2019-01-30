@@ -149,7 +149,8 @@ class OAIRecordRepository implements OAIRepository
             return $this->listDCIRecords($options);
         }
 
-        // TODO chenge it to elseif ($metadataPrefix != 'rif') and provide any alt versions by their prefix
+        // TODO change it to elseif ($metadataPrefix != 'rif') and
+        // provide any schema from the 'schemas' table that are exportable
         if ($metadataPrefix == "iso19115-3")
         {
             return $this->listISO19115_3Records($options);
