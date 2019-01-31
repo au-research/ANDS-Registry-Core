@@ -387,6 +387,7 @@ class ImportTask extends Task
                     "ValidatePayload",
                     "ProcessPayload",
                     "Ingest",
+                    "IngestNativeSchema",
                     "ProcessCoreMetadata",
                     "HandleRefreshHarvest",
                     "ProcessDelete",

@@ -15,7 +15,7 @@ class Payload
     private $path;
     private $path_validated;
     private $path_processed;
-    private $path_original;
+    private $path_native;
 
     /**
      * ImportPayload constructor.
@@ -35,7 +35,7 @@ class Payload
     {
         $this->path_validated = is_file($this->path.'.validated') ? $this->path.'.validated' : null;
         $this->path_processed = is_file($this->path.'.processed') ? $this->path.'.processed' : null;
-        $this->path_original = is_file($this->path.'.tmp') ? $this->path.'.tmp' : null;
+        $this->path_native = is_file(str_replace(".xml",".tmp",$this->path)) ? str_replace(".xml",".tmp",$this->path) : null;
     }
 
     /**
@@ -47,8 +47,11 @@ class Payload
         switch ($status) {
             case "unvalidated":
             case "original":
-                if ($this->path_original != null) {
-                    return file_get_contents($this->path_original);
+                return file_get_contents($this->path);
+                break;
+            case "native":
+                if ($this->path_native != null) {
+                    return file_get_contents($this->path_native);
                 }
                 return null;
             break;
@@ -98,7 +101,7 @@ class Payload
             'path' => $this->path,
             'path_validated' => $this->path_validated,
             'path_processed' => $this->path_processed,
-            'path_original' => $this->path_original,
+            'path_native' => $this->path_native,
         ];
     }
 

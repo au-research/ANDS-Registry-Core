@@ -28,12 +28,21 @@ CREATE TABLE `versions` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 CREATE TABLE `registry_object_versions` (
-  `version_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+  `version_id` mediumint(8) NOT NULL,
   `registry_object_id` mediumint(8) NOT NULL,
   PRIMARY KEY (`version_id`,`registry_object_id`),
   -- foreign key (`version_id`) REFERENCES `version_id`.`id`,
   -- foreign key (`registry_object_id`) REFERENCES `registry_objects`.`id`,
   INDEX (`version_id`,`registry_object_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+
+CREATE TABLE `versions_identifiers` (
+  `version_id` mediumint(8) NOT NULL,
+  `identifier` varchar(255) NOT NULL,
+  `identifier_type` varchar(20),
+  PRIMARY KEY (`version_id`,`identifier`),
+  INDEX (`version_id`,`identifier`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 CREATE VIEW `alt_schema_versions` AS

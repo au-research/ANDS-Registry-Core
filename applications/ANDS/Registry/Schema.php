@@ -20,8 +20,12 @@ class Schema extends Model
         $counter = 0;
         foreach($prefixMap as $item){
             $counter--;
-            if($item == 'iso'){
-                $prefix .= $item;
+            if(str_contains($item , 'iso')){
+                $prefix = 'iso';
+                $counter = $bigNum;
+            }
+            elseif($item == 'iso'){ //reset if found only iso
+                $prefix = $item;
                 $counter = $bigNum;
             }
             elseif($counter > $bigNum - $prefixSize){

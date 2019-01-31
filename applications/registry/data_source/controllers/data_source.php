@@ -89,7 +89,10 @@ class Data_source extends MX_Controller {
 
 			if($id && $ds){
 
-				foreach($ds->attributes as $attrib=>$value){
+                $harvester_methods = get_db_config_item('harvester_methods');
+                if($harvester_methods) $item['harvester_methods'] = $harvester_methods;
+                
+                foreach($ds->attributes as $attrib=>$value){
 					$item[$attrib] = $value->value;
 				}
 
