@@ -13,8 +13,8 @@ class User_view_behavior_suggestor extends _GenericSuggestor
 
         $cacheKey = "ro.$id.user_view_behavior_suggestor";
 
-        // cache for 1w
-        $cacheDuration = 60 * 1440 * 7;
+        // cache for 1w (in minutes)
+        $cacheDuration = 1440 * 7;
 
         return \ANDS\Cache\Cache::driver('suggestions')->remember($cacheKey, $cacheDuration, function() use ($id){
             $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($id);
