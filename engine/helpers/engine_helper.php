@@ -497,8 +497,6 @@ function alphasort_byattr_title($a, $b) {
 }
 
 function monolog($message, $logger = "activity", $type = "info", $allowBot = false) {
-    return;
-    //dd($message);
     if (function_exists('get_instance')) {
         $CI =& get_instance();
         if (!class_exists('ANDSLogging')) {
