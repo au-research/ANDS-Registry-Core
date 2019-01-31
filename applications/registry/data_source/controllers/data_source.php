@@ -89,6 +89,7 @@ class Data_source extends MX_Controller {
 
 			if($id && $ds){
 
+
                 $harvester_methods = get_db_config_item('harvester_methods');
                 if($harvester_methods) $item['harvester_methods'] = $harvester_methods;
                 
@@ -104,9 +105,6 @@ class Data_source extends MX_Controller {
 					date_default_timezone_set('Australia/Canberra');
 					$item['harvest_date'] = date( 'Y-m-d H:i:s', strtotime($item['harvest_date']));
 				}
-
-				//get harvester_method
-
 
 			}
 

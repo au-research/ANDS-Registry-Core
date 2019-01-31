@@ -3,7 +3,7 @@
 return [
     'release_version' => env('VERSION', '30'),
     'environment_name' => env("ENVIRONMENT_NAME", "RDA"),
-    'environment_colour' => env("ENVIRONMENT_COLOUR" , "ands-green"),
+    'environment_colour' => env("ENVIRONMENT_COLOUR" , "#6EBF21"),
     'environment_logo' => '/img/ands_logo_white.png',
     'protocol' => env('PROTOCOL', 'http://'),
     'default_base_url' => env('PROTOCOL', 'http://') . env("BASE_URL", "localhost").'/',
@@ -44,11 +44,26 @@ return [
 
         'default' => 'file',
 
-        'storage' => [
+        'drivers' => [
             'file' => [
                 'namespace' => env('CACHE_FILE_NS', 'ands'),
                 'path' => env('CACHE_FILE_PATH', 'engine/cache/storage'),
                 'ttl' => env('CACHE_FILE_TTL', 60)
+            ]
+        ],
+
+        'store' => [
+            'file' => [
+                'driver' => 'file',
+                'namespace' => 'ands'
+            ],
+            'graph' => [
+                'driver' => 'file',
+                'namespace' => 'graph',
+            ],
+            'suggestions' => [
+                'driver' => 'file',
+                'namespace' => 'suggestions'
             ]
         ]
     ],
