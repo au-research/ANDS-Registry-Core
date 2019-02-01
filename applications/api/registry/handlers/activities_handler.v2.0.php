@@ -303,7 +303,7 @@ class ActivitiesHandlerV2 extends Handler
         //principalInvestigator
         if ($principalInvestigator = (isset($params['principalInvestigator'])) ? $params['principalInvestigator'] : null) {
             $this->ci->solr->setOpt('fq',
-                '+principal_investigator_search:"' . $principalInvestigator . '"');
+                '+principal_investigator_search:(' . $principalInvestigator . ')');
         }
 
         //researcher

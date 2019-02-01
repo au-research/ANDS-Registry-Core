@@ -458,7 +458,7 @@
 
             	field = thefields['search_fields'][i];
             	$.ajax({
-				    url:settings.search_endpoint+'api_key='+settings.api_key+'&'+field+"="+encodeURIComponent(query)+funder_list+'&start=0&rows=999&callback=?',
+				    url:settings.search_endpoint+'api_key='+settings.api_key+'&'+field+'="'+encodeURIComponent(query)+'"'+funder_list+'&start=0&rows=999&callback=?',
                     indexValue: i,
 				    dataType: 'JSONP',
 				    success: function(data){
