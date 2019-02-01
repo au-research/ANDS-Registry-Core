@@ -34,11 +34,11 @@
 		    //location (absolute URL) of the jsonp proxy
 
             // this has been inserted just for testing purposes
-            search_endpoint: 'http://devl.ands.org.au/liz/registry/api/v2.0/registry.jsonp/activities/grant?',
-            lookup_endpoint: 'http://devl.ands.org.au/liz/registry/api/v2.0/registry.jsonp/activities/grant?',
+            //search_endpoint: 'http://devl.ands.org.au/liz/registry/api/v2.0/registry.jsonp/activities/grant?',
+            //lookup_endpoint: 'http://devl.ands.org.au/liz/registry/api/v2.0/registry.jsonp/activities/grant?',
 
-            //search_endpoint: 'http://researchdata.ands.org.au/api/v2.0/registry.jsonp/activities/grant?',
-            //lookup_endpoint: 'http://researchdata.ands.org.au/api/v2.0/registry.jsonp/activities/grant?',
+            search_endpoint: 'http://researchdata.ands.org.au/api/v2.0/registry.jsonp/activities/grant?',
+            lookup_endpoint: 'http://researchdata.ands.org.au/api/v2.0/registry.jsonp/activities/grant?',
             api_key: 'public',
 		    //auto _lookup once init
 		    pre_lookup: false,
@@ -458,7 +458,7 @@
 
             	field = thefields['search_fields'][i];
             	$.ajax({
-				    url:settings.search_endpoint+'api_key='+settings.api_key+'&'+field+'="'+encodeURIComponent(query)+'"'+funder_list+'&start=0&rows=999&callback=?',
+				    url:settings.search_endpoint+'api_key='+settings.api_key+'&'+field+"="+encodeURIComponent(query)+funder_list+'&start=0&rows=999&callback=?',
                     indexValue: i,
 				    dataType: 'JSONP',
 				    success: function(data){
