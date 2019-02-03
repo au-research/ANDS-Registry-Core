@@ -14,7 +14,8 @@ class Aaf_rapid_authenticator extends Authenticator {
 			$this->auth_domain = 'aaf.edu.au';
 
 			$this->load->library('JWT');
-			$secret = get_config_item('aaf_rapidconnect_secret');
+
+			$secret = \ANDS\Util\config::get('oauth.AAF_RapidConnect.keys.secret');
 
 			$decoded = $this->jwt->decode($this->jwt_token, $secret);
 

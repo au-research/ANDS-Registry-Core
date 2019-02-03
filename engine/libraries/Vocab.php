@@ -25,7 +25,7 @@ class Vocab {
      * @return [type] [description]
      */
     function init(){
-        $this->resolvingServices = $this->CI->config->item('vocab_resolving_services');
+        $this->resolvingServices = \ANDS\Util\config::get('vocab.vocab_resolving_services');
     	$this->resolvedArray = array();
     	return $this;
     }

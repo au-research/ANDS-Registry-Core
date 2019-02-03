@@ -24,7 +24,7 @@ class RecordsGraphController
         if (!$disableCache) {
             // caches by default
             // R28: does not accept custom parameters yet
-            return Cache::file()->rememberForever("graph.$id", function() use ($id){
+            return Cache::driver('graph')->rememberForever("graph.$id", function() use ($id){
                 return $this->getGraphForRecord($id);
             });
         }

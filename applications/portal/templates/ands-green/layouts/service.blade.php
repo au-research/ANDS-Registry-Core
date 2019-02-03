@@ -12,6 +12,9 @@
     		    		<div class="row element-short-top">
                             <div class="col-md-9 view-content" style="padding-right:0">
                                 <div class="panel panel-primary swatch-white panel-content">
+                                    <div class="panel-tools">
+                                        @include('registry_object/contents/icon')
+                                    </div>
                                     <div class="panel-body">
                                         <div class="container-fluid">
                                             <div class="row">
