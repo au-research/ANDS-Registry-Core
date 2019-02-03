@@ -5,20 +5,23 @@ namespace ANDS\Registry\Suggestors;
 
 
 use ANDS\RegistryObject;
-use ANDS\Repository\RegistryObjectsRepository;
 use Carbon\Carbon;
 use Elasticsearch\ClientBuilder;
 
-class UserDataSuggestor
+class UserDataSuggestor implements RegistryObjectSuggestor
 {
     private $client = null;
+
+    protected static $ipLimitCount = 200;
+    protected static $recordLimitCount = 100;
 
     /**
      * UserDataSuggestor constructor.
      */
     public function __construct()
     {
-        $url = env('ELASTICSEARCH_URL', 'http://localhost:9200');
+        $url = \ANDS\Util\Config::get('app.elasticsearch_url');
+
         $url = rtrim($url, '/');
 
         $headers = @get_headers($url);
@@ -30,6 +33,17 @@ class UserDataSuggestor
                     [ $url ]
                 )->build();
         }
+    }
+
+    /**
+     * TODO cache results
+     *
+     * @param RegistryObject $record
+     * @return array|null
+     */
+    public function suggest(RegistryObject $record)
+    {
+        return $this->suggestByView($record);
     }
 
     /**
@@ -77,7 +91,7 @@ class UserDataSuggestor
                     'ip_viewed' => [
                         'terms' => [
                             'field' => 'doc.@fields.user.ip.raw',
-                            'size' => 500
+                            'size' => self::$ipLimitCount
                         ],
                     ]
                 ]
@@ -88,7 +102,6 @@ class UserDataSuggestor
             $response = $this->client->search($params);
         } catch (\Exception $e) {
             // log error
-            dd(get_exception_msg($e));
             monolog(self::class ." : ". get_exception_msg($e), "error", "error");
             return [];
         }
@@ -129,7 +142,7 @@ class UserDataSuggestor
                             'records_viewed' => [
                                 'terms' => [
                                     'field' => 'doc.@fields.record.key.raw',
-                                    'size' => 100
+                                    'size' => self::$recordLimitCount
                                 ]
                             ]
                         ]
@@ -138,7 +151,13 @@ class UserDataSuggestor
             ]
         ];
 
-        $response = $this->client->search($params);
+        try {
+            $response = $this->client->search($params);
+        } catch (\Exception $e) {
+            // log error
+            monolog(self::class ." : ". get_exception_msg($e), "error", "error");
+            return [];
+        }
 
         $recordsViewedPerUser = collect($response['aggregations']['ip_viewed']['buckets'])->pluck('records_viewed')->pluck('buckets');
 
@@ -156,10 +175,9 @@ class UserDataSuggestor
 
         // sort
         $sorted = collect($recordOccurences)->sort()->reverse();
-//dd(count($sorted));
 
         // get first 100
-        $sorted = $sorted->take(100);
+        $sorted = $sorted->take(self::$recordLimitCount);
 
         // filter out the ones that actually exists
         $ids = $sorted->keys()->toArray();
@@ -173,7 +191,7 @@ class UserDataSuggestor
                 'title' => $record->title,
                 'key' => $record->key,
                 'slug' => $record->slug,
-                'RDAUrl' => baseUrl($record->slug. '/'. $record->id),
+                'RDAUrl' => $record->portalUrl,
                 'score' => $sorted->get($record->key)
             ];
         }

@@ -336,6 +336,7 @@ class RegistryObject extends Model
     /**
      * $this->portalUrl
      * $this->portal_url
+     *
      * @return string
      */
     public function getPortalUrlAttribute()
@@ -345,6 +346,7 @@ class RegistryObject extends Model
 
     /**
      * $this->portalUrlWithKey
+     *
      * @return string
      */
     public function getPortalUrlWithKeyAttribute()

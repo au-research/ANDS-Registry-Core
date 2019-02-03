@@ -4,8 +4,8 @@
 @yield('script')
 </script>
 
-@if(get_config_item('tracking'))
-    <?php $tracking = get_config_item('tracking'); ?>
+@if(\ANDS\Util\config::get('app.tracking'))
+    <?php $tracking = \ANDS\Util\config::get('app.tracking'); ?>
     @if($tracking['googleGA']['enabled'])
         <script>
           (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
