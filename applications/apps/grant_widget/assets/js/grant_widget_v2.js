@@ -37,8 +37,8 @@
             //search_endpoint: 'http://devl.ands.org.au/liz/registry/api/v2.0/registry.jsonp/activities/grant?',
             //lookup_endpoint: 'http://devl.ands.org.au/liz/registry/api/v2.0/registry.jsonp/activities/grant?',
 
-            search_endpoint: 'http://researchdata.ands.org.au/api/v2.0/registry.jsonp/activities/grant?',
-            lookup_endpoint: 'http://researchdata.ands.org.au/api/v2.0/registry.jsonp/activities/grant?',
+            search_endpoint: 'https://researchdata.ands.org.au/api/v2.0/registry.jsonp/activities/grant?',
+            lookup_endpoint: 'https://researchdata.ands.org.au/api/v2.0/registry.jsonp/activities/grant?',
             api_key: 'public',
 		    //auto _lookup once init
 		    pre_lookup: false,
