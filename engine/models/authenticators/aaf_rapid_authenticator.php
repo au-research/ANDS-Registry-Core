@@ -9,13 +9,20 @@ class Aaf_rapid_authenticator extends Authenticator {
 
 	private $jwt_token = false;
 
+	// TODO use AAFRapidAuthenticator class instead
 	public function authenticate() {
 		try{
 			$this->auth_domain = 'aaf.edu.au';
 
 			$this->load->library('JWT');
 
-			$secret = \ANDS\Util\config::get('oauth.AAF_RapidConnect.keys.secret');
+			// multiple [dot] notation for config get doesn't work
+			// $secret = \ANDS\Util\config::get('oauth.AAF_RapidConnect.keys.secret');
+
+            // get secret properly
+            $conf = \ANDS\Util\Config::get('oauth');
+            $config = $conf['providers']['AAF_RapidConnect'];
+            $secret = $config['keys']['secret'];
 
 			$decoded = $this->jwt->decode($this->jwt_token, $secret);
 
