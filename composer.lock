@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "fa8b8e5ea724c19f44823c3342e521c2",
@@ -1534,16 +1534,16 @@
         },
         {
             "name": "jaybizzle/crawler-detect",
-            "version": "v1.2.74",
+            "version": "v1.2.78",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JayBizzle/Crawler-Detect.git",
-                "reference": "e5fbc685383a4b8f49183b3a646b193491cc14c5"
+                "reference": "0f91f34d375ddd5d7034b9eaf6b74acd0b2a0ed6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/e5fbc685383a4b8f49183b3a646b193491cc14c5",
-                "reference": "e5fbc685383a4b8f49183b3a646b193491cc14c5",
+                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/0f91f34d375ddd5d7034b9eaf6b74acd0b2a0ed6",
+                "reference": "0f91f34d375ddd5d7034b9eaf6b74acd0b2a0ed6",
                 "shasum": ""
             },
             "require": {
@@ -1579,7 +1579,7 @@
                 "crawlerdetect",
                 "php crawler detect"
             ],
-            "time": "2018-11-21T20:56:45+00:00"
+            "time": "2019-01-15T21:21:27+00:00"
         },
         {
             "name": "minhd/solr-client",
