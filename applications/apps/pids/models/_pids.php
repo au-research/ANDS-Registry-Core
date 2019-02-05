@@ -13,8 +13,8 @@ class _pids extends CI_Model
 		parent::__construct();
 		$this->_CI =& get_instance();
 		$this->pid_db = $this->load->database('pids', TRUE);
-		$this->PIDS_APP_ID = $this->_CI->config->item('pids_server_app_id');
-		$this->PIDS_SERVICE_BASE_URI = $this->_CI->config->item('pids_server_base_url');
+		$this->PIDS_APP_ID = \ANDS\Util\config::get('pids.server_app_id');
+		$this->PIDS_SERVICE_BASE_URI =  \ANDS\Util\config::get('pids.server_base_url');
 	}
 
 	function getTrustedClients(){
