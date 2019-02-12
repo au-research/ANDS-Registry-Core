@@ -51,7 +51,6 @@ class Registry_object extends MX_Controller {
 			if($revision!=''){
 				$data['viewing_revision'] = true;
 				$data['rif_html'] = $ro->transformForHtml($revision, $ds->title);
-				$data['native_format'] = $ro->getNativeFormat($revision);
 				$revRecord = $ro->getRevision($revision);
 				$time = date("F j, Y, g:i a", $revRecord[0]['timestamp']);
 				$data['currentRevision'] = ($revRecord[0]['current'] === 'TRUE' ? "TRUE": '');
@@ -59,29 +58,25 @@ class Registry_object extends MX_Controller {
 					$data['revisionInfo'] = 'Current Version: '.$time;
 				else
 					$data['revisionInfo'] = 'Revision: '.$time;
-
-				if($ro->getNativeFormat($revision) != 'rif')
-				{
-					$data['naitive_text'] = $ro->getNativeFormatData($revision);
-				}
-
 			}
 			else
 			{
 				$data['viewing_revision'] = false;
 				$data['rif_html'] = $ro->transformForHtml('', $ds->title);
-				$data['native_format'] = $ro->getNativeFormat();
-				if($ro->getNativeFormat($revision) != 'rif')
-				{
-					$data['naitive_text'] = $ro->getNativeFormatData();
-				}
 
 				if($this->user->hasAffiliation($ds->record_owner))
 				{
 					$data['action_bar'] = $this->generateStatusActionBar($ro, $ds);
 				}
-
 			}
+
+            $data['native_format'] = "BLAH BLAH";
+			$data['naitive_text'] = "JHKJGKJHKJHKJHKJHKJHKJHK";
+
+
+           // $generatedContent = \ANDS\RegistryObject\AltSchemaVersion::where('registry_object_id', $ro_id )->get();
+           // $harvestedNativeContent = \ANDS\RegistryObject\AltSchemaVersionByIdentifier::where('registry_object_id', $ro_id )->get();
+
 
 			$data['revisions'] = array_slice($ro->getAllRevisions(),0,$this->maxVisibleRevisions);
 
