@@ -33,12 +33,12 @@
 		var defaults = {
 		    //location (absolute URL) of the jsonp proxy
 
-           // search_endpoint: 'http://devl.ands.org.au/liz/registry/api/v2.0/registry.jsonp/activities/grant?',
-          //  lookup_endpoint: 'http://devl.ands.org.au/liz/registry/api/v2.0/registry.jsonp/activities/grant?',
             // this has been inserted just for testing purposes
+            //search_endpoint: 'http://devl.ands.org.au/liz/registry/api/v2.0/registry.jsonp/activities/grant?',
+            //lookup_endpoint: 'http://devl.ands.org.au/liz/registry/api/v2.0/registry.jsonp/activities/grant?',
 
-            search_endpoint: 'http://researchdata.ands.org.au/api/v2.0/registry.jsonp/activities/grant?',
-            lookup_endpoint: 'http://researchdata.ands.org.au/api/v2.0/registry.jsonp/activities/grant?',
+            search_endpoint: 'https://researchdata.ands.org.au/api/v2.0/registry.jsonp/activities/grant?',
+            lookup_endpoint: 'https://researchdata.ands.org.au/api/v2.0/registry.jsonp/activities/grant?',
             api_key: 'public',
 		    //auto _lookup once init
 		    pre_lookup: false,
@@ -59,7 +59,7 @@
 		    result_error_class: 'grant_error_div',
 		    search_div_class: 'grant_search_div',
 		    nohits_msg: '<p>No matches found.</p>',
-		    query_text: '<span class="form_label">Search Query:</span>',
+		    query_text: '<span><b>Search Query:</b></span>',
 
 		    search_text_btn: 'Search',
 		    close_search_text_btn: '[x]',
@@ -150,10 +150,10 @@
 		//use settings
 		if(settings.search){
              var funders_list = '';
-			 if(settings.funder_lists)
+			 if(settings.funder_lists && settings.funders != '')
              {
-                funders_list = '<span class="form_label">Funding Orgs:</span> <select name="funders" class="funder"><option value="All">All</option>'
-                var theList = jQuery.parseJSON((settings.funders));
+                funders_list = '<span><b>Funding Orgs:</b></span> <select name="funder" class="funder"><option value="All">All</option>'
+                var theList = JSON.parse(settings.funders);
                 for(i=0;i<theList.funder_list.length;i++){
                     funders_list = funders_list + '<option value="'+theList.funder_list[i]+'">'+theList.funder_list[i]+'</option>';
                 }
@@ -439,19 +439,23 @@
 		var result_div = p.find('.'+settings.grant_search_result);
         var thefields = jQuery.parseJSON(fields)
         var funder_list = '';
+
         if(funder!='All')
         {
-            funder_list = '&group='+funder;
+            funder_list = '&funder="'+funder+'"';
         }
+
 		if($.trim(query)==""){
 			$('.grant_search_result', p).html('Please enter a search string');
 		}else{
-            var matches = '';
+            var matches = 0;
 			$('.grant_search_result', p).html('Loading...');
             var html = '';
             // setting up a defferred so that the function doesn't drop through with a O found response before the ajax is returned
-            var dfd = new $.Deferred();
+           // var dfd = new jQuery.Deferred();
+
             for(i=0;i<thefields['search_fields'].length;i++) {
+
             	field = thefields['search_fields'][i];
             	$.ajax({
 				    url:settings.search_endpoint+'api_key='+settings.api_key+'&'+field+"="+encodeURIComponent(query)+funder_list+'&start=0&rows=999&callback=?',
@@ -461,7 +465,7 @@
 					if(settings.success_handler && (typeof settings.success_handler === 'function')){
 						settings.success_handler(data, obj, settings);
 					}else{
-                        matches += data.numFound
+                        matches += parseInt(data.numFound);
 						if(data.numFound>0){
                             html += '<a class="show_list" id="'+this.indexValue+settings._wid+'"> + </a>'+data.numFound+" found in <i>"+ thefields['search_fields'][this.indexValue]+"</i><br />";
 							html +='<div id="div_'+this.indexValue+settings._wid+'" class="listdiv" style="display:none"><ul>';
@@ -524,13 +528,13 @@
 			});
 
             }
-            return dfd.promise();
-            if(matches == 0 && i == thefields['search_fields'].length)
-            {
-                $('.grant_search_result', p).html(settings.nohits_msg);
-            }
-        }
 
+
+        }
+        setTimeout(function(){if(parseInt(matches) == 0 && i == thefields['search_fields'].length)
+        {
+            $('.grant_search_result', p).html(settings.nohits_msg);
+        }},1000);
 
 
 	}
@@ -594,12 +598,9 @@
     function scrollTo(hash) {
         location.hash = "#" + hash;
     }
-	//catch all .grant_widget and apply grant_widget() with default settings on
-    $(document).ready(function(){
-        $('.grant_widget').each(function(){
-            var elem = $(this);
-            var widget = elem.grant_widget();
-        });
+    $('.grant_widget').each(function(){
+        var elem = $(this);
+        var widget = elem.grant_widget();
     });
 
     $(document).on("click", ".show_list", function(e) {
