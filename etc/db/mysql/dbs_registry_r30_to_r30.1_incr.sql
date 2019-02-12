@@ -3,11 +3,12 @@ use dbs_registry;
 -- DROP TABLE `versions`;
 -- DROP TABLE `registry_object_versions`;
 -- DROP TABLE `schemas`;
+-- DROP VIEW `alt_schema_versions`;
 
 
 CREATE TABLE `schemas` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `prefix` mediumint(10) NOT NULL,
+  `prefix` varchar(20) NOT NULL,
   `uri` varchar(255) NOT NULL,
   `exportable` boolean NOT NULL DEFAULT FALSE,
   PRIMARY KEY (`id`,`prefix`),
@@ -17,7 +18,7 @@ CREATE TABLE `schemas` (
 CREATE TABLE `versions` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
   `schema_id` mediumint(8),
-  `data` blob NOT NULL,
+  `data` mediumblob NOT NULL,
   `hash` varchar(45) NOT NULL,
   `origin` varchar(20) NOT NULL,
   `created_at` datetime DEFAULT NOW(),
@@ -36,23 +37,10 @@ CREATE TABLE `registry_object_versions` (
   INDEX (`version_id`,`registry_object_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-
-CREATE TABLE `versions_identifiers` (
-  `version_id` mediumint(8) NOT NULL,
-  `identifier` varchar(255) NOT NULL,
-  `identifier_type` varchar(20),
-  PRIMARY KEY (`version_id`,`identifier`),
-  INDEX (`version_id`,`identifier`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
 CREATE VIEW `alt_schema_versions` AS
-SELECT `ro`.`registry_object_id` ,`ro`.`key` ,`ro`.`group` ,`ro`.`data_source_id` as `registry_object_data_source_id`
+SELECT `v`.`id`, `ro`.`registry_object_id` ,`ro`.`key` ,`ro`.`group` ,`ro`.`data_source_id` as `registry_object_data_source_id`
 ,`ro`.`class`, `v`.`data`, `v`.`created_at`, `v`.`updated_at`, `v`.`origin`, `sch`.`prefix`, `sch`.`uri`
-from ((`versions` `v`
-left join `registry_object_versions` `rov`
-on((`v`.`id` = `rov`.`version_id`)))
-left join `registry_objects` `ro`
-on((`ro`.`registry_object_id` = `rov`.`registry_object_id`)))
-left join `schemas` `sch`
-on((`sch`.`id` = `v`.`schema_id`))
-where (`ro`.`status` = 'PUBLISHED') and `sch`.`exportable` = TRUE;
+from (`versions` `v` left join `registry_object_versions` `rov` on(`v`.`id` = `rov`.`version_id`)
+left join `registry_objects` `ro` on(`ro`.`registry_object_id` = `rov`.`registry_object_id`)
+left join `schemas` `sch` on(`sch`.`id` = `v`.`schema_id`))
+where `ro`.`status` = 'PUBLISHED' and `sch`.`exportable` = TRUE;

@@ -6,6 +6,7 @@ namespace ANDS;
 
 use ANDS\Registry\IdentifierRelationshipView;
 use ANDS\Registry\RelationshipView;
+use ANDS\RegistryObject\AltSchemaVersion;
 use ANDS\RegistryObject\ExportToCSVTrait;
 use ANDS\RegistryObject\HasVersions;
 use ANDS\RegistryObject\Identifier;
@@ -22,7 +23,7 @@ class RegistryObject extends Model
     /** traits */
     use ExportToCSVTrait, HasVersions;
 
-    protected $versionRelationModel = RegistryObjectVersion::class;
+    protected $versionRelationModel = AltSchemaVersion::class;
     protected $versionRelationForeignKey = 'registry_object_id';
 
     protected $table = "registry_objects";

@@ -196,6 +196,27 @@ class RegistryObjectsRepository
     }
 
 
+    /**
+     * @param $identifiers
+     * @param $dataSourceId
+     * @param string $status
+     * @return RegistryObject[]
+     */
+    public static function getRecordsByIdentifier($identifiers, $dataSourceId, $status = "PUBLISHED")
+    {
+        
+        $matchingIdenfifiers = Identifier::wherein('identifier', $identifiers)
+            ->get()->pluck('registry_object_id')->toArray();
+
+
+        $registryObjects = RegistryObject::where('data_source_id', $dataSourceId)
+            ->where('status', $status)
+            ->wherein('registry_object_id', $matchingIdenfifiers)
+            ->get();
+
+        return $registryObjects;
+    }
+
     public static function getRecordsByHarvestID($harvestId, $dataSourceId, $status = "PUBLISHED")
     {
         $importTask = new ImportTask();

@@ -2,16 +2,12 @@
 
 namespace ANDS\API\Task\ImportSubTask;
 
-use ANDS\RecordData;
-use ANDS\RegistryObject;
-use ANDS\Util\XMLUtil;
-use ANDS\Repository\DataSourceRepository;
-use ANDS\RegistryObject\AltSchemaVersion;
-use ANDS\Repository\RegistryObjectsRepository as Repo;
-use SimpleXMLElement;
-use ANDS\Registry\VersionsIdentifiers;
 use \ANDS\Registry\Versions as Versions;
 use \ANDS\Registry\Schema;
+use \ANDS\RegistryObject\AltSchemaVersion;
+use \ANDS\RegistryObject\RegistryObjectVersion;
+use \ANDS\Repository\RegistryObjectsRepository;
+use \ANDS\Repository\DataSourceRepository;
 use \DOMDocument;
 
 class IngestNativeSchema extends ImportSubTask
@@ -28,7 +24,7 @@ class IngestNativeSchema extends ImportSubTask
         $this->data_source = DataSourceRepository::getByID($this->parent()->dataSourceID);
         $payloadCounter = 0;
         foreach ($this->parent()->getPayloads() as $payloadIndex => $payload) {
-            $payloadCounter++;
+
             $xml = $payload->getContentByStatus($this->payloadSource);
             if ($xml === null) {
                 $this->addError("No Original content were found for ". $payload->getPath());
@@ -40,57 +36,15 @@ class IngestNativeSchema extends ImportSubTask
             $mdNodes = $dom->documentElement->getElementsByTagName('MD_Metadata');
 
             foreach ($mdNodes as $mdNode) {
-                $identifiers = [];
-                $existingVersionIds = [];
-                $fileIdentifiers = $mdNode->getElementsByTagName('fileIdentifier');
-                if(sizeof($fileIdentifiers) > 0){
-                    foreach ($fileIdentifiers as $fileIdentifier){
-                        $identifiers[] = ['identifier' => trim($fileIdentifier->nodeValue), 'identifier_type' => 'local'];
-                    }
-                }
-
-                if(sizeof($identifiers) == 0){
-                    $mdIdentifiers = $mdNode->getElementsByTagName('MD_Identifier');
-                    if(sizeof($mdIdentifiers) > 0){
-                        foreach ($mdIdentifiers as $mdIdentifier){
-                            if(sizeof($mdIdentifier->getElementsByTagName('codeSpace')) > 0) {
-                                $cspElement = $mdIdentifier->getElementsByTagName('codeSpace')[0];
-                                if ($cspElement != null && trim($cspElement->nodeValue) != '' && trim($cspElement->nodeValue) == 'urn:uuid') {
-                                    $identifiers[] = ['identifier' => trim($mdIdentifier->getElementsByTagName('code')[0]->nodeValue),
-                                        'identifier_type' => trim($cspElement->nodeValue)];
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if(sizeof($identifiers) == 0){
-                    echo "Couldn't determine Identifiers so quiting";
-                    break;
-                }
-
-                foreach($identifiers as $identifier) {
-                    $existingVersionIds = VersionsIdentifiers::where('identifier', $identifier['identifier'])
-                        ->where('identifier_type', $identifier['identifier_type'])->pluck('version_id');
-                }
-
-                Versions::wherein('id', $existingVersionIds)->delete();
-                VersionsIdentifiers::wherein('version_id', $existingVersionIds)->delete();
-
-                $newVersionId = $this->insertNativeObject($mdNode);
-
-                foreach($identifiers as $identifier) {
-                    $versionIdentifier = new VersionsIdentifiers(['version_id' => $newVersionId,
-                        'identifier' => $identifier['identifier'],
-                        'identifier_type' => $identifier['identifier_type']]);
-                    $versionIdentifier->save();
-                }
+               $success = $this->insertNativeObject($mdNode);
+               if($success)
+                   $payloadCounter++;
             }
 
             if ($multiplePayloads) {
                 $this->updateProgress(
                     $payloadCounter, count($payloads),
-                    "Processed payload ($payloadCounter/".count($payloads).") " . $payloadIndex
+                    "Processed Native ($payloadCounter/".count($payloads).") " . $payloadIndex
                 );
             }
         }
@@ -98,6 +52,7 @@ class IngestNativeSchema extends ImportSubTask
         $this->parent()->updateHarvest([
             "importer_message" => "Records Created: ".$payloadCounter
         ]);
+        $this->parent()->setTaskData("NativeObjectsCreated", $payloadCounter);
 
     }
 
@@ -106,55 +61,91 @@ class IngestNativeSchema extends ImportSubTask
      * @param nativeObject DomElement
      *
      */
-    private function insertNativeObject($nativeObject)
+    private function insertNativeObject($mdNode)
     {
 
+        $identifiers = [];
+        $created = false;
+        $fileIdentifiers = $mdNode->getElementsByTagName('fileIdentifier');
+        if(sizeof($fileIdentifiers) > 0){
+            foreach ($fileIdentifiers as $fileIdentifier){
+                $identifiers[] = ['identifier' => trim($fileIdentifier->nodeValue), 'identifier_type' => 'local'];
+            }
+        }
 
-        $schema = Schema::where('uri', $nativeObject->namespaceURI)->first();
-        // check if the schema exists, if not, create it
+        if(sizeof($identifiers) == 0){
+            $mdIdentifiers = $mdNode->getElementsByTagName('MD_Identifier');
+            if(sizeof($mdIdentifiers) > 0){
+                foreach ($mdIdentifiers as $mdIdentifier){
+                    if(sizeof($mdIdentifier->getElementsByTagName('codeSpace')) > 0) {
+                        $cspElement = $mdIdentifier->getElementsByTagName('codeSpace')[0];
+                        if ($cspElement != null && trim($cspElement->nodeValue) != '' && trim($cspElement->nodeValue) == 'urn:uuid') {
+                            $identifiers[] = ['identifier' => trim($mdIdentifier->getElementsByTagName('code')[0]->nodeValue),
+                                'identifier_type' => trim($cspElement->nodeValue)];
+                        }
+                    }
+                }
+            }
+        }
+
+        if(sizeof($identifiers) == 0){
+            $this->log("Couldn't determine Identifiers");
+            return $created;
+        }
+
+        $schema = Schema::where('uri', $mdNode->namespaceURI)->first();
+
         if($schema == null){
 
             $schema = new Schema();
             $schema->setRawAttributes([
-                'prefix' => Schema::getPrefix($nativeObject->namespaceURI),
-                'uri' => $nativeObject->namespaceURI,
+                'prefix' => Schema::getPrefix($mdNode->namespaceURI),
+                'uri' => $mdNode->namespaceURI,
                 'exportable' => 1
             ]);
             $schema->save();
         }
 
+        $IdentifierArray = [];
 
-        $newVersion = new Versions();
+        foreach($identifiers as $identifier) {
+            $IdentifierArray[] =  $identifier['identifier'];
+        }
+
+        $registryObjects = RegistryObjectsRepository::getRecordsByIdentifier($IdentifierArray, $this->parent()->dataSourceID);
+
+        $recordIDs = collect($registryObjects)->pluck('registry_object_id')->toArray();
+
         $dom = new DomDocument('1.0', 'UTF-8');
-        $dom->appendChild($dom->importNode($nativeObject, True));
+        $dom->appendChild($dom->importNode($mdNode, True));
         $data = $dom->saveXML();
-        $newVersion->setRawAttributes([
-            'data' => $data,
-            'hash' => md5($data),
-            'origin' => 'HARVESTER',
-            'schema_id' => $schema->id,
-            'updated_at' => date("Y-m-d G:i:s")
-        ]);
 
-        $newVersion->save();
+        $hash = md5($data);
 
-        return $newVersion->id;
-    }
+        foreach ($recordIDs as $id) {
+            $existing = AltSchemaVersion::where('prefix', $schema->prefix)->where('registry_object_id', $id)->first();
 
+            if (!$existing) {
+                $version = Versions::create([
+                    'data' => $data,
+                    'hash' => $hash,
+                    'origin' => 'HARVESTER',
+                    'schema_id' => $schema->id,
+                ]);
+                RegistryObjectVersion::firstOrCreate([
+                    'version_id' => $version->id,
+                    'registry_object_id' => $id
+                ]);
+            } elseif ($hash != $existing->version->hash) {
+                $existing->version->update([
+                    'data' => $data,
+                    'hash' => $hash
+                ]);
+            }
 
-    public static function getNameSpaceFromSimpleXML($mdNode)
-    {
-        var_dump($mdNode);
-    }
-
-    /**
-     * @param $sxml
-     * @param $xpath
-     * @return mixed
-     */
-    public static function getElementsByXPathFromSXML(\SimpleXMLElement $sxml, $xpath)
-    {
-        return $sxml->xpath($xpath);
+            $created = true;
+        }
+        return $created;
     }
 
 }

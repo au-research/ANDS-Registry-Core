@@ -28,6 +28,9 @@ class RecordsHandler extends Handler {
         $router->get('records/(\w+)/dci/validate', 'RecordsMiscController@dciValidate');
         $router->get('records/(\w+)/oai_dc', 'RecordsMiscController@oai_dc');
 
+        $router->get('records/(\w+)/versions', 'RecordsVersionsController@index');
+        $router->get('records/(\w+)/versions/(\w+)', 'RecordsVersionsController@show');
+
         $router->get('records/(\w+)/graph', 'RecordsGraphController@index');
 
         $router->route(['GET', 'PUT', 'POST'], 'records/(\w+)/sync', 'RecordsController@sync');

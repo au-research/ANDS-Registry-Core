@@ -1,10 +1,11 @@
 <?php
 
 namespace ANDS\API\Task\ImportSubTask;
-use \ANDS\Registry\Providers\ISO19115\ISO19115_3Provider;
-use ANDS\Registry\VersionsIdentifiers;
 use \ANDS\Registry\Versions as Versions;
 use \ANDS\Registry\Schema;
+use \ANDS\RegistryObject\AltSchemaVersion;
+use \ANDS\RegistryObject\RegistryObjectVersion;
+use \ANDS\Repository\RegistryObjectsRepository;
 use \DOMDocument;
 
 class IngestNativeSchemaTest extends \RegistryTestClass
@@ -14,7 +15,7 @@ class IngestNativeSchemaTest extends \RegistryTestClass
     {
 
         $importTask = new IngestNativeSchema();
-
+        $dataSourceId = 14;
         $dom = new \DOMDocument();
         $dom->load("/var/www/html/workareas/leo/registry/tests/resources/harvested_contents/oaipmh.xml");
         //$dom->load("/var/www/html/workareas/leo/registry/tests/resources/harvested_contents/csw.xml");
@@ -22,75 +23,7 @@ class IngestNativeSchemaTest extends \RegistryTestClass
 
 
         foreach ($mdNodes as $mdNode) {
-            $identifiers = [];
-            $existingVersionIds = [];
-            $fileIdentifiers = $mdNode->getElementsByTagName('fileIdentifier');
-            if(sizeof($fileIdentifiers) > 0){
-                foreach ($fileIdentifiers as $fileIdentifier){
-                    $identifiers[] = ['identifier' => trim($fileIdentifier->nodeValue), 'identifier_type' => 'local'];
-                }
-            }
-
-            if(sizeof($identifiers) == 0){
-                $mdIdentifiers = $mdNode->getElementsByTagName('MD_Identifier');
-                if(sizeof($mdIdentifiers) > 0){
-                    foreach ($mdIdentifiers as $mdIdentifier){
-                        if(sizeof($mdIdentifier->getElementsByTagName('codeSpace')) > 0) {
-                            $cspElement = $mdIdentifier->getElementsByTagName('codeSpace')[0];
-                            if ($cspElement != null && trim($cspElement->nodeValue) != '' && trim($cspElement->nodeValue) == 'urn:uuid') {
-                                $identifiers[] = ['identifier' => trim($mdIdentifier->getElementsByTagName('code')[0]->nodeValue),
-                                    'identifier_type' => trim($cspElement->nodeValue)];
-                            }
-                        }
-                    }
-                }
-            }
-
-            if(sizeof($identifiers) == 0){
-                echo "Couldn't determine Identifiers so quiting";
-                break;
-            }
-
-            $schema = Schema::where('uri', $mdNode->namespaceURI)->first();
-
-            if($schema == null){
-
-                $schema = new Schema();
-                $schema->setRawAttributes([
-                    'prefix' => Schema::getPrefix($mdNode->namespaceURI),
-                    'uri' => $mdNode->namespaceURI,
-                    'exportable' => 1
-                ]);
-                $schema->save();
-            }
-
-            foreach($identifiers as $identifier) {
-                $existingVersionIds = VersionsIdentifiers::where('identifier', $identifier['identifier'])
-                ->where('identifier_type', $identifier['identifier_type'])->pluck('version_id');
-            }
-
-            Versions::wherein('id', $existingVersionIds)->delete();
-            VersionsIdentifiers::wherein('version_id', $existingVersionIds)->delete();
-
-            $newVersion = new \ANDS\Registry\Versions();
-            $dom = new DomDocument('1.0', 'UTF-8');
-            $dom->appendChild($dom->importNode($mdNode, True));
-            $data = $dom->saveXML();
-            $newVersion->setRawAttributes([
-                'data' => $data,
-                'hash' => md5($data),
-                'origin' => 'HARVESTER',
-                'schema_id' => $schema->id,
-                'updated_at' => date("Y-m-d G:i:s")
-            ]);
-            $newVersion->save();
-            // check if the schema exists, if not, create it
-            foreach($identifiers as $identifier) {
-                $versionIdentifier = new VersionsIdentifiers(['version_id' => $newVersion->id,
-                    'identifier' => $identifier['identifier'],
-                    'identifier_type' => $identifier['identifier_type']]);
-                $versionIdentifier->save();
-            }
+            $this->insertNativeObject($mdNode);
         }
 
 
@@ -112,4 +45,88 @@ class IngestNativeSchemaTest extends \RegistryTestClass
 
     }
 
+    private function insertNativeObject($mdNode)
+    {
+
+        $dataSourceID = 14;
+        $identifiers = [];
+        $fileIdentifiers = $mdNode->getElementsByTagName('fileIdentifier');
+        if (sizeof($fileIdentifiers) > 0) {
+            foreach ($fileIdentifiers as $fileIdentifier) {
+                $identifiers[] = ['identifier' => trim($fileIdentifier->nodeValue), 'identifier_type' => 'local'];
+            }
+        }
+
+        if (sizeof($identifiers) == 0) {
+            $mdIdentifiers = $mdNode->getElementsByTagName('MD_Identifier');
+            if (sizeof($mdIdentifiers) > 0) {
+                foreach ($mdIdentifiers as $mdIdentifier) {
+                    if (sizeof($mdIdentifier->getElementsByTagName('codeSpace')) > 0) {
+                        $cspElement = $mdIdentifier->getElementsByTagName('codeSpace')[0];
+                        if ($cspElement != null && trim($cspElement->nodeValue) != '' && trim($cspElement->nodeValue) == 'urn:uuid') {
+                            $identifiers[] = ['identifier' => trim($mdIdentifier->getElementsByTagName('code')[0]->nodeValue),
+                                'identifier_type' => trim($cspElement->nodeValue)];
+                        }
+                    }
+                }
+            }
+        }
+
+        if (sizeof($identifiers) == 0) {
+            echo "Couldn't determine Identifiers so quiting";
+            return;
+        }
+
+        $schema = Schema::where('uri', $mdNode->namespaceURI)->first();
+
+        if ($schema == null) {
+
+            $schema = new Schema();
+            $schema->setRawAttributes([
+                'prefix' => Schema::getPrefix($mdNode->namespaceURI),
+                'uri' => $mdNode->namespaceURI,
+                'exportable' => 1
+            ]);
+            $schema->save();
+        }
+
+        $IdentifierArray = [];
+
+        foreach ($identifiers as $identifier) {
+            $IdentifierArray[] = $identifier['identifier'];
+        }
+
+        $registryObjects = RegistryObjectsRepository::getRecordsByIdentifier($IdentifierArray, $dataSourceID);
+
+        $recordIDs = collect($registryObjects)->pluck('registry_object_id')->toArray();
+
+        $dom = new DomDocument('1.0', 'UTF-8');
+        $dom->appendChild($dom->importNode($mdNode, True));
+        $data = $dom->saveXML();
+
+        $hash = md5($data);
+
+        foreach ($recordIDs as $id) {
+            $existing = AltSchemaVersion::where('prefix', $schema->prefix)->where('registry_object_id', $id)->first();
+var_dump($hash);
+            if (!$existing) {
+                $existing = Versions::create([
+                    'data' => $data,
+                    'hash' => $hash,
+                    'origin' => 'HARVESTER',
+                    'schema_id' => $schema->id,
+                ]);
+            } elseif ($hash != $existing->version->hash) {
+                $existing->version->update([
+                    'data' => $data,
+                    'hash' => $hash
+                ]);
+            }
+
+            RegistryObjectVersion::firstOrCreate([
+                'version_id' => $existing->id,
+                'registry_object_id' => $id
+            ]);
+        }
+    }
 }
