@@ -11,7 +11,7 @@ return [
     'solr_url' => env('SOLR_URL', 'http://localhost:8983/solr/'),
     'elasticsearch_url' => env('ELASTICSEARCH_URL', 'http://localhost:9200/'),
     'socket_url' => env('SOCKET_URL', 'https://localhost:3001/'),
-    'deployment_state' => "development",
+    'deployment_state' => env('ENVIRONMENT', "development"),
     'api_whitelist_ip' => env('API_WHITELIST_IP', ''),
     'timezone' => env("TIMEZONE", 'Australia/Canberra'),
     'site_admin' => env('ADMIN_NAME', null),
