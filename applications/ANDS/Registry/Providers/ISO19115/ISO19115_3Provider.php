@@ -14,12 +14,19 @@ use ANDS\RegistryObject\AltSchemaVersion;
 class ISO19115_3Provider implements RegistryContentProvider
 {
     private static $schema_uri = 'http://standards.iso.org/iso/19115/-3/mdb/1.0';
-
+    private static $origin = "REGISTRY";
     public static function process(RegistryObject $record)
     {
 
         if(!static::isValid($record))
             return false;
+
+        $existing = AltSchemaVersion::where('prefix', Schema::getPrefix(static::$schema_uri))
+            ->where('registry_object_id', $record->id)->first();
+// don't generate one if we have an other instance from different origin eg HARVESTER
+        if($existing && $existing->origin != static::$origin)
+            return false;
+
 
         $iso = static::generateISO($record->getCurrentData()->data);
         $schema = Schema::where('uri', static::$schema_uri)->first();
@@ -34,7 +41,7 @@ class ISO19115_3Provider implements RegistryContentProvider
             $schema->save();
         }
 
-        $record->addVersion($iso, static::$schema_uri, "REGISRTY");
+        $record->addVersion($iso, static::$schema_uri, static::$origin);
 
         return true;
 

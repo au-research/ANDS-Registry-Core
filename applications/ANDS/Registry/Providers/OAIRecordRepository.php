@@ -56,7 +56,7 @@ class OAIRecordRepository implements OAIRepository
         "iso19115-3" => [
             'metadataPrefix' => 'iso19115-3',
             'schema' => 'http://standards.iso.org/iso/19115/-3/mdb/1.0/mdb.xsd',
-            'metadataNamespace' => 'http://standards.iso.org/iso/19115/-3/mdb/1.0'
+            'metadataNamespace' => 'no-default-namespace'
         ]
     ];
 
@@ -277,6 +277,11 @@ class OAIRecordRepository implements OAIRepository
         } elseif ($metadataFormat == "dci") {
             if ($dci = DCI::where('registry_object_id', $record->id)->first()) {
                 $oaiRecord->setMetadata($dci->data);
+            }
+        } elseif ($metadataFormat == "iso19115-3") {
+
+            if ($iso = AltSchemaVersion::where('registry_object_id', $record->id)->where('prefix', 'iso19115-3')->first()) {
+                $oaiRecord->setMetadata($iso->data);
             }
         }
         return $oaiRecord;
