@@ -118,7 +118,7 @@ class IngestNativeSchema extends ImportSubTask
 
         $dom = new DomDocument('1.0', 'UTF-8');
         $dom->appendChild($dom->importNode($mdNode, True));
-        $data = $dom->saveXML();
+        $data = $dom->saveXML($dom->documentElement);
 
         $hash = md5($data);
 

@@ -37,5 +37,20 @@ class ISO19115_3ProviderTest extends \RegistryTestClass
         //$provider->validateContent($iso);
     }
 
+    /** @test */
+    public function test_dont_overwrite_harvester_iso19115()
+    {
+        $record = $this->ensureKeyExist("TERN/6d09d9c4-b9b7-4ae3-a60b-03a963c73878");
+
+        $provider = new ISO19115_3Provider();
+        $result = $provider->process($record);
+        $this->assertFalse($result);
+        $iso = $provider->get($record);
+        $rootNode = XMLUtil::getElementsByName($iso,'MD_Metadata',"http://standards.iso.org/iso/19115/-3/mdb/1.0");
+        $this->assertEquals(sizeof($rootNode), 1);
+        //$provider->validateContent($iso);
+    }
+
+
 
 }
