@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+    <registryObject group="Australian National Data Services">
+        <key>6ac30542-4805-f2bf-e5e4-45b73b15221d</key>
+        <originatingSource type="">https://researchdata.ands.org.au/datasource/MISSING_DATASOURCE</originatingSource>
+        <service type="OGC:WMS">
+            <name type="primary">
+                <namePart>Marine Key Ecological Features service</namePart>
+            </name>
+            <description type="brief">&amp;lt;p&amp;gt;Web service Key Ecological Feature (KEFs). Key ecological features are the parts of the marine ecosystem that are considered to be of importance for a marine regions biodiversity or ecosystem function and integrity.&amp;lt;/p&amp;gt;</description>
+            <rights>
+                <accessRights>CC - Attribution (CC BY)</accessRights>
+            </rights>
+            <identifier type="local">6ac30542-4805-f2bf-e5e4-45b73b15221d</identifier>
+            <location>
+                <address>
+                  <electronic type="url">
+                    <value>http://www.environment.gov.au/mapping/services/ogc_services/Key_Ecological_Features/MapServer/WMSServer?SERVICE=WMS&amp;VERSION=1.3.0&amp;REQUEST=GetCapabilities</value>
+                  </electronic>
+                  <electronic type="email">
+                    <value>marine.metadata@environment.gov.au </value>
+                  </electronic>
+                </address>
+            </location>
+            <location>
+                <address>
+                  <physical type="Postal">
+                    <addressPart type="addressLine">Australian Government Department of the Environment</addressPart>
+                    <addressPart type="addressLine">GPO Box 787 </addressPart>
+                    <addressPart type="addressLine">Canberra</addressPart>
+                    <addressPart type="addressLine">ACT</addressPart>
+                    <addressPart type="addressLine">2601</addressPart>
+                    <addressPart type="addressLine">AU</addressPart>
+                    <addressPart type="telephoneNumber">02 6274 1111</addressPart>
+                    <addressPart type="faxNumber">02 6274 1666</addressPart>
+                  </physical>
+                </address>
+            </location>
+            <coverage>
+                <spatial type="iso19139dcmiBox">northlimit=85; southlimit=-85; westlimit=-46.6899; eastLimit=180; projection=WGS84</spatial>
+            </coverage>
+            <subject type="local">EPBC</subject>
+            <subject type="local">Ecology</subject>
+            <subject type="local">Marine</subject>
+            <subject type="local">OSS</subject>
+            <subject type="local">oceans</subject>
+            <subject type="local">WMS</subject>
+            <subject type="local">OPeNDAP</subject>
+            <subject type="local">Gridded</subject>
+            <subject type="local">Satellite</subject>
+            <subject type="local">Solar</subject>
+            <subject type="local">Radiation</subject>
+            <subject type="local">Meteorology</subject>
+            <subject type="local">National Environmental Information Infrastructure</subject>
+            <subject type="local">neii.gov.au</subject>
+            <subject type="anzsrc-for">040107</subject>
+            <subject type="anzsrc-for">060805</subject>
+            <subject type="anzsrc-for">1109</subject>
+            <subject type="anzsrc-for">110903</subject>
+            <subject type="local">inlandWaters</subject>
+            <subject type="local">environment</subject>
+            <subject type="anzsrc-for">1904</subject>
+            <subject type="anzsrc-for">1905</subject>
+            <relatedInfo type="collection">
+                <title>Marine Key Ecological Features</title>
+                <identifier type="global">baabcdcf-e620-4d9e-b273-91d1de3ec107</identifier>
+                <relation type="hasAssociationWith"/>
+            </relatedInfo>
+            <relatedInfo type="collection">
+                <title>Lorem Ipso</title>
+                <identifier type="local">Collection_NamePrimary_5Char_new</identifier>
+                <relation type="makesAvailable">
+                    <url>http://www.environment.gov.au/mapping/services/ogc_services/Key_Ecological_Features/MapServer/WMSServer?SERVICE=WMS&amp;VERSION=1.3.0&amp;REQUEST=GetCapabilities</url>
+                </relation>
+            </relatedInfo>
+            <relatedInfo type="collection">
+                <title>Average wild-type C57BL/6J mouse 3D MRI cortex labels</title>
+                <identifier type="local">xiaobinshen/demoforRAB/tissuestack</identifier>
+                <relation type="makesAvailable">
+                    <url>http://www.environment.gov.au/mapping/services/ogc_services/Key_Ecological_Features/MapServer/WMSServer</url>
+                </relation>
+            </relatedInfo>
+            <relatedInfo type="collection">
+                <title>Directory of Important Wetlands in Australia (DIWA) Spatial Database</title>
+                <identifier type="global">ANZCW0501003820</identifier>
+                <relation type="makesAvailable">
+                    <url>http://www.environment.gov.au/mapping/services/ogc_services/Key_Ecological_Features/MapServer/WMSServer?SERVICE=WMS&amp;VERSION=1.3.0&amp;REQUEST=GetCapabilities</url>
+                </relation>
+            </relatedInfo>
+            <relatedInfo type="collection">
+                <title>Australian Geophysical Data Collection</title>
+                <identifier type="global">f7322_4624_6986_4680</identifier>
+                <relation type="makesAvailable">
+                    <url>http://www.environment.gov.au/mapping/services/ogc_services/Key_Ecological_Features/MapServer/WMSServer?SERVICE=WMS&amp;VERSION=1.3.0&amp;REQUEST=GetCapabilities</url>
+                </relation>
+            </relatedInfo>
+            <relatedInfo type="collection">
+                <title>Demo Sample Collection 2</title>
+                <identifier type="local">Col2_new</identifier>
+                <relation type="makesAvailable">
+                    <url>http://www.environment.gov.au/mapping/services/ogc_services/Key_Ecological_Features/MapServer/WMSServer?SERVICE=WMS&amp;VERSION=1.3.0&amp;REQUEST=GetCapabilities</url>
+                </relation>
+            </relatedInfo>
+        </service>
+    </registryObject>
+</registryObjects>
