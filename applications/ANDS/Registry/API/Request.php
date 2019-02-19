@@ -63,6 +63,11 @@ class Request
         return array_key_exists($key, $inputs) ? $inputs[$key] : null;
     }
 
+    public static function getContentType()
+    {
+        return array_key_exists('CONTENT_TYPE', $_SERVER) ? $_SERVER['CONTENT_TYPE'] : "";
+    }
+
     function parse_raw_http_request(array &$a_data)
     {
         // read incoming data

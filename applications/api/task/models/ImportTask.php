@@ -391,6 +391,7 @@ class ImportTask extends Task
                     "HandleRefreshHarvest",
                     "ProcessDelete",
                     "ProcessIdentifiers",
+                    "IngestNativeSchema",
                     "ProcessLinks",
                     "ProcessRelationships",
                     "ProcessGraphRelationships",
