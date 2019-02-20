@@ -30,16 +30,30 @@ class IngestNativeSchema extends ImportSubTask
                 $this->addError("No Original content were found for ". $payload->getPath());
                 break;
             }
-
+            libxml_use_internal_errors(true);
             $dom = new \DOMDocument();
-            $dom->loadXML($xml);
-            $mdNodes = $dom->documentElement->getElementsByTagName('MD_Metadata');
-
-            foreach ($mdNodes as $mdNode) {
-               $success = $this->insertNativeObject($mdNode);
-               if($success)
-                   $payloadCounter++;
+            try{
+                $dom->loadXML($xml);
+                $mdNodes = $dom->documentElement->getElementsByTagName('MD_Metadata');
+                $errors = libxml_get_errors();
+                if($errors) {
+                    foreach ($errors as $error) {
+                        $this->add_load_error($error, $xml);
+                    }
+                }
+                else{
+                    foreach ($mdNodes as $mdNode) {
+                        $success = $this->insertNativeObject($mdNode);
+                        if($success)
+                            $payloadCounter++;
+                    }
+                }
+                libxml_clear_errors();
             }
+            Catch(Exception $e){
+                $this->addError("Errors while loading  ".$this->payloadSource. " Error message:". $e->getMessage());
+            }
+
 
             if ($multiplePayloads) {
                 $this->updateProgress(
@@ -55,6 +69,35 @@ class IngestNativeSchema extends ImportSubTask
         $this->parent()->setTaskData("NativeObjectsCreated", $payloadCounter);
 
     }
+
+    function add_load_error($error, $xml)
+    {
+        $error_msg  = $xml[$error->line - 1] . "\n";
+        $error_msg.= str_repeat('-', $error->column) . "^\n";
+
+        switch ($error->level) {
+            case LIBXML_ERR_WARNING:
+                $error_msg .= "Warning $error->code: ";
+                break;
+            case LIBXML_ERR_ERROR:
+                $error_msg .= "Error $error->code: ";
+                break;
+            case LIBXML_ERR_FATAL:
+                $error_msg .= "Fatal Error $error->code: ";
+                break;
+        }
+
+        $error_msg .= trim($error->message) .
+            "\n  Line: $error->line" .
+            "\n  Column: $error->column";
+
+        if ($error->file) {
+            $error_msg .= "\n  File: $error->file";
+        }
+
+        $this->addError("Errors while loading  ".$this->payloadSource. " Error message:". $error_msg);
+    }
+
 
     /*Insert a record versions
      *
