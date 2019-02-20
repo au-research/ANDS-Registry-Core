@@ -17,17 +17,34 @@ class IngestNativeSchemaTest extends \RegistryTestClass
         $importTask = new IngestNativeSchema();
         $dataSourceId = 14;
         $dom = new \DOMDocument();
-        $dom->load("/var/www/html/workareas/leo/registry/tests/resources/harvested_contents/oaipmh.xml");
-        //$dom->load("/var/www/html/workareas/leo/registry/tests/resources/harvested_contents/csw.xml");
-        $mdNodes = $dom->documentElement->getElementsByTagName('MD_Metadata');
 
-
-        foreach ($mdNodes as $mdNode) {
-            $this->insertNativeObject($mdNode);
-        }
-
+        //$dom->load("/var/www/html/workareas/leo/registry/tests/resources/harvested_contents/oaipmh.xml");
+        $xml = file_get_contents("/var/www/html/workareas/leo/registry/tests/resources/harvested_contents/bom_csw.xml");
+        libxml_use_internal_errors(true);
+        $dom = new \DOMDocument();
+            try {
+                $dom->loadXML($xml);
+                $mdNodes = $dom->documentElement->getElementsByTagName('MD_Metadata');
+                $errors = libxml_get_errors();
+                if ($errors) {
+                    foreach ($errors as $error) {
+                        $this->print_load_error($error, $xml);
+                    }
+                } else {
+                    foreach ($mdNodes as $mdNode) {
+                        $success = $this->insertNativeObject($mdNode);
+                    }
+                }
+                libxml_clear_errors();
+            }
+            Catch(Exception $e){
+                print("Errors while loading testFile Error message:". $e->getMessage());
+            }
 
     }
+
+
+
 
     /**  @test */
     public function testPrefixGen(){
@@ -93,6 +110,7 @@ class IngestNativeSchemaTest extends \RegistryTestClass
         $IdentifierArray = [];
 
         foreach ($identifiers as $identifier) {
+            var_dump($identifier['identifier']);
             $IdentifierArray[] = $identifier['identifier'];
         }
 
@@ -108,7 +126,6 @@ class IngestNativeSchemaTest extends \RegistryTestClass
 
         foreach ($recordIDs as $id) {
             $existing = AltSchemaVersion::where('prefix', $schema->prefix)->where('registry_object_id', $id)->first();
-var_dump($hash);
             if (!$existing) {
                 $existing = Versions::create([
                     'data' => $data,
@@ -129,4 +146,33 @@ var_dump($hash);
             ]);
         }
     }
+
+
+        function print_load_error($error, $xml)
+        {
+            $error_msg  = $xml[$error->line - 1] . "\n";
+            $error_msg.= str_repeat('-', $error->column) . "^\n";
+
+            switch ($error->level) {
+                case LIBXML_ERR_WARNING:
+                    $error_msg .= "Warning $error->code: ";
+                    break;
+                case LIBXML_ERR_ERROR:
+                    $error_msg .= "Error $error->code: ";
+                    break;
+                case LIBXML_ERR_FATAL:
+                    $error_msg .= "Fatal Error $error->code: ";
+                    break;
+            }
+
+            $error_msg .= trim($error->message) .
+                "\n  Line: $error->line" .
+                "\n  Column: $error->column";
+
+            if ($error->file) {
+                $error_msg .= "\n  File: $error->file";
+            }
+
+            print("Errors while loading  Test file  Error message:". $error_msg);
+        }
 }
