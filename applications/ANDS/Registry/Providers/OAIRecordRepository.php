@@ -144,7 +144,7 @@ class OAIRecordRepository implements OAIRepository
             return $this->listDCIRecords($options);
         }
 
-        if ($metadataPrefix == "rif") {
+        if ($metadataPrefix == "rif" || $metadataPrefix == "oai_dc") {
             $registryObjects = $this->getRegistryObjects($options);
             $records = $registryObjects['records'];
             $total = $registryObjects['total'];
