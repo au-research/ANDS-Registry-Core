@@ -187,6 +187,7 @@ class ServiceProvider
         $options = $this->collectOptions();
         if (array_key_exists('metadataPrefix', $options)) {
             $formats = $this->repository->getFormats();
+
             $xmlns = $formats[$options['metadataPrefix']]['metadataNamespace'];
             $response->getContent()->documentElement->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:default',
                 $xmlns);
