@@ -186,11 +186,13 @@ class ServiceProvider
         // OAI-PMH elements will have the oai: prefix
         $options = $this->collectOptions();
         if (array_key_exists('metadataPrefix', $options)) {
-            $formats = $this->repository->getFormats();
+            $formats = $this->repository->getDefaultFormats();
+            if(isset($formats[$options['metadataPrefix']])){
+                $xmlns = $formats[$options['metadataPrefix']]['metadataNamespace'];
+                $response->getContent()->documentElement->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:default',
+                    $xmlns);
+            }
 
-            $xmlns = $formats[$options['metadataPrefix']]['metadataNamespace'];
-            $response->getContent()->documentElement->setAttributeNS('http://www.w3.org/2000/xmlns/', 'xmlns:default',
-                $xmlns);
         }
 
         return $response;
@@ -419,9 +421,12 @@ class ServiceProvider
 
         if ($data['metadata']) {
             $metadataNode = $recordNode->appendChild($response->createElement('metadata'));
-            $fragment = $response->getContent()->createDocumentFragment();
-            $fragment->appendXML($data['metadata']);
-            $metadataNode->appendChild($fragment);
+            $doc = new DOMDocument();
+            $doc->loadXML($data['metadata']);
+            $clonedNode = $doc->documentElement->cloneNode(true);
+            $importedNode = $element->ownerDocument->importNode($clonedNode, true);
+            $metadataNode->appendChild($importedNode);
+
         }
 
         $element->appendChild($recordNode);

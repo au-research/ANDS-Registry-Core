@@ -14,7 +14,7 @@ interface OAIRepository
     public function listMetadataFormats($identifier = null);
     public function listIdentifiers($options);
     public function getFormats();
-
+    public function getDefaultFormats();
     // helper
     public function getDateFormat();
 }
