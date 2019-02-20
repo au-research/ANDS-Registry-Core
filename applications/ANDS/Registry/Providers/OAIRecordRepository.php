@@ -52,11 +52,6 @@ class OAIRecordRepository implements OAIRepository
             'metadataPrefix' => 'dci',
             'schema' => 'https://clarivate.com/products/web-of-science/web-science-form/data-citation-index/',
             'metadataNamespace' => 'https://clarivate.com/products/web-of-science/web-science-form/data-citation-index/'
-        ],
-        "iso19115-3" => [
-            'metadataPrefix' => 'iso19115-3',
-            'schema' => 'http://standards.iso.org/iso/19115/-3/mdb/1.0/mdb.xsd',
-            'metadataNamespace' => 'no-default-namespace'
         ]
     ];
 
@@ -130,14 +125,14 @@ class OAIRecordRepository implements OAIRepository
 
             throw new IdDoesNotExistException();
         }
-        return $this->formats;
+        return $this->getFormats();
     }
 
     public function listRecords($options)
     {
         $metadataPrefix = $options['metadataPrefix'];
 
-        if (!in_array($metadataPrefix, array_keys($this->formats))) {
+        if (!in_array($metadataPrefix,  array_keys($this->getFormats()))) {
             throw new BadArgumentException();
         }
 
@@ -149,38 +144,39 @@ class OAIRecordRepository implements OAIRepository
             return $this->listDCIRecords($options);
         }
 
+        if ($metadataPrefix == "rif") {
+            $registryObjects = $this->getRegistryObjects($options);
+            $records = $registryObjects['records'];
+            $total = $registryObjects['total'];
+
+            $result = [];
+            foreach ($records as $record) {
+                $oaiRecord = new Record(
+                    $this->oaiIdentifierPrefix . $record->id,
+                    DatesProvider::getUpdatedAt($record, $this->getDateFormat(), 'UTC')
+                );
+
+                // set
+                $oaiRecord = $this->addSets($oaiRecord, $record);
+
+                $oaiRecord = $this->addMetadata($oaiRecord, $record, $options['metadataPrefix']);
+
+                $result[] = $oaiRecord;
+            }
+            return [
+                'total' => $total,
+                'records' => $result,
+                'limit' => $options['limit'],
+                'offset' => $options['offset']
+            ];
+        }
         // TODO change it to elseif ($metadataPrefix != 'rif') and
         // provide any schema from the 'schemas' table that are exportable
-        if ($metadataPrefix == "iso19115-3")
-        {
-            return $this->listISO19115_3Records($options);
+        else {
+            return $this->listAltSchemaVersions($options);
         }
 
-        $registryObjects = $this->getRegistryObjects($options);
-        $records = $registryObjects['records'];
-        $total = $registryObjects['total'];
 
-        $result = [];
-        foreach ($records as $record) {
-            $oaiRecord = new Record(
-                $this->oaiIdentifierPrefix.$record->id,
-                DatesProvider::getUpdatedAt($record, $this->getDateFormat(), 'UTC')
-            );
-
-            // set
-            $oaiRecord = $this->addSets($oaiRecord, $record);
-
-            $oaiRecord = $this->addMetadata($oaiRecord, $record, $options['metadataPrefix']);
-
-            $result[] = $oaiRecord;
-        }
-
-        return [
-            'total' => $total,
-            'records' => $result,
-            'limit' => $options['limit'],
-            'offset' => $options['offset']
-        ];
     }
 
     public function getDateFormat()
@@ -195,7 +191,9 @@ class OAIRecordRepository implements OAIRepository
 
     public function getRecord($metadataFormat, $identifier)
     {
-        if (!in_array($metadataFormat, array_keys($this->formats))) {
+
+
+        if (!in_array($metadataFormat, array_keys($this->getFormats()))) {
             throw new BadArgumentException();
         }
 
@@ -205,7 +203,6 @@ class OAIRecordRepository implements OAIRepository
 
         $id = str_replace($this->oaiIdentifierPrefix, "", $identifier);
         $record = RegistryObjectsRepository::getRecordByID($id);
-
         if (!$record) {
             // try to see if it's a scholix record
             $scholixRecord = Scholix::where('scholix_identifier', $identifier)->first();
@@ -278,10 +275,9 @@ class OAIRecordRepository implements OAIRepository
             if ($dci = DCI::where('registry_object_id', $record->id)->first()) {
                 $oaiRecord->setMetadata($dci->data);
             }
-        } elseif ($metadataFormat == "iso19115-3") {
-
-            if ($iso = AltSchemaVersion::where('registry_object_id', $record->id)->where('prefix', 'iso19115-3')->first()) {
-                $oaiRecord->setMetadata($iso->data);
+        } else{
+            if ($altRecord = AltSchemaVersion::where('registry_object_id', $record->id)->where('prefix', $metadataFormat)->first()) {
+                $oaiRecord->setMetadata($altRecord->data);
             }
         }
         return $oaiRecord;
@@ -324,6 +320,10 @@ class OAIRecordRepository implements OAIRepository
 
         if ($options['metadataPrefix'] == "dci") {
             return $this->listIdentifiersDCI($options);
+        }
+
+        else{
+            return $this->listIdentifiersAltSchema($options);
         }
 
         throw new BadArgumentException("Unknown metadataPrefix {$options['metadataPrefix']}");
@@ -722,9 +722,32 @@ class OAIRecordRepository implements OAIRepository
         return $oaiRecord;
     }
 
+    private function listIdentifiersAltSchema($options)
+    {
+        $result = [];
 
-    private function listISO19115_3Records($options){
-        $records = $this->getISO19115_3Records($options);
+        $records = $this->getAltSchemaVersions($options);
+
+        foreach ($records['records'] as $record) {
+            $oaiRecord = new Record(
+                $this->oaiIdentifierPrefix.$record->registryObject->id,
+                Carbon::parse($record->updated_at)->setTimezone('UTC')->format($this->getDateFormat())
+            );
+            $oaiRecord = $this->addDCISets($oaiRecord, $record);
+            $result[] = $oaiRecord;
+        }
+
+        return [
+            'total' => $records['total'],
+            'records' => $result,
+            'limit' => $options['limit'],
+            'offset' => $options['offset']
+        ];
+    }
+
+
+    private function listAltSchemaVersions($options){
+        $records = $this->getAltSchemaVersions($options);
 
         $result = [];
         foreach ($records['records'] as $record) {
@@ -747,9 +770,9 @@ class OAIRecordRepository implements OAIRepository
         ];
     }
 
-    private function getISO19115_3Records($options)
+    private function getAltSchemaVersions($options)
     {
-        $records = AltSchemaVersion::where('prefix', 'iso19115-3')->limit($options['limit'])->offset($options['offset']);
+        $records = AltSchemaVersion::where('prefix', $options['metadataPrefix'])->limit($options['limit'])->offset($options['offset']);
 
         // set
         if (array_key_exists('set', $options) && $options['set']) {
@@ -836,7 +859,18 @@ class OAIRecordRepository implements OAIRepository
      */
     public function getFormats()
     {
-        return $this->formats;
+        $formats = [];
+        $schemas = \ANDS\Registry\Schema::where('exportable' , 1)->get();
+        foreach ($schemas as $schema){
+            $formats[$schema->prefix] = [
+                'metadataPrefix' => $schema->prefix,
+                'schema' => $schema->uri,
+                'metadataNamespace' => $schema->uri
+            ];
+        }
+
+
+       return array_merge($this->formats, $formats);
     }
 
     private function getGroupID($name)
