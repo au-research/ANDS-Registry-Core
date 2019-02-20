@@ -183,7 +183,7 @@ class ServiceProvider
         }
 
         // set the xmlns based on the metadataPrefix
-        // OAI-PMH elements will have the oai: prefix
+        // need to add a xmlns:default because OAI is the default xmlns="http://www.openarchives.org/OAI/2.0/
         $options = $this->collectOptions();
         if (array_key_exists('metadataPrefix', $options)) {
             $formats = $this->repository->getDefaultFormats();
