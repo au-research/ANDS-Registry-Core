@@ -32,6 +32,9 @@ class Schema extends Model
                 $prefix .= $item;
             }
         }
+        if(strlen(trim($prefix)) == 0)
+            return $schemaURI;
+
         return $prefix;
 
     }

@@ -873,6 +873,14 @@ class OAIRecordRepository implements OAIRepository
        return array_merge($this->formats, $formats);
     }
 
+    /**
+     * @return array
+     */
+    public function getDefaultFormats()
+    {
+        return $this->formats;
+    }
+
     private function getGroupID($name)
     {
         if ($group = Group::where('title', $name)->first()) {

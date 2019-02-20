@@ -50,6 +50,7 @@ class IngestNativeSchemaTest extends \RegistryTestClass
     public function testPrefixGen(){
 
         $uriList  = array(
+            "http://bluenet3.antcrc.utas.edu.au/mcp" => "http://bluenet3.antcrc.utas.edu.au/mcp",
             "iso2005gmd" => "http://www.isotc211.org/2005/gmd",
             "iso19115-3" => "http://standards.iso.org/iso/19115/-3/mdb/1.0"
         );
