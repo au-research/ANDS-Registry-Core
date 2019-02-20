@@ -260,6 +260,7 @@ class ImportTask extends Task
                     "IndexPortal",
                     "IndexRelationship",
                     "ProcessGraphRelationships",
+                    "GenerateISOServiceRecord",
                     "FinishImport",
                     "WriteImportSummary"
                 ];
@@ -284,6 +285,7 @@ class ImportTask extends Task
                     "IndexPortal",
                     "IndexRelationship",
                     "ProcessGraphRelationships",
+                    "GenerateISOServiceRecord",
                     "FinishImport",
                 ];
                 break;
