@@ -733,7 +733,7 @@ class OAIRecordRepository implements OAIRepository
                 $this->oaiIdentifierPrefix.$record->registryObject->id,
                 Carbon::parse($record->updated_at)->setTimezone('UTC')->format($this->getDateFormat())
             );
-            $oaiRecord = $this->addDCISets($oaiRecord, $record);
+            $oaiRecord = $this->addAltSchemaVersionsSets($oaiRecord, $record);
             $result[] = $oaiRecord;
         }
 
