@@ -114,7 +114,7 @@ class IngestNativeSchemaTest extends \RegistryTestClass
             $schema->save();
         }
 
-
+        $IdentifierArray = [];
 
         foreach ($identifiers as $identifier) {
             $IdentifierArray[] = $identifier['identifier'];
