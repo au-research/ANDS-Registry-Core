@@ -28,6 +28,15 @@ return [
         'schema' => [
             'driver' => 'file',
             'path' => 'etc/schema'
+        ],
+        'logs' => [
+            'path' => env('LOGS_PATH', 'logs'),
+
+            // legacy_path for CodeIgniter, default empty for engine/logs location
+            'legacy_path' => env('LOGS_PATH_LEGACY', '')
+        ],
+        'uploads' => [
+            'path' => env('UPLOADS_PATH', 'assets/uploads')
         ]
     ],
 
