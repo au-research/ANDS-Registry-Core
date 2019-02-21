@@ -41,6 +41,7 @@
     </xsl:template>
 
     <xsl:template match="ro:service">
+        <xsl:variable name="serviceType" select="@type"/>
         <mdb:MD_Metadata>
             <xsl:attribute name="xsi:schemaLocation">
                 <xsl:text>http://standards.iso.org/iso/19115/-3/gco/1.0 ../../../etc/schema/19115/-3/gco/1.0/gco.xsd</xsl:text>
@@ -161,12 +162,13 @@
                     </xsl:choose>
                     <xsl:element name="srv:serviceType">
                        <xsl:element name="gco:ScopedName">
-                            <xsl:value-of select="@type"/>
+                           <xsl:value-of select="$serviceType"/>
                        </xsl:element>
                     </xsl:element>
                     <xsl:for-each select="ro:location/ro:address/ro:electronic[@type='url']">
                         <xsl:call-template name="addContainsOperations">
-                            <xsl:with-param name="linkage" select="value"/>
+                            <xsl:with-param name="linkage" select="ro:value/text()"/>
+                            <xsl:with-param name="protocol" select="$serviceType"/>
                         </xsl:call-template>
                     </xsl:for-each>
 
@@ -178,7 +180,9 @@
 
     <xsl:template name="addContainsOperations">
         <xsl:param name="linkage"/>
-        <xsl:if test="contains('GetCapabilities', $linkage)">
+        <xsl:param name="protocol"/>
+        <xsl:message>HELLO:: <xsl:value-of select="$linkage"/></xsl:message>
+        <xsl:if test="contains($linkage, 'GetCapabilities')">
             <xsl:element name="srv:containsOperations">
                 <xsl:element name="srv:SV_OperationMetadata">
                     <xsl:element name="srv:operationName">
@@ -196,10 +200,10 @@
                     <xsl:element name="srv:connectPoint">
                         <xsl:element name="cit:CI_OnlineResource">
                             <xsl:element name="cit:linkage">
-                                <xsl:element name="gco:CharacterString">http://services.ga.gov.au/gis/services/CWTH_OMA_1994_Mineral_Blocks_AMB2006a_WM/MapServer/WFSServer?request=GetCapabilities&amp;service=WFS</xsl:element>
+                                <xsl:element name="gco:CharacterString"><xsl:value-of select="$linkage"/></xsl:element>
                             </xsl:element>
                                 <xsl:element name="cit:protocol">
-                                    <xsl:element name="gco:CharacterString">OGC:WFS</xsl:element>
+                                    <xsl:element name="gco:CharacterString"><xsl:value-of select="$protocol"/></xsl:element>
                                 </xsl:element>
                         </xsl:element>
                     </xsl:element>
