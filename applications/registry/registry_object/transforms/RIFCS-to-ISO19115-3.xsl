@@ -164,10 +164,138 @@
                             <xsl:value-of select="@type"/>
                        </xsl:element>
                     </xsl:element>
+                    <xsl:for-each select="ro:location/ro:address/ro:electronic[@type='url']">
+                        <xsl:call-template name="addContainsOperations">
+                            <xsl:with-param name="linkage" select="value"/>
+                        </xsl:call-template>
+                    </xsl:for-each>
+
                     <xsl:apply-templates select="ro:relatedInfo"/>
                 </xsl:element>
             </xsl:element>
         </mdb:MD_Metadata>
+    </xsl:template>
+
+    <xsl:template name="addContainsOperations">
+        <xsl:param name="linkage"/>
+        <xsl:if test="contains('GetCapabilities', $linkage)">
+            <xsl:element name="srv:containsOperations">
+                <xsl:element name="srv:SV_OperationMetadata">
+                    <xsl:element name="srv:operationName">
+                        <xsl:element name="gco:CharacterString">GetCapabilities</xsl:element>
+                    </xsl:element>
+                    <xsl:element name="srv:distributedComputingPlatform">
+                        <xsl:element name="srv:DCPList">
+                            <xsl:attribute name="codeList">codeListLocation#DCPList</xsl:attribute>
+                            <xsl:attribute name="codeListValue">WebServices</xsl:attribute>
+                        </xsl:element>
+                    </xsl:element>
+                    <xsl:element name="srv:operationDescription">
+                        <xsl:element name="gco:CharacterString">The GetCapabilities operation is used to obtain service metadata, which is a machine-readable (and human-readable) description of the server's information content and acceptable request parameter values.</xsl:element>
+                    </xsl:element>
+                    <xsl:element name="srv:connectPoint">
+                        <xsl:element name="cit:CI_OnlineResource">
+                            <xsl:element name="cit:linkage">
+                                <xsl:element name="gco:CharacterString">http://services.ga.gov.au/gis/services/CWTH_OMA_1994_Mineral_Blocks_AMB2006a_WM/MapServer/WFSServer?request=GetCapabilities&amp;service=WFS</xsl:element>
+                            </xsl:element>
+                                <xsl:element name="cit:protocol">
+                                    <xsl:element name="gco:CharacterString">OGC:WFS</xsl:element>
+                                </xsl:element>
+                        </xsl:element>
+                    </xsl:element>
+                    <xsl:element name="srv:parameter">
+                        <xsl:element name="srv:SV_Parameter">
+                            <xsl:element name="srv:name">
+                                <xsl:element name="gco:MemberName">
+                                    <xsl:element name="gco:aName">
+                                        <xsl:element name="gco:CharacterString">SERVICE</xsl:element>
+                                    </xsl:element>
+                                    <xsl:element name="gco:attributeType">
+                                        <xsl:element name="gco:TypeName">
+                                            <xsl:element name="gco:aName">
+                                                <xsl:element name="gco:CharacterString">TEXT</xsl:element>
+                                            </xsl:element>
+                                        </xsl:element>
+                                    </xsl:element>
+                                </xsl:element>
+                            </xsl:element>
+                            <xsl:element name="srv:direction">
+                                <xsl:element name="srv:SV_ParameterDirection">in</xsl:element>
+                            </xsl:element>
+                            <xsl:element name="srv:description">
+                                <xsl:element name="gco:CharacterString">The mandatory SERVICE parameter indicates which of the available service types at a particular server is being invoked. When invoking GetCapabilities on a WMS the value WMS shall be used.</xsl:element>
+                            </xsl:element>
+                            <xsl:element name="srv:optionality">
+                                <xsl:element name="gco:Boolean">false</xsl:element>
+                            </xsl:element>
+                            <xsl:element name="srv:repeatability">
+                                <xsl:element name="gco:Boolean">false</xsl:element>
+                            </xsl:element>
+                        </xsl:element>
+                    </xsl:element>
+                    <xsl:element name="srv:parameter">
+                        <xsl:element name="srv:SV_Parameter">
+                            <xsl:element name="srv:name">
+                                <xsl:element name="gco:MemberName">
+                                    <xsl:element name="gco:aName">
+                                        <xsl:element name="gco:CharacterString">REQUEST</xsl:element>
+                                    </xsl:element>
+                                    <xsl:element name="gco:attributeType">
+                                        <xsl:element name="gco:TypeName">
+                                            <xsl:element name="gco:aName">
+                                                <xsl:element name="gco:CharacterString">TEXT</xsl:element>
+                                            </xsl:element>
+                                        </xsl:element>
+                                    </xsl:element>
+                                </xsl:element>
+                            </xsl:element>
+                            <xsl:element name="srv:direction">
+                                <xsl:element name="srv:SV_ParameterDirection">in</xsl:element>
+                            </xsl:element>
+                            <xsl:element name="srv:description">
+                                <xsl:element name="gco:CharacterString">The mandatory REQUEST parameter indicates which service operation is being invoked. To invoke the GetCapabilities operation, the value GetCapabilities shall be used.</xsl:element>
+                            </xsl:element>
+                            <xsl:element name="srv:optionality">
+                                <xsl:element name="gco:Boolean">false</xsl:element>
+                            </xsl:element>
+                            <xsl:element name="srv:repeatability">
+                                <xsl:element name="gco:Boolean">false</xsl:element>
+                            </xsl:element>
+                        </xsl:element>
+                    </xsl:element>
+                    <xsl:element name="srv:parameter">
+                        <xsl:element name="srv:SV_Parameter">
+                            <xsl:element name="srv:name">
+                                <xsl:element name="gco:MemberName">
+                                    <xsl:element name="gco:aName">
+                                        <xsl:element name="gco:CharacterString">VERSION</xsl:element>
+                                    </xsl:element>
+                                    <xsl:element name="gco:attributeType">
+                                        <xsl:element name="gco:TypeName">
+                                            <xsl:element name="gco:aName">
+                                                <xsl:element name="gco:CharacterString">TEXT</xsl:element>
+                                            </xsl:element>
+                                        </xsl:element>
+                                    </xsl:element>
+                                </xsl:element>
+                            </xsl:element>
+                            <xsl:element name="srv:direction">
+                                <xsl:element name="srv:SV_ParameterDirection">in</xsl:element>
+                            </xsl:element>
+                            <xsl:element name="srv:description">
+                                <xsl:element name="gco:CharacterString">The optional VERSION parameter indicates the service type version number to use. In response to a GetCapabilities request that does not specify a version number, the server shall respond with the highest version it supports.</xsl:element>
+                            </xsl:element>
+                            <xsl:element name="srv:optionality">
+                                <xsl:element name="gco:Boolean">true</xsl:element>
+                            </xsl:element>
+                            <xsl:element name="srv:repeatability">
+                                <xsl:element name="gco:Boolean">false</xsl:element>
+                            </xsl:element>
+                        </xsl:element>
+                    </xsl:element>
+                </xsl:element>
+            </xsl:element>
+        </xsl:if>
     </xsl:template>
 
     <xsl:template match="ro:addressPart[@type = 'telephoneNumber']">
