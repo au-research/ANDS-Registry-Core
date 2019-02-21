@@ -18,8 +18,8 @@ class IngestNativeSchemaTest extends \RegistryTestClass
         $dataSourceId = 14;
         $dom = new \DOMDocument();
 
-        //$dom->load("/var/www/html/workareas/leo/registry/tests/resources/harvested_contents/oaipmh.xml");
-        $xml = file_get_contents(__DIR__ ."../../../resources/harvested_contents/bom_csw.xml");
+        $xml = file_get_contents(__DIR__ ."../../../resources/harvested_contents/oaipmh.xml");
+        // $xml = file_get_contents(__DIR__ ."../../../resources/harvested_contents/bom_csw.xml");
         libxml_use_internal_errors(true);
         $dom = new \DOMDocument();
             try {
@@ -31,15 +31,21 @@ class IngestNativeSchemaTest extends \RegistryTestClass
                         $this->print_load_error($error, $xml);
                     }
                 } else {
+                    $counter = 0;
                     foreach ($mdNodes as $mdNode) {
                         $success = $this->insertNativeObject($mdNode);
+                        //if($success){
+                            $counter++;
+                        //}
                     }
+                    $this->assertEquals(10, $counter);
                 }
                 libxml_clear_errors();
             }
             Catch(Exception $e){
                 print("Errors while loading testFile Error message:". $e->getMessage());
             }
+
 
     }
 
@@ -108,12 +114,13 @@ class IngestNativeSchemaTest extends \RegistryTestClass
             $schema->save();
         }
 
-        $IdentifierArray = [];
+
 
         foreach ($identifiers as $identifier) {
-            var_dump($identifier['identifier']);
             $IdentifierArray[] = $identifier['identifier'];
         }
+
+        $this->assertGreaterThanOrEqual(1, sizeof($IdentifierArray));
 
         $registryObjects = RegistryObjectsRepository::getRecordsByIdentifier($IdentifierArray, $dataSourceID);
 
