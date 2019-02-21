@@ -19,7 +19,7 @@ class IngestNativeSchemaTest extends \RegistryTestClass
         $dom = new \DOMDocument();
 
         //$dom->load("/var/www/html/workareas/leo/registry/tests/resources/harvested_contents/oaipmh.xml");
-        $xml = file_get_contents("/var/www/html/workareas/leo/registry/tests/resources/harvested_contents/bom_csw.xml");
+        $xml = file_get_contents(__DIR__ ."../../../resources/harvested_contents/bom_csw.xml");
         libxml_use_internal_errors(true);
         $dom = new \DOMDocument();
             try {
