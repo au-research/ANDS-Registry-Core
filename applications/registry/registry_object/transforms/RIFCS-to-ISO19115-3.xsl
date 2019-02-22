@@ -40,8 +40,9 @@
         <xsl:apply-templates/>
     </xsl:template>
 
-    <xsl:template match="ro:service">
-        <xsl:variable name="serviceType" select="@type"/>
+    <xsl:template match="ro:service | ro:collection">
+        <xsl:variable name="objectClass" select="local-name()"/>
+        <xsl:variable name="objectType" select="@type"/>
         <mdb:MD_Metadata>
             <xsl:attribute name="xsi:schemaLocation">
                 <xsl:text>http://standards.iso.org/iso/19115/-3/gco/1.0 ../../../etc/schema/19115/-3/gco/1.0/gco.xsd</xsl:text>
@@ -75,7 +76,7 @@
             </xsl:attribute>
             <xsl:apply-templates select="ro:identifier"/>
             <xsl:call-template name="addScope">
-                <xsl:with-param name="scope" select="local-name()"/>
+                <xsl:with-param name="scope" select="$objectClass"/>
             </xsl:call-template>
             <!---
 
@@ -124,64 +125,85 @@
                 </xsl:choose>
             </xsl:element>
             <xsl:element name="mdb:dateInfo">
-                <!--  FILL  -->
+                <!--  END FILL  -->
             </xsl:element>
 
             <xsl:call-template name="addMetadataStandard"/>
-            <xsl:element name="mdb:identificationInfo">
-                <xsl:element name="srv:SV_ServiceIdentification">
-                    <xsl:element name="mri:citation">
-                        <xsl:element name="cit:CI_Citation">
-                            <xsl:element name="cit:title">
-                                <xsl:apply-templates select="ro:name"/>
-                            </xsl:element>
-                        </xsl:element>
-                    </xsl:element>
-                    <xsl:apply-templates select="ro:description"/>
-                    <xsl:apply-templates select="ro:coverage/ro:spatial"/>
-                    <xsl:if test="ro:subject">
-                        <xsl:element name="mri:descriptiveKeywords">
-                            <xsl:element name="mri:MD_Keywords">
-                                <xsl:apply-templates select="ro:subject"/>
-                            </xsl:element>
-                        </xsl:element>
-                    </xsl:if>
-                    <xsl:choose>
-                        <xsl:when test="ro:rights">
-                            <xsl:apply-templates select="ro:rights"/>
-                        </xsl:when>
-                        <xsl:otherwise>
-                            <xsl:element name="mri:resourceConstraints">
-                                <xsl:element name="mco:MD_Constraints">
-                                    <xsl:element name="mco:useLimitation">
-                                        <xsl:element name="gco:CharacterString">none</xsl:element>
-                                    </xsl:element>
-                                </xsl:element>
-                            </xsl:element>
-                        </xsl:otherwise>
-                    </xsl:choose>
-                    <xsl:element name="srv:serviceType">
-                       <xsl:element name="gco:ScopedName">
-                           <xsl:value-of select="$serviceType"/>
-                       </xsl:element>
-                    </xsl:element>
-                    <xsl:for-each select="ro:location/ro:address/ro:electronic[@type='url']">
-                        <xsl:call-template name="addContainsOperations">
-                            <xsl:with-param name="linkage" select="ro:value/text()"/>
-                            <xsl:with-param name="protocol" select="$serviceType"/>
-                        </xsl:call-template>
-                    </xsl:for-each>
-
-                    <xsl:apply-templates select="ro:relatedInfo"/>
-                </xsl:element>
-            </xsl:element>
+            <xsl:choose>
+                <xsl:when test="$objectClass = 'service'">
+                    <xsl:call-template name="serviceIdentification">
+                        <xsl:with-param name="serviceType" select="$objectType"></xsl:with-param>
+                    </xsl:call-template>
+                </xsl:when>
+                <xsl:when test="$objectClass = 'collection'">
+                    <xsl:call-template name="collectionIdentification">
+                        <xsl:with-param name="collectionType" select="$objectType"></xsl:with-param>
+                    </xsl:call-template>
+                </xsl:when>
+            </xsl:choose>
         </mdb:MD_Metadata>
     </xsl:template>
+    
+    <xsl:template name="serviceIdentification">
+        <xsl:param name="serviceType"/>
+        <xsl:element name="mdb:identificationInfo">
+            <xsl:element name="srv:SV_ServiceIdentification">
+                <xsl:element name="mri:citation">
+                    <xsl:element name="cit:CI_Citation">
+                        <xsl:element name="cit:title">
+                            <xsl:apply-templates select="ro:name"/>
+                        </xsl:element>
+                    </xsl:element>
+                </xsl:element>
+                <xsl:apply-templates select="ro:description"/>
+                <xsl:apply-templates select="ro:coverage/ro:spatial"/>
+                <xsl:if test="ro:subject">
+                    <xsl:element name="mri:descriptiveKeywords">
+                        <xsl:element name="mri:MD_Keywords">
+                            <xsl:apply-templates select="ro:subject"/>
+                        </xsl:element>
+                    </xsl:element>
+                </xsl:if>
+                <xsl:choose>
+                    <xsl:when test="ro:rights">
+                        <xsl:apply-templates select="ro:rights"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:element name="mri:resourceConstraints">
+                            <xsl:element name="mco:MD_Constraints">
+                                <xsl:element name="mco:useLimitation">
+                                    <xsl:element name="gco:CharacterString">none</xsl:element>
+                                </xsl:element>
+                            </xsl:element>
+                        </xsl:element>
+                    </xsl:otherwise>
+                </xsl:choose>
+                <xsl:element name="srv:serviceType">
+                    <xsl:element name="gco:ScopedName">
+                        <xsl:value-of select="$serviceType"/>
+                    </xsl:element>
+                </xsl:element>
+                <xsl:for-each select="ro:location/ro:address/ro:electronic[@type='url']">
+                    <xsl:call-template name="addContainsOperations">
+                        <xsl:with-param name="linkage" select="ro:value/text()"/>
+                        <xsl:with-param name="protocol" select="$serviceType"/>
+                    </xsl:call-template>
+                </xsl:for-each>
+                
+                <xsl:apply-templates select="ro:relatedInfo"/>
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
 
+
+    <xsl:template name="collectionIdentification">
+        <xsl:comment>COLLECTION IDENTIFICATION GOES HERE</xsl:comment>
+    </xsl:template>
+    
+    
     <xsl:template name="addContainsOperations">
         <xsl:param name="linkage"/>
         <xsl:param name="protocol"/>
-        <xsl:message>HELLO:: <xsl:value-of select="$linkage"/></xsl:message>
         <xsl:if test="contains($linkage, 'GetCapabilities')">
             <xsl:element name="srv:containsOperations">
                 <xsl:element name="srv:SV_OperationMetadata">
