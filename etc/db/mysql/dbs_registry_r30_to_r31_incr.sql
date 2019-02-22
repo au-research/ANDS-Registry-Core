@@ -8,7 +8,7 @@ use dbs_registry;
 
 CREATE TABLE `schemas` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `prefix` varchar(20) NOT NULL,
+  `prefix` varchar(255) NOT NULL,
   `uri` varchar(255) NOT NULL,
   `exportable` boolean NOT NULL DEFAULT FALSE,
   PRIMARY KEY (`id`,`prefix`),
