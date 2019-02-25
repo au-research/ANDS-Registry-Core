@@ -712,7 +712,10 @@ class ImportTask extends Task
             "recordsDeletedCount" => "Records deleted",
             "datasourceRecordBeforeCount" => "Number of " . $targetStatus . " records Before Import",
             "datasourceRecordAfterCount" => "Number of " . $targetStatus . " records After Import",
-            "url" => "URL"
+            "url" => "URL",
+            "number_of_links_tested" => "Number of service endpoints tested",
+            "number_of_service_created" => "Number of Service records created",
+            "number_of_links_failed" => "Number of links which didn’t return a valid response"
         ];
 
         $message = [];
