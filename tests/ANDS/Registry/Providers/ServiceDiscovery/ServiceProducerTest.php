@@ -10,6 +10,8 @@ use ANDS\File\Storage;
 use ANDS\Registry\Providers\ServiceDiscovery\ServiceProducer;
 use ANDS\Registry\Providers\ServiceDiscovery\ServiceDiscovery;
 
+
+
 class ServiceProducerTest extends \RegistryTestClass
 {
 
@@ -20,24 +22,41 @@ class ServiceProducerTest extends \RegistryTestClass
         $serviceProducer->getServicebyURL("http://acef.tern.org.au/geoserver/wms" , "WMS");
         $rifcs = $serviceProducer->getRegistryObjects();
         $sC = $serviceProducer->getServiceCount();
+        $sC = $serviceProducer->getSummary();
         $this->assertContains("<registryObject", $rifcs);
-        $this->assertEquals($sC, 1);
+        $this->assertEquals($sC->number_of_service_created, 1);
+    }
+
+
+    /** @test */
+    public function test_process_toolkit_response()
+    {
+        $response = Storage::disk('test')->get('servicesDiscovery/toolkit_response.json');
+        $serviceProducer = new ServiceProducer(\ANDS\Util\Config::get('app.services_registry_url'));
+        $serviceProducer->mockResponse($response);
+        $rifcs = $serviceProducer->getRegistryObjects();
+        $sC = $serviceProducer->getSummary();
+        $this->assertContains("<registryObject", $rifcs);
+        $this->assertEquals(2, $sC['number_of_service_created']);
+
     }
 
     /** @test */
     public function test_get_rif_from_services_json()
     {
+
         $this->markTestSkipped("Require better test data");
 
         $sJson = Storage::disk('test')->get('servicesDiscovery/services.json');
         $serviceProducer = new ServiceProducer(\ANDS\Util\Config::get('app.services_registry_url'));
         $serviceProducer->processServices($sJson);
         $rifcs = $serviceProducer->getRegistryObjects();
-        $sC = $serviceProducer->getServiceCount();
+        $sC = $serviceProducer->getSummary();
         $this->assertContains("<registryObject", $rifcs);
-        $this->assertEquals($sC, 24);
+        $this->assertEquals($sC->number_of_service_created, 24);
 
     }
+
 
     /** @test **/
     public function test_get_links_for_datasource_79() {
