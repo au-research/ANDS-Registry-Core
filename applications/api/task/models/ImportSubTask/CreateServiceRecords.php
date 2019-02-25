@@ -43,7 +43,7 @@ class CreateServiceRecords extends ImportSubTask
         $this->log($summary['number_of_links_failed'] . " Links Failed");
         if(sizeof($summary['error_msgs']) > 0){
             foreach ($summary['error_msgs'] as $error)
-                $this->addError($error);
+                $this->log($error);
         }
 
         $harvestedContentDir = \ANDS\Util\config::get('app.harvested_contents_path');
@@ -61,7 +61,9 @@ class CreateServiceRecords extends ImportSubTask
         file_put_contents($filePath, $serviceProduce->getRegistryObjects());
         $this->parent()->loadPayload();
         $this->parent()->setTaskData('payload', $filePath);
-
+        $this->parent()->setTaskData("number_of_links_tested", $summary['number_of_links_tested']);
+        $this->parent()->setTaskData("number_of_service_created" , $summary['number_of_service_created']);
+        $this->parent()->setTaskData("number_of_links_failed", $summary['number_of_links_failed']);
         $this->parent()->updateHarvest(["importer_message" => "Generated " . $summary['number_of_service_created'] . " rifcs service records"]);
     }
 }
