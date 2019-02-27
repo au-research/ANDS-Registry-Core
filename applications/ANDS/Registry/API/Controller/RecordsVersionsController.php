@@ -34,11 +34,7 @@ class RecordsVersionsController extends HTTPController
     public function show($recordID, $versionID)
     {
         $version = Versions::find($versionID);
+        return $this->printXML($version->data);
 
-        if ($this->wantsXML()) {
-            return $this->printXML($version->data);
-        }
-
-        return $version;
     }
 }
