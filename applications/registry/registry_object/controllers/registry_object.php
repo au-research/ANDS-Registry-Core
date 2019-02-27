@@ -70,7 +70,7 @@ class Registry_object extends MX_Controller {
 					$data['action_bar'] = $this->generateStatusActionBar($ro, $ds);
 				}
 			}
-            $data['native_format'] = array();
+            $data['alt_versions'] = array();
 
             $altversions = AltSchemaVersion::where('registry_object_id', $ro_id)->get();
 
