@@ -180,10 +180,15 @@ date_default_timezone_set('Australia/Melbourne');
 							<tr><th>Feed type</th><td><?php echo (strpos($ro->getAttribute('harvest_id'),'MANUAL') === 0 ? 'Manual entry' : 'Harvest');?></td></tr>
 							<tr><th>Quality Assessed</th><td><?php echo ucfirst($ro->getAttribute('manually_assessed') ? $ro->getAttribute('manually_assessed') : 'no');?></td></tr>
 							
-							<?php 
-								if($native_format != 'rif') {
-									echo '<tr><th>Native Format</th><td><a href="javascript:;" class="btn btn-small" id="exportNative"><i class="icon-eject"></i>Export '.$native_format.'</a></td></tr>';
-								}
+							<?php
+                            if(sizeof($alt_versions) > 0){
+                               echo '<tr><th>Other formats</th>';
+                            foreach($alt_versions as $version)
+                            {
+									echo '<td><a href="'.base_url().'api/registry/records/'.$ro_id.'/versions/'.$version['id'].'" class="btn btn-small" id="exportNative">'.$version['prefix'].'</a></td>';
+                            }
+                                echo '</tr>';
+                            }
 							?>
 							<?php if(!($viewing_revision && !$currentRevision)): ?>
 								<tr><td colspan="2"><a class="btn btn-small btn-danger pull-right" id="delete_record_button"> <i class="icon-white icon-warning-sign"></i> Delete Record <i class="icon-white icon-trash"></i> </a></td></tr>

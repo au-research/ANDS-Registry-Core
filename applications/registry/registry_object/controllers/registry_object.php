@@ -4,6 +4,7 @@ define('SERVICES_MODULE_PATH', REGISTRY_APP_PATH.'services/');
 include_once("applications/registry/registry_object/models/_transforms.php");
 use ANDS\DataSource;
 use ANDS\Registry\Providers\Quality\Types;
+use ANDS\RegistryObject\AltSchemaVersion;
 use \Transforms as Transforms;
 /**
  * Registry Object controller
@@ -69,10 +70,13 @@ class Registry_object extends MX_Controller {
 					$data['action_bar'] = $this->generateStatusActionBar($ro, $ds);
 				}
 			}
+            $data['native_format'] = array();
 
-            $data['native_format'] = "BLAH BLAH";
-			$data['naitive_text'] = "JHKJGKJHKJHKJHKJHKJHKJHK";
+            $altversions = AltSchemaVersion::where('registry_object_id', $ro_id)->get();
 
+            foreach ($altversions as $version){
+                $data['alt_versions'][] = array("prefix"=>$version->prefix, "id"=>$version->id);
+            }
 
            // $generatedContent = \ANDS\RegistryObject\AltSchemaVersion::where('registry_object_id', $ro_id )->get();
            // $harvestedNativeContent = \ANDS\RegistryObject\AltSchemaVersionByIdentifier::where('registry_object_id', $ro_id )->get();
