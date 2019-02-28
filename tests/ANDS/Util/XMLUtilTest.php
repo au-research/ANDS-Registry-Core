@@ -19,7 +19,7 @@ class XMLUtilTest extends RegistryTestClass
         $this->assertEquals("service", $class);
 
         $simpleXml = XMLUtil::getSimpleXMLFromString($rif_service);
-        $class = XMLUtil::getRegistryObjectClass($rif_service, $simpleXml);
+        $class = XMLUtil::getRegistryObjectClass(null, $simpleXml);
         $this->assertEquals("service", $class);
 
     }
