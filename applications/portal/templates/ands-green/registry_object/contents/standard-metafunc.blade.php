@@ -15,7 +15,6 @@
         <div class="center-block" style="text-align:center">
             <i class="fa fa-lg fa-facebook fa-border"></i>
             <i class="fa fa-lg fa-twitter fa-border"></i>
-            <i class="fa fa-lg fa-google fa-border"></i>
         </div>
         
     </div>
