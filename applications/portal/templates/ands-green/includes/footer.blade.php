@@ -60,7 +60,6 @@
                         <ul>
                             <li class="cat-item"><a class="noexicon social-sharing" href="{{ portal_url('page/share/facebook?'.$params) }}" target="_blank"><i class="fa fa-facebook"></i> Facebook</a></li>
                             <li class="cat-item"><a class="noexicon social-sharing" href="{{ portal_url('page/share/twitter/?'.$params) }}" target="_blank"><i class="fa fa-twitter"></i> Twitter</a></li>
-                            <li class="cat-item"><a class="noexicon social-sharing" href="{{ portal_url('page/share/google?'.$params) }}" target="_blank"><i class="fa fa-google"></i> Google</a></li>
                         </ul>
                     </div>
                 </div>
