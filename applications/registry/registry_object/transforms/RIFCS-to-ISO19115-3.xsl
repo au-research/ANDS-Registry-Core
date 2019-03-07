@@ -459,7 +459,7 @@
                     </xsl:element>
                 </xsl:element>
             </xsl:when>
-            <xsl:when test="@type = 'gmlKmlPolyCoords'">
+            <xsl:when test="@type = 'gmlKmlPolyCoords' or @type = 'kmlPolyCoords'">
                 <xsl:element name="mri:extent">
                     <xsl:element name="gex:EX_Extent">
                         <xsl:element name="gex:geographicElement">
