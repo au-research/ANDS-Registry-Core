@@ -21,7 +21,7 @@ class ServiceDiscovery {
      */
     public static function getServiceLinksForDatasource($data_source_id)
     {
-        $links = collect(Links::where('data_source_id', $data_source_id)->where('link_type', 'LIKE', 'identifier_uri_link%')->get())
+        $links = collect(Links::where('data_source_id', $data_source_id)->where('link_type', 'LIKE', 'identifier_ur%_link')->get())
             ->merge(Links::where('data_source_id', $data_source_id)->where('link_type', 'LIKE', 'electronic%')->get())
             ->merge(Links::where('data_source_id', $data_source_id)->where('link_type', 'LIKE', 'relatedInfo%')->get())
             ->unique();
@@ -40,8 +40,8 @@ class ServiceDiscovery {
         $links = Links::wherein('registry_object_id', $ro_ids)->get();
         return $links;
     }
-    
-    
+
+
     public static function getServicesBylinks($url){
         $url = static::getBaseUrl($url);
         $links = Links::where('link','LIKE',"{$url}%")->get();
@@ -246,7 +246,7 @@ class ServiceDiscovery {
     {
         // check if the link type is supported
         $supported = false;
-        $supported_types = ["identifier_uri_link", "electronic", "relatedInfo"];
+        $supported_types = ["identifier_uri_link", "identifier_url_link", "electronic", "relatedInfo"];
         foreach ($supported_types as $a) {
             if (stripos($link->link_type, $a) !== false) {
                 $supported = true;
