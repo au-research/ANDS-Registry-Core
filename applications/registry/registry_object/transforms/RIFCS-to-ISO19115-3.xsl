@@ -89,32 +89,40 @@
                         <xsl:element name="cit:CI_Responsibility">
                             <xsl:element name="cit:role">
                                 <xsl:element name="cit:CI_RoleCode">
-                                    <xsl:attribute name="codeList">https://standards.iso.org/iso/19115/resources/Codelists/cat/codelists.xml#CI_RoleCode</xsl:attribute>
-                                    <xsl:attribute name="codeListValue">pointOfContact</xsl:attribute>
+                                    <xsl:attribute name="codeList"
+                                        >https://standards.iso.org/iso/19115/resources/Codelists/cat/codelists.xml#CI_RoleCode</xsl:attribute>
+                                    <xsl:attribute name="codeListValue"
+                                        >pointOfContact</xsl:attribute>
                                 </xsl:element>
                             </xsl:element>
                             <xsl:element name="cit:party">
                                 <xsl:element name="cit:CI_Organisation">
                                     <xsl:element name="cit:name">
                                         <xsl:element name="gco:CharacterString">
-                                            <xsl:apply-templates select="//ro:addressPart[position() = 1]" mode="partyName"/>
+                                            <xsl:apply-templates
+                                                select="//ro:addressPart[position() = 1]"
+                                                mode="partyName"/>
                                         </xsl:element>
                                     </xsl:element>
                                     <xsl:element name="cit:contactInfo">
                                         <xsl:element name="cit:CI_Contact">
                                             <xsl:apply-templates
-                                              select="ro:location/ro:address/ro:physical/ro:addressPart[@type = 'telephoneNumber' or @type='faxNumber']"/>
+                                                select="ro:location/ro:address/ro:physical/ro:addressPart[@type = 'telephoneNumber' or @type='faxNumber']"/>
                                             <xsl:element name="cit:address">
-                                              <xsl:element name="cit:CI_Address">
-                                              <xsl:apply-templates select="ro:location/ro:address/ro:physical/ro:addressPart[position() > 1]" mode="deliveryPoint"/>
-                                              <xsl:apply-templates select="ro:location/ro:address/ro:electronic[@type = 'email']"/>
-                                              </xsl:element>
+                                                <xsl:element name="cit:CI_Address">
+                                                  <xsl:apply-templates
+                                                  select="ro:location/ro:address/ro:physical/ro:addressPart[position() > 1]"
+                                                  mode="deliveryPoint"/>
+                                                  <xsl:apply-templates
+                                                  select="ro:location/ro:address/ro:electronic[@type = 'email']"
+                                                  />
+                                                </xsl:element>
                                             </xsl:element>
                                         </xsl:element>
                                     </xsl:element>
                                 </xsl:element>
                             </xsl:element>
-                         </xsl:element>
+                        </xsl:element>
                     </xsl:when>
                     <xsl:otherwise>
                         <xsl:element name="cit:CI_Responsibility">
@@ -132,18 +140,18 @@
             <xsl:choose>
                 <xsl:when test="$objectClass = 'service'">
                     <xsl:call-template name="serviceIdentification">
-                        <xsl:with-param name="serviceType" select="$objectType"></xsl:with-param>
+                        <xsl:with-param name="serviceType" select="$objectType"/>
                     </xsl:call-template>
                 </xsl:when>
                 <xsl:when test="$objectClass = 'collection'">
                     <xsl:call-template name="collectionIdentification">
-                        <xsl:with-param name="collectionType" select="$objectType"></xsl:with-param>
+                        <xsl:with-param name="collectionType" select="$objectType"/>
                     </xsl:call-template>
                 </xsl:when>
             </xsl:choose>
         </mdb:MD_Metadata>
     </xsl:template>
-    
+
     <xsl:template name="serviceIdentification">
         <xsl:param name="serviceType"/>
         <xsl:element name="mdb:identificationInfo">
@@ -189,7 +197,7 @@
                         <xsl:with-param name="protocol" select="$serviceType"/>
                     </xsl:call-template>
                 </xsl:for-each>
-                
+
                 <xsl:apply-templates select="ro:relatedInfo"/>
             </xsl:element>
         </xsl:element>
@@ -199,8 +207,8 @@
     <xsl:template name="collectionIdentification">
         <xsl:comment>COLLECTION IDENTIFICATION GOES HERE</xsl:comment>
     </xsl:template>
-    
-    
+
+
     <xsl:template name="addContainsOperations">
         <xsl:param name="linkage"/>
         <xsl:param name="protocol"/>
@@ -217,16 +225,23 @@
                         </xsl:element>
                     </xsl:element>
                     <xsl:element name="srv:operationDescription">
-                        <xsl:element name="gco:CharacterString">The GetCapabilities operation is used to obtain service metadata, which is a machine-readable (and human-readable) description of the server's information content and acceptable request parameter values.</xsl:element>
+                        <xsl:element name="gco:CharacterString">The GetCapabilities operation is
+                            used to obtain service metadata, which is a machine-readable (and
+                            human-readable) description of the server's information content and
+                            acceptable request parameter values.</xsl:element>
                     </xsl:element>
                     <xsl:element name="srv:connectPoint">
                         <xsl:element name="cit:CI_OnlineResource">
                             <xsl:element name="cit:linkage">
-                                <xsl:element name="gco:CharacterString"><xsl:value-of select="$linkage"/></xsl:element>
-                            </xsl:element>
-                                <xsl:element name="cit:protocol">
-                                    <xsl:element name="gco:CharacterString"><xsl:value-of select="$protocol"/></xsl:element>
+                                <xsl:element name="gco:CharacterString">
+                                    <xsl:value-of select="$linkage"/>
                                 </xsl:element>
+                            </xsl:element>
+                            <xsl:element name="cit:protocol">
+                                <xsl:element name="gco:CharacterString">
+                                    <xsl:value-of select="$protocol"/>
+                                </xsl:element>
+                            </xsl:element>
                         </xsl:element>
                     </xsl:element>
                     <xsl:element name="srv:parameter">
@@ -234,12 +249,14 @@
                             <xsl:element name="srv:name">
                                 <xsl:element name="gco:MemberName">
                                     <xsl:element name="gco:aName">
-                                        <xsl:element name="gco:CharacterString">SERVICE</xsl:element>
+                                        <xsl:element name="gco:CharacterString"
+                                            >SERVICE</xsl:element>
                                     </xsl:element>
                                     <xsl:element name="gco:attributeType">
                                         <xsl:element name="gco:TypeName">
                                             <xsl:element name="gco:aName">
-                                                <xsl:element name="gco:CharacterString">TEXT</xsl:element>
+                                                <xsl:element name="gco:CharacterString"
+                                                  >TEXT</xsl:element>
                                             </xsl:element>
                                         </xsl:element>
                                     </xsl:element>
@@ -249,7 +266,11 @@
                                 <xsl:element name="srv:SV_ParameterDirection">in</xsl:element>
                             </xsl:element>
                             <xsl:element name="srv:description">
-                                <xsl:element name="gco:CharacterString">The mandatory SERVICE parameter indicates which of the available service types at a particular server is being invoked. When invoking GetCapabilities on a WMS the value WMS shall be used.</xsl:element>
+                                <xsl:element name="gco:CharacterString">The mandatory SERVICE
+                                    parameter indicates which of the available service types at a
+                                    particular server is being invoked. When invoking
+                                    GetCapabilities on a WMS the value WMS shall be
+                                    used.</xsl:element>
                             </xsl:element>
                             <xsl:element name="srv:optionality">
                                 <xsl:element name="gco:Boolean">false</xsl:element>
@@ -264,12 +285,14 @@
                             <xsl:element name="srv:name">
                                 <xsl:element name="gco:MemberName">
                                     <xsl:element name="gco:aName">
-                                        <xsl:element name="gco:CharacterString">REQUEST</xsl:element>
+                                        <xsl:element name="gco:CharacterString"
+                                            >REQUEST</xsl:element>
                                     </xsl:element>
                                     <xsl:element name="gco:attributeType">
                                         <xsl:element name="gco:TypeName">
                                             <xsl:element name="gco:aName">
-                                                <xsl:element name="gco:CharacterString">TEXT</xsl:element>
+                                                <xsl:element name="gco:CharacterString"
+                                                  >TEXT</xsl:element>
                                             </xsl:element>
                                         </xsl:element>
                                     </xsl:element>
@@ -279,7 +302,10 @@
                                 <xsl:element name="srv:SV_ParameterDirection">in</xsl:element>
                             </xsl:element>
                             <xsl:element name="srv:description">
-                                <xsl:element name="gco:CharacterString">The mandatory REQUEST parameter indicates which service operation is being invoked. To invoke the GetCapabilities operation, the value GetCapabilities shall be used.</xsl:element>
+                                <xsl:element name="gco:CharacterString">The mandatory REQUEST
+                                    parameter indicates which service operation is being invoked. To
+                                    invoke the GetCapabilities operation, the value GetCapabilities
+                                    shall be used.</xsl:element>
                             </xsl:element>
                             <xsl:element name="srv:optionality">
                                 <xsl:element name="gco:Boolean">false</xsl:element>
@@ -294,12 +320,14 @@
                             <xsl:element name="srv:name">
                                 <xsl:element name="gco:MemberName">
                                     <xsl:element name="gco:aName">
-                                        <xsl:element name="gco:CharacterString">VERSION</xsl:element>
+                                        <xsl:element name="gco:CharacterString"
+                                            >VERSION</xsl:element>
                                     </xsl:element>
                                     <xsl:element name="gco:attributeType">
                                         <xsl:element name="gco:TypeName">
                                             <xsl:element name="gco:aName">
-                                                <xsl:element name="gco:CharacterString">TEXT</xsl:element>
+                                                <xsl:element name="gco:CharacterString"
+                                                  >TEXT</xsl:element>
                                             </xsl:element>
                                         </xsl:element>
                                     </xsl:element>
@@ -309,7 +337,11 @@
                                 <xsl:element name="srv:SV_ParameterDirection">in</xsl:element>
                             </xsl:element>
                             <xsl:element name="srv:description">
-                                <xsl:element name="gco:CharacterString">The optional VERSION parameter indicates the service type version number to use. In response to a GetCapabilities request that does not specify a version number, the server shall respond with the highest version it supports.</xsl:element>
+                                <xsl:element name="gco:CharacterString">The optional VERSION
+                                    parameter indicates the service type version number to use. In
+                                    response to a GetCapabilities request that does not specify a
+                                    version number, the server shall respond with the highest
+                                    version it supports.</xsl:element>
                             </xsl:element>
                             <xsl:element name="srv:optionality">
                                 <xsl:element name="gco:Boolean">true</xsl:element>
@@ -332,12 +364,13 @@
                         <xsl:value-of select="."/>
                     </xsl:element>
                 </xsl:element>
-                        <xsl:element name="cit:numberType">
-                            <xsl:element name="cit:CI_TelephoneTypeCode">
-                                <xsl:attribute name="codeList">https://standards.iso.org/iso/19115/resources/Codelists/cat/codelists.xml#CI_TelephoneTypeCode</xsl:attribute>
-                                <xsl:attribute name="codeListValue">fax</xsl:attribute>
-                            </xsl:element>
-                        </xsl:element>
+                <xsl:element name="cit:numberType">
+                    <xsl:element name="cit:CI_TelephoneTypeCode">
+                        <xsl:attribute name="codeList"
+                            >https://standards.iso.org/iso/19115/resources/Codelists/cat/codelists.xml#CI_TelephoneTypeCode</xsl:attribute>
+                        <xsl:attribute name="codeListValue">fax</xsl:attribute>
+                    </xsl:element>
+                </xsl:element>
             </xsl:element>
         </xsl:element>
     </xsl:template>
@@ -350,12 +383,13 @@
                         <xsl:value-of select="."/>
                     </xsl:element>
                 </xsl:element>
-                        <xsl:element name="cit:numberType">
-                            <xsl:element name="cit:CI_TelephoneTypeCode">
-                                <xsl:attribute name="codeList">https://standards.iso.org/iso/19115/resources/Codelists/cat/codelists.xml#CI_TelephoneTypeCode</xsl:attribute>
-                                <xsl:attribute name="codeListValue">fax</xsl:attribute>
-                            </xsl:element>
-                        </xsl:element>
+                <xsl:element name="cit:numberType">
+                    <xsl:element name="cit:CI_TelephoneTypeCode">
+                        <xsl:attribute name="codeList"
+                            >https://standards.iso.org/iso/19115/resources/Codelists/cat/codelists.xml#CI_TelephoneTypeCode</xsl:attribute>
+                        <xsl:attribute name="codeListValue">fax</xsl:attribute>
+                    </xsl:element>
+                </xsl:element>
             </xsl:element>
         </xsl:element>
     </xsl:template>
@@ -386,34 +420,85 @@
     <xsl:template match="ro:spatial">
         <xsl:variable name="lowText"
             select="translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')"/>
-        <xsl:element name="mri:extent">
-            <xsl:element name="gex:EX_Extent">
-                <xsl:element name="gex:geographicElement">
-                    <xsl:element name="gex:EX_GeographicBoundingBox">
-                        <xsl:element name="gex:westBoundLongitude">
-                            <xsl:element name="gco:Decimal">
-                                <xsl:value-of select="substring-before(substring-after($lowText, 'westlimit='), ';')"/>
-                            </xsl:element>
-                        </xsl:element>
-                        <xsl:element name="gex:eastBoundLongitude">
-                            <xsl:element name="gco:Decimal">
-                                <xsl:value-of select="substring-before(substring-after($lowText, 'eastlimit='), ';')"/>
-                            </xsl:element>
-                        </xsl:element>
-                        <xsl:element name="gex:southBoundLatitude">
-                            <xsl:element name="gco:Decimal">
-                                <xsl:value-of select="substring-before(substring-after($lowText, 'southlimit='), ';')"/>
-                            </xsl:element>
-                        </xsl:element>
-                        <xsl:element name="gex:northBoundLatitude">
-                            <xsl:element name="gco:Decimal">
-                                <xsl:value-of select="substring-before(substring-after($lowText, 'northlimit='), ';')"/>
+        <xsl:choose>
+            <xsl:when test="@type = 'iso19139dcmiBox'">
+                <xsl:element name="mri:extent">
+                    <xsl:element name="gex:EX_Extent">
+                        <xsl:element name="gex:geographicElement">
+                            <xsl:element name="gex:EX_GeographicBoundingBox">
+                                <xsl:element name="gex:westBoundLongitude">
+                                    <xsl:element name="gco:Decimal">
+                                        <xsl:value-of
+                                            select="substring-before(substring-after($lowText, 'westlimit='), ';')"
+                                        />
+                                    </xsl:element>
+                                </xsl:element>
+                                <xsl:element name="gex:eastBoundLongitude">
+                                    <xsl:element name="gco:Decimal">
+                                        <xsl:value-of
+                                            select="substring-before(substring-after($lowText, 'eastlimit='), ';')"
+                                        />
+                                    </xsl:element>
+                                </xsl:element>
+                                <xsl:element name="gex:southBoundLatitude">
+                                    <xsl:element name="gco:Decimal">
+                                        <xsl:value-of
+                                            select="substring-before(substring-after($lowText, 'southlimit='), ';')"
+                                        />
+                                    </xsl:element>
+                                </xsl:element>
+                                <xsl:element name="gex:northBoundLatitude">
+                                    <xsl:element name="gco:Decimal">
+                                        <xsl:value-of
+                                            select="substring-before(substring-after($lowText, 'northlimit='), ';')"
+                                        />
+                                    </xsl:element>
+                                </xsl:element>
                             </xsl:element>
                         </xsl:element>
                     </xsl:element>
                 </xsl:element>
-            </xsl:element>
-        </xsl:element>
+            </xsl:when>
+            <xsl:when test="@type = 'gmlKmlPolyCoords'">
+                <xsl:element name="mri:extent">
+                    <xsl:element name="gex:EX_Extent">
+                        <xsl:element name="gex:geographicElement">
+                            <xsl:element name="gex:EX_GeographicBoundingBox">
+                                <xsl:element name="gex:westBoundLongitude">
+                                    <xsl:element name="gco:Decimal">
+                                        <xsl:call-template name="getWestLimit">
+                                            <xsl:with-param name="coords" select="$lowText"/>
+                                        </xsl:call-template>
+                                    </xsl:element>
+                                </xsl:element>
+                                <xsl:element name="gex:eastBoundLongitude">
+                                    <xsl:element name="gco:Decimal">
+                                        <xsl:call-template name="getEastLimit">
+                                            <xsl:with-param name="coords" select="$lowText"/>
+                                        </xsl:call-template>
+                                    </xsl:element>
+                                </xsl:element>
+                                <xsl:element name="gex:southBoundLatitude">
+                                    <xsl:element name="gco:Decimal">
+                                        <xsl:call-template name="getSouthLimit">
+                                            <xsl:with-param name="coords" select="$lowText"/>
+                                        </xsl:call-template>
+                                    </xsl:element>
+                                </xsl:element>
+                                <xsl:element name="gex:northBoundLatitude">
+                                    <xsl:element name="gco:Decimal">
+                                        <xsl:call-template name="getNorthLimit">
+                                            <xsl:with-param name="coords" select="$lowText"/>
+                                        </xsl:call-template>
+                                    </xsl:element>
+                                </xsl:element>
+                            </xsl:element>
+                        </xsl:element>
+                    </xsl:element>
+                </xsl:element>
+            </xsl:when>
+        </xsl:choose>
+
     </xsl:template>
 
 
@@ -533,5 +618,125 @@
     </xsl:template>
 
     <xsl:template match="node()"/>
+
+    <xsl:template name="getWestLimit">
+        <xsl:param name="coords"/>
+        <xsl:param name="limit" select="180"/>
+        <xsl:choose>
+            <xsl:when test="string-length($coords) > 0">
+                <xsl:variable name="latlon" select="substring-before($coords, ' ')"/>
+                <xsl:variable name="lon" select="substring-before($latlon, ',')"/>
+                <xsl:variable name="newLimit">
+                    <xsl:choose>
+                        <xsl:when test="number($lon) &lt; number($limit)">
+                            <xsl:value-of select="$lon"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="$limit"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
+                <xsl:variable name="remainder" select="substring-after($coords,  ' ')"/>
+                <xsl:call-template name="getWestLimit">
+                    <xsl:with-param name="coords" select="$remainder"/>
+                    <xsl:with-param name="limit" select="$newLimit"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$limit"/>
+            </xsl:otherwise>
+        </xsl:choose>
+
+    </xsl:template>
+
+    <xsl:template name="getEastLimit">
+        <xsl:param name="coords"/>
+        <xsl:param name="limit" select="-180"/>
+        <xsl:choose>
+            <xsl:when test="string-length($coords) > 0">
+                <xsl:variable name="latlon" select="substring-before($coords, ' ')"/>
+                <xsl:variable name="lon" select="substring-before($latlon, ',')"/>
+                <xsl:variable name="newLimit">
+                    <xsl:choose>
+                        <xsl:when test="number($lon) &gt; number($limit)">
+                            <xsl:value-of select="$lon"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="$limit"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
+                <xsl:variable name="remainder" select="substring-after($coords,  ' ')"/>
+                <xsl:call-template name="getEastLimit">
+                    <xsl:with-param name="coords" select="$remainder"/>
+                    <xsl:with-param name="limit" select="$newLimit"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$limit"/>
+            </xsl:otherwise>
+        </xsl:choose>
+
+    </xsl:template>
+
+    <xsl:template name="getSouthLimit">
+        <xsl:param name="coords"/>
+        <xsl:param name="limit" select="90"/>
+        <xsl:choose>
+            <xsl:when test="string-length($coords) > 0">
+                <xsl:variable name="latlon" select="substring-before($coords, ' ')"/>
+                <xsl:variable name="lat" select="substring-after($latlon, ',')"/>
+                <xsl:variable name="newLimit">
+                    <xsl:choose>
+                        <xsl:when test="number($lat) &lt; number($limit)">
+                            <xsl:value-of select="$lat"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="$limit"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
+                <xsl:variable name="remainder" select="substring-after($coords,  ' ')"/>
+                <xsl:call-template name="getSouthLimit">
+                    <xsl:with-param name="coords" select="$remainder"/>
+                    <xsl:with-param name="limit" select="$newLimit"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$limit"/>
+            </xsl:otherwise>
+        </xsl:choose>
+
+    </xsl:template>
+
+    <xsl:template name="getNorthLimit">
+        <xsl:param name="coords"/>
+        <xsl:param name="limit" select="-90"/>
+        <xsl:choose>
+            <xsl:when test="string-length($coords) > 0">
+                <xsl:variable name="latlon" select="substring-before($coords, ' ')"/>
+                <xsl:variable name="lat" select="substring-after($latlon, ',')"/>
+                <xsl:variable name="newLimit">
+                    <xsl:choose>
+                        <xsl:when test="number($lat) &gt; number($limit)">
+                            <xsl:value-of select="$lat"/>
+                        </xsl:when>
+                        <xsl:otherwise>
+                            <xsl:value-of select="$limit"/>
+                        </xsl:otherwise>
+                    </xsl:choose>
+                </xsl:variable>
+                <xsl:variable name="remainder" select="substring-after($coords,  ' ')"/>
+                <xsl:call-template name="getNorthLimit">
+                    <xsl:with-param name="coords" select="$remainder"/>
+                    <xsl:with-param name="limit" select="$newLimit"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="$limit"/>
+            </xsl:otherwise>
+        </xsl:choose>
+
+    </xsl:template>
 
 </xsl:stylesheet>
