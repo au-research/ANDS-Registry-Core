@@ -33,14 +33,14 @@ $base_url = str_replace('/apps','/registry',base_url());
         var portal_url = '<?php echo portal_url();?>';
         var apps_url = '<?php echo apps_url();?>';
         var api_url = '<?php echo api_url();?>';
-        var real_base_url = "<?php echo $this->config->item('default_base_url');?>";
+        var real_base_url = "<?php echo \ANDS\Util\config::get('app.default_base_url');?>";
         var suffix = '<?php echo url_suffix();?>';
         var internal_api_key = 'api';
         var editor = '';
 
-        var socket_url = '<?php echo $this->config->item('socket_url');?>';
+        var socket_url = '<?php echo \ANDS\Util\config::get('app.socket_url');?>';
         //urchin code
-        <?php echo urchin_for($this->config->item('svc_urchin_id')); ?>
+        <?php echo urchin_for(\ANDS\Util\config::get('app.svc_urchin_id')); ?>
     </script>
 
     <script type="text/javascript" src="<?php echo$base_url;?>assets/js/arms.scripts.js"></script>
