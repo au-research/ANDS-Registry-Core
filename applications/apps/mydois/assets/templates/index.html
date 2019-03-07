@@ -10,7 +10,7 @@
         <div class="span6 offset4">
             <div class="widget-box">
                 <div class="widget-title">
-                    <h5>DOI Query Tool</h5>
+                    <h5>DOI Query Tool </h5>
                 </div>
                 <div class="widget-content">
                     <form action="" class="form-search">
@@ -22,10 +22,10 @@
                 </div>
                 <div class="widget-content"
                     ng-repeat="app_id in vm.client.assoc_doi_app_id | filter:vm.filter track by $index" ng-if="app_id.status == 'ACTIVE'">
-                    <div ng-if="app_id.datacite_prefix !='10.5072'">
+                    <div>
                     <dl>
                         <dt>Name</dt>
-                        <dd>{{ app_id.client_name }}</dd>
+                        <dd>{{ app_id.client_name }} Edited</dd>
                         <dt>Contact</dt>
                         <dd>{{ app_id.client_contact_name }}</dd>
                         <dt>Datacite prefix</dt>
@@ -33,15 +33,15 @@
                         <dt>App ID</dt>
                         <dd>{{ app_id.app_id }}</dd>
                     </dl>
-                    <a href="#/manage/{{ app_id.app_id }}" class="btn btn-primary">Manage</a>
+                    <a  ng-if="app_id.datacite_prefix !='10.5072'" href="#/manage/{{ app_id.app_id }}" class="btn btn-primary">Manage</a>
                     </div>
                     <dl>
                         <dt>Name</dt>
-                        <dd>Test: {{ app_id.client_name }}</dd>
+                        <dd>Test: {{ app_id.client_name }} edited</dd>
                         <dt>Contact</dt>
                         <dd>{{ app_id.client_contact_name }}</dd>
                         <dt>Datacite prefix</dt>
-                        <dd>10.5072/</dd>
+                        <dd>{{ app_id.datacite_test_prefix }}/</dd>
                         <dt>App ID</dt>
                         <dd>{{ app_id.test_app_id }}</dd>
                     </dl>

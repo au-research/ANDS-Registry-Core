@@ -37,8 +37,8 @@
                     });
                     break;
                 case 'mint':
-                    if(vm.client.mode=="test"){vm.client.datacite_prefix="10.5072";}
-                    if(vm.client.datacite_prefix=="10.5072"){
+                    if(vm.client.mode == "test"){vm.client.datacite_prefix="10.5072";}
+                    if(vm.client.datacite_prefix == "10.5072"){
                         var test_str = "TEST_DOI_";
                     }else{
                         var test_str = "";
@@ -46,7 +46,7 @@
                     vm.editxml = false;
                     vm.response = false;
                     vm.newdoi_url = '';
-                    vm.newdoi_id = vm.client.datacite_prefix +'/'+ test_str + vm.uniqid();
+                    vm.newdoi_id = vm.client.datacite_test_prefix +'/'+ test_str + vm.uniqid();
                     vm.newdoixml = APIDOIService.getBlankDataciteXML(vm.newdoi_id);
                     break;
             }
@@ -123,12 +123,23 @@
 
         vm.doupdate = function() {
             $scope.$broadcast('update');
-            var data = {
-                xml : vm.stripBlankElements(vm.viewdoi.datacite_xml),
-                app_id : vm.client.app_id,
-                url : vm.viewdoi.url,
-                doi : vm.viewdoi.doi_id,
-                client_id: vm.client.client_id
+            if(vm.client.mode == 'test'){
+                var data = {
+                    xml : vm.stripBlankElements(vm.viewdoi.datacite_xml),
+                    app_id : vm.client.test_app_id,
+                    url : vm.viewdoi.url,
+                    doi : vm.viewdoi.doi_id,
+                    client_id: vm.client.client_id
+                };
+
+            }else {
+                var data = {
+                    xml: vm.stripBlankElements(vm.viewdoi.datacite_xml),
+                    app_id: vm.client.app_id,
+                    url: vm.viewdoi.url,
+                    doi: vm.viewdoi.doi_id,
+                    client_id: vm.client.client_id
+                };
             }
             vm.loading = true;
             vm.response = false;
@@ -142,10 +153,18 @@
         }
 
         vm.dodeactivate = function(doi_id) {
-            var data = {
-                app_id : vm.client.app_id,
-                doi : doi_id,
-                client_id: vm.client.client_id
+            if(vm.client.mode == 'test') {
+                var data = {
+                    app_id: vm.client.test_app_id,
+                    doi: doi_id,
+                    client_id: vm.client.client_id
+                };
+            }else{
+                var data = {
+                    app_id: vm.client.app_id,
+                    doi: doi_id,
+                    client_id: vm.client.client_id
+                };
             }
             vm.response = {};
             APIDOIService.deactivate(data).then(function(response){
@@ -155,10 +174,18 @@
         }
 
         vm.doactivate = function(doi_id) {
-            var data = {
-                app_id : vm.client.app_id,
-                doi : doi_id,
-                client_id: vm.client.client_id
+            if(vm.client.mode == 'test') {
+                var data = {
+                    app_id: vm.client.test_app_id,
+                    doi: doi_id,
+                    client_id: vm.client.client_id
+                };
+            }else{
+                var data = {
+                    app_id: vm.client.app_id,
+                    doi: doi_id,
+                    client_id: vm.client.client_id
+                };
             }
             vm.response = {};
             APIDOIService.activate(data).then(function(response){
