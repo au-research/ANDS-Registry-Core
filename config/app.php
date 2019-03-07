@@ -10,7 +10,7 @@ return [
     'subject_vocab_proxy' => env('PROTOCOL', 'http://') . env("BASE_URL", "localhost").'/apps/vocab_widget/proxy/',
     'solr_url' => env('SOLR_URL', 'http://localhost:8983/solr/'),
     'elasticsearch_url' => env('ELASTICSEARCH_URL', 'http://localhost:9200/'),
-    'socket_url' => env('SOCKET_URL', 'https://localhost:3001/'),
+    'socket_url' => env('SOCKET_URL', 'http://localhost:3001/'),
     'deployment_state' => env('ENVIRONMENT', "development"),
     'api_whitelist_ip' => env('API_WHITELIST_IP', ''),
     'timezone' => env("TIMEZONE", 'Australia/Canberra'),
@@ -20,6 +20,8 @@ return [
     'shibboleth_sp' => false,
     'services_registry_url' => env('SERVICES_DISCOVERY_SERVICE_URL', null),
     'harvested_contents_path' => env('HARVESTED_CONTENTS', '/var/harvested_contents/'),
+    'rda_urchin_id' => env('RDA_URCHIN_ID', ''),
+    'svc_urchin_id' => env('SVC_URCHIN_ID', ''),
     'storage' => [
         'test' => [
             'driver' => 'file',
