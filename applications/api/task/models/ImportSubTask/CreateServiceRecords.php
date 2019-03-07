@@ -62,7 +62,6 @@ class CreateServiceRecords extends ImportSubTask
         $this->parent()->loadPayload();
         $this->parent()->setTaskData('payload', $filePath);
         $this->parent()->setTaskData("number_of_links_tested", $summary['number_of_links_tested']);
-        $this->parent()->setTaskData("number_of_service_created" , $summary['number_of_service_created']);
         $this->parent()->setTaskData("number_of_links_failed", $summary['number_of_links_failed']);
         $this->parent()->updateHarvest(["importer_message" => "Generated " . $summary['number_of_service_created'] . " rifcs service records"]);
     }
