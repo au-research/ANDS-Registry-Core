@@ -406,6 +406,7 @@ class Doi_api
         $responselog = array();
         $this->providesOwnResponse = true;
         $arrayFormater = new ArrayFormatter();
+      //  dd($potential_doi);
 
         if (isset($_SERVER['PHP_AUTH_USER'])) {
             $appID = $_SERVER['PHP_AUTH_USER'];
@@ -414,6 +415,7 @@ class Doi_api
         if (isset($_SERVER['PHP_AUTH_USER'])) {
             $sharedSecret = $_SERVER["PHP_AUTH_PW"];
         }
+        // dd($sharedSecret);
 
         //If the client has not provided their appid or shared secret - or has provided incorrect ones - then  set up what logging we can and return the datacite error message
         if (!$appID || !$sharedSecret) {
@@ -456,13 +458,31 @@ class Doi_api
         }
 
         $call = $this->params['identifier'];
+
+       // dd($call);
         $responselog['activity'] = $this->params['identifier'];
 
-        $dataciteClient = $this->getDataciteClientForClient($this->client);
+        if ($potential_doi != '') {
+            $doi = $potential_doi;
+        } else {
+            $doi = $this->getDoiValue();
+        }
+
+        if($appID == $this->client->test_app_id && str_replace("10.5072","",$doi)==$doi)
+        {
+            $this->client->mode = 'test';
+        }else{
+            $this->client->mode = 'prod';
+        }
+
+        $dataciteClient = $this->getDataciteClientForClient($this->client,$this->client->mode);
+
+
 
         // construct the DOIServiceProvider to ensure this client is registered to use the service
         $doiService = new DOIServiceProvider($this->clientRepository, $this->doiRepository,
             $dataciteClient);
+
 
         // authenticate the client
         $result = $doiService->authenticate(
@@ -490,11 +510,7 @@ class Doi_api
             return $result;
         }
 
-        if ($potential_doi != '') {
-            $doi = $potential_doi;
-        } else {
-            $doi = $this->getDoiValue();
-        }
+
 
         $validDoi = true;
         $doiObject = '';
@@ -507,6 +523,7 @@ class Doi_api
                 $clientDoi = ($doiObject->client_id == $this->client->client_id) ? true : false;
             }
         }
+
 
         $validXml = true;
 
@@ -708,6 +725,7 @@ class Doi_api
 
         //set the http response code to what has been returned from DataCite
         $responsehttp = '';
+
         foreach($DataciteResponses as $dataCiteMessage){
             if(isset($dataCiteMessage['httpcode'])) $responsehttp = $dataCiteMessage['httpcode'];
         }
