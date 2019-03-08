@@ -33,7 +33,7 @@
     <!-- stylesheet to convert RIFCS service xml to ISO19115-3 service record -->
 
     <xsl:output method="xml" omit-xml-declaration="yes" version="1.0" encoding="UTF-8" indent="yes"/>
-
+    <xsl:param name="subjects" select="''"/>
     <xsl:strip-space elements="*"/>
 
     <xsl:template match="/ | ro:registryObjects | ro:registryObject">
@@ -165,13 +165,8 @@
                 </xsl:element>
                 <xsl:apply-templates select="ro:description"/>
                 <xsl:apply-templates select="ro:coverage/ro:spatial"/>
-                <xsl:if test="ro:subject">
-                    <xsl:element name="mri:descriptiveKeywords">
-                        <xsl:element name="mri:MD_Keywords">
-                            <xsl:apply-templates select="ro:subject"/>
-                        </xsl:element>
-                    </xsl:element>
-                </xsl:if>
+
+                <xsl:call-template name="addResolvedSubjects"/>
                 <xsl:choose>
                     <xsl:when test="ro:rights">
                         <xsl:apply-templates select="ro:rights"/>
@@ -208,6 +203,41 @@
         <xsl:comment>COLLECTION IDENTIFICATION GOES HERE</xsl:comment>
     </xsl:template>
 
+    <xsl:template name="addResolvedSubjects">
+        <xsl:element name="mri:descriptiveKeywords">
+            <xsl:element name="mri:MD_Keywords">
+                <xsl:call-template name="addSubject">
+                    <xsl:with-param name="subjectList" select="$subjects"/>
+                </xsl:call-template>
+            </xsl:element>
+        </xsl:element>
+    </xsl:template>
+
+
+    <xsl:template name="addSubject">
+        <xsl:param name="subjectList"/>
+        <xsl:choose>
+            <xsl:when test="contains($subjectList, ',')">
+                <xsl:variable name="subject" select="substring-before($subjectList, ',')"/>
+                <xsl:variable name="moreSubject" select="substring-after($subjectList, ',')"/>
+                <xsl:element name="mri:keyword">
+                    <xsl:element name="gco:CharacterString">
+                        <xsl:value-of select="$subject"/>
+                    </xsl:element>
+                </xsl:element>
+                <xsl:call-template name="addSubject">
+                    <xsl:with-param name="subjectList" select="$moreSubject"/>
+                </xsl:call-template>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:element name="mri:keyword">
+                    <xsl:element name="gco:CharacterString">
+                        <xsl:value-of select="$subjectList"/>
+                    </xsl:element>
+                </xsl:element>
+            </xsl:otherwise>
+        </xsl:choose>       
+    </xsl:template>
 
     <xsl:template name="addContainsOperations">
         <xsl:param name="linkage"/>

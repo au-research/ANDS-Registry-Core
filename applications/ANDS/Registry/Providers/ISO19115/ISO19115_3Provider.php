@@ -3,13 +3,14 @@
 
 namespace ANDS\Registry\Providers\ISO19115;
 
-use ANDS\Registry\Providers\RegistryContentProvider;
-use ANDS\RegistryObject;
-use ANDS\Registry\Transforms;
+use \ANDS\Registry\Providers\RegistryContentProvider;
+use \ANDS\Registry\Providers\RIFCS\SubjectProvider;
+use \ANDS\RegistryObject;
+use \ANDS\Registry\Transforms;
 use \DOMDocument as DOMDocument;
 use \Exception;
 use \ANDS\Registry\Schema;
-use ANDS\RegistryObject\AltSchemaVersion;
+use \ANDS\RegistryObject\AltSchemaVersion;
 
 class ISO19115_3Provider implements RegistryContentProvider
 {
@@ -26,9 +27,17 @@ class ISO19115_3Provider implements RegistryContentProvider
 // don't generate one if we have an other instance from different origin eg HARVESTER
         if($existing && $existing->origin != static::$origin)
             return false;
+        // use the resolved subjects for the iso
+        $subjects = SubjectProvider::processSubjects($record);
+        $subjectStr = "";
+        $pf= ",";
+        foreach ($subjects as $key=>$subject)
+        {
+            $subjectStr .= $pf.$subject['resolved'];
+            if($pf == "") $pf = ",";
+        }
 
-
-        $iso = static::generateISO($record->getCurrentData()->data);
+        $iso = static::generateISO($record->getCurrentData()->data, $subjectStr);
         $schema = Schema::where('uri', static::$schema_uri)->first();
 
         if($schema == null){
@@ -79,10 +88,10 @@ class ISO19115_3Provider implements RegistryContentProvider
         return true;
     }
 
-    private static function generateISO($recordData){
-
+    private static function generateISO($recordData, $subjects = ""){
         try {
             $xslt_processor = Transforms::get_extrif_to_iso19115_3_transformer();
+            $xslt_processor->setParameter ('','subjects' , $subjects);
             $dom = new DOMDocument();
             $dom->loadXML($recordData, LIBXML_NOENT);
             return trim($xslt_processor->transformToXML($dom));
