@@ -6,6 +6,7 @@ use ANDS\DataSource;
 use ANDS\Registry\Providers\Quality\Types;
 use ANDS\RegistryObject\AltSchemaVersion;
 use ANDS\Registry\Providers\ServiceDiscovery\ServiceProducer;
+use ANDS\Registry\Providers\ServiceDiscovery\ServiceDiscovery;
 use \Transforms as Transforms;
 /**
  * Registry Object controller
@@ -550,11 +551,29 @@ class Registry_object extends MX_Controller {
         if(str_contains($data['type'], 'OGC:') && $data['ogc_service_url'] != '')
         {
             $type = str_replace('OGC:', '', $data['type']);
+
+            $links = ServiceDiscovery::getServicesBylinks($data['ogc_service_url']);
+
+            $fLinks = ServiceDiscovery::processLinks($links);
+
+            $services = ServiceDiscovery::formatLinks($fLinks);
+
+
             $serviceProducer = new ServiceProducer(\ANDS\Util\Config::get('app.services_registry_url'));
-            $rifcs = $serviceProducer->getRifcsForServiceUrl($data['ogc_service_url'] , $type);
+
+            if(sizeof($services) > 0){
+                $serviceProducer->processServices(json_encode($services));
+                $summary = $serviceProducer->getSummary();
+                $rifcs = $serviceProducer->getRegistryObjects();
+            }else{
+                $rifcs = $serviceProducer->getRifcsForServiceUrl($data['ogc_service_url'], $data['type']);
+            }
+
+
             if(str_contains($rifcs,'<registryObject')){
 
                 $rifDom = new DOMDocument();
+
                 $rifDom->loadXML($rifcs, LIBXML_NOENT);
                 $registryObject = $rifDom->getElementsByTagName('registryObject');
                 $registryObject->item(0)->getAttributeNode('group')->value = $data['group'];
