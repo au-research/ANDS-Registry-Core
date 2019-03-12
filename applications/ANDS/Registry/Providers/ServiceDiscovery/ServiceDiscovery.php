@@ -267,11 +267,12 @@ class ServiceDiscovery {
     }
 
     private static function getRelationType($link_type){
+
     if(strpos($link_type, "relatedInfo_relation_") === 0){
         $tokens = explode("_", $link_type);
         $type = $tokens[2];
         if($type != ""){
-            return getReverseRelationshipString($type);
+            return getReverseRelationshipStringCI($type);
         }
     }
 

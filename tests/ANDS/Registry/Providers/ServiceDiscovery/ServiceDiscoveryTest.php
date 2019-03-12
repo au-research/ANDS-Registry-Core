@@ -90,8 +90,6 @@ class ServiceDiscoveryTest extends \RegistryTestClass
         $links = ServiceDiscovery::getServicesBylinks($url);
         $links = ServiceDiscovery::processLinks($links);
         $links = ServiceDiscovery::formatLinks($links);
-
-
         $this->assertEquals(1, count($links));
 
     }
