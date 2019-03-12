@@ -118,7 +118,7 @@ class LinkProvider implements RegistryContentProvider
         $ds_id = (string)$record->data_source_id;
         foreach (XMLUtil::getElementsByXPath($xml,
             'ro:registryObject/ro:' . $record->class . '/ro:identifier') AS $identifier) {
-            $vType = strtolower((string) $identifier['type']);
+            $vType = (string) $identifier['type'];
             $type = 'identifier_'.$vType.'_link';
             $link = trim(static::getResolvedLinkForIdentifier($vType, (string) $identifier));
             if ($link == "") {
@@ -130,7 +130,7 @@ class LinkProvider implements RegistryContentProvider
         foreach(XMLUtil::getElementsByXPath($xml,
             'ro:registryObject/ro:' . $record->class.'/ro:relatedInfo/ro:identifier') AS $identifier) {
             if((string)$identifier != '') {
-                $vType = strtolower((string) $identifier['type']);
+                $vType = (string) $identifier['type'];
                 $type = 'identifier_'.$vType.'_link';
                 $link = static::getResolvedLinkForIdentifier($vType, (string) $identifier);
                 if($link != '')
@@ -142,7 +142,7 @@ class LinkProvider implements RegistryContentProvider
         foreach( XMLUtil::getElementsByXPath($xml,
             'ro:registryObject/ro:' . $record->class.'/ro:citationInfo/ro:citationMetadata/ro:identifier') AS $identifier) {
             if((string)$identifier != '') {
-                $vType = strtolower((string) $identifier['type']);
+                $vType = (string) $identifier['type'];
                 $type = 'citation_metadata_identifier_'.$vType.'_link';
                 $link = self::getResolvedLinkForIdentifier($vType, (string) $identifier);
                 if($link != '')
@@ -166,7 +166,7 @@ class LinkProvider implements RegistryContentProvider
         foreach (XMLUtil::getElementsByXPath($xml, '//ro:relation[ro:url]') AS $rm)
         {
             $rmParent = $rm->xpath('..');
-            $rType = strtolower((string) $rm['type']);
+            $rType = (string) $rm['type'];
             $type = $rmParent[0]->getName() . '_relation_' . $rType. '_url';
             $value = static::cleanUrl((string)$rm->url[0]);
             if ($value != '') {
@@ -180,7 +180,7 @@ class LinkProvider implements RegistryContentProvider
     {
         $identifier = trim($identifier);
         $typeArray = ['handle', 'purl', 'doi', 'uri', 'url', 'ark', 'orcid', 'au-anl:peau' , 'raid', 'grid','scopusID','igsn','isni'];
-
+        $type = strtolower($type);
         if ((strpos($identifier,'http://') === 0 || strpos($identifier,'https://') === 0)
             && in_array($type, $typeArray)){
             return $identifier;
