@@ -56,6 +56,38 @@ class ServiceProducer {
         $this->response = $response->json();
     }
 
+    function getRifcsForServiceUrl($ogc_service_url, $type){
+
+        $headers = [
+            'Content-type' => 'application/xml; charset=utf-8',
+            'Accept' => 'application/xml',
+        ];
+        $query = ['url'=>$ogc_service_url, 'type'=>$type];
+
+        $request = $this->http->get('getServiceAsRif',  $headers, ["query" => $query]);
+
+        try {
+            $response = $request->send();
+            $this->responseCode = $response->getStatusCode();
+        }
+        catch (ClientErrorResponseException $e) {
+            $this->errors = $e->getResponse()->json();
+            $this->responseCode = $e->getCode();
+            return null;
+        }
+        catch (ServerErrorResponseException $e){
+            $this->errors[] = $e->getResponse()->json();
+            $this->responseCode = $e->getCode();
+            return null;
+        }
+        catch (\Exception $e) {
+            $this->errors[] = $e->getMessage();
+            $this->responseCode = $e->getCode();
+            return null;
+        }
+        return $response->xml()->saveXML();
+    }
+
     function getSummary(){
         return $this->response['summary'];
     }
