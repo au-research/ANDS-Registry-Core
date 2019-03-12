@@ -19,12 +19,9 @@ class ServiceProducerTest extends \RegistryTestClass
     public function test_get_rif_from_url_and_type() {
 
         $serviceProducer = new ServiceProducer(\ANDS\Util\Config::get('app.services_registry_url'));
-        $serviceProducer->getServicebyURL("http://acef.tern.org.au/geoserver/wms" , "WMS");
-        $rifcs = $serviceProducer->getRegistryObjects();
-        $sC = $serviceProducer->getServiceCount();
-        $sC = $serviceProducer->getSummary();
+        $rifcs = $serviceProducer->getRifcsForServiceUrl("https://test.ands.org.au/mock/get/AUTestingRecords_WCS_Response_5_v1.0.0" , "OGC:WCS");
         $this->assertContains("<registryObject", $rifcs);
-        $this->assertEquals($sC->number_of_service_created, 1);
+
     }
 
 

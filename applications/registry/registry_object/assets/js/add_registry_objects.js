@@ -53,6 +53,7 @@ $(function(){
 				group = $('input[name=group]').val();
 				data_source_id = $('select[name=data_source_id]').val();
 				originating_source = $('input[name=originatingSource]').val();
+                ogc_service_url = $('input[name=ogc_service_url]').val();
 				if(isUniqueMsg = isUniqueKey(registry_object_key, null, data_source_id))
 				{				
 					Core_addValidationMessage($('input[name=key]'), 'error', isUniqueMsg);
@@ -60,7 +61,7 @@ $(function(){
 				}
 				else
 				{
-					var data = {data_source_id:data_source_id, registry_object_key:registry_object_key, ro_class:ro_class, type:type, group:group, originating_source:originating_source};
+					var data = {data_source_id:data_source_id, registry_object_key:registry_object_key, ro_class:ro_class, type:type, group:group, originating_source:originating_source, ogc_service_url:ogc_service_url};
 					$.ajax({
 						type: 'POST',
 						url: base_url+'registry_object/add_new',

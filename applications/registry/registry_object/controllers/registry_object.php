@@ -5,6 +5,7 @@ include_once("applications/registry/registry_object/models/_transforms.php");
 use ANDS\DataSource;
 use ANDS\Registry\Providers\Quality\Types;
 use ANDS\RegistryObject\AltSchemaVersion;
+use ANDS\Registry\Providers\ServiceDiscovery\ServiceProducer;
 use \Transforms as Transforms;
 /**
  * Registry Object controller
@@ -546,26 +547,63 @@ class Registry_object extends MX_Controller {
             $status = $draftRecord->status;
             throw new Exception("A RegistryObject with key $key already exists in status $status");
         }
+        if(str_contains($data['type'], 'OGC:') && $data['ogc_service_url'] != '')
+        {
+            $type = str_replace('OGC:', '', $data['type']);
+            $serviceProducer = new ServiceProducer(\ANDS\Util\Config::get('app.services_registry_url'));
+            $rifcs = $serviceProducer->getRifcsForServiceUrl($data['ogc_service_url'] , $type);
+            if(str_contains($rifcs,'<registryObject')){
 
-        // prepare XML
-        $xml = "<registryObject group='".$data['group']."'>".NL;
-        $xml .= "<key>".$data['registry_object_key']."</key>".NL;
-        $xml .= "<originatingSource type=''>".$data['originating_source']."</originatingSource>".NL;
-        $xml .= "<".$data['ro_class']." type='".$data['type']."'>".NL;
-        $xml .= "<description type=''></description>";
-        $xml .= "<identifier type=''></identifier>";
-        if($data['ro_class']=='collection') $xml .="<dates type=''></dates>";
-        $xml .= "<location></location>";
-        $xml .= "<relatedObject><key></key><relation type=''></relation></relatedObject>";
-        $xml .= "<subject type=''></subject>";
-        $xml .= "<relatedInfo></relatedInfo>";
-        $xml .= "</".$data['ro_class'].">".NL;
-        $xml .= "</registryObject>";
-        $xml = \ANDS\Util\XMLUtil::wrapRegistryObject($xml);
+                $rifDom = new DOMDocument();
+                $rifDom->loadXML($rifcs, LIBXML_NOENT);
+                $registryObject = $rifDom->getElementsByTagName('registryObject');
+                $registryObject->item(0)->getAttributeNode('group')->value = $data['group'];
+                $key =  $rifDom->getElementsByTagName('key');
+                $key->item(0)->nodeValue = $data['registry_object_key'];
+                $originatingSource = $rifDom->getElementsByTagName('originatingSource');
+                $originatingSource->item(0)->nodeValue = $data['originating_source'];
+                $xml = $rifDom->saveXML();
 
+            }
+            else {
+                $xml = "<registryObject group='" . $data['group'] . "'>" . NL;
+                $xml .= "<key>" . $data['registry_object_key'] . "</key>" . NL;
+                $xml .= "<originatingSource type=''>" . $data['originating_source'] . "</originatingSource>" . NL;
+                $xml .= "<" . $data['ro_class'] . " type='" . $data['type'] . "'>" . NL;
+                $xml .= "<location><address><electronic type='url'><value>";
+                $xml .= $data['ogc_service_url'];
+                $xml .= "</value></electronic></address></location>";
+                $xml .= "<description type=''></description>";
+                $xml .= "<identifier type=''></identifier>";
+                if ($data['ro_class'] == 'collection') $xml .= "<dates type=''></dates>";
+                $xml .= "<location></location>";
+                $xml .= "<relatedObject><key></key><relation type=''></relation></relatedObject>";
+                $xml .= "<subject type=''></subject>";
+                $xml .= "<relatedInfo></relatedInfo>";
+                $xml .= "</" . $data['ro_class'] . ">" . NL;
+                $xml .= "</registryObject>";
+                $xml = \ANDS\Util\XMLUtil::wrapRegistryObject($xml);
+            }
+        }
+        else {    // prepare XML
+            $xml = "<registryObject group='" . $data['group'] . "'>" . NL;
+            $xml .= "<key>" . $data['registry_object_key'] . "</key>" . NL;
+            $xml .= "<originatingSource type=''>" . $data['originating_source'] . "</originatingSource>" . NL;
+            $xml .= "<" . $data['ro_class'] . " type='" . $data['type'] . "'>" . NL;
+            $xml .= "<description type=''></description>";
+            $xml .= "<identifier type=''></identifier>";
+            if ($data['ro_class'] == 'collection') $xml .= "<dates type=''></dates>";
+            $xml .= "<location></location>";
+            $xml .= "<relatedObject><key></key><relation type=''></relation></relatedObject>";
+            $xml .= "<subject type=''></subject>";
+            $xml .= "<relatedInfo></relatedInfo>";
+            $xml .= "</" . $data['ro_class'] . ">" . NL;
+            $xml .= "</registryObject>";
+            $xml = \ANDS\Util\XMLUtil::wrapRegistryObject($xml);
+        }
         // write the xml payload to the file system
         $batchID = 'MANUAL-ARO-' . md5($data['registry_object_key']).'-'.time();
-        \ANDS\Payload::write($dataSource->data_source_id, $batchID, $xml);
+        \ANDS\Payload::write($data['data_source_id'], $batchID, $xml);
 
         // import Task creation
         $importTask = new \ANDS\API\Task\ImportTask();
@@ -576,7 +614,7 @@ class Registry_object extends MX_Controller {
                 'params' => http_build_query([
                     'pipeline' => 'ManualImport',
                     'source' => 'manual',
-                    'ds_id' => $dataSource->data_source_id,
+                    'ds_id' => $data['data_source_id'],
                     'batch_id' => $batchID,
                     'user_name' => $this->user->name(),
                     'targetStatus' => 'DRAFT'
