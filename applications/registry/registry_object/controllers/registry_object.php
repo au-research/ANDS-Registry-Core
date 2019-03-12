@@ -560,6 +560,8 @@ class Registry_object extends MX_Controller {
 
 
             $serviceProducer = new ServiceProducer(\ANDS\Util\Config::get('app.services_registry_url'));
+            // clear any rifcs if picked up accidently
+            $services[0]['rifcsB64'] = "";
 
             if(sizeof($services) > 0){
                 $serviceProducer->processServices(json_encode($services));
