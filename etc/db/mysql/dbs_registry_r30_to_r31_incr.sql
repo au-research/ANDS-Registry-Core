@@ -47,3 +47,6 @@ where `ro`.`status` = 'PUBLISHED' and `sch`.`exportable` = TRUE;
 
 ALTER TABLE `dbs_dois`.`prefixes`
 ADD COLUMN `is_test` TINYINT NULL DEFAULT 0 AFTER `created`;
+
+ALTER TABLE `dbs_dois`.`doi_client_prefixes`
+ADD COLUMN `is_test` TINYINT NULL DEFAULT 0 AFTER `active`;

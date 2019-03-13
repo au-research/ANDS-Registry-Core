@@ -252,7 +252,14 @@ class Doi_api
             return $formater->format($response);
         }
 
-        $dataciteClient = $this->getDataciteClientForClient($this->client);
+        if($appID == $this->client->test_app_id)
+        {
+            $this->client->mode = 'test';
+        }else{
+            $this->client->mode = 'prod';
+        }
+
+        $dataciteClient = $this->getDataciteClientForClient($this->client, $this->client->mode);
 
         // construct the DOIServiceProvider to handle DOI requests
         $doiService = new DOIServiceProvider($this->clientRepository, $this->doiRepository,
@@ -265,6 +272,8 @@ class Doi_api
             $this->getIPAddress(),
             $manual
         );
+
+
 
         if ($result === false) {
             $this->doilog($doiService->getResponse(), 'doi_' . $method,
@@ -355,10 +364,11 @@ class Doi_api
         }
     }
 
-    private function getDataciteClientForClient(Client $client)
+    private function getDataciteClientForClient(Client $client,$mode = 'prod')
     {
         // constructing the dataciteclient to talk with datacite services
         $config = Config::get('datacite');
+
 
         // no need to construct the name if it's provided by datacite_symbol
         $clientUsername = $client->datacite_symbol;
@@ -368,11 +378,15 @@ class Doi_api
         }
 
         $dataciteClient = new MdsClient(
-            $clientUsername, $config['password']
+            $clientUsername, $config['password'], $config['testPassword']
         );
 
         // set to the default DOI Service in global config
-        $dataciteClient->setDataciteUrl($config['base_url']);
+        if($mode == 'test') {
+            $dataciteClient->setDataciteUrl($config['base_test_url']);
+        } else{
+            $dataciteClient->setDataciteUrl($config['base_url']);
+        }
 
         return $dataciteClient;
     }
@@ -392,6 +406,7 @@ class Doi_api
         $responselog = array();
         $this->providesOwnResponse = true;
         $arrayFormater = new ArrayFormatter();
+      //  dd($potential_doi);
 
         if (isset($_SERVER['PHP_AUTH_USER'])) {
             $appID = $_SERVER['PHP_AUTH_USER'];
@@ -400,6 +415,7 @@ class Doi_api
         if (isset($_SERVER['PHP_AUTH_USER'])) {
             $sharedSecret = $_SERVER["PHP_AUTH_PW"];
         }
+        // dd($sharedSecret);
 
         //If the client has not provided their appid or shared secret - or has provided incorrect ones - then  set up what logging we can and return the datacite error message
         if (!$appID || !$sharedSecret) {
@@ -442,13 +458,31 @@ class Doi_api
         }
 
         $call = $this->params['identifier'];
+
+       // dd($call);
         $responselog['activity'] = $this->params['identifier'];
 
-        $dataciteClient = $this->getDataciteClientForClient($this->client);
+        if ($potential_doi != '') {
+            $doi = $potential_doi;
+        } else {
+            $doi = $this->getDoiValue();
+        }
+
+        if($appID == $this->client->test_app_id && str_replace("10.5072","",$doi)==$doi)
+        {
+            $this->client->mode = 'test';
+        }else{
+            $this->client->mode = 'prod';
+        }
+
+        $dataciteClient = $this->getDataciteClientForClient($this->client,$this->client->mode);
+
+
 
         // construct the DOIServiceProvider to ensure this client is registered to use the service
         $doiService = new DOIServiceProvider($this->clientRepository, $this->doiRepository,
             $dataciteClient);
+
 
         // authenticate the client
         $result = $doiService->authenticate(
@@ -476,11 +510,7 @@ class Doi_api
             return $result;
         }
 
-        if ($potential_doi != '') {
-            $doi = $potential_doi;
-        } else {
-            $doi = $this->getDoiValue();
-        }
+
 
         $validDoi = true;
         $doiObject = '';
@@ -493,6 +523,7 @@ class Doi_api
                 $clientDoi = ($doiObject->client_id == $this->client->client_id) ? true : false;
             }
         }
+
 
         $validXml = true;
 
@@ -694,6 +725,7 @@ class Doi_api
 
         //set the http response code to what has been returned from DataCite
         $responsehttp = '';
+
         foreach($DataciteResponses as $dataCiteMessage){
             if(isset($dataCiteMessage['httpcode'])) $responsehttp = $dataCiteMessage['httpcode'];
         }
@@ -1004,6 +1036,14 @@ class Doi_api
     private function getClientModel($app_id)
     {
         $this->client = $this->clientRepository->getByAppID($app_id);
+        if($this->client->app_id == $app_id) {
+            $this->client->mode = "prod";
+            $this->client->datacite_prefix = $this->getTrustedClientActivePrefix();
+        }else{
+            $this->client->mode = "test";
+            $this->client->datacite_prefix = $this->getTrustedClientActiveTestPrefix();
+            $this->client->datacite_test_prefix = $this->getTrustedClientActiveTestPrefix();
+        }
     }
 
 
@@ -1052,16 +1092,23 @@ class Doi_api
             throw new Exception('App ID required');
         }
         $this->client = $this->clientRepository->getByAppID($app_id);
-        if($this->client->app_id == $app_id) {
-            $this->client->mode = "prod";
-        }else{
-            $this->client->mode = "test";
-        }
-
         if (!$this->client) {
             throw new Exception('Invalid App ID');
         }
-        $this->client->datacite_prefix = $this->getTrustedClientActivePrefix();
+
+        if($this->client->app_id == $app_id) {
+
+            $this->client->mode = "prod";
+            $this->client->datacite_prefix = $this->getTrustedClientActivePrefix();
+        }else{
+            $this->client->mode = "test";
+            $this->client->datacite_prefix = $this->getTrustedClientActiveTestPrefix();
+            $this->client->datacite_test_prefix = $this->getTrustedClientActiveTestPrefix();
+        }
+
+
+
+        $this->client->datacite_test_prefix = $this->getTrustedClientActiveTestPrefix();
     }
 
 
@@ -1071,11 +1118,21 @@ class Doi_api
         if (is_array_empty($this->client->prefixes))
             return $this->testPrefix;
         foreach ($this->client->prefixes as $clientPrefix) {
-            if ($clientPrefix->active)
+            if ($clientPrefix->active  && $clientPrefix->is_test == 0)
                 return $clientPrefix->prefix->prefix_value;
         }
+        return $this->testPrefix;
     }
-
+    private function getTrustedClientActiveTestPrefix()
+    {
+        if (is_array_empty($this->client->prefixes))
+            return $this->testPrefix;
+        foreach ($this->client->prefixes as $clientPrefix) {
+            if ($clientPrefix->active && $clientPrefix->is_test == 1)
+                return $clientPrefix->prefix->prefix_value;
+        }
+        return $this->testPrefix;
+    }
 
     private function getTrustedClients()
     {
@@ -1107,6 +1164,7 @@ class Doi_api
         $offset = $this->ci->input->get('offset') ?: 0;
         $search = $this->ci->input->get('search') ?: '';
         $mode = $this->ci->input->get('mode') ?: $this->client->mode;
+        //dd($this->client->datacite_test_prefix);
 
         $query = $this->dois_db
             ->order_by('updated_when', 'desc')
@@ -1117,9 +1175,9 @@ class Doi_api
             ->select('*');
 
         if($mode == "prod") {
-            $query = $this->dois_db->where("doi_id NOT LIKE '%10.5072%'");
+            $query = $this->dois_db->where("doi_id NOT LIKE '10.5072%' AND doi_id NOT LIKE '".$this->client->datacite_test_prefix."%'")->where('status !=', 'REQUESTED');
         }else{
-            $query = $this->dois_db->where("doi_id LIKE '%10.5072%'");
+            $query = $this->dois_db->where("doi_id LIKE '10.5072/%' OR doi_id LIKE '".$this->client->datacite_test_prefix."%'")->where('status !=', 'REQUESTED');
         }
         if ($search) {
             $query = $this->dois_db->where("doi_id LIKE '%{$search}%'");
