@@ -7,7 +7,10 @@ $(function(){
 			//console.log($(this).attr('id'));
 			var ro_class = $(this).attr('id');
 			var theInput = '<input type="text" class="input-xlarge rifcs-type" vocab="RIFCS'+ro_class+'Type" name="type" value="" required autocomplete="off">';
+
 			$('#ro_type').html(theInput);
+
+
 			$('#AddNewDS_confirm').attr('ro_class', ro_class);
 			$('#AddNewDS_confirm').html('Add New '+ro_class);
 
@@ -15,14 +18,32 @@ $(function(){
 			initVocabWidgets();
 
 			//Core_bindFormValidation($('#AddNewDS form'));
+			if(ro_class == 'service'){
+                $('input[name=type]').on({
+                    change:function(e){
+                        var type = $('input[name=type]').val();
+                        if(type.startsWith("OGC:")){
+                            $('#ogc_service_url_group').show();
+                        }
+                        else{
+                            $('#ogc_service_url_group').hide();
+                        }
+                    }
+                });
+			}
+			$('#ogc_service_url_group').hide();
 		}
-	});	
+	});
+
     $('input[name=key]').on({
     	blur: function(e){
     		e.preventDefault();
     		$('.alert-error').hide();
     	}
     });
+
+
+
 
 	$('#generate_random_key').live({
 		click:function(e){
