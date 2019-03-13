@@ -568,7 +568,7 @@ class Registry_object extends MX_Controller {
                 $summary = $serviceProducer->getSummary();
                 $rifcs = $serviceProducer->getRegistryObjects();
             }else{
-                $rifcs = $serviceProducer->getRifcsForServiceUrl($data['ogc_service_url'], $data['type']);
+                $rifcs = $serviceProducer->getRifcsForServiceUrl($data['ogc_service_url'], $type);
             }
 
 
