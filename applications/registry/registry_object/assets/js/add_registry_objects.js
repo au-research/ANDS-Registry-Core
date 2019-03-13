@@ -31,6 +31,7 @@ $(function(){
                     }
                 });
 			}
+            $('input[name=ogc_service_url]').val('');
 			$('#ogc_service_url_group').hide();
 		}
 	});

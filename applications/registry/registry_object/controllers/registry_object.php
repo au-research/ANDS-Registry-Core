@@ -548,65 +548,75 @@ class Registry_object extends MX_Controller {
             $status = $draftRecord->status;
             throw new Exception("A RegistryObject with key $key already exists in status $status");
         }
-        if(str_contains($data['type'], 'OGC:') && $data['ogc_service_url'] != '')
-        {
-            $type = str_replace('OGC:', '', $data['type']);
+        $xml = null;
 
-            $links = ServiceDiscovery::getServicesBylinks($data['ogc_service_url']);
+        try{
+            if(str_contains($data['type'], 'OGC:') && $data['ogc_service_url'] != '')
+            {
+                // use the new service discovery method if an OGC service is created with a url
+                $type = str_replace('OGC:', '', $data['type']);
 
-            $fLinks = ServiceDiscovery::processLinks($links);
+                $links = ServiceDiscovery::getServicesBylinks($data['ogc_service_url']);
 
-            $services = ServiceDiscovery::formatLinks($fLinks);
+                $fLinks = ServiceDiscovery::processLinks($links);
+
+                $services = ServiceDiscovery::formatLinks($fLinks);
+
+                $serviceProducer = new ServiceProducer(\ANDS\Util\Config::get('app.services_registry_url'));
+                // clear any rifcs if picked up accidently
+                $services[0]['rifcsB64'] = "";
 
 
-            $serviceProducer = new ServiceProducer(\ANDS\Util\Config::get('app.services_registry_url'));
-            // clear any rifcs if picked up accidently
-            $services[0]['rifcsB64'] = "";
+                if(sizeof($services) > 0){
+                    $serviceProducer->processServices(json_encode($services));
+                    $summary = $serviceProducer->getSummary();
+                    $rifcs = $serviceProducer->getRegistryObjects();
+                }else{
+                    $rifcs = $serviceProducer->getRifcsForServiceUrl($data['ogc_service_url'], $type);
+                }
 
-            if(sizeof($services) > 0){
-                $serviceProducer->processServices(json_encode($services));
-                $summary = $serviceProducer->getSummary();
-                $rifcs = $serviceProducer->getRegistryObjects();
-            }else{
-                $rifcs = $serviceProducer->getRifcsForServiceUrl($data['ogc_service_url'], $type);
+
+                if(str_contains($rifcs,'</registryObject>')){
+
+                    $rifDom = new DOMDocument();
+                    $rifDom->loadXML($rifcs, LIBXML_NOENT);
+                    $registryObject = $rifDom->getElementsByTagName('registryObject');
+                    $registryObject->item(0)->getAttributeNode('group')->value = $data['group'];
+                    $key =  $rifDom->getElementsByTagName('key');
+                    $key->item(0)->nodeValue = $data['registry_object_key'];
+                    $originatingSource = $rifDom->getElementsByTagName('originatingSource');
+                    $originatingSource->item(0)->nodeValue = $data['originating_source'];
+                    $xml = $rifDom->saveXML();
+
+                }
+                else {
+                    $xml = "<registryObject group='" . $data['group'] . "'>" . NL;
+                    $xml .= "<key>" . $data['registry_object_key'] . "</key>" . NL;
+                    $xml .= "<originatingSource type=''>" . $data['originating_source'] . "</originatingSource>" . NL;
+                    $xml .= "<" . $data['ro_class'] . " type='" . $data['type'] . "'>" . NL;
+                    $xml .= "<location><address><electronic type='url'><value>";
+                    $xml .= str_replace("&", "&amp;", $data['ogc_service_url']);
+                    $xml .= "</value></electronic></address></location>";
+                    $xml .= "<description type=''></description>";
+                    $xml .= "<identifier type=''></identifier>";
+                    if ($data['ro_class'] == 'collection') $xml .= "<dates type=''></dates>";
+                    $xml .= "<location></location>";
+                    $xml .= "<relatedObject><key></key><relation type=''></relation></relatedObject>";
+                    $xml .= "<subject type=''></subject>";
+                    $xml .= "<relatedInfo></relatedInfo>";
+                    $xml .= "</" . $data['ro_class'] . ">" . NL;
+                    $xml .= "</registryObject>";
+                    $xml = \ANDS\Util\XMLUtil::wrapRegistryObject($xml);
+                }
             }
-
-
-            if(str_contains($rifcs,'<registryObject')){
-
-                $rifDom = new DOMDocument();
-
-                $rifDom->loadXML($rifcs, LIBXML_NOENT);
-                $registryObject = $rifDom->getElementsByTagName('registryObject');
-                $registryObject->item(0)->getAttributeNode('group')->value = $data['group'];
-                $key =  $rifDom->getElementsByTagName('key');
-                $key->item(0)->nodeValue = $data['registry_object_key'];
-                $originatingSource = $rifDom->getElementsByTagName('originatingSource');
-                $originatingSource->item(0)->nodeValue = $data['originating_source'];
-                $xml = $rifDom->saveXML();
-
-            }
-            else {
-                $xml = "<registryObject group='" . $data['group'] . "'>" . NL;
-                $xml .= "<key>" . $data['registry_object_key'] . "</key>" . NL;
-                $xml .= "<originatingSource type=''>" . $data['originating_source'] . "</originatingSource>" . NL;
-                $xml .= "<" . $data['ro_class'] . " type='" . $data['type'] . "'>" . NL;
-                $xml .= "<location><address><electronic type='url'><value>";
-                $xml .= $data['ogc_service_url'];
-                $xml .= "</value></electronic></address></location>";
-                $xml .= "<description type=''></description>";
-                $xml .= "<identifier type=''></identifier>";
-                if ($data['ro_class'] == 'collection') $xml .= "<dates type=''></dates>";
-                $xml .= "<location></location>";
-                $xml .= "<relatedObject><key></key><relation type=''></relation></relatedObject>";
-                $xml .= "<subject type=''></subject>";
-                $xml .= "<relatedInfo></relatedInfo>";
-                $xml .= "</" . $data['ro_class'] . ">" . NL;
-                $xml .= "</registryObject>";
-                $xml = \ANDS\Util\XMLUtil::wrapRegistryObject($xml);
-            }
+        } catch(Exception $e){
+            // we tried and failed to create a service record using the discovery method
+            // so just create a skeleton ro as we used to do
+            $xml = null;
         }
-        else {    // prepare XML
+
+
+        if(!$xml) {    // prepare XML
             $xml = "<registryObject group='" . $data['group'] . "'>" . NL;
             $xml .= "<key>" . $data['registry_object_key'] . "</key>" . NL;
             $xml .= "<originatingSource type=''>" . $data['originating_source'] . "</originatingSource>" . NL;
