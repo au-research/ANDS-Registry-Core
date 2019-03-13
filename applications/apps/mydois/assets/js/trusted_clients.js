@@ -100,6 +100,7 @@ $(document).on('click', '#add_confirm', function(){
 			$('#edit_trusted_client_form input[name=app_id]').val(data['app_id']);
 			$('#edit_trusted_client_form input[name=test_app_id]').val(data['test_app_id']);
 			$('#edit_trusted_client_form select[name=datacite_prefix]').val(data['datacite_prefix']);
+            $('#edit_trusted_client_form select[name=datacite_test_prefix]').val(data['datacite_test_prefix']);
 			$('#edit_trusted_client_form input[name=shared_secret]').val(data['shared_secret']);
 			$('#edit_trusted_client_form input[name=test_shared_secret]').val(data['test_shared_secret']);
 			$('#edit_trusted_client_modal').modal('show');
@@ -107,6 +108,14 @@ $(document).on('click', '#add_confirm', function(){
             $('#prefix_select').empty();
             $.each(data['available_prefixes'], function (i, item) {
                 $('#prefix_select').append($('<option>', {
+                    value: item,
+                    text : item
+                }));
+            });
+
+            $('#prefix_test_select').empty();
+            $.each(data['available_test_prefixes'], function (i, item) {
+                $('#prefix_test_select').append($('<option>', {
                     value: item,
                     text : item
                 }));
@@ -133,17 +142,39 @@ $(document).on('click', '#add_confirm', function(){
 					text : item
 				}));
 			});
-			$('#add_trusted_client_modal').modal('show');
 		}
 	});
+    $.ajax({
+        url:apps_url+'mydois/get_available_prefixes?mode=test',
+        type: 'GET',
+        success: function(data){
+
+            $('#add_test_prefix_select').empty();
+            $.each(data, function (i, item) {
+                $('#add_test_prefix_select').append($('<option>', {
+                    value: item,
+                    text : item
+                }));
+            });
+            $('#add_trusted_client_modal').modal('show');
+        }
+    });
 }).on('click', '#fetch_unassigned_prefixes_btn', function(){
 	$.ajax({
-		url:apps_url+'mydois/fetch_unassigned_prefix',
+		url:apps_url+'mydois/fetch_unassigned_prefix?mode=prod',
 		type: 'GET',
 		success: function(data){
 			$('#result_msg').html(data.message).addClass('label alert-info');
 		}
 	});
+}).on('click', '#fetch_unassigned_test_prefixes_btn', function(){
+    $.ajax({
+        url:apps_url+'mydois/fetch_unassigned_prefix?mode=test',
+        type: 'GET',
+        success: function(data){
+            $('#result_msg').html(data.message).addClass('label alert-info');
+        }
+    });
 });
 
 function listTrustedClients() {

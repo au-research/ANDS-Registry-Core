@@ -78,11 +78,19 @@ class Mydois extends MX_Controller {
      * starting with the test prefix
      *
      */
-    function get_available_prefixes(){
+    function get_available_prefixes($mode = 'prod'){
         $prefixes = [];
-        $prefixes[] = $this->testPrefix;
-        $this->fabricaClient->syncUnallocatedPrefixes();
-        $unallocatedPrefixes = $this->clientRepository->getUnalocatedPrefixes();
+        //we now need to determine if we are retrieving production or test prefixes
+
+        if(isset($_GET['mode']) && $_GET['mode'] == 'test'){
+            $mode = 'test';
+            $this->fabricaClient->setDataciteUrl(getenv("DATACITE_FABRICA_API_TEST_URL"));
+        }else{
+            $prefixes[] = $this->testPrefix;
+        }
+
+        $this->fabricaClient->syncUnallocatedPrefixes($mode);
+        $unallocatedPrefixes = $this->clientRepository->getUnalocatedPrefixes($mode);
         foreach($unallocatedPrefixes as $aPrefix) {
             if(sizeof($prefixes) >= $this->unallocatedPrefixLimit)
                 break;
@@ -105,7 +113,10 @@ class Mydois extends MX_Controller {
     public function fetch_unassigned_prefix()
     {
         $response = [];
-        $unallocatedPrefixes = $this->clientRepository->getUnalocatedPrefixes();
+
+        $mode = $_GET["mode"];
+
+        $unallocatedPrefixes = $this->clientRepository->getUnalocatedPrefixes($mode);
 
         if(sizeof($unallocatedPrefixes) > $this->unallocatedPrefixLimit){
             $response['message'] = "Number of Unallocated Prefixes (".sizeof($unallocatedPrefixes).") is greater than the Prefix Limit of (".$this->unallocatedPrefixLimit.").";
@@ -119,7 +130,7 @@ class Mydois extends MX_Controller {
 //            for($i = 0 ; $i < $numberofPrefixestoFetch ; $i++){
 //                $response['newPrefixes'][] = "10.999999".$i;
 //            }
-            $response['newPrefixes'] = $this->fabricaClient->claimNumberOfUnassignedPrefixes($numberofPrefixestoFetch);
+            $response['newPrefixes'] = $this->fabricaClient->claimNumberOfUnassignedPrefixes($numberofPrefixestoFetch,$mode);
 
             $response['message'] = "Fetched ".sizeof($response['newPrefixes']) . " new Prefixe(s)";
         }
@@ -151,7 +162,9 @@ class Mydois extends MX_Controller {
                 $client["url"] = $this->fabricaUrl . "/clients/" . strtolower($client->datacite_symbol);
                 $client['domain_list'] = str_replace(",", " ", $this->getTrustedClientDomains($client->client_id));
                 $client['datacite_prefix'] = $this->getTrustedClientActivePrefix($client->client_id);
+                $client['datacite_test_prefix'] = $this->getTrustedClientActiveTestPrefix($client->client_id);
                 $client['not_active_prefixes'] = $this->getTrustedClientNonActivePrefixes($client->client_id);
+                $client['not_active_text_prefixes'] = $this->getTrustedClientNonActiveTestPrefixes($client->client_id);
         }
 
         return $allClients;
@@ -269,7 +282,23 @@ ip_address = "'.$r["combined_ip"].'"  WHERE app_id = "'.$r["app_id"].'"');
         if(is_array_empty($client->prefixes))
             return "";
         foreach ($client->prefixes as $clientPrefix) {
-            if($clientPrefix->active && $clientPrefix->prefix != null)
+            if($clientPrefix->active && $clientPrefix->prefix != null && $clientPrefix->is_test == 0)
+                return $clientPrefix->prefix->prefix_value;
+        }
+        return "";
+    }
+    /**
+     * TODO refactor to ANDS-DOI-SERVICE functionality
+     *
+     * @param $client_id
+     * @return mixed
+     */
+    private function getTrustedClientActiveTestPrefix($client_id){
+        $client = $this->clientRepository->getByID($client_id);
+        if(is_array_empty($client->prefixes))
+            return "";
+        foreach ($client->prefixes as $clientPrefix) {
+            if($clientPrefix->active && $clientPrefix->prefix != null  && $clientPrefix->is_test == 1)
                 return $clientPrefix->prefix->prefix_value;
         }
         return "";
@@ -287,12 +316,29 @@ ip_address = "'.$r["combined_ip"].'"  WHERE app_id = "'.$r["app_id"].'"');
         if(is_array_empty($client->prefixes))
             return "";
         foreach ($client->prefixes as $clientPrefix) {
-            if(!$clientPrefix->active)
+            if(!$clientPrefix->active && $client->is_test == 0)
                 $notActiveprefixes .= $clientPrefix->prefix->prefix_value.", ";
         }
         return trim($notActiveprefixes, ', "');
     }
 
+    /**
+     * TODO refactor to ANDS-DOI-SERVICE functionality
+     *
+     * @param $client_id
+     * @return mixed
+     */
+    private function getTrustedClientNonActiveTestPrefixes($client_id){
+        $client = $this->clientRepository->getByID($client_id);
+        $notActiveprefixes = "";
+        if(is_array_empty($client->prefixes))
+            return "";
+        foreach ($client->prefixes as $clientPrefix) {
+            if(!$clientPrefix->active  && $client->is_test == 1)
+                $notActiveprefixes .= $clientPrefix->prefix->prefix_value.", ";
+        }
+        return trim($notActiveprefixes, ', "');
+    }
     /**
      * AJAX Entry for adding trusted client
      */
@@ -306,6 +352,7 @@ ip_address = "'.$r["combined_ip"].'"  WHERE app_id = "'.$r["app_id"].'"');
 		$client_contact_email = trim(urlencode($posted['client_contact_email']));
 		$domainList = trim($posted['domainList']);
         $datacite_prefix = 	trim(urlencode($posted['datacite_prefix']));
+        $datacite_test_prefix = 	trim(urlencode($posted['datacite_test_prefix']));
 		$shared_secret = trim(urlencode($posted['shared_secret']))	;
         $test_shared_secret = trim(urlencode($posted['test_shared_secret']))	;
         
@@ -322,9 +369,11 @@ ip_address = "'.$r["combined_ip"].'"  WHERE app_id = "'.$r["app_id"].'"');
         ]);
         
         $client->addDomains($domainList);
-        $client->addClientPrefix($datacite_prefix, true);
+        $client->addClientPrefix($datacite_prefix, 'prod',true);
+        $client->addClientPrefix($datacite_test_prefix, 'test',true);
 
-        $this->fabricaClient->addClient($client);
+        //Add the client as a production client
+        $this->fabricaClient->addClient($client, 'prod');
 
         if($this->fabricaClient->hasError()){
             //if error occurred return the result message to the user
@@ -337,7 +386,7 @@ ip_address = "'.$r["combined_ip"].'"  WHERE app_id = "'.$r["app_id"].'"');
 
         if($datacite_prefix && $datacite_prefix != $this->testPrefix){
 
-            $this->fabricaClient->updateClientPrefixes($client);
+            $this->fabricaClient->updateClientPrefixes($client, 'prod');
             if($this->fabricaClient->hasError()){
                 //if error occurred return the result message to the user
                 $response['responseCode'] = $this->fabricaClient->responseCode;
@@ -347,6 +396,34 @@ ip_address = "'.$r["combined_ip"].'"  WHERE app_id = "'.$r["app_id"].'"');
                 exit();
             }
         }
+
+
+        //Add the client as a test client
+        $this->fabricaClient->addClient($client, 'test');
+
+        if($this->fabricaClient->hasError()){
+            //if error occurred return the result message to the user
+            $response['responseCode'] = $this->fabricaClient->responseCode;
+            $response['errorMessages'] = $this->fabricaClient->getErrorMessage();
+            $response['Messages'] = $this->fabricaClient->getMessages();
+            echo json_encode($response);
+            exit();
+        }
+
+        if($datacite_test_prefix && $datacite_test_prefix != $this->testPrefix){
+
+            $this->fabricaClient->updateClientPrefixes($client, 'test');
+            if($this->fabricaClient->hasError()){
+                //if error occurred return the result message to the user
+                $response['responseCode'] = $this->fabricaClient->responseCode;
+                $response['errorMessages'] = $this->fabricaClient->getErrorMessage();
+                $response['Messages'] = $this->fabricaClient->getMessages();
+                echo json_encode($response);
+                exit();
+            }
+        }
+
+
         // we should get here only if no error occurred during the update
         // return the code if 200 or 201
         if($this->fabricaClient->responseCode == 200 || $this->fabricaClient->responseCode == 201)
@@ -363,7 +440,9 @@ ip_address = "'.$r["combined_ip"].'"  WHERE app_id = "'.$r["app_id"].'"');
 		$response = $this->clientRepository->getByID($client_id);
 		$response['domain_list'] = $this->getTrustedClientDomains($client_id);
 		$response['datacite_prefix'] = $this->getTrustedClientActivePrefix($client_id);
+        $response['datacite_test_prefix'] = $this->getTrustedClientActiveTestPrefix($client_id);
 		$response['available_prefixes'] = $this->getAvailablePrefixesForClient($client_id);
+        $response['available_test_prefixes'] = $this->getAvailableTestPrefixesForClient($client_id);
 		echo json_encode($response);
 	}
 
@@ -378,7 +457,7 @@ ip_address = "'.$r["combined_ip"].'"  WHERE app_id = "'.$r["app_id"].'"');
     private function getAvailablePrefixesForClient($client_id)
     {
 
-        $unallocatedPrefixes = $this->clientRepository->getUnalocatedPrefixes();
+        $unallocatedPrefixes = $this->clientRepository->getUnalocatedPrefixes('prod');
         $prefixes = [];
 
         if ($ownPrefix = $this->getTrustedClientActivePrefix($client_id)) {
@@ -396,6 +475,33 @@ ip_address = "'.$r["combined_ip"].'"  WHERE app_id = "'.$r["app_id"].'"');
     }
 
     /**
+     * TODO refactor to ANDS-DOI-SERVICE functionality
+     *
+     * @param $client_id
+     * @return array
+     * gets unallocatedPrefixLimit list of prefixes to give to clients
+     *
+     */
+    private function getAvailableTestPrefixesForClient($client_id)
+    {
+
+        $unallocatedPrefixes = $this->clientRepository->getUnalocatedPrefixes('test');
+        $prefixes = [];
+
+        if ($ownPrefix = $this->getTrustedClientActiveTestPrefix($client_id)) {
+            $prefixes[] = $ownPrefix;
+        }
+
+        foreach($unallocatedPrefixes as $aPrefix) {
+            if(sizeof($prefixes) >= $this->unallocatedPrefixLimit)
+                break;
+            if(!in_array($aPrefix->prefix_value, $this->old_prod_prefixes))
+                $prefixes[] = $aPrefix->prefix_value;
+        }
+        $prefixes[] = $this->testPrefix;
+        return $prefixes;
+    }
+    /**
      * AJAX entry
      * for committing a change to a client
      */
@@ -410,6 +516,7 @@ ip_address = "'.$r["combined_ip"].'"  WHERE app_id = "'.$r["app_id"].'"');
 		$client_contact_email = trim($posted['client_contact_email']);
 		$domainList = trim($posted['domainList']);
 		$datacite_prefix = 	trim($posted['datacite_prefix']);
+		$datacite_test_prefix = trim($posted['datacite_test_prefix']);
 		$shared_secret = trim($posted['shared_secret']);
         $test_shared_secret = trim($posted['test_shared_secret']);
 
@@ -430,36 +537,70 @@ ip_address = "'.$r["combined_ip"].'"  WHERE app_id = "'.$r["app_id"].'"');
         $client->addDomains($domainList);
 
         $hasPrefix = $client->hasPrefix($datacite_prefix);
+        $hasTestPrefix = $client->hasPrefix($datacite_test_prefix);
         // adds or sets the given prefix to active
-        $client->addClientPrefix($datacite_prefix, true);
+        $client->addClientPrefix($datacite_prefix, 'prod',true);
+        $client->addClientPrefix($datacite_test_prefix, 'test',true);
 
-        $this->fabricaClient->updateClient($client);
+        // updates the client on datacite prod
+        $this->fabricaClient->updateClient($client,'prod');
 
-        // updates the client on datacite 
+
         if($this->fabricaClient->hasError()){
             //if error occurred return the result message to the user
             $response['responseCode'] = $this->fabricaClient->responseCode;
             $response['errorMessages'] = $this->fabricaClient->getErrorMessage();
             $response['Messages'] = $this->fabricaClient->getMessages();
+            echo json_encode($this->fabricaClient);
             echo json_encode($response);
             exit();
         }
 
+
         // if new production prefix is assigned to client
         // update client prefix on datacite
-        
+
         if($datacite_prefix && $datacite_prefix != $this->testPrefix && !$hasPrefix){
-            $this->fabricaClient->updateClientPrefixes($client);
+            $this->fabricaClient->updateClientPrefixes($client,'prod');
             if($this->fabricaClient->hasError()){
                 //if error occurred return the result message to the user
                 $response['responseCode'] = $this->fabricaClient->responseCode;
                 $response['errorMessages'] = $this->fabricaClient->getErrorMessage();
                 $response['Messages'] = $this->fabricaClient->getMessages();
-                echo json_encode($response);
+               // var_dump($this->fabricaClient);
+                // echo json_encode($response);
                 exit();
             }
         }
+        // updates the client on datacite test
+        $this->fabricaClient->updateClient($client,'test');
 
+
+        if($this->fabricaClient->hasError()){
+            //if error occurred return the result message to the user
+            $response['responseCode'] = $this->fabricaClient->responseCode;
+            $response['errorMessages'] = $this->fabricaClient->getErrorMessage();
+            $response['Messages'] = $this->fabricaClient->getMessages();
+            echo json_encode($this->fabricaClient);
+            echo json_encode($response);
+            exit();
+        }
+
+        // if new test prefix is assigned to client
+        // update client prefix on datacite test
+
+        if($datacite_test_prefix && $datacite_test_prefix != $this->testPrefix && !$hasTestPrefix){
+            $this->fabricaClient->updateClientPrefixes($client,'test');
+            if($this->fabricaClient->hasError()){
+                //if error occurred return the result message to the user
+                $response['responseCode'] = $this->fabricaClient->responseCode;
+                $response['errorMessages'] = $this->fabricaClient->getErrorMessage();
+                $response['Messages'] = $this->fabricaClient->getMessages();
+                var_dump($this->fabricaClient);
+              //  echo json_encode($response);
+                exit();
+            }
+        }
         // we should get here only if no error occurred during the update
         // return the code if 200 or 201
  
@@ -509,7 +650,7 @@ ip_address = "'.$r["combined_ip"].'"  WHERE app_id = "'.$r["app_id"].'"');
         $fabricaConfig = \ANDS\Util\Config::get('datacite.fabrica');
 
         $this->fabricaUrl = $fabricaConfig['url'];
-        $this->fabricaClient = new FabricaClient($fabricaConfig['username'],$fabricaConfig['password']);
+        $this->fabricaClient = new FabricaClient($fabricaConfig['username'],$fabricaConfig['password'],$fabricaConfig['testPassword']);
         $this->fabricaClient->setDataciteUrl($fabricaConfig['api_url']);
         $this->fabricaClient->setClientRepository($this->clientRepository);
     }
