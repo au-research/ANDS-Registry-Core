@@ -97,12 +97,23 @@
 
         vm.mint = function() {
             $scope.$broadcast('update');
-            var data = {
-                xml : vm.stripBlankElements(vm.newdoixml),
-                app_id : vm.client.app_id,
-                url : vm.newdoi_url,
-                doi : vm.newdoi_id,
-                client_id: vm.client.client_id
+            if(vm.client.mode == 'test'){
+                var data = {
+                    xml : vm.stripBlankElements(vm.newdoixml),
+                    app_id : vm.client.test_app_id,
+                    url : vm.newdoi_url,
+                    doi : vm.newdoi_id,
+                    client_id: vm.client.client_id
+                };
+
+            }else {
+                var data = {
+                    xml: vm.stripBlankElements(vm.newdoixml),
+                    app_id: vm.client.app_id,
+                    url : vm.newdoi_url,
+                    doi : vm.newdoi_id,
+                    client_id: vm.client.client_id
+                };
             }
             vm.loading = true;
             vm.response = false;
