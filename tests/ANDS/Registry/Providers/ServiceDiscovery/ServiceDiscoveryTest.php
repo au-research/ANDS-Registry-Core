@@ -62,7 +62,7 @@ class ServiceDiscoveryTest extends \RegistryTestClass
     {
         $url = "http://www.cmar.csiro.au/geoserver/wms?&CQL_FILTER=SURVEY_NAME%20%3D%20%27ALBA196909%27";
         $baseUrl = ServiceDiscovery::getBaseUrl($url);
-        $this->assertEquals($baseUrl, "http://www.cmar.csiro.au/geoserver/wms");
+        $this->assertEquals($baseUrl, "https://www.cmar.csiro.au/geoserver/wms");
     }
 
     /** @test **/

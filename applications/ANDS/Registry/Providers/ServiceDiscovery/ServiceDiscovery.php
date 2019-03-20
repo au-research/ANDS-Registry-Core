@@ -43,8 +43,8 @@ class ServiceDiscovery {
 
 
     public static function getServicesBylinks($url){
-        $url = static::getBaseUrl($url);
-        $links = Links::where('link','LIKE',"{$url}%")->get();
+        $url = static::getBaseUrl($url, false);
+        $links = Links::where('link','LIKE',"%{$url}%")->get();
         return $links;
     }
 
@@ -222,15 +222,18 @@ class ServiceDiscovery {
         return array("type"=>$identifiers[0]->identifier_type, "identifier"=>$identifiers[0]->identifier);
     }
 
-    public static function getBaseUrl($url){
+    public static function getBaseUrl($url, $withProtocol = true){
         $parsed_url = parse_url($url);
 
-        $scheme   = isset($parsed_url['scheme']) ? $parsed_url['scheme'] . '://' : '';
+        //$scheme   = isset($parsed_url['scheme']) ? $parsed_url['scheme'] . '://' : '';
+        $scheme = "https://";
         $host     = isset($parsed_url['host']) ? $parsed_url['host'] : '';
         $port     = isset($parsed_url['port']) ? ':' . $parsed_url['port'] : '';
         $path     = isset($parsed_url['path']) ? $parsed_url['path'] : '';
-
-        return $scheme.$host.$port.$path;
+        if($withProtocol)
+            return $scheme.$host.$port.$path;
+        else
+            return $host.$port.$path;
 
     }
 
