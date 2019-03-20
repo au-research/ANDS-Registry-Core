@@ -730,7 +730,7 @@ class OAIRecordRepository implements OAIRepository
 
         foreach ($records['records'] as $record) {
             $oaiRecord = new Record(
-                $this->oaiIdentifierPrefix.$record->registryObject->id,
+                $record->registryObject->key,
                 Carbon::parse($record->updated_at)->setTimezone('UTC')->format($this->getDateFormat())
             );
             $oaiRecord = $this->addAltSchemaVersionsSets($oaiRecord, $record);
@@ -753,7 +753,7 @@ class OAIRecordRepository implements OAIRepository
         foreach ($records['records'] as $record) {
 
             $oaiRecord = new Record(
-                $this->oaiIdentifierPrefix.$record->registryObject->id,
+                $record->registryObject->key,
                 Carbon::parse($record->updated_at)->setTimezone('UTC')->format($this->getDateFormat())
             );
             $oaiRecord = $this->addAltSchemaVersionsSets($oaiRecord, $record);
