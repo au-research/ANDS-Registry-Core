@@ -37,8 +37,8 @@
                     });
                     break;
                 case 'mint':
-                    if(vm.client.mode == "test"){vm.client.datacite_prefix="10.5072";}
-                    if(vm.client.datacite_prefix == "10.5072"){
+                    if(vm.client.mode == "test"){
+                        vm.client.datacite_prefix=vm.client.datacite_test_prefix;
                         var test_str = "TEST_DOI_";
                     }else{
                         var test_str = "";
@@ -46,7 +46,7 @@
                     vm.editxml = false;
                     vm.response = false;
                     vm.newdoi_url = '';
-                    vm.newdoi_id = vm.client.datacite_test_prefix +'/'+ test_str + vm.uniqid();
+                    vm.newdoi_id = vm.client.datacite_prefix +'/'+ test_str + vm.uniqid();
                     vm.newdoixml = APIDOIService.getBlankDataciteXML(vm.newdoi_id);
                     break;
             }
