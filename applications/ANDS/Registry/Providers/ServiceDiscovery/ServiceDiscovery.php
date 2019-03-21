@@ -9,6 +9,7 @@ use ANDS\RegistryObject;
 use ANDS\RegistryObject\Identifier;
 use ANDS\RegistryObject\Links;
 use ANDS\Repository\RegistryObjectsRepository as Repo;
+use ANDS\Util\StrUtil;
 
 class ServiceDiscovery {
 
@@ -141,7 +142,7 @@ class ServiceDiscovery {
                 $fullURLs = array_merge($fullURLs, $serviceRelation["full_urls"]);
             }
 
-            $uuid = static::generateUUIDFromString($url);
+            $uuid = StrUtil::generateUUIDFromString($url);
             $rifcsB64 = static::getExistingContentasBase64Str($uuid);
             $links[] = [
                 "url" => $url,
@@ -154,17 +155,6 @@ class ServiceDiscovery {
         }
 
         return $links;
-    }
-// http://guid.us/GUID/PHP
-    private static function generateUUIDFromString($sting){
-        $charid = strtolower(md5($sting));
-        $hyphen = chr(45);// "-"
-        $uuid = substr($charid, 0, 8).$hyphen
-            .substr($charid, 8, 4).$hyphen
-            .substr($charid,12, 4).$hyphen
-            .substr($charid,16, 4).$hyphen
-            .substr($charid,20,12);
-        return $uuid;
     }
 
 
