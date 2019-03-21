@@ -584,6 +584,7 @@ class Registry_object extends MX_Controller {
                     $registryObject->item(0)->getAttributeNode('group')->value = $data['group'];
                     $key =  $rifDom->getElementsByTagName('key');
                     $key->item(0)->nodeValue = $data['registry_object_key'];
+                    $identifier =  $rifDom->getElementsByTagName('identifier');
                     $originatingSource = $rifDom->getElementsByTagName('originatingSource');
                     $originatingSource->item(0)->nodeValue = $data['originating_source'];
                     $xml = $rifDom->saveXML();
@@ -599,7 +600,6 @@ class Registry_object extends MX_Controller {
                     $xml .= "</value></electronic></address></location>";
                     $xml .= "<description type=''></description>";
                     $xml .= "<identifier type=''></identifier>";
-                    if ($data['ro_class'] == 'collection') $xml .= "<dates type=''></dates>";
                     $xml .= "<location></location>";
                     $xml .= "<relatedObject><key></key><relation type=''></relation></relatedObject>";
                     $xml .= "<subject type=''></subject>";
