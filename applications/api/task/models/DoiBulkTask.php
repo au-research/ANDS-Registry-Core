@@ -151,11 +151,10 @@ class DoiBulkTask extends Task
         $client = $clientRepository->getByID($bulkRequest->client_id);
 
         $config = Config::get('datacite');
+     //   dd($config);
         $clientUsername = $config['name_prefix'] . "." . $config['name_middle'] . str_pad($client->client_id, 2, '-', STR_PAD_LEFT);
-        $dataciteClient = new MdsClient(
-            $clientUsername, $config['password']
-        );
-
+        $dataciteClient = new MdsClient($clientUsername,$config['password'],$config['testPassword']);
+//dd($dataciteClient);
         $dataciteClient->setDataciteUrl($config['base_url']);
         $doiService = new DOIServiceProvider($clientRepository, $doiRepository, $dataciteClient);
         $doiService->setAuthenticatedClient($client);
