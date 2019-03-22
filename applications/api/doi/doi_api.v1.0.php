@@ -856,6 +856,7 @@ class Doi_api
     private function handleBulkOperation()
     {
         $app_id = $this->ci->input->get('app_id') ? $this->ci->input->get('app_id') : false;
+
         if (!$app_id) {
             throw new Exception('App ID required');
         }
@@ -945,7 +946,8 @@ class Doi_api
         $bulkRequest->params = json_encode([
             'type' => $type,
             'from' => $from,
-            'to' => $to
+            'to' => $to,
+            'mode' => 'test'
         ]);
         $bulkRequest->save();
 
@@ -1017,12 +1019,38 @@ class Doi_api
     {
         if ($type == 'url') {
             // get DOIs belongs to this APPID that has a URL matching FROM
-
+            //added change to only get prod app_id dois for a prod add_id and test dois for a test app_id
+            $prefixes= '';
             $this->getClientModel($this->ci->input->get('app_id'));
+            $client = $this->clientDetail();
+            $mode = $client['client']['attributes']['mode'];
+            if($mode == 'test'){
+                $is_test = 1;
+            }else{
+                $is_test = 0;
+            }
+
+            foreach ($client['client']->prefixes as $clientPrefix) {
+                if($clientPrefix->prefix->is_test == $is_test) {
+                    $prefixes[] = array("id" => $clientPrefix->prefix->prefix_value);
+                }
+            }
+
+
+            $prefix_query ="(";
+            $count = count($prefixes);
+
+            //need to set up the sql string to determine which doi (prod or test) to get
+            for($i=0;$i<$count;$i++){
+                $prefix_query .= "`doi_id` LIKE  '".$prefixes[$i]['id']."%' ";
+                if($i<$count-1) $prefix_query .= " OR " ;
+                if($i == ($count-1)) $prefix_query .= " ) " ;
+            }
 
             $query = Doi::query();
             $query->where('client_id', $this->client->client_id)
-                ->whereRaw('`url` LIKE BINARY ?', ['%' . $from . '%']);
+                ->whereRaw('`url` LIKE BINARY ?', ['%' . $from . '%'])
+                ->whereRaw($prefix_query);
 
             return [
                 'total' => $query->count(),
