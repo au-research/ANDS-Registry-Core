@@ -343,13 +343,26 @@
         vm.bulk_type = 'url';
 
         vm.bulkPreview = function() {
-            var data = {
-                app_id : vm.client.app_id,
-                type : vm.bulk_type,
-                from: vm.bulk_from,
-                to: vm.bulk_to,
-                preview: true
+            if(vm.client.mode == 'test'){
+                var data = {
+                    app_id : vm.client.test_app_id,
+                    type : vm.bulk_type,
+                    from: vm.bulk_from,
+                    to: vm.bulk_to,
+                    preview: true,
+                    mode:vm.client.mode
+                }
+            }else{
+                var data = {
+                    app_id : vm.client.app_id,
+                    type : vm.bulk_type,
+                    from: vm.bulk_from,
+                    to: vm.bulk_to,
+                    preview: true,
+                    mode:vm.client.mode
+                }
             }
+
             APIDOIService.bulkRequest(data).then(function(response){
                 vm.bulkPreviewResponse = response.data;
                 console.log( vm.bulkPreviewResponse );
@@ -377,9 +390,11 @@
 
         vm.getBulkRequests = function () {
             delete vm.bulkRequests;
+            console.log(vm.client.mode);
             APIDOIService.bulk({
                 client_id: vm.client.client_id,
-                app_id: vm.client.app_id
+                app_id: vm.client.app_id,
+                mode: vm.client.mode
             }).then(function (response) {
                 vm.bulkRequests = response.data;
                 angular.forEach(vm.bulkRequests, function (bulkRequest) {
