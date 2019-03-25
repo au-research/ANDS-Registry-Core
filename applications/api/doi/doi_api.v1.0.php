@@ -406,7 +406,6 @@ class Doi_api
         $responselog = array();
         $this->providesOwnResponse = true;
         $arrayFormater = new ArrayFormatter();
-      //  dd($potential_doi);
 
         if (isset($_SERVER['PHP_AUTH_USER'])) {
             $appID = $_SERVER['PHP_AUTH_USER'];
@@ -415,7 +414,6 @@ class Doi_api
         if (isset($_SERVER['PHP_AUTH_USER'])) {
             $sharedSecret = $_SERVER["PHP_AUTH_PW"];
         }
-        // dd($sharedSecret);
 
         //If the client has not provided their appid or shared secret - or has provided incorrect ones - then  set up what logging we can and return the datacite error message
         if (!$appID || !$sharedSecret) {
@@ -459,7 +457,6 @@ class Doi_api
 
         $call = $this->params['identifier'];
 
-       // dd($call);
         $responselog['activity'] = $this->params['identifier'];
 
         if ($potential_doi != '') {
@@ -939,6 +936,8 @@ class Doi_api
             ];
         }
 
+        $client = $this->clientDetail();
+        $mode = $client['client']['attributes']['mode'];
         // Generate new BulkRequest
         $bulkRequest = new BulkRequest;
         $bulkRequest->client_id = $this->client->client_id;
@@ -947,8 +946,9 @@ class Doi_api
             'type' => $type,
             'from' => $from,
             'to' => $to,
-            'mode' => 'test'
+            'mode' => $mode
         ]);
+
         $bulkRequest->save();
 
         // Generate new task do process the BulkRequest
@@ -1192,7 +1192,7 @@ class Doi_api
         $offset = $this->ci->input->get('offset') ?: 0;
         $search = $this->ci->input->get('search') ?: '';
         $mode = $this->ci->input->get('mode') ?: $this->client->mode;
-        //dd($this->client->datacite_test_prefix);
+
 
         $query = $this->dois_db
             ->order_by('updated_when', 'desc')
