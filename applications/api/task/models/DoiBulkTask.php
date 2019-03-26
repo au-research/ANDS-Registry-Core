@@ -181,9 +181,8 @@ class DoiBulkTask extends Task
      */
     private function generateBulk($request)
     {
-        $this->log('Generating bulks for request('.$request->id.')');
         $parameters = json_decode($request->params, true);
-
+        $this->log('Generating bulks for request('.$request->id.')');
 
         //set up search parameter for test and prod prefixes
         if($parameters['mode']=='test'){
@@ -201,7 +200,11 @@ class DoiBulkTask extends Task
             $pref = Prefix::where('id' ,$prefix->prefix_id)
                 ->get();
             foreach($pref as $thepref){
-                $search_prefixes[] =  $thepref['attributes']['prefix_value'];
+                if($is_test == 0 && $thepref['attributes']['prefix_value']!= '10.5072') {
+                    $search_prefixes[] = $thepref['attributes']['prefix_value'];
+                }else if($is_test == 1 ){
+                    $search_prefixes[] = $thepref['attributes']['prefix_value'];
+                }
             }
         }
 
@@ -220,6 +223,7 @@ class DoiBulkTask extends Task
 
             $dois = Doi::where('client_id', $request->client_id)
                 ->where('url', 'LIKE', '%'.$parameters['from'].'%')
+                ->where('status', 'LIKE', '%ACTIVE%')
                 ->whereRaw($prefix_query)
                 ->get();
 
@@ -238,6 +242,7 @@ class DoiBulkTask extends Task
 
             $count = Bulk::where('bulk_id', $request->id)->count();
             $this->log('Added '.$count.' bulk item(s) to be processed');
+
         }
     }
 
@@ -251,6 +256,7 @@ class DoiBulkTask extends Task
         $JSONFormater = new JSONFormatter();
         $stringFormater = new StringFormatter();
         $arrayFormater = new ArrayFormatter();
+
 
         $this->log('Executing bulk: '.$bulk->id .' Updating ('.$bulk->doi.') URL from '.$bulk->from.' to '.$bulk->to);
 

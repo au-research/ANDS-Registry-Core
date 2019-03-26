@@ -399,7 +399,7 @@
             });
         }
 
-        vm.getBulkRequests = function () {
+        vm.getBulkRequests = function() {
             delete vm.bulkRequests;
             APIDOIService.bulk({
                 client_id: vm.client.client_id,
