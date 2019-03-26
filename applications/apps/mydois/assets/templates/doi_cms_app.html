@@ -285,6 +285,7 @@
             </a>
 
             <div ng-if="vm.bulkRequests" ng-repeat="bulkRequest in vm.bulkRequests">
+                <div ng-if="bulkRequest.params.mode == vm.client.mode">
                 <h5>Bulk Request ({{ bulkRequest.counts.PROGRESS }}% Completed) Created {{ bulkRequest.date_created }}</h5>
                 <div class="input-prepend input-append" style="display:inline-block">
                     <span class="add-on">Type</span>
@@ -328,6 +329,7 @@
                     Remove Bulk Request
                 </a>
                 <hr/>
+            </div>
             </div>
 
 
