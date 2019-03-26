@@ -223,7 +223,7 @@ class DoiBulkTask extends Task
 
             $dois = Doi::where('client_id', $request->client_id)
                 ->where('url', 'LIKE', '%'.$parameters['from'].'%')
-                ->where('status', 'LIKE', '%ACTIVE%')
+                ->where('status','LIKE','%ACTIVE%')
                 ->whereRaw($prefix_query)
                 ->get();
 
