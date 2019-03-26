@@ -1049,6 +1049,7 @@ class Doi_api
 
             $query = Doi::query();
             $query->where('client_id', $this->client->client_id)
+                ->whereRaw('`status` LIKE "%ACTIVE%"')
                 ->whereRaw('`url` LIKE BINARY ?', ['%' . $from . '%'])
                 ->whereRaw($prefix_query);
 
