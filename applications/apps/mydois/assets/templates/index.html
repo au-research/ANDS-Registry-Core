@@ -22,7 +22,7 @@
                 </div>
                 <div class="widget-content"
                     ng-repeat="app_id in vm.client.assoc_doi_app_id | filter:vm.filter track by $index" ng-if="app_id.status == 'ACTIVE'">
-                    <div>
+                    <div ng-if="app_id.datacite_prefix !='10.5072'">
                     <dl>
                         <dt>Name</dt>
                         <dd>{{ app_id.client_name }} Edited</dd>
