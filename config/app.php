@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'release_version' => env('VERSION', '30'),
+    'release_version' => env('VERSION', '31'),
     'environment_name' => env("ENVIRONMENT_NAME", "RDA"),
     'environment_colour' => env("ENVIRONMENT_COLOUR" , "#6EBF21"),
     'environment_logo' => '/img/ands_logo_white.png',
@@ -12,6 +12,7 @@ return [
     'elasticsearch_url' => env('ELASTICSEARCH_URL', 'http://localhost:9200/'),
     'socket_url' => env('SOCKET_URL', 'http://localhost:3001/'),
     'deployment_state' => env('ENVIRONMENT', "development"),
+    'cookie_domain' => env('COOKIE_DOMAIN', '.ands.org.au'),
     'api_whitelist_ip' => env('API_WHITELIST_IP', ''),
     'timezone' => env("TIMEZONE", 'Australia/Canberra'),
     'site_admin' => env('ADMIN_NAME', null),
@@ -116,11 +117,5 @@ return [
         // 	- 	Developer API documentation
         			'toolbox',
 
-    ],
-
-
-
-
-
-    'cookie_domain' => '.ands.org.au'
+    ]
 ];
