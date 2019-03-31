@@ -82,8 +82,8 @@ return [
     'tracking' =>
     [
         'googleGA' => [
-            'enabled' => false,
-            'keys' => ['id' => '']
+            'enabled' => env("GOOGLE_URCHIN_ID") ? true : false,
+            'keys' => ['id' => env("GOOGLE_URCHIN_ID", "")]
             ],
         'luckyOrange' => [
             'enabled' => false,
