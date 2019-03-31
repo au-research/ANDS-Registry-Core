@@ -37,8 +37,8 @@
                     });
                     break;
                 case 'mint':
-                    if(vm.client.mode=="test"){vm.client.datacite_prefix="10.5072";}
-                    if(vm.client.datacite_prefix=="10.5072"){
+                    if(vm.client.mode == "test"){
+                        vm.client.datacite_prefix=vm.client.datacite_test_prefix;
                         var test_str = "TEST_DOI_";
                     }else{
                         var test_str = "";
@@ -97,12 +97,23 @@
 
         vm.mint = function() {
             $scope.$broadcast('update');
-            var data = {
-                xml : vm.stripBlankElements(vm.newdoixml),
-                app_id : vm.client.app_id,
-                url : vm.newdoi_url,
-                doi : vm.newdoi_id,
-                client_id: vm.client.client_id
+            if(vm.client.mode == 'test'){
+                var data = {
+                    xml : vm.stripBlankElements(vm.newdoixml),
+                    app_id : vm.client.test_app_id,
+                    url : vm.newdoi_url,
+                    doi : vm.newdoi_id,
+                    client_id: vm.client.client_id
+                };
+
+            }else {
+                var data = {
+                    xml: vm.stripBlankElements(vm.newdoixml),
+                    app_id: vm.client.app_id,
+                    url : vm.newdoi_url,
+                    doi : vm.newdoi_id,
+                    client_id: vm.client.client_id
+                };
             }
             vm.loading = true;
             vm.response = false;
@@ -123,12 +134,23 @@
 
         vm.doupdate = function() {
             $scope.$broadcast('update');
-            var data = {
-                xml : vm.stripBlankElements(vm.viewdoi.datacite_xml),
-                app_id : vm.client.app_id,
-                url : vm.viewdoi.url,
-                doi : vm.viewdoi.doi_id,
-                client_id: vm.client.client_id
+            if(vm.client.mode == 'test'){
+                var data = {
+                    xml : vm.stripBlankElements(vm.viewdoi.datacite_xml),
+                    app_id : vm.client.test_app_id,
+                    url : vm.viewdoi.url,
+                    doi : vm.viewdoi.doi_id,
+                    client_id: vm.client.client_id
+                };
+
+            }else {
+                var data = {
+                    xml: vm.stripBlankElements(vm.viewdoi.datacite_xml),
+                    app_id: vm.client.app_id,
+                    url: vm.viewdoi.url,
+                    doi: vm.viewdoi.doi_id,
+                    client_id: vm.client.client_id
+                };
             }
             vm.loading = true;
             vm.response = false;
@@ -142,10 +164,18 @@
         }
 
         vm.dodeactivate = function(doi_id) {
-            var data = {
-                app_id : vm.client.app_id,
-                doi : doi_id,
-                client_id: vm.client.client_id
+            if(vm.client.mode == 'test') {
+                var data = {
+                    app_id: vm.client.test_app_id,
+                    doi: doi_id,
+                    client_id: vm.client.client_id
+                };
+            }else{
+                var data = {
+                    app_id: vm.client.app_id,
+                    doi: doi_id,
+                    client_id: vm.client.client_id
+                };
             }
             vm.response = {};
             APIDOIService.deactivate(data).then(function(response){
@@ -155,10 +185,18 @@
         }
 
         vm.doactivate = function(doi_id) {
-            var data = {
-                app_id : vm.client.app_id,
-                doi : doi_id,
-                client_id: vm.client.client_id
+            if(vm.client.mode == 'test') {
+                var data = {
+                    app_id: vm.client.test_app_id,
+                    doi: doi_id,
+                    client_id: vm.client.client_id
+                };
+            }else{
+                var data = {
+                    app_id: vm.client.app_id,
+                    doi: doi_id,
+                    client_id: vm.client.client_id
+                };
             }
             vm.response = {};
             APIDOIService.activate(data).then(function(response){
@@ -305,13 +343,26 @@
         vm.bulk_type = 'url';
 
         vm.bulkPreview = function() {
-            var data = {
-                app_id : vm.client.app_id,
-                type : vm.bulk_type,
-                from: vm.bulk_from,
-                to: vm.bulk_to,
-                preview: true
+            if(vm.client.mode == 'test'){
+                var data = {
+                    app_id : vm.client.test_app_id,
+                    type : vm.bulk_type,
+                    from: vm.bulk_from,
+                    to: vm.bulk_to,
+                    preview: true,
+                    mode:vm.client.mode
+                }
+            }else{
+                var data = {
+                    app_id : vm.client.app_id,
+                    type : vm.bulk_type,
+                    from: vm.bulk_from,
+                    to: vm.bulk_to,
+                    preview: true,
+                    mode:vm.client.mode
+                }
             }
+
             APIDOIService.bulkRequest(data).then(function(response){
                 vm.bulkPreviewResponse = response.data;
                 console.log( vm.bulkPreviewResponse );
@@ -324,11 +375,22 @@
             ) {
                 return;
             }
-            var data = {
-                app_id : vm.client.app_id,
-                type : vm.bulk_type,
-                from: vm.bulk_from,
-                to: vm.bulk_to
+            if(vm.client.mode == 'test'){
+                var data = {
+                    app_id : vm.client.test_app_id,
+                    type : vm.bulk_type,
+                    from: vm.bulk_from,
+                    to: vm.bulk_to,
+                    mode:vm.client.mode
+                };
+            }else{
+                var data = {
+                    app_id : vm.client.app_id,
+                    type : vm.bulk_type,
+                    from: vm.bulk_from,
+                    to: vm.bulk_to,
+                    mode:vm.client.mode
+                };
             }
             APIDOIService.bulkRequest(data).then(function(response){
                 vm.bulkRequestedResponse = response.data;
@@ -337,11 +399,12 @@
             });
         }
 
-        vm.getBulkRequests = function () {
+        vm.getBulkRequests = function() {
             delete vm.bulkRequests;
             APIDOIService.bulk({
                 client_id: vm.client.client_id,
-                app_id: vm.client.app_id
+                app_id: vm.client.app_id,
+                mode: vm.client.mode
             }).then(function (response) {
                 vm.bulkRequests = response.data;
                 angular.forEach(vm.bulkRequests, function (bulkRequest) {

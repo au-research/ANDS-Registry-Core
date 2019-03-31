@@ -10,6 +10,8 @@ use ANDS\File\Storage;
 use ANDS\Registry\Providers\ServiceDiscovery\ServiceProducer;
 use ANDS\Registry\Providers\ServiceDiscovery\ServiceDiscovery;
 
+
+
 class ServiceProducerTest extends \RegistryTestClass
 {
 
@@ -17,27 +19,41 @@ class ServiceProducerTest extends \RegistryTestClass
     public function test_get_rif_from_url_and_type() {
 
         $serviceProducer = new ServiceProducer(\ANDS\Util\Config::get('app.services_registry_url'));
-        $serviceProducer->getServicebyURL("http://acef.tern.org.au/geoserver/wms" , "WMS");
-        $rifcs = $serviceProducer->getRegistryObjects();
-        $sC = $serviceProducer->getServiceCount();
+        $rifcs = $serviceProducer->getRifcsForServiceUrl("https://test.ands.org.au/mock/get/AUTestingRecords_WCS_Response_5_v1.0.0" , "OGC:WCS");
         $this->assertContains("<registryObject", $rifcs);
-        $this->assertEquals($sC, 1);
+
+    }
+
+
+    /** @test */
+    public function test_process_toolkit_response()
+    {
+        $response = Storage::disk('test')->get('servicesDiscovery/toolkit_response.json');
+        $serviceProducer = new ServiceProducer(\ANDS\Util\Config::get('app.services_registry_url'));
+        $serviceProducer->mockResponse($response);
+        $rifcs = $serviceProducer->getRegistryObjects();
+        $sC = $serviceProducer->getSummary();
+        $this->assertContains("<registryObject", $rifcs);
+        $this->assertEquals(2, $sC['number_of_service_created']);
+
     }
 
     /** @test */
     public function test_get_rif_from_services_json()
     {
+
         $this->markTestSkipped("Require better test data");
 
         $sJson = Storage::disk('test')->get('servicesDiscovery/services.json');
         $serviceProducer = new ServiceProducer(\ANDS\Util\Config::get('app.services_registry_url'));
         $serviceProducer->processServices($sJson);
         $rifcs = $serviceProducer->getRegistryObjects();
-        $sC = $serviceProducer->getServiceCount();
+        $sC = $serviceProducer->getSummary();
         $this->assertContains("<registryObject", $rifcs);
-        $this->assertEquals($sC, 24);
+        $this->assertEquals($sC->number_of_service_created, 24);
 
     }
+
 
     /** @test **/
     public function test_get_links_for_datasource_79() {

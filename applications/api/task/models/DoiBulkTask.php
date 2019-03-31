@@ -14,6 +14,8 @@ use ANDS\DOI\Formatter\JSONFormatter;
 use ANDS\DOI\Formatter\StringFormatter;
 use ANDS\DOI\MdsClient;
 use ANDS\DOI\Model\Doi;
+use ANDS\DOI\Model\ClientPrefixes;
+use ANDS\DOI\Model\Prefix;
 use ANDS\DOI\Repository\ClientRepository;
 use ANDS\DOI\Repository\DoiRepository;
 use ANDS\Util\Config;
@@ -148,15 +150,23 @@ class DoiBulkTask extends Task
 
         $bulkRequest = BulkRequest::find($this->bulkID);
 
+        $params = json_decode($bulkRequest->params, true);
+
+
         $client = $clientRepository->getByID($bulkRequest->client_id);
 
         $config = Config::get('datacite');
-        $clientUsername = $config['name_prefix'] . "." . $config['name_middle'] . str_pad($client->client_id, 2, '-', STR_PAD_LEFT);
-        $dataciteClient = new MdsClient(
-            $clientUsername, $config['password']
-        );
 
-        $dataciteClient->setDataciteUrl($config['base_url']);
+
+        $clientUsername = $config['name_prefix'] . "." . $config['name_middle'] . str_pad($client->client_id, 2, '-', STR_PAD_LEFT);
+        $dataciteClient = new MdsClient($clientUsername,$config['password'],$config['testPassword']);
+
+        if($params['mode'] == 'test'){
+            $dataciteClient->setDataciteUrl($config['base_test_url']);
+        }else{
+            $dataciteClient->setDataciteUrl($config['base_url']);
+        }
+
         $doiService = new DOIServiceProvider($clientRepository, $doiRepository, $dataciteClient);
         $doiService->setAuthenticatedClient($client);
 
@@ -171,12 +181,50 @@ class DoiBulkTask extends Task
      */
     private function generateBulk($request)
     {
-        $this->log('Generating bulks for request('.$request->id.')');
         $parameters = json_decode($request->params, true);
+        $this->log('Generating bulks for request('.$request->id.')');
+
+        //set up search parameter for test and prod prefixes
+        if($parameters['mode']=='test'){
+            $is_test = 1;
+        }else{
+            $is_test = 0;
+        }
+
+        //return the lists of prefixes for test and prod
+        $prefixes = ClientPrefixes::where('client_id' ,$request->client_id)
+            ->where('is_test', $is_test)
+            ->get();
+
+        foreach($prefixes as $prefix){
+            $pref = Prefix::where('id' ,$prefix->prefix_id)
+                ->get();
+            foreach($pref as $thepref){
+                if($is_test == 0 && $thepref['attributes']['prefix_value']!= '10.5072') {
+                    $search_prefixes[] = $thepref['attributes']['prefix_value'];
+                }else if($is_test == 1 ){
+                    $search_prefixes[] = $thepref['attributes']['prefix_value'];
+                }
+            }
+        }
+
 
         if ($parameters['type'] == 'url') {
+
+            $prefix_query ="(";
+            $count = count($search_prefixes);
+
+            //need to set up the sql string to determine which doi (prod or test) to get
+            for($i=0;$i<$count;$i++){
+                $prefix_query .= "`doi_id` LIKE  '".$search_prefixes[$i]."%' ";
+                if($i<$count-1) $prefix_query .= " OR " ;
+                if($i == ($count-1)) $prefix_query .= " ) " ;
+            }
+
             $dois = Doi::where('client_id', $request->client_id)
                 ->where('url', 'LIKE', '%'.$parameters['from'].'%')
+                ->where('status','LIKE','%ACTIVE%')
+                ->whereRaw($prefix_query)
                 ->get();
 
             $this->log('Found '.count($dois). ' DOI(s) matching request parameters');
@@ -189,10 +237,12 @@ class DoiBulkTask extends Task
                     'to' => str_replace($parameters['from'], $parameters['to'], $doi->url),
                     'bulk_id' => $request->id
                 ]);
+
             }
 
             $count = Bulk::where('bulk_id', $request->id)->count();
             $this->log('Added '.$count.' bulk item(s) to be processed');
+
         }
     }
 
@@ -206,6 +256,7 @@ class DoiBulkTask extends Task
         $JSONFormater = new JSONFormatter();
         $stringFormater = new StringFormatter();
         $arrayFormater = new ArrayFormatter();
+
 
         $this->log('Executing bulk: '.$bulk->id .' Updating ('.$bulk->doi.') URL from '.$bulk->from.' to '.$bulk->to);
 

@@ -352,11 +352,14 @@ class XMLUtil
      * @return string
      * @throws Exception
      */
-    public static function getRegistryObjectClass($xml, $simpleXML = null)
+    public static function getRegistryObjectClass($xml = null, $simpleXML = null)
     {
-        $xml = XMLUtil::unwrapRegistryObject($xml);
-        $xml = XMLUtil::wrapRegistryObject($xml);
-        $simpleXML = $simpleXML ?: XMLUtil::getSimpleXMLFromString($xml);
+
+        if ($simpleXML == null) {
+            $xml = XMLUtil::unwrapRegistryObject($xml);
+            $xml = XMLUtil::wrapRegistryObject($xml);
+            $simpleXML = XMLUtil::getSimpleXMLFromString($xml);
+        }
 
         if (count($simpleXML->xpath("//ro:collection"))) {
             return "collection";

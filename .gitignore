@@ -1,13 +1,36 @@
+# configuration
 global_config.php
+.env
+
+# general
 ._*
 .settings
 .htaccess
-assets/uploads/
-assets/shared/
 .DS_Store
+.idea/
+
+# vendor
+applications/registry/registry_object/modules/
 node_modules/
+vendor/
+
+# cache and upload assets
 .sass-cache/
 engine/cache/
+assets/uploads
+assets/uploads/
+assets/shared/
+
+# logs
+engine/logs
+logs/
+
+# tests and artifacts
+test-reports/
+tests-reports/
+artifact.zip
+
+# link checker
 etc/misc/python/myconfig.py
 etc/misc/python/cert.pem
 etc/misc/python/__*
@@ -15,13 +38,12 @@ etc/misc/python/citation_services/update_citation_data.ini
 etc/misc/python/linkchecker/linkchecker.ini
 etc/misc/python/linkchecker/__pycache__
 etc/misc/python/linkchecker/checkers/__pycache__
-.idea/
+
+# etc
 wordpress/
-engine/logs
-applications/registry/registry_object/modules/
-test-reports/
-/vendor/
-logs/
-.env
-tests-reports/
+
+
+
+
+
 robots.txt

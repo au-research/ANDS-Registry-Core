@@ -112,7 +112,29 @@ class StrUtil
         return str_replace(self::stopWords, "", $str);
     }
 
+
+
+
     /**
+     * Generate a uuid from a string
+     *  http://guid.us/GUID/PHP
+     * @param $sting
+     * @return string
+     *
+     */
+    public static function generateUUIDFromString($sting)
+    {
+        $charid = strtolower(md5($sting));
+        $hyphen = chr(45);// "-"
+        $uuid = substr($charid, 0, 8) . $hyphen
+            . substr($charid, 8, 4) . $hyphen
+            . substr($charid, 12, 4) . $hyphen
+            . substr($charid, 16, 4) . $hyphen
+            . substr($charid, 20, 12);
+        return $uuid;
+
+    }
+        /**
      * Takes a singular word and makes it plural
      *
      * @param $str

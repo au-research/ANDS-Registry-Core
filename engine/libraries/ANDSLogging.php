@@ -28,7 +28,21 @@ class ANDSLogging
     {
         // set up the logger
         $logger = new Logger($log);
-        $handler = new StreamHandler('logs/'.$log.'.log');
+
+        $config = array_dot(\ANDS\Util\Config::get('app'));
+        $path = (array_key_exists('storage.logs.path', $config))
+            ? $config['storage.logs.path']
+            : null;
+
+        if (!$path) {
+            // logs are not written
+            // TODO warning?
+            return;
+        }
+
+        $path = rtrim($path,'/').'/';
+
+        $handler = new StreamHandler($path.'/'.$log.'.log');
         $formatter = new LogstashFormatter($log, null, null, null);
         $handler->setFormatter($formatter);
         $logger->pushHandler($handler);

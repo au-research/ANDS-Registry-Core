@@ -1,1322 +1,1890 @@
 [
     {
-        "url": "http://neii.bom.gov.au/services/solarclim/wms/data/monClim_gloHorExp1Hou.nc",
+        "url": "http://acef.tern.org.au/geoserver/wms",
         "relations": [
             {
-                "key": "NEII/34b50bab-8124-4c78-a1d1-a0a83601ec56",
-                "title": "Australian Gridded Solar Climatology Web Data Services",
+                "key": "AIMS/1b8d175c-43b4-401c-8e8f-711533ded0da",
+                "title": "Future Reef MAP - October 2013 (Northbound)",
                 "identifier": {
                     "type": "global",
-                    "identifier": "34b50bab-8124-4c78-a1d1-a0a83601ec56"
+                    "identifier": "1b8d175c-43b4-401c-8e8f-711533ded0da"
                 },
-                "types": [
-                    "identifier_uri_link"
-                ],
-                "relation": [
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://neii.bom.gov.au/services/solarclim/wms/data/monClim_gloHorExp1Hou.nc?service=WMS&version=1.3.0&request=GetCapabilities"
-                    }
-                ]
-            }
-        ],
-        "full_urls": [
-            "http://neii.bom.gov.au/services/solarclim/wms/data/monClim_gloHorExp1Hou.nc?service=WMS&version=1.3.0&request=GetCapabilities"
-        ],
-        "subjects": [
-            {
-                "type": "local",
-                "value": "WMS",
-                "uri": ""
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
             },
             {
-                "type": "local",
-                "value": "OPeNDAP",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Gridded",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Satellite",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Solar",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Radiation",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Meteorology",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "National Environmental Information Infrastructure",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "neii.gov.au",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "040107",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Web Service",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "topography",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Earth Sciences",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "04",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "oceans",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "environment",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "inlandWaters",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "society",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "WFS",
-                "uri": ""
-            }
-        ]
-    },
-    {
-        "url": "http://neii.bom.gov.au/services/solarclim/wms/data/monClim_dirNorExp1Hou.nc",
-        "relations": [
-            {
-                "key": "NEII/34b50bab-8124-4c78-a1d1-a0a83601ec56",
-                "title": "Australian Gridded Solar Climatology Web Data Services",
+                "key": "AIMS/32232fd8-a909-4ceb-8cfe-7dd730b42256",
+                "title": "Future Reef MAP - October 2013 (Southbound)",
                 "identifier": {
                     "type": "global",
-                    "identifier": "34b50bab-8124-4c78-a1d1-a0a83601ec56"
+                    "identifier": "32232fd8-a909-4ceb-8cfe-7dd730b42256"
                 },
-                "types": [
-                    "identifier_uri_link"
-                ],
-                "relation": [
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://neii.bom.gov.au/services/solarclim/wms/data/monClim_dirNorExp1Hou.nc?service=WMS&version=1.3.0&request=GetCapabilities"
-                    }
-                ]
-            }
-        ],
-        "full_urls": [
-            "http://neii.bom.gov.au/services/solarclim/wms/data/monClim_dirNorExp1Hou.nc?service=WMS&version=1.3.0&request=GetCapabilities"
-        ],
-        "subjects": [
-            {
-                "type": "local",
-                "value": "WMS",
-                "uri": ""
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
             },
             {
-                "type": "local",
-                "value": "OPeNDAP",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Gridded",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Satellite",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Solar",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Radiation",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Meteorology",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "National Environmental Information Infrastructure",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "neii.gov.au",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "040107",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Web Service",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "topography",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Earth Sciences",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "04",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "oceans",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "environment",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "inlandWaters",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "society",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "WFS",
-                "uri": ""
-            }
-        ]
-    },
-    {
-        "url": "http://neii.bom.gov.au/services/solarclim/wms/data/monClim_gloHorExp1Day.nc",
-        "relations": [
-            {
-                "key": "NEII/34b50bab-8124-4c78-a1d1-a0a83601ec56",
-                "title": "Australian Gridded Solar Climatology Web Data Services",
+                "key": "AIMS/d29eb009-69ed-4d4a-b1a6-c61dc59281e5",
+                "title": "Future Reef MAP - November 2013 (Northbound)",
                 "identifier": {
                     "type": "global",
-                    "identifier": "34b50bab-8124-4c78-a1d1-a0a83601ec56"
+                    "identifier": "d29eb009-69ed-4d4a-b1a6-c61dc59281e5"
                 },
-                "types": [
-                    "identifier_uri_link"
-                ],
-                "relation": [
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://neii.bom.gov.au/services/solarclim/wms/data/monClim_gloHorExp1Day.nc?service=WMS&version=1.3.0&request=GetCapabilities"
-                    }
-                ]
-            }
-        ],
-        "full_urls": [
-            "http://neii.bom.gov.au/services/solarclim/wms/data/monClim_gloHorExp1Day.nc?service=WMS&version=1.3.0&request=GetCapabilities"
-        ],
-        "subjects": [
-            {
-                "type": "local",
-                "value": "WMS",
-                "uri": ""
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
             },
             {
-                "type": "local",
-                "value": "OPeNDAP",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Gridded",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Satellite",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Solar",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Radiation",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Meteorology",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "National Environmental Information Infrastructure",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "neii.gov.au",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "040107",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Web Service",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "topography",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Earth Sciences",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "04",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "oceans",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "environment",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "inlandWaters",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "society",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "WFS",
-                "uri": ""
-            }
-        ]
-    },
-    {
-        "url": "http://neii.bom.gov.au/services/solarclim/wms/data/monClim_dirNorExp1Day.nc",
-        "relations": [
-            {
-                "key": "NEII/34b50bab-8124-4c78-a1d1-a0a83601ec56",
-                "title": "Australian Gridded Solar Climatology Web Data Services",
+                "key": "AIMS/cd4dcca4-dfc5-4acd-a46d-3221a0b4cfe6",
+                "title": "Future Reef MAP - December 2013 (Northbound)",
                 "identifier": {
                     "type": "global",
-                    "identifier": "34b50bab-8124-4c78-a1d1-a0a83601ec56"
+                    "identifier": "cd4dcca4-dfc5-4acd-a46d-3221a0b4cfe6"
                 },
-                "types": [
-                    "identifier_uri_link"
-                ],
-                "relation": [
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://neii.bom.gov.au/services/solarclim/wms/data/monClim_dirNorExp1Day.nc?service=WMS&version=1.3.0&request=GetCapabilities"
-                    }
-                ]
-            }
-        ],
-        "full_urls": [
-            "http://neii.bom.gov.au/services/solarclim/wms/data/monClim_dirNorExp1Day.nc?service=WMS&version=1.3.0&request=GetCapabilities"
-        ],
-        "subjects": [
-            {
-                "type": "local",
-                "value": "WMS",
-                "uri": ""
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
             },
             {
-                "type": "local",
-                "value": "OPeNDAP",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Gridded",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Satellite",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Solar",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Radiation",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Meteorology",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "National Environmental Information Infrastructure",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "neii.gov.au",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "040107",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Web Service",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "topography",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Earth Sciences",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "04",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "oceans",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "environment",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "inlandWaters",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "society",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "WFS",
-                "uri": ""
-            }
-        ]
-    },
-    {
-        "url": "http://neii.bom.gov.au/services/solarclim/wms/data/annClim_gloHorExp1Day.nc",
-        "relations": [
-            {
-                "key": "NEII/34b50bab-8124-4c78-a1d1-a0a83601ec56",
-                "title": "Australian Gridded Solar Climatology Web Data Services",
+                "key": "AIMS/485421e8-c7a6-4946-a40d-ec295cb09f95",
+                "title": "Future Reef MAP - December 2013 (Southbound)",
                 "identifier": {
                     "type": "global",
-                    "identifier": "34b50bab-8124-4c78-a1d1-a0a83601ec56"
+                    "identifier": "485421e8-c7a6-4946-a40d-ec295cb09f95"
                 },
-                "types": [
-                    "identifier_uri_link"
-                ],
-                "relation": [
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://neii.bom.gov.au/services/solarclim/wms/data/annClim_gloHorExp1Day.nc?service=WMS&version=1.3.0&request=GetCapabilities"
-                    }
-                ]
-            }
-        ],
-        "full_urls": [
-            "http://neii.bom.gov.au/services/solarclim/wms/data/annClim_gloHorExp1Day.nc?service=WMS&version=1.3.0&request=GetCapabilities"
-        ],
-        "subjects": [
-            {
-                "type": "local",
-                "value": "WMS",
-                "uri": ""
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
             },
             {
-                "type": "local",
-                "value": "OPeNDAP",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Gridded",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Satellite",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Solar",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Radiation",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Meteorology",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "National Environmental Information Infrastructure",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "neii.gov.au",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "040107",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Web Service",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "topography",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Earth Sciences",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "04",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "oceans",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "environment",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "inlandWaters",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "society",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "WFS",
-                "uri": ""
-            }
-        ]
-    },
-    {
-        "url": "http://neii.bom.gov.au/services/solarclim/wms/data/annClim_dirNorExp1Day.nc",
-        "relations": [
-            {
-                "key": "NEII/34b50bab-8124-4c78-a1d1-a0a83601ec56",
-                "title": "Australian Gridded Solar Climatology Web Data Services",
+                "key": "AIMS/f8f0129b-a731-709b-e043-08114f8cffb6",
+                "title": "Future Reef MAP - February 2013 (Southbound)",
                 "identifier": {
                     "type": "global",
-                    "identifier": "34b50bab-8124-4c78-a1d1-a0a83601ec56"
+                    "identifier": "f8f0129b-a731-709b-e043-08114f8cffb6"
                 },
-                "types": [
-                    "identifier_uri_link"
-                ],
-                "relation": [
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://neii.bom.gov.au/services/solarclim/wms/data/annClim_dirNorExp1Day.nc?service=WMS&version=1.3.0&request=GetCapabilities"
-                    }
-                ]
-            }
-        ],
-        "full_urls": [
-            "http://neii.bom.gov.au/services/solarclim/wms/data/annClim_dirNorExp1Day.nc?service=WMS&version=1.3.0&request=GetCapabilities"
-        ],
-        "subjects": [
-            {
-                "type": "local",
-                "value": "WMS",
-                "uri": ""
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
             },
             {
-                "type": "local",
-                "value": "OPeNDAP",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Gridded",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Satellite",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Solar",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Radiation",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Meteorology",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "National Environmental Information Infrastructure",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "neii.gov.au",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "040107",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Web Service",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "topography",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Earth Sciences",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "04",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "oceans",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "environment",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "inlandWaters",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "society",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "WFS",
-                "uri": ""
-            }
-        ]
-    },
-    {
-        "url": "http://www.ga.gov.au/gis/services/topography/AusHydro/MapServer/WMSServer",
-        "relations": [
-            {
-                "key": "NEII/e294b68a-eb97-49af-863d-9feffe15c370",
-                "title": "AusHydro WMS",
+                "key": "AIMS/eeb81d6d-d021-4c7e-adad-70339bb536c7",
+                "title": "Future Reef MAP - August 2013 (Northbound)",
                 "identifier": {
                     "type": "global",
-                    "identifier": "e294b68a-eb97-49af-863d-9feffe15c370"
+                    "identifier": "eeb81d6d-d021-4c7e-adad-70339bb536c7"
                 },
-                "types": [
-                    "identifier_uri_link"
-                ],
-                "relation": [
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://www.ga.gov.au/gis/services/topography/AusHydro/MapServer/WMSServer?request=GetCapabilities&service=WMS"
-                    }
-                ]
-            }
-        ],
-        "full_urls": [
-            "http://www.ga.gov.au/gis/services/topography/AusHydro/MapServer/WMSServer?request=GetCapabilities&service=WMS"
-        ],
-        "subjects": [
-            {
-                "type": "local",
-                "value": "WMS",
-                "uri": ""
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
             },
             {
-                "type": "local",
-                "value": "OPeNDAP",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Gridded",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Satellite",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Solar",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Radiation",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Meteorology",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "National Environmental Information Infrastructure",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "neii.gov.au",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "040107",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Web Service",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "topography",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Earth Sciences",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "04",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "oceans",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "environment",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "inlandWaters",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "society",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "WFS",
-                "uri": ""
-            }
-        ]
-    },
-    {
-        "url": "http://www.environment.gov.au/mapping/services/ogc_services/Key_Ecological_Features/MapServer/WMSServer",
-        "relations": [
-            {
-                "key": "NEII/baabcdcf-e620-4d9e-b273-91d1de3ec107",
-                "title": "Marine Key Ecological Features",
+                "key": "AIMS/61F2E4F8-96DB-4723-AADE-08274DAF2268",
+                "title": "Australian Seagrass distribution (2005 - Polygons Dataset) as subsetted from Global Distribution of Seagrasses",
                 "identifier": {
                     "type": "global",
-                    "identifier": "baabcdcf-e620-4d9e-b273-91d1de3ec107"
+                    "identifier": "61F2E4F8-96DB-4723-AADE-08274DAF2268"
                 },
-                "types": [
-                    "identifier_uri_link"
-                ],
-                "relation": [
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://www.environment.gov.au/mapping/services/ogc_services/Key_Ecological_Features/MapServer/WMSServer"
-                    }
-                ]
-            }
-        ],
-        "full_urls": [
-            "http://www.environment.gov.au/mapping/services/ogc_services/Key_Ecological_Features/MapServer/WMSServer"
-        ],
-        "subjects": [
-            {
-                "type": "local",
-                "value": "WMS",
-                "uri": ""
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
             },
             {
-                "type": "local",
-                "value": "OPeNDAP",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Gridded",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Satellite",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Solar",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Radiation",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Meteorology",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "National Environmental Information Infrastructure",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "neii.gov.au",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "040107",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Web Service",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "topography",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Earth Sciences",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "04",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "oceans",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "environment",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "inlandWaters",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "society",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "WFS",
-                "uri": ""
-            }
-        ]
-    },
-    {
-        "url": "http://www.environment.gov.au/mapping/services/ogc_services/Key_Ecological_Features_named/MapServer/WMSServer",
-        "relations": [
-            {
-                "key": "NEII/baabcdcf-e620-4d9e-b273-91d1de3ec107",
-                "title": "Marine Key Ecological Features",
+                "key": "AIMS/0017D0D1-FFD1-45B9-93AB-B7169A9ED4DE",
+                "title": "Australian Seagrass distribution (2005 - Points Dataset) as subsetted from Global Distribution of Seagrasses",
                 "identifier": {
                     "type": "global",
-                    "identifier": "baabcdcf-e620-4d9e-b273-91d1de3ec107"
+                    "identifier": "0017D0D1-FFD1-45B9-93AB-B7169A9ED4DE"
                 },
-                "types": [
-                    "identifier_uri_link"
-                ],
-                "relation": [
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://www.environment.gov.au/mapping/services/ogc_services/Key_Ecological_Features_named/MapServer/WMSServer"
-                    }
-                ]
-            }
-        ],
-        "full_urls": [
-            "http://www.environment.gov.au/mapping/services/ogc_services/Key_Ecological_Features_named/MapServer/WMSServer"
-        ],
-        "subjects": [
-            {
-                "type": "local",
-                "value": "WMS",
-                "uri": ""
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
             },
             {
-                "type": "local",
-                "value": "OPeNDAP",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Gridded",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Satellite",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Solar",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Radiation",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Meteorology",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "National Environmental Information Infrastructure",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "neii.gov.au",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "040107",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Web Service",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "topography",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Earth Sciences",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "04",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "oceans",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "environment",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "inlandWaters",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "society",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "WFS",
-                "uri": ""
-            }
-        ]
-    },
-    {
-        "url": "http://www.environment.gov.au/mapping/services/ogc_services/Key_Ecological_Features/MapServer/WFSServer",
-        "relations": [
-            {
-                "key": "NEII/baabcdcf-e620-4d9e-b273-91d1de3ec107",
-                "title": "Marine Key Ecological Features",
+                "key": "AIMS/C9AF9C32-02A4-4968-A8AF-DED70901D8DC",
+                "title": "Australian Mangrove distribution (1997) as subsetted from Global Distribution of Mangroves",
                 "identifier": {
                     "type": "global",
-                    "identifier": "baabcdcf-e620-4d9e-b273-91d1de3ec107"
+                    "identifier": "C9AF9C32-02A4-4968-A8AF-DED70901D8DC"
                 },
-                "types": [
-                    "identifier_uri_link"
-                ],
-                "relation": [
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://www.environment.gov.au/mapping/services/ogc_services/Key_Ecological_Features/MapServer/WFSServer"
-                    }
-                ]
-            }
-        ],
-        "full_urls": [
-            "http://www.environment.gov.au/mapping/services/ogc_services/Key_Ecological_Features/MapServer/WFSServer"
-        ],
-        "subjects": [
-            {
-                "type": "local",
-                "value": "WMS",
-                "uri": ""
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
             },
             {
-                "type": "local",
-                "value": "OPeNDAP",
-                "uri": ""
+                "key": "AIMS/D668E9F6-4D26-4C1A-9CC4-019B70F8A4AD",
+                "title": "Australian Mangrove distribution (2011) as subsetted from Global Distribution of Mangroves USGS",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "D668E9F6-4D26-4C1A-9CC4-019B70F8A4AD"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
             },
             {
-                "type": "local",
-                "value": "Gridded",
-                "uri": ""
+                "key": "AIMS/F2627E91-D95F-46BB-B276-0DC1D9255B63",
+                "title": "Australian Coral reef distribution (V7.0, 2003) as subsetted from Global distribution of Coral reefs",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "F2627E91-D95F-46BB-B276-0DC1D9255B63"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
             },
             {
-                "type": "local",
-                "value": "Satellite",
-                "uri": ""
+                "key": "AIMS/2811E83B-CE92-419A-9FBE-225CD2B40F50",
+                "title": "Australian Coral reef distribution (2010) as subsetted from Global Distribution of Coral Reefs",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "2811E83B-CE92-419A-9FBE-225CD2B40F50"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
             },
             {
-                "type": "local",
-                "value": "Solar",
-                "uri": ""
+                "key": "AIMS/61d0c51d-eecf-4f5f-9857-843d2ef4d1e4",
+                "title": "National Intertidal-Subtidal Benthic NISB Habitat Distribution Map Series",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "61d0c51d-eecf-4f5f-9857-843d2ef4d1e4"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
             },
             {
-                "type": "local",
-                "value": "Radiation",
-                "uri": ""
+                "key": "AIMS/7d0b4a53-1863-4600-92a4-d385c88e9be9",
+                "title": "TRIAP Franklin 2008 Waterbirds",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "7d0b4a53-1863-4600-92a4-d385c88e9be9"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
             },
             {
-                "type": "local",
-                "value": "Meteorology",
-                "uri": ""
+                "key": "AIMS/a2d67ad1-7fb2-4a35-81ca-d5b4d5bfdfc7",
+                "title": "Marine Turtle Nesting",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "a2d67ad1-7fb2-4a35-81ca-d5b4d5bfdfc7"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
             },
             {
-                "type": "local",
-                "value": "National Environmental Information Infrastructure",
-                "uri": ""
+                "key": "AIMS/{0377A251-4E6C-48DF-95FC-720048F879B6}",
+                "title": "Directory of Important Wetlands Spatial Database including Wetlands Type and Criteria",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "{0377A251-4E6C-48DF-95FC-720048F879B6}"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
             },
             {
-                "type": "local",
-                "value": "neii.gov.au",
-                "uri": ""
+                "key": "AIMS/26b356b1-94e6-46e5-be79-5a4ab5d4ee41",
+                "title": "Future Reef MAP - February 2014 (Northbound)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "26b356b1-94e6-46e5-be79-5a4ab5d4ee41"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
             },
             {
-                "type": "anzsrc-for",
-                "value": "040107",
-                "uri": ""
+                "key": "AIMS/4bc6a5e3-54b1-49fc-9dc1-ac69ef054d11",
+                "title": "Future Reef MAP - February 2014 (Southbound)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "4bc6a5e3-54b1-49fc-9dc1-ac69ef054d11"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
             },
             {
-                "type": "local",
-                "value": "Web Service",
-                "uri": ""
+                "key": "AIMS/47B9828F-C3F9-4809-A1B9-DBB9F0603361",
+                "title": "Commonwealth Marine Planning Regions",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "47B9828F-C3F9-4809-A1B9-DBB9F0603361"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
             },
             {
-                "type": "local",
-                "value": "topography",
-                "uri": ""
+                "key": "AIMS/{7FD7398A-EA5C-4D10-9DFC-5C0A92ACF95E}",
+                "title": "Moreton Bay marine park zoning 2008",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "{7FD7398A-EA5C-4D10-9DFC-5C0A92ACF95E}"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
             },
             {
-                "type": "local",
-                "value": "Earth Sciences",
-                "uri": ""
+                "key": "AIMS/{96547FE5-BD51-3A64-4F99-7624CE173669}",
+                "title": "Natural resource management regional boundaries - Queensland",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "{96547FE5-BD51-3A64-4F99-7624CE173669}"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
             },
             {
-                "type": "anzsrc-for",
-                "value": "04",
-                "uri": ""
+                "key": "AIMS/4fe89d34-d095-4540-ad9b-64ad70d79200",
+                "title": "Great Barrier Reef coast marine park zoning",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "4fe89d34-d095-4540-ad9b-64ad70d79200"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
             },
             {
-                "type": "local",
-                "value": "oceans",
-                "uri": ""
+                "key": "AIMS/AB846A7B-8133-4B68-B1FB-A33F0013C0CD",
+                "title": "Great Barrier Reef Marine Park Zoning (Administrative) Boundaries",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "AB846A7B-8133-4B68-B1FB-A33F0013C0CD"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
             },
             {
-                "type": "local",
-                "value": "environment",
-                "uri": ""
+                "key": "AIMS/{0565FECF-C0C7-4BA6-8207-866A0D0F1B48}",
+                "title": "Storm tide high hazard Queensland",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "{0565FECF-C0C7-4BA6-8207-866A0D0F1B48}"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
             },
             {
-                "type": "local",
-                "value": "inlandWaters",
-                "uri": ""
+                "key": "AIMS/{C6E48D0B-AAB2-4E14-894E-6B59DA831380}",
+                "title": "Storm tide Queensland series",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "{C6E48D0B-AAB2-4E14-894E-6B59DA831380}"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
             },
             {
-                "type": "local",
-                "value": "society",
-                "uri": ""
+                "key": "AIMS/{EE24F9F6-CF15-4E19-BB8A-25B92D30518D}",
+                "title": "Storm tide medium hazard Queensland",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "{EE24F9F6-CF15-4E19-BB8A-25B92D30518D}"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
             },
             {
-                "type": "local",
-                "value": "WFS",
-                "uri": ""
-            }
-        ]
-    },
-    {
-        "url": "http://www.environment.gov.au/mapping/services/ogc_services/capad/MapServer/WMSServer",
-        "relations": [
+                "key": "AIMS/FE476606-9BD6-49BA-BF1F-870323BBB7A2",
+                "title": "Australian Estuaries Database - CAMRIS",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "FE476606-9BD6-49BA-BF1F-870323BBB7A2"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
             {
-                "key": "NEII/9984a9fd-3dd0-4e38-bfbd-7e788fa851a1",
+                "key": "AIMS/72ba4f6f-8b2d-4de0-a1b5-115aa60530d0",
+                "title": "Seagrass Presence Absence SA (ACEAS)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "72ba4f6f-8b2d-4de0-a1b5-115aa60530d0"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/2b621f28-2dc5-4fa8-a40a-bb4d61fb4c28",
+                "title": "Seagrass Presence Absence NT (ACEAS)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "2b621f28-2dc5-4fa8-a40a-bb4d61fb4c28"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/10323298-7513-4073-8b4d-943070bdce40",
+                "title": "Seagrass Presence Absence VIC (ACEAS)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "10323298-7513-4073-8b4d-943070bdce40"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/0DDC8826-AB51-44D9-A47D-D157B3A4053B",
+                "title": "Seagrass Presence Absence QLD (ACEAS)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "0DDC8826-AB51-44D9-A47D-D157B3A4053B"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/b22f318f-95ce-4d9d-9169-843d892ae04f",
+                "title": "Seagrass Presence Absence TAS (ACEAS)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "b22f318f-95ce-4d9d-9169-843d892ae04f"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/6c35d098-58de-4c90-8e10-b370c38323aa",
+                "title": "Seagrass Presence Absence NSW (ACEAS)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "6c35d098-58de-4c90-8e10-b370c38323aa"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/8fec03d6-48e3-4352-9ddb-085e42e55637",
+                "title": "Australian estuaries (NLWRA)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "8fec03d6-48e3-4352-9ddb-085e42e55637"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/30DA5FD4-AE08-405B-9F55-7E1833C230A4",
+                "title": "Integrated Marine and Coastal Regionalisation of Australia (IMCRA) v4.0 - Provincial Bioregions",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "30DA5FD4-AE08-405B-9F55-7E1833C230A4"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/62dd5778-1421-4e28-a751-384850ab0043",
+                "title": "Collaborative Australian Protected Areas Database (CAPAD) 2014- Marine",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "62dd5778-1421-4e28-a751-384850ab0043"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/9fb04042-5544-4860-8298-1165b5e35998",
+                "title": "Australia's network of Commonwealth Marine Reserves",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "9fb04042-5544-4860-8298-1165b5e35998"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/{018D121F-55A2-4F49-BE59-829BFF7EE4BC}",
+                "title": "Queensland wetland data version 3 - wetland areas",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "{018D121F-55A2-4F49-BE59-829BFF7EE4BC}"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/f16e1b55-afc6-44fb-8eae-413fb91ff727",
+                "title": "Indigenous Protected Areas (IPA) - Declared",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "f16e1b55-afc6-44fb-8eae-413fb91ff727"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/5935f698-5653-447b-a3a9-8a4934eb76f7",
+                "title": "Logan and Albert Rivers Continuous Water Quality Stations",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "5935f698-5653-447b-a3a9-8a4934eb76f7"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/cc7e4fb0-ae3c-40b9-9af3-c29d575bc1bc",
+                "title": "Logan River Continuous Water Quality Station",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "cc7e4fb0-ae3c-40b9-9af3-c29d575bc1bc"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/3ea97d80-30d6-4d6e-99a8-de5b199e9424",
+                "title": "Albert River Continuous Water Quality Station",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "3ea97d80-30d6-4d6e-99a8-de5b199e9424"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/da023c22-08a7-46a5-a415-c7bc29d213f5",
+                "title": "Upper Logan River Continuous Water Quality Station",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "da023c22-08a7-46a5-a415-c7bc29d213f5"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/9984a9fd-3dd0-4e38-bfbd-7e788fa851a1",
                 "title": "Collaborative Australian Protected Areas Database (CAPAD) 2014",
                 "identifier": {
                     "type": "global",
                     "identifier": "9984a9fd-3dd0-4e38-bfbd-7e788fa851a1"
                 },
-                "types": [
-                    "identifier_uri_link"
-                ],
-                "relation": [
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://www.environment.gov.au/mapping/services/ogc_services/capad/MapServer/WMSServer"
-                    }
-                ]
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/23053B66-472A-41A9-BBD1-85EFCC443065",
+                "title": "Oyster Harbour Seagrass 1988",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "23053B66-472A-41A9-BBD1-85EFCC443065"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/1D34BD8E-74B1-41EB-8F81-398539215527",
+                "title": "Oyster Harbour Seagrass 2006",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "1D34BD8E-74B1-41EB-8F81-398539215527"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/5967A2E0-B4AC-4BBA-87B1-9F4B356AABB4",
+                "title": "WA Hardy Inlet Seagrass 2008",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "5967A2E0-B4AC-4BBA-87B1-9F4B356AABB4"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/C17373F8-C646-41CB-A0A5-11A9559251D1",
+                "title": "Oyster Harbour Seagrass 1996",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "C17373F8-C646-41CB-A0A5-11A9559251D1"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/1312EDED-E3C1-47D3-9971-FA35FA45A98D",
+                "title": "WA Leschenault Estuary Seagrass 2009",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "1312EDED-E3C1-47D3-9971-FA35FA45A98D"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/D060C3CC-9F40-4FFF-B461-B79757595AC6",
+                "title": "WA Wilson Inlet Seagrass 2008",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "D060C3CC-9F40-4FFF-B461-B79757595AC6"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/26FC0D8F-567B-4245-98BC-C9DB94D08C3E",
+                "title": "WA Walpole Nornalup Inlets SAV sites Seagrass 2009",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "26FC0D8F-567B-4245-98BC-C9DB94D08C3E"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/5477BEF6-93CF-4B78-B502-A0D24C1ADF31",
+                "title": "WA Princess Royal Harbour Seagrass 2006",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "5477BEF6-93CF-4B78-B502-A0D24C1ADF31"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/0815F7E2-E8E7-4DE9-98A7-9A43BE4BE232",
+                "title": "WA Leschenault Estuary SAV Sample Locations Seagrass 2009",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "0815F7E2-E8E7-4DE9-98A7-9A43BE4BE232"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/B137E6F3-93A5-49AD-845C-80CE104505ED",
+                "title": "WA Irwin Inlet Seagrass 2009",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "B137E6F3-93A5-49AD-845C-80CE104505ED"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/B489C13F-6C28-4F49-A29E-361961A1547F",
+                "title": "WA Walpole Nornalup Inlets Seagrass 2009",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "B489C13F-6C28-4F49-A29E-361961A1547F"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/891DA018-0C6C-48A6-B455-46614B6AE952",
+                "title": "WA Stokes Inlet Seagrass 2009",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "891DA018-0C6C-48A6-B455-46614B6AE952"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/E8B03484-6D7B-41A9-B54D-F5533D045AC3",
+                "title": "WA Princess Royal Harbour Seagrass 1996 - 2006",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "E8B03484-6D7B-41A9-B54D-F5533D045AC3"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/4C8F29B0-FC8B-4E3B-AFB7-EC0220E56B5A",
+                "title": "WA Stokes Inlet Ruppia Seagrass 2009",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "4C8F29B0-FC8B-4E3B-AFB7-EC0220E56B5A"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/1A1C2B18-8F23-4278-9FC0-4151A114B18B",
+                "title": "WA Wilson Inlet Site locations Seagrass 2008",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "1A1C2B18-8F23-4278-9FC0-4151A114B18B"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/047586A5-5319-4B30-A41C-99DF746F9C33",
+                "title": "WA Wilson Inlet Transect Points Seagrass 2007",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "047586A5-5319-4B30-A41C-99DF746F9C33"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/A9D7EAA8-B833-467F-9D92-7E0D9E8CCB2A",
+                "title": "WA Swan Canning Transect Seagrass 2011",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "A9D7EAA8-B833-467F-9D92-7E0D9E8CCB2A"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/F34BF3C6-B4A1-4012-B7E8-100BC949F523",
+                "title": "WA Beaufort Ruppia Seagrass 2009",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "F34BF3C6-B4A1-4012-B7E8-100BC949F523"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/47C03030-9FA2-45E2-9377-CFB3BA5C2830",
+                "title": "WA Beaufort Seagrass 2009",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "47C03030-9FA2-45E2-9377-CFB3BA5C2830"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/BC8EBF03-F4F3-467C-9CBC-40F11C5720C2",
+                "title": "Structural characteristics of mangrove forests: compilation of LAI and other variables for experimental and survey sites",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "BC8EBF03-F4F3-467C-9CBC-40F11C5720C2"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/715976C0-2FF2-4941-9B37-67B7CAE4478F",
+                "title": "WA Wilson Inlet WilsonCoords Seagrass 2007",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "715976C0-2FF2-4941-9B37-67B7CAE4478F"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/78546037-EE5B-43C4-8018-0C9CE81E51B3",
+                "title": "WA Swan Canning Seagrass 2011",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "78546037-EE5B-43C4-8018-0C9CE81E51B3"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/7255AD99-10B7-4B1C-BE4F-5A36E7A475A9",
+                "title": "WA Wilson Inlet GPSpointsExtended Seagrass 2008",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "7255AD99-10B7-4B1C-BE4F-5A36E7A475A9"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/87FFB0BB-2FDE-4AF1-99B4-250926BBAC50",
+                "title": "WA Wellstead estuary SAV sites Ruppia Seagrass 2009",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "87FFB0BB-2FDE-4AF1-99B4-250926BBAC50"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/3B4BAEF1-5B54-41B7-A2BA-DC59B16DB059",
+                "title": "Gold Coast Broadwater Seagrass mapping 2005/08",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "3B4BAEF1-5B54-41B7-A2BA-DC59B16DB059"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/281FAA64-F6F3-400C-A48F-D342E4ABCA83",
+                "title": "Estuarine Macrophytes of NSW",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "281FAA64-F6F3-400C-A48F-D342E4ABCA83"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/fb4a64a0-4cf3-42da-b6ee-358b64ea2c6d",
+                "title": "Future Reef MAP - November 2013 (Southbound)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "fb4a64a0-4cf3-42da-b6ee-358b64ea2c6d"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/a05f7892-eae3-7506-e044-00144fdd4fa6",
+                "title": "Islands of Australia (GEODATA Coast 100K 2004)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "a05f7892-eae3-7506-e044-00144fdd4fa6"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/a05f7892-ca30-7506-e044-00144fdd4fa6",
+                "title": "Victorian Coastal Waterways Geomorphic Habitat Mapping, Version 2 (1:100 000 scale digital data)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "a05f7892-ca30-7506-e044-00144fdd4fa6"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/a05f7892-c3f9-7506-e044-00144fdd4fa6",
+                "title": "New South Wales Coastal Waterways Geomorphic Habitat Mapping, Version 2 (1:100 000 scale digital data)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "a05f7892-c3f9-7506-e044-00144fdd4fa6"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/a05f7892-c344-7506-e044-00144fdd4fa6",
+                "title": "Queensland Coastal Waterways Geomorphic Habitat Mapping, Version 2 (1:100 000 scale digital data)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "a05f7892-c344-7506-e044-00144fdd4fa6"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/a05f7892-bff6-7506-e044-00144fdd4fa6",
+                "title": "South Australian Coastal Waterways Geomorphic Habitat Mapping (1:100 000 scale digital data)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "a05f7892-bff6-7506-e044-00144fdd4fa6"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/a05f7892-ca2f-7506-e044-00144fdd4fa6",
+                "title": "Tasmanian Coastal Waterways Geomorphic Habitat Mapping, Version 2 (1:100 000 scale digital data)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "a05f7892-ca2f-7506-e044-00144fdd4fa6"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/a05f7892-c3e7-7506-e044-00144fdd4fa6",
+                "title": "Northern Territory Coastal Waterways Geomorphic Habitat Mapping. Version 2 (1:100 000 scale digital data)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "a05f7892-c3e7-7506-e044-00144fdd4fa6"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/a05f7892-c3f8-7506-e044-00144fdd4fa6",
+                "title": "Western Australia Coastal Waterways Geomorphic Habitat Mapping, Version 2 (1:100 000 scale digital data)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "a05f7892-c3f8-7506-e044-00144fdd4fa6"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/d75b719c-e3f5-45c9-be97-eb06f28fa88f",
+                "title": "Seagrass Presence Absence WA (ACEAS)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "d75b719c-e3f5-45c9-be97-eb06f28fa88f"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/ED1853D6-6F56-4570-835E-09B59DB8AFD7",
+                "title": "New South Wales - National Intertidal-Subtidal Benthic NISB Habitat Map",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "ED1853D6-6F56-4570-835E-09B59DB8AFD7"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/DEC149CF-9C87-469F-A041-894C76941048",
+                "title": "Victoria - National Intertidal-Subtidal Benthic NISB Habitat Map (PLUS)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "DEC149CF-9C87-469F-A041-894C76941048"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/1F214D18-CB45-4C97-9547-8890152AF773",
+                "title": "Presence and Absence of Seagrass (1967) in Cockburn Sound as in the Nov 2000 Seagrass Mapping in Owen Anchorage and Cockburn Sound 1999 report",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "1F214D18-CB45-4C97-9547-8890152AF773"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/58215F4D-7E0A-4B66-8D3F-DBCA95EF6FCD",
+                "title": "Western Australia - National Intertidal-Subtidal Benthic NISB Habitat Map (PLUS)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "58215F4D-7E0A-4B66-8D3F-DBCA95EF6FCD"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/2D7ECC22-7F5B-41EF-8D76-A1AAE44672B7",
+                "title": "Presence and Absence of Seagrass (1972) in Cockburn Sound as in the Nov 2000 Seagrass Mapping in Owen Anchorage and Cockburn Sound 1999 report",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "2D7ECC22-7F5B-41EF-8D76-A1AAE44672B7"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/9B3E1CE9-4223-455B-ABEE-6313A05058B7",
+                "title": "Presence and Absence of Seagrass (1995) in Cockburn Sound as in the Nov 2000 Seagrass Mapping in Owen Anchorage and Cockburn Sound 1999 report",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "9B3E1CE9-4223-455B-ABEE-6313A05058B7"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/E4D4655A-4D9C-4E6D-BC9D-5C5DC4F4FF69",
+                "title": "Presence and Absence of Seagrass (1982) in Cockburn Sound as in the Nov 2000 Seagrass Mapping in Owen Anchorage and Cockburn Sound 1999 report",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "E4D4655A-4D9C-4E6D-BC9D-5C5DC4F4FF69"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/B8E02DC0-B9D6-4FFF-A6B7-0AA1354CAE22",
+                "title": "Presence and Absence of Seagrass (1999) in Cockburn Sound - with species information as in the Nov 2000 Seagrass Mapping in Owen Anchorage and Cockburn Sound 1999 report",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "B8E02DC0-B9D6-4FFF-A6B7-0AA1354CAE22"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/DD387968-EF78-4333-B376-BBFFC4902BAC",
+                "title": "South Australia - National Intertidal-Subtidal Benthic NISB Habitat Map (PLUS)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "DD387968-EF78-4333-B376-BBFFC4902BAC"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/FE66E7B1-28D1-4CF1-A6EA-77A302EDCB98",
+                "title": "Northern Territory - National Intertidal-Subtidal Benthic NISB Habitat Map (PLUS)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "FE66E7B1-28D1-4CF1-A6EA-77A302EDCB98"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/9A5538A7-5387-4C77-BB2C-92E72C4D212F",
+                "title": "Tasmania - National Intertidal-Subtidal Benthic NISB Habitat Map (PLUS)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "9A5538A7-5387-4C77-BB2C-92E72C4D212F"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/C2E30581-8A7C-4DBF-BBB9-4BEFFB556083",
+                "title": "WA Wilson Inlet Seagrass 2007",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "C2E30581-8A7C-4DBF-BBB9-4BEFFB556083"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/A0D9F8EE-4261-438A-8ADE-EFF664EFF55C",
+                "title": "Integrated Marine and Coastal Regionalisation of Australia (IMCRA) v4.0 - Meso-scale Bioregions",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "A0D9F8EE-4261-438A-8ADE-EFF664EFF55C"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/C7DEE4B5-BDF8-49B6-9494-B1E7824342C2",
+                "title": "WA Wellstead estuary Seagrass 2009",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "C7DEE4B5-BDF8-49B6-9494-B1E7824342C2"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/0D709B10-2A07-43D8-86AB-DD4C207CC946",
+                "title": "Queensland - National Intertidal-Subtidal Benthic NISB Habitat Map (PLUS)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "0D709B10-2A07-43D8-86AB-DD4C207CC946"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/f8f016d2-3f9d-72fc-e043-08114f8c2496",
+                "title": "Future Reef MAP - February 2013 (Northbound)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "f8f016d2-3f9d-72fc-e043-08114f8c2496"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/b742c9e9-9f5b-4e74-bc3e-56632f9b04b2",
+                "title": "Future Reef MAP - August 2013 (Southbound)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "b742c9e9-9f5b-4e74-bc3e-56632f9b04b2"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/de683728-2eaa-4fd0-ab48-c74f01596e22",
+                "title": "Future Reef MAP - April 2013 (Northbound)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "de683728-2eaa-4fd0-ab48-c74f01596e22"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/oai:dam.coastalcoms.com:4",
+                "title": "Noosa Bar (Video Obs) - Beach Observation",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "oai:dam.coastalcoms.com:4"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/oai:dam.coastalcoms.com:12",
+                "title": "Jan Juc (Video Obs) - Beach Observation",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "oai:dam.coastalcoms.com:12"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/oai:dam.coastalcoms.com:13",
+                "title": "Lorne (Video Obs) - Beach Observation",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "oai:dam.coastalcoms.com:13"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/oai:dam.coastalcoms.com:14",
+                "title": "Glenelg (Video Obs) - Beach Observation",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "oai:dam.coastalcoms.com:14"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/oai:dam.coastalcoms.com:15",
+                "title": "Cottesloe Beach (Video Obs) - Beach Observation",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "oai:dam.coastalcoms.com:15"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/oai:dam.coastalcoms.com:16",
+                "title": "Geraldton Beach (Video Obs) - Beach Observation",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "oai:dam.coastalcoms.com:16"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/oai:dam.coastalcoms.com:17",
+                "title": "Byron Bay (Video Obs) - Beach Observation",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "oai:dam.coastalcoms.com:17"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/oai:dam.coastalcoms.com:18",
+                "title": "Seaford Beach (Video Obs) - Beach Observation",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "oai:dam.coastalcoms.com:18"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/oai:dam.coastalcoms.com:3",
+                "title": "Palm Cove (Video Obs) - Beach Observation",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "oai:dam.coastalcoms.com:3"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/oai:dam.coastalcoms.com:5",
+                "title": "Perigian Beach (Video Obs) - Beach Observation",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "oai:dam.coastalcoms.com:5"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/oai:dam.coastalcoms.com:6",
+                "title": "Maroochydore (Video Obs) - Surfzone Observation",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "oai:dam.coastalcoms.com:6"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/oai:dam.coastalcoms.com:7",
+                "title": "Rainbow Bay (Video Obs) - Surfzone Observation",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "oai:dam.coastalcoms.com:7"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/oai:dam.coastalcoms.com:8",
+                "title": "Kingscliff Beach (Video Obs) - Beach Observation",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "oai:dam.coastalcoms.com:8"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/oai:dam.coastalcoms.com:9",
+                "title": "North Palm Beach (Video Obs) - Beach Observation",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "oai:dam.coastalcoms.com:9"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/oai:dam.coastalcoms.com:10",
+                "title": "Bondi Beach (Video Obs) - Beach Observation",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "oai:dam.coastalcoms.com:10"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/oai:dam.coastalcoms.com:11",
+                "title": "Woolami Beach (Video Obs) - Beach Observation",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "oai:dam.coastalcoms.com:11"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/oai:dam.coastalcoms.com:2",
+                "title": "Clifton Beach (Video Obs) - Beach Observation",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "oai:dam.coastalcoms.com:2"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/463f1924-7b41-4f52-882e-bbd45ecb37dc",
+                "title": "Collaborative Australian Protected Areas Database (CAPAD) 2012-Marine-External",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "463f1924-7b41-4f52-882e-bbd45ecb37dc"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/f8f00f25-b53f-6b3d-e043-08114f8cd5fa",
+                "title": "Future Reef MAP - March 2013 (Northbound)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "f8f00f25-b53f-6b3d-e043-08114f8cd5fa"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/f8f01a7d-44c8-6cdf-e043-08114f8c3530",
+                "title": "Future Reef MAP - December 2012 (Southbound)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "f8f01a7d-44c8-6cdf-e043-08114f8c3530"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/f8f00921-b614-6c1e-e043-08114f8c37f0",
+                "title": "Future Reef MAP - March 2013 (Southbound)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "f8f00921-b614-6c1e-e043-08114f8c37f0"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/a8e960e8-5b79-47ac-8922-d53864e6a8be",
+                "title": "Future Reef MAP - April 2013 (Southbound)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "a8e960e8-5b79-47ac-8922-d53864e6a8be"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/8669d72a-f415-458d-8710-105685e60806",
+                "title": "Future Reef MAP - May 2013 (Northbound)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "8669d72a-f415-458d-8710-105685e60806"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/9cfa3509-ab03-410c-bd09-56e5fb6140da",
+                "title": "Future Reef MAP - May 2013 (Southbound)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "9cfa3509-ab03-410c-bd09-56e5fb6140da"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/72c03efe-a522-4f9e-81c6-77bedbb2cc5b",
+                "title": "Future Reef MAP - June 2013 (Northbound)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "72c03efe-a522-4f9e-81c6-77bedbb2cc5b"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/f155a266-b1ad-48b9-8e05-14f3aa8eab39",
+                "title": "Future Reef MAP - June 2013 (Southbound)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "f155a266-b1ad-48b9-8e05-14f3aa8eab39"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/f91b866d-e3fb-46b5-a8cf-7aaa4b1d7f20",
+                "title": "Future Reef MAP - July 2013 (Northbound)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "f91b866d-e3fb-46b5-a8cf-7aaa4b1d7f20"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/14772166-28cf-42e9-8f42-234620bb2189",
+                "title": "Future Reef MAP - July 2013 (Southbound)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "14772166-28cf-42e9-8f42-234620bb2189"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/4660f05c-fc35-4cdc-a0fb-82b225498f64",
+                "title": "Future Reef MAP - September 2013 (Northbound)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "4660f05c-fc35-4cdc-a0fb-82b225498f64"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/f8ec27be-68f4-2875-e043-08114f8c8fe9",
+                "title": "Future Reef MAP - December 2012 (Northbound)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "f8ec27be-68f4-2875-e043-08114f8c8fe9"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/f63172d2-53a9-4d3d-befe-cb9c769d10ad",
+                "title": "Future Reef MAP - January 2014 (Southbound)",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "f63172d2-53a9-4d3d-befe-cb9c769d10ad"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/00ce1c70-1bbc-4f3f-8345-7091484d6ed4",
+                "title": "Future Reef MAP - April 2014",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "00ce1c70-1bbc-4f3f-8345-7091484d6ed4"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/314c8518-15ec-495d-b997-129953ae3798",
+                "title": "Future Reef MAP - May 2014",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "314c8518-15ec-495d-b997-129953ae3798"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/fd168969-1511-47b0-9fd9-94f08f482ffc",
+                "title": "Future Reef MAP - June 2014",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "fd168969-1511-47b0-9fd9-94f08f482ffc"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/b82f51ad-e59b-4827-bf39-603d273cf1e7",
+                "title": "Future Reef MAP - July 2014",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "b82f51ad-e59b-4827-bf39-603d273cf1e7"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/7a1f508e-8794-4aa8-aa8f-419215884f77",
+                "title": "Future Reef MAP - August 2014",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "7a1f508e-8794-4aa8-aa8f-419215884f77"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/565de1c4-27f1-40da-8fcb-2343cbca086d",
+                "title": "Future Reef MAP - March 2015",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "565de1c4-27f1-40da-8fcb-2343cbca086d"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/2e687037-aac9-4b5a-a51f-5f3eb83f6b8b",
+                "title": "Future Reef MAP 2 - March 2016",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "2e687037-aac9-4b5a-a51f-5f3eb83f6b8b"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/c36c12e4-9fad-4a72-842a-c08033145552",
+                "title": "Future Reef MAP 2 - May 2016",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "c36c12e4-9fad-4a72-842a-c08033145552"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/e12bb541-6c15-4bc5-8e2c-c0c4f21ace30",
+                "title": "Future Reef MAP - January 2015",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "e12bb541-6c15-4bc5-8e2c-c0c4f21ace30"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/ebb3e623-9260-449e-9466-7471036bad1d",
+                "title": "Future Reef MAP 2 - July 2016",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "ebb3e623-9260-449e-9466-7471036bad1d"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/d7164b03-040a-4c5d-b5a3-ead13790dba1",
+                "title": "Future Reef MAP - May 2015",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "d7164b03-040a-4c5d-b5a3-ead13790dba1"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/32d056be-37d5-48f0-b1bc-0859ab167de9",
+                "title": "Future Reef MAP - September 2014",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "32d056be-37d5-48f0-b1bc-0859ab167de9"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/4de78c70-5c21-4559-9b94-e884ef0a173a",
+                "title": "Future Reef MAP - October 2014",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "4de78c70-5c21-4559-9b94-e884ef0a173a"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
+            },
+            {
+                "key": "AIMS/f6e8252d-5409-42bc-8f0b-08bd92413353",
+                "title": "Future Reef MAP - December 2014",
+                "identifier": {
+                    "type": "global",
+                    "identifier": "f6e8252d-5409-42bc-8f0b-08bd92413353"
+                },
+                "types": ["identifier_uri_link"],
+                "relation": [{
+                    "type": "hasAssociationWith",
+                    "full_url": "http://acef.tern.org.au/geoserver/wms"
+                }]
             }
         ],
-        "full_urls": [
-            "http://www.environment.gov.au/mapping/services/ogc_services/capad/MapServer/WMSServer"
-        ],
+        "full_urls": ["http://acef.tern.org.au/geoserver/wms"],
         "subjects": [
             {
                 "type": "local",
-                "value": "WMS",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "OPeNDAP",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Gridded",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Satellite",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Solar",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Radiation",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Meteorology",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "National Environmental Information Infrastructure",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "neii.gov.au",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "040107",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Web Service",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "topography",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Earth Sciences",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "04",
-                "uri": ""
-            },
-            {
-                "type": "local",
                 "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "biota",
                 "uri": ""
             },
             {
@@ -1331,114 +1899,78 @@
             },
             {
                 "type": "local",
-                "value": "society",
+                "value": "boundaries",
                 "uri": ""
             },
             {
                 "type": "local",
-                "value": "WFS",
+                "value": "planningCadastre",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "structure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "farming",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "geoscientificInformation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "climatologyMeteorologyAtmosphere",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "imageryBaseMapsEarthCover",
                 "uri": ""
             }
         ]
     },
     {
-        "url": "http://www.environment.gov.au/mapping/services/ogc_services/capad/MapServer/WFSServer",
-        "relations": [
-            {
-                "key": "NEII/9984a9fd-3dd0-4e38-bfbd-7e788fa851a1",
-                "title": "Collaborative Australian Protected Areas Database (CAPAD) 2014",
-                "identifier": {
-                    "type": "global",
-                    "identifier": "9984a9fd-3dd0-4e38-bfbd-7e788fa851a1"
+        "url": "https://acef.tern.org.au/geoserver/acef-default/ows",
+        "relations": [{
+            "key": "AIMS/0419a746-ddc1-44d2-86e7-e5c402473956",
+            "title": "Spatially explicit current and future threats to seagrass habitats in Australia",
+            "identifier": {
+                "type": "global",
+                "identifier": "0419a746-ddc1-44d2-86e7-e5c402473956"
+            },
+            "types": [
+                "identifier_uri_link",
+                "relatedInfo_relation_supports_url"
+            ],
+            "relation": [
+                {
+                    "type": "hasAssociationWith",
+                    "full_url": "https://acef.tern.org.au/geoserver/acef-default/ows"
                 },
-                "types": [
-                    "identifier_uri_link"
-                ],
-                "relation": [
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://www.environment.gov.au/mapping/services/ogc_services/capad/MapServer/WFSServer"
-                    }
-                ]
-            }
-        ],
+                {
+                    "type": "isSupportedBy",
+                    "full_url": "https://acef.tern.org.au/geoserver/acef-default/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=acef-default:ACEAS_SeagrassThreats_2016&outputFormat=SHAPE-ZIP"
+                }
+            ]
+        }],
         "full_urls": [
-            "http://www.environment.gov.au/mapping/services/ogc_services/capad/MapServer/WFSServer"
+            "https://acef.tern.org.au/geoserver/acef-default/ows",
+            "https://acef.tern.org.au/geoserver/acef-default/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=acef-default:ACEAS_SeagrassThreats_2016&outputFormat=SHAPE-ZIP"
         ],
         "subjects": [
             {
                 "type": "local",
-                "value": "WMS",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "OPeNDAP",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Gridded",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Satellite",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Solar",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Radiation",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Meteorology",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "National Environmental Information Infrastructure",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "neii.gov.au",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "040107",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Web Service",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "topography",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Earth Sciences",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "04",
-                "uri": ""
-            },
-            {
-                "type": "local",
                 "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "biota",
                 "uri": ""
             },
             {
@@ -1453,114 +1985,66 @@
             },
             {
                 "type": "local",
-                "value": "society",
+                "value": "boundaries",
                 "uri": ""
             },
             {
                 "type": "local",
-                "value": "WFS",
+                "value": "planningCadastre",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "structure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "farming",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "geoscientificInformation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "climatologyMeteorologyAtmosphere",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "imageryBaseMapsEarthCover",
                 "uri": ""
             }
         ]
     },
     {
-        "url": "http://www.environment.gov.au/mapping/services/ogc_services/Important_Wetlands/MapServer/WMSServer",
-        "relations": [
-            {
-                "key": "NEII/ANZCW0501003820",
-                "title": "Directory of Important Wetlands in Australia (DIWA) Spatial Database",
-                "identifier": {
-                    "type": "global",
-                    "identifier": "ANZCW0501003820"
-                },
-                "types": [
-                    "identifier_uri_link"
-                ],
-                "relation": [
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://www.environment.gov.au/mapping/services/ogc_services/Important_Wetlands/MapServer/WMSServer"
-                    }
-                ]
-            }
-        ],
-        "full_urls": [
-            "http://www.environment.gov.au/mapping/services/ogc_services/Important_Wetlands/MapServer/WMSServer"
-        ],
+        "url": "http://dap.tern.org.au/thredds/catalog/CMIP5QLD/catalog.html",
+        "relations": [{
+            "key": "AIMS/b587a6ee-cc1a-4849-bee4-58fec60f0e9f",
+            "title": "High Resolution Climate Change Projection Data for Queensland",
+            "identifier": {
+                "type": "global",
+                "identifier": "b587a6ee-cc1a-4849-bee4-58fec60f0e9f"
+            },
+            "types": ["identifier_uri_link"],
+            "relation": [{
+                "type": "hasAssociationWith",
+                "full_url": "http://dap.tern.org.au/thredds/catalog/CMIP5QLD/catalog.html"
+            }]
+        }],
+        "full_urls": ["http://dap.tern.org.au/thredds/catalog/CMIP5QLD/catalog.html"],
         "subjects": [
             {
                 "type": "local",
-                "value": "WMS",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "OPeNDAP",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Gridded",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Satellite",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Solar",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Radiation",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Meteorology",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "National Environmental Information Infrastructure",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "neii.gov.au",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "040107",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Web Service",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "topography",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Earth Sciences",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "04",
-                "uri": ""
-            },
-            {
-                "type": "local",
                 "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "biota",
                 "uri": ""
             },
             {
@@ -1575,114 +2059,66 @@
             },
             {
                 "type": "local",
-                "value": "society",
+                "value": "boundaries",
                 "uri": ""
             },
             {
                 "type": "local",
-                "value": "WFS",
+                "value": "planningCadastre",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "structure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "farming",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "geoscientificInformation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "climatologyMeteorologyAtmosphere",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "imageryBaseMapsEarthCover",
                 "uri": ""
             }
         ]
     },
     {
-        "url": "http://www.environment.gov.au/mapping/services/ogc_services/Important_Wetlands/MapServer/WFSServer",
-        "relations": [
-            {
-                "key": "NEII/ANZCW0501003820",
-                "title": "Directory of Important Wetlands in Australia (DIWA) Spatial Database",
-                "identifier": {
-                    "type": "global",
-                    "identifier": "ANZCW0501003820"
-                },
-                "types": [
-                    "identifier_uri_link"
-                ],
-                "relation": [
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://www.environment.gov.au/mapping/services/ogc_services/Important_Wetlands/MapServer/WFSServer"
-                    }
-                ]
-            }
-        ],
-        "full_urls": [
-            "http://www.environment.gov.au/mapping/services/ogc_services/Important_Wetlands/MapServer/WFSServer"
-        ],
+        "url": "http://qld.auscover.org.au/thredds/catalog/auscover/modis/fractional_cover/global/catalog.html",
+        "relations": [{
+            "key": "AIMS/c2817e5c-3260-42e9-a02b-118b668fc44c",
+            "title": "Fractional cover - MODIS, CSIRO Land and Water algorithm, global coverage",
+            "identifier": {
+                "type": "global",
+                "identifier": "c2817e5c-3260-42e9-a02b-118b668fc44c"
+            },
+            "types": ["identifier_uri_link"],
+            "relation": [{
+                "type": "hasAssociationWith",
+                "full_url": "http://qld.auscover.org.au/thredds/catalog/auscover/modis/fractional_cover/global/catalog.html"
+            }]
+        }],
+        "full_urls": ["http://qld.auscover.org.au/thredds/catalog/auscover/modis/fractional_cover/global/catalog.html"],
         "subjects": [
             {
                 "type": "local",
-                "value": "WMS",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "OPeNDAP",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Gridded",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Satellite",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Solar",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Radiation",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Meteorology",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "National Environmental Information Infrastructure",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "neii.gov.au",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "040107",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Web Service",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "topography",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Earth Sciences",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "04",
-                "uri": ""
-            },
-            {
-                "type": "local",
                 "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "biota",
                 "uri": ""
             },
             {
@@ -1697,114 +2133,66 @@
             },
             {
                 "type": "local",
-                "value": "society",
+                "value": "boundaries",
                 "uri": ""
             },
             {
                 "type": "local",
-                "value": "WFS",
+                "value": "planningCadastre",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "structure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "farming",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "geoscientificInformation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "climatologyMeteorologyAtmosphere",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "imageryBaseMapsEarthCover",
                 "uri": ""
             }
         ]
     },
     {
-        "url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1D_SST",
-        "relations": [
-            {
-                "key": "NEII/a927dd64-8998-47b1-ab5b-6f97bf626fc0",
-                "title": "ReefTemp Next Generation Web Data Services",
-                "identifier": {
-                    "type": "global",
-                    "identifier": "a927dd64-8998-47b1-ab5b-6f97bf626fc0"
-                },
-                "types": [
-                    "identifier_uri_link"
-                ],
-                "relation": [
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1D_SST?service=WMS&version=1.3.0&request=GetCapabilities"
-                    }
-                ]
-            }
-        ],
-        "full_urls": [
-            "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1D_SST?service=WMS&version=1.3.0&request=GetCapabilities"
-        ],
+        "url": "http://opendap.bom.gov.au:8080/thredds/catalog/curing_modis_500m_8-day/catalog.html",
+        "relations": [{
+            "key": "AIMS/97fe8bd3-b68a-40db-9f7f-33a18fcaff44",
+            "title": "Grassland Curing - MODIS, Bushfire CRC algorithms, Australia and states coverage",
+            "identifier": {
+                "type": "global",
+                "identifier": "97fe8bd3-b68a-40db-9f7f-33a18fcaff44"
+            },
+            "types": ["identifier_uri_link"],
+            "relation": [{
+                "type": "hasAssociationWith",
+                "full_url": "http://opendap.bom.gov.au:8080/thredds/catalog/curing_modis_500m_8-day/catalog.html"
+            }]
+        }],
+        "full_urls": ["http://opendap.bom.gov.au:8080/thredds/catalog/curing_modis_500m_8-day/catalog.html"],
         "subjects": [
             {
                 "type": "local",
-                "value": "WMS",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "OPeNDAP",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Gridded",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Satellite",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Solar",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Radiation",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Meteorology",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "National Environmental Information Infrastructure",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "neii.gov.au",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "040107",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Web Service",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "topography",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Earth Sciences",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "04",
-                "uri": ""
-            },
-            {
-                "type": "local",
                 "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "biota",
                 "uri": ""
             },
             {
@@ -1819,114 +2207,66 @@
             },
             {
                 "type": "local",
-                "value": "society",
+                "value": "boundaries",
                 "uri": ""
             },
             {
                 "type": "local",
-                "value": "WFS",
+                "value": "planningCadastre",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "structure",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "farming",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "geoscientificInformation",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "climatologyMeteorologyAtmosphere",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "imageryBaseMapsEarthCover",
                 "uri": ""
             }
         ]
     },
     {
-        "url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1D_DHD",
-        "relations": [
-            {
-                "key": "NEII/a927dd64-8998-47b1-ab5b-6f97bf626fc0",
-                "title": "ReefTemp Next Generation Web Data Services",
-                "identifier": {
-                    "type": "global",
-                    "identifier": "a927dd64-8998-47b1-ab5b-6f97bf626fc0"
-                },
-                "types": [
-                    "identifier_uri_link"
-                ],
-                "relation": [
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1D_DHD?service=WMS&version=1.3.0&request=GetCapabilities"
-                    }
-                ]
-            }
-        ],
-        "full_urls": [
-            "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1D_DHD?service=WMS&version=1.3.0&request=GetCapabilities"
-        ],
+        "url": "http://www.auscover.org.au/thredds/catalog/auscover/modis-fc/v3.0.1/catalog.html",
+        "relations": [{
+            "key": "AIMS/d7369c11-3235-40d0-8060-6af6ddb339a7",
+            "title": "Fractional cover - MODIS, CSIRO Land and Water algorithm, Australia coverage",
+            "identifier": {
+                "type": "global",
+                "identifier": "d7369c11-3235-40d0-8060-6af6ddb339a7"
+            },
+            "types": ["identifier_uri_link"],
+            "relation": [{
+                "type": "hasAssociationWith",
+                "full_url": "http://www.auscover.org.au/thredds/catalog/auscover/modis-fc/v3.0.1/catalog.html"
+            }]
+        }],
+        "full_urls": ["http://www.auscover.org.au/thredds/catalog/auscover/modis-fc/v3.0.1/catalog.html"],
         "subjects": [
             {
                 "type": "local",
-                "value": "WMS",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "OPeNDAP",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Gridded",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Satellite",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Solar",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Radiation",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Meteorology",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "National Environmental Information Infrastructure",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "neii.gov.au",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "040107",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Web Service",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "topography",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Earth Sciences",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "04",
-                "uri": ""
-            },
-            {
-                "type": "local",
                 "value": "oceans",
+                "uri": ""
+            },
+            {
+                "type": "local",
+                "value": "biota",
                 "uri": ""
             },
             {
@@ -1941,1603 +2281,37 @@
             },
             {
                 "type": "local",
-                "value": "society",
+                "value": "boundaries",
                 "uri": ""
             },
             {
                 "type": "local",
-                "value": "WFS",
+                "value": "planningCadastre",
                 "uri": ""
-            }
-        ]
-    },
-    {
-        "url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1D_ERR",
-        "relations": [
-            {
-                "key": "NEII/a927dd64-8998-47b1-ab5b-6f97bf626fc0",
-                "title": "ReefTemp Next Generation Web Data Services",
-                "identifier": {
-                    "type": "global",
-                    "identifier": "a927dd64-8998-47b1-ab5b-6f97bf626fc0"
-                },
-                "types": [
-                    "identifier_uri_link"
-                ],
-                "relation": [
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1D_ERR?service=WMS&version=1.3.0&request=GetCapabilities"
-                    }
-                ]
-            }
-        ],
-        "full_urls": [
-            "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1D_ERR?service=WMS&version=1.3.0&request=GetCapabilities"
-        ],
-        "subjects": [
-            {
-                "type": "local",
-                "value": "WMS",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "OPeNDAP",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Gridded",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Satellite",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Solar",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Radiation",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Meteorology",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "National Environmental Information Infrastructure",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "neii.gov.au",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "040107",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Web Service",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "topography",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Earth Sciences",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "04",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "oceans",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "environment",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "inlandWaters",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "society",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "WFS",
-                "uri": ""
-            }
-        ]
-    },
-    {
-        "url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1W",
-        "relations": [
-            {
-                "key": "NEII/a927dd64-8998-47b1-ab5b-6f97bf626fc0",
-                "title": "ReefTemp Next Generation Web Data Services",
-                "identifier": {
-                    "type": "global",
-                    "identifier": "a927dd64-8998-47b1-ab5b-6f97bf626fc0"
-                },
-                "types": [
-                    "identifier_uri_link"
-                ],
-                "relation": [
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1W?service=WMS&version=1.3.0&request=GetCapabilities"
-                    }
-                ]
-            }
-        ],
-        "full_urls": [
-            "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1W?service=WMS&version=1.3.0&request=GetCapabilities"
-        ],
-        "subjects": [
-            {
-                "type": "local",
-                "value": "WMS",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "OPeNDAP",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Gridded",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Satellite",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Solar",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Radiation",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Meteorology",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "National Environmental Information Infrastructure",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "neii.gov.au",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "040107",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Web Service",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "topography",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Earth Sciences",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "04",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "oceans",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "environment",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "inlandWaters",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "society",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "WFS",
-                "uri": ""
-            }
-        ]
-    },
-    {
-        "url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1M",
-        "relations": [
-            {
-                "key": "NEII/a927dd64-8998-47b1-ab5b-6f97bf626fc0",
-                "title": "ReefTemp Next Generation Web Data Services",
-                "identifier": {
-                    "type": "global",
-                    "identifier": "a927dd64-8998-47b1-ab5b-6f97bf626fc0"
-                },
-                "types": [
-                    "identifier_uri_link"
-                ],
-                "relation": [
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1M?service=WMS&version=1.3.0&request=GetCapabilities"
-                    }
-                ]
-            }
-        ],
-        "full_urls": [
-            "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1M?service=WMS&version=1.3.0&request=GetCapabilities"
-        ],
-        "subjects": [
-            {
-                "type": "local",
-                "value": "WMS",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "OPeNDAP",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Gridded",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Satellite",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Solar",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Radiation",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Meteorology",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "National Environmental Information Infrastructure",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "neii.gov.au",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "040107",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Web Service",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "topography",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Earth Sciences",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "04",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "oceans",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "environment",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "inlandWaters",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "society",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "WFS",
-                "uri": ""
-            }
-        ]
-    },
-    {
-        "url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P6M",
-        "relations": [
-            {
-                "key": "NEII/a927dd64-8998-47b1-ab5b-6f97bf626fc0",
-                "title": "ReefTemp Next Generation Web Data Services",
-                "identifier": {
-                    "type": "global",
-                    "identifier": "a927dd64-8998-47b1-ab5b-6f97bf626fc0"
-                },
-                "types": [
-                    "identifier_uri_link"
-                ],
-                "relation": [
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P6M?service=WMS&version=1.3.0&request=GetCapabilities"
-                    }
-                ]
-            }
-        ],
-        "full_urls": [
-            "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P6M?service=WMS&version=1.3.0&request=GetCapabilities"
-        ],
-        "subjects": [
-            {
-                "type": "local",
-                "value": "WMS",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "OPeNDAP",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Gridded",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Satellite",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Solar",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Radiation",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Meteorology",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "National Environmental Information Infrastructure",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "neii.gov.au",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "040107",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Web Service",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "topography",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Earth Sciences",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "04",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "oceans",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "environment",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "inlandWaters",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "society",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "WFS",
-                "uri": ""
-            }
-        ]
-    },
-    {
-        "url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1A",
-        "relations": [
-            {
-                "key": "NEII/a927dd64-8998-47b1-ab5b-6f97bf626fc0",
-                "title": "ReefTemp Next Generation Web Data Services",
-                "identifier": {
-                    "type": "global",
-                    "identifier": "a927dd64-8998-47b1-ab5b-6f97bf626fc0"
-                },
-                "types": [
-                    "identifier_uri_link"
-                ],
-                "relation": [
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1A?service=WMS&version=1.3.0&request=GetCapabilities"
-                    }
-                ]
-            }
-        ],
-        "full_urls": [
-            "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/RT2_gridAgg_P1A?service=WMS&version=1.3.0&request=GetCapabilities"
-        ],
-        "subjects": [
-            {
-                "type": "local",
-                "value": "WMS",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "OPeNDAP",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Gridded",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Satellite",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Solar",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Radiation",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Meteorology",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "National Environmental Information Infrastructure",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "neii.gov.au",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "040107",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Web Service",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "topography",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Earth Sciences",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "04",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "oceans",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "environment",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "inlandWaters",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "society",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "WFS",
-                "uri": ""
-            }
-        ]
-    },
-    {
-        "url": "http://www.environment.gov.au/mapping/services/ogc_services/World_Heritage_Areas_label/MapServer/WMSServer",
-        "relations": [
-            {
-                "key": "NEII/6C54FE6C-2773-47C6-8CBC-4722F29081EF",
-                "title": "Australia, World Heritage Areas",
-                "identifier": {
-                    "type": "global",
-                    "identifier": "6C54FE6C-2773-47C6-8CBC-4722F29081EF"
-                },
-                "types": [
-                    "identifier_uri_link"
-                ],
-                "relation": [
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://www.environment.gov.au/mapping/services/ogc_services/World_Heritage_Areas_label/MapServer/WMSServer"
-                    }
-                ]
-            }
-        ],
-        "full_urls": [
-            "http://www.environment.gov.au/mapping/services/ogc_services/World_Heritage_Areas_label/MapServer/WMSServer"
-        ],
-        "subjects": [
-            {
-                "type": "local",
-                "value": "WMS",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "OPeNDAP",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Gridded",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Satellite",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Solar",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Radiation",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Meteorology",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "National Environmental Information Infrastructure",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "neii.gov.au",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "040107",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Web Service",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "topography",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Earth Sciences",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "04",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "oceans",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "environment",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "inlandWaters",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "society",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "WFS",
-                "uri": ""
-            }
-        ]
-    },
-    {
-        "url": "http://www.environment.gov.au/mapping/services/ogc_services/World_Heritage_Areas_label/MapServer/WFSServer",
-        "relations": [
-            {
-                "key": "NEII/6C54FE6C-2773-47C6-8CBC-4722F29081EF",
-                "title": "Australia, World Heritage Areas",
-                "identifier": {
-                    "type": "global",
-                    "identifier": "6C54FE6C-2773-47C6-8CBC-4722F29081EF"
-                },
-                "types": [
-                    "identifier_uri_link"
-                ],
-                "relation": [
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://www.environment.gov.au/mapping/services/ogc_services/World_Heritage_Areas_label/MapServer/WFSServer"
-                    }
-                ]
-            }
-        ],
-        "full_urls": [
-            "http://www.environment.gov.au/mapping/services/ogc_services/World_Heritage_Areas_label/MapServer/WFSServer"
-        ],
-        "subjects": [
-            {
-                "type": "local",
-                "value": "WMS",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "OPeNDAP",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Gridded",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Satellite",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Solar",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Radiation",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Meteorology",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "National Environmental Information Infrastructure",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "neii.gov.au",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "040107",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Web Service",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "topography",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Earth Sciences",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "04",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "oceans",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "environment",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "inlandWaters",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "society",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "WFS",
-                "uri": ""
-            }
-        ]
-    },
-    {
-        "url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P1D",
-        "relations": [
-            {
-                "key": "NEII/3440bced-e383-4f39-8991-820aeb9097cb",
-                "title": "eReefs Marine Water Quality Web Data Services",
-                "identifier": {
-                    "type": "global",
-                    "identifier": "3440bced-e383-4f39-8991-820aeb9097cb"
-                },
-                "types": [
-                    "identifier_uri_link"
-                ],
-                "relation": [
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P1D?service=WMS&version=1.3.0&request=GetCapabilities"
-                    }
-                ]
-            }
-        ],
-        "full_urls": [
-            "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P1D?service=WMS&version=1.3.0&request=GetCapabilities"
-        ],
-        "subjects": [
-            {
-                "type": "local",
-                "value": "WMS",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "OPeNDAP",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Gridded",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Satellite",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Solar",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Radiation",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Meteorology",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "National Environmental Information Infrastructure",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "neii.gov.au",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "040107",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Web Service",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "topography",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Earth Sciences",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "04",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "oceans",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "environment",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "inlandWaters",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "society",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "WFS",
-                "uri": ""
-            }
-        ]
-    },
-    {
-        "url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P1W",
-        "relations": [
-            {
-                "key": "NEII/3440bced-e383-4f39-8991-820aeb9097cb",
-                "title": "eReefs Marine Water Quality Web Data Services",
-                "identifier": {
-                    "type": "global",
-                    "identifier": "3440bced-e383-4f39-8991-820aeb9097cb"
-                },
-                "types": [
-                    "identifier_uri_link"
-                ],
-                "relation": [
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P1W?service=WMS&version=1.3.0&request=GetCapabilities"
-                    }
-                ]
-            }
-        ],
-        "full_urls": [
-            "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P1W?service=WMS&version=1.3.0&request=GetCapabilities"
-        ],
-        "subjects": [
-            {
-                "type": "local",
-                "value": "WMS",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "OPeNDAP",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Gridded",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Satellite",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Solar",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Radiation",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Meteorology",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "National Environmental Information Infrastructure",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "neii.gov.au",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "040107",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Web Service",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "topography",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Earth Sciences",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "04",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "oceans",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "environment",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "inlandWaters",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "society",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "WFS",
-                "uri": ""
-            }
-        ]
-    },
-    {
-        "url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P1M",
-        "relations": [
-            {
-                "key": "NEII/3440bced-e383-4f39-8991-820aeb9097cb",
-                "title": "eReefs Marine Water Quality Web Data Services",
-                "identifier": {
-                    "type": "global",
-                    "identifier": "3440bced-e383-4f39-8991-820aeb9097cb"
-                },
-                "types": [
-                    "identifier_uri_link"
-                ],
-                "relation": [
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P1M?service=WMS&version=1.3.0&request=GetCapabilities"
-                    }
-                ]
-            }
-        ],
-        "full_urls": [
-            "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P1M?service=WMS&version=1.3.0&request=GetCapabilities"
-        ],
-        "subjects": [
-            {
-                "type": "local",
-                "value": "WMS",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "OPeNDAP",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Gridded",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Satellite",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Solar",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Radiation",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Meteorology",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "National Environmental Information Infrastructure",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "neii.gov.au",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "040107",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Web Service",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "topography",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Earth Sciences",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "04",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "oceans",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "environment",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "inlandWaters",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "society",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "WFS",
-                "uri": ""
-            }
-        ]
-    },
-    {
-        "url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P6M",
-        "relations": [
-            {
-                "key": "NEII/3440bced-e383-4f39-8991-820aeb9097cb",
-                "title": "eReefs Marine Water Quality Web Data Services",
-                "identifier": {
-                    "type": "global",
-                    "identifier": "3440bced-e383-4f39-8991-820aeb9097cb"
-                },
-                "types": [
-                    "identifier_uri_link"
-                ],
-                "relation": [
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P6M?service=WMS&version=1.3.0&request=GetCapabilities"
-                    }
-                ]
-            }
-        ],
-        "full_urls": [
-            "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P6M?service=WMS&version=1.3.0&request=GetCapabilities"
-        ],
-        "subjects": [
-            {
-                "type": "local",
-                "value": "WMS",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "OPeNDAP",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Gridded",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Satellite",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Solar",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Radiation",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Meteorology",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "National Environmental Information Infrastructure",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "neii.gov.au",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "040107",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Web Service",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "topography",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Earth Sciences",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "04",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "oceans",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "environment",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "inlandWaters",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "society",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "WFS",
-                "uri": ""
-            }
-        ]
-    },
-    {
-        "url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P1A",
-        "relations": [
-            {
-                "key": "NEII/3440bced-e383-4f39-8991-820aeb9097cb",
-                "title": "eReefs Marine Water Quality Web Data Services",
-                "identifier": {
-                    "type": "global",
-                    "identifier": "3440bced-e383-4f39-8991-820aeb9097cb"
-                },
-                "types": [
-                    "identifier_uri_link"
-                ],
-                "relation": [
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P1A?service=WMS&version=1.3.0&request=GetCapabilities"
-                    }
-                ]
-            }
-        ],
-        "full_urls": [
-            "http://ereeftds.bom.gov.au/ereefs/tds/wms/ereefs/mwq_gridAgg_P1A?service=WMS&version=1.3.0&request=GetCapabilities"
-        ],
-        "subjects": [
-            {
-                "type": "local",
-                "value": "WMS",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "OPeNDAP",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Gridded",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Satellite",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Solar",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Radiation",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Meteorology",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "National Environmental Information Infrastructure",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "neii.gov.au",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "040107",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Web Service",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "topography",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Earth Sciences",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "04",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "oceans",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "environment",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "inlandWaters",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "society",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "WFS",
-                "uri": ""
-            }
-        ]
-    },
-    {
-        "url": "http://geofabric.bom.gov.au/simplefeatures/ows",
-        "relations": [
-            {
-                "key": "NEII/8b0f74b4-675a-43f9-9c2b-0fbee00f31d7",
-                "title": "Australian Hydrological Geospatial Fabric (Geofabric) Web Data Services",
-                "identifier": {
-                    "type": "global",
-                    "identifier": "8b0f74b4-675a-43f9-9c2b-0fbee00f31d7"
-                },
-                "types": [
-                    "identifier_uri_link"
-                ],
-                "relation": [
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://geofabric.bom.gov.au/simplefeatures/ows?service=wfs&version=2.0.0&request=GetCapabilities"
-                    },
-                    {
-                        "type": "hasAssociationWith",
-                        "full_url": "http://geofabric.bom.gov.au/simplefeatures/ows?service=wms&version=1.3.0&request=GetCapabilities"
-                    }
-                ]
-            }
-        ],
-        "full_urls": [
-            "http://geofabric.bom.gov.au/simplefeatures/ows?service=wfs&version=2.0.0&request=GetCapabilities",
-            "http://geofabric.bom.gov.au/simplefeatures/ows?service=wms&version=1.3.0&request=GetCapabilities"
-        ],
-        "subjects": [
-            {
-                "type": "local",
-                "value": "WMS",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "OPeNDAP",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Gridded",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Satellite",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Solar",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Radiation",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Meteorology",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "National Environmental Information Infrastructure",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "neii.gov.au",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "040107",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Web Service",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "topography",
-                "uri": ""
-            },
-            {
-                "type": "local",
-                "value": "Earth Sciences",
-                "uri": ""
-            },
-            {
-                "type": "anzsrc-for",
-                "value": "04",
-                "uri": ""
             },
             {
                 "type": "local",
-                "value": "oceans",
+                "value": "structure",
                 "uri": ""
             },
             {
                 "type": "local",
-                "value": "environment",
+                "value": "farming",
                 "uri": ""
             },
             {
                 "type": "local",
-                "value": "inlandWaters",
+                "value": "geoscientificInformation",
                 "uri": ""
             },
             {
                 "type": "local",
-                "value": "society",
+                "value": "climatologyMeteorologyAtmosphere",
                 "uri": ""
             },
             {
                 "type": "local",
-                "value": "WFS",
+                "value": "imageryBaseMapsEarthCover",
                 "uri": ""
             }
         ]

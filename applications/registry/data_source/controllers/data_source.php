@@ -89,11 +89,11 @@ class Data_source extends MX_Controller {
 
 			if($id && $ds){
 
-                if ($harvester_methods = get_db_config_item('harvester_methods')) {
-                    $item['harvester_methods'] = $harvester_methods;
-                }
 
-				foreach($ds->attributes as $attrib=>$value){
+                $harvester_methods = get_db_config_item('harvester_methods');
+                if($harvester_methods) $item['harvester_methods'] = $harvester_methods;
+                
+                foreach($ds->attributes as $attrib=>$value){
 					$item[$attrib] = $value->value;
 				}
 
@@ -121,18 +121,27 @@ class Data_source extends MX_Controller {
 		echo $jsonData;
 	}
 
-	public function upload($id=false) {
+    /**
+     * TODO Refactor this to not use CodeIgniter uploads
+     *
+     * @param bool $id
+     * @throws Exception
+     */
+    public function upload($id=false) {
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		set_exception_handler('json_exception_handler');
 
-		$upload_path = './assets/uploads/harvester_crosswalks/';
+        $config = \ANDS\Util\Config::get('app');
+        $path = array_dot($config)['storage.uploads.path'];
+        $upload_path = rtrim($path, '/').'/harvester_crosswalks/';
+
 		if(!is_dir($upload_path)) {
-			if(!mkdir($upload_path)) throw new Exception('Upload path are not created correctly. Contact server administrator');
+			if(!mkdir($upload_path, 0755, true)) throw new Exception('Upload path are not created correctly. Contact server administrator');
 		}
 		$upload_path = $upload_path.$id.'/';
 		if(!is_dir($upload_path)) {
-			if(!mkdir($upload_path)) throw new Exception('Upload path are not created correctly. Contact server administrator');
+			if(!mkdir($upload_path, 0755, true)) throw new Exception('Upload path are not created correctly. Contact server administrator');
 		}
 
 		$config['upload_path'] = $upload_path;

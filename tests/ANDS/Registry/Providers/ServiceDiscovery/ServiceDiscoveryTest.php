@@ -62,26 +62,37 @@ class ServiceDiscoveryTest extends \RegistryTestClass
     {
         $url = "http://www.cmar.csiro.au/geoserver/wms?&CQL_FILTER=SURVEY_NAME%20%3D%20%27ALBA196909%27";
         $baseUrl = ServiceDiscovery::getBaseUrl($url);
-        $this->assertEquals($baseUrl, "http://www.cmar.csiro.au/geoserver/wms");
+        $this->assertEquals($baseUrl, "https://www.cmar.csiro.au/geoserver/wms");
     }
 
     /** @test **/
     public function test_get_links_for_record() {
 
         $this->markTestSkipped("Should only be ran during development");
-     $collectionkey = 'AUTestingRecords2ExampleCollectionForLargeNumberRelations31ServiceDiscovery';
-    //$collectionkey = 'AIMS/e4cdfaf2-bbb1-44c7-8a07-cf9ffdab747f';
+     //$collectionkey = 'AUTestingRecords2ExampleCollectionForLargeNumberRelations31ServiceDiscovery';
+    $collectionkey = 'AODN/ec86f035-d4c9-4ff3-e044-00144fdd4fa6AUT3de';
     $record = RegistryObjectsRepository::getPublishedByKey($collectionkey);
+    //dd($record);
 
     $links = ServiceDiscovery::getServiceLinksForRegistryObject($record);
 
-    $this->assertEquals(6, count($links));
+    $this->assertEquals(26, count($links));
 
         $links = ServiceDiscovery::processLinks($links);
        $links = ServiceDiscovery::formatLinks($links);
         echo(json_encode($links));
     }
 
+        /** @test **/
+    public function test_links_via_url(){
+        $url = "https://test.ands.org.au/mock/get/AUTestingRecords_WMS_Response_7_v1.3.0";
+
+        $links = ServiceDiscovery::getServicesBylinks($url);
+        $links = ServiceDiscovery::processLinks($links);
+        $links = ServiceDiscovery::formatLinks($links);
+        $this->assertEquals(1, count($links));
+
+    }
 
 
 //

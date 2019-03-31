@@ -183,6 +183,69 @@ function getReverseRelationshipString($relation) {
 	return $relation;
 }
 
+
+/**
+ * Returns the reverse form of a relationship
+ *
+ * @param $relation
+ * @return string
+ */
+function getReverseRelationshipStringCI($relation) {
+    $ciRelation = strtolower($relation);
+    switch ($ciRelation) {
+        case strtolower("describes") : return "isDescribedBy"; break;
+        case strtolower("isDescribedBy") : return "describes"; break;
+        case strtolower("hasPart") : return "isPartOf"; break;
+        case strtolower("isPartOf") : return "hasPart"; break;
+        case strtolower("hasAssociationWith") : return "hasAssociationWith"; break;
+        case strtolower("hasCollector") : return "isCollectorOf"; break;
+        case strtolower("isCollectorOf") : return "hasCollector"; break;
+        case strtolower("hasPrincipalInvestigator") : return "isPrincipalInvestigatorOf"; break;
+        case strtolower("isPrincipalInvestigatorOf") : return "hasPrincipalInvestigator"; break;
+        case strtolower("isLocatedIn") : return "isLocationFor"; break;
+        case strtolower("isLocationFor") : return "isLocatedIn"; break;
+        case strtolower("manages") : return "isManagedBy" ; break;
+        case strtolower("isManagedBy") : return "isManagerOf"; break;
+        case strtolower("isManagerOf") : return "isManagedBy"; break;
+        case strtolower("isOutputOf") : return "hasOutput"; break;
+        case strtolower("hasOutput") : return "isOutputOf"; break;
+        case strtolower("isOwnedBy") : return "isOwnerOf"; break;
+        case strtolower("isOwnerOf") : return "isOwnedBy"; break;
+        case strtolower("supports") : return "isSupportedBy"; break;
+        case strtolower("isSupportedBy") : return "supports"; break;
+        case strtolower("isEnrichedBy") : return "enriches"; break;
+        case strtolower("enriches") : return "isEnrichedBy"; break;
+        case strtolower("isDerivedFrom") : return "hasDerivedCollection"; break;
+        case strtolower("hasDerivedCollection") : return "isDerivedFrom"; break;
+        case strtolower("isAvailableThrough") : return "makesAvailable"; break;
+        case strtolower("makesAvailable") : return "isAvailableThrough"; break;
+        case strtolower("isProducedBy") : return "produces"; break;
+        case strtolower("produces") : return "isProducedBy"; break;
+        case strtolower("isPresentedBy") : return "presents"; break;
+        case strtolower("presents") : return "isPresentedBy"; break;
+        case strtolower("hasValueAddedBy") : return "addsValueTo"; break;
+        case strtolower("addsValueTo") : return "hasValueAddedBy"; break;
+        case strtolower("isOperatedOnBy") : return "operatesOn"; break;
+        case strtolower("operatesOn") : return "isOperatedOnBy"; break;
+        case strtolower("isCitedBy") : return "cites"; break;
+        case strtolower("cites") : return "isCitedBy"; break;
+        case strtolower("isReferencedBy") : return "references"; break;
+        case strtolower("references") : return "isReferencedBy"; break;
+        case strtolower("isDocumentedBy") : return "documents"; break;
+        case strtolower("documents") : return "isDocumentedBy"; break;
+        case strtolower("isSupplementedBy") : return "isSupplementTo"; break;
+        case strtolower("isSupplementTo") : return "isSupplementedBy"; break;
+        case strtolower("hasParticipant") : return "isParticipantIn"; break;
+        case strtolower("isParticipantIn") : return "hasParticipant"; break;
+        case strtolower("isFundedBy") : return "isFunderOf"; break;
+        case strtolower("isFunderOf") : return "isFundedBy"; break;
+        case strtolower("isMemberOf") : return "hasMember"; break;
+        case strtolower("hasMember") : return "isMemberOf"; break;
+        case strtolower("isReviewedBy") : return "reviews"; break;
+        case strtolower("reviews") : return "isReviewedBy"; break;
+    }
+    return $relation;
+}
 /**
  * Resolve Identifier to a link
  * References found in links.php

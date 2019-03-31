@@ -65,10 +65,15 @@
 
 			<div class="control-group" style="background-color:#ffffff;margin-bottom:10px;padding:0em">
 				<label class="control-label" for="key">Type</label>
-				<div class="controls" id="ro_type">
-					
-				</div>
+				<div class="controls" id="ro_type"></div>
 			</div>
+
+            <div class="control-group" id="ogc_service_url_group" style="background-color:#ffffff;margin-bottom:10px;padding:0em">
+                <label class="control-label" for="key">OGC Service URL (optional)</label>
+                <input type="text" class="input-xlarge" name="ogc_service_url"/>
+                <p class="help-inline"><small>Where possible the form will be auto populated with information retrieved from the service</small></p>
+            </div>
+
 			</div>
 
 
