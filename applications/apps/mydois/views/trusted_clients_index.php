@@ -4,6 +4,7 @@
 	<div class="btn-group">
 		<a id="add_trusted_client_btn" href="javascript:;" class="btn btn-large"><i class="icon icon-plus"></i> Add Trusted Clients</a>
 		<a id="fetch_unassigned_prefixes_btn" href="javascript:;" class="btn btn-large"><i class="icon icon-plus"></i> Fetch Unassigned Prefixes</a>
+        <a id="fetch_unassigned_test_prefixes_btn" href="javascript:;" class="btn btn-large"><i class="icon icon-plus"></i> Fetch Unassigned Test Prefixes</a>
 	</div>
 </div>
 <div id="breadcrumb" style="clear:both;">
@@ -60,13 +61,20 @@
 					</div>
 				</div>
 				<div class="control-group">
-					<label class="control-label">DOI Prefix</label>
+					<label class="control-label">DOI Prod Prefix</label>
 					<div class="controls">
 						<select name="datacite_prefix" id="add_prefix_select">
 						</select>
 					</div>
-				</div>																			
-				<div class="control-group">
+				</div>
+                <div class="control-group">
+                    <label class="control-label">DOI Test Prefix</label>
+                    <div class="controls">
+                        <select name="datacite_test_prefix" id="add_test_prefix_select">
+                        </select>
+                    </div>
+                </div>
+                <div class="control-group">
 					<label class="control-label">IP Address Range(s)</label>
 					<div class="controls">
 						<input type="text" name="ip_address" value=""/>
@@ -134,13 +142,20 @@
 					</div>
 				</div>
 				<div class="control-group">
-					<label class="control-label">DOI Prefix</label>
+					<label class="control-label">DOI Prod Prefix</label>
 					<div class="controls">
 						<select name="datacite_prefix" id="prefix_select">
 						</select>
 					</div>
-				</div>																			
-				<div class="control-group">
+				</div>
+                <div class="control-group">
+                    <label class="control-label">DOI Test Prefix</label>
+                    <div class="controls">
+                        <select name="datacite_test_prefix" id="prefix_test_select">
+                        </select>
+                    </div>
+                </div>
+                <div class="control-group">
 					<label class="control-label">IP Address Range(s)</label>
 					<div class="controls">
 						<input type="text" name="ip_address" value=""/>
@@ -200,6 +215,7 @@
 					<th>App ID</th>
 					<th>Test App ID</th>
 					<th>Active Prefix</th>
+					<th>Active Test Prefix</th>
 					<th>Other Prefixes</th>
 					<th>Domain List</th>
 					<th>Date Created</th>
@@ -216,6 +232,7 @@
 					<td>{{app_id}}</td>
 					<td>{{test_app_id}}</td>
 					<td>{{datacite_prefix}}</td>
+					<td>{{datacite_test_prefix}}</td>
 					<td>{{not_active_prefixes}}</td>
 					<td>{{domain_list}}</td>
 					<td>{{created_when}}</td>

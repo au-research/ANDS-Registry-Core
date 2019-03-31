@@ -9,6 +9,7 @@ use ANDS\RegistryObject;
 use ANDS\RegistryObject\Identifier;
 use ANDS\RegistryObject\Links;
 use ANDS\Repository\RegistryObjectsRepository as Repo;
+use ANDS\Util\StrUtil;
 
 class ServiceDiscovery {
 
@@ -21,7 +22,7 @@ class ServiceDiscovery {
      */
     public static function getServiceLinksForDatasource($data_source_id)
     {
-        $links = collect(Links::where('data_source_id', $data_source_id)->where('link_type', 'LIKE', 'identifier_uri_link%')->get())
+        $links = collect(Links::where('data_source_id', $data_source_id)->where('link_type', 'LIKE', 'identifier_ur%_link')->get())
             ->merge(Links::where('data_source_id', $data_source_id)->where('link_type', 'LIKE', 'electronic%')->get())
             ->merge(Links::where('data_source_id', $data_source_id)->where('link_type', 'LIKE', 'relatedInfo%')->get())
             ->unique();
@@ -40,11 +41,11 @@ class ServiceDiscovery {
         $links = Links::wherein('registry_object_id', $ro_ids)->get();
         return $links;
     }
-    
-    
+
+
     public static function getServicesBylinks($url){
-        $url = static::getBaseUrl($url);
-        $links = Links::where('link','LIKE',"{$url}%")->get();
+        $url = static::getBaseUrl($url, false);
+        $links = Links::where('link','LIKE',"%{$url}%")->get();
         return $links;
     }
 
@@ -141,7 +142,7 @@ class ServiceDiscovery {
                 $fullURLs = array_merge($fullURLs, $serviceRelation["full_urls"]);
             }
 
-            $uuid = static::generateUUIDFromString($url);
+            $uuid = StrUtil::generateUUIDFromString($url);
             $rifcsB64 = static::getExistingContentasBase64Str($uuid);
             $links[] = [
                 "url" => $url,
@@ -154,17 +155,6 @@ class ServiceDiscovery {
         }
 
         return $links;
-    }
-// http://guid.us/GUID/PHP
-    private static function generateUUIDFromString($sting){
-        $charid = strtolower(md5($sting));
-        $hyphen = chr(45);// "-"
-        $uuid = substr($charid, 0, 8).$hyphen
-            .substr($charid, 8, 4).$hyphen
-            .substr($charid,12, 4).$hyphen
-            .substr($charid,16, 4).$hyphen
-            .substr($charid,20,12);
-        return $uuid;
     }
 
 
@@ -222,15 +212,18 @@ class ServiceDiscovery {
         return array("type"=>$identifiers[0]->identifier_type, "identifier"=>$identifiers[0]->identifier);
     }
 
-    public static function getBaseUrl($url){
+    public static function getBaseUrl($url, $withProtocol = true){
         $parsed_url = parse_url($url);
 
-        $scheme   = isset($parsed_url['scheme']) ? $parsed_url['scheme'] . '://' : '';
+        //$scheme   = isset($parsed_url['scheme']) ? $parsed_url['scheme'] . '://' : '';
+        $scheme = "https://";
         $host     = isset($parsed_url['host']) ? $parsed_url['host'] : '';
         $port     = isset($parsed_url['port']) ? ':' . $parsed_url['port'] : '';
         $path     = isset($parsed_url['path']) ? $parsed_url['path'] : '';
-
-        return $scheme.$host.$port.$path;
+        if($withProtocol)
+            return $scheme.$host.$port.$path;
+        else
+            return $host.$port.$path;
 
     }
 
@@ -246,7 +239,7 @@ class ServiceDiscovery {
     {
         // check if the link type is supported
         $supported = false;
-        $supported_types = ["identifier_uri_link", "electronic", "relatedInfo"];
+        $supported_types = ["identifier_uri_link", "identifier_url_link", "electronic", "relatedInfo"];
         foreach ($supported_types as $a) {
             if (stripos($link->link_type, $a) !== false) {
                 $supported = true;
@@ -272,7 +265,7 @@ class ServiceDiscovery {
         $tokens = explode("_", $link_type);
         $type = $tokens[2];
         if($type != ""){
-            return getReverseRelationshipString($type);
+            return getReverseRelationshipStringCI($type);
         }
     }
 

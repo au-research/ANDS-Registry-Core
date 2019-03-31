@@ -202,6 +202,19 @@ class Transforms {
 
         return self::$extrif_to_endnote_transformer;
     }
-	
+
+    static function get_extrif_to_iso19115_3_transformer()
+    {
+        if (is_null(self::$extrif_to_endnote_transformer))
+        {
+            $iso_xsl = new DomDocument();
+            $iso_xsl->load(REGISTRY_APP_PATH.'registry_object/transforms/RIFCS-to-ISO19115-3.xsl');
+            $isoProc = new XSLTProcessor();
+            $isoProc->importStyleSheet($iso_xsl);
+            self::$extrif_to_endnote_transformer = $isoProc;
+        }
+
+        return self::$extrif_to_endnote_transformer;
+    }
 	
 }		

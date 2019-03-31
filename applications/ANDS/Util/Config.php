@@ -17,15 +17,16 @@ class Config
      * Get a configuration
      * Usage: Config::get('database'), Config::get('database.registry')
      *
-     * @param $name
+     * @param $path
      * @return mixed
      */
-    public static function get($name)
+    public static function get($path)
     {
         $config = null;
+        $name = $path;
         // get name.config if exists
-        if (strpos($name, ".") > 0) {
-            $parts = explode('.', $name);
+        if (strpos($path, ".") > 0) {
+            $parts = explode('.', $path);
             $name = $parts[0];
             $config = $parts[1];
         }
@@ -46,7 +47,11 @@ class Config
         // fetch the configuration that is already loaded (should)
         $configuration = self::$data[$name];
 
-        // TODO cater for multiple dot app.config.cache.something
+        if (array_key_exists($path, $dots = array_dot($configuration))) {
+            return $dots[$path];
+        }
+
+        // TODO cater for multiple dot app.config.cache.something using array_dot
         if ($config && array_key_exists($config, $configuration)) {
             return $configuration[$config];
         }

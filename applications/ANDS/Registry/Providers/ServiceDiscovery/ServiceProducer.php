@@ -29,7 +29,7 @@ class ServiceProducer {
     function processServices($service_json_file){
         $headers = [
             'Content-type' => 'application/json; charset=utf-8',
-            'Accept' => 'application/xml',
+            'Accept' => 'application/json',
         ];
         $response = "";
         $request = $this->http->post('processServices', $headers, $service_json_file);
@@ -53,38 +53,51 @@ class ServiceProducer {
             $this->responseCode = $e->getCode();
             return;
         }
-        $this->response = $response->xml()->asXML();
+        $this->response = $response->json();
     }
 
-    public function getServicebyURL($url, $type)
-    {
-        $response = "";
+    function getRifcsForServiceUrl($ogc_service_url, $type){
+
         $headers = [
-            'Content-type' => 'application/json; charset=utf-8',
+            'Content-type' => 'application/xml; charset=utf-8',
             'Accept' => 'application/xml',
         ];
+        $query = ['url'=>$ogc_service_url, 'type'=>$type];
+
+        $request = $this->http->get('getServiceAsRif',  $headers, ["query" => $query]);
+
         try {
-            $response = $this->http->get('getRifService', $headers, ["query" => ['url'=>$url, 'type' => $type]])->send();
+            $response = $request->send();
             $this->responseCode = $response->getStatusCode();
         }
         catch (ClientErrorResponseException $e) {
-            $this->errors[] = $e->getMessage();
+            $this->errors = $e->getResponse()->json();
             $this->responseCode = $e->getCode();
+            return null;
         }
         catch (ServerErrorResponseException $e){
+            $this->errors[] = $e->getResponse()->json();
+            $this->responseCode = $e->getCode();
+            return null;
+        }
+        catch (\Exception $e) {
             $this->errors[] = $e->getMessage();
             $this->responseCode = $e->getCode();
+            return null;
         }
-        $this->response = $response->xml()->asXML();
+        return $response->xml()->saveXML();
     }
-    
-    function getServiceCount(){
-        $registryObjects = XMLUtil::getElementsByName($this->response, 'registryObject');
-        return count($registryObjects);
+
+    function getSummary(){
+        return $this->response['summary'];
     }
 
     function getRegistryObjects(){
-        return $this->response;
+        return base64_decode($this->response['B64XML']);
+    }
+
+    function mockResponse($jsonString){
+        $this->response = json_decode($jsonString, true);
     }
     
 }

@@ -401,9 +401,6 @@ class Page extends MX_Controller
             case "twitter":
                 $shareUrl = "https://twitter.com/share?url=".$url."&text=".$title."&hashtags=andsdata";
                 break;
-            case "google":
-                $shareUrl = "https://plus.google.com/share?url=".$url;
-                break;
         }
 
         // Do the Redirect

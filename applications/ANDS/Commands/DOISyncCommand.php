@@ -34,7 +34,7 @@ class DOISyncCommand extends Command
             ->setDescription('Sync DOI with Datacite')
             ->setHelp("This command allows you to sync local DOI with remote Datacite server")
 
-            ->addArgument('what', InputArgument::REQUIRED, 'identify|process|checkWrongDoiInXML|processWrongDOI')
+            ->addArgument('what', InputArgument::REQUIRED, 'identify|process|checkWrongDoiInXML|processWrongDOI|checkDataCiteInfo')
             ->addArgument('id', InputArgument::OPTIONAL, 'id of the record')
         ;
     }
@@ -55,6 +55,10 @@ class DOISyncCommand extends Command
 
         if ($command == "identify") {
             $this->identify($input, $output);
+        }
+
+        if ($command == "checkDataCiteInfo") {
+            $this->checkDataCiteInfo($input, $output);
         }
 
         if ($command == "deleteDOIs") {
@@ -110,7 +114,7 @@ class DOISyncCommand extends Command
                         }else{
                             $this->log("Deleting " . $missing);
                             $dataciteClient = $this->getDataciteClient($client);
-                            $dataciteClient->setDataciteUrl("https://app.datacite.org/");
+                            $dataciteClient->setDataciteUrl("https://api.datacite.org/");
                             $dataciteClient->deleteDOI($missing, $dataciteClient);
                         }
                     }
@@ -118,6 +122,85 @@ class DOISyncCommand extends Command
             }
         }
         $progressBar->finish();
+    }
+
+    private function checkDataCiteInfo(InputInterface $input, OutputInterface $output)
+    {
+
+        $clientModel = new Client;
+        $clientModel->setConnection('dois');
+
+        $clients = $clientModel->get();
+
+        if ($id = $input->getArgument('id')) {
+            $client = $clientModel->find($id);
+            if (!$client) {
+                $output->writeln("<error>Error client $id not found</error>");
+                die();
+            }
+            $clients = [$client];
+        }
+        $data = [];
+        $progressBar = new ProgressBar($output, count($clients));
+
+        foreach ($clients as $client) {
+
+
+            if ($client->status == 'ACTIVE' && $client->client_id != 72) {
+
+                $doiModel = new Doi;
+                $doiModel->setConnection('dois');
+
+                $databaseDOIs = $doiModel
+                    ->where('client_id', $client->client_id)
+                    ->whereIn('status', ['ACTIVE', 'INACTIVE', 'RESERVED', 'RESERVED_INACTIVE'])
+                    ->lists('url', 'doi_id')
+                    ->map(function ($item) {
+                        return strtoupper($item);
+                    })->filter(function ($item) {
+                        return strpos($item, "10.5072") === false;
+                    })->toArray();
+
+
+                $dataciteClient = $this->getDataciteClient($client);
+
+                $dataciteClient->setDataciteUrl("https://api.datacite.org");
+
+                $allDataciteMintedClientDOIs = $dataciteClient->getDOIURLs("");
+
+
+                foreach ($databaseDOIs as $doi => $values) {
+                    if (str_replace("10.5072", "", $doi) == $doi) {
+                        $db_doi = strtoupper($doi);
+                        $db_dois[$db_doi] = strtoupper($values);
+                    }
+                }
+
+                if (is_array($allDataciteMintedClientDOIs)) {
+
+                    foreach ($allDataciteMintedClientDOIs as $doi => $values) {
+                        if (str_replace("10.5072", "", $doi) == $doi) {
+                            if ($db_dois[$doi] != strtoupper($values['url'])) {
+                                $data[$doi ] = " has url " . $db_dois[$doi] . " in DB and " . $values['url'] . " at DataCite";
+                            }
+
+                            if (is_null($values['xml'])) {
+                                $data[$doi ] =   " has lost xml link at datacite";
+                            }
+
+                        }
+                    }
+                }
+
+                $this->displayStat($client, $data, $output);
+                $data = [];
+
+            }
+            $progressBar->advance(1);
+        }
+        $progressBar->finish();
+
+        $this->displayStat($client, $data, $output);
     }
 
     private function identify(InputInterface $input, OutputInterface $output)
@@ -139,7 +222,7 @@ class DOISyncCommand extends Command
         $progressBar = new ProgressBar($output, count($clients));
         foreach ($clients as $client) {
             //only want to process active clients - also client 72 has well over 200000 dois so cannot be listed from datacite
-            if($client->status=='ACTIVE' && $client->client_id!=72) {
+            if($client->status=='ACTIVE') {
                 $stat = $this->getStat($client);
                 $data[] = [
                     'client' => $client,
@@ -259,7 +342,7 @@ class DOISyncCommand extends Command
 
         $dataciteClient = $this->getDataciteClient($client);
 
-        $dataciteClient->setDataciteUrl("https://app.datacite.org/");
+        $dataciteClient->setDataciteUrl("https://api.datacite.org");
 
         $allDataciteMintedClientDOIs = $dataciteClient->getDOIs("");
 
@@ -282,10 +365,14 @@ class DOISyncCommand extends Command
                 return !in_array($item, $databaseDOIs);
             })->toArray();
 
+
+
         $missingInDatacite = collect($difference)
             ->filter(function($item) use ($allDataciteMintedDOIs) {
                 return !in_array($item, $allDataciteMintedDOIs);
             })->toArray();
+
+        var_dump($missingInDatacite);
 
 
         return [

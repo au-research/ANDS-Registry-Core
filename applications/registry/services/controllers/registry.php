@@ -9,6 +9,9 @@
  * @package ands/services/registry
  * 
  */
+
+use ANDS\Util\StrUtil;
+
 class Registry extends MX_Controller {
 
 	//formatResponse is a helper function in engine/helper/presentation_function
@@ -361,10 +364,23 @@ class Registry extends MX_Controller {
 		for( $i = 0; $i < $length; $i++ ) {
 			$str .= $chars[ rand( 0, $size - 1 ) ];
 		}
-		$jsonData['key'] = $str;
+		$jsonData['key'] = StrUtil::generateUUIDFromString($str);
 		$jsonData = json_encode($jsonData);
 		echo $jsonData;
 	}
+
+
+    // http://guid.us/GUID/PHP
+    private static function generateUUIDFromString($sting){
+        $charid = strtolower(md5($sting));
+        $hyphen = chr(45);// "-"
+        $uuid = substr($charid, 0, 8).$hyphen
+            .substr($charid, 8, 4).$hyphen
+            .substr($charid,12, 4).$hyphen
+            .substr($charid,16, 4).$hyphen
+            .substr($charid,20,12);
+        return $uuid;
+    }
 
 	/**
 	 * check a key to see uniqueness

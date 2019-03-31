@@ -7,7 +7,10 @@ $(function(){
 			//console.log($(this).attr('id'));
 			var ro_class = $(this).attr('id');
 			var theInput = '<input type="text" class="input-xlarge rifcs-type" vocab="RIFCS'+ro_class+'Type" name="type" value="" required autocomplete="off">';
+
 			$('#ro_type').html(theInput);
+
+
 			$('#AddNewDS_confirm').attr('ro_class', ro_class);
 			$('#AddNewDS_confirm').html('Add New '+ro_class);
 
@@ -15,14 +18,33 @@ $(function(){
 			initVocabWidgets();
 
 			//Core_bindFormValidation($('#AddNewDS form'));
+			if(ro_class == 'service'){
+                $('input[name=type]').on({
+                    change:function(e){
+                        var type = $('input[name=type]').val();
+                        if(type.startsWith("OGC:")){
+                            $('#ogc_service_url_group').show();
+                        }
+                        else{
+                            $('#ogc_service_url_group').hide();
+                        }
+                    }
+                });
+			}
+            $('input[name=ogc_service_url]').val('');
+			$('#ogc_service_url_group').hide();
 		}
-	});	
+	});
+
     $('input[name=key]').on({
     	blur: function(e){
     		e.preventDefault();
     		$('.alert-error').hide();
     	}
     });
+
+
+
 
 	$('#generate_random_key').live({
 		click:function(e){
@@ -53,6 +75,7 @@ $(function(){
 				group = $('input[name=group]').val();
 				data_source_id = $('select[name=data_source_id]').val();
 				originating_source = $('input[name=originatingSource]').val();
+                ogc_service_url = $('input[name=ogc_service_url]').val();
 				if(isUniqueMsg = isUniqueKey(registry_object_key, null, data_source_id))
 				{				
 					Core_addValidationMessage($('input[name=key]'), 'error', isUniqueMsg);
@@ -60,7 +83,7 @@ $(function(){
 				}
 				else
 				{
-					var data = {data_source_id:data_source_id, registry_object_key:registry_object_key, ro_class:ro_class, type:type, group:group, originating_source:originating_source};
+					var data = {data_source_id:data_source_id, registry_object_key:registry_object_key, ro_class:ro_class, type:type, group:group, originating_source:originating_source, ogc_service_url:ogc_service_url};
 					$.ajax({
 						type: 'POST',
 						url: base_url+'registry_object/add_new',

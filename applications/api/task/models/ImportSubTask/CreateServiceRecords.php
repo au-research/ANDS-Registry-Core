@@ -36,12 +36,15 @@ class CreateServiceRecords extends ImportSubTask
         $this->log("Generating services from $service_json_file");
         $services_json = file_get_contents($service_json_file);
         $serviceProduce->processServices($services_json);
-        $serviceCount = $serviceProduce->getServiceCount();
-        if ($serviceCount == 0) {
-            $this->log("No Services generated");
-            return;
+        $summary = $serviceProduce->getSummary();
+
+        $this->log("Tested " . $summary['number_of_links_tested'] . " service links");
+        $this->log("Generated " . $summary['number_of_service_created'] . " rifcs service records");
+        $this->log($summary['number_of_links_failed'] . " Links Failed");
+        if(sizeof($summary['error_msgs']) > 0){
+            foreach ($summary['error_msgs'] as $error)
+                $this->log($error);
         }
-        $this->log("Generated $serviceCount rifcs service records");
 
         $harvestedContentDir = \ANDS\Util\config::get('app.harvested_contents_path');
 
@@ -58,7 +61,8 @@ class CreateServiceRecords extends ImportSubTask
         file_put_contents($filePath, $serviceProduce->getRegistryObjects());
         $this->parent()->loadPayload();
         $this->parent()->setTaskData('payload', $filePath);
-
-        $this->parent()->updateHarvest(["importer_message" => "Generated $serviceCount rifcs service records"]);
+        $this->parent()->setTaskData("number_of_links_tested", $summary['number_of_links_tested']);
+        $this->parent()->setTaskData("number_of_links_failed", $summary['number_of_links_failed']);
+        $this->parent()->updateHarvest(["importer_message" => "Generated " . $summary['number_of_service_created'] . " rifcs service records"]);
     }
 }

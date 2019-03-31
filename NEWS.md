@@ -1,3 +1,20 @@
+## Release 31
+
+Release 31 of ARDC Online Services is scheduled for implementation on 2 April 2019, between 8am and 12pm AEDT. This release implements a number of enhancements and bug fixes to the Research Data Australia Registry and Research Vocabularies Australia. Below is the list of all the changes planned for this release.
+
+**Research Data Australia (RDA)**
+
+* Remove Google share functionality (CC-2461)
+
+**Research Data Australia Registry**
+
+* Allow users to auto populate the add registry object form by providing an OGC service URL (CC-1818)
+* Enable the registry to store and expose via OAI-PMH, multiple metadata formats for records (CC-1818)
+
+**DOI Service**
+
+* Migrate test accounts to the DOI Fabrica Test system (CC-2211)
+
 ## Release 30
 
 ANDS Online Services Release 30 is due for implementation on Tuesday, 4 December 2018.  Please find below the summary of all Release 30 changes with an overview of who, what and how the changes will impact our users.

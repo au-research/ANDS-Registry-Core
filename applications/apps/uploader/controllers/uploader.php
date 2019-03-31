@@ -146,6 +146,9 @@ class Uploader extends MX_Controller {
 		parent::__construct();
 		acl_enforce('PORTAL_STAFF');
 		$this->load->helper(array('form', 'url'));
+		$config = \ANDS\Util\Config::get('app');
+		$path = array_dot($config)['storage.uploads.path'];
+		$this->directory = $path;
 	}
 
 

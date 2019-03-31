@@ -260,6 +260,7 @@ class ImportTask extends Task
                     "IndexPortal",
                     "IndexRelationship",
                     "ProcessGraphRelationships",
+                    "GenerateISOServiceRecord",
                     "FinishImport",
                     "WriteImportSummary"
                 ];
@@ -284,6 +285,7 @@ class ImportTask extends Task
                     "IndexPortal",
                     "IndexRelationship",
                     "ProcessGraphRelationships",
+                    "GenerateISOServiceRecord",
                     "FinishImport",
                 ];
                 break;
@@ -391,6 +393,7 @@ class ImportTask extends Task
                     "HandleRefreshHarvest",
                     "ProcessDelete",
                     "ProcessIdentifiers",
+                    "IngestNativeSchema",
                     "ProcessLinks",
                     "ProcessRelationships",
                     "ProcessGraphRelationships",
@@ -709,7 +712,9 @@ class ImportTask extends Task
             "recordsDeletedCount" => "Records deleted",
             "datasourceRecordBeforeCount" => "Number of " . $targetStatus . " records Before Import",
             "datasourceRecordAfterCount" => "Number of " . $targetStatus . " records After Import",
-            "url" => "URL"
+            "url" => "URL",
+            "number_of_links_tested" => "Number of service links tested",
+            "number_of_links_failed" => "Number of service links which didn’t return a valid response"
         ];
 
         $message = [];
