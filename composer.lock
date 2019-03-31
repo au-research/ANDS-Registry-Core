@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
     "content-hash": "25f79d660a17a830a5304120dcf8d330",
@@ -66,12 +66,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/au-research/ANDS-DOI-Service.git",
-                "reference": "6dbbd93a78501b4b7dc7cb3fa90b41b62e9513a8"
+                "reference": "233dee5aa062214fe6fbd948f66eda0572b90ebb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/au-research/ANDS-DOI-Service/zipball/6dbbd93a78501b4b7dc7cb3fa90b41b62e9513a8",
-                "reference": "6dbbd93a78501b4b7dc7cb3fa90b41b62e9513a8",
+                "url": "https://api.github.com/repos/au-research/ANDS-DOI-Service/zipball/233dee5aa062214fe6fbd948f66eda0572b90ebb",
+                "reference": "233dee5aa062214fe6fbd948f66eda0572b90ebb",
                 "shasum": ""
             },
             "require": {
@@ -99,7 +99,7 @@
                 }
             ],
             "description": "ANDS DOI Service library",
-            "time": "2019-03-08T00:28:21+00:00"
+            "time": "2019-03-19T02:01:05+00:00"
         },
         {
             "name": "cebe/markdown",
@@ -3298,7 +3298,7 @@
                 },
                 {
                     "name": "Gert de Pagter",
-                    "email": "BackEndTea@gmail.com"
+                    "email": "backendtea@gmail.com"
                 }
             ],
             "description": "Symfony polyfill for ctype functions",
