@@ -45,7 +45,8 @@ class ISO19115_3Provider implements RegistryContentProvider
             $schema = new Schema();
             $schema->setRawAttributes([
                 'prefix' => Schema::getPrefix(static::$schema_uri),
-                'uri' => static::$schema_uri
+                'uri' => static::$schema_uri,
+                'exportable' => 1
             ]);
             $schema->save();
         }
