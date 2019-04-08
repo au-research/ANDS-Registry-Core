@@ -561,7 +561,8 @@ Y2  - '.date("Y-m-d")."
                 if($grant_objects){
                     foreach ($grant_objects as $grant_object)
                     {
-                        $grant_sxml = $grant_object->getSimpleXML(NULL, true);
+                        // true means extrif !!
+                        $grant_sxml = $grant_object->getSimpleXML(NULL);
                         if($grant_object->status == PUBLISHED){
                             $grant_id = $grant_sxml->xpath("//ro:identifier[@type='arc'] | //ro:identifier[@type='nhmrc'] | //ro:identifier[@type='purl']");
 
