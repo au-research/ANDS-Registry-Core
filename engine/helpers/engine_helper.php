@@ -542,7 +542,11 @@ function debug($message, $type = "debug") {
     }
 
     $logger = new \Monolog\Logger('debug');
-    $handler = new \Monolog\Handler\StreamHandler('logs/debug.log');
+
+    $storageConfig = ANDS\Util\Config::get('app.storage');
+    $logsPath = $storageConfig['logs']['path'];
+    
+    $handler = new \Monolog\Handler\StreamHandler($logsPath.'/debug.log');
     $logger->pushHandler($handler);
     if ($type == "debug") {
         $logger->debug($message);
