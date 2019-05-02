@@ -19,6 +19,11 @@ class IngestNativeSchema extends ImportSubTask
 
     public function run_task()
     {
+        if (!$this->parent()->hasPayloadExtension('tmp')) {
+            $this->log("No native schema exists");
+            return;
+        }
+
         $payloads = $this->parent()->loadPayload('tmp')->getPayloads();
         $multiplePayloads = count($payloads) > 1 ? true : false;
         $this->data_source = DataSourceRepository::getByID($this->parent()->dataSourceID);
