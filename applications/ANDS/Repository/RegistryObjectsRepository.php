@@ -356,6 +356,20 @@ class RegistryObjectsRepository
         return $query->get();
     }
 
+    public static function getAllByFilters($filters)
+    {
+        $query = static::getByFilters($filters, RegistryObject::where('status', '<>', 'DELETED'));
+
+        return $query->get();
+    }
+
+    public static function getCountByFilters($filters)
+    {
+        $query = static::getByFilters($filters, RegistryObject::where('status', '<>', 'DELETED'));
+
+        return $query->count();
+    }
+
     public static function getCountPublished($filters)
     {
         $query = static::getPublishedQuery($filters);
@@ -366,6 +380,18 @@ class RegistryObjectsRepository
     public static function getPublishedQuery($filters)
     {
         $query = RegistryObject::where('status', 'PUBLISHED');
+
+        return static::getByFilters($filters, $query);
+    }
+
+    /**
+     * @param $filters
+     * @param null $q
+     * @return RegistryObject
+     */
+    public static function getByFilters($filters, $q = null)
+    {
+        $query = $q ? $q: RegistryObject::orderBy('registry_object_id', 'asc');
 
         // limit and offset
         if (array_key_exists('limit', $filters)) {
@@ -428,8 +454,8 @@ class RegistryObjectsRepository
             }
         }
 
-//        var_dump($query->getBindings());
-//        dd($query->toSql());
+        //        var_dump($query->getBindings());
+//                dd($query->toSql());
 
         return $query;
     }
