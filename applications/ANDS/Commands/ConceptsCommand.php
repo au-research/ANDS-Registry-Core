@@ -157,10 +157,19 @@ class ConceptsCommand extends Command
 
         $output->writeln("Indexing: $type to {$this->solrUrl}");
 
-        // special condition for anzsrc-for
-        // TODO: investigate gcmd-sci https://vocabs.ands.org.au/vocabs/services/vocabs/gcmd-sci/tree-raw
-        if ($type == "anzsrc-for" || $type == "anzsrc-seo") {
-            $source = "https://vocabs.ands.org.au/vocabs/services/vocabs/" . $type . "/tree-raw";
+        // TODO: make dynamic, use the VocabsRegistryAPI to find the latest artefact version
+        $conceptsSourceURLs = [
+            'anzsrc-for' => 'https://vocabs.ands.org.au/registry/api/resource/versions/28/versionArtefacts/conceptTree',
+            'anzsrc-seo' => 'https://vocabs.ands.org.au/registry/api/resource/versions/18/versionArtefacts/conceptTree',
+
+            // gcmd-sci on RVA
+            'gcmd' => 'https://vocabs.ands.org.au/registry/api/resource/versions/16/versionArtefacts/conceptTree',
+
+            //'iso639-3' -> should come from file
+        ];
+
+        if (in_array($type, array_keys($conceptsSourceURLs))) {
+            $source = $conceptsSourceURLs[$type];
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $source);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -170,13 +179,7 @@ class ConceptsCommand extends Command
             $concepts_source = file_get_contents($source);
         }
 
-        $concepts_array = json_decode($concepts_source, true);
-
-        $concepts = $concepts_array['message'];
-
-        if ($type === "gcmd") {
-           $concepts = $concepts_array[0]['narrower'];
-        }
+        $concepts = json_decode($concepts_source, true);
 
         $this->generate_solr(
             $concepts,
