@@ -60,7 +60,6 @@ class JsonLDProvider implements RIFCSProvider
             $json_ld->creator = self::getCreator($record, $data);
             $json_ld->citation = self::getCitation($data);
             $json_ld->dateCreated = self::getDateCreated($record, $data);
-            $json_ld->dateModified = self::getDateModified($record, $data);
             $json_ld->datePublished = DatesProvider::getPublicationDate($record);
             $json_ld->alternativeHeadline = self::getAlternateName($record, $data);
             $json_ld->version = self::getVersion($record, $data);
@@ -132,6 +131,7 @@ class JsonLDProvider implements RIFCSProvider
         return $identifiers;
     }
 
+
     public static function getSpatialCoverage(
         RegistryObject $record,
         $data = null
@@ -141,16 +141,13 @@ class JsonLDProvider implements RIFCSProvider
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class . '/ro:coverage/ro:spatial') AS $coverage) {
 
-            $type = (string)$coverage['type'];
+            $processabelTypes = ["iso19139dcmiBox", "dcmiPoint", "gmlKmlPolyCoords", "kmlPolyCoords"];
 
-            if($type == "iso19139dcmiBox"){
-                $geo = array("@type"=>"GeoShape","box"=>(string)$coverage);
-                $coverages[] = array("@type" => "Place", "geo" =>$geo);
+            $type = (string)$coverage['type'];
+            if(in_array($type, $processabelTypes)){
+                $coverages[] = static::processCoordinates($type, (string)$coverage);
             }
-            if($type == "dcmiPoint" || $type == "gmlKmlPolyCoords"|| $type == "kmlPolyCoords") {
-                $geo = array("@type"=>"GeoShape","polygon"=>(string)$coverage);
-                $coverages[] = array("@type" => "Place", "geo" =>$geo);
-            }else{
+            else{
                 $coverages[] = array("@type" => "Place", "description" => $coverage['type'] . " " . (string)$coverage);
             }
         };
@@ -265,6 +262,101 @@ class JsonLDProvider implements RIFCSProvider
         return $citation;
 
     }
+
+    public static function processCoordinates($type, $coords){
+
+        $coverage = [];
+
+        if($type == "iso19139dcmiBox"){
+            $geo = static::getGeo($coords);
+            $coverage = array("@type" => "Place", "geo" =>$geo);
+        }
+        elseif($type == "dcmiPoint"){
+            $geo = static::GeoCoordinates($coords);
+            $coverage = array("@type" => "Place", "geo" =>$geo);
+        }
+        elseif($type == "gmlKmlPolyCoords"|| $type == "kmlPolyCoords") {
+            $coordsArray = explode(" ", $coords);
+
+            if (sizeof($coordsArray) > 1) {
+                $geo = static::getBoxFromCoordsArray($coordsArray);
+                $coverage = array("@type" => "Place", "geo" => $geo);
+            } else {
+                $latLon = $coordsArray = explode(",", $coordsArray[0]);
+                $geo = array("@type" => "GeoCoordinates", "latitude" => $latLon[1], "longitude" => $latLon[0]);
+                $coverage = array("@type" => "Place", "geo" => $geo);
+            }
+        }
+        return $coverage;
+    }
+
+    public static function getBoxFromCoordsArray($coordsArray){
+        $north = -90;
+        $south = 90;
+        $west = 180;
+        $east = -180;
+        foreach( $coordsArray as $latLon){
+            $latLon = $coordsArray = explode(",", $latLon);
+            if($north < $latLon[1])
+                $north = $latLon[1];
+            if($south > $latLon[1])
+                $south = $latLon[1];
+            if($east < $latLon[0])
+                $east = $latLon[0];
+            if($west > $latLon[0])
+                $west= $latLon[0];
+        }
+        return array("@type" => "GeoShape", "box" => $south. " " .$west. " " . $north. " " .$east );
+    }
+
+    public static function getCoordinates($coords){
+        $tok = strtok($coords, ";");
+        $north = null;
+        $east = null;
+        while ($tok !== false) {
+            $keyValue = explode("=", $tok);
+            if (strtolower(trim($keyValue[0])) == 'north' && is_numeric($keyValue[1])) {
+                $north = floatval($keyValue[1]);
+            }
+            if (strtolower(trim($keyValue[0])) == 'east' && is_numeric($keyValue[1])) {
+                $east = floatval($keyValue[1]);
+            }
+            $tok = strtok(";");
+        }
+        return array("@type"=>"GeoCoordinates", "latitude"=>$north, "longitude"=>$east);
+    }
+
+    public static function getGeo($dcmiText){
+        $tok = strtok($dcmiText, ";");
+        $north = null;
+        $south = null;
+        $west = null;
+        $east = null;
+        while ($tok !== false) {
+            $keyValue = explode("=", $tok);
+            if (strtolower(trim($keyValue[0])) == 'northlimit' && is_numeric($keyValue[1])) {
+                $north = floatval($keyValue[1]);
+            }
+            if (strtolower(trim($keyValue[0])) == 'southlimit' && is_numeric($keyValue[1])) {
+                $south = floatval($keyValue[1]);
+            }
+            if (strtolower(trim($keyValue[0])) == 'westlimit' && is_numeric($keyValue[1])) {
+                $west = floatval($keyValue[1]);
+            }
+            if (strtolower(trim($keyValue[0])) == 'eastlimit' && is_numeric($keyValue[1])) {
+                $east = floatval($keyValue[1]);
+            }
+            $tok = strtok(";");
+        }
+
+            if ($north == $south && $east == $west) {
+                return array("@type"=>"GeoCoordinates","latitude"=>$north, "longitude"=>$east);
+            } else {
+                return array("@type" => "GeoShape", "box" => $south. " " .$west. " " . $north. " " .$east );
+            }
+
+    }
+
 
     public static function getFunder(
         RegistryObject $record
@@ -405,7 +497,7 @@ class JsonLDProvider implements RIFCSProvider
                 $distArray = [];
                 $distArray["@type"] = "DataDownload";
                 $distArray["contentSize"] = (string)$distribute->byteSize;
-                $distArray["URL"] = (string)$distribute->value;
+                $distArray["contentUrl"] = (string)$distribute->value;
                 $distArray["fileFormat"] = (string)$distribute->mediaType;
                 if($notes) $distArray["description"] = $notes;
                 $distribution[] = $distArray;
@@ -464,7 +556,7 @@ class JsonLDProvider implements RIFCSProvider
         $data = null
     )
     {
-        $creatorArray = array("isPrincipalInvestigatorOf","author","coInvestigator","isOwnedBy","hasCollector");
+        $creatorArray = array("isPrincipalInvestigatorOf","author","coInvestigator", "hasCollector");
 
         if (!$data) {
             $data = MetadataProvider::getSelective($record, ['recordData']);
@@ -608,7 +700,7 @@ class JsonLDProvider implements RIFCSProvider
         }
 
         $relationships = $data['relationships'];
-
+        $usedRelTypes = ["isOwnedBy", "isOwnerOf", "isManagedBy", "isManagerOf"];
         $accountablePerson = [];
 
         foreach ($relationships as $relation) {
@@ -618,10 +710,10 @@ class JsonLDProvider implements RIFCSProvider
             } else {
                 $relation_types[] = $relation->prop('relation_type');
             }
-
             if (($relation->prop("to_class") == "party" || $relation->prop("to_related_info_type") == "party")
-                && (in_array("isOwnedBy", $relation_types) || in_array("isOwnerOf", $relation_types))
+                && (sizeof(array_intersect($usedRelTypes, $relation_types)) > 0)
             ) {
+
                 if ($relation->prop("to_type") == 'group' || $relation->prop("to_related_info_type") == 'group') {
                     $type = "Organization";
                 } else {
@@ -634,7 +726,6 @@ class JsonLDProvider implements RIFCSProvider
                 }
             }
         }
-
         return $accountablePerson;
     }
 
