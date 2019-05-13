@@ -56,7 +56,6 @@ class JsonLDProvider implements RIFCSProvider
             $json_ld->termsOfService = self::getTermsOfService($record, $data);
         } elseif ($record->class == 'collection'){
             $json_ld->accountablePerson = self::getAccountablePerson($record, $data);
-            $json_ld->author = self::getAuthor($record, $data);
             $json_ld->creator = self::getCreator($record, $data);
             $json_ld->citation = self::getCitation($data);
             $json_ld->dateCreated = self::getDateCreated($record, $data);
@@ -276,37 +275,49 @@ class JsonLDProvider implements RIFCSProvider
             $coverage = array("@type" => "Place", "geo" =>$geo);
         }
         elseif($type == "gmlKmlPolyCoords"|| $type == "kmlPolyCoords") {
-            $coordsArray = explode(" ", $coords);
+            $geo = static::getBoxFromCoords($coords);
+            $coverage = array("@type" => "Place", "geo" => $geo);
 
-            if (sizeof($coordsArray) > 1) {
-                $geo = static::getBoxFromCoordsArray($coordsArray);
-                $coverage = array("@type" => "Place", "geo" => $geo);
-            } else {
-                $latLon = $coordsArray = explode(",", $coordsArray[0]);
-                $geo = array("@type" => "GeoCoordinates", "latitude" => $latLon[1], "longitude" => $latLon[0]);
-                $coverage = array("@type" => "Place", "geo" => $geo);
-            }
         }
         return $coverage;
     }
 
-    public static function getBoxFromCoordsArray($coordsArray){
+    /*
+     * JIRA  CC-2360
+     * simplifies a list of lat long coordinates to produces a bounding box
+     * Currently not displaying in Google Dataset Search.
+     * ("box" GeoShapes display, but GeoShape "polygon" doesn't seem to display).
+     * If polygon is not supported going forward we can produce a box which has the poly extents.
+     * Send a query to Google to see if they will support "polygon"?
+     *
+     */
+    public static function getBoxFromCoords($coords){
         $north = -90;
         $south = 90;
         $west = 180;
         $east = -180;
-        foreach( $coordsArray as $latLon){
-            $latLon = $coordsArray = explode(",", $latLon);
-            if($north < $latLon[1])
-                $north = $latLon[1];
-            if($south > $latLon[1])
-                $south = $latLon[1];
-            if($east < $latLon[0])
-                $east = $latLon[0];
-            if($west > $latLon[0])
-                $west= $latLon[0];
+        $coordsArray = explode(" ", $coords);
+
+        if (sizeof($coordsArray) > 1) {
+            foreach( $coordsArray as $latLon){
+                $latLon = $coordsArray = explode(",", $latLon);
+                if($north < $latLon[1])
+                    $north = $latLon[1];
+                if($south > $latLon[1])
+                    $south = $latLon[1];
+                if($east < $latLon[0])
+                    $east = $latLon[0];
+                if($west > $latLon[0])
+                    $west= $latLon[0];
+            }
+            $geo =array("@type" => "GeoShape", "box" => $south. " " .$west. " " . $north. " " .$east );
+        } else {
+            $latLon = $coordsArray = explode(",", $coordsArray[0]);
+            $geo = array("@type" => "GeoCoordinates", "latitude" => $latLon[1], "longitude" => $latLon[0]);
+
         }
-        return array("@type" => "GeoShape", "box" => $south. " " .$west. " " . $north. " " .$east );
+
+        return $geo;
     }
 
     public static function getCoordinates($coords){
@@ -326,6 +337,11 @@ class JsonLDProvider implements RIFCSProvider
         return array("@type"=>"GeoCoordinates", "latitude"=>$north, "longitude"=>$east);
     }
 
+    /*
+     *  dcmiText not sure how it worked before but
+     *  according to the schema.org specs the box element needs to have the actual coordinates not dcmibox attributes
+     *
+     */
     public static function getGeo($dcmiText){
         $tok = strtok($dcmiText, ";");
         $north = null;
@@ -358,9 +374,8 @@ class JsonLDProvider implements RIFCSProvider
     }
 
 
-    public static function getFunder(
-        RegistryObject $record
-    ){
+    public static function getFunder(RegistryObject $record)
+    {
         $funders = [];
         $provider = GrantsConnectionsProvider::create();
         $unprocessed = $provider->getFunder($record);
