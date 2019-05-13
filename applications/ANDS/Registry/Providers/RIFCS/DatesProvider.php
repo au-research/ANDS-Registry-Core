@@ -96,6 +96,7 @@ class DatesProvider implements RIFCSProvider
      * @param null $data
      * @param string $format
      * @return string
+     * @throws \Exception
      */
     public static function getPublicationDate(
         RegistryObject $record,
@@ -202,6 +203,93 @@ class DatesProvider implements RIFCSProvider
 
         return self::getCreatedDate($record, $format);
     }
+
+
+    /**
+     * @param RegistryObject $record
+     * @param null $data
+     * @param string $format
+     * @return string
+     */
+    public static function getPublicationDateForSchemadotOrg(
+        RegistryObject $record,
+        $data = null,
+        $format = 'Y-m-d'
+    ) {
+        if (!$data) {
+            $data = MetadataProvider::getSelective($record, ['recordData']);
+        }
+
+        $publicationDate = null;
+
+        try{
+            $citationMedataDates = XMLUtil::getElementsByXPath(
+                $data['recordData'],
+                'ro:registryObject/ro:' . $record->class . '/ro:citationInfo/ro:citationMetadata/ro:date'
+            );
+
+            // registryObject/collection/citationInfo/citationMetadata/date[@type=’publication date’]
+            foreach ($citationMedataDates AS $date) {
+                if ((string) $date['type'] == 'publicationDate') {
+                    $publicationDate = self::formatDate((string) $date, $format);
+                }
+            }
+            if ($publicationDate) return $publicationDate;
+
+            // registryObject/collection/citationInfo/citationMetadata/date[@type=’issued date’]
+            foreach ($citationMedataDates AS $date) {
+                if ((string) $date['type'] == 'issued') {
+                    $publicationDate = self::formatDate((string) $date, $format);
+                }
+            }
+            if ($publicationDate) return $publicationDate;
+
+
+            $roDates = XMLUtil::getElementsByXPath(
+                $data['recordData'],
+                'ro:registryObject/ro:' . $record->class . '/ro:dates'
+            );
+
+            // registryObject/collection/dates[@type=’issued’]
+            foreach ($roDates AS $date) {
+                if ((string) $date['type'] == 'dc.issued') {
+                    $publicationDate = self::formatDate((string) $date->date, $format);
+                }
+            }
+            if ($publicationDate) return $publicationDate;
+
+            // registryObject/collection/dates[@type=’available’]
+            foreach ($roDates AS $date) {
+                if ((string) $date['type'] == 'dc.available') {
+                    $publicationDate = self::formatDate((string) $date->date, $format);
+                }
+            }
+            if ($publicationDate) return $publicationDate;
+
+            /**
+             * registryObject/Collection@dateAccessioned
+             */
+            foreach (XMLUtil::getElementsByXPath($data['recordData'],
+                'ro:registryObject/ro:' . $record->class) AS $object) {
+
+                if ($dateAccessioned = (string) $object['dateAccessioned']) {
+                    $publicationDate = self::formatDate($dateAccessioned, $format);
+                }
+            }
+            if ($publicationDate) return $publicationDate;
+
+            return self::getCreatedDate($record, $format);
+        }
+        catch(\Exception $e)
+        {
+            return null;
+        }
+
+    }
+
+
+
+
 
     /**
      * Returns created date
