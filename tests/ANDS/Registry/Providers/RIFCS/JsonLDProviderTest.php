@@ -85,4 +85,21 @@ class JsonLDProviderTest extends \RegistryTestClass
 
     }
 
+
+    /** @test **/
+    public function it_should_convert_faulty_kmlpolycoords_to_null()
+    {
+        $dcmiText = "124.035156,fish";
+        $output = JsonLDProvider::getBoxFromCoords($dcmiText);
+        self::assertNull($output);
+    }
+
+    /** @test **/
+    public function it_should_convert_faulty_dcmi_box_to_null()
+    {
+        $dcmiText = "northlimit=4.65; southlimit=3.652; westlimit=; eastLimit=102.066;";
+        $output = JsonLDProvider::getGeo($dcmiText);
+        self::assertNull($output);
+
+    }
 }
