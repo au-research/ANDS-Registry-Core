@@ -144,7 +144,9 @@ class JsonLDProvider implements RIFCSProvider
 
             $type = (string)$coverage['type'];
             if(in_array($type, $processabelTypes)){
-                $coverages[] = static::processCoordinates($type, (string)$coverage);
+                $coverage = static::processCoordinates($type, (string)$coverage);
+                if($coverage != null)
+                    $coverages[] = $coverage;
             }
             else{
                 $coverages[] = array("@type" => "Place", "description" => $coverage['type'] . " " . (string)$coverage);
@@ -264,22 +266,22 @@ class JsonLDProvider implements RIFCSProvider
 
     public static function processCoordinates($type, $coords){
 
-        $coverage = [];
+        $geo = null;
 
         if($type == "iso19139dcmiBox"){
             $geo = static::getGeo($coords);
-            $coverage = array("@type" => "Place", "geo" =>$geo);
         }
         elseif($type == "dcmiPoint"){
             $geo = static::GeoCoordinates($coords);
-            $coverage = array("@type" => "Place", "geo" =>$geo);
         }
         elseif($type == "gmlKmlPolyCoords"|| $type == "kmlPolyCoords") {
             $geo = static::getBoxFromCoords($coords);
-            $coverage = array("@type" => "Place", "geo" => $geo);
-
         }
-        return $coverage;
+
+        if($geo == null)
+            return null;
+
+        return array("@type" => "Place", "geo" =>$geo);
     }
 
     /*
@@ -297,7 +299,7 @@ class JsonLDProvider implements RIFCSProvider
         $west = 180;
         $east = -180;
         $coordsArray = explode(" ", $coords);
-
+        $geo = null;
         if (sizeof($coordsArray) > 1) {
             foreach( $coordsArray as $latLon){
                 $latLon = $coordsArray = explode(",", $latLon);
@@ -310,10 +312,12 @@ class JsonLDProvider implements RIFCSProvider
                 if($west > $latLon[0])
                     $west= $latLon[0];
             }
-            $geo =array("@type" => "GeoShape", "box" => $south. " " .$west. " " . $north. " " .$east );
+            if(is_numeric($north) && is_numeric($east) && is_numeric($south) && is_numeric($west))
+                $geo =array("@type" => "GeoShape", "box" => $south. " " .$west. " " . $north. " " .$east );
         } else {
             $latLon = $coordsArray = explode(",", $coordsArray[0]);
-            $geo = array("@type" => "GeoCoordinates", "latitude" => $latLon[1], "longitude" => $latLon[0]);
+            if(is_numeric($latLon[1]) && is_numeric($latLon[0]))
+                $geo = array("@type" => "GeoCoordinates", "latitude" => $latLon[1], "longitude" => $latLon[0]);
 
         }
 
@@ -324,6 +328,7 @@ class JsonLDProvider implements RIFCSProvider
         $tok = strtok($coords, ";");
         $north = null;
         $east = null;
+        $geo = null;
         while ($tok !== false) {
             $keyValue = explode("=", $tok);
             if (strtolower(trim($keyValue[0])) == 'north' && is_numeric($keyValue[1])) {
@@ -334,7 +339,10 @@ class JsonLDProvider implements RIFCSProvider
             }
             $tok = strtok(";");
         }
-        return array("@type"=>"GeoCoordinates", "latitude"=>$north, "longitude"=>$east);
+        if(is_numeric($north) && is_numeric($east))
+            $geo = array("@type"=>"GeoCoordinates", "latitude"=>$north, "longitude"=>$east);
+
+        return $geo;
     }
 
     /*
@@ -348,6 +356,7 @@ class JsonLDProvider implements RIFCSProvider
         $south = null;
         $west = null;
         $east = null;
+        $geo = null;
         while ($tok !== false) {
             $keyValue = explode("=", $tok);
             if (strtolower(trim($keyValue[0])) == 'northlimit' && is_numeric($keyValue[1])) {
@@ -364,12 +373,15 @@ class JsonLDProvider implements RIFCSProvider
             }
             $tok = strtok(";");
         }
-
+        if(is_numeric($north) && is_numeric($east) && is_numeric($south) && is_numeric($west)){
             if ($north == $south && $east == $west) {
-                return array("@type"=>"GeoCoordinates","latitude"=>$north, "longitude"=>$east);
+                $geo = array("@type"=>"GeoCoordinates","latitude"=>$north, "longitude"=>$east);
             } else {
-                return array("@type" => "GeoShape", "box" => $south. " " .$west. " " . $north. " " .$east );
+                $geo = array("@type" => "GeoShape", "box" => $south. " " .$west. " " . $north. " " .$east );
             }
+        }
+
+        return $geo;
 
     }
 
