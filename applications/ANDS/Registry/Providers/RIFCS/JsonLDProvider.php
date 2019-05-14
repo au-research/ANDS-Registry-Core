@@ -59,7 +59,7 @@ class JsonLDProvider implements RIFCSProvider
             $json_ld->creator = self::getCreator($record, $data);
             $json_ld->citation = self::getCitation($data);
             $json_ld->dateCreated = self::getDateCreated($record, $data);
-            $json_ld->datePublished = DatesProvider::getPublicationDate($record);
+            $json_ld->datePublished = DatesProvider::getPublicationDateForSchemadotOrg($record);
             $json_ld->alternativeHeadline = self::getAlternateName($record, $data);
             $json_ld->version = self::getVersion($record, $data);
             $json_ld->fileFormat = self::getFileFormat($record, $data);
@@ -164,11 +164,30 @@ class JsonLDProvider implements RIFCSProvider
 
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class . '/ro:coverage/ro:temporal/ro:date') AS $coverage) {
-                $coverages[] = $coverage['type']." ".(string)$coverage;
+            $type = (string) $coverage['type'];
+            $coverages[$type] = (string)$coverage;
         };
 
-        return $coverages;
+
+        return static::formatTempCoverages($coverages);
     }
+
+    public static function formatTempCoverages($coverages){
+
+        $dateFrom = "..";
+        $dateTo = "..";
+        foreach ($coverages as $type=>$date)
+        {
+            $date = DatesProvider::formatDate($date);
+            if($type == 'dateFrom' && $date != null){
+                    $dateFrom = $date;
+                }
+                if($type == "dateTo" && $date != null)
+                    $dateTo = $date;
+        }
+       return $dateFrom . '/' . $dateTo;
+    }
+
 
     public static function getPublisher(
         RegistryObject $record,
@@ -300,25 +319,28 @@ class JsonLDProvider implements RIFCSProvider
         $east = -180;
         $coordsArray = explode(" ", $coords);
         $geo = null;
+
         if (sizeof($coordsArray) > 1) {
             foreach( $coordsArray as $latLon){
                 $latLon = $coordsArray = explode(",", $latLon);
-                if($north < $latLon[1])
-                    $north = $latLon[1];
-                if($south > $latLon[1])
-                    $south = $latLon[1];
-                if($east < $latLon[0])
-                    $east = $latLon[0];
-                if($west > $latLon[0])
-                    $west= $latLon[0];
+                if(is_numeric($latLon[1])){
+                    if($north < $latLon[1])
+                        $north = $latLon[1];
+                    if($south > $latLon[1])
+                        $south = $latLon[1];
+                }
+                if(is_numeric($latLon[0])){
+                    if($east < $latLon[0])
+                        $east = $latLon[0];
+                    if($west > $latLon[0])
+                        $west= $latLon[0];
+                }
             }
-            if(is_numeric($north) && is_numeric($east) && is_numeric($south) && is_numeric($west))
-                $geo =array("@type" => "GeoShape", "box" => $south. " " .$west. " " . $north. " " .$east );
+            $geo =array("@type" => "GeoShape", "box" => $south. "," .$west. " " . $north. "," .$east );
         } else {
             $latLon = $coordsArray = explode(",", $coordsArray[0]);
             if(is_numeric($latLon[1]) && is_numeric($latLon[0]))
                 $geo = array("@type" => "GeoCoordinates", "latitude" => $latLon[1], "longitude" => $latLon[0]);
-
         }
 
         return $geo;
@@ -377,7 +399,7 @@ class JsonLDProvider implements RIFCSProvider
             if ($north == $south && $east == $west) {
                 $geo = array("@type"=>"GeoCoordinates","latitude"=>$north, "longitude"=>$east);
             } else {
-                $geo = array("@type" => "GeoShape", "box" => $south. " " .$west. " " . $north. " " .$east );
+                $geo = array("@type" => "GeoShape", "box" => $south. "," .$west. " " . $north. "," .$east );
             }
         }
 

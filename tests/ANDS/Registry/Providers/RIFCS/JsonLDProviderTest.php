@@ -102,4 +102,12 @@ class JsonLDProviderTest extends \RegistryTestClass
         self::assertNull($output);
 
     }
+
+    /** @test **/
+    public function it_shouldnt_format_temporal_coverages()
+    {
+        $coverages = array("dateTo"=>"2019-05-07T03:01:02Z", "dateFrom"=>"2019-05-31T03:01:06Z");
+        $output = JsonLDProvider::formatTempCoverages($coverages);
+        print $output;
+    }
 }
