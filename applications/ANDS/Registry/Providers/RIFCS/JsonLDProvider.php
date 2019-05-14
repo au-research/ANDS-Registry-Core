@@ -34,53 +34,53 @@ class JsonLDProvider implements RIFCSProvider
         // Do the truth test first and early return to fix super node issue
         if ($record->class <> "collection" && $record->class <> "service") return "";
         if ($record->class == "collection" && $record->type <> "collection" && $record->type <> "dataset" && $record->type <> "software") return "";
-dd("HERE");
+
         $base_url = Config::get('app.default_base_url');
 
-//        $data = MetadataProvider::get($record);
-//
-//        $json_ld = new JsonLDProvider();
-//        $json_ld->{'@context'} = "http://schema.org/";
-//        if ($record->type == 'dataset' || $record->type == 'collection') {
-//            $json_ld->{'@type'} = "Dataset";
-//            //$json_ld->distribution = self::getDistribution($record, $data);
-//        }
-//        if ($record->type == 'software' && $record->class == "collection") {
-//            $json_ld->codeRepository = self::getCodeRepository($record, $data);
-//            $json_ld->{'@type'} = "SoftwareSourceCode";
-//        }
-//        if ($record->class == 'service') {
-//            $json_ld->{'@type'} = "Service";
-//            $json_ld->serviceType = $record->type;
-//            //$json_ld->provider = self::getProvider($record, $data);
-//            $json_ld->termsOfService = self::getTermsOfService($record, $data);
-//        } elseif ($record->class == 'collection'){
-//            $json_ld->accountablePerson = self::getAccountablePerson($record, $data);
-//            $json_ld->creator = self::getCreator($record, $data);
-//           // $json_ld->citation = self::getCitation($data);
-//            $json_ld->dateCreated = self::getDateCreated($record, $data);
-//            $json_ld->datePublished = DatesProvider::getPublicationDateForSchemadotOrg($record);
-//            $json_ld->alternativeHeadline = self::getAlternateName($record, $data);
-//            $json_ld->version = self::getVersion($record, $data);
-//            $json_ld->fileFormat = self::getFileFormat($record, $data);
-//            //$json_ld->funder = self::getFunder($record);
-//            //$json_ld->hasPart = self::getRelated($data, "hasPart");
-//            //$json_ld->isBasedOn = self::getRelated($data, "isDerivedFrom");
-//            //$json_ld->isPartOf = self::getRelated($data, "isPartOf");
-//            $json_ld->sourceOrganization = array("@type" => "Organization", "name" => $record->group);
-//            $json_ld->keywords = self::getKeywords($record);
-//            $json_ld->license = self::getLicense($record, $data);
-//            $json_ld->publisher = self::getPublisher($record, $data);
-//            $json_ld->spatialCoverage = self::getSpatialCoverage($record, $data);
-//            $json_ld->temporalCoverage = self::getTemporalCoverage($record, $data);
-//            $json_ld->inLanguage = "en";
-//        }
-//
-//        $json_ld->name = $record->title;
-//        $json_ld->description = self::getDescriptions($record, $data);
-//        $json_ld->alternateName = self::getAlternateName($record, $data);
-//        $json_ld->identifier = self::getIdentifier($record, $data);
-//        $json_ld->url = self::base_url() . "view?key=" . $record->key;
+        $data = MetadataProvider::get($record);
+
+        $json_ld = new JsonLDProvider();
+        $json_ld->{'@context'} = "http://schema.org/";
+        if ($record->type == 'dataset' || $record->type == 'collection') {
+            $json_ld->{'@type'} = "Dataset";
+            $json_ld->distribution = self::getDistribution($record, $data);
+        }
+        if ($record->type == 'software' && $record->class == "collection") {
+            $json_ld->codeRepository = self::getCodeRepository($record, $data);
+            $json_ld->{'@type'} = "SoftwareSourceCode";
+        }
+        if ($record->class == 'service') {
+            $json_ld->{'@type'} = "Service";
+            $json_ld->serviceType = $record->type;
+            $json_ld->provider = self::getProvider($record, $data);
+            $json_ld->termsOfService = self::getTermsOfService($record, $data);
+        } elseif ($record->class == 'collection'){
+            $json_ld->accountablePerson = self::getAccountablePerson($record, $data);
+            $json_ld->creator = self::getCreator($record, $data);
+            $json_ld->citation = self::getCitation($data);
+            $json_ld->dateCreated = self::getDateCreated($record, $data);
+            $json_ld->datePublished = DatesProvider::getPublicationDateForSchemadotOrg($record);
+            $json_ld->alternativeHeadline = self::getAlternateName($record, $data);
+            $json_ld->version = self::getVersion($record, $data);
+            $json_ld->fileFormat = self::getFileFormat($record, $data);
+            $json_ld->funder = self::getFunder($record);
+            $json_ld->hasPart = self::getRelated($data, "hasPart");
+            $json_ld->isBasedOn = self::getRelated($data, "isDerivedFrom");
+            $json_ld->isPartOf = self::getRelated($data, "isPartOf");
+            $json_ld->sourceOrganization = array("@type" => "Organization", "name" => $record->group);
+            $json_ld->keywords = self::getKeywords($record);
+            $json_ld->license = self::getLicense($record, $data);
+            $json_ld->publisher = self::getPublisher($record, $data);
+            $json_ld->spatialCoverage = self::getSpatialCoverage($record, $data);
+            $json_ld->temporalCoverage = self::getTemporalCoverage($record, $data);
+            $json_ld->inLanguage = "en";
+        }
+
+        $json_ld->name = $record->title;
+        $json_ld->description = self::getDescriptions($record, $data);
+        $json_ld->alternateName = self::getAlternateName($record, $data);
+        $json_ld->identifier = self::getIdentifier($record, $data);
+        $json_ld->url = self::base_url() . "view?key=" . $record->key;
 
         $json_ld = (object) array_filter((array) $json_ld);
         return json_encode($json_ld);
