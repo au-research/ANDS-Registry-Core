@@ -336,7 +336,7 @@ class JsonLDProvider implements RIFCSProvider
                         $west= $latLon[0];
                 }
             }
-            $geo =array("@type" => "GeoShape", "box" => $south. "," .$west. " " . $north. "," .$east );
+            $geo =array("@type" => "GeoShape", "box" => $south. " " .$west. " " . $north. " " .$east );
         } else {
             $latLon = $coordsArray = explode(",", $coordsArray[0]);
             if(is_numeric($latLon[1]) && is_numeric($latLon[0]))
@@ -399,7 +399,7 @@ class JsonLDProvider implements RIFCSProvider
             if ($north == $south && $east == $west) {
                 $geo = array("@type"=>"GeoCoordinates","latitude"=>$north, "longitude"=>$east);
             } else {
-                $geo = array("@type" => "GeoShape", "box" => $south. "," .$west. " " . $north. "," .$east );
+                $geo = array("@type" => "GeoShape", "box" => $south. " " .$west. " " . $north. " " .$east );
             }
         }
 

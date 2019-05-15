@@ -51,7 +51,7 @@ class JsonLDProviderTest extends \RegistryTestClass
     {
         $dcmiText = "northlimit=4.65; southlimit=3.652; westlimit=100.887; eastLimit=102.066;";
         $output = JsonLDProvider::getGeo($dcmiText);
-        self::assertEquals("3.652,100.887 4.65,102.066", $output['box']);
+        self::assertEquals("3.652 100.887 4.65 102.066", $output['box']);
 
     }
 
@@ -71,7 +71,7 @@ class JsonLDProviderTest extends \RegistryTestClass
         $dcmiText = "124.035156,-18.082766 127.199219,-15.897502 133.878906,-16.404031 140.031250,-13.858969 144.074219,-12.146298 147.414063,-17.077352 149.523438,-23.018655 150.578125,-29.324321 141.261719,-28.374150 138.273438,-23.475493 134.933594,-26.659391 125.968750,-25.236898 119.992188,-21.199421 124.035156,-18.082766";
         $output = JsonLDProvider::getBoxFromCoords($dcmiText);
         self::assertEquals("GeoShape", $output['@type']);
-        self::assertEquals("-29.324321,119.992188 -12.146298,150.578125", $output['box']);
+        self::assertEquals("-29.324321 119.992188 -12.146298 150.578125", $output['box']);
 
     }
 
@@ -104,10 +104,10 @@ class JsonLDProviderTest extends \RegistryTestClass
     }
 
     /** @test **/
-    public function it_shouldnt_format_temporal_coverages()
+    public function it_should_format_temporal_coverages()
     {
-        $coverages = array("dateTo"=>"2019-05-07T03:01:02Z", "dateFrom"=>"2019-05-31T03:01:06Z");
+        $coverages = array("dateTo"=>"2019-06-07T03:01:02Z", "dateFrom"=>"2019-05-31T03:01:06Z");
         $output = JsonLDProvider::formatTempCoverages($coverages);
-        print $output;
+        self::assertEquals("2019-05-31/2019-06-07", $output);
     }
 }
