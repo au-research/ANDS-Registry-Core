@@ -269,7 +269,7 @@ class JsonLDProvider implements RIFCSProvider
                     "propertyID"=> $relation["identifier_type"],
                     "value"=> $relation["identifier_value"]
                 );
-                $citation[] = array("@type"=>"CreativeWork","name"=>$relation->prop("relation_to_title"),"identifier"=>[$identifier]);
+                $citation[] = array("@type"=>"CreativeWork","name"=>$relation['name'],"identifier"=>[$identifier]);
             }
         }
         return $citation;
@@ -444,7 +444,7 @@ class JsonLDProvider implements RIFCSProvider
             } else {
                 $type = "Person";
             }
-            if ($relation->prop("to_title") != "") {
+            if ($relation["name"] != "") {
                 $related[] = array("@type" => $type, "name" => $relation["name"], "url" => self::base_url().$relation["slug"]."/".$relation["id"]);
             } else {
                 $related[] = array("@type" => $type, "name" => $relation["name"]);
@@ -584,7 +584,7 @@ class JsonLDProvider implements RIFCSProvider
             } else {
                 $type = "Person";
             }
-            if ($relation->prop("to_title") != "") {
+            if ($relation["name"] != "") {
                 $accountablePerson[] = array("@type" => $type, "name" => $relation["name"], "url" => self::base_url().$relation["slug"]."/".$relation["id"]);
             } else {
                 $accountablePerson[] = array("@type" => $type, "name" => $relation["name"]);
