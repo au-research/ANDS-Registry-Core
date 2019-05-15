@@ -4,16 +4,15 @@
 namespace ANDS\Registry\Providers\RIFCS;
 
 
-use ANDS\RecordData;
+use ANDS\Registry\IdentifierRelationshipView;
 use ANDS\RegistryObject;
 use ANDS\Registry\Providers\MetadataProvider;
 use ANDS\Registry\Providers\RIFCSProvider;
 use ANDS\Registry\Providers\GrantsConnectionsProvider;
-use ANDS\Registry\Providers\RIFCS\DatesProvider;
-use ANDS\Registry\Providers\RIFCS\SubjectProvider;
 use ANDS\Registry\Providers\LinkProvider;
 use ANDS\Util\Config;
 use ANDS\Util\XMLUtil;
+use ANDS\Registry\RelationshipView;
 
 
 /**
@@ -35,9 +34,9 @@ class JsonLDProvider implements RIFCSProvider
         if ($record->class <> "collection" && $record->class <> "service") return "";
         if ($record->class == "collection" && $record->type <> "collection" && $record->type <> "dataset" && $record->type <> "software") return "";
 
-        $base_url = Config::get('app.default_base_url');
+        $data = [];
 
-        $data = MetadataProvider::get($record);
+        $data['recordData'] = $record->getCurrentData()->data;
 
         $json_ld = new JsonLDProvider();
         $json_ld->{'@context'} = "http://schema.org/";
@@ -55,18 +54,19 @@ class JsonLDProvider implements RIFCSProvider
             $json_ld->provider = self::getProvider($record, $data);
             $json_ld->termsOfService = self::getTermsOfService($record, $data);
         } elseif ($record->class == 'collection'){
+
             $json_ld->accountablePerson = self::getAccountablePerson($record, $data);
             $json_ld->creator = self::getCreator($record, $data);
-            $json_ld->citation = self::getCitation($data);
+            $json_ld->citation = self::getCitation($record);
             $json_ld->dateCreated = self::getDateCreated($record, $data);
             $json_ld->datePublished = DatesProvider::getPublicationDateForSchemadotOrg($record);
             $json_ld->alternativeHeadline = self::getAlternateName($record, $data);
             $json_ld->version = self::getVersion($record, $data);
             $json_ld->fileFormat = self::getFileFormat($record, $data);
             $json_ld->funder = self::getFunder($record);
-            $json_ld->hasPart = self::getRelated($data, "hasPart");
-            $json_ld->isBasedOn = self::getRelated($data, "isDerivedFrom");
-            $json_ld->isPartOf = self::getRelated($data, "isPartOf");
+            $json_ld->hasPart = self::getRelated($record, array("hasPart"));
+            $json_ld->isBasedOn = self::getRelated($record, array("isDerivedFrom"));
+            $json_ld->isPartOf = self::getRelated($record, array("isPartOf"));
             $json_ld->sourceOrganization = array("@type" => "Organization", "name" => $record->group);
             $json_ld->keywords = self::getKeywords($record);
             $json_ld->license = self::getLicense($record, $data);
@@ -255,30 +255,23 @@ class JsonLDProvider implements RIFCSProvider
     }
 
 
-    public static function getCitation(
-        $data = null
-    )
+    public static function getCitation(RegistryObject $record)
     {
-    $citation = [];
+        $citation = [];
 
-        $relationships = $data['relationships'];
-
+        $relationships = self::getRelatedPublications($record);
         foreach ($relationships as $relation) {
-            if (($relation->prop("to_class") == "collection" && $relation->prop("to_type")=="publication") || $relation->prop("to_related_info_type") == "publication"
-            ) {
-                if($relation->prop("to_title") != ""){
-                    $citation[] = array("@type"=>"CreativeWork","name"=>$relation->prop("to_title"),"url"=>self::base_url() ."view?key=".$relation->prop("to_key"));
-                }else{
-                    $identifier =array(
-                        "@type"=> "PropertyValue",
-                        "propertyID"=> $relation->prop("to_identifier_type"),
-                        "value"=> $relation->prop("to_identifier")
-                    );
-                    $citation[] = array("@type"=>"CreativeWork","name"=>$relation->prop("relation_to_title"),"identifier"=>[$identifier]);
-                }
+            if($relation['slug'] != ""){
+                $citation[] = array("@type"=>"CreativeWork","name"=>$relation['name'],"url"=>self::base_url().$relation["slug"]."/".$relation["id"]);
+            }else{
+                $identifier =array(
+                    "@type"=> "PropertyValue",
+                    "propertyID"=> $relation["identifier_type"],
+                    "value"=> $relation["identifier_value"]
+                );
+                $citation[] = array("@type"=>"CreativeWork","name"=>$relation->prop("relation_to_title"),"identifier"=>[$identifier]);
             }
         }
-
         return $citation;
 
     }
@@ -310,7 +303,7 @@ class JsonLDProvider implements RIFCSProvider
      * ("box" GeoShapes display, but GeoShape "polygon" doesn't seem to display).
      * If polygon is not supported going forward we can produce a box which has the poly extents.
      * Send a query to Google to see if they will support "polygon"?
-     *
+     * https://developers.google.com/search/docs/data-types/dataset
      */
     public static function getBoxFromCoords($coords){
         $north = -90;
@@ -421,79 +414,40 @@ class JsonLDProvider implements RIFCSProvider
 
     }
 
-    public static function getRelated(
-        $data = null,
-        $relation_type = null
-    ){
+    public static function getRelated(RegistryObject $record, $relation_type = array())
+    {
         $related = [];
-        $relationships = $data['relationships'];
 
+        $relationships = self::getRelationByType($record, $relation_type);
 
         foreach ($relationships as $relation) {
-            $relation_types = [];
-            $relation_origins = [];
-
-            if(is_array($relation->prop('relation_type'))){
-                $relation_types = $relation->prop('relation_type');
+            if($relation["name"] != ""){
+                $related[] = array("@type"=>"CreativeWork","name"=>$relation["name"],"url"=>self::base_url().$relation["slug"]."/".$relation["id"]);
             }else{
-                $relation_types[] = $relation->prop('relation_type');
-            }
-            if(is_array($relation->prop('relation_type'))){
-                $relation_origins = $relation->prop('relation_origin');
-            }else{
-                $relation_origins[] = $relation->prop('relation_origin');
-            }
-
-            for($i=0;$i<count($relation_origins);$i++){
-                if(str_replace("REVERSE_GRANTS"," ",$relation_origins[$i])!=$relation_origins[$i]){
-                    unset($relation_origins[$i]);
-                    unset($relation_types[$i]);
-                }
-            }
-
-            if ( ($relation->prop("to_class") == "collection" || $relation->prop("to_related_info_type") == "collection")
-                && in_array($relation_type, $relation_types)) {
-                if($relation->prop("to_title") != ""){
-                    $related[] = array("@type"=>"CreativeWork","name"=>$relation->prop("to_title"),"url"=>self::base_url() ."view?key=".$relation->prop("to_key"));
-                }else{
-                    $related[] = array("@type"=>"CreativeWork","name"=>$relation->prop("relation_to_title"));
-                }
+                $related[] = array("@type"=>"CreativeWork","name"=>$relation["name"]);
             }
         }
         return $related;
 
     }
 
-    public static function getProvider(
-        $record,
-        $data = null
-    ){
+    public static function getProvider(RegistryObject $record)
+    {
         $related = [];
-        $relationships = $data['relationships'];
         $provider_relationships = array("isOwnedBy", "isManagedBy");
 
+        $relationships = self::getRelationByType($record, $provider_relationships);
+
         foreach ($relationships as $relation) {
-            foreach ($provider_relationships as $provider_relationship) {
-                $relation_types = [];
-                if (is_array($relation->prop('relation_type'))) {
-                    $relation_types = $relation->prop('relation_type');
-                } else {
-                    $relation_types[] = $relation->prop('relation_type');
-                }
-                if (($relation->prop("to_class") == "party" || $relation->prop("to_related_info_type") == "party")
-                    && in_array($provider_relationship, $relation_types)
-                ) {
-                    if($relation->prop("to_type")=='group'|| $relation->prop("to_related_info_type")=='group'){
-                        $type = "Organization";
-                    } else{
-                        $type = "Person";
-                    }
-                    if ($relation->prop("to_title") != "") {
-                        $related[] = array("@type" => $type, "name" => $relation->prop("to_title"), "url" => self::base_url() . "view?key=" . $relation->prop("to_key"));
-                    } else {
-                        $related[] = array("@type" => $type, "name" => $relation->prop("relation_to_title"));
-                    }
-                }
+            if ($relation["type"] == 'group') {
+                $type = "Organization";
+            } else {
+                $type = "Person";
+            }
+            if ($relation->prop("to_title") != "") {
+                $related[] = array("@type" => $type, "name" => $relation["name"], "url" => self::base_url().$relation["slug"]."/".$relation["id"]);
+            } else {
+                $related[] = array("@type" => $type, "name" => $relation["name"]);
             }
         }
 
@@ -507,10 +461,7 @@ class JsonLDProvider implements RIFCSProvider
 
 
 
-    public static function getDateCreated(
-        RegistryObject $record,
-        $data = null
-    )
+    public static function getDateCreated(RegistryObject $record, $data = null)
     {
         $dateCreated = [];
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
@@ -533,10 +484,7 @@ class JsonLDProvider implements RIFCSProvider
 
     }
 
-    public static function getDistribution(
-        RegistryObject $record,
-        $data = null
-    )
+    public static function getDistribution(RegistryObject $record, $data = null)
     {
         $distribution = [];
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
@@ -555,10 +503,7 @@ class JsonLDProvider implements RIFCSProvider
         return $distribution;
     }
 
-    public static function getCodeRepository(
-        RegistryObject $record,
-        $data = null
-    )
+    public static function getCodeRepository(RegistryObject $record, $data = null)
     {
         $codeRepository = [];
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
@@ -569,10 +514,7 @@ class JsonLDProvider implements RIFCSProvider
         return $codeRepository;
     }
 
-    public static function getFileFormat(
-        RegistryObject $record,
-        $data = null
-    )
+    public static function getFileFormat(RegistryObject $record, $data = null)
     {
         $fileFormat = [];
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
@@ -585,31 +527,20 @@ class JsonLDProvider implements RIFCSProvider
     }
 
 
-    public static function getDateModified(
-        RegistryObject $record,
-        $data = null
-    )
+    public static function getDateModified(RegistryObject $record, $data)
     {
         $dateModified = [];
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class ) AS $recordAtt) {
              if((string)$recordAtt['dateModified']!='')   $dateModified[] = (string)$recordAtt['dateModified'];
         };
-
         return $dateModified;
 
     }
 
-    public static function getCreator(
-        RegistryObject $record,
-        $data = null
-    )
+    public static function getCreator(RegistryObject $record, $data)
     {
-        $creatorArray = array("isPrincipalInvestigatorOf","author","coInvestigator", "hasCollector");
-
-        if (!$data) {
-            $data = MetadataProvider::getSelective($record, ['recordData']);
-        }
+        $relations_types = array("isPrincipalInvestigatorOf","author","coInvestigator", "hasCollector");
         $creator = [];
 
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
@@ -623,165 +554,46 @@ class JsonLDProvider implements RIFCSProvider
             $creator[]= array("@type"=>"Person","name"=>$name);
         };
 
-        if(count($creator)>0) return $creator;
+        $relationships = self::getRelationByType($record, $relations_types);
 
-        $relationships = $data['relationships'];
         foreach ($relationships as $relation) {
-            if (is_array($relation->prop('relation_type'))) {
-                $relation_types = $relation->prop('relation_type');
-            } else {
-                $relation_types[] = $relation->prop('relation_type');
+            if($relation["type"]=='group'){
+                $type = "Organization";
+            } else{
+                $type = "Person";
             }
-            foreach ($creatorArray as $creatorType)
-            if (($relation->prop("to_class") == "party" || $relation->prop("to_related_info_type") == "party")
-                && in_array($creatorType, $relation_types)
-            ) {
-                if($relation->prop("to_type")=='group'|| $relation->prop("to_related_info_type")=='group'){
-                    $type = "Organization";
-                } else{
-                    $type = "Person";
-                }
-
-                if($relation->prop("to_title") != ""){
-                    $creator[] = array("@type"=>$type,"name"=>$relation->prop("to_title"),"url"=>self::base_url() ."view?key=".$relation->prop("to_key"));
-                }else{
-                    $creator[] = array("@type"=>$type,"name"=>$relation->prop("relation_to_title"));
-                }
-
-                return $creator;
-
+            if($relation["name"] != ""){
+                $related[] = array("@type"=>$type,"name"=>$relation["name"],"url"=>self::base_url().$relation["slug"]."/".$relation["id"]);
+            }else{
+                $related[] = array("@type"=>$type,"name"=>$relation["name"]);
             }
         }
         return $creator;
     }
 
-    public static function getAuthor(
-        RegistryObject $record,
-        $data = null
-    )
+
+    public static function getAccountablePerson(RegistryObject $record)
     {
-        $authorArray = array("IsPrincipalInvestigatorOf","author","coInvestigator");
-        $authorArray2 = array("isOwnedBy","hasCollector");
 
-        if (!$data) {
-            $data = MetadataProvider::getSelective($record, ['recordData']);
-        }
-        $author = [];
-
-        foreach (XMLUtil::getElementsByXPath($data['recordData'],
-            'ro:registryObject/ro:' . $record->class . '/ro:citationInfo/ro:citationMetadata/ro:contributor') AS $contributor) {
-            $names = (array)$contributor;
-            if(is_array($names['namePart'])){
-                $name = implode(" ",$names['namePart']);
-            }else{
-                $name = $names['namePart'];
-            }
-            $author[]= array("@type"=>"Person","name"=>$name);
-        };
-
-        if(count($author)>0) return $author;
-
-        $relationships = $data['relationships'];
-
-        foreach ($relationships as $relation) {
-            if (is_array($relation->prop('relation_type'))) {
-                $relation_types = $relation->prop('relation_type');
-            } else {
-                $relation_types[] = $relation->prop('relation_type');
-            }
-            foreach($authorArray as $auth_type) {
-                if (($relation->prop("to_class") == "party" || $relation->prop("to_related_info_type") == "party")
-                    && (in_array($auth_type, $relation_types))
-                ) {
-                    if ($relation->prop("to_type") == 'group' || $relation->prop("to_related_info_type") == 'group') {
-                        $type = "Organization";
-                    } else {
-                        $type = "Person";
-                    }
-
-                    if ($relation->prop("to_title") != "") {
-                        $author[] = array("@type" => $type, "name" => $relation->prop("to_title"), "url" => self::base_url() . "view?key=" . $relation->prop("to_key"));
-                    } else {
-                        $author[] = array("@type" => $type, "name" => $relation->prop("relation_to_title"));
-                    }
-                }
-            }
-        }
-
-        if(count($author)>0) return $author;
-
-        foreach ($relationships as $relation) {
-            if (is_array($relation->prop('relation_type'))) {
-                $relation_types = $relation->prop('relation_type');
-            } else {
-                $relation_types[] = $relation->prop('relation_type');
-            }
-            foreach($authorArray2 as $authorType)
-            if (($relation->prop("to_class") == "party" || $relation->prop("to_related_info_type") == "party")
-                && in_array($authorType,$relation_types)
-            ) {
-                if($relation->prop("to_type")=='group'||$relation->prop("to_related_info_type")=='group'){
-                    $type = "Organization";
-                } else{
-                    $type = "Person";
-                }
-
-                if($relation->prop("to_title") != ""){
-                    $author[] = array("@type"=>$type,"name"=>$relation->prop("to_title"),"url"=>self::base_url() ."view?key=".$relation->prop("to_key"));
-                }else{
-                    $author[] = array("@type"=>$type,"name"=>$relation->prop("relation_to_title"));
-                }
-            }
-        }
-
-        return $author;
-
-    }
-
-
-    public static function getAccountablePerson(
-        RegistryObject $record,
-        $data = null
-    )
-    {
-        if (!$data) {
-            $data = MetadataProvider::getSelective($record, ['recordData']);
-        }
-
-        $relationships = $data['relationships'];
-        $usedRelTypes = ["isOwnedBy", "isOwnerOf", "isManagedBy", "isManagerOf"];
+        $relations_types = ["isOwnedBy", "isOwnerOf", "isManagedBy", "isManagerOf"];
+        $relationships = self::getRelationByType($record, $relations_types);
         $accountablePerson = [];
-
         foreach ($relationships as $relation) {
-            $relation_types = [];
-            if (is_array($relation->prop('relation_type'))) {
-                $relation_types = $relation->prop('relation_type');
+            if ($relation["type"] == 'group') {
+                $type = "Organization";
             } else {
-                $relation_types[] = $relation->prop('relation_type');
+                $type = "Person";
             }
-            if (($relation->prop("to_class") == "party" || $relation->prop("to_related_info_type") == "party")
-                && (sizeof(array_intersect($usedRelTypes, $relation_types)) > 0)
-            ) {
-
-                if ($relation->prop("to_type") == 'group' || $relation->prop("to_related_info_type") == 'group') {
-                    $type = "Organization";
-                } else {
-                    $type = "Person";
-                }
-                if ($relation->prop("to_title") != "") {
-                    $accountablePerson[] = array("@type" => $type, "name" => $relation->prop("to_title"), "url" => self::base_url() . "view?key=" . $relation->prop("to_key"));
-                } else {
-                    $accountablePerson[] = array("@type" => $type, "name" => $relation->prop("relation_to_title"));
-                }
+            if ($relation->prop("to_title") != "") {
+                $accountablePerson[] = array("@type" => $type, "name" => $relation["name"], "url" => self::base_url().$relation["slug"]."/".$relation["id"]);
+            } else {
+                $accountablePerson[] = array("@type" => $type, "name" => $relation["name"]);
             }
         }
         return $accountablePerson;
     }
 
-    public static function getDescriptions(
-        RegistryObject $record,
-        $data = null
-    )
+    public static function getDescriptions(RegistryObject $record, $data = null)
     {
         if (!$data) {
             $data = MetadataProvider::getSelective($record, ['recordData']);
@@ -802,10 +614,7 @@ class JsonLDProvider implements RIFCSProvider
         return $descriptions;
     }
 
-    public static function getVersion(
-        RegistryObject $record,
-        $data = null
-    )
+    public static function getVersion(RegistryObject $record, $data = null)
     {
         if (!$data) {
             $data = MetadataProvider::getSelective($record, ['recordData']);
@@ -821,10 +630,7 @@ class JsonLDProvider implements RIFCSProvider
     }
 
 
-    public static function getAlternateName(
-        RegistryObject $record,
-        $data = null
-    )
+    public static function getAlternateName(RegistryObject $record, $data = null)
     {
         if (!$data) {
             $data = MetadataProvider::getSelective($record, ['recordData']);
@@ -843,6 +649,135 @@ class JsonLDProvider implements RIFCSProvider
         }
 
         return $alternateNames;
+    }
+
+    public static function getRelationByType(RegistryObject $record, array $relations)
+    {
+        $results = [];
+        $reverseRelationTypes = collect($relations)->map(function($item){
+            return getReverseRelationshipString($item);
+        })->toArray();
+
+        // direct
+        $direct = RelationshipView::where('from_id', $record->id)
+            ->whereIn('relation_type', $relations)
+            ->take(50)->get();
+        foreach ($direct as $relation) {
+            $results[] = [
+                'relation' => $relation['relation_type'],
+                'name' => (string) $relation['to_title'],
+                'id' => $relation['to_id'],
+                'slug' => $relation['to_slug'],
+                'key' => $relation['to_key'],
+                'type' => $relation['to_type']
+            ];
+        }
+
+        // reverse
+        $reverse = RelationshipView::where('to_key', $record->key)
+            ->whereIn('relation_type', $reverseRelationTypes)
+            ->take(50)->get();
+        foreach ($reverse as $relation) {
+            $results[] = [
+                'relation' => getReverseRelationshipString($relation['relation_type']),
+                'name' => (string) $relation['from_title'],
+                'id' => $relation['from_id'],
+                'slug' => $relation['from_slug'],
+                'key' => $relation['from_key'],
+                'type' => $relation['from_type']
+            ];
+        }
+
+        // direct
+        $direct = IdentifierRelationshipView::where('from_id', $record->id)
+            ->whereIn('relation_type', $relations)
+            ->take(50)->get();
+        foreach ($direct as $relation) {
+            $results[] = [
+                'relation' => $relation['relation_type'],
+                'name' => (string) $relation['to_title'],
+                'id' => $relation['to_id'],
+                'slug' => $relation['to_slug'],
+                'key' => $relation['to_key'],
+                'type' => $relation['to_type']
+            ];
+        }
+
+        // reverse
+        $reverse = IdentifierRelationshipView::where('to_key', $record->key)
+            ->whereIn('relation_type', $reverseRelationTypes)
+            ->take(50)->get();
+        foreach ($reverse as $relation) {
+            $results[] = [
+                'relation' => getReverseRelationshipString($relation['relation_type']),
+                'name' => (string) $relation['from_title'],
+                'id' => $relation['from_id'],
+                'slug' => $relation['from_slug'],
+                'key' => $relation['from_key'],
+                'type' => $relation['from_type']
+            ];
+        }
+
+        return $results;
+    }
+
+
+    public static function getRelatedPublications(RegistryObject $record)
+    {
+        $results = [];
+
+        $direct = RelationshipView::where('from_id', $record->id)
+            ->where('to_type', 'publication')
+            ->take(50)->get();
+        foreach ($direct as $relation) {
+            $results[] = [
+                'relation' => $relation['relation_type'],
+                'name' => (string) $relation['to_title'],
+                'id' => $relation['to_id'],
+                'slug' => $relation['to_slug'],
+                'key' => $relation['to_key'],
+                'type' => $relation['to_type'],
+                "identifier_type" => null,
+                "identifier_value"=> null
+            ];
+        }
+
+        // reverse
+        $reverse = RelationshipView::where('to_key', $record->key)
+            ->where('from_type', 'publication')
+            ->take(50)->get();
+        foreach ($reverse as $relation) {
+            $results[] = [
+                'relation' => getReverseRelationshipString($relation['relation_type']),
+                'name' => (string) $relation['from_title'],
+                'id' => $relation['from_id'],
+                'slug' => $relation['from_slug'],
+                'key' => $relation['from_key'],
+                'type' => $relation['from_type'],
+                "identifier_type" => null,
+                "identifier_value"=> null
+            ];
+        }
+
+        // direct
+        $direct = IdentifierRelationshipView::where('from_id', $record->id)
+            ->where('to_type', 'publication')
+            ->take(50)->get();
+        foreach ($direct as $relation) {
+            $results[] = [
+                'relation' => $relation['relation_type'],
+                'name' => (string) $relation['to_title'],
+                'id' => null,
+                'slug' => null,
+                'key' => null,
+                'type' => $relation['to_type'],
+                "identifier_type" => $relation["to_identifier_type"],
+                "identifier_value"=> $relation["to_identifier"]
+            ];
+        }
+
+
+        return $results;
     }
 }
 ?>
