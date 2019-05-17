@@ -48,7 +48,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="yes" name="apple-mobile-web-app-capable">
     @include('includes/styles')
-    @include('includes/scripts')
+
 </head>
 
 <!-- Environment Indicator -->
