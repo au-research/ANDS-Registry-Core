@@ -3,7 +3,9 @@ module.exports = function (grunt) {
   //configuration goes here
   var yeomanConfig = {
     assets: 'core/assets',
-    templates: 'templates'
+    templates: 'templates',
+
+
   }
 
   grunt.initConfig({
@@ -38,7 +40,7 @@ module.exports = function (grunt) {
           '<%= yeoman.templates %>/ands-green/assets/css/ands.css',
           '<%= yeoman.assets %>/css/portal.less.compiled.css'
         ],
-        dest: '<%= yeoman.assets %>/css/portal.combine.css'
+        dest: '<%= yeoman.assets %>/css/portal.prepurify.combine.css'
       },
       lib: {
         options: {separator: ';'},
@@ -47,7 +49,6 @@ module.exports = function (grunt) {
           '<%=yeoman.assets %>/vendor/qtip2/jquery.qtip.js',
           '<%=yeoman.assets %>/vendor/mustache/mustache.min.js',
           '<%=yeoman.assets %>/vendor/colorbox/jquery.colorbox-min.js',
-
           '<%=yeoman.assets %>/lib/angular/angular.min.js',
           '<%=yeoman.assets %>/lib/angular-route/angular-route.min.js',
           '<%=yeoman.assets %>/lib/angular-sanitize/angular-sanitize.min.js',
@@ -58,7 +59,6 @@ module.exports = function (grunt) {
           '<%=yeoman.assets %>/lib/angular-loading-bar/build/loading-bar.min.js',
           '<%=yeoman.assets %>/lib/angular-google-maps/dist/angular-google-maps.js',
           '<%=yeoman.assets %>/lib/angular-lz-string/angular-lz-string.js',
-
           '<%=yeoman.assets %>/vendor/lodash/dist/lodash.min.js',
           '<%=yeoman.templates %>/ands-green/assets/js/d3.min.js',
           '<%=yeoman.templates %>/ands-green/assets/js/neo4jd3/js/neo4jd3.js'
@@ -102,10 +102,22 @@ module.exports = function (grunt) {
         }
       }
     },
+    purifycss: {
+        options: {},
+        target: {
+            src: ['<%= yeoman.templates %>/ands-green/includes/*.php',
+                '<%= yeoman.templates %>/ands-green/layouts/*.php',
+                '<%= yeoman.templates %>/ands-green/registry_object/*.php',
+                '<%= yeoman.templates %>/ands-green/registry_object/contents/*.php',
+            ],
+            css: ['<%= yeoman.assets %>/css/portal.prepurify.combine.css'],
+            dest: '<%=yeoman.assets %>/css/portal.combine.css'
+        },
+    },
     watch: {
       styles: {
         files: ['**/*.less', '**/*.css', '!core/assets/dist/*.css'],
-        tasks: ['less', 'concat:styles', 'clean', 'assets_versioning']
+        tasks: ['less', 'concat:styles', 'clean', 'purifycss', 'assets_versioning']
       },
       scripts: {
         files: [
@@ -114,7 +126,7 @@ module.exports = function (grunt) {
           'core/assets/js/*.js',
           '!core/assets/dist/*.js'
         ],
-        tasks: ['concat:lib', 'concat:portal_lib', 'clean', 'assets_versioning']
+        tasks: ['concat:lib', 'concat:portal_lib', 'clean', 'purifycss', 'assets_versioning']
       }
     },
     clean: ['<%=yeoman.assets %>/dist'],
@@ -128,7 +140,7 @@ module.exports = function (grunt) {
         files: {
           '<%=yeoman.assets %>/dist/lib.js': ['<%=yeoman.assets %>/js/lib.js'],
           '<%=yeoman.assets %>/dist/portal_lib.js': ['<%=yeoman.assets %>/js/portal_lib.js'],
-          '<%=yeoman.assets %>/dist/portal.combine.css': ['<%= yeoman.assets %>/css/portal.combine.css']
+          '<%=yeoman.assets %>/dist/portal.combine.css': ['<%=yeoman.assets %>/css/portal.combine.css']
         }
       }
     },
@@ -144,11 +156,11 @@ module.exports = function (grunt) {
           }
         ]
       }
-    }
+    },
   })
-  require('load-grunt-tasks')(grunt)
+  require('load-grunt-tasks')(grunt);
 
-  grunt.registerTask('default', ['less', 'concat', 'clean', 'assets_versioning', 'copy'])
+  grunt.registerTask('default', ['less', 'concat', 'clean', 'assets_versioning', 'copy' , 'purifycss'])
   grunt.registerTask('dev', ['default'])
-  grunt.registerTask('prod', ['default', 'uglify'])
+  grunt.registerTask('prod', ['default', 'uglify']);
 }

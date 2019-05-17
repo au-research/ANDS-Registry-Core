@@ -79,4 +79,39 @@
             </div>
         </div>
     </section>
+    <script type="text/javascript" defer src="https://jira.ands.org.au/s/d41d8cd98f00b204e9800998ecf8427e/en_AUc8oc9c-1988229788/6265/77/1.4.7/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=d9610dcf"></script>
+
+    <script>
+        _.contains = _.includes;
+    </script>
+
+    @if(isset($lib))
+        @foreach($lib as $l)
+            @if($l=='jquery-ui')
+                <script type="text/javascript" defer src="{{asset_url('vendor/jquery-ui/jquery-ui.js', 'core')}}"></script>
+            @elseif($l=='dynatree')
+                <script type="text/javascript" defer src="{{asset_url('vendor/dynatree/dist/jquery.dynatree.js', 'core')}}"></script>
+            @elseif($l=='textAngular')
+                <link rel='stylesheet' href="{{asset_url('vendor/textAngular/src/textAngular.css', 'core')}}">
+                <script defer src="{{asset_url('vendor/textAngular/dist/textAngular-rangy.min.js', 'core')}}"></script>
+                <script defer src="{{asset_url('vendor/textAngular/dist/textAngular-sanitize.min.js', 'core')}}"></script>
+                <script defer src="{{asset_url('vendor/textAngular/dist/textAngular.min.js', 'core')}}"></script>
+            @elseif($l=='colorbox')
+                <script defer src="{{asset_url('vendor/colorbox/jquery.colorbox-min.js', 'core')}}"></script>
+            @elseif($l=='mustache')
+                <script defer src="{{asset_url('vendor/mustache/mustache.min.js', 'core')}}"></script>
+            @elseif($l=='map')
+                <script defer="text/javascript" async src="https://maps.googleapis.com/maps/api/js?{{ \ANDS\Util\Config::get('app.google_api_key') ? 'key='.\ANDS\Util\Config::get('app.google_api_key') : ''  }}&libraries=drawing&amp;sensor=false"></script>
+            @elseif($l=='ngupload')
+                <script defer="text/javascript" async src="{{asset_url('vendor/ng-file-upload/angular-file-upload-all.min.js','core')}}"></script>
+            @endif
+        @endforeach
+    @endif
+
+    @if(isset($scripts))
+        @foreach($scripts as $script)
+            <script src="{{asset_url('js/'.$script.'.js')}}"></script>
+        @endforeach
+    @endif
+
 </footer>
