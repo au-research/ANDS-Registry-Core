@@ -540,7 +540,7 @@ class JsonLDProvider implements RIFCSProvider
 
     public static function getCreator(RegistryObject $record, $data)
     {
-        $relations_types = array("isPrincipalInvestigatorOf","author","coInvestigator", "hasCollector");
+
         $creator = [];
 
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
@@ -551,9 +551,13 @@ class JsonLDProvider implements RIFCSProvider
             }else{
                 $name = $names['namePart'];
             }
-            $creator[]= array("@type"=>"Person","name"=>$name);
+            $creator[] = array("@type"=>"Person","name"=>$name);
         };
 
+        if(sizeof($creator) > 0)
+            return $creator;
+
+        $relations_types = array("isPrincipalInvestigatorOf","author","coInvestigator", "hasCollector");
         $relationships = self::getRelationByType($record, $relations_types);
 
         foreach ($relationships as $relation) {
@@ -575,19 +579,19 @@ class JsonLDProvider implements RIFCSProvider
     public static function getAccountablePerson(RegistryObject $record)
     {
 
-        $relations_types = ["isOwnedBy", "isOwnerOf", "isManagedBy", "isManagerOf"];
+        $relations_types = ["isOwnedBy", "isManagedBy"];
         $relationships = self::getRelationByType($record, $relations_types);
         $accountablePerson = [];
+        $processedIds = [];
         foreach ($relationships as $relation) {
-            if ($relation["type"] == 'group') {
-                $type = "Organization";
-            } else {
-                $type = "Person";
+            if ($relation["type"] == 'group' || in_array_r($relation["id"] , $processedIds)) {
+                continue;
             }
+            $processedIds[] = $relation["id"];
             if ($relation["name"] != "") {
-                $accountablePerson[] = array("@type" => $type, "name" => $relation["name"], "url" => self::base_url().$relation["slug"]."/".$relation["id"]);
+                $accountablePerson[] = array("@type" => "Person", "name" => $relation["name"], "url" => self::base_url().$relation["slug"]."/".$relation["id"]);
             } else {
-                $accountablePerson[] = array("@type" => $type, "name" => $relation["name"]);
+                $accountablePerson[] = array("@type" => "Person", "name" => $relation["name"]);
             }
         }
         return $accountablePerson;
@@ -595,9 +599,6 @@ class JsonLDProvider implements RIFCSProvider
 
     public static function getDescriptions(RegistryObject $record, $data = null)
     {
-        if (!$data) {
-            $data = MetadataProvider::getSelective($record, ['recordData']);
-        }
 
         $types= array ("brief","full");
 
