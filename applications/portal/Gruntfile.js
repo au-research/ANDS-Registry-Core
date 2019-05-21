@@ -4,6 +4,7 @@ module.exports = function (grunt) {
   var yeomanConfig = {
     assets: 'core/assets',
     templates: 'templates',
+    profile: 'profile',
 
 
   }
@@ -105,10 +106,9 @@ module.exports = function (grunt) {
     purifycss: {
         options: {},
         target: {
-            src: ['<%= yeoman.templates %>/ands-green/includes/*.php',
-                '<%= yeoman.templates %>/ands-green/layouts/*.php',
-                '<%= yeoman.templates %>/ands-green/registry_object/*.php',
-                '<%= yeoman.templates %>/ands-green/registry_object/contents/*.php',
+            src: ['<%= yeoman.templates %>/**/*.php',
+                  '<%= yeoman.profile %>/assets/templates/*.html',
+                  'registry_object/**/*.js'
             ],
             css: ['<%= yeoman.assets %>/css/portal.prepurify.combine.css'],
             dest: '<%=yeoman.assets %>/css/portal.combine.css'
