@@ -558,19 +558,27 @@ class JsonLDProvider implements RIFCSProvider
             return $creator;
 
         $relations_types = array("isPrincipalInvestigatorOf","author","coInvestigator", "hasCollector");
-        $relationships = self::getRelationByType($record, $relations_types);
+        foreach ($relations_types as $relation_type) {
+            $relationships = self::getRelationByType($record, array($relation_type));
+            foreach ($relationships as $relation) {
+                if ($relation["class"] != 'party') // shouldn't happen with these relationship types but to be sure
+                {
+                    continue;
+                }
+                if ($relation["type"] == 'group') {
+                    $type = "Organization";
+                } else {
+                    $type = "Person";
+                }
+                if ($relation["name"] != "") {
+                    $creator[] = array("@type" => $type, "name" => $relation["name"], "url" => self::base_url() . $relation["slug"] . "/" . $relation["id"]);
+                } else {
+                    $creator[] = array("@type" => $type, "name" => $relation["name"]);
+                }
 
-        foreach ($relationships as $relation) {
-            if($relation["type"]=='group'){
-                $type = "Organization";
-            } else{
-                $type = "Person";
             }
-            if($relation["name"] != ""){
-                $related[] = array("@type"=>$type,"name"=>$relation["name"],"url"=>self::base_url().$relation["slug"]."/".$relation["id"]);
-            }else{
-                $related[] = array("@type"=>$type,"name"=>$relation["name"]);
-            }
+            if(sizeof($creator) > 0)
+                return $creator;
         }
         return $creator;
     }
@@ -584,7 +592,8 @@ class JsonLDProvider implements RIFCSProvider
         $accountablePerson = [];
         $processedIds = [];
         foreach ($relationships as $relation) {
-            if ($relation["type"] == 'group' || in_array_r($relation["id"] , $processedIds)) {
+            // check for class == party in case shouldn't happen with these relationship types but to be sure
+            if ($relation["class"] != 'party' || $relation["type"] == 'group' || in_array_r($relation["id"] , $processedIds)) {
                 continue;
             }
             $processedIds[] = $relation["id"];
@@ -670,7 +679,8 @@ class JsonLDProvider implements RIFCSProvider
                 'id' => $relation['to_id'],
                 'slug' => $relation['to_slug'],
                 'key' => $relation['to_key'],
-                'type' => $relation['to_type']
+                'type' => $relation['to_type'],
+                'class' => $relation['to_class']
             ];
         }
 
@@ -685,7 +695,8 @@ class JsonLDProvider implements RIFCSProvider
                 'id' => $relation['from_id'],
                 'slug' => $relation['from_slug'],
                 'key' => $relation['from_key'],
-                'type' => $relation['from_type']
+                'type' => $relation['from_type'],
+                'class' => $relation['from_class']
             ];
         }
 
@@ -700,7 +711,8 @@ class JsonLDProvider implements RIFCSProvider
                 'id' => $relation['to_id'],
                 'slug' => $relation['to_slug'],
                 'key' => $relation['to_key'],
-                'type' => $relation['to_type']
+                'type' => $relation['to_type'],
+                'class' => $relation['to_class']
             ];
         }
 
@@ -715,7 +727,8 @@ class JsonLDProvider implements RIFCSProvider
                 'id' => $relation['from_id'],
                 'slug' => $relation['from_slug'],
                 'key' => $relation['from_key'],
-                'type' => $relation['from_type']
+                'type' => $relation['from_type'],
+                'class' => $relation['from_class']
             ];
         }
 
