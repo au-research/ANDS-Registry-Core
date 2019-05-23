@@ -127,9 +127,7 @@ class JsonLDProviderTest extends \RegistryTestClass
         $record = $this->ensureKeyExist("SchemaDotOrgJLDRecords1");
         $data['recordData'] = $record->getCurrentData()->data;
         $output = JsonLDProvider::getFunder($record, $data);
-        $provider = GrantsConnectionsProvider::create();
-        $output = $provider->getFunder($record);
-        self::assertEquals("SchemaDotOrgJLDGroupRecord3", $output->key);
+        self::assertEquals("The Great Funder", $output[0]['name']);
     }
 
 }
