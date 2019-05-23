@@ -6,6 +6,7 @@ use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\Registry\Providers\RIFCS\JsonLDProvider;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
+use ANDS\Registry\Providers\GrantsConnectionsProvider;
 
 class JsonLDProviderTest extends \RegistryTestClass
 {
@@ -110,4 +111,25 @@ class JsonLDProviderTest extends \RegistryTestClass
         $output = JsonLDProvider::formatTempCoverages($coverages);
         self::assertEquals("2019-05-31/2019-06-07", $output);
     }
+
+    /** @test **/
+    public function it_should_find_a_creator()
+    {
+        $record = $this->ensureKeyExist("SchemaDotOrgJLDRecords1");
+        $data['recordData'] = $record->getCurrentData()->data;
+        $output = JsonLDProvider::getCreator($record, $data);
+        self::assertEquals("The Creator of", $output[0]['name']);
+    }
+
+    /** @test **/
+    public function it_should_find_a_funder()
+    {
+        $record = $this->ensureKeyExist("SchemaDotOrgJLDRecords1");
+        $data['recordData'] = $record->getCurrentData()->data;
+        $output = JsonLDProvider::getFunder($record, $data);
+        $provider = GrantsConnectionsProvider::create();
+        $output = $provider->getFunder($record);
+        self::assertEquals("SchemaDotOrgJLDGroupRecord3", $output->key);
+    }
+
 }

@@ -295,7 +295,7 @@ class GrantsConnectionsProvider extends Connections
         $reverse = $this->init()
             ->setFilter('to_key', $record->key)
             ->setFilter('from_class', 'party')
-            ->setFilter('relation_type', 'funds')
+            ->setFilter('relation_type', 'isFunderOf')
             ->setLimit(1)
             ->get();
 

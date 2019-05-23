@@ -80,7 +80,7 @@ class JsonLDProvider implements RIFCSProvider
         $json_ld->description = self::getDescriptions($record, $data);
         $json_ld->alternateName = self::getAlternateName($record, $data);
         $json_ld->identifier = self::getIdentifier($record, $data);
-        $json_ld->url = self::base_url() . "view?key=" . $record->key;
+        $json_ld->url = self::base_url() . $record->slug . "/" . $record->id;
 
         $json_ld = (object) array_filter((array) $json_ld);
         return json_encode($json_ld);
@@ -408,7 +408,7 @@ class JsonLDProvider implements RIFCSProvider
         $unprocessed = $provider->getFunder($record);
         if($unprocessed) {
             $type = ($unprocessed->type=="group") ? "Organization" : "Person";
-            $funders[] = array("@type" => $type, "name"=>$unprocessed->title, "url"=>self::base_url() ."view?key=".$unprocessed->key);
+            $funders[] = array("@type" => $type, "name"=>$unprocessed->title, "url"=>self::base_url() .$unprocessed->slug."/".$unprocessed->id);
         }
         return $funders;
 
@@ -542,7 +542,6 @@ class JsonLDProvider implements RIFCSProvider
     {
 
         $creator = [];
-
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class . '/ro:citationInfo/ro:citationMetadata/ro:contributor') AS $contributor) {
             $names = (array)$contributor;
@@ -557,8 +556,8 @@ class JsonLDProvider implements RIFCSProvider
         if(sizeof($creator) > 0)
             return $creator;
 
-        $relations_types = array("isPrincipalInvestigatorOf","author","coInvestigator", "hasCollector");
-        foreach ($relations_types as $relation_type) {
+        $relations_types = array("hasPrincipalInvestigator","author","coInvestigator", "hasCollector");
+        foreach ($relations_types as $idx=>$relation_type) {
             $relationships = self::getRelationByType($record, array($relation_type));
             foreach ($relationships as $relation) {
                 if ($relation["class"] != 'party') // shouldn't happen with these relationship types but to be sure
