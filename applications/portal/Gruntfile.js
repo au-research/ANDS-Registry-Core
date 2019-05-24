@@ -41,7 +41,7 @@ module.exports = function (grunt) {
           '<%= yeoman.templates %>/ands-green/assets/css/ands.css',
           '<%= yeoman.assets %>/css/portal.less.compiled.css'
         ],
-        dest: '<%= yeoman.assets %>/css/portal.prepurify.combine.css'
+        dest: '<%= yeoman.assets %>/css/portal.combine.css'
       },
       lib: {
         options: {separator: ';'},
@@ -78,7 +78,8 @@ module.exports = function (grunt) {
           'registry_object/assets/js/portal-directives.js',
           'registry_object/assets/js/vocab-factory.js',
           'registry_object/assets/js/search_controller.js',
-          'registry_object/assets/js/search-factory.js'
+          'registry_object/assets/js/search-factory.js',
+
         ],
         dest: '<%=yeoman.assets %>/js/portal_lib.js'
       }
@@ -103,21 +104,10 @@ module.exports = function (grunt) {
         }
       }
     },
-    purifycss: {
-        options: {},
-        target: {
-            src: ['<%= yeoman.templates %>/**/*.php',
-                  '<%= yeoman.profile %>/assets/templates/*.html',
-                  'registry_object/**/*.js'
-            ],
-            css: ['<%= yeoman.assets %>/css/portal.prepurify.combine.css'],
-            dest: '<%=yeoman.assets %>/css/portal.combine.css'
-        },
-    },
     watch: {
       styles: {
         files: ['**/*.less', '**/*.css', '!core/assets/dist/*.css'],
-        tasks: ['less', 'concat:styles', 'clean', 'purifycss', 'assets_versioning']
+        tasks: ['less', 'concat:styles', 'clean','assets_versioning']
       },
       scripts: {
         files: [
@@ -126,7 +116,7 @@ module.exports = function (grunt) {
           'core/assets/js/*.js',
           '!core/assets/dist/*.js'
         ],
-        tasks: ['concat:lib', 'concat:portal_lib', 'clean', 'purifycss', 'assets_versioning']
+        tasks: ['concat:lib', 'concat:portal_lib', 'clean', 'assets_versioning']
       }
     },
     clean: ['<%=yeoman.assets %>/dist'],
@@ -160,7 +150,7 @@ module.exports = function (grunt) {
   })
   require('load-grunt-tasks')(grunt);
 
-  grunt.registerTask('default', ['less', 'concat', 'clean', 'assets_versioning', 'copy' , 'purifycss'])
+  grunt.registerTask('default', ['less', 'concat', 'clean', 'assets_versioning', 'copy' ])
   grunt.registerTask('dev', ['default'])
   grunt.registerTask('prod', ['default', 'uglify']);
 }

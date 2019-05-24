@@ -79,5 +79,4 @@
             </div>
         </div>
     </section>
-    @include('includes/scripts')
 </footer>
