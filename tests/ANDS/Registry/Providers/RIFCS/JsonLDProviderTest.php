@@ -130,4 +130,14 @@ class JsonLDProviderTest extends \RegistryTestClass
         self::assertEquals("The Great Funder", $output[0]['name']);
     }
 
+    /** @test **/
+    public function it_should_find_a_publication()
+    {
+        $record = $this->ensureKeyExist("https://redbox.rmit.edu.au/redbox/published/detail/de43cbd0fbdef27eb2ab7a8fffb3d9ceAUTza");
+        $data['recordData'] = $record->getCurrentData()->data;
+        $output = JsonLDProvider::getRelatedPublications($record);
+        self::assertEquals("https://dx.doi.org/10.1371/journal.pone.0180842", $output[0]['identifier_value']);
+    }
+
+
 }
