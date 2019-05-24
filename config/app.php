@@ -4,7 +4,7 @@ return [
     'release_version' => env('VERSION', '31'),
     'environment_name' => env("ENVIRONMENT_NAME", "RDA"),
     'environment_colour' => env("ENVIRONMENT_COLOUR" , "#6EBF21"),
-    'environment_logo' => '/img/ands_logo_white.png',
+    'environment_logo' => 'img/ardc_logo_white.png',
     'protocol' => env('PROTOCOL', 'http://'),
     'default_base_url' => env('PROTOCOL', 'http://') . env("BASE_URL", "localhost").'/',
     'subject_vocab_proxy' => env('PROTOCOL', 'http://') . env("BASE_URL", "localhost").'/apps/vocab_widget/proxy/',
