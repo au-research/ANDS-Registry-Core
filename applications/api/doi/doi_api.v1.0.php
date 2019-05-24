@@ -1332,7 +1332,7 @@ class Doi_api
 
         //determine if doi is a test doi
         $test_check = strpos($message["doi"]["id"], '10.5072');
-        if ($test_check || $test_check === 0 || $client->mode == 'test') {
+        if ($test_check || $test_check === 0 || ($client && $client->mode == 'test')) {
             $message["doi"]["production"] = false;
         }
 
