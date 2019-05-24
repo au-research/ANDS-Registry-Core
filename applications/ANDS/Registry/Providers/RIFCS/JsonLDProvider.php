@@ -779,22 +779,20 @@ class JsonLDProvider implements RIFCSProvider
 
         // direct
         $direct = IdentifierRelationshipView::where('from_id', $record->id)
-            ->where('to_type', 'publication')
+            ->where('to_related_info_type', 'publication')
             ->take(50)->get();
         foreach ($direct as $relation) {
             $results[] = [
                 'relation' => $relation['relation_type'],
-                'name' => (string) $relation['to_title'],
+                'name' => (string) $relation['relation_to_title'],
                 'id' => null,
                 'slug' => null,
                 'key' => null,
-                'type' => $relation['to_type'],
+                'type' => $relation['to_related_info_type'],
                 "identifier_type" => $relation["to_identifier_type"],
                 "identifier_value"=> $relation["to_identifier"]
             ];
         }
-
-
         return $results;
     }
 }
