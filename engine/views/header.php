@@ -80,7 +80,7 @@ else
 
     <div id="header" <?=$environment_header_style;?>>
       <a href="<?php echo registry_url();?>" title="<?=$logo_title;?>" tip="<?=$logo_title;?>" my="center left" at="center right">
-        <img src="<?=$environment_logo;?>" alt="ANDS Logo White"/> 
+        <img src="<?=$environment_logo;?>" alt="ANDS Logo White" style="height:50%;"/>
       </a>
       <strong style="color:<?=$environment_colour;?>;"><?=$environment_name;?></strong>
     </div>
