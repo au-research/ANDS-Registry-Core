@@ -181,11 +181,16 @@ class JsonLDProvider implements RIFCSProvider
             $date = DatesProvider::formatDate($date);
             if($type == 'dateFrom' && $date != null){
                     $dateFrom = $date;
-                }
-                if($type == "dateTo" && $date != null)
-                    $dateTo = $date;
+            }
+            if($type == "dateTo" && $date != null)
+                $dateTo = $date;
         }
-       return $dateFrom . '/' . $dateTo;
+        $formattedDate =  $dateFrom . '/' . $dateTo;
+
+        if($formattedDate == '../..')
+            return null;
+
+        return $formattedDate;
     }
 
 
