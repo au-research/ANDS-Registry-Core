@@ -1583,12 +1583,11 @@ function getRIFCSforTab(tab, hasField){
 						fragment +='</date>';
 					}else if(type=='citation_date'){
                         var dates = $('.aro_box_part[type=citation_date]', this);
-                        $.each(dates, function(){
-                        	console.log(this);
-                            fragment += '<date field_id="' +$(this).attr('field_id')+'" type="'+($('input[name=type]', this).length !== 0 ?  htmlEntities($('input[name=type]', this).val()) : "")+'">';
-                            fragment += ($('input[name=value]', this).length !== 0 ?  htmlEntities($('input[name=value]', this).val()) : "");
-                            fragment +='</date>';
-                        });
+						$.each(dates, function(){
+							fragment += '<date field_id="' +$(this).attr('field_id')+'" type="'+($('input[name=type]', this).length !== 0 ?  htmlEntities($('input[name=type]', this).val()) : "")+'">';
+							fragment += ($('input[name=value]', this).length !== 0 ?  htmlEntities($('input[name=value]', this).val()) : "");
+							fragment +='</date>';
+						});
 					}else if(type=='temporal'){
 						fragment+='<temporal';
 						if(hasField) fragment += ' field_id="' +$(this).attr('field_id')+'"';
