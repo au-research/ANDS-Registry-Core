@@ -4,9 +4,9 @@
             <div class="row element-normal-top element-normal-bottom">
                 <div class="col-md-8">
                     <p>
-                        Research Data Australia is the data discovery service of the Australian National Data Service (ANDS).
-                        ANDS is supported by the Australian Government through the National Collaborative Research Infrastructure Strategy Program.
-                        <a href="http://ands.org.au/__data/assets/pdf_file/0006/387843/better-data-for-australian-research.pdf" target="_blank" style="color:#84A">Read more about ANDS...</a>
+                        Research Data Australia is the data discovery service of the Australian Research Data Commons (ARDC).
+                        The ARDC is supported by the Australian Government through the National Collaborative Research Infrastructure Strategy Program.
+                        <a href="https://ardc.edu.au/about/" target="_blank" style="color:#84A">Read more about the ARDC...</a>
                     </p>
                 </div>
                 <div class="col-md-2">
@@ -67,9 +67,9 @@
                     <div id="categories-4" class="sidebar-widget  widget_categories">
                         <h3 class="sidebar-header">External Resources</h3>
                         <ul>
-                            <li class="cat-item"> <a href="http://www.ands.org.au/" title="" target="_blank">ANDS Website</a> </li>
+                            <li class="cat-item"> <a href="https://ardc.edu.au" title="" target="_blank">ARDC Website</a> </li>
                             <li class="cat-item"> <a href="http://developers.ands.org.au" title="" target="_blank">Developers</a> </li>
-                            <li class="cat-item"> <a href="{{base_url('registry/')}}" title="">ANDS Online Services</a> </li>
+                            <li class="cat-item"> <a href="{{base_url('registry/')}}" title="">ARDC Online Services</a> </li>
                             @if(isset($ro) && $ro->core['id'])
                                 <li class="cat-item"> <a href="{{base_url('registry/registry_object/view/')}}/<?=$this->ro->id?>" title="">Registry View</a> </li>
                             @endif
