@@ -62,7 +62,7 @@ class JsonLDProvider implements RIFCSProvider
             $json_ld->datePublished = DatesProvider::getPublicationDateForSchemadotOrg($record);
             $json_ld->alternativeHeadline = self::getAlternateName($record, $data);
             $json_ld->version = self::getVersion($record, $data);
-            $json_ld->fileFormat = self::getFileFormat($record, $data);
+            $json_ld->encodingFormat = self::getEncodingFormat($record, $data);
             $json_ld->funder = self::getFunder($record);
             $json_ld->hasPart = self::getRelated($record, array("hasPart"));
             $json_ld->isBasedOn = self::getRelated($record, array("isDerivedFrom"));
@@ -501,7 +501,7 @@ class JsonLDProvider implements RIFCSProvider
                 $distArray["@type"] = "DataDownload";
                 $distArray["contentSize"] = (string)$distribute->byteSize;
                 $distArray["contentUrl"] = (string)$distribute->value;
-                $distArray["fileFormat"] = (string)$distribute->mediaType;
+                $distArray["encodingFormat"] = (string)$distribute->mediaType;
                 if($notes) $distArray["description"] = $notes;
                 $distribution[] = $distArray;
             }
@@ -520,16 +520,16 @@ class JsonLDProvider implements RIFCSProvider
         return $codeRepository;
     }
 
-    public static function getFileFormat(RegistryObject $record, $data = null)
+    public static function getEncodingFormat(RegistryObject $record, $data = null)
     {
-        $fileFormat = [];
+        $encodingFormat = [];
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class . '/ro:location/ro:address/ro:electronic') AS $distribute) {
             if((string)$distribute['target']=='directDownload') {
-                $fileFormat[] = (string)$distribute->mediaType;
+                $encodingFormat[] = (string)$distribute->mediaType;
             }
         };
-        return $fileFormat;
+        return $encodingFormat;
     }
 
 
