@@ -43,6 +43,7 @@ class JsonLDProvider implements RIFCSProvider
         if ($record->type == 'dataset' || $record->type == 'collection') {
             $json_ld->{'@type'} = "Dataset";
             $json_ld->distribution = self::getDistribution($record, $data);
+
         }
         if ($record->type == 'software' && $record->class == "collection") {
             $json_ld->codeRepository = self::getCodeRepository($record, $data);
@@ -54,7 +55,6 @@ class JsonLDProvider implements RIFCSProvider
             $json_ld->provider = self::getProvider($record, $data);
             $json_ld->termsOfService = self::getTermsOfService($record, $data);
         } elseif ($record->class == 'collection'){
-
             $json_ld->accountablePerson = self::getAccountablePerson($record, $data);
             $json_ld->creator = self::getCreator($record, $data);
             $json_ld->citation = self::getCitation($record);
@@ -593,6 +593,7 @@ class JsonLDProvider implements RIFCSProvider
     {
         $relations_types = ["isOwnedBy", "isManagedBy"];
         $processedIds = [];
+        $accountablePerson = [];
         foreach ($relations_types as $idx=>$relation_type) {
             $relationships = self::getRelationByType($record, array($relation_type));
             foreach ($relationships as $relation) {
