@@ -757,6 +757,9 @@ function initEloquent() {
                 'port' => array_key_exists('port', $db) ? $db['port'] : $default['port'],
                 'username' => array_key_exists('username', $db) ? $db['username'] : $default['username'],
                 'password' => array_key_exists('password', $db) ? $db['password'] : $default['password'],
+                'charset' => 'utf8',
+                'collation' => 'utf8_general_ci',
+                'prefix' => '',
                 'options' => [
                     \PDO::ATTR_PERSISTENT => true,
                 ]
