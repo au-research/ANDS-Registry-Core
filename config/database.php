@@ -4,6 +4,7 @@ return [
         'hostname' => env('DB_HOSTNAME', 'localhost'),
         'username' => env('DB_USERNAME', 'webuser'),
         'password' => env('DB_PASSWORD', ''),
+        'port' => env('DB_PORT', 3306),
         'dbdriver' => 'mysqli',
         'database' => env('DB_DATABASE', 'dbs_registry')
     ],
