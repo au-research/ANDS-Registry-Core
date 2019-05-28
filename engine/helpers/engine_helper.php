@@ -753,15 +753,13 @@ function initEloquent() {
             [
                 'driver' => 'mysql',
                 'host' => array_key_exists('hostname', $db) ? $db['hostname'] : $default['hostname'],
-                'database' => array_key_exists('database', $db) ? $db['database'] : "dbs_registry",
+                'database' => array_key_exists('database', $db) ? $db['database'] : $default['database'],
+                'port' => array_key_exists('port', $db) ? $db['port'] : $default['port'],
                 'username' => array_key_exists('username', $db) ? $db['username'] : $default['username'],
                 'password' => array_key_exists('password', $db) ? $db['password'] : $default['password'],
-                'charset' => 'utf8',
-                'collation' => 'utf8_general_ci',
-                'prefix' => '',
-                'options'   => array(
+                'options' => [
                     \PDO::ATTR_PERSISTENT => true,
-                )
+                ]
             ], $key
         );
     }
