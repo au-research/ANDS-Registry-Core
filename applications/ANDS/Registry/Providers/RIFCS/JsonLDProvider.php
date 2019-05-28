@@ -215,14 +215,15 @@ class JsonLDProvider implements RIFCSProvider
         $data = null
     ){
         $licenses = [];
-
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class . '/ro:rights/ro:licence') AS $license) {
-            $licenses[]= (string)$license;
-            $licenses[]= (string)$license['type'];
-            $licenses[]= (string)$license['rightsUri'];
+            if((string)$license != '')
+                $licenses[]= (string)$license;
+            if((string)$license['type'] != '')
+                $licenses[]= (string)$license['type'];
+            if((string)$license['rightsUri'] != '')
+                $licenses[]= (string)$license['rightsUri'];
         };
-
         return $licenses;
     }
 
@@ -590,22 +591,24 @@ class JsonLDProvider implements RIFCSProvider
 
     public static function getAccountablePerson(RegistryObject $record)
     {
-
         $relations_types = ["isOwnedBy", "isManagedBy"];
-        $relationships = self::getRelationByType($record, $relations_types);
-        $accountablePerson = [];
         $processedIds = [];
-        foreach ($relationships as $relation) {
-            // check for class == party in case shouldn't happen with these relationship types but to be sure
-            if ($relation["class"] != 'party' || $relation["type"] == 'group' || in_array_r($relation["id"] , $processedIds)) {
-                continue;
+        foreach ($relations_types as $idx=>$relation_type) {
+            $relationships = self::getRelationByType($record, array($relation_type));
+            foreach ($relationships as $relation) {
+                // check for class == party in case shouldn't happen with these relationship types but to be sure
+                if ($relation["class"] != 'party' || $relation["type"] == 'group' || in_array_r($relation["id"] , $processedIds)) {
+                    continue;
+                }
+                $processedIds[] = $relation["id"];
+                if ($relation["name"] != "") {
+                    $accountablePerson[] = array("@type" => "Person", "name" => $relation["name"], "url" => self::base_url().$relation["slug"]."/".$relation["id"]);
+                } else {
+                    $accountablePerson[] = array("@type" => "Person", "name" => $relation["name"]);
+                }
             }
-            $processedIds[] = $relation["id"];
-            if ($relation["name"] != "") {
-                $accountablePerson[] = array("@type" => "Person", "name" => $relation["name"], "url" => self::base_url().$relation["slug"]."/".$relation["id"]);
-            } else {
-                $accountablePerson[] = array("@type" => "Person", "name" => $relation["name"]);
-            }
+            if(sizeof($accountablePerson) > 0)
+                return $accountablePerson;
         }
         return $accountablePerson;
     }
