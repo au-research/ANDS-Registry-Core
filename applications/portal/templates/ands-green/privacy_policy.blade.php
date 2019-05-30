@@ -9,12 +9,12 @@
                        <h1 class="bigger hairline bordered bordered-normal os-animation animated fadeIn" data-os-animation="fadeIn" data-os-animation-delay="0s" style="-webkit-animation: 0s;">Privacy Policy</h1>
                    </header>
                    <p>
-                       The following document sets forth the Privacy Policy for the ANDS website Research Data Australia,
+                       The following document sets forth the Privacy Policy for the ARDC website Research Data Australia,
                        <a href="http://researchdata.ands.org.au">http://researchdata.ands.org.au</a>.
                    </p>
 
                    <p>
-                       ANDS is bound by the <a href="http://www.comlaw.gov.au/Details/C2013C00482">Privacy Act 1988</a> (Privacy Act),
+                       The ARDC is bound by the <a href="http://www.comlaw.gov.au/Details/C2013C00482">Privacy Act 1988</a> (Privacy Act),
                        which sets out a number of principles concerning the privacy of individuals.
                    </p>
 
@@ -36,7 +36,7 @@
                    <p>There are many aspects of the site which can be viewed without providing personal information,
                        however, for access to certain features you are required to login via supported 3rd party
                        authorisation providers. Upon your approval, these 3rd party providers share profile information
-                       about you with ANDS and Research Data Australia. From this information ANDS will collect and
+                       about you with the ARDC and Research Data Australia. From this information the ARDC will collect and
                        store your name, unique provider ID and if available a link to your profile image.
                    </p>
                    <p>
@@ -47,13 +47,13 @@
                    </p>
                    <h3>Sharing of your personal information</h3>
                    <p>
-                       ANDS will not disclose or on sell any personal information obtained through your login and use of
+                       The ARDC will not disclose or on sell any personal information obtained through your login and use of
                        Research Data Australia. Data collected will only be used in the context of your logged in
                        Research Data Australia session and to improve our website and services.
                    </p>
                    <h3>Changes to this Privacy Policy</h3>
                    <p>
-                       ANDS reserves the right to make amendments to this Privacy Policy at any time. If you have
+                       The ARDC reserves the right to make amendments to this Privacy Policy at any time. If you have
                        objections to the Privacy Policy, you should not access or use the site.
 
                    </p>
@@ -65,19 +65,14 @@
 
                    </p>
                    <h3>Contacting us</h3>
-                   <p>ANDS welcomes your comments regarding this Privacy Policy. If you have any questions or concerns
+                   <p>The ARDC welcomes your comments regarding this Privacy Policy. If you have any questions or concerns
                        about this Privacy Policy and would like further information, please contact us by any of the
                        following means during business hours Monday to Friday.
                    </p>
                    <p>
-                       ANDS Office<br/>
-                       Monash University,<br/>
-                       PO Box 197,<br/>
-                       Caulfield East VIC 3145,<br/>
-                       AUSTRALIA<br/>
-                       <br/>
+                       ARDC Office</br>
                        Phone: <a href="tel:%2B61%203%209902%200585">+61 3 9902 0585</a><br/>
-                       E-mail: <a href="mailto:services@ands.org.au">services@ands.org.au</a><br/>
+                       E-mail: <a href="mailto:services@ardc.edu.au">services@ardc.edu.au</a><br/>
                    </p>
                </div>
            </div>
