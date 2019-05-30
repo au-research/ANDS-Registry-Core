@@ -1,7 +1,7 @@
 <footer id="footer" role="contentinfo">
     <section class="section swatch-black">
         <div class="container">
-            <div class="row element-normal-top element-normal-bottom">
+            <div class="row element-normal-top element-normal-bottom footer-banner">
                 <div class="col-md-8">
                     <p>
                         Research Data Australia is the data discovery service of the Australian Research Data Commons (ARDC).
@@ -9,10 +9,12 @@
                         <a href="https://ardc.edu.au/about/" target="_blank" style="color:#84A">Read more about the ARDC...</a>
                     </p>
                 </div>
-                <div class="col-md-2">
-                   <a href="https://education.gov.au/national-collaborative-research-infrastructure-strategy-ncris" target="_blank" class="gov_logo"><img style="margin-top: -40px;" src="<?php echo asset_url('images/NCRIS_PROVIDER_rev.png','core');?>" alt="National Collaborative Research Infrastructure Strategy (NCRIS)" /></a>
+                <div class="col-md-2 edu-logo-footer">
+                   <a href="https://education.gov.au/national-collaborative-research-infrastructure-strategy-ncris" target="_blank" class="gov_logo">
+                       <img src="<?php echo asset_url('images/NCRIS_PROVIDER_rev.png','core');?>" alt="National Collaborative Research Infrastructure Strategy (NCRIS)" />
+                   </a>
                 </div>
-                <div class="col-md-2" style="text-align:center;">
+                <div class="col-md-2 ardc-logo-footer">
                     <a href="https://www.ardc.edu.au/" class="footer_logo"><img src="{{ asset_url(\ANDS\Util\config::get('app.environment_logo'), 'base')}}" alt=""/></a>
                 </div>
             </div>
