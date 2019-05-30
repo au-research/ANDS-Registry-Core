@@ -73,11 +73,16 @@ class JSONInterface extends FormatHandler
         header('Content-type: application/json');
         $ci->output->set_content_type('application/json');
         $ci->output->set_status_header($status);
-        if ($ci->input->get('pretty')) {
-            return json_encode($response, JSON_PRETTY_PRINT);
-        } else {
-            return json_encode($response);
+
+        $response = $ci->input->get('pretty')
+            ?  json_encode($response, JSON_PRETTY_PRINT)
+            : json_encode($response);
+
+        if (!$response) {
+            monolog("Failed encoding string: ". json_last_error_msg(), "error");
         }
+
+        return $response;
     }
 
     /**
