@@ -7,6 +7,7 @@ use ANDS\Registry\Providers\DCI\DataCitationIndexProvider;
 use ANDS\Registry\Providers\DublinCore\DublinCoreProvider;
 use ANDS\Registry\Providers\ORCID\ORCIDProvider;
 use ANDS\Registry\Providers\ORCID\ORCIDRecord;
+use ANDS\Registry\Providers\RIFCS\JsonLDProvider;
 use ANDS\Repository\RegistryObjectsRepository;
 
 class RecordsMiscController
@@ -63,6 +64,20 @@ class RecordsMiscController
         $record = RegistryObjectsRepository::getRecordByID($id);
         $dci = DataCitationIndexProvider::get($record);
         $this->printXML($dci);
+    }
+
+    /**
+     * GET json_ld endpoint for a record
+     *
+     * @param $id
+     * @return mixed
+     */
+    public function json_ld($id)
+    {
+        $record = RegistryObjectsRepository::getRecordByID($id);
+        $jsonLD = JsonLDProvider::process($record);
+
+        return json_decode($jsonLD);
     }
 
     public function dciValidate($id)
