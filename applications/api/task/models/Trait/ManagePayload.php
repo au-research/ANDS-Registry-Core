@@ -81,10 +81,40 @@ trait ManagePayload
     }
 
     /**
+     * check if the payload has a type
+     * primarily used to check the existence of file(s) before attempting to load them
+     *
+     * @param string $fileExtension
+     * @return bool
+     *
+     * TODO use something better than scandir
+     */
+    public function hasPayloadExtension($fileExtension = 'xml')
+    {
+        $path = $this->getHarvestedPath();
+
+        if (!is_dir($path)) {
+            $filePath = $path . '.' . $fileExtension;
+            return is_file($filePath);
+        } else {
+            $directory = scandir($path);
+            $files = [];
+            foreach ($directory as $f) {
+                if (endsWith($f, '.' . $fileExtension)) {
+                    $files[] = $f;
+                }
+            }
+            return !is_array_empty($files);
+        }
+    }
+
+    /**
      * Load the payload specified in the parent task
      * to the parent payloads array
-     * @param $fileExtension the file extension we want to load from harvested contents
-     * TODO: need a better file searching mechanism than scan_dir
+     * @param string $fileExtention
+     * @return ManagePayload
+     *
+     * TODO: use something better than scandir
      */
 
     public function loadPayload($fileExtention = 'xml')

@@ -1,5 +1,5 @@
 @if($related['software']['count']>0)
-    <div class="related-data">
+    <div class="related-software">
         <h4>Related Software</h4>
         <ul class="list-unstyled">
             @foreach($related['software']['docs'] as $col)

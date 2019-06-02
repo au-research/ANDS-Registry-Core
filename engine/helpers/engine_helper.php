@@ -542,7 +542,11 @@ function debug($message, $type = "debug") {
     }
 
     $logger = new \Monolog\Logger('debug');
-    $handler = new \Monolog\Handler\StreamHandler('logs/debug.log');
+
+    $storageConfig = ANDS\Util\Config::get('app.storage');
+    $logsPath = $storageConfig['logs']['path'];
+    
+    $handler = new \Monolog\Handler\StreamHandler($logsPath.'/debug.log');
     $logger->pushHandler($handler);
     if ($type == "debug") {
         $logger->debug($message);
@@ -749,15 +753,16 @@ function initEloquent() {
             [
                 'driver' => 'mysql',
                 'host' => array_key_exists('hostname', $db) ? $db['hostname'] : $default['hostname'],
-                'database' => array_key_exists('database', $db) ? $db['database'] : "dbs_registry",
+                'database' => array_key_exists('database', $db) ? $db['database'] : $default['database'],
+                'port' => array_key_exists('port', $db) ? $db['port'] : $default['port'],
                 'username' => array_key_exists('username', $db) ? $db['username'] : $default['username'],
                 'password' => array_key_exists('password', $db) ? $db['password'] : $default['password'],
                 'charset' => 'utf8',
                 'collation' => 'utf8_general_ci',
                 'prefix' => '',
-                'options'   => array(
+                'options' => [
                     \PDO::ATTR_PERSISTENT => true,
-                )
+                ]
             ], $key
         );
     }

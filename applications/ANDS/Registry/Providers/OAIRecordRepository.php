@@ -192,13 +192,29 @@ class OAIRecordRepository implements OAIRepository
     public function getRecord($metadataFormat, $identifier)
     {
 
-
         if (!in_array($metadataFormat, array_keys($this->getFormats()))) {
             throw new BadArgumentException();
         }
 
         if ($metadataFormat == "scholix") {
             return $this->getScholixRecord($identifier);
+        }
+
+        if (!in_array($metadataFormat, array_keys($this->formats))) {
+
+            $record = AltSchemaVersion::where('key', $identifier)->first();
+            if (!$record) {
+                return null;
+            }
+
+            $oaiRecord = new Record(
+                $record->registryObject->key,
+                Carbon::parse($record->updated_at)->setTimezone('UTC')->format($this->getDateFormat())
+            );
+            $oaiRecord = $this->addAltSchemaVersionsSets($oaiRecord, $record);
+            $oaiRecord->setMetadata($record->data);
+
+            return $oaiRecord;
         }
 
         $id = str_replace($this->oaiIdentifierPrefix, "", $identifier);

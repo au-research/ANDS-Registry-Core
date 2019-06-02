@@ -13,6 +13,7 @@ class RecordsController extends HTTPController implements RestfulController
 
     protected static $validFilters = [
         'data_source_id',
+        'status',
         'class',
         'key',
         'type',
@@ -37,11 +38,11 @@ class RecordsController extends HTTPController implements RestfulController
 
         if (request('summary')) {
             return [
-                'count' => RegistryObjectsRepository::getCountPublished($filters)
+                'count' => RegistryObjectsRepository::getCountByFilters($filters)
             ];
         }
 
-        return RegistryObjectsRepository::getPublishedBy($filters);
+        return RegistryObjectsRepository::getAllByFilters($filters);
     }
 
     /**

@@ -154,3 +154,32 @@ div.vertical-center {
   word-wrap: break-word;
   word-break: break-word;
 }
+
+/**
+  * Footer responsive layout
+ */
+@media (max-width: 991px) {
+  .footer-banner {
+    .edu-logo-footer img{
+      width: 200px;
+      margin: 40px 0;
+    }
+    .ardc-logo-footer img {
+      width: 200px;
+      text-align: left;
+    }
+  }
+}
+
+@media (min-width: 992px) {
+  .footer-banner {
+    .edu-logo-footer img{
+      width: 100%;
+      margin-top: -40px;
+    }
+    .ardc-logo-footer img {
+      width: 100%;
+      text-align: center;
+    }
+  }
+}
