@@ -3,7 +3,10 @@ module.exports = function (grunt) {
   //configuration goes here
   var yeomanConfig = {
     assets: 'core/assets',
-    templates: 'templates'
+    templates: 'templates',
+    profile: 'profile',
+
+
   }
 
   grunt.initConfig({
@@ -47,18 +50,16 @@ module.exports = function (grunt) {
           '<%=yeoman.assets %>/vendor/qtip2/jquery.qtip.js',
           '<%=yeoman.assets %>/vendor/mustache/mustache.min.js',
           '<%=yeoman.assets %>/vendor/colorbox/jquery.colorbox-min.js',
-
-          '<%=yeoman.assets %>/lib/angular/angular.min.js',
-          '<%=yeoman.assets %>/lib/angular-route/angular-route.min.js',
-          '<%=yeoman.assets %>/lib/angular-sanitize/angular-sanitize.min.js',
-          '<%=yeoman.assets %>/lib/angular-animate/angular-animate.min.js',
-          '<%=yeoman.assets %>/lib/angular-ui-utils/ui-utils.min.js',
-          '<%=yeoman.assets %>/lib/angular-bootstrap/ui-bootstrap.min.js',
-          '<%=yeoman.assets %>/lib/angular-bootstrap/ui-bootstrap-tpls.min.js',
-          '<%=yeoman.assets %>/lib/angular-loading-bar/build/loading-bar.min.js',
-          '<%=yeoman.assets %>/lib/angular-google-maps/dist/angular-google-maps.js',
-          '<%=yeoman.assets %>/lib/angular-lz-string/angular-lz-string.js',
-
+          'node_modules/@bower_components/angular/angular.min.js',
+          'node_modules/@bower_components/angular-route/angular-route.min.js',
+          'node_modules/@bower_components/angular-sanitize/angular-sanitize.min.js',
+          'node_modules/@bower_components/angular-animate/angular-animate.min.js',
+          'node_modules/@bower_components/angular-ui-utils/ui-utils.min.js',
+          'node_modules/@bower_components/angular-bootstrap/ui-bootstrap.min.js',
+          'node_modules/@bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js',
+          'node_modules/@bower_components/angular-loading-bar/build/loading-bar.min.js',
+          'node_modules/@bower_components/angular-google-maps/dist/angular-google-maps.js',
+          'node_modules/@bower_components/angular-lz-string/angular-lz-string.js',
           '<%=yeoman.assets %>/vendor/lodash/dist/lodash.min.js',
           '<%=yeoman.templates %>/ands-green/assets/js/d3.min.js',
           '<%=yeoman.templates %>/ands-green/assets/js/neo4jd3/js/neo4jd3.js'
@@ -77,7 +78,8 @@ module.exports = function (grunt) {
           'registry_object/assets/js/portal-directives.js',
           'registry_object/assets/js/vocab-factory.js',
           'registry_object/assets/js/search_controller.js',
-          'registry_object/assets/js/search-factory.js'
+          'registry_object/assets/js/search-factory.js',
+
         ],
         dest: '<%=yeoman.assets %>/js/portal_lib.js'
       }
@@ -105,7 +107,7 @@ module.exports = function (grunt) {
     watch: {
       styles: {
         files: ['**/*.less', '**/*.css', '!core/assets/dist/*.css'],
-        tasks: ['less', 'concat:styles', 'clean', 'assets_versioning']
+        tasks: ['less', 'concat:styles', 'clean','assets_versioning']
       },
       scripts: {
         files: [
@@ -128,7 +130,7 @@ module.exports = function (grunt) {
         files: {
           '<%=yeoman.assets %>/dist/lib.js': ['<%=yeoman.assets %>/js/lib.js'],
           '<%=yeoman.assets %>/dist/portal_lib.js': ['<%=yeoman.assets %>/js/portal_lib.js'],
-          '<%=yeoman.assets %>/dist/portal.combine.css': ['<%= yeoman.assets %>/css/portal.combine.css']
+          '<%=yeoman.assets %>/dist/portal.combine.css': ['<%=yeoman.assets %>/css/portal.combine.css']
         }
       }
     },
@@ -144,11 +146,11 @@ module.exports = function (grunt) {
           }
         ]
       }
-    }
+    },
   })
-  require('load-grunt-tasks')(grunt)
+  require('load-grunt-tasks')(grunt);
 
-  grunt.registerTask('default', ['less', 'concat', 'clean', 'assets_versioning', 'copy'])
+  grunt.registerTask('default', ['less', 'concat', 'clean', 'assets_versioning', 'copy' ])
   grunt.registerTask('dev', ['default'])
-  grunt.registerTask('prod', ['default', 'uglify'])
+  grunt.registerTask('prod', ['default', 'uglify']);
 }

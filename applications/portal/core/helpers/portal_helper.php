@@ -55,7 +55,12 @@ function profile_image() {
 			$r = $result->first_row();
 			if ($r->oauth_data) {
 				$data = json_decode($r->oauth_data, true);
-				if ($data['photoURL']) return $data['photoURL'];
+				if ($data['photoURL'] && $data['photoURL'] != '') {
+				    return $data['photoURL'];
+
+                }else{
+                    return asset_url('images/generic_user.png', 'core');
+                }
 			} else {
 				return asset_url('images/generic_user.png', 'core');
 			}

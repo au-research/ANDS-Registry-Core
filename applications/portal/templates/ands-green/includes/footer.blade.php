@@ -1,19 +1,21 @@
 <footer id="footer" role="contentinfo">
     <section class="section swatch-black">
         <div class="container">
-            <div class="row element-normal-top element-normal-bottom">
+            <div class="row element-normal-top element-normal-bottom footer-banner">
                 <div class="col-md-8">
                     <p>
-                        Research Data Australia is the data discovery service of the Australian National Data Service (ANDS).
-                        ANDS is supported by the Australian Government through the National Collaborative Research Infrastructure Strategy Program.
-                        <a href="http://ands.org.au/__data/assets/pdf_file/0006/387843/better-data-for-australian-research.pdf" target="_blank" style="color:#84A07B">Read more about ANDS...</a>
+                        Research Data Australia is the data discovery service of the Australian Research Data Commons (ARDC).
+                        The ARDC is supported by the Australian Government through the National Collaborative Research Infrastructure Strategy Program.
+                        <a href="https://ardc.edu.au/about/" target="_blank" style="color:#84A">Read more about the ARDC...</a>
                     </p>
                 </div>
-                <div class="col-md-2">
-                   <a href="https://education.gov.au/national-collaborative-research-infrastructure-strategy-ncris" target="_blank" class="gov_logo"><img style="height:75px;" src="<?php echo asset_url('images/NCRIS_PROVIDER_rev.png','core');?>" alt="National Collaborative Research Infrastructure Strategy (NCRIS)" /></a>
+                <div class="col-md-2 edu-logo-footer">
+                   <a href="https://education.gov.au/national-collaborative-research-infrastructure-strategy-ncris" target="_blank" class="gov_logo">
+                       <img src="<?php echo asset_url('images/NCRIS_PROVIDER_rev.png','core');?>" alt="National Collaborative Research Infrastructure Strategy (NCRIS)" />
+                   </a>
                 </div>
-                <div class="col-md-2">
-                    <a href="http://www.ands.org.au/" class="footer_logo"><img src="{{asset_url('images/footer_logo_rev.png', 'core')}}" alt="" style="height:75px;"/></a>
+                <div class="col-md-2 ardc-logo-footer">
+                    <a href="https://www.ardc.edu.au/" class="footer_logo"><img src="{{ asset_url(\ANDS\Util\config::get('app.environment_logo'), 'base')}}" alt=""/></a>
                 </div>
             </div>
             <div class="row element-normal-top element-normal-bottom">
@@ -67,9 +69,9 @@
                     <div id="categories-4" class="sidebar-widget  widget_categories">
                         <h3 class="sidebar-header">External Resources</h3>
                         <ul>
-                            <li class="cat-item"> <a href="http://www.ands.org.au/" title="" target="_blank">ANDS Website</a> </li>
+                            <li class="cat-item"> <a href="https://ardc.edu.au" title="" target="_blank">ARDC Website</a> </li>
                             <li class="cat-item"> <a href="http://developers.ands.org.au" title="" target="_blank">Developers</a> </li>
-                            <li class="cat-item"> <a href="{{base_url('registry/')}}" title="">ANDS Online Services</a> </li>
+                            <li class="cat-item"> <a href="{{base_url('registry/')}}" title="">ARDC Online Services</a> </li>
                             @if(isset($ro) && $ro->core['id'])
                                 <li class="cat-item"> <a href="{{base_url('registry/registry_object/view/')}}/<?=$this->ro->id?>" title="">Registry View</a> </li>
                             @endif

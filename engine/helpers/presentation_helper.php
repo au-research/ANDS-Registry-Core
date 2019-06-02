@@ -417,8 +417,8 @@ function nicifyDate($w3cdtf)
             // Assume friendly display of just the year
             return date("Y", $time); // i.e. 2001
         }
-        elseif(date("d", $time)=="01"){
-            return date("m Y", $time); // i.e. 2001
+        elseif(date("d", $time)!="01"){
+            return date("d m Y", $time); // i.e. 2001
         }
         else
         {

@@ -58,8 +58,8 @@
                             <span ng-if="doi.doi_id.indexOf('10.5072/') == 0">{{ doi.url }}</span>
                         </td>
                         <td>
-                            <a target="_blank" href="http://dx.doi.org/{{ doi.doi_id }}" ng-if="doi.status!='RESERVED' && doi.doi_id.indexOf('10.5072/') == -1">{{ doi.doi_id }}</a>
-                            <span ng-if="doi.status=='RESERVED' || doi.doi_id.indexOf('10.5072/') == 0">{{ doi.doi_id }}</span>
+                            <a target="_blank" href="http://dx.doi.org/{{ doi.doi_id }}" ng-if="doi.status!='RESERVED' && doi.doi_id.indexOf('10.5072/') == -1 && vm.client.mode !='test'">{{ doi.doi_id }}</a>
+                            <span ng-if="doi.status=='RESERVED' || doi.doi_id.indexOf('10.5072/') == 0 ||  vm.client.mode =='test'">{{ doi.doi_id }}</span>
                         </td>
                         <td>
                             <div class="btn-group">

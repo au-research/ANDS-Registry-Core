@@ -56,6 +56,7 @@ foreach($eDBCONF as $groupname=>$value)
 	if(!isset($eDBCONF[$groupname]['username'])) $eDBCONF[$groupname]['username'] = $eDBCONF['default']['username'];
 	if(!isset($eDBCONF[$groupname]['password'])) $eDBCONF[$groupname]['password'] = $eDBCONF['default']['password'];
 	if(!isset($eDBCONF[$groupname]['dbdriver'])) $eDBCONF[$groupname]['dbdriver'] = $eDBCONF['default']['dbdriver'];
+	if(!isset($eDBCONF[$groupname]['port'])) $eDBCONF[$groupname]['port'] = $eDBCONF['default']['port'];
 	if(!isset($eDBCONF[$groupname]['dbprefix'])) $eDBCONF[$groupname]['dbprefix'] = '';
 	if(!isset($eDBCONF[$groupname]['pconnect'])) $eDBCONF[$groupname]['pconnect'] = FALSE;
 	if(!isset($eDBCONF[$groupname]['db_debug'])) $eDBCONF[$groupname]['db_debug'] = FALSE;

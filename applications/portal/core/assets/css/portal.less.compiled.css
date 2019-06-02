@@ -178,6 +178,29 @@ div.vertical-center span.vertical-center {
   word-break: break-word;
 }
 /**
+  * Footer responsive layout
+ */
+@media (max-width: 991px) {
+  .footer-banner .edu-logo-footer img {
+    width: 200px;
+    margin: 40px 0;
+  }
+  .footer-banner .ardc-logo-footer img {
+    width: 200px;
+    text-align: left;
+  }
+}
+@media (min-width: 992px) {
+  .footer-banner .edu-logo-footer img {
+    width: 100%;
+    margin-top: -40px;
+  }
+  .footer-banner .ardc-logo-footer img {
+    width: 100%;
+    text-align: center;
+  }
+}
+/**
  * Modules used mainly in view page
  */
 .panel-content {
