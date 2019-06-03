@@ -185,9 +185,19 @@ class XMLUtil
             $xslt_processor = Transforms::get_clean_ns_transformer();
             $dom = new DOMDocument();
             $dom->loadXML($xml);
+            $errors = libxml_get_errors();
+            $error_string = '';
+            foreach ($errors as $error) {
+                $error_string .= TAB . "Line " . $error->line . ": " . $error->message;
+            }
+            libxml_clear_errors();
+            libxml_use_internal_errors(false);
+            if($error_string != ""){
+                throw new Exception("Unable to clean namespaces from XML: " . NL . $error_string);
+            }
             return $xslt_processor->transformToXML($dom);
         } catch (Exception $e) {
-            throw new Exception($e->getMessage());
+            throw $e;
         }
     }
 
@@ -202,7 +212,7 @@ class XMLUtil
         try{
             $xslt_processor = Transforms::get_rif_to_edit_form_transformer();
             $dom = new DOMDocument();
-            $dom->loadXML($xml, LIBXML_NOENT);
+            $dom->loadXML($xml, LIBXML_NOENT, LIBXML_PARSEHUGE);
             foreach($params as $key=>$val){
                 $xslt_processor->setParameter('', $key, $val);
             }
@@ -235,7 +245,7 @@ class XMLUtil
 
         try {
             $xml = new \DOMDocument();
-            $xml->loadXML($payload);
+            $xml->loadXML($payload, LIBXML_PARSEHUGE);
         } Catch (\Exception $e) {
 
             $this->validationMessage = $e->getMessage();
@@ -258,7 +268,7 @@ class XMLUtil
     public function validateRIFCS($xml)
     {
         $doc = new DOMDocument('1.0', 'utf-8');
-        $doc->loadXML($xml);
+        $doc->loadXML($xml, LIBXML_PARSEHUGE);
         if (!$doc) {
             throw new Exception("Unable to parse XML. Perhaps your XML file is not well-formed?");
         }
@@ -289,7 +299,7 @@ class XMLUtil
 
         try {
             $xml = new \DOMDocument();
-            $xml->loadXML($payload);
+            $xml->loadXML($payload, LIBXML_PARSEHUGE);
         } Catch (\Exception $e) {
             $this->validationMessage = $e->getMessage();
             return false;
@@ -307,7 +317,7 @@ class XMLUtil
         libxml_use_internal_errors(true);
         try {
             $xml = new \DOMDocument();
-            $xml->loadXML($payload);
+            $xml->loadXML($payload, LIBXML_PARSEHUGE);
         } Catch (\Exception $e) {
 
             $this->validationMessage = $e->getMessage();
