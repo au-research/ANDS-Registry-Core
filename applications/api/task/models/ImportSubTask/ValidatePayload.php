@@ -32,7 +32,6 @@ class ValidatePayload extends ImportSubTask
             // this task requires unvalidated payload
             $path = $payload->getPath();
             $xml = $payload->getContentByStatus($this->payloadSource);
-
             // validate RIFCS schema
             try {
                 // $this->log("Validation started for $path");
@@ -142,7 +141,7 @@ class ValidatePayload extends ImportSubTask
     public function validateRIFCS($xml)
     {
         $doc = new DOMDocument('1.0', 'utf-8');
-        $doc->loadXML($xml);
+        $doc->loadXML($xml, LIBXML_PARSEHUGE);
         if (!$doc) {
             throw new Exception("Unable to parse XML. Perhaps your XML file is not well-formed?");
         }
