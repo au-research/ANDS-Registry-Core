@@ -503,9 +503,9 @@ class Registry_object extends MX_Controller
             $result = $rdb->get_where('registry_object_identifier_relationships',
                 array('id' => $this->input->get('identifier_relation_id')));
 
+
             if ($result->num_rows() > 0) {
                 $fr = $result->first_row();
-
                 $ro = false;
 
                 $pullback = false;
@@ -514,15 +514,17 @@ class Registry_object extends MX_Controller
                 if ($fr->related_info_type == 'party' && $fr->related_object_identifier_type == 'orcid' && isset($fr->related_object_identifier)) {
 
                     $orcid = ORCIDRecordsRepository::obtain($fr->related_object_identifier);
-                    $bio = json_decode($orcid->record_data, true);
-                    $pullback = [
-                        'name' => $orcid->full_name,
-                        'bio' => $bio,
-                        'bio_content' => $bio['person']['biography']['content'],
-                        'orcidRecord' => $orcid,
-                        'orcid' => $orcid->orcid_id
-                    ];
-
+                    $pullback = [];
+                    if($orcid != null){
+                        $bio = json_decode($orcid->record_data, true);
+                        $pullback = [
+                            'name' => $orcid->full_name,
+                            'bio' => $bio,
+                            'bio_content' => $bio['person']['biography']['content'],
+                            'orcidRecord' => $orcid,
+                            'orcid' => $orcid->orcid_id
+                        ];
+                    }
                     $filters = array('identifier_value' => $fr->related_object_identifier);
                     $ro = $this->ro->findRecord($filters);
                 }
