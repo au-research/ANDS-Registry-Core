@@ -115,10 +115,10 @@ class JsonLDProviderTest extends \RegistryTestClass
     /** @test **/
     public function it_should_find_a_creator()
     {
-        $record = $this->ensureKeyExist("SchemaDotOrgJLDRecords1");
+        $record = $this->ensureKeyExist("AUTSchemaOrgCollection3");
         $data['recordData'] = $record->getCurrentData()->data;
         $output = JsonLDProvider::getCreator($record, $data);
-        self::assertEquals("The Creator of", $output[0]['name']);
+        self::assertEquals("AUTParty6Has_Collector", $output[0]['name']);
     }
 
     /** @test **/
