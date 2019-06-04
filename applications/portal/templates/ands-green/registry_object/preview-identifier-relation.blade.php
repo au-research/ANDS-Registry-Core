@@ -8,6 +8,9 @@
 	<div class="panel-body">
 		@if(!$pullback && $record->connections_preview_div)
 			{{$record->connections_preview_div}}
+			@if($ro)
+				<a href="{{portal_url($ro->core['slug'].'/'.$ro->core['id'])}}" class="btn btn-primary btn-link btn-sm">View Record</a>
+			@endif
 		@elseif($pullback)
 			<h4>
 				@if($record->related_title)
