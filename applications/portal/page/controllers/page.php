@@ -399,7 +399,7 @@ class Page extends MX_Controller
                 $shareUrl = "http://www.facebook.com/sharer.php?u=".$url;
                 break;
             case "twitter":
-                $shareUrl = "https://twitter.com/share?url=".$url."&text=".$title."&hashtags=andsdata";
+                $shareUrl = "https://twitter.com/share?url=".$url."&text=".$title."&hashtags=ardcdata";
                 break;
         }
 
