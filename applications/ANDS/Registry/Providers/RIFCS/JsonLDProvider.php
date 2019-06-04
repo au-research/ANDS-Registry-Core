@@ -291,7 +291,7 @@ class JsonLDProvider implements RIFCSProvider
             $geo = static::getGeo($coords);
         }
         elseif($type == "dcmiPoint"){
-            $geo = static::GeoCoordinates($coords);
+            $geo = static::getCoordinates($coords);
         }
         elseif($type == "gmlKmlPolyCoords"|| $type == "kmlPolyCoords") {
             $geo = static::getBoxFromCoords($coords);
