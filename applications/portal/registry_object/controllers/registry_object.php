@@ -524,6 +524,14 @@ class Registry_object extends MX_Controller
                             'orcidRecord' => $orcid,
                             'orcid' => $orcid->orcid_id
                         ];
+                    }else{
+                        $pullback = [
+                            'name' => $fr->related_title,
+                            'bio' => "",
+                            'bio_content' => "",
+                            'orcidRecord' => null,
+                            'orcid' => $fr->related_object_identifier
+                        ];
                     }
                     $filters = array('identifier_value' => $fr->related_object_identifier);
                     $ro = $this->ro->findRecord($filters);
