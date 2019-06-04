@@ -136,7 +136,6 @@ class JsonLDProviderTest extends \RegistryTestClass
         $record = $this->ensureKeyExist("AUTSchemaOrgCollection1");
         $data['recordData'] = $record->getCurrentData()->data;
         $output = JsonLDProvider::getRelatedPublications($record);
-        dd($output);
         self::assertEquals("https://dx.doi.org/10.1371/journal.pone.0180842", $output[0]['identifier_value']);
     }
 
