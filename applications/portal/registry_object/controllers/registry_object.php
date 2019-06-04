@@ -499,6 +499,9 @@ class Registry_object extends MX_Controller
 
             //hack into the registry network and grab things
             //@todo: figure things out for yourself
+
+
+
             $rdb = $this->load->database('registry', true);
             $result = $rdb->get_where('registry_object_identifier_relationships',
                 array('id' => $this->input->get('identifier_relation_id')));
@@ -506,41 +509,8 @@ class Registry_object extends MX_Controller
 
             if ($result->num_rows() > 0) {
                 $fr = $result->first_row();
-                $ro = false;
 
-                $pullback = false;
-
-                //ORCID "Pull back"
-                if ($fr->related_info_type == 'party' && $fr->related_object_identifier_type == 'orcid' && isset($fr->related_object_identifier)) {
-
-                    $orcid = ORCIDRecordsRepository::obtain($fr->related_object_identifier);
-                    $pullback = [];
-                    if($orcid != null){
-                        $bio = json_decode($orcid->record_data, true);
-                        $pullback = [
-                            'name' => $orcid->full_name,
-                            'bio' => $bio,
-                            'bio_content' => $bio['person']['biography']['content'],
-                            'orcidRecord' => $orcid,
-                            'orcid' => $orcid->orcid_id
-                        ];
-                    }else{
-                        $pullback = [
-                            'name' => $fr->related_title,
-                            'bio' => "",
-                            'bio_content' => "",
-                            'orcidRecord' => null,
-                            'orcid' => $fr->related_object_identifier
-                        ];
-                    }
-                    $filters = array('identifier_value' => $fr->related_object_identifier);
-                    $ro = $this->ro->findRecord($filters);
-                }
-
-                if (!$ro) {
-                    $ro = $this->ro->getByID($fr->registry_object_id);
-                }
-
+                $ro = $this->ro->getByID($fr->registry_object_id);
                 monolog(
                     array(
                         'event' => 'portal_preview_identifier',
@@ -550,6 +520,28 @@ class Registry_object extends MX_Controller
                     'portal', 'info'
                 );
 
+
+                $ro = false;
+
+                $pullback = false;
+
+                //ORCID "Pull back"
+                if ($fr->related_info_type == 'party' && $fr->related_object_identifier_type == 'orcid' && isset($fr->related_object_identifier)) {
+
+                    $orcid = ORCIDRecordsRepository::obtain($fr->related_object_identifier);
+                    if($orcid != null){
+                        $bio = json_decode($orcid->record_data, true);
+                        $pullback = [
+                            'name' => $orcid->full_name,
+                            'bio' => $bio,
+                            'bio_content' => $bio['person']['biography']['content'],
+                            'orcidRecord' => $orcid,
+                            'orcid' => $orcid->orcid_id
+                        ];
+                    }
+                    $filters = array('identifier_value' => $fr->related_object_identifier);
+                    $ro = $this->ro->findRecord($filters);
+                }
                 $this->blade
                     ->set('record', $fr)
                     ->set('ro', $ro)
