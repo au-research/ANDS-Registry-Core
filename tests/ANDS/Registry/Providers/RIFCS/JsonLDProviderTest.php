@@ -111,33 +111,33 @@ class JsonLDProviderTest extends \RegistryTestClass
         $output = JsonLDProvider::formatTempCoverages($coverages);
         self::assertEquals("2019-05-31/2019-06-07", $output);
     }
+//
+//    /** @test **/
+//    public function it_should_find_a_creator()
+//    {
+//        $record = $this->ensureKeyExist("AUTSchemaOrgCollection3");
+//        $data['recordData'] = $record->getCurrentData()->data;
+//        $output = JsonLDProvider::getCreator($record, $data);
+//        self::assertEquals("AUTParty6Has_Collector", $output[0]['name']);
+//    }
+//
+//    /** @test **/
+//    public function it_should_find_a_funder()
+//    {
+//        $record = $this->ensureKeyExist("SchemaDotOrgJLDRecords1");
+//        $data['recordData'] = $record->getCurrentData()->data;
+//        $output = JsonLDProvider::getFunder($record, $data);
+//        self::assertEquals("The Great Funder", $output[0]['name']);
+//    }
 
-    /** @test **/
-    public function it_should_find_a_creator()
-    {
-        $record = $this->ensureKeyExist("SchemaDotOrgJLDRecords1");
-        $data['recordData'] = $record->getCurrentData()->data;
-        $output = JsonLDProvider::getCreator($record, $data);
-        self::assertEquals("The Creator of", $output[0]['name']);
-    }
-
-    /** @test **/
-    public function it_should_find_a_funder()
-    {
-        $record = $this->ensureKeyExist("SchemaDotOrgJLDRecords1");
-        $data['recordData'] = $record->getCurrentData()->data;
-        $output = JsonLDProvider::getFunder($record, $data);
-        self::assertEquals("The Great Funder", $output[0]['name']);
-    }
-
-    /** @test **/
-    public function it_should_find_a_publication()
-    {
-        $record = $this->ensureKeyExist("https://redbox.rmit.edu.au/redbox/published/detail/de43cbd0fbdef27eb2ab7a8fffb3d9ceAUTza");
-        $data['recordData'] = $record->getCurrentData()->data;
-        $output = JsonLDProvider::getRelatedPublications($record);
-        self::assertEquals("https://dx.doi.org/10.1371/journal.pone.0180842", $output[0]['identifier_value']);
-    }
+//    /** @test **/
+//    public function it_should_find_a_publication()
+//    {
+//        $record = $this->ensureKeyExist("AUTSchemaOrgCollection1");
+//        $data['recordData'] = $record->getCurrentData()->data;
+//        $output = JsonLDProvider::getRelatedPublications($record);
+//        self::assertEquals("https://dx.doi.org/10.1371/journal.pone.0180842", $output[0]['identifier_value']);
+//    }
 
 
 }
