@@ -212,7 +212,7 @@ class XMLUtil
         try{
             $xslt_processor = Transforms::get_rif_to_edit_form_transformer();
             $dom = new DOMDocument();
-            $dom->loadXML($xml, LIBXML_NOENT, LIBXML_PARSEHUGE);
+            $dom->loadXML($xml, LIBXML_NOENT);
             foreach($params as $key=>$val){
                 $xslt_processor->setParameter('', $key, $val);
             }
