@@ -49,6 +49,7 @@ class JsonLDProvider implements RIFCSProvider
             $json_ld->codeRepository = self::getCodeRepository($record, $data);
             $json_ld->{'@type'} = "SoftwareSourceCode";
         }
+
         if ($record->class == 'service') {
             $json_ld->{'@type'} = "Service";
             $json_ld->serviceType = $record->type;
@@ -290,7 +291,7 @@ class JsonLDProvider implements RIFCSProvider
             $geo = static::getGeo($coords);
         }
         elseif($type == "dcmiPoint"){
-            $geo = static::GeoCoordinates($coords);
+            $geo = static::getCoordinates($coords);
         }
         elseif($type == "gmlKmlPolyCoords"|| $type == "kmlPolyCoords") {
             $geo = static::getBoxFromCoords($coords);
@@ -427,10 +428,15 @@ class JsonLDProvider implements RIFCSProvider
         $relationships = self::getRelationByType($record, $relation_type);
 
         foreach ($relationships as $relation) {
-            if($relation["name"] != ""){
+            if($relation["slug"] != ""){
                 $related[] = array("@type"=>"CreativeWork","name"=>$relation["name"],"url"=>self::base_url().$relation["slug"]."/".$relation["id"]);
             }else{
-                $related[] = array("@type"=>"CreativeWork","name"=>$relation["name"]);
+                $identifier =array(
+                    "@type"=> "PropertyValue",
+                    "propertyID"=> $relation["identifier_type"],
+                    "value"=> $relation["identifier_value"]
+                );
+                $related[] = array("@type"=>"CreativeWork","name"=>$relation["name"],"identifier"=>[$identifier]);
             }
         }
         return $related;
@@ -450,10 +456,16 @@ class JsonLDProvider implements RIFCSProvider
             } else {
                 $type = "Person";
             }
-            if ($relation["name"] != "") {
+            if ($relation["slug"] != "") {
                 $related[] = array("@type" => $type, "name" => $relation["name"], "url" => self::base_url().$relation["slug"]."/".$relation["id"]);
+
             } else {
-                $related[] = array("@type" => $type, "name" => $relation["name"]);
+                $identifier =array(
+                    "@type"=> "PropertyValue",
+                    "propertyID"=> $relation["identifier_type"],
+                    "value"=> $relation["identifier_value"]
+                );
+                $related[] = array("@type" => $type, "name" => $relation["name"], "identifier" => $identifier);
             }
         }
 
@@ -575,12 +587,16 @@ class JsonLDProvider implements RIFCSProvider
                 } else {
                     $type = "Person";
                 }
-                if ($relation["name"] != "") {
+                if ($relation["slug"] != '') {
                     $creator[] = array("@type" => $type, "name" => $relation["name"], "url" => self::base_url() . $relation["slug"] . "/" . $relation["id"]);
                 } else {
-                    $creator[] = array("@type" => $type, "name" => $relation["name"]);
+                    $identifier =array(
+                        "@type"=> "PropertyValue",
+                        "propertyID"=> $relation["identifier_type"],
+                        "value"=> $relation["identifier_value"]
+                    );
+                    $creator[] = array("@type" => $type, "name" => $relation["name"], "identifier" =>  $identifier);
                 }
-
             }
             if(sizeof($creator) > 0)
                 return $creator;
@@ -602,10 +618,15 @@ class JsonLDProvider implements RIFCSProvider
                     continue;
                 }
                 $processedIds[] = $relation["id"];
-                if ($relation["name"] != "") {
+                if ($relation["slug"] != "") {
                     $accountablePerson[] = array("@type" => "Person", "name" => $relation["name"], "url" => self::base_url().$relation["slug"]."/".$relation["id"]);
                 } else {
-                    $accountablePerson[] = array("@type" => "Person", "name" => $relation["name"]);
+                    $identifier =array(
+                        "@type"=> "PropertyValue",
+                        "propertyID"=> $relation["identifier_type"],
+                        "value"=> $relation["identifier_value"]
+                    );
+                    $accountablePerson[] = array("@type" => "Person", "name" => $relation["name"], "identifier" => $identifier);
                 }
             }
             if(sizeof($accountablePerson) > 0)
@@ -688,7 +709,9 @@ class JsonLDProvider implements RIFCSProvider
                 'slug' => $relation['to_slug'],
                 'key' => $relation['to_key'],
                 'type' => $relation['to_type'],
-                'class' => $relation['to_class']
+                'class' => $relation['to_class'],
+                "identifier_type" => null,
+                "identifier_value"=> null
             ];
         }
 
@@ -704,7 +727,9 @@ class JsonLDProvider implements RIFCSProvider
                 'slug' => $relation['from_slug'],
                 'key' => $relation['from_key'],
                 'type' => $relation['from_type'],
-                'class' => $relation['from_class']
+                'class' => $relation['from_class'],
+                "identifier_type" => null,
+                "identifier_value"=> null
             ];
         }
 
@@ -715,12 +740,14 @@ class JsonLDProvider implements RIFCSProvider
         foreach ($direct as $relation) {
             $results[] = [
                 'relation' => $relation['relation_type'],
-                'name' => (string) $relation['to_title'],
+                'name' => $relation['to_title'] != null ? (string) $relation['to_title'] : (string) $relation['relation_to_title'],
                 'id' => $relation['to_id'],
                 'slug' => $relation['to_slug'],
                 'key' => $relation['to_key'],
-                'type' => $relation['to_type'],
-                'class' => $relation['to_class']
+                'type' => $relation['to_type'] != null ? (string) $relation['to_type'] : (string) $relation['to_related_info_type'],
+                'class' => $relation['to_class']!= null ? (string) $relation['to_class'] : (string) $relation['to_related_info_type'],
+                "identifier_type" => $relation["to_identifier_type"],
+                "identifier_value"=> $relation["to_identifier"]
             ];
         }
 
@@ -736,7 +763,9 @@ class JsonLDProvider implements RIFCSProvider
                 'slug' => $relation['from_slug'],
                 'key' => $relation['from_key'],
                 'type' => $relation['from_type'],
-                'class' => $relation['from_class']
+                'class' => $relation['from_class'],
+                "identifier_type" => null,
+                "identifier_value"=> null
             ];
         }
 
@@ -797,6 +826,26 @@ class JsonLDProvider implements RIFCSProvider
                 "identifier_value"=> $relation["to_identifier"]
             ];
         }
+
+
+        // reverse
+        $reverse = IdentifierRelationshipView::where('to_key', $record->key)
+            ->where('from_type', 'publication')
+            ->take(50)->get();
+        foreach ($reverse as $relation) {
+            $results[] = [
+                'relation' => getReverseRelationshipString($relation['relation_type']),
+                'name' => (string) $relation['from_title'],
+                'id' => $relation['from_id'],
+                'slug' => $relation['from_slug'],
+                'key' => $relation['from_key'],
+                'type' => $relation['from_type'],
+                'class' => $relation['from_class'],
+                "identifier_type" => null,
+                "identifier_value"=> null
+            ];
+        }
+
         return $results;
     }
 }
