@@ -10,6 +10,11 @@ class Versions extends Model
     protected $primaryKey = "id";
     protected $fillable = ['schema_id', 'data', 'hash', 'origin', 'created_at', 'updated_at'];
 
+    public function schema()
+    {
+        return $this->hasOne(Schema::class, 'id', 'schema_id');
+    }
+
     public function toArray()
     {
         return [
