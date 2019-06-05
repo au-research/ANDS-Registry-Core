@@ -66,7 +66,6 @@ class Registry_object extends MX_Controller {
 			{
 				$data['viewing_revision'] = false;
 				$data['rif_html'] = $ro->transformForHtml('', $ds->title);
-
 				if($this->user->hasAffiliation($ds->record_owner))
 				{
 					$data['action_bar'] = $this->generateStatusActionBar($ro, $ds);
@@ -74,11 +73,17 @@ class Registry_object extends MX_Controller {
 			}
             $data['alt_versions'] = array();
 
-            $altversions = AltSchemaVersion::where('registry_object_id', $ro_id)->get();
-
-            foreach ($altversions as $version){
-                $data['alt_versions'][] = array("prefix"=>$version->prefix, "id"=>$version->id);
-            }
+            /**
+             * Instead of using the AltSchemaVersions view (causes slow query)
+             * Look for all the versions ids and pluck the schema from them
+             */
+            $altVersionsIDs = \ANDS\Registry\RegistryObjectVersions::where('registry_object_id', $ro_id)->get()->pluck('version_id');
+            $data['alt_versions'] = \ANDS\Registry\Versions::where('id', $altVersionsIDs)->get()->map(function($item){
+                return [
+                    'prefix' => $item->schema->prefix,
+                    'id' => $item->id
+                ];
+            })->toArray();
 
            // $generatedContent = \ANDS\RegistryObject\AltSchemaVersion::where('registry_object_id', $ro_id )->get();
            // $harvestedNativeContent = \ANDS\RegistryObject\AltSchemaVersionByIdentifier::where('registry_object_id', $ro_id )->get();
