@@ -255,6 +255,11 @@ set_error_handler("default_error_handler");
 
 function default_exception_handler( $e ) {
 
+    if (!function_exists('get_instance')) {
+        echo get_exception_msg($e);
+        die();
+    }
+
     $_ci =& get_instance(); // CI super object to access load etc.
 
 	$data['js_lib'] = array('core');
