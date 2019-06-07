@@ -124,7 +124,7 @@ class Ingest extends ImportSubTask
 
             // deal with previous versions
             RecordData::where('registry_object_id', $deletedRecord->registry_object_id)
-                ->update(['current' => '']);
+                ->update(['current' => 'FALSE']);
 
             // add new version in and set it to current
             $newVersion = Repo::addNewVersion(
