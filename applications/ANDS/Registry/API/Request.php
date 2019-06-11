@@ -151,7 +151,7 @@ class Request
      */
     public static function ip()
     {
-        $serverVariables = ["HTTP_X_FORWARDED_FOR". "HTTP_CLIENT_IP", "REMOTE_ADDR"];
+        $serverVariables = ["HTTP_X_FORWARDED_FOR", "HTTP_CLIENT_IP", "REMOTE_ADDR"];
 
         foreach ($serverVariables as $var) {
             if (array_key_exists($var, $_SERVER)) {
@@ -160,6 +160,6 @@ class Request
         }
 
         // command line?
-        return "127.0.0.1";
+        return "0.0.0.0";
     }
 }
