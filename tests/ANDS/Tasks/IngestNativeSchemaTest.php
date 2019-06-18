@@ -33,9 +33,9 @@ class IngestNativeSchemaTest extends \RegistryTestClass
                     $counter = 0;
                     foreach ($mdNodes as $mdNode) {
                         $success = $this->insertNativeObject($mdNode);
-                        if($success){
+                       // if($success){
                             $counter++;
-                        }
+                       // }
                     }
                     $this->assertEquals(10, $counter);
                 }
