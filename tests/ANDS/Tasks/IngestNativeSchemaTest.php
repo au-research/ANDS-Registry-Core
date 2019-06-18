@@ -3,7 +3,6 @@
 namespace ANDS\API\Task\ImportSubTask;
 use \ANDS\Registry\Versions as Versions;
 use \ANDS\Registry\Schema;
-use \ANDS\RegistryObject\AltSchemaVersion;
 use \ANDS\RegistryObject\RegistryObjectVersion;
 use \ANDS\Repository\RegistryObjectsRepository;
 use \DOMDocument;
@@ -19,11 +18,11 @@ class IngestNativeSchemaTest extends \RegistryTestClass
         $dom = new \DOMDocument();
 
         $xml = file_get_contents(__DIR__ ."../../../resources/harvested_contents/oaipmh.xml");
-        // $xml = file_get_contents(__DIR__ ."../../../resources/harvested_contents/bom_csw.xml");
+        //$xml = file_get_contents(__DIR__ ."../../../resources/harvested_contents/bom_csw.xml");
         libxml_use_internal_errors(true);
         $dom = new \DOMDocument();
             try {
-                $dom->loadXML($xml);
+                $dom->loadXML($xml, LIBXML_NONET );
                 $mdNodes = $dom->documentElement->getElementsByTagName('MD_Metadata');
                 $errors = libxml_get_errors();
                 if ($errors) {
@@ -34,9 +33,9 @@ class IngestNativeSchemaTest extends \RegistryTestClass
                     $counter = 0;
                     foreach ($mdNodes as $mdNode) {
                         $success = $this->insertNativeObject($mdNode);
-                        //if($success){
+                        if($success){
                             $counter++;
-                        //}
+                        }
                     }
                     $this->assertEquals(10, $counter);
                 }
@@ -131,28 +130,37 @@ class IngestNativeSchemaTest extends \RegistryTestClass
         $data = $dom->saveXML();
 
         $hash = md5($data);
-
+        $success = false;
         foreach ($recordIDs as $id) {
-            $existing = AltSchemaVersion::where('prefix', $schema->prefix)->where('registry_object_id', $id)->first();
+            $altVersionsIDs = RegistryObjectVersion::where('registry_object_id', $id)->get()->pluck('version_id')->toArray();
+            $existing = null;
+            if (count($altVersionsIDs) > 0) {
+                $existing = Versions::wherein('id', $altVersionsIDs)->where("schema_id", $schema->id)->first();
+            }
+            $success = true;
             if (!$existing) {
-                $existing = Versions::create([
+                //echo "\nADDING NEW";
+                $version = Versions::create([
                     'data' => $data,
                     'hash' => $hash,
                     'origin' => 'HARVESTER',
                     'schema_id' => $schema->id,
                 ]);
-            } elseif ($hash != $existing->version->hash) {
-                $existing->version->update([
+                RegistryObjectVersion::firstOrCreate([
+                    'version_id' => $version->id,
+                    'registry_object_id' => $id
+                ]);
+            } elseif ($hash != $existing->hash) {
+               //echo "\nUPDATING";
+                $existing->update([
                     'data' => $data,
                     'hash' => $hash
                 ]);
-            }
-
-            RegistryObjectVersion::firstOrCreate([
-                'version_id' => $existing->id,
-                'registry_object_id' => $id
-            ]);
+            }//else{
+                //echo "\nDIDN'T CHANGE" . $existing->hash;
+            //}
         }
+        return $success;
     }
 
 

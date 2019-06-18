@@ -4,7 +4,6 @@ namespace ANDS\API\Task\ImportSubTask;
 
 use \ANDS\Registry\Versions as Versions;
 use \ANDS\Registry\Schema;
-use \ANDS\RegistryObject\AltSchemaVersion;
 use \ANDS\RegistryObject\RegistryObjectVersion;
 use \ANDS\Repository\RegistryObjectsRepository;
 use \ANDS\Repository\DataSourceRepository;
@@ -171,7 +170,12 @@ class IngestNativeSchema extends ImportSubTask
         $hash = md5($data);
 
         foreach ($recordIDs as $id) {
-            $existing = AltSchemaVersion::where('prefix', $schema->prefix)->where('registry_object_id', $id)->first();
+
+            $altVersionsIDs = RegistryObjectVersion::where('registry_object_id', $id)->get()->pluck('version_id')->toArray();
+            $existing = null;
+            if (count($altVersionsIDs) > 0) {
+                $existing = Versions::wherein('id', $altVersionsIDs)->where("schema_id", $schema->id)->first();
+            }
 
             if (!$existing) {
                 $version = Versions::create([
@@ -184,8 +188,8 @@ class IngestNativeSchema extends ImportSubTask
                     'version_id' => $version->id,
                     'registry_object_id' => $id
                 ]);
-            } elseif ($hash != $existing->version->hash) {
-                $existing->version->update([
+            } elseif ($hash != $existing->hash) {
+                $existing->update([
                     'data' => $data,
                     'hash' => $hash
                 ]);
