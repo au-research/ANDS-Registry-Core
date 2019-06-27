@@ -15,7 +15,7 @@ class PopulateAffectedList extends ImportSubTask
 {
     protected $requireImportedRecords = true;
     protected $title = "GENERATING AFFECTED LIST";
-    private $chunkLimit = 100;
+    private $chunkLimit = 400;
 
     public function run_task()
     {
@@ -72,14 +72,28 @@ class PopulateAffectedList extends ImportSubTask
 
         $this->log("Getting affectedIDs for $total records");
 
-        $affectedRecordIDs = RelationshipProvider::getAffectedIDsFromIDs($ids, $keys);
-        $affectedRecordDuplicatesIDs = [];
-        $affectedRecordDuplicatesRecords = RelationshipProvider::getDuplicateRecordsFromIDs($affectedRecordIDs);
-        if(count($affectedRecordDuplicatesRecords) > 0){
-            foreach($affectedRecordDuplicatesRecords as $record){
-                $affectedRecordDuplicatesIDs[] = $record->registry_object_id;
-            }
+        $affectedRecordIDs = [];
 
+        for($start = 0 ; $start <= sizeof($ids); $start += $this->chunkLimit)
+        {
+            $result = RelationshipProvider::getAffectedIDsFromIDs(array_slice($ids, $start , $this->chunkLimit), array_slice($keys, $start , $this->chunkLimit));
+            if(is_array($result))
+                $affectedRecordIDs = array_merge($affectedRecordIDs, $result);
+        }
+
+        $affectedRecordIDs = collect($affectedRecordIDs)
+            ->flatten()->values()->unique()
+            ->toArray();
+
+        for($start = 0 ; $start <= sizeof($affectedRecordIDs); $start += $this->chunkLimit)
+        {
+            $affectedRecordDuplicatesRecords = RelationshipProvider::getDuplicateRecordsFromIDs(array_slice($affectedRecordIDs, $start , $this->chunkLimit));
+            if(count($affectedRecordDuplicatesRecords) > 0){
+                foreach($affectedRecordDuplicatesRecords as $record){
+                    $affectedRecordDuplicatesIDs[] = $record->registry_object_id;
+                }
+
+            }
         }
 
         $affectedRecordIDs = array_merge($affectedRecordIDs, $affectedRecordDuplicatesIDs);
@@ -88,9 +102,21 @@ class PopulateAffectedList extends ImportSubTask
             ->flatten()->values()->unique()
             ->toArray();
 
-        $duplicateRecordIDs = RelationshipProvider::getDuplicateRecordsFromIdentifiers($duplicatedIdentifiers);
+        $duplicateRecordIDs = [];
 
-        if($duplicateRecordIDs){
+        for($start = 0 ; $start <= sizeof($duplicatedIdentifiers); $start += $this->chunkLimit)
+        {
+            $result = RelationshipProvider::getDuplicateRecordsFromIdentifiers(array_slice($duplicatedIdentifiers, $start , $this->chunkLimit));
+            if(is_array($result))
+                $duplicateRecordIDs = array_merge($duplicateRecordIDs, $result);
+        }
+
+        $duplicateRecordIDs= collect($duplicateRecordIDs)
+            ->flatten()->values()->unique()
+            ->toArray();
+
+
+        if(sizeof($duplicateRecordIDs) > 0){
             $this->parent()->setTaskData("duplicateRecords", $duplicateRecordIDs);
         }
 
