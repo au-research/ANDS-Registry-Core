@@ -1375,11 +1375,11 @@ class Doi_api
 
         $this->clientRepository = new ClientRepository(
             $database['hostname'], $database['database'], $database['username'],
-            $database['password']
+            $database['password'], $database['port']
         );
         $this->doiRepository = new DoiRepository(
             $database['hostname'], $database['database'], $database['username'],
-            $database['password']
+            $database['password'], $database['port']
         );
 
     }
