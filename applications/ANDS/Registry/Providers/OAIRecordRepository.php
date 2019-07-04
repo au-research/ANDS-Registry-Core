@@ -312,7 +312,7 @@ class OAIRecordRepository implements OAIRepository
 
             foreach ($registryObjects['records'] as $record) {
                 $oaiRecord = new Record(
-                    "oai:ands.org.au:{$record->id}",
+                    $this->oaiIdentifierPrefix.$record->id,
                     DatesProvider::getUpdatedAt($record, $this->getDateFormat(), 'UTC')
                 );
 
