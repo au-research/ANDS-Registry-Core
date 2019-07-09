@@ -262,7 +262,7 @@
                         var xml = '';
                         var xmlns = "http://datacite.org/schema/kernel-4";
                         var xmlnsxsi = "http://www.w3.org/2001/XMLSchema-instance";
-                        var xsischemaLocation = "http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4.1/metadata.xsd";
+                        var xsischemaLocation = "http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4.2/metadata.xsd";
                         xml += '<?xml version="1.0" encoding="utf-8"?>';
                         xml += '<resource xmlns="' + xmlns + '" xmlns:xsi="' + xmlnsxsi + '" xsi:schemaLocation="' + xsischemaLocation + '">';
                         xml += '<identifier identifierType="' + json.resource[0].identifier[0]['_attr']['identifierType']['_value'] + '">' + json.resource[0].identifier[0]['_text'] + '</identifier>';
