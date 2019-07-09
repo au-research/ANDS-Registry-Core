@@ -23,30 +23,53 @@ class ProcessDelete extends ImportSubTask
 {
     protected $requireDeletedRecords = true;
     protected $title = "DELETING RECORDS";
+    protected $chunkSize = 500;
 
     public function run_task()
     {
         $deletedRecords = $this->parent()->getTaskData('deletedRecords');
+        $chunks = collect($deletedRecords)->chunk(self::$chunkSize);
 
-        $publishedRecords = [];
-        $draftRecords = [];
-        foreach ($deletedRecords as $id) {
-            $record = RegistryObject::find($id);
-            if ($record && $record->isPublishedStatus()) {
-                $publishedRecords[] = $record;
-            } elseif ($record && $record->isDraftStatus()) {
-                $draftRecords[] = $record;
+        // chunk the deleted records for performance
+        foreach ($chunks as $i => $chunk) {
+            $statuses = RegistryObject::select('status')
+                ->groupBy('status')
+                ->whereIn('registry_object_id', $chunk)
+                ->get()->pluck('status')->toArray();
+
+            // if there's only 1 status, then take the first status
+            if (count($statuses) === 1) {
+                $status = $statuses[0];
+                if (RegistryObjectsRepository::isPublishedStatus($status)) {
+                    $this->deletePublishedRecords($chunk);
+                } elseif (RegistryObjectsRepository::isDraftStatus($status)) {
+                    $this->deleteDraftRecords($chunk);
+                } else {
+                    $this->log("Chunk #$i status is not valid for deletion: $status");
+                }
             } else {
-                $this->log("Record with ID " . $id . " doesn't exist for deletion");
+                // more than 1 status, determine the status of each record in this chunk
+                $publishedRecords = [];
+                $draftRecords = [];
+                foreach ($chunk as $id) {
+                    $record = RegistryObject::find($id);
+                    if ($record && $record->isPublishedStatus()) {
+                        $publishedRecords[] = $record->id;
+                    } elseif ($record && $record->isDraftStatus()) {
+                        $draftRecords[] = $record->id;
+                    } else {
+                        $this->log("Record with ID " . $id . " does not exist for deletion");
+                    }
+                }
+
+                if (count($draftRecords) > 0) {
+                    $this->deleteDraftRecords($draftRecords);
+                }
+
+                if (count($publishedRecords) > 0) {
+                    $this->deletePublishedRecords($publishedRecords);
+                }
             }
-        }
-
-        if (count($draftRecords) > 0) {
-            $this->deleteDraftRecords($draftRecords);
-        }
-
-        if (count($publishedRecords) > 0) {
-            $this->deletePublishedRecords($publishedRecords);
         }
     }
 
@@ -54,12 +77,14 @@ class ProcessDelete extends ImportSubTask
      * deleting DRAFT RegistryObject
      * will delete every instance of this records
      *
-     * @param $records
+     * @param $chunk
      */
-    public function deleteDraftRecords($records)
+    public function deleteDraftRecords($chunk)
     {
-        $count = count($records);
+        $count = count($chunk);
         $this->log("Deleting $count DRAFT records");
+
+        $records = RegistryObject::whereIn('registry_object_id', $chunk)->get();
 
         // TODO: refactor to reduce SQL queries
         foreach ($records as $record) {
@@ -72,11 +97,11 @@ class ProcessDelete extends ImportSubTask
      * A mini workflow to delete published RegistryObject
      * soft-delete implementation
      *
-     * @param $records
+     * @param $chunk
      */
-    public function deletePublishedRecords($records)
+    public function deletePublishedRecords($chunk)
     {
-        $deletedRecords = $this->parent()->getTaskData('deletedRecords');
+        $records = RegistryObject::whereIn('registry_object_id', $chunk)->get();
 
         $count = count($records);
         $this->log("Deleting $count PUBLISHED records");
@@ -90,40 +115,30 @@ class ProcessDelete extends ImportSubTask
         $keys = collect($records)->pluck('key')->toArray();
 
         // get the affected records IDs before deleting the PUBLISHED records
-        $affectedRecordIDs = RelationshipProvider::getAffectedIDsFromIDs($ids, $keys, true);
+        $affectedRecordIDs = RelationshipProvider::getAffectedIDsFromIDs($ids, $keys);
 
-        // TODO: refactor to reduce SQL queries
+        // delete all relevant information
+        RegistryObject\Identifier::whereIn('registry_object_id', $ids)->delete();
+        IdentifierRelationship::whereIn('registry_object_id', $ids)->delete();
+        Relationship::whereIn('registry_object_id', $ids)->delete();
+        ImplicitRelationship::whereIn('from_id', $ids)->delete();
+        Links::whereIn('registry_object_id', $ids)->delete();
+        Scholix::whereIn('registry_object_id', $ids)->delete();
+        DCI::whereIn('registry_object_id', $ids)->delete();
+
+        // TODO alt schema versions
+
+        // set status to soft deleted
+        RegistryObject::whereIn('registry_object_id', $ids)->update(['status' => 'DELETED']);
+
+        // touch delete timestamps
+        DatesProvider::touchDeleteByIDs($ids);
+
+        // TODO refactor with collections array_map
         foreach ($records as $record) {
-            $record->status = "DELETED";
-            $record->save();
-
-            // delete everything that could hold a problem
-            // identifier
-            RegistryObject\Identifier::where('registry_object_id', $record->registry_object_id)->delete();
-
-            // identifier relation
-            IdentifierRelationship::where('registry_object_id', $record->registry_object_id)->delete();
-
-            // all relationships
-            Relationship::where('registry_object_id', $record->registry_object_id)->delete();
-            ImplicitRelationship::where('from_id', $record->registry_object_id)->delete();
-
-            //delete links
-            Links::where('registry_object_id', $record->registry_object_id)->delete();
-
-            // delete scholix documents
-            Scholix::where('registry_object_id', $record->registry_object_id)->delete();
-
-            // delete dci documents
-            DCI::where('registry_object_id', $record->registry_object_id)->delete();
-
-            // touch timestamp
-            DatesProvider::touchDelete($record);
-
             $portalQuery .= " id:$record->registry_object_id";
             $fromRelationQuery .= " from_id:$record->registry_object_id";
             $toRelationQuery .= " to_id:$record->registry_object_id";
-
             $this->parent()->incrementTaskData("recordsDeletedCount");
         }
 
@@ -150,6 +165,7 @@ class ProcessDelete extends ImportSubTask
             $this->parent()->setTaskData('affectedRecords', $affectedRecordIDs);
         }
 
+        // TODO optimization
         $this->parent()->getCI()->load->library('solr');
         // chunk the ids by 300
         $chunks = collect($ids)->chunk(300)->toArray();
