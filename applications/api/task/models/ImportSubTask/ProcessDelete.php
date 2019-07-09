@@ -28,7 +28,7 @@ class ProcessDelete extends ImportSubTask
     public function run_task()
     {
         $deletedRecords = $this->parent()->getTaskData('deletedRecords');
-        $chunks = collect($deletedRecords)->chunk(self::$chunkSize);
+        $chunks = collect($deletedRecords)->chunk($this->chunkSize);
 
         // chunk the deleted records for performance
         foreach ($chunks as $i => $chunk) {
