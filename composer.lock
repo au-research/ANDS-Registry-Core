@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "25f79d660a17a830a5304120dcf8d330",
@@ -66,12 +66,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/au-research/ANDS-DOI-Service.git",
-                "reference": "233dee5aa062214fe6fbd948f66eda0572b90ebb"
+                "reference": "e46a189beace44a87da329115532653358b9dc4a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/au-research/ANDS-DOI-Service/zipball/233dee5aa062214fe6fbd948f66eda0572b90ebb",
-                "reference": "233dee5aa062214fe6fbd948f66eda0572b90ebb",
+                "url": "https://api.github.com/repos/au-research/ANDS-DOI-Service/zipball/e46a189beace44a87da329115532653358b9dc4a",
+                "reference": "e46a189beace44a87da329115532653358b9dc4a",
                 "shasum": ""
             },
             "require": {
@@ -99,7 +99,7 @@
                 }
             ],
             "description": "ANDS DOI Service library",
-            "time": "2019-03-19T02:01:05+00:00"
+            "time": "2019-07-04T02:15:55+00:00"
         },
         {
             "name": "cebe/markdown",
