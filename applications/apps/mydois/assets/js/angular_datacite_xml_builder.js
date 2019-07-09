@@ -51,7 +51,7 @@
 
                 scope.availableOptions['relatedIdentifierType'] = ['ARK', 'arXiv', 'bibcode', 'DOI', 'EAN13', 'EISSN', 'Handle', 'IGSN', 'ISBN', 'ISSN', 'ISTC', 'LISSN', 'LSID', 'PMID', 'PURL', 'UPC', 'URL', 'URN'];
 
-                scope.availableOptions['relationType'] = ['IsCitedBy', 'Cites', 'IsSupplementTo', 'IsSupplementedBy', 'IsContinuedBy', 'Continues', 'HasMetadata', 'IsMetadataFor', 'IsNewVersionOf', 'IsPreviousVersionOf', 'IsPartOf', 'HasPart', 'IsReferencedBy', 'References', 'IsDocumentedBy', 'Documents', 'IsCompiledBy', 'Compiles', 'IsVariantFormOf', 'IsOriginalFormOf', 'IsIdenticalTo', 'IsReviewedBy', 'Reviews', 'IsDerivedFrom', 'IsSourceOf', 'IsDescribedBy', 'Describes', 'HasVersion', 'IsVersionOf', 'IsRequiredBy', 'Requires'];
+                scope.availableOptions['relationType'] = ['IsCitedBy', 'Cites', 'IsSupplementTo', 'IsSupplementedBy', 'IsContinuedBy', 'Continues', 'HasMetadata', 'IsMetadataFor', 'IsNewVersionOf', 'IsPreviousVersionOf', 'IsPartOf', 'HasPart', 'IsReferencedBy', 'References', 'IsDocumentedBy', 'Documents', 'IsCompiledBy', 'Compiles', 'IsVariantFormOf', 'IsOriginalFormOf', 'IsIdenticalTo', 'IsReviewedBy', 'Reviews', 'IsDerivedFrom', 'IsSourceOf', 'IsDescribedBy', 'Describes', 'HasVersion', 'IsVersionOf', 'IsRequiredBy', 'Requires', 'Obsoletes', 'isObsoletedBy'];
 
                 scope.availableOptions['descriptionType'] = ['Abstract', 'Methods', 'SeriesInformation', 'TableOfContents', 'TechnicalInfo', 'Other'];
 
@@ -422,6 +422,7 @@
                 'index': '=',
                 'optiontype': '=',
                 'label': '=',
+                'alabel': '=',
                 'custom': '=',
                 'readonly': '=',
                 'attribute' : '=',
@@ -437,7 +438,7 @@
 
                 scope.availableOptions['nameType'] = ['Organizational', 'Personal'];
                 scope.availableOptions['titleType'] = ['AlternativeTitle', 'Subtitle', 'TranslatedTitle', 'Other'];
-                scope.availableOptions['dateType'] = ['Accepted', 'Available', 'Copyrighted', 'Collected', 'Created', 'Issued', 'Submitted', 'Updated', 'Valid', 'Other'];
+                scope.availableOptions['dateType'] = ['Accepted', 'Available', 'Copyrighted', 'Collected', 'Created', 'Issued', 'Submitted', 'Updated', 'Valid', 'Withdrawn', 'Other'];
                 scope.availableOptions['resourceTypeGeneral'] = ['Audiovisual', 'Collection', 'Dataset', 'DataPaper', 'Event', 'Image', 'InteractiveResource', 'Model', 'PhysicalObject', 'Service', 'Software', 'Sound', 'Text', 'Workflow', 'Other'];
                 scope.availableOptions['descriptionType'] = ['Abstract', 'Methods', 'SeriesInformation', 'TableOfContents', 'Other'];
 
