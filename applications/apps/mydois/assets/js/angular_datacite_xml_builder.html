@@ -26,11 +26,13 @@
     <div class="widget-content">
         <datacite-twin-item-form
             item="objectModel.resource[0].publisher[0]"
-            attribute="'lang'"
-            alabel="'Language'"
             label="'Publisher'"
             readonly="readonly"
             ></datacite-twin-item-form>
+        <div class="input-prepend input-append" style="display:inline-block" >
+            <span class="add-on">Language</span>
+            <input name='publisher_lang' ng-readonly="readonly" type="text"  placeholder="Language" ng-model="objectModel.resource[0].publisher[0]._attr.lang._value" class="ng-valid ng-dirty"/>
+        </div>
         <datacite-twin-item-form
             item="objectModel.resource[0].publicationYear[0]"
             label="'Publication Year'"
@@ -60,8 +62,8 @@
                     <span class="add-on">Creator Name</span>
                     <input type="text" placeholder="Creator Name"  ng-model="creator.creatorName[0]._text" ng-readonly="readonly" style="width: 420px"/>
                     <div class="input-prepend input-append" style="display:inline-block" >
-                        <span class="add-on">lang</span>
-                        <input ng-readonly="readonly" type="text" placeholder="lang" ng-model="creator.creatorName[0]._attr.lang._value " class="ng-valid ng-dirty"/>
+                        <span class="add-on">Language</span>
+                        <input ng-readonly="readonly" type="text" placeholder="Language" ng-model="creator.creatorName[0]._attr.lang._value" class="ng-valid ng-dirty"/>
                     </div>
                 </div>
                 <div class="input-prepend input-append">
@@ -216,8 +218,8 @@
                             <span class="add-on">Contributor Name</span>
                             <input type="text" placeholder="Contributor Name"  ng-model="contributor.contributorName[0]._text" ng-readonly="readonly" style="width: 420px"/>
                             <div class="input-prepend input-append" style="display:inline-block" >
-                                <span class="add-on">lang</span>
-                                <input ng-readonly="readonly" type="text" placeholder="lang" ng-model="contributor.contributorName[0]._attr.lang._value " class="ng-valid ng-dirty"/>
+                                <span class="add-on">Language</span>
+                                <input ng-readonly="readonly" type="text" placeholder="Language" ng-model="contributor.contributorName[0]._attr.lang._value" class="ng-valid ng-dirty"/>
                             </div>
                         </div>
 
@@ -630,8 +632,8 @@
                     </div>
 
                     <div class="input-prepend input-append" >
-                        <span class="add-on">lang</span>
-                        <input ng-readonly="readonly" type="text" placeholder="lang" ng-model="rights._attr.lang._value" class="ng-valid ng-dirty"/>
+                        <span class="add-on">Language</span>
+                        <input ng-readonly="readonly" type="text" placeholder="Language" ng-model="rights._attr.lang._value" class="ng-valid ng-dirty"/>
                     </div>
 
                     <div class="input-prepend input-append">

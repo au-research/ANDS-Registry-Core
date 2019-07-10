@@ -12,12 +12,11 @@
             </li>
         </ul>
     </div>
-
     <input type="text" ng-model="item._text" placeholder="{{ label ? label : 'Value' }}" ng-readonly="readonly" style="{{ custom ? custom : 'width:210px' }}">
 
     <div class="btn-group" style="display:inline-block;" ng-if="attribute">
         <span class="add-on">{{ alabel ? alabel : attribute }}</span> <!-- add label for attributes -->
-        <input  type="text" ng-model="item._attr[attribute]._value" placeholder="{{ attribute }}" ng-readonly="readonly" style="{{ custom ? custom : 'width:210px' }}">
+        <input  type="text" ng-model="item._attr[attribute]._value" placeholder="{{ alabel ? alabel : attribute }}" ng-readonly="readonly" style="{{ custom ? custom : 'width:210px' }}">
     </div>
 
     <div style="display:inline-block;padding-left:3px">
