@@ -178,7 +178,6 @@
                             scope.objectModel.resource[0][val].push({});
                         }
                     });
-
                     if (scope.objectModel.resource[0].creators) {
                         angular.forEach(scope.objectModel.resource[0].creators[0].creator, function (creator, index) {
                             var fields = ['creatorName', 'givenName', 'familyName', 'nameIdentifier', 'affiliation'];
@@ -281,6 +280,9 @@
                                 xml += '<' + module;
                                 if (item['_attr']) {
                                     angular.forEach(item['_attr'], function (value, key) {
+                                        if (key == 'lang') {
+                                            key = 'xml:lang';
+                                        }
                                         xml += ' ' + key + '="' + value['_value'] + '"';
                                     });
                                 }
