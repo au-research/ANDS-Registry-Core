@@ -262,7 +262,7 @@ class DOIChecker(base.BaseChecker):
         or only those which are active.
 
         Production DOIs are those which have a status other than
-        "REQUESTED", and which have a doi_id beginning with "10.4".
+        "REQUESTED", and which have a doi_id beginning with a production prefix
 
         Active production DOIs are those production DOIs which have
         a status of "ACTIVE".
