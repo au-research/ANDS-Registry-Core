@@ -136,6 +136,8 @@ class DOIChecker(base.BaseChecker):
         :param prefix_list:
         :return: a string eg AND (doi_id LIKE "10.24366/%" OR doi_id LIKE "10.24369/%" OR doi_id LIKE "10.24403/%")
         """
+        if len(prefix_list) == 0:
+            return ""
         qc = " AND ("
         first = True
         for prefix in prefix_list:
@@ -282,6 +284,10 @@ class DOIChecker(base.BaseChecker):
         """
         prefix_list = []
         self._get_prefix_list(prefix_list, client_id)
+
+        if len(prefix_list) == 0:
+            print("No Production Prefix for client_id ", client_id, file=sys.stderr)
+            return
 
         active_only = False
         if 'active_only' in self._params:
