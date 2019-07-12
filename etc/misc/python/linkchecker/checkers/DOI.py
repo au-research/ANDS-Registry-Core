@@ -9,7 +9,9 @@ client_list: dict (despite the name, grr)
   key: int: client_id
   value: tuple: The row the doi_client table
       that has client_id as its key.
-
+      
+prefix_list: list of production prefixes
+  
 doi_list: list
   element: tuple: a row from the doi_object table.
 
@@ -58,7 +60,6 @@ class DOIChecker(base.BaseChecker):
         """
         client_list = {}
         self._get_client_list(client_list, self._params['client_id'])
-
         result_list = {}
         error_count = {}
 
@@ -111,6 +112,43 @@ class DOIChecker(base.BaseChecker):
                 print("DEBUG: Assigning client_list[{}] = {}".format(
                     r[0], r), file=sys.stderr)
         cur.close()
+
+    def _get_prefix_list(self, prefix_list, client_id=None):
+        """ very simple query to get the production prefixes for
+        any given client or all clients
+        """
+        cur = self._conn.cursor()
+        query = "SELECT prefix_value FROM doi_client_prefixes cp "
+        query +="LEFT OUTER JOIN prefixes p ON cp.prefix_id = p.id WHERE cp.is_test IS false"
+        if client_id is not None:
+            cur.execute(query + " AND cp.client_id=" + str(client_id) + ";")
+        else:
+            cur.execute(query + ";")
+        for r in cur:
+            prefix_list.append(str(r[0]))
+            if self._debug:
+                print("DEBUG: Assigning prefix_list %s", str(r[0]), file=sys.stderr)
+        cur.close()
+
+    def _get_prefix_query_comp(self, prefix_list):
+        """
+        generate a query component for production prefix match
+        :param prefix_list:
+        :return: a string eg AND (doi_id LIKE "10.24366/%" OR doi_id LIKE "10.24369/%" OR doi_id LIKE "10.24403/%")
+        """
+        qc = " AND ("
+        first = True
+        for prefix in prefix_list:
+            if first:
+                qc += "doi_id LIKE '" + prefix + "/%'"
+            else:
+                qc += " OR doi_id LIKE '" + prefix + "/%'"
+            first = False
+        qc += ");"
+        return qc
+
+
+
 
     def _run_tests(self, ssl_context, client_id, admin_email, client_list,
                    link_timeout, batch_size,
@@ -242,6 +280,9 @@ class DOIChecker(base.BaseChecker):
         client_id -- A client_id to use for searching the database,
             or None, if the DOIs of all clients are to be returned.
         """
+        prefix_list = []
+        self._get_prefix_list(prefix_list, client_id)
+
         active_only = False
         if 'active_only' in self._params:
             active_only = bool(distutils.util.strtobool(
@@ -257,7 +298,7 @@ class DOIChecker(base.BaseChecker):
         else:
             # All production DOIs.
             query += " AND `status`!='REQUESTED'"
-        query += " AND `doi_id` LIKE '10.4%';"
+        query += self._get_prefix_query_comp(prefix_list)
         if self._debug:
             print("DEBUG: _get_DOI_links query:", query, file=sys.stderr)
         cur.execute(query)
