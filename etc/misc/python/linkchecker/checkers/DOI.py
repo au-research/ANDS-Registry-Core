@@ -5,7 +5,7 @@ Link checker for ANDS DOIs.
 """
 Data structures used throughout this module:
 
-client_list: dict (despite the name, grr)
+client_list: dict (despite the name)
   key: int: client_id
   value: tuple: The row the doi_client table
       that has client_id as its key.
@@ -15,7 +15,7 @@ prefix_list: list of production prefixes
 doi_list: list
   element: tuple: a row from the doi_object table.
 
-testing_array: dict (despite the name, grr)
+testing_array: dict (despite the name)
   key: int: An index into the doi_list array.
   value: dict: Details of the link to be tested.
     There are three key/value pairs in each dictionary,
@@ -675,9 +675,9 @@ owner_id: {}
 
     def _process_result_lists(self, client_list, result_list, error_count,
                               client_id=None, admin_email=None):
-        """Summarize the errors, log and email the results.
+        """Summarise the errors, log and email the results.
 
-        Summarize the logs, create appropriate headings, log an entry, and
+        Summarise the logs, create appropriate headings, log an entry, and
         email the content to whom it supposed to.
 
         An entry is logged to the database for all clients with an
