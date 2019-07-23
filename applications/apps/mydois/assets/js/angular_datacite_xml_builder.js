@@ -472,7 +472,13 @@
                 };
 
                 if (scope.attribute) {
-                    scope.setOption(scope.item, scope.attribute, "");
+                    if(scope.item && scope.item._attr &&
+                        scope.item._attr[scope.attribute] &&
+                        scope.item._attr[scope.attribute]._value != "")
+                    {
+                        scope.setOption(scope.item, scope.attribute, scope.item._attr[scope.attribute]._value);
+                    } else
+                        scope.setOption(scope.item, scope.attribute, "");
                 }
             }
         }
