@@ -198,12 +198,7 @@
             <p>If you have any questions or concerns, please contact us by any of the following means during business hours Monday to Friday.</p>
             <p>
                 ARDC Office<br/>
-                Monash University,<br/>
-                PO Box 197,<br/>
-                Caulfield East VIC 3145,<br/>
-                AUSTRALIA<br/>
-                <br/>
-                Phone: +61 3 9902 0585 <br/>
+                Phone: <a href="tel:%2B61%203%209902%200585">+61 3 9902 0585</a><br/>
                 E-mail: <a href="mailto:services@ardc.org.au">services@ardcs.org.au</a>
                 <br/>
             </p>
