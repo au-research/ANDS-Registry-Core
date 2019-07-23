@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <file name="StringFormatter.php">
+    <totals>
+      <lines total="19" comments="6" code="13" executable="2" executed="2" percent="100.00%"/>
+      <methods count="1" tested="1" percent="100.00%"/>
+      <functions count="0" tested="0" percent=""/>
+      <classes count="1" tested="1" percent="100.00%"/>
+      <traits count="0" tested="0" percent=""/>
+    </totals>
+    <class name="StringFormatter" start="5" executable="2" executed="2" crap="1">
+      <package full="" name="" sub="" category=""/>
+      <namespace name="ANDS\DOI\Formatter"/>
+      <method name="format" signature="format($payload)" start="13" end="18" crap="1" executable="2" executed="2" coverage="100"/>
+    </class>
+    <coverage>
+      <line nr="15">
+        <covered by="StringFormatterTest::it_should_be_able_to_format_a_standard_message"/>
+      </line>
+      <line nr="16">
+        <covered by="StringFormatterTest::it_should_be_able_to_format_a_standard_message"/>
+      </line>
+    </coverage>
+  </file>
+</phpunit>

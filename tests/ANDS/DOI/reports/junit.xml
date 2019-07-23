@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="doi" tests="75" assertions="177" failures="7" errors="1" time="77.425115">
+    <testsuite name="DOIServiceProviderTest" file="/var/www/html/workareas/leo/doi/tests/DOIServiceProviderTest.php" tests="20" assertions="38" failures="5" errors="0" time="36.963942">
+      <testcase name="it_should_be_able_to_create_a_service_provider" class="DOIServiceProviderTest" file="/var/www/html/workareas/leo/doi/tests/DOIServiceProviderTest.php" line="16" assertions="1" time="0.098465"/>
+      <testcase name="it_should_authenticate_a_real_user" class="DOIServiceProviderTest" file="/var/www/html/workareas/leo/doi/tests/DOIServiceProviderTest.php" line="23" assertions="3" time="0.077347"/>
+      <testcase name="it_should_not_authenticate_a_fake_user" class="DOIServiceProviderTest" file="/var/www/html/workareas/leo/doi/tests/DOIServiceProviderTest.php" line="35" assertions="3" time="0.057315"/>
+      <testcase name="it_should_authenticate_a_test_user" class="DOIServiceProviderTest" file="/var/www/html/workareas/leo/doi/tests/DOIServiceProviderTest.php" line="45" assertions="4" time="0.069077"/>
+      <testcase name="it_should_disallow_minting_if_client_is_not_authenticated" class="DOIServiceProviderTest" file="/var/www/html/workareas/leo/doi/tests/DOIServiceProviderTest.php" line="60" assertions="1" time="0.033575"/>
+      <testcase name="it_should_allow_a_client_to_mint" class="DOIServiceProviderTest" file="/var/www/html/workareas/leo/doi/tests/DOIServiceProviderTest.php" line="70" assertions="2" time="5.043267"/>
+      <testcase name="it_should_allow_minting_a_new_doi_and_return_good_message" class="DOIServiceProviderTest" file="/var/www/html/workareas/leo/doi/tests/DOIServiceProviderTest.php" line="84" assertions="4" time="5.219736"/>
+      <testcase name="it_should_disallow_minting_if_not_authorized" class="DOIServiceProviderTest" file="/var/www/html/workareas/leo/doi/tests/DOIServiceProviderTest.php" line="109" assertions="3" time="0.063454"/>
+      <testcase name="it_should_not_allow_minting_a_new_doi_and_return_error_message" class="DOIServiceProviderTest" file="/var/www/html/workareas/leo/doi/tests/DOIServiceProviderTest.php" line="126" assertions="2" time="0.870542"/>
+      <testcase name="it_should_disallow_minting_of_url_not_in_top_domain" class="DOIServiceProviderTest" file="/var/www/html/workareas/leo/doi/tests/DOIServiceProviderTest.php" line="143" assertions="3" time="0.091609"/>
+      <testcase name="it_should_not_activate_an_active_doi" class="DOIServiceProviderTest" file="/var/www/html/workareas/leo/doi/tests/DOIServiceProviderTest.php" line="164" assertions="1" time="4.058000"/>
+      <testcase name="it_should_activate_an_inactive_doi" class="DOIServiceProviderTest" file="/var/www/html/workareas/leo/doi/tests/DOIServiceProviderTest.php" line="182" assertions="2" time="3.986094">
+        <failure type="PHPUnit_Framework_ExpectationFailedException">DOIServiceProviderTest::it_should_activate_an_inactive_doi
+Failed asserting that false is true.
+
+/var/www/html/workareas/leo/doi/tests/DOIServiceProviderTest.php:199
+</failure>
+      </testcase>
+      <testcase name="it_should_deactivate_an_active_doi" class="DOIServiceProviderTest" file="/var/www/html/workareas/leo/doi/tests/DOIServiceProviderTest.php" line="207" assertions="2" time="4.231153">
+        <failure type="PHPUnit_Framework_ExpectationFailedException">DOIServiceProviderTest::it_should_deactivate_an_active_doi
+Failed asserting that false is true.
+
+/var/www/html/workareas/leo/doi/tests/DOIServiceProviderTest.php:222
+</failure>
+      </testcase>
+      <testcase name="it_should_allow_current_client_doi_access" class="DOIServiceProviderTest" file="/var/www/html/workareas/leo/doi/tests/DOIServiceProviderTest.php" line="227" assertions="1" time="0.115978">
+        <failure type="PHPUnit_Framework_ExpectationFailedException">DOIServiceProviderTest::it_should_allow_current_client_doi_access
+Failed asserting that false is true.
+
+/var/www/html/workareas/leo/doi/tests/DOIServiceProviderTest.php:231
+</failure>
+      </testcase>
+      <testcase name="it_should_not_allow_current_client_doi_access" class="DOIServiceProviderTest" file="/var/www/html/workareas/leo/doi/tests/DOIServiceProviderTest.php" line="236" assertions="1" time="0.114303"/>
+      <testcase name="it_should_add_doi_before_validate" class="DOIServiceProviderTest" file="/var/www/html/workareas/leo/doi/tests/DOIServiceProviderTest.php" line="245" assertions="1" time="3.914898"/>
+      <testcase name="it_should_add_identifier_before_validate" class="DOIServiceProviderTest" file="/var/www/html/workareas/leo/doi/tests/DOIServiceProviderTest.php" line="263" assertions="1" time="5.260700"/>
+      <testcase name="it_should_add_identifier_before_validate_before_update" class="DOIServiceProviderTest" file="/var/www/html/workareas/leo/doi/tests/DOIServiceProviderTest.php" line="280" assertions="1" time="0.144378">
+        <failure type="PHPUnit_Framework_ExpectationFailedException">DOIServiceProviderTest::it_should_add_identifier_before_validate_before_update
+Failed asserting that false is true.
+
+/var/www/html/workareas/leo/doi/tests/DOIServiceProviderTest.php:290
+</failure>
+      </testcase>
+      <testcase name="it_should_add_or_change_doi_before_validate_before_update" class="DOIServiceProviderTest" file="/var/www/html/workareas/leo/doi/tests/DOIServiceProviderTest.php" line="296" assertions="1" time="0.164555">
+        <failure type="PHPUnit_Framework_ExpectationFailedException">DOIServiceProviderTest::it_should_add_or_change_doi_before_validate_before_update
+Failed asserting that false is true.
+
+/var/www/html/workareas/leo/doi/tests/DOIServiceProviderTest.php:306
+</failure>
+      </testcase>
+      <testcase name="it_should_add_doi_and_work_with_utf8" class="DOIServiceProviderTest" file="/var/www/html/workareas/leo/doi/tests/DOIServiceProviderTest.php" line="311" assertions="1" time="3.349496"/>
+    </testsuite>
+    <testsuite name="FabricaClientTest" file="/var/www/html/workareas/leo/doi/tests/FabricaClientTest.php" tests="6" assertions="6" failures="0" errors="1" time="6.651226">
+      <testcase name="it_should_get_the_client" class="FabricaClientTest" file="/var/www/html/workareas/leo/doi/tests/FabricaClientTest.php" line="13" assertions="2" time="0.067911"/>
+      <testcase name="it_should_get_all_UnAssigned_prefixes" class="FabricaClientTest" file="/var/www/html/workareas/leo/doi/tests/FabricaClientTest.php" line="20" assertions="1" time="1.790095"/>
+      <testcase name="it_should_get_all_Unalocated_prefixes" class="FabricaClientTest" file="/var/www/html/workareas/leo/doi/tests/FabricaClientTest.php" line="28" assertions="1" time="1.539166"/>
+      <testcase name="it_should_get_all_clients" class="FabricaClientTest" file="/var/www/html/workareas/leo/doi/tests/FabricaClientTest.php" line="38" assertions="1" time="1.737605"/>
+      <testcase name="it_should_find_client_by_symbol_remote" class="FabricaClientTest" file="/var/www/html/workareas/leo/doi/tests/FabricaClientTest.php" line="45" assertions="1" time="1.350308"/>
+      <testcase name="it_should_create_clientInfo_from_local_client_object" class="FabricaClientTest" file="/var/www/html/workareas/leo/doi/tests/FabricaClientTest.php" line="52" assertions="0" time="0.166141">
+        <error type="PHPUnit_Framework_Error_Notice">FabricaClientTest::it_should_create_clientInfo_from_local_client_object
+Trying to get property of non-object
+
+/var/www/html/workareas/leo/doi/src/FabricaClient.php:293
+/var/www/html/workareas/leo/doi/src/FabricaClient.php:271
+/var/www/html/workareas/leo/doi/tests/FabricaClientTest.php:58
+</error>
+      </testcase>
+    </testsuite>
+    <testsuite name="ArrayFormatterTest" file="/var/www/html/workareas/leo/doi/tests/Formatter/ArrayFormatterTest.php" tests="1" assertions="1" failures="0" errors="0" time="0.015062">
+      <testcase name="it_should_be_able_to_format_a_standard_message" class="ArrayFormatterTest" file="/var/www/html/workareas/leo/doi/tests/Formatter/ArrayFormatterTest.php" line="9" assertions="1" time="0.015062"/>
+    </testsuite>
+    <testsuite name="JSONFormatterTest" file="/var/www/html/workareas/leo/doi/tests/Formatter/JSONFormatterTest.php" tests="1" assertions="3" failures="0" errors="0" time="0.061933">
+      <testcase name="it_should_be_able_to_format_a_standard_message" class="JSONFormatterTest" file="/var/www/html/workareas/leo/doi/tests/Formatter/JSONFormatterTest.php" line="9" assertions="3" time="0.061933"/>
+    </testsuite>
+    <testsuite name="StringFormatterTest" file="/var/www/html/workareas/leo/doi/tests/Formatter/StringFormatterTest.php" tests="1" assertions="1" failures="0" errors="0" time="0.015477">
+      <testcase name="it_should_be_able_to_format_a_standard_message" class="StringFormatterTest" file="/var/www/html/workareas/leo/doi/tests/Formatter/StringFormatterTest.php" line="9" assertions="1" time="0.015477"/>
+    </testsuite>
+    <testsuite name="XMLFormatterTest" file="/var/www/html/workareas/leo/doi/tests/Formatter/XMLFormatterTest.php" tests="2" assertions="42" failures="0" errors="0" time="0.067248">
+      <testcase name="it_should_be_able_to_format_a_standard_message" class="XMLFormatterTest" file="/var/www/html/workareas/leo/doi/tests/Formatter/XMLFormatterTest.php" line="7" assertions="21" time="0.033779"/>
+      <testcase name="it_should_return_a_mt010_message_for_no_app_id" class="XMLFormatterTest" file="/var/www/html/workareas/leo/doi/tests/Formatter/XMLFormatterTest.php" line="24" assertions="21" time="0.033469"/>
+    </testsuite>
+    <testsuite name="MdsClientTest" file="/var/www/html/workareas/leo/doi/tests/MdsClientTest.php" tests="9" assertions="9" failures="2" errors="0" time="19.209248">
+      <testcase name="test_construct_object" class="MdsClientTest" file="/var/www/html/workareas/leo/doi/tests/MdsClientTest.php" line="10" assertions="1" time="0.034101"/>
+      <testcase name="it_should_return_a_doi" class="MdsClientTest" file="/var/www/html/workareas/leo/doi/tests/MdsClientTest.php" line="19" assertions="1" time="1.398330">
+        <failure type="PHPUnit_Framework_ExpectationFailedException">MdsClientTest::it_should_return_a_doi
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-''
++'https://devl.ands.org.au/minh/'
+
+/var/www/html/workareas/leo/doi/tests/MdsClientTest.php:23
+</failure>
+      </testcase>
+      <testcase name="it_should_return_good_xml_for_a_doi" class="MdsClientTest" file="/var/www/html/workareas/leo/doi/tests/MdsClientTest.php" line="29" assertions="2" time="1.404814"/>
+      <testcase name="test_mint_a_new_doi" class="MdsClientTest" file="/var/www/html/workareas/leo/doi/tests/MdsClientTest.php" line="44" assertions="1" time="2.999636"/>
+      <testcase name="it_should_mint_a_schema_version_4_doi" class="MdsClientTest" file="/var/www/html/workareas/leo/doi/tests/MdsClientTest.php" line="58" assertions="1" time="3.292705"/>
+      <testcase name="it_should_set_datacite_url" class="MdsClientTest" file="/var/www/html/workareas/leo/doi/tests/MdsClientTest.php" line="72" assertions="1" time="0.033910"/>
+      <testcase name="it_should_update_a_doi_with_new_xml" class="MdsClientTest" file="/var/www/html/workareas/leo/doi/tests/MdsClientTest.php" line="82" assertions="1" time="5.562404"/>
+      <testcase name="it_should_update_a_doi_with_new_url" class="MdsClientTest" file="/var/www/html/workareas/leo/doi/tests/MdsClientTest.php" line="106" assertions="1" time="4.470188">
+        <failure type="PHPUnit_Framework_ExpectationFailedException">MdsClientTest::it_should_update_a_doi_with_new_url
+Failed asserting that two strings are equal.
+--- Expected
++++ Actual
+@@ @@
+-''
++'https://devl.ands.org.au/minh_replaced/'
+
+/var/www/html/workareas/leo/doi/tests/MdsClientTest.php:120
+</failure>
+      </testcase>
+      <testcase name="it_should_activate_a_doi_and_then_deactivate" class="MdsClientTest" file="/var/www/html/workareas/leo/doi/tests/MdsClientTest.php" line="128" assertions="0" time="0.013160"/>
+    </testsuite>
+    <testsuite name="ClientRepositoryTest" file="/var/www/html/workareas/leo/doi/tests/Repository/ClientRepositoryTest.php" tests="15" assertions="35" failures="0" errors="0" time="5.905344">
+      <testcase name="it_should_be_able_to_get_a_client" class="ClientRepositoryTest" file="/var/www/html/workareas/leo/doi/tests/Repository/ClientRepositoryTest.php" line="13" assertions="1" time="0.301716"/>
+      <testcase name="it_should_be_able_to_get_a_client_via_id" class="ClientRepositoryTest" file="/var/www/html/workareas/leo/doi/tests/Repository/ClientRepositoryTest.php" line="19" assertions="3" time="0.330526"/>
+      <testcase name="it_should_be_able_to_get_a_client_via_appid" class="ClientRepositoryTest" file="/var/www/html/workareas/leo/doi/tests/Repository/ClientRepositoryTest.php" line="29" assertions="3" time="0.298267"/>
+      <testcase name="it_should_authenticate_the_right_user_if_has_shared_secret" class="ClientRepositoryTest" file="/var/www/html/workareas/leo/doi/tests/Repository/ClientRepositoryTest.php" line="37" assertions="1" time="0.270938"/>
+      <testcase name="it_does_not_authenticate_if_wrong_shared_secret" class="ClientRepositoryTest" file="/var/www/html/workareas/leo/doi/tests/Repository/ClientRepositoryTest.php" line="46" assertions="1" time="0.307464"/>
+      <testcase name="it_authenticates_user_if_ip_match_and_no_shared_secret_provided" class="ClientRepositoryTest" file="/var/www/html/workareas/leo/doi/tests/Repository/ClientRepositoryTest.php" line="55" assertions="1" time="0.317915"/>
+      <testcase name="it_does_not_authenticates_user_if_ip_match_fail" class="ClientRepositoryTest" file="/var/www/html/workareas/leo/doi/tests/Repository/ClientRepositoryTest.php" line="64" assertions="1" time="0.287278"/>
+      <testcase name="it_should_authenticate_user_if_sharedsecret_match_and_ip_mismatch" class="ClientRepositoryTest" file="/var/www/html/workareas/leo/doi/tests/Repository/ClientRepositoryTest.php" line="73" assertions="2" time="0.286414"/>
+      <testcase name="it_should_generate_new_client_with_datacite_symbol" class="ClientRepositoryTest" file="/var/www/html/workareas/leo/doi/tests/Repository/ClientRepositoryTest.php" line="83" assertions="1" time="0.346411"/>
+      <testcase name="it_should_generate_datacite_symbol_for_test_client" class="ClientRepositoryTest" file="/var/www/html/workareas/leo/doi/tests/Repository/ClientRepositoryTest.php" line="93" assertions="3" time="0.367251"/>
+      <testcase name="it_should_create_a_new_test_client" class="ClientRepositoryTest" file="/var/www/html/workareas/leo/doi/tests/Repository/ClientRepositoryTest.php" line="110" assertions="1" time="0.282564"/>
+      <testcase name="it_should_add_a_prefix_to_test_client" class="ClientRepositoryTest" file="/var/www/html/workareas/leo/doi/tests/Repository/ClientRepositoryTest.php" line="117" assertions="0" time="0.601732"/>
+      <testcase name="it_should_add_a_domain_to_test_client" class="ClientRepositoryTest" file="/var/www/html/workareas/leo/doi/tests/Repository/ClientRepositoryTest.php" line="126" assertions="4" time="0.759930"/>
+      <testcase name="it_should_update_a_client" class="ClientRepositoryTest" file="/var/www/html/workareas/leo/doi/tests/Repository/ClientRepositoryTest.php" line="151" assertions="10" time="0.423508"/>
+      <testcase name="should_return_unallocated_prefixes" class="ClientRepositoryTest" file="/var/www/html/workareas/leo/doi/tests/Repository/ClientRepositoryTest.php" line="180" assertions="3" time="0.723429"/>
+    </testsuite>
+    <testsuite name="DoiRepositoryTest" file="/var/www/html/workareas/leo/doi/tests/Repository/DoiRepositoryTest.php" tests="3" assertions="8" failures="0" errors="0" time="4.439874">
+      <testcase name="it_should_be_able_to_get_a_doi" class="DoiRepositoryTest" file="/var/www/html/workareas/leo/doi/tests/Repository/DoiRepositoryTest.php" line="14" assertions="1" time="0.091010"/>
+      <testcase name="it_should_be_able_to_get_a_doi_via_id" class="DoiRepositoryTest" file="/var/www/html/workareas/leo/doi/tests/Repository/DoiRepositoryTest.php" line="22" assertions="4" time="4.097621"/>
+      <testcase name="it_should_create_and_update_doi_correctly" class="DoiRepositoryTest" file="/var/www/html/workareas/leo/doi/tests/Repository/DoiRepositoryTest.php" line="46" assertions="3" time="0.251243"/>
+    </testsuite>
+    <testsuite name="SchemaProviderTest" file="/var/www/html/workareas/leo/doi/tests/SchemaProviderTest.php" tests="1" assertions="2" failures="0" errors="0" time="0.015192">
+      <testcase name="it_should_cache_file" class="SchemaProviderTest" file="/var/www/html/workareas/leo/doi/tests/SchemaProviderTest.php" line="9" assertions="2" time="0.015192"/>
+    </testsuite>
+    <testsuite name="XMLTransformerTest" file="/var/www/html/workareas/leo/doi/tests/Transformer/XMLTransformerTest.php" tests="1" assertions="3" failures="0" errors="0" time="0.018972">
+      <testcase name="it_should_transform_to_kernel_4" class="XMLTransformerTest" file="/var/www/html/workareas/leo/doi/tests/Transformer/XMLTransformerTest.php" line="9" assertions="3" time="0.018972"/>
+    </testsuite>
+    <testsuite name="IPValidatorTest" file="/var/www/html/workareas/leo/doi/tests/Validator/IPValidatorTest.php" tests="4" assertions="17" failures="0" errors="0" time="0.073533">
+      <testcase name="it_should_validates_ip_range" class="IPValidatorTest" file="/var/www/html/workareas/leo/doi/tests/Validator/IPValidatorTest.php" line="8" assertions="4" time="0.016687"/>
+      <testcase name="it_should_valiodates_host_names" class="IPValidatorTest" file="/var/www/html/workareas/leo/doi/tests/Validator/IPValidatorTest.php" line="17" assertions="3" time="0.017409"/>
+      <testcase name="it_should_validates_exact_matching" class="IPValidatorTest" file="/var/www/html/workareas/leo/doi/tests/Validator/IPValidatorTest.php" line="25" assertions="4" time="0.020001"/>
+      <testcase name="it_should_validates_cidr_range" class="IPValidatorTest" file="/var/www/html/workareas/leo/doi/tests/Validator/IPValidatorTest.php" line="34" assertions="6" time="0.019436"/>
+    </testsuite>
+    <testsuite name="URLValidatorTest" file="/var/www/html/workareas/leo/doi/tests/Validator/URLValidatorTest.php" tests="4" assertions="4" failures="0" errors="0" time="0.080002">
+      <testcase name="it_should_validates_domain_correctly_for_single_domain" class="URLValidatorTest" file="/var/www/html/workareas/leo/doi/tests/Validator/URLValidatorTest.php" line="9" assertions="1" time="0.018069"/>
+      <testcase name="it_should_validates_domain_correctly_for_multiple_domain" class="URLValidatorTest" file="/var/www/html/workareas/leo/doi/tests/Validator/URLValidatorTest.php" line="19" assertions="1" time="0.021838"/>
+      <testcase name="it_should_fail_validation_for_mismatch" class="URLValidatorTest" file="/var/www/html/workareas/leo/doi/tests/Validator/URLValidatorTest.php" line="30" assertions="1" time="0.017999"/>
+      <testcase name="it_should_validate_correctly_on_correct_client_domain" class="URLValidatorTest" file="/var/www/html/workareas/leo/doi/tests/Validator/URLValidatorTest.php" line="40" assertions="1" time="0.022096"/>
+    </testsuite>
+    <testsuite name="XMLValidatorTest" file="/var/www/html/workareas/leo/doi/tests/Validator/XMLValidatorTest.php" tests="7" assertions="8" failures="0" errors="0" time="3.908062">
+      <testcase name="it_should_return_xml_version" class="XMLValidatorTest" file="/var/www/html/workareas/leo/doi/tests/Validator/XMLValidatorTest.php" line="9" assertions="1" time="0.033776"/>
+      <testcase name="it_should_return_xml_schema_validation" class="XMLValidatorTest" file="/var/www/html/workareas/leo/doi/tests/Validator/XMLValidatorTest.php" line="16" assertions="1" time="0.769612"/>
+      <testcase name="it_should_return_xml_schema_invalid" class="XMLValidatorTest" file="/var/www/html/workareas/leo/doi/tests/Validator/XMLValidatorTest.php" line="23" assertions="1" time="0.766633"/>
+      <testcase name="it_should_return_xml_schema_invalid_for_empty_xml" class="XMLValidatorTest" file="/var/www/html/workareas/leo/doi/tests/Validator/XMLValidatorTest.php" line="31" assertions="2" time="0.036539"/>
+      <testcase name="it_should_validate_schema_version_4" class="XMLValidatorTest" file="/var/www/html/workareas/leo/doi/tests/Validator/XMLValidatorTest.php" line="43" assertions="1" time="0.766854"/>
+      <testcase name="it_should_validate_schema_version_4_full" class="XMLValidatorTest" file="/var/www/html/workareas/leo/doi/tests/Validator/XMLValidatorTest.php" line="50" assertions="1" time="0.766888"/>
+      <testcase name="it_should_validate_schema_version_4_with_geolocation" class="XMLValidatorTest" file="/var/www/html/workareas/leo/doi/tests/Validator/XMLValidatorTest.php" line="57" assertions="1" time="0.767759"/>
+    </testsuite>
+  </testsuite>
+</testsuites>

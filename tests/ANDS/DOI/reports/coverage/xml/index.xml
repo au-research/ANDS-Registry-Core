@@ -1,0 +1,469 @@
+<?xml version="1.0"?>
+<phpunit xmlns="http://schema.phpunit.de/coverage/1.0">
+  <project name="/var/www/html/workareas/leo/doi/src">
+    <tests>
+      <test name="DOIServiceProviderTest::it_should_be_able_to_create_a_service_provider" size="unknown" result="0" status="PASSED"/>
+      <test name="DOIServiceProviderTest::it_should_authenticate_a_real_user" size="unknown" result="0" status="PASSED"/>
+      <test name="DOIServiceProviderTest::it_should_not_authenticate_a_fake_user" size="unknown" result="0" status="PASSED"/>
+      <test name="DOIServiceProviderTest::it_should_authenticate_a_test_user" size="unknown" result="0" status="PASSED"/>
+      <test name="DOIServiceProviderTest::it_should_disallow_minting_if_client_is_not_authenticated" size="unknown" result="0" status="PASSED"/>
+      <test name="DOIServiceProviderTest::it_should_allow_a_client_to_mint" size="unknown" result="0" status="PASSED"/>
+      <test name="DOIServiceProviderTest::it_should_allow_minting_a_new_doi_and_return_good_message" size="unknown" result="0" status="PASSED"/>
+      <test name="DOIServiceProviderTest::it_should_disallow_minting_if_not_authorized" size="unknown" result="0" status="PASSED"/>
+      <test name="DOIServiceProviderTest::it_should_not_allow_minting_a_new_doi_and_return_error_message" size="unknown" result="0" status="PASSED"/>
+      <test name="DOIServiceProviderTest::it_should_disallow_minting_of_url_not_in_top_domain" size="unknown" result="0" status="PASSED"/>
+      <test name="DOIServiceProviderTest::it_should_not_activate_an_active_doi" size="unknown" result="0" status="PASSED"/>
+      <test name="DOIServiceProviderTest::it_should_activate_an_inactive_doi" size="unknown" result="3" status="FAILURE"/>
+      <test name="DOIServiceProviderTest::it_should_deactivate_an_active_doi" size="unknown" result="3" status="FAILURE"/>
+      <test name="DOIServiceProviderTest::it_should_allow_current_client_doi_access" size="unknown" result="3" status="FAILURE"/>
+      <test name="DOIServiceProviderTest::it_should_not_allow_current_client_doi_access" size="unknown" result="0" status="PASSED"/>
+      <test name="DOIServiceProviderTest::it_should_add_doi_before_validate" size="unknown" result="0" status="PASSED"/>
+      <test name="DOIServiceProviderTest::it_should_add_identifier_before_validate" size="unknown" result="0" status="PASSED"/>
+      <test name="DOIServiceProviderTest::it_should_add_identifier_before_validate_before_update" size="unknown" result="3" status="FAILURE"/>
+      <test name="DOIServiceProviderTest::it_should_add_or_change_doi_before_validate_before_update" size="unknown" result="3" status="FAILURE"/>
+      <test name="DOIServiceProviderTest::it_should_add_doi_and_work_with_utf8" size="unknown" result="0" status="PASSED"/>
+      <test name="FabricaClientTest::it_should_get_the_client" size="unknown" result="0" status="PASSED"/>
+      <test name="FabricaClientTest::it_should_get_all_UnAssigned_prefixes" size="unknown" result="0" status="PASSED"/>
+      <test name="FabricaClientTest::it_should_get_all_Unalocated_prefixes" size="unknown" result="0" status="PASSED"/>
+      <test name="FabricaClientTest::it_should_get_all_clients" size="unknown" result="0" status="PASSED"/>
+      <test name="FabricaClientTest::it_should_find_client_by_symbol_remote" size="unknown" result="0" status="PASSED"/>
+      <test name="FabricaClientTest::it_should_create_clientInfo_from_local_client_object" size="unknown" result="4" status="ERROR"/>
+      <test name="ArrayFormatterTest::it_should_be_able_to_format_a_standard_message" size="unknown" result="0" status="PASSED"/>
+      <test name="JSONFormatterTest::it_should_be_able_to_format_a_standard_message" size="unknown" result="0" status="PASSED"/>
+      <test name="StringFormatterTest::it_should_be_able_to_format_a_standard_message" size="unknown" result="0" status="PASSED"/>
+      <test name="XMLFormatterTest::it_should_be_able_to_format_a_standard_message" size="unknown" result="0" status="PASSED"/>
+      <test name="XMLFormatterTest::it_should_return_a_mt010_message_for_no_app_id" size="unknown" result="0" status="PASSED"/>
+      <test name="MdsClientTest::test_construct_object" size="unknown" result="0" status="PASSED"/>
+      <test name="MdsClientTest::it_should_return_a_doi" size="unknown" result="3" status="FAILURE"/>
+      <test name="MdsClientTest::it_should_return_good_xml_for_a_doi" size="unknown" result="0" status="PASSED"/>
+      <test name="MdsClientTest::test_mint_a_new_doi" size="unknown" result="0" status="PASSED"/>
+      <test name="MdsClientTest::it_should_mint_a_schema_version_4_doi" size="unknown" result="0" status="PASSED"/>
+      <test name="MdsClientTest::it_should_set_datacite_url" size="unknown" result="0" status="PASSED"/>
+      <test name="MdsClientTest::it_should_update_a_doi_with_new_xml" size="unknown" result="0" status="PASSED"/>
+      <test name="MdsClientTest::it_should_update_a_doi_with_new_url" size="unknown" result="3" status="FAILURE"/>
+      <test name="MdsClientTest::it_should_activate_a_doi_and_then_deactivate" size="unknown" result="0" status="PASSED"/>
+      <test name="ClientRepositoryTest::it_should_be_able_to_get_a_client" size="unknown" result="0" status="PASSED"/>
+      <test name="ClientRepositoryTest::it_should_be_able_to_get_a_client_via_id" size="unknown" result="0" status="PASSED"/>
+      <test name="ClientRepositoryTest::it_should_be_able_to_get_a_client_via_appid" size="unknown" result="0" status="PASSED"/>
+      <test name="ClientRepositoryTest::it_should_authenticate_the_right_user_if_has_shared_secret" size="unknown" result="0" status="PASSED"/>
+      <test name="ClientRepositoryTest::it_does_not_authenticate_if_wrong_shared_secret" size="unknown" result="0" status="PASSED"/>
+      <test name="ClientRepositoryTest::it_authenticates_user_if_ip_match_and_no_shared_secret_provided" size="unknown" result="0" status="PASSED"/>
+      <test name="ClientRepositoryTest::it_does_not_authenticates_user_if_ip_match_fail" size="unknown" result="0" status="PASSED"/>
+      <test name="ClientRepositoryTest::it_should_authenticate_user_if_sharedsecret_match_and_ip_mismatch" size="unknown" result="0" status="PASSED"/>
+      <test name="ClientRepositoryTest::it_should_generate_new_client_with_datacite_symbol" size="unknown" result="0" status="PASSED"/>
+      <test name="ClientRepositoryTest::it_should_generate_datacite_symbol_for_test_client" size="unknown" result="0" status="PASSED"/>
+      <test name="ClientRepositoryTest::it_should_create_a_new_test_client" size="unknown" result="0" status="PASSED"/>
+      <test name="ClientRepositoryTest::it_should_add_a_prefix_to_test_client" size="unknown" result="0" status="PASSED"/>
+      <test name="ClientRepositoryTest::it_should_add_a_domain_to_test_client" size="unknown" result="0" status="PASSED"/>
+      <test name="ClientRepositoryTest::it_should_update_a_client" size="unknown" result="0" status="PASSED"/>
+      <test name="ClientRepositoryTest::should_return_unallocated_prefixes" size="unknown" result="0" status="PASSED"/>
+      <test name="DoiRepositoryTest::it_should_be_able_to_get_a_doi" size="unknown" result="0" status="PASSED"/>
+      <test name="DoiRepositoryTest::it_should_be_able_to_get_a_doi_via_id" size="unknown" result="0" status="PASSED"/>
+      <test name="DoiRepositoryTest::it_should_create_and_update_doi_correctly" size="unknown" result="0" status="PASSED"/>
+      <test name="SchemaProviderTest::it_should_cache_file" size="unknown" result="0" status="PASSED"/>
+      <test name="XMLTransformerTest::it_should_transform_to_kernel_4" size="unknown" result="0" status="PASSED"/>
+      <test name="IPValidatorTest::it_should_validates_ip_range" size="unknown" result="0" status="PASSED"/>
+      <test name="IPValidatorTest::it_should_valiodates_host_names" size="unknown" result="0" status="PASSED"/>
+      <test name="IPValidatorTest::it_should_validates_exact_matching" size="unknown" result="0" status="PASSED"/>
+      <test name="IPValidatorTest::it_should_validates_cidr_range" size="unknown" result="0" status="PASSED"/>
+      <test name="URLValidatorTest::it_should_validates_domain_correctly_for_single_domain" size="unknown" result="0" status="PASSED"/>
+      <test name="URLValidatorTest::it_should_validates_domain_correctly_for_multiple_domain" size="unknown" result="0" status="PASSED"/>
+      <test name="URLValidatorTest::it_should_fail_validation_for_mismatch" size="unknown" result="0" status="PASSED"/>
+      <test name="URLValidatorTest::it_should_validate_correctly_on_correct_client_domain" size="unknown" result="0" status="PASSED"/>
+      <test name="XMLValidatorTest::it_should_return_xml_version" size="unknown" result="0" status="PASSED"/>
+      <test name="XMLValidatorTest::it_should_return_xml_schema_validation" size="unknown" result="0" status="PASSED"/>
+      <test name="XMLValidatorTest::it_should_return_xml_schema_invalid" size="unknown" result="0" status="PASSED"/>
+      <test name="XMLValidatorTest::it_should_return_xml_schema_invalid_for_empty_xml" size="unknown" result="0" status="PASSED"/>
+      <test name="XMLValidatorTest::it_should_validate_schema_version_4" size="unknown" result="0" status="PASSED"/>
+      <test name="XMLValidatorTest::it_should_validate_schema_version_4_full" size="unknown" result="0" status="PASSED"/>
+      <test name="XMLValidatorTest::it_should_validate_schema_version_4_with_geolocation" size="unknown" result="0" status="PASSED"/>
+    </tests>
+    <directory name="/var/www/html/workareas/leo/doi/src">
+      <totals>
+        <lines total="2182" comments="613" code="1569" executable="741" executed="512" percent="69.10%"/>
+        <methods count="110" tested="71" percent="64.55%"/>
+        <functions count="0" tested="0" percent=""/>
+        <classes count="20" tested="12" percent="60.00%"/>
+        <traits count="0" tested="0" percent=""/>
+      </totals>
+      <file name="DOIServiceProvider.php" href="DOIServiceProvider.php.xml">
+        <totals>
+          <lines total="473" comments="151" code="322" executable="185" executed="105" percent="56.76%"/>
+          <methods count="16" tested="11" percent="68.75%"/>
+          <functions count="0" tested="0" percent=""/>
+          <classes count="1" tested="0" percent="0.00%"/>
+          <traits count="0" tested="0" percent=""/>
+        </totals>
+      </file>
+      <file name="DataCiteClient.php" href="DataCiteClient.php.xml">
+        <totals>
+          <lines total="89" comments="49" code="40" executable="0" executed="0" percent=""/>
+          <methods count="0" tested="0" percent=""/>
+          <functions count="0" tested="0" percent=""/>
+          <classes count="0" tested="0" percent=""/>
+          <traits count="0" tested="0" percent=""/>
+        </totals>
+      </file>
+      <file name="FabricaClient.php" href="FabricaClient.php.xml">
+        <totals>
+          <lines total="299" comments="66" code="233" executable="86" executed="42" percent="48.84%"/>
+          <methods count="29" tested="9" percent="31.03%"/>
+          <functions count="0" tested="0" percent=""/>
+          <classes count="1" tested="0" percent="0.00%"/>
+          <traits count="0" tested="0" percent=""/>
+        </totals>
+      </file>
+      <directory name="Formatter">
+        <totals>
+          <lines total="248" comments="47" code="201" executable="134" executed="62" percent="46.27%"/>
+          <methods count="7" tested="6" percent="85.71%"/>
+          <functions count="0" tested="0" percent=""/>
+          <classes count="5" tested="4" percent="80.00%"/>
+          <traits count="0" tested="0" percent=""/>
+        </totals>
+        <file name="ArrayFormatter.php" href="Formatter/ArrayFormatter.php.xml">
+          <totals>
+            <lines total="19" comments="6" code="13" executable="2" executed="2" percent="100.00%"/>
+            <methods count="1" tested="1" percent="100.00%"/>
+            <functions count="0" tested="0" percent=""/>
+            <classes count="1" tested="1" percent="100.00%"/>
+            <traits count="0" tested="0" percent=""/>
+          </totals>
+        </file>
+        <file name="Formatter.php" href="Formatter/Formatter.php.xml">
+          <totals>
+            <lines total="162" comments="23" code="139" executable="115" executed="43" percent="37.39%"/>
+            <methods count="3" tested="2" percent="66.67%"/>
+            <functions count="0" tested="0" percent=""/>
+            <classes count="1" tested="0" percent="0.00%"/>
+            <traits count="0" tested="0" percent=""/>
+          </totals>
+        </file>
+        <file name="JSONFormatter.php" href="Formatter/JSONFormatter.php.xml">
+          <totals>
+            <lines total="20" comments="6" code="14" executable="3" executed="3" percent="100.00%"/>
+            <methods count="1" tested="1" percent="100.00%"/>
+            <functions count="0" tested="0" percent=""/>
+            <classes count="1" tested="1" percent="100.00%"/>
+            <traits count="0" tested="0" percent=""/>
+          </totals>
+        </file>
+        <file name="StringFormatter.php" href="Formatter/StringFormatter.php.xml">
+          <totals>
+            <lines total="19" comments="6" code="13" executable="2" executed="2" percent="100.00%"/>
+            <methods count="1" tested="1" percent="100.00%"/>
+            <functions count="0" tested="0" percent=""/>
+            <classes count="1" tested="1" percent="100.00%"/>
+            <traits count="0" tested="0" percent=""/>
+          </totals>
+        </file>
+        <file name="XMLFormatter.php" href="Formatter/XMLFormatter.php.xml">
+          <totals>
+            <lines total="28" comments="6" code="22" executable="12" executed="12" percent="100.00%"/>
+            <methods count="1" tested="1" percent="100.00%"/>
+            <functions count="0" tested="0" percent=""/>
+            <classes count="1" tested="1" percent="100.00%"/>
+            <traits count="0" tested="0" percent=""/>
+          </totals>
+        </file>
+      </directory>
+      <file name="ArrayFormatter.php" href="Formatter/ArrayFormatter.php.xml">
+        <totals>
+          <lines total="19" comments="6" code="13" executable="2" executed="2" percent="100.00%"/>
+          <methods count="1" tested="1" percent="100.00%"/>
+          <functions count="0" tested="0" percent=""/>
+          <classes count="1" tested="1" percent="100.00%"/>
+          <traits count="0" tested="0" percent=""/>
+        </totals>
+      </file>
+      <file name="Formatter.php" href="Formatter/Formatter.php.xml">
+        <totals>
+          <lines total="162" comments="23" code="139" executable="115" executed="43" percent="37.39%"/>
+          <methods count="3" tested="2" percent="66.67%"/>
+          <functions count="0" tested="0" percent=""/>
+          <classes count="1" tested="0" percent="0.00%"/>
+          <traits count="0" tested="0" percent=""/>
+        </totals>
+      </file>
+      <file name="JSONFormatter.php" href="Formatter/JSONFormatter.php.xml">
+        <totals>
+          <lines total="20" comments="6" code="14" executable="3" executed="3" percent="100.00%"/>
+          <methods count="1" tested="1" percent="100.00%"/>
+          <functions count="0" tested="0" percent=""/>
+          <classes count="1" tested="1" percent="100.00%"/>
+          <traits count="0" tested="0" percent=""/>
+        </totals>
+      </file>
+      <file name="StringFormatter.php" href="Formatter/StringFormatter.php.xml">
+        <totals>
+          <lines total="19" comments="6" code="13" executable="2" executed="2" percent="100.00%"/>
+          <methods count="1" tested="1" percent="100.00%"/>
+          <functions count="0" tested="0" percent=""/>
+          <classes count="1" tested="1" percent="100.00%"/>
+          <traits count="0" tested="0" percent=""/>
+        </totals>
+      </file>
+      <file name="XMLFormatter.php" href="Formatter/XMLFormatter.php.xml">
+        <totals>
+          <lines total="28" comments="6" code="22" executable="12" executed="12" percent="100.00%"/>
+          <methods count="1" tested="1" percent="100.00%"/>
+          <functions count="0" tested="0" percent=""/>
+          <classes count="1" tested="1" percent="100.00%"/>
+          <traits count="0" tested="0" percent=""/>
+        </totals>
+      </file>
+      <file name="MdsClient.php" href="MdsClient.php.xml">
+        <totals>
+          <lines total="222" comments="62" code="160" executable="66" executed="50" percent="75.76%"/>
+          <methods count="16" tested="10" percent="62.50%"/>
+          <functions count="0" tested="0" percent=""/>
+          <classes count="1" tested="0" percent="0.00%"/>
+          <traits count="0" tested="0" percent=""/>
+        </totals>
+      </file>
+      <directory name="Model">
+        <totals>
+          <lines total="225" comments="52" code="173" executable="57" executed="48" percent="84.21%"/>
+          <methods count="11" tested="8" percent="72.73%"/>
+          <functions count="0" tested="0" percent=""/>
+          <classes count="5" tested="4" percent="80.00%"/>
+          <traits count="0" tested="0" percent=""/>
+        </totals>
+        <file name="Client.php" href="Model/Client.php.xml">
+          <totals>
+            <lines total="133" comments="23" code="110" executable="53" executed="44" percent="83.02%"/>
+            <methods count="9" tested="6" percent="66.67%"/>
+            <functions count="0" tested="0" percent=""/>
+            <classes count="1" tested="0" percent="0.00%"/>
+            <traits count="0" tested="0" percent=""/>
+          </totals>
+        </file>
+        <file name="ClientDomain.php" href="Model/ClientDomain.php.xml">
+          <totals>
+            <lines total="13" comments="0" code="13" executable="0" executed="0" percent=""/>
+            <methods count="0" tested="0" percent=""/>
+            <functions count="0" tested="0" percent=""/>
+            <classes count="1" tested="1" percent="100.00%"/>
+            <traits count="0" tested="0" percent=""/>
+          </totals>
+        </file>
+        <file name="ClientPrefixes.php" href="Model/ClientPrefixes.php.xml">
+          <totals>
+            <lines total="18" comments="0" code="18" executable="2" executed="2" percent="100.00%"/>
+            <methods count="1" tested="1" percent="100.00%"/>
+            <functions count="0" tested="0" percent=""/>
+            <classes count="1" tested="1" percent="100.00%"/>
+            <traits count="0" tested="0" percent=""/>
+          </totals>
+        </file>
+        <file name="Doi.php" href="Model/Doi.php.xml">
+          <totals>
+            <lines total="43" comments="23" code="20" executable="2" executed="2" percent="100.00%"/>
+            <methods count="1" tested="1" percent="100.00%"/>
+            <functions count="0" tested="0" percent=""/>
+            <classes count="1" tested="1" percent="100.00%"/>
+            <traits count="0" tested="0" percent=""/>
+          </totals>
+        </file>
+        <file name="Prefix.php" href="Model/Prefix.php.xml">
+          <totals>
+            <lines total="18" comments="6" code="12" executable="0" executed="0" percent=""/>
+            <methods count="0" tested="0" percent=""/>
+            <functions count="0" tested="0" percent=""/>
+            <classes count="1" tested="1" percent="100.00%"/>
+            <traits count="0" tested="0" percent=""/>
+          </totals>
+        </file>
+      </directory>
+      <file name="Client.php" href="Model/Client.php.xml">
+        <totals>
+          <lines total="133" comments="23" code="110" executable="53" executed="44" percent="83.02%"/>
+          <methods count="9" tested="6" percent="66.67%"/>
+          <functions count="0" tested="0" percent=""/>
+          <classes count="1" tested="0" percent="0.00%"/>
+          <traits count="0" tested="0" percent=""/>
+        </totals>
+      </file>
+      <file name="ClientDomain.php" href="Model/ClientDomain.php.xml">
+        <totals>
+          <lines total="13" comments="0" code="13" executable="0" executed="0" percent=""/>
+          <methods count="0" tested="0" percent=""/>
+          <functions count="0" tested="0" percent=""/>
+          <classes count="1" tested="1" percent="100.00%"/>
+          <traits count="0" tested="0" percent=""/>
+        </totals>
+      </file>
+      <file name="ClientPrefixes.php" href="Model/ClientPrefixes.php.xml">
+        <totals>
+          <lines total="18" comments="0" code="18" executable="2" executed="2" percent="100.00%"/>
+          <methods count="1" tested="1" percent="100.00%"/>
+          <functions count="0" tested="0" percent=""/>
+          <classes count="1" tested="1" percent="100.00%"/>
+          <traits count="0" tested="0" percent=""/>
+        </totals>
+      </file>
+      <file name="Doi.php" href="Model/Doi.php.xml">
+        <totals>
+          <lines total="43" comments="23" code="20" executable="2" executed="2" percent="100.00%"/>
+          <methods count="1" tested="1" percent="100.00%"/>
+          <functions count="0" tested="0" percent=""/>
+          <classes count="1" tested="1" percent="100.00%"/>
+          <traits count="0" tested="0" percent=""/>
+        </totals>
+      </file>
+      <file name="Prefix.php" href="Model/Prefix.php.xml">
+        <totals>
+          <lines total="18" comments="6" code="12" executable="0" executed="0" percent=""/>
+          <methods count="0" tested="0" percent=""/>
+          <functions count="0" tested="0" percent=""/>
+          <classes count="1" tested="1" percent="100.00%"/>
+          <traits count="0" tested="0" percent=""/>
+        </totals>
+      </file>
+      <directory name="Repository">
+        <totals>
+          <lines total="299" comments="75" code="224" executable="107" executed="105" percent="98.13%"/>
+          <methods count="18" tested="16" percent="88.89%"/>
+          <functions count="0" tested="0" percent=""/>
+          <classes count="2" tested="1" percent="50.00%"/>
+          <traits count="0" tested="0" percent=""/>
+        </totals>
+        <file name="ClientRepository.php" href="Repository/ClientRepository.php.xml">
+          <totals>
+            <lines total="214" comments="52" code="162" executable="78" executed="76" percent="97.44%"/>
+            <methods count="13" tested="11" percent="84.62%"/>
+            <functions count="0" tested="0" percent=""/>
+            <classes count="1" tested="0" percent="0.00%"/>
+            <traits count="0" tested="0" percent=""/>
+          </totals>
+        </file>
+        <file name="DoiRepository.php" href="Repository/DoiRepository.php.xml">
+          <totals>
+            <lines total="85" comments="23" code="62" executable="29" executed="29" percent="100.00%"/>
+            <methods count="5" tested="5" percent="100.00%"/>
+            <functions count="0" tested="0" percent=""/>
+            <classes count="1" tested="1" percent="100.00%"/>
+            <traits count="0" tested="0" percent=""/>
+          </totals>
+        </file>
+      </directory>
+      <file name="ClientRepository.php" href="Repository/ClientRepository.php.xml">
+        <totals>
+          <lines total="214" comments="52" code="162" executable="78" executed="76" percent="97.44%"/>
+          <methods count="13" tested="11" percent="84.62%"/>
+          <functions count="0" tested="0" percent=""/>
+          <classes count="1" tested="0" percent="0.00%"/>
+          <traits count="0" tested="0" percent=""/>
+        </totals>
+      </file>
+      <file name="DoiRepository.php" href="Repository/DoiRepository.php.xml">
+        <totals>
+          <lines total="85" comments="23" code="62" executable="29" executed="29" percent="100.00%"/>
+          <methods count="5" tested="5" percent="100.00%"/>
+          <functions count="0" tested="0" percent=""/>
+          <classes count="1" tested="1" percent="100.00%"/>
+          <traits count="0" tested="0" percent=""/>
+        </totals>
+      </file>
+      <file name="SchemaProvider.php" href="SchemaProvider.php.xml">
+        <totals>
+          <lines total="17" comments="6" code="11" executable="1" executed="1" percent="100.00%"/>
+          <methods count="1" tested="1" percent="100.00%"/>
+          <functions count="0" tested="0" percent=""/>
+          <classes count="1" tested="1" percent="100.00%"/>
+          <traits count="0" tested="0" percent=""/>
+        </totals>
+      </file>
+      <directory name="Transformer">
+        <totals>
+          <lines total="51" comments="17" code="34" executable="12" executed="12" percent="100.00%"/>
+          <methods count="2" tested="2" percent="100.00%"/>
+          <functions count="0" tested="0" percent=""/>
+          <classes count="1" tested="1" percent="100.00%"/>
+          <traits count="0" tested="0" percent=""/>
+        </totals>
+        <file name="XMLTransformer.php" href="Transformer/XMLTransformer.php.xml">
+          <totals>
+            <lines total="51" comments="17" code="34" executable="12" executed="12" percent="100.00%"/>
+            <methods count="2" tested="2" percent="100.00%"/>
+            <functions count="0" tested="0" percent=""/>
+            <classes count="1" tested="1" percent="100.00%"/>
+            <traits count="0" tested="0" percent=""/>
+          </totals>
+        </file>
+      </directory>
+      <file name="XMLTransformer.php" href="Transformer/XMLTransformer.php.xml">
+        <totals>
+          <lines total="51" comments="17" code="34" executable="12" executed="12" percent="100.00%"/>
+          <methods count="2" tested="2" percent="100.00%"/>
+          <functions count="0" tested="0" percent=""/>
+          <classes count="1" tested="1" percent="100.00%"/>
+          <traits count="0" tested="0" percent=""/>
+        </totals>
+      </file>
+      <directory name="Validator">
+        <totals>
+          <lines total="259" comments="88" code="171" executable="93" executed="87" percent="93.55%"/>
+          <methods count="10" tested="8" percent="80.00%"/>
+          <functions count="0" tested="0" percent=""/>
+          <classes count="3" tested="1" percent="33.33%"/>
+          <traits count="0" tested="0" percent=""/>
+        </totals>
+        <file name="IPValidator.php" href="Validator/IPValidator.php.xml">
+          <totals>
+            <lines total="86" comments="38" code="48" executable="35" executed="33" percent="94.29%"/>
+            <methods count="3" tested="2" percent="66.67%"/>
+            <functions count="0" tested="0" percent=""/>
+            <classes count="1" tested="0" percent="0.00%"/>
+            <traits count="0" tested="0" percent=""/>
+          </totals>
+        </file>
+        <file name="URLValidator.php" href="Validator/URLValidator.php.xml">
+          <totals>
+            <lines total="24" comments="7" code="17" executable="7" executed="7" percent="100.00%"/>
+            <methods count="1" tested="1" percent="100.00%"/>
+            <functions count="0" tested="0" percent=""/>
+            <classes count="1" tested="1" percent="100.00%"/>
+            <traits count="0" tested="0" percent=""/>
+          </totals>
+        </file>
+        <file name="XMLValidator.php" href="Validator/XMLValidator.php.xml">
+          <totals>
+            <lines total="149" comments="43" code="106" executable="51" executed="47" percent="92.16%"/>
+            <methods count="6" tested="5" percent="83.33%"/>
+            <functions count="0" tested="0" percent=""/>
+            <classes count="1" tested="0" percent="0.00%"/>
+            <traits count="0" tested="0" percent=""/>
+          </totals>
+        </file>
+      </directory>
+      <file name="IPValidator.php" href="Validator/IPValidator.php.xml">
+        <totals>
+          <lines total="86" comments="38" code="48" executable="35" executed="33" percent="94.29%"/>
+          <methods count="3" tested="2" percent="66.67%"/>
+          <functions count="0" tested="0" percent=""/>
+          <classes count="1" tested="0" percent="0.00%"/>
+          <traits count="0" tested="0" percent=""/>
+        </totals>
+      </file>
+      <file name="URLValidator.php" href="Validator/URLValidator.php.xml">
+        <totals>
+          <lines total="24" comments="7" code="17" executable="7" executed="7" percent="100.00%"/>
+          <methods count="1" tested="1" percent="100.00%"/>
+          <functions count="0" tested="0" percent=""/>
+          <classes count="1" tested="1" percent="100.00%"/>
+          <traits count="0" tested="0" percent=""/>
+        </totals>
+      </file>
+      <file name="XMLValidator.php" href="Validator/XMLValidator.php.xml">
+        <totals>
+          <lines total="149" comments="43" code="106" executable="51" executed="47" percent="92.16%"/>
+          <methods count="6" tested="5" percent="83.33%"/>
+          <functions count="0" tested="0" percent=""/>
+          <classes count="1" tested="0" percent="0.00%"/>
+          <traits count="0" tested="0" percent=""/>
+        </totals>
+      </file>
+    </directory>
+  </project>
+</phpunit>
