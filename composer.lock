@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "25f79d660a17a830a5304120dcf8d330",
+    "content-hash": "a9574126a96e2f465dad9ebe01eb684f",
     "packages": [
         {
             "name": "abraham/twitteroauth",
@@ -59,47 +59,6 @@
                 "twitter"
             ],
             "time": "2018-07-04T01:28:41+00:00"
-        },
-        {
-            "name": "au-research/ands-doi-service",
-            "version": "dev-develop",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/au-research/ANDS-DOI-Service.git",
-                "reference": "8a2cd6557719389be96fc39754a603d04a33830c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/au-research/ANDS-DOI-Service/zipball/8a2cd6557719389be96fc39754a603d04a33830c",
-                "reference": "8a2cd6557719389be96fc39754a603d04a33830c",
-                "shasum": ""
-            },
-            "require": {
-                "guzzle/http": "^3.9",
-                "illuminate/database": "5.2.*",
-                "vlucas/phpdotenv": "^2.1"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "4.8.*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "ANDS\\DOI\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Apache-2.0"
-            ],
-            "authors": [
-                {
-                    "name": "Minh Duc Nguyen",
-                    "email": "minh.nguyen@ands.org.au"
-                }
-            ],
-            "description": "ANDS DOI Service library",
-            "time": "2019-07-15T04:55:10+00:00"
         },
         {
             "name": "cebe/markdown",
@@ -4666,7 +4625,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "au-research/ands-doi-service": 20,
         "minhd/solr-client": 20,
         "javibravo/simpleue": 20
     },
