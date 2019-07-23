@@ -3,6 +3,7 @@
 use ANDS\DOI\Model\Client;
 use ANDS\DOI\Model\Prefix;
 use ANDS\DOI\Repository\ClientRepository;
+use ANDS\Util\Config;
 use Dotenv\Dotenv;
 
 class ClientRepositoryTest extends PHPUnit_Framework_TestCase
@@ -188,13 +189,12 @@ class ClientRepositoryTest extends PHPUnit_Framework_TestCase
      * @return ClientRepository
      */
     private function getClientRepository() {
-
+        $database = Config::get('database.dois');
         $this->repo = new ClientRepository(
-            getenv("DATABASE_URL"),
-            getenv("DATABASE"),
-            getenv("DATABASE_USERNAME"),
-            getenv("DATABASE_PASSWORD")
+            $database['hostname'], $database['database'], $database['username'],
+            $database['password'], $database['port']
         );
+        return $this->repo;
     }
 
     private function createTestClient(){

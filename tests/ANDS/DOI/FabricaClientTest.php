@@ -1,6 +1,7 @@
 <?php
 
 
+use ANDS\Util\Config;
 use Dotenv\Dotenv;
 
 
@@ -36,13 +37,14 @@ class FabricaClientTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    public function it_should_get_more_from_unassigned_prefixes(){
+    public function it_should_get_more_from_unassigned_prefixes()
+    {
+        $this->markTestSkipped("this test is currently not working as there are no unassigned prefixes available on the test system");
         $cc = 1;
         // this test is currently not working as there are no unassigned prefixes available on the test system
         $unAssignedPrefixes = $this->fabricaClient->claimNumberOfUnassignedPrefixes($cc, 'test');
-       // $this->assertEquals(201, $this->fabricaClient->responseCode);
-       // $this->assertEquals($cc, sizeof($unAssignedPrefixes));
-
+        // $this->assertEquals(201, $this->fabricaClient->responseCode);
+        // $this->assertEquals($cc, sizeof($unAssignedPrefixes));
     }
 
     /** @test */
@@ -96,6 +98,7 @@ class FabricaClientTest extends PHPUnit_Framework_TestCase
     /** @test */
     public function it_should_compare_and_sync_prod_and_test_clients()
     {
+        $this->markTestSkipped("This is not a test");
         $this->fabricaClient->syncProdTestClients();
     }
     
@@ -241,16 +244,15 @@ class FabricaClientTest extends PHPUnit_Framework_TestCase
         $testPassword = getenv("DATACITE_FABRICA_TEST_PASSWORD");
         $this->fabricaClient = new \ANDS\DOI\FabricaClient($username, $password, $testPassword);
 
-        $this->fabricaClient->setClientRepository(new \ANDS\DOI\Repository\ClientRepository(
-            getenv("DATABASE_URL"),
-            getenv("DATABASE"),
-            getenv("DATABASE_USERNAME"),
-            getenv("DATABASE_PASSWORD")
-        ));
+        $database = Config::get('database.dois');
+        $clientRepository = new \ANDS\DOI\Repository\ClientRepository(
+            $database['hostname'], $database['database'], $database['username'],
+            $database['password'], $database['port']
+        );
 
+        $this->fabricaClient->setClientRepository($clientRepository);
         $this->fabricaClient->setDataciteUrl(getenv("DATACITE_FABRICA_API_URL"));
         $this->repo = $this->fabricaClient->getClientRepository();
-
     }
 
     
@@ -283,16 +285,15 @@ class FabricaClientTest extends PHPUnit_Framework_TestCase
 
     private function getTestFabricaClient()
     {
+        $database = Config::get('database.dois');
         $username = $this->trustedClient_symbol;
         $password = getenv("DATACITE_FABRICA_PASSWORD");
         $testPassword = getenv("DATACITE_FABRICA_TEST_PASSWORD");
         $this->testFabricaClient = new \ANDS\DOI\FabricaClient($username, $password, $testPassword);
 
         $this->testFabricaClient->setClientRepository(new \ANDS\DOI\Repository\ClientRepository(
-            getenv("DATABASE_URL"),
-            getenv("DATABASE"),
-            getenv("DATABASE_USERNAME"),
-            getenv("DATABASE_PASSWORD")
+            $database['hostname'], $database['database'], $database['username'],
+            $database['password'], $database['port']
         ));
 
         $this->testFabricaClient->setDataciteUrl(getenv("DATACITE_FABRICA_API_URL"));
