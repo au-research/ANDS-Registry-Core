@@ -87,7 +87,7 @@ use ANDS\Util\Config as ConfigUtil;
                         Monday to Friday.</p>
                     <p>
                         ARDC Office<br/><br/>
-                        Phone: +61 3 9902 0585 <br/>
+                        Phone: <a href="tel:%2B61%203%209902%200585">+61 3 9902 0585</a><br/>
                         E-mail: <a href="mailto:services@ardc.edu.au">services@ardc.edu.au</a>
                         <br/>
                     </p>
