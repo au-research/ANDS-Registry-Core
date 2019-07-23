@@ -7,6 +7,7 @@ use ANDS\DOI\Model\Doi;
 use ANDS\DOI\Repository\ClientRepository;
 use ANDS\DOI\Repository\DoiRepository;
 use ANDS\DOI\Validator\XMLValidator;
+use ANDS\Util\Config;
 use Dotenv\Dotenv;
 use ANDS\DOI\MdsClient;
 
@@ -447,21 +448,19 @@ class DOIServiceProviderTest extends PHPUnit_Framework_TestCase
      */
     private function getServiceProvider()
     {
-        $this->testPrefix = getenv("TEST_DOI_PREFIX");
+        $database = Config::get('database.dois');
 
         $clientRepository = new ClientRepository(
-            getenv("DATABASE_URL"),
-            getenv("DATABASE"),
-            getenv("DATABASE_USERNAME"),
-            getenv("DATABASE_PASSWORD")
+            $database['hostname'], $database['database'], $database['username'],
+            $database['password'], $database['port']
         );
 
         $doiRepository = new DoiRepository(
-            getenv("DATABASE_URL"),
-            getenv("DATABASE"),
-            getenv("DATABASE_USERNAME"),
-            getenv("DATABASE_PASSWORD")
+            $database['hostname'], $database['database'], $database['username'],
+            $database['password'], $database['port']
         );
+
+        $this->testPrefix = getenv("TEST_DOI_PREFIX");
 
         $dataciteClient = new MdsClient(
             getenv("DATACITE_USERNAME"),

@@ -18,7 +18,7 @@ class Storage
     public function __construct($storage)
     {
         $this->driver = $storage['driver'];
-        $base = __DIR__ .'../../../../';
+        $base = __DIR__ .'/../../../';
         $this->path = rtrim($base. $storage['path'], '/') .'/';
     }
 

@@ -6,6 +6,7 @@ use ANDS\DOI\Model\Client;
 use ANDS\DOI\Model\Doi;
 use ANDS\DOI\Repository\ClientRepository;
 use ANDS\DOI\Repository\DoiRepository;
+use ANDS\Util\Config;
 use Dotenv\Dotenv;
 
 class DoiRepositoryTest extends PHPUnit_Framework_TestCase
@@ -109,14 +110,11 @@ class DoiRepositoryTest extends PHPUnit_Framework_TestCase
      * @return DoiRepository
      */
     private function getDoiRepository() {
-
-        $repo = new DoiRepository(
-            getenv("DATABASE_URL"),
-            getenv("DATABASE"),
-            getenv("DATABASE_USERNAME"),
-            getenv("DATABASE_PASSWORD")
+        $database = Config::get('database.dois');
+        return $doiRepository = new DoiRepository(
+            $database['hostname'], $database['database'], $database['username'],
+            $database['password'], $database['port']
         );
-        return $repo;
     }
 
     /**
@@ -126,19 +124,19 @@ class DoiRepositoryTest extends PHPUnit_Framework_TestCase
      */
     private function getServiceProvider()
     {
+        $database = Config::get('database.dois');
+
         $clientRepository = new ClientRepository(
-            getenv("DATABASE_URL"),
-            getenv("DATABASE"),
-            getenv("DATABASE_USERNAME"),
-            getenv("DATABASE_PASSWORD")
+            $database['hostname'], $database['database'], $database['username'],
+            $database['password'], $database['port']
         );
 
         $doiRepository = new DoiRepository(
-            getenv("DATABASE_URL"),
-            getenv("DATABASE"),
-            getenv("DATABASE_USERNAME"),
-            getenv("DATABASE_PASSWORD")
+            $database['hostname'], $database['database'], $database['username'],
+            $database['password'], $database['port']
         );
+
+        $this->testPrefix = getenv("TEST_DOI_PREFIX");
 
         $dataciteClient = new MdsClient(
             getenv("DATACITE_USERNAME"),
@@ -146,7 +144,7 @@ class DoiRepositoryTest extends PHPUnit_Framework_TestCase
             getenv("DATACITE_TEST_PASSWORD")
         );
         $dataciteClient->setDataciteUrl(getenv("DATACITE_TEST_URL"));
-        $this->testPrefix = getenv("TEST_DOI_PREFIX");
+
         $serviceProvider = new DOIServiceProvider(
             $clientRepository, $doiRepository, $dataciteClient
         );

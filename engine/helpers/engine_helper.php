@@ -542,7 +542,7 @@ function debug($message, $type = "debug") {
 //    $debug = ConfigUtil::get('app.debug');
     $debug = true;
 
-    if ($env === "production" || $debug === false) {
+    if ($env === "production" || $debug === false || $env === "testing") {
         return;
     }
 
