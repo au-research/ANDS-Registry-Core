@@ -99,7 +99,8 @@ class DoiRepositoryTest extends PHPUnit_Framework_TestCase
     {
 
         $client = Client::where('app_id', getenv('TEST_CLIENT_APPID'))->first();
-        $client->addClientPrefix($this->testPrefix);
+        $client->addClientPrefix($this->testPrefix, "test", true);
+        $client->mode = "test";
         return $client;
     }
 
