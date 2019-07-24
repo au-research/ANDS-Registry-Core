@@ -118,8 +118,8 @@ class FabricaClientTest extends PHPUnit_Framework_TestCase
         $newPrefix = $unAllocatedPrefix->prefix_value;
 
         // we try to add the prefix and update it to fabrica
-        $this->trustedClient->addClientPrefix($newPrefix,'prod');
-        $this->fabricaClient->updateClientPrefixes($this->trustedClient, 'prod');
+        $this->trustedClient->addClientPrefix($newPrefix,'test');
+        $this->fabricaClient->updateClientPrefixes($this->trustedClient, 'test');
 
         $this->assertFalse($this->fabricaClient->hasError(), "update client prefixes failed. Reason: ". $this->fabricaClient->getErrorMessage());
 
