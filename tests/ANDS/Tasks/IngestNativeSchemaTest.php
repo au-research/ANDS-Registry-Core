@@ -13,6 +13,7 @@ class IngestNativeSchemaTest extends \RegistryTestClass
     public function test_iso_extraction()
     {
 
+        $this->markTestSkipped("requires record in the registry so shouldn't be run on its own");
         $importTask = new IngestNativeSchema();
         $dataSourceId = 14;
         $dom = new \DOMDocument();
@@ -33,9 +34,9 @@ class IngestNativeSchemaTest extends \RegistryTestClass
                     $counter = 0;
                     foreach ($mdNodes as $mdNode) {
                         $success = $this->insertNativeObject($mdNode);
-                       // if($success){
+                        //if($success){
                             $counter++;
-                       // }
+                        //}
                     }
                     $this->assertEquals(10, $counter);
                 }
@@ -97,7 +98,7 @@ class IngestNativeSchemaTest extends \RegistryTestClass
 
         if (sizeof($identifiers) == 0) {
             echo "Couldn't determine Identifiers so quiting";
-            return;
+            return false;
         }
 
         $schema = Schema::where('uri', $mdNode->namespaceURI)->first();
@@ -139,7 +140,7 @@ class IngestNativeSchemaTest extends \RegistryTestClass
             }
             $success = true;
             if (!$existing) {
-                //echo "\nADDING NEW";
+                echo "\nADDING NEW";
                 $version = Versions::create([
                     'data' => $data,
                     'hash' => $hash,
@@ -151,14 +152,14 @@ class IngestNativeSchemaTest extends \RegistryTestClass
                     'registry_object_id' => $id
                 ]);
             } elseif ($hash != $existing->hash) {
-               //echo "\nUPDATING";
+               echo "\nUPDATING";
                 $existing->update([
                     'data' => $data,
                     'hash' => $hash
                 ]);
-            }//else{
-                //echo "\nDIDN'T CHANGE" . $existing->hash;
-            //}
+            }else{
+                echo "\nDIDN'T CHANGE" . $existing->hash;
+            }
         }
         return $success;
     }
