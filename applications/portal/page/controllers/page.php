@@ -272,14 +272,14 @@ class Page extends MX_Controller
             if ($ds == '') {
 
                 $this->load->library('solr');
-                $this->solr->setFacetOpt('field', 'data_source_key');
+                $this->solr->setFacetOpt('field', 'data_source_id');
                 $this->solr->setFacetOpt('limit', 1000);
                 $this->solr->setFacetOpt('mincount', 0);
 
                 $this->solr->executeSearch();
                 $res = $this->solr->getFacet();
 
-                $dsfacet = $res->{'facet_fields'}->{'data_source_key'};
+                $dsfacet = $res->{'facet_fields'}->{'data_source_id'};
 
                 header("Content-Type: text/xml");
                 echo '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
@@ -297,11 +297,10 @@ class Page extends MX_Controller
             } elseif ($ds != '') {
 
                 $this->load->library('solr');
-                $filters = array('data_source_key' => $ds, 'rows' => 50000, 'fl' => 'key, id, record_modified_timestamp, slug');
+                $filters = array('data_source_id' => $ds, 'rows' => 50000, 'fl' => 'key, id, record_modified_timestamp, slug');
                 $this->solr->setFilters($filters);
                 $this->solr->executeSearch();
                 $res = $this->solr->getResult();
-
                 $keys = $res->{'docs'};
                 $freq = 'weekly';
                 if ($this->is_active($ds)) {
@@ -312,7 +311,7 @@ class Page extends MX_Controller
                 echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
                 foreach ($keys as $k) {
                     echo '<url>';
-                    if ($k->{'slug'}) {
+                    if (isset($k->{'slug'})) {
                         echo '<loc>' . base_url() . $k->{'slug'} . '/' . $k->{'id'} . '</loc>';
                     } else {
                         echo '<loc>' . base_url() . 'view/?key=' . urlencode($k->{'key'}) . '</loc>';
@@ -326,10 +325,10 @@ class Page extends MX_Controller
         }
     }
 
-    public function is_active($ds_key)
+    public function is_active($ds_id)
     {
         $this->load->library('solr');
-        $filters = array('data_source_key' => $ds_key);
+        $filters = array('data_source_id' => $ds_id);
         $this->solr->setFilters($filters);
         $this->solr->setFacetOpt('query', 'record_created_timestamp:[NOW-1MONTH/MONTH TO NOW]');
         $this->solr->executeSearch();

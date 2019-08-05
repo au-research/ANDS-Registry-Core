@@ -186,7 +186,7 @@ function default_error_handler($errno, $errstr, $errfile, $errline)
 	// Ignore E_STRICT no email either
 	if ($errno == E_STRICT) { return true; }
 
-	if (ENVIRONMENT == "development" || ini_get('display_errors') == 1)
+	if (ConfigUtil::get("app.deployment_state") == "development" || ini_get('display_errors') == 1)
 	{
 		throw new Exception($errstr . NL . "on line " . $errline . " (" . $errfile .")");
 	}
@@ -227,7 +227,7 @@ function error_level_tostring($errno)
 function notifySiteAdmin($errno, $errstr, $errfile, $errline)
 {
 	$_ci =& get_instance();
-	if($_ci->config->item('app.site_admin_email') && $_ci->config->item('app.site_admin_email') != '<admin @ email>')
+	if(ConfigUtil::get('app.site_admin_email') && ConfigUtil::get('app.site_admin_email') != '<admin @ email>')
 	{
 		$siteAdmin = (ConfigUtil::get('app.site_admin') ? ConfigUtil::get('app.site_admin') : 'Site Admin');
 
@@ -542,7 +542,7 @@ function debug($message, $type = "debug") {
 //    $debug = ConfigUtil::get('app.debug');
     $debug = true;
 
-    if ($env === "production" || $debug === false) {
+    if ($env === "production" || $debug === false || $env === "testing") {
         return;
     }
 

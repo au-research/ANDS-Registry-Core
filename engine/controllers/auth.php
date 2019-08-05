@@ -114,7 +114,10 @@ class Auth extends CI_Controller {
 			$this->load->model('authenticators/'.$authenticator_class, 'auth');
 			$this->auth->load_params($params);
 			$this->auth->authenticate();
-			$this->user->refreshAffiliations($this->user->localIdentifier());
+
+			// we don't need to refresh affiliation anymore since the authenticator authComplete already
+            // set the required authentication cookie
+			//$this->user->refreshAffiliations($this->user->localIdentifier());
 
 			if ($this->input->get('redirect')) redirect($this->input->get('redirect'));
 
