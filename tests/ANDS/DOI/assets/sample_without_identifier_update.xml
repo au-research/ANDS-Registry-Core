@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://datacite.org/schema/kernel-4" xsi:schemaLocation="http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4.1/metadata.xsd">
+    <titles>
+        <title xml:lang="en">Lower Hunter Particle Characterisation Study Data Set</title>
+    </titles>
+    <creators>
+        <creator>
+            <creatorName>Office of Environment and Heritage (OEH)</creatorName>
+            <nameIdentifier nameIdentifierScheme="OEH">Office of Environment and Heritage (OEH)</nameIdentifier>
+        </creator>
+    </creators>
+    <language>en</language>
+    <resourceType resourceTypeGeneral="Dataset">Chemical speciation and Positive Matrix Factorisation Factor Concentration</resourceType>
+    <version>1.0</version>
+    <publisher>Office of Environment and Heritage (OEH)</publisher>
+    <publicationYear>2016</publicationYear>
+    <descriptions>
+        <description xml:lang="en" descriptionType="Abstract">Particle chemical speciation and Positive Matrix Factorisation (PMF) factor concentration dataset for the Lower Hunter Particle Characterisation Study.
+            Note: This workbook contains the chemical speciation data for each sample collected during study (worksheets K and L) and the PMF factor concentration data for each day (worksheets E and F), which together comprise the primary dataset from the Lower Hunter Particle Characterisation  Study. This workbook also includes summary data for PMF factor concentrations, including annual averages (worksheets A, B, F and G) and monthly averages (worksheets C, D, H and I). Due to data rounding, there maybe some differences between the summary data reported in this workbook and the summary data presented in the main report.</description>
+    </descriptions>
+</resource>

@@ -35,6 +35,11 @@ class UserDataSuggestor implements RegistryObjectSuggestor
         }
     }
 
+    public function isClientOnline()
+    {
+        return $this->client !== null;
+    }
+
     /**
      * TODO cache results
      *

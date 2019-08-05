@@ -163,7 +163,7 @@
             <h3 id="helpModalLabel">ORCID Search and Link Wizard Help</h3>
         </div>
         <div class="modal-body">
-            <p>The ANDS Search and Link Wizard allows you to link your ORCID record with your research datasets published in <a href="<?php echo portal_url();?>">Research Data Australia</a>. By using the wizard, you can enrich your research profile and promote your research to others. Your ORCID ID will also be indexed with the Research Data Australia records you link to, making your work more discoverable.
+            <p>The ARDC Search and Link Wizard allows you to link your ORCID record with your research datasets published in <a href="<?php echo portal_url();?>">Research Data Australia</a>. By using the wizard, you can enrich your research profile and promote your research to others. Your ORCID ID will also be indexed with the Research Data Australia records you link to, making your work more discoverable.
             </p>
             <h4>Suggested Datasets</h4>
             <p>The Suggested Datasets section will list any datasets from Research Data Australia, which are either directly related to your ORCID ID or are related to a researcher matching your surname. These datasets can be linked to your ORCID record using steps 3 to 6 in the Linking datasets to your ORCID record section below.</p>
@@ -177,34 +177,29 @@
                 <li>Click the ‘Link’ button to link the datasets to your ORCID record.</li>
             </ol>
             <h4>Unlinking datasets from your ORCID record</h4>
-            <p>Unlinking Research Data Australia datasets from your ORCID record can be done via your account on the ORCID website or through the ANDS Search and Link Wizard. The following instructions are for the ANDS Search and Link Wizard.</p>
+            <p>Unlinking Research Data Australia datasets from your ORCID record can be done via your account on the ORCID website or through the ARDC Search and Link Wizard. The following instructions are for the ARDC Search and Link Wizard.</p>
             <ol>
-                <li>Login to your ORCID account and access the ANDS Search and Link Wizard.</li>
+                <li>Login to your ORCID account and access the ARDC Search and Link Wizard.</li>
                 <li>Locate the ‘Datasets already linked from Research Data Australia’ section on the right-hand side of the page.</li>
                 <li>Click the ‘X’ icon displayed with the record you wish to unlink. This will open up an unlink confirmation message.</li>
                 <li>Click the ‘Ok’ button to unlink the record. Note that you will need to refresh your record on the ORCID website to see the change.</li>
             </ol>
             <h4>Authorisation</h4>
-            <p>In order to access the ANDS Search and Link Wizard you are required to authorise ANDS to access your ORCID profile.</p>
-            <p>Upon your approval, ANDS retrieves and stores the details of your ORCID record. This information is used to customise your sessions and enable ANDS to link works to your ORCID record.</p>
-            <p>ANDS requests the following access permissions to your ORCID record:</p>
+            <p>In order to access the ARDC Search and Link Wizard you are required to authorise ARDC to access your ORCID profile.</p>
+            <p>Upon your approval, ARDC retrieves and stores the details of your ORCID record. This information is used to customise your sessions and enable ARDC to link works to your ORCID record.</p>
+            <p>ARDC requests the following access permissions to your ORCID record:</p>
             <ul>
                 <li>Add or update your research activities<br/>Allow this organization or application to add activity information stored in their system(s) to your ORCID record and update information they have added.</li>
                 <li>Read limited information from your research activities<br/>Will allow this organization or application to read limited information from your works, funding or affiliations</li>
             </ul>
             <h4>Accessing/deleting your personal information</h4>
-            <p>You have a right to access your personal information or ask for it to be removed from the ANDS system (subject to exceptions allowed by law). To make a request please use the contact information below. You may be required to put your request in writing for security reasons.</p>
+            <p>You have a right to access your personal information or ask for it to be removed from the ARDC system (subject to exceptions allowed by law). To make a request please use the contact information below. You may be required to put your request in writing for security reasons.</p>
             <h4>Contacting us</h4>
             <p>If you have any questions or concerns, please contact us by any of the following means during business hours Monday to Friday.</p>
             <p>
-                ANDS Office<br/>
-                Monash University,<br/>
-                PO Box 197,<br/>
-                Caulfield East VIC 3145,<br/>
-                AUSTRALIA<br/>
-                <br/>
-                Phone: +61 3 9902 0585 <br/>
-                E-mail: <a href="mailto:services@ands.org.au">services@ands.org.au</a>
+                ARDC Office<br/>
+                Phone: <a href="tel:%2B61%203%209902%200585">+61 3 9902 0585</a><br/>
+                E-mail: <a href="mailto:services@ardc.org.au">services@ardcs.org.au</a>
                 <br/>
             </p>
         </div>
