@@ -14,7 +14,7 @@
                 <div class="row">
                     <div class="col-md-8 col-md-offset-2">
                         <p>The record you are looking for no longer exists in Research Data Australia.</p>
-                        <p>You may wish to return to the <a href="{{base_url()}}">home page</a> or contact <a href="mailto:services@ands.org.au">services@ands.org.au</a> for further support.</p>
+                        <p>You may wish to return to the <a href="{{base_url()}}">home page</a> or contact <a href="mailto:services@ardc.edu.au">services@ardc.edu.au</a> for further support.</p>
                     </div>
                     @if ($message)
                         {{ $message }}
