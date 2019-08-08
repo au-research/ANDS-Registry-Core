@@ -1246,19 +1246,19 @@ class Registry_object extends MX_Controller {
 										{
 											$this->ro->emailAssessor($ds);
 											$jsondata['message_code'] = 'SUBMITTED_FOR_ASSESSMENT_EMAIL_SENT';
-											$jsondata['success_message'] .= '<strong>Note:</strong> An ANDS Quality Assessor has been notified of your submitted record(s).</li>';
+											$jsondata['success_message'] .= '<strong>Note:</strong> An ARDC Quality Assessor has been notified of your submitted record(s).</li>';
 											$sentMail = true;
 										}
 										else
 										{
 											// Otherwise prompt to contact the CLO
-											$jsondata['success_message'] .= '<strong>Note:</strong> You should contact your ANDS Client Liaison Officer to let them know your records are ready for assessment.</li>';
+											$jsondata['success_message'] .= '<strong>Note:</strong> You should contact your ARDC Client Liaison Officer to let them know your records are ready for assessment.</li>';
 											$sentMail = true;
 										}
 									}
 									elseif ($ds->count_SUBMITTED_FOR_ASSESSMENT > 0 && !$sentMail)
 									{
-										$jsondata['success_message'] .= '<strong>Note:</strong> You should contact your ANDS Client Liaison Officer to let them know your records are ready for assessment.</li>';
+										$jsondata['success_message'] .= '<strong>Note:</strong> You should contact your ARDC Client Liaison Officer to let them know your records are ready for assessment.</li>';
 										$sentMail = true;
 									}
 								}

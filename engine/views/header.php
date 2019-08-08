@@ -26,7 +26,7 @@ else
   $environment_name = '';
   $environment_colour = '';
   $environment_header_style = '';
-  $logo_title = 'Back to ANDS Online Services Home';
+  $logo_title = 'Back to ARDC Online Services Home';
 }
 
 
