@@ -108,7 +108,7 @@ class ANDSLogging
         // IP and User Agent
         if (!array_key_exists('user', $event)) {
             $event['user'] = [
-                'ip' => $CI->input->ip_address(),
+                'ip' => \ANDS\Registry\API\Request::ip(),
                 'user_agent' => $CI->input->user_agent()
             ];
         }

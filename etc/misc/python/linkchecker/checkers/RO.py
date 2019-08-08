@@ -33,7 +33,7 @@ rol_list: list
     key: one of the column names in the registry_object_links table.
     value: the value of that column
 
-testing_array: dict (despite the name, grr)
+testing_array: dict (despite the name)
   key: int: An index into the rol_list array.
   value: dict: Details of the link to be tested.
     There are three key/value pairs in each dictionary,

@@ -121,6 +121,9 @@ class Relationships extends ROHandler
                 $ci->solr->setOpt('fq',
                     '+to_class:party OR relation_origin:IDENTIFIER');
                 $ci->solr->setOpt('fq', '-to_type:group');
+                //boost hasPrincipalInvestigator type relationships
+                $ci->solr->setOpt('defType', 'edismax');
+                $ci->solr->setOpt('bq', 'relation:hasPrincipalInvestigator^5');
                 break;
             case "organisations":
                 $ci->solr->setOpt('fq', '+to_class:party');

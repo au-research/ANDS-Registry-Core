@@ -679,12 +679,18 @@ class _data_source {
         if($harvestId)
         {
             $this->db->where("harvest_id", $harvestId);
-            $this->db->update("harvests", array('status'=>$status, 'next_run'=>date( 'Y-m-d\TH:i:s.uP', $nextRun), 'batch_number'=>$batchNumber, 'mode'=>$mode));
+            $result = $this->db->update("harvests", array('status'=>$status, 'next_run'=>date( 'Y-m-d H:i:s', $nextRun), 'batch_number'=>$batchNumber, 'mode'=>$mode));
+            if (!$result) {
+                throw new Exception($this->db->_error_message());
+            }
             return $harvestId;
         }
         else
         {
-            $this->db->insert("harvests", array("data_source_id" => $this->id, 'status'=>$status, 'next_run'=>date( 'Y-m-d\TH:i:s.uP', $nextRun), 'batch_number'=>$batchNumber, 'mode'=>$mode));
+            $result = $this->db->insert("harvests", array("data_source_id" => $this->id, 'status'=>$status, 'next_run'=>date( 'Y-m-d H:i:s', $nextRun), 'batch_number'=>$batchNumber, 'mode'=>$mode));
+            if (!$result) {
+                throw new Exception($this->db->_error_message());
+            }
             return $this->db->insert_id();
         }
     }

@@ -182,6 +182,7 @@ class XMLUtil
     public static function cleanNameSpace($xml)
     {
         try {
+            libxml_clear_errors();
             $xslt_processor = Transforms::get_clean_ns_transformer();
             $dom = new DOMDocument();
             $dom->loadXML($xml);

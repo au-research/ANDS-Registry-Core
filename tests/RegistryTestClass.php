@@ -24,6 +24,7 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         parent::setUp();
+        initEloquent();
 
         restore_error_handler();
 
@@ -81,6 +82,9 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
 
         // delete data source attributes
         $this->dataSource->dataSourceAttributes()->delete();
+
+        // delete data source harvests
+        $this->dataSource->harvest()->delete();
 
         // delete data source
         $this->dataSource->delete();

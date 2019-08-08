@@ -42,25 +42,6 @@ $eDBCONF = array();
 define('ENVIRONMENT', ConfigUtil::get('app.deployment_state'));
 date_default_timezone_set(env('TIMEZONE', ConfigUtil::get('app.timezone')));
 define('PROTOCOL', ConfigUtil::get('app.protocol'));
-if(isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/bot|crawl|slurp|spider/i', $_SERVER['HTTP_USER_AGENT']) === 0 && isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] !="POST")
-{
-    if(PROTOCOL == 'https://'){
-        if((!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] != "on")){
-            $redirect = PROTOCOL.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-            header("HTTP/1.1 301 Moved Permanently");
-            header("Location: $redirect");
-            return;
-        }
-    }
-    if(PROTOCOL == 'http://'){
-        if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === "on"){
-            $redirect = PROTOCOL.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-            header("HTTP/1.1 301 Moved Permanently");
-            header("Location: $redirect");
-            return;
-        }
-    }
-}
 
 
 /*

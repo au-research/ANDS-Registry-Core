@@ -47,17 +47,28 @@
 
                 scope.availableOptions['nameType'] = ['Organizational', 'Personal'];
 
-                scope.availableOptions['contributorType'] = ['ContactPerson', 'DataCollector', 'DataCurator', 'DataManager', 'Distributor', 'Editor', 'HostingInstitution', 'Producer', 'ProjectLeader', 'ProjectManager', 'ProjectMember', 'RegistrationAgency', 'RegistrationAuthority', 'RelatedPerson', 'Researcher', 'ResearchGroup', 'RightsHolder', 'Sponsor', 'Supervisor', 'WorkPackageLeader', 'Other'];
+                scope.availableOptions['contributorType'] = ['ContactPerson', 'DataCollector', 'DataCurator',
+                    'DataManager', 'Distributor', 'Editor', 'HostingInstitution', 'Producer', 'ProjectLeader',
+                    'ProjectManager', 'ProjectMember', 'RegistrationAgency', 'RegistrationAuthority',
+                    'RelatedPerson', 'Researcher', 'ResearchGroup', 'RightsHolder', 'Sponsor',
+                    'Supervisor', 'WorkPackageLeader', 'Other'];
 
-                scope.availableOptions['relatedIdentifierType'] = ['ARK', 'arXiv', 'bibcode', 'DOI', 'EAN13', 'EISSN', 'Handle', 'IGSN', 'ISBN', 'ISSN', 'ISTC', 'LISSN', 'LSID', 'PMID', 'PURL', 'UPC', 'URL', 'URN'];
+                scope.availableOptions['relatedIdentifierType'] = ['ARK', 'arXiv', 'bibcode', 'DOI', 'EAN13',
+                    'EISSN', 'Handle', 'IGSN', 'ISBN', 'ISSN', 'ISTC', 'LISSN', 'LSID', 'PMID', 'PURL',
+                    'UPC', 'URL', 'URN', 'w3id'];
 
-                scope.availableOptions['relationType'] = ['IsCitedBy', 'Cites', 'IsSupplementTo', 'IsSupplementedBy', 'IsContinuedBy', 'Continues', 'HasMetadata', 'IsMetadataFor', 'IsNewVersionOf', 'IsPreviousVersionOf', 'IsPartOf', 'HasPart', 'IsReferencedBy', 'References', 'IsDocumentedBy', 'Documents', 'IsCompiledBy', 'Compiles', 'IsVariantFormOf', 'IsOriginalFormOf', 'IsIdenticalTo', 'IsReviewedBy', 'Reviews', 'IsDerivedFrom', 'IsSourceOf', 'IsDescribedBy', 'Describes', 'HasVersion', 'IsVersionOf', 'IsRequiredBy', 'Requires'];
+                scope.availableOptions['relationType'] = ['IsCitedBy', 'Cites', 'IsSupplementTo', 'IsSupplementedBy',
+                    'IsContinuedBy', 'Continues', 'HasMetadata', 'IsMetadataFor', 'IsNewVersionOf', 'IsPreviousVersionOf',
+                    'IsPartOf', 'HasPart', 'IsReferencedBy', 'References', 'IsDocumentedBy', 'Documents', 'IsCompiledBy',
+                    'Compiles', 'IsVariantFormOf', 'IsOriginalFormOf', 'IsIdenticalTo', 'IsReviewedBy', 'Reviews', 'IsDerivedFrom',
+                    'IsSourceOf', 'IsDescribedBy', 'Describes', 'HasVersion', 'IsVersionOf', 'IsRequiredBy', 'Requires', 'Obsoletes', 'IsObsoletedBy'];
 
                 scope.availableOptions['descriptionType'] = ['Abstract', 'Methods', 'SeriesInformation', 'TableOfContents', 'TechnicalInfo', 'Other'];
 
                 scope.availableOptions['funderIdentifierType'] = ['ISNI', 'GRID', 'Crossref Funder ID', 'Other'];
 
-                scope.availableOptions['resourceTypeGeneral'] = ['Audiovisual', 'Collection', 'Dataset', 'DataPaper', 'Event', 'Image', 'InteractiveResource', 'Model', 'PhysicalObject', 'Service', 'Software', 'Sound', 'Text', 'Workflow', 'Other'];
+                scope.availableOptions['resourceTypeGeneral'] = ['Audiovisual', 'Collection', 'Dataset', 'DataPaper', 'Event', 'Image',
+                    'InteractiveResource', 'Model', 'PhysicalObject', 'Service', 'Software', 'Sound', 'Text', 'Workflow', 'Other'];
 
 
                 scope.setOption = function (item, attr, value) {
@@ -178,7 +189,6 @@
                             scope.objectModel.resource[0][val].push({});
                         }
                     });
-
                     if (scope.objectModel.resource[0].creators) {
                         angular.forEach(scope.objectModel.resource[0].creators[0].creator, function (creator, index) {
                             var fields = ['creatorName', 'givenName', 'familyName', 'nameIdentifier', 'affiliation'];
@@ -262,7 +272,7 @@
                         var xml = '';
                         var xmlns = "http://datacite.org/schema/kernel-4";
                         var xmlnsxsi = "http://www.w3.org/2001/XMLSchema-instance";
-                        var xsischemaLocation = "http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4.1/metadata.xsd";
+                        var xsischemaLocation = "http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4.2/metadata.xsd";
                         xml += '<?xml version="1.0" encoding="utf-8"?>';
                         xml += '<resource xmlns="' + xmlns + '" xmlns:xsi="' + xmlnsxsi + '" xsi:schemaLocation="' + xsischemaLocation + '">';
                         xml += '<identifier identifierType="' + json.resource[0].identifier[0]['_attr']['identifierType']['_value'] + '">' + json.resource[0].identifier[0]['_text'] + '</identifier>';
@@ -281,6 +291,9 @@
                                 xml += '<' + module;
                                 if (item['_attr']) {
                                     angular.forEach(item['_attr'], function (value, key) {
+                                        if (key == 'lang') {
+                                            key = 'xml:lang';
+                                        }
                                         xml += ' ' + key + '="' + value['_value'] + '"';
                                     });
                                 }
@@ -293,7 +306,8 @@
                         });
 
                         //similar modules
-                        var modules = ['title', 'subject', 'date', 'alternateIdentifier', 'relatedIdentifier', 'size', 'format', 'description', 'rights', 'geoLocation', 'creator', 'contributor', 'fundingReference'];
+                        var modules = ['title', 'subject', 'date', 'alternateIdentifier', 'relatedIdentifier', 'size',
+                            'format', 'description', 'rights', 'geoLocation', 'creator', 'contributor', 'fundingReference'];
                         angular.forEach(modules, function (module) {
                             var container = module + 's';
                             if (module == 'rights') container = 'rightsList';
@@ -422,6 +436,7 @@
                 'index': '=',
                 'optiontype': '=',
                 'label': '=',
+                'alabel': '=',
                 'custom': '=',
                 'readonly': '=',
                 'attribute' : '=',
@@ -437,9 +452,13 @@
 
                 scope.availableOptions['nameType'] = ['Organizational', 'Personal'];
                 scope.availableOptions['titleType'] = ['AlternativeTitle', 'Subtitle', 'TranslatedTitle', 'Other'];
-                scope.availableOptions['dateType'] = ['Accepted', 'Available', 'Copyrighted', 'Collected', 'Created', 'Issued', 'Submitted', 'Updated', 'Valid', 'Other'];
-                scope.availableOptions['resourceTypeGeneral'] = ['Audiovisual', 'Collection', 'Dataset', 'DataPaper', 'Event', 'Image', 'InteractiveResource', 'Model', 'PhysicalObject', 'Service', 'Software', 'Sound', 'Text', 'Workflow', 'Other'];
-                scope.availableOptions['descriptionType'] = ['Abstract', 'Methods', 'SeriesInformation', 'TableOfContents', 'Other'];
+                scope.availableOptions['dateType'] = ['Accepted', 'Available', 'Copyrighted', 'Collected', 'Created',
+                    'Issued', 'Submitted', 'Updated', 'Valid', 'Withdrawn', 'Other'];
+                scope.availableOptions['resourceTypeGeneral'] = ['Audiovisual', 'Collection', 'Dataset', 'DataPaper',
+                    'Event', 'Image', 'InteractiveResource', 'Model', 'PhysicalObject', 'Service', 'Software',
+                    'Sound', 'Text', 'Workflow', 'Other'];
+                scope.availableOptions['descriptionType'] = ['Abstract', 'Methods', 'SeriesInformation',
+                    'TableOfContents', 'Other'];
 
                 scope.remove = function () {
                     scope.list.splice(scope.index, '1');
@@ -453,7 +472,13 @@
                 };
 
                 if (scope.attribute) {
-                    scope.setOption(scope.item, scope.attribute, "");
+                    if(scope.item && scope.item._attr &&
+                        scope.item._attr[scope.attribute] &&
+                        scope.item._attr[scope.attribute]._value != "")
+                    {
+                        scope.setOption(scope.item, scope.attribute, scope.item._attr[scope.attribute]._value);
+                    } else
+                        scope.setOption(scope.item, scope.attribute, "");
                 }
             }
         }

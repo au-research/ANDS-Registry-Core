@@ -29,6 +29,10 @@
             label="'Publisher'"
             readonly="readonly"
             ></datacite-twin-item-form>
+        <div class="input-prepend input-append" style="display:inline-block" >
+            <span class="add-on">Language</span>
+            <input name='publisher_lang' ng-readonly="readonly" type="text"  placeholder="Language" ng-model="objectModel.resource[0].publisher[0]._attr.lang._value" class="ng-valid ng-dirty"/>
+        </div>
         <datacite-twin-item-form
             item="objectModel.resource[0].publicationYear[0]"
             label="'Publication Year'"
@@ -54,8 +58,13 @@
                             </li>
                         </ul>
                     </div>
+
                     <span class="add-on">Creator Name</span>
                     <input type="text" placeholder="Creator Name"  ng-model="creator.creatorName[0]._text" ng-readonly="readonly" style="width: 420px"/>
+                    <div class="input-prepend input-append" style="display:inline-block" >
+                        <span class="add-on">Language</span>
+                        <input ng-readonly="readonly" type="text" placeholder="Language" ng-model="creator.creatorName[0]._attr.lang._value" class="ng-valid ng-dirty"/>
+                    </div>
                 </div>
                 <div class="input-prepend input-append">
                     <div class="input-prepend input-append" style="display:inline-block">
@@ -208,6 +217,10 @@
                             </div>
                             <span class="add-on">Contributor Name</span>
                             <input type="text" placeholder="Contributor Name"  ng-model="contributor.contributorName[0]._text" ng-readonly="readonly" style="width: 420px"/>
+                            <div class="input-prepend input-append" style="display:inline-block" >
+                                <span class="add-on">Language</span>
+                                <input ng-readonly="readonly" type="text" placeholder="Language" ng-model="contributor.contributorName[0]._attr.lang._value" class="ng-valid ng-dirty"/>
+                            </div>
                         </div>
 
                     </div>
@@ -271,7 +284,8 @@
                 index="$index"
                 readonly="readonly"
                 optiontype="'dateType'"
-                attribute="'dateInformation'">
+                attribute="'dateInformation'"
+                alabel="'Date Information'">
             </datacite-twin-item-form>
             <a ng-if="!readonly" href="" class="btn btn-info" ng-click="add(objectModel.resource[0].dates[0], 'date')"><i class="icon-plus icon-white"></i> Add Date</a>
         </div>
@@ -599,6 +613,18 @@
                         <span class="add-on">Rights URI</span>
                         <input ng-readonly="readonly" type="text" placeholder="Rights URI" ng-model="rights._attr.rightsURI._value" class="ng-valid ng-dirty"/>
                     </div>
+                    <div class="input-prepend input-append" >
+                        <span class="add-on">Rights Identifier</span>
+                        <input ng-readonly="readonly" type="text" placeholder="Rights Identifier" ng-model="rights._attr.rightsIdentifier._value" class="ng-valid ng-dirty"/>
+                    </div>
+                    <div class="input-prepend input-append" >
+                        <span class="add-on">Rights Identifier Scheme</span>
+                        <input ng-readonly="readonly" type="text" placeholder="Rights Identifier Scheme" ng-model="rights._attr.rightsIdentifierScheme._value" class="ng-valid ng-dirty"/>
+                    </div>
+                    <div class="input-prepend input-append" >
+                        <span class="add-on">Scheme URI</span>
+                        <input ng-readonly="readonly" type="text" placeholder="Scheme URI" ng-model="rights._attr.schemeURI._value" class="ng-valid ng-dirty"/>
+                    </div>
 
                     <div class="input-prepend input-append"  style="display:inline-block;">
                         <span class="add-on">Rights</span>
@@ -606,8 +632,8 @@
                     </div>
 
                     <div class="input-prepend input-append" >
-                        <span class="add-on">lang</span>
-                        <input ng-readonly="readonly" type="text" placeholder="lang" ng-model="rights._attr.lang._value" class="ng-valid ng-dirty"/>
+                        <span class="add-on">Language</span>
+                        <input ng-readonly="readonly" type="text" placeholder="Language" ng-model="rights._attr.lang._value" class="ng-valid ng-dirty"/>
                     </div>
 
                     <div class="input-prepend input-append">
