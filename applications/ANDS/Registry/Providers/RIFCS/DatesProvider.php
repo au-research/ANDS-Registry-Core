@@ -427,6 +427,11 @@ class DatesProvider implements RIFCSProvider
         $record->save();
     }
 
+    public static function touchDeleteByIDs(array $ids)
+    {
+        RegistryObject::whereIn('registry_object_id', $ids)->update(['deleted_at' => Carbon::now()]);
+    }
+
     public static function getUpdatedAt($record, $getDateFormat = 'Y-m-d', $timezone = null)
     {
         $timezone = $timezone ?: Config::get('app.timezone');

@@ -1,5 +1,20 @@
 @if( $ro->core['class'] != 'party' && $ro->core['class'] !='group' )
-    @if (is_array($related['researchers']) && sizeof($related['researchers']['docs']) > 0)
+    <?php
+    $contributors = '';
+    ?>
+    @if($ro->citations)
+        @foreach($ro->citations as $citation)
+            @if($citation['type']=='metadata' && $citation['contributors']!='')
+             <?php  $contributors = explode(";",$citation['contributors']); ?>
+            @endif
+        @endforeach
+
+    @endif
+    @if($contributors!='')
+    @foreach($contributors as $contributor)
+        {{$contributor}} <small>( Contributor )</small>
+        @endforeach
+    @elseif (is_array($related['researchers']) && sizeof($related['researchers']['docs']) > 0)
         @foreach($related['researchers']['docs'] as $col)
             <a href="<?php echo base_url()?>{{$col['to_slug']}}/{{$col['to_id']}}"
                tip="{{ $col['display_description'] }}"

@@ -1,5 +1,5 @@
-<?php 
-
+<?php
+use ANDS\Util\Config as ConfigUtil;
 /**
  * Role Dashboard Interface
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
@@ -28,13 +28,13 @@
                             <img src="<?php echo asset_url('img/orcid_16x16.png'); ?>"
                                  alt="orcid id logo" style="margin-bottom: 5px;"></a>
                     </p>
-					<?php if($this->config->item('deployment_state')!='production'):?>
+					<?php if(ConfigUtil::get('app.deployment_state') !='production'):?>
 					<div class="alert alert-info">
-						This is a demonstration of ORCID Integration Wizard with <a href="http://researchdata.ands.org.au">Research Data Australia</a>. A <a href="http://sandbox-1.orcid.org/oauth/signin" target="_blank">Sandbox ORCID account</a> is required for testing.
+						This is a demonstration of ORCID Integration Wizard with <a href="<?php echo portal_url() ?>">Research Data Australia</a>. A <a href="http://sandbox-1.orcid.org/oauth/signin" target="_blank">Sandbox ORCID account</a> is required for testing.
 					</div>
 					<?php endif; ?>
                     <p>
-                        The ANDS Search and Link Wizard allows you to link your
+                        The ARDC Search and Link Wizard allows you to link your
                         ORCID record with your research datasets published in
                         Research Data Australia. By using the wizard you can
                         enrich your research profile and promote your research
@@ -47,18 +47,18 @@
                         Authorisation
                     </h4>
                     <p>
-                        In order to access the ANDS Search and Link Wizard you
-                        will need to authorise ANDS to access your ORCID
+                        In order to access the ARDC Search and Link Wizard you
+                        will need to authorise ARDC to access your ORCID
                         profile.
                     </p>
                     <p>
-                        Upon your approval, ANDS will retrieve and store the
+                        Upon your approval, ARDC will retrieve and store the
                         details of your ORCID record. This information is used
-                        to customise your sessions and enable ANDS to link works
+                        to customise your sessions and enable the ARDC to link works
                         to your ORCID record.
                     </p>
                     <p>
-                        ANDS is requesting the following access permissions to
+                        The ARDC is requesting the following access permissions to
                         your ORCID record:
                     </p>
                     <ul>
@@ -77,7 +77,7 @@
                     </ul>
                     <h4>Accessing/Deleting Your Personal Information</h4>
                     <p>You have a right to access your personal information or
-                        ask for it to be removed from the ANDS system (subject
+                        ask for it to be removed from the ARDC system (subject
                         to exceptions allowed by law). To make a request please
                         use the contact information below. You may be required
                         to put your request in writing for security reasons.</p>
@@ -86,14 +86,9 @@
                         by any of the following means during business hours
                         Monday to Friday.</p>
                     <p>
-                        ANDS Office<br/>
-                        Monash University,<br/>
-                        PO Box 197,<br/>
-                        Caulfield East VIC 3145,<br/>
-                        AUSTRALIA<br/>
-                        <br/>
-                        Phone: +61 3 9902 0585 <br/>
-                        E-mail: <a href="mailto:services@ands.org.au">services@ands.org.au</a>
+                        ARDC Office<br/><br/>
+                        Phone: <a href="tel:%2B61%203%209902%200585">+61 3 9902 0585</a><br/>
+                        E-mail: <a href="mailto:services@ardc.edu.au">services@ardc.edu.au</a>
                         <br/>
                     </p>
 

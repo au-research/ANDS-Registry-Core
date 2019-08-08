@@ -5,15 +5,17 @@ Link checker for ANDS DOIs.
 """
 Data structures used throughout this module:
 
-client_list: dict (despite the name, grr)
+client_list: dict (despite the name)
   key: int: client_id
   value: tuple: The row the doi_client table
       that has client_id as its key.
-
+      
+prefix_list: list of production prefixes
+  
 doi_list: list
   element: tuple: a row from the doi_object table.
 
-testing_array: dict (despite the name, grr)
+testing_array: dict (despite the name)
   key: int: An index into the doi_list array.
   value: dict: Details of the link to be tested.
     There are three key/value pairs in each dictionary,
@@ -58,7 +60,6 @@ class DOIChecker(base.BaseChecker):
         """
         client_list = {}
         self._get_client_list(client_list, self._params['client_id'])
-
         result_list = {}
         error_count = {}
 
@@ -111,6 +112,45 @@ class DOIChecker(base.BaseChecker):
                 print("DEBUG: Assigning client_list[{}] = {}".format(
                     r[0], r), file=sys.stderr)
         cur.close()
+
+    def _get_prefix_list(self, prefix_list, client_id=None):
+        """ very simple query to get the production prefixes for
+        any given client or all clients
+        """
+        cur = self._conn.cursor()
+        query = "SELECT prefix_value FROM doi_client_prefixes cp "
+        query +="LEFT OUTER JOIN prefixes p ON cp.prefix_id = p.id WHERE cp.is_test IS false"
+        if client_id is not None:
+            cur.execute(query + " AND cp.client_id=" + str(client_id) + ";")
+        else:
+            cur.execute(query + ";")
+        for r in cur:
+            prefix_list.append(str(r[0]))
+            if self._debug:
+                print("DEBUG: Assigning prefix_list %s", str(r[0]), file=sys.stderr)
+        cur.close()
+
+    def _get_prefix_query_comp(self, prefix_list):
+        """
+        generate a query component for production prefix match
+        :param prefix_list:
+        :return: a string eg AND (doi_id LIKE "10.24366/%" OR doi_id LIKE "10.24369/%" OR doi_id LIKE "10.24403/%")
+        """
+        if len(prefix_list) == 0:
+            return ""
+        qc = " AND ("
+        first = True
+        for prefix in prefix_list:
+            if first:
+                qc += "doi_id LIKE '" + prefix + "/%'"
+            else:
+                qc += " OR doi_id LIKE '" + prefix + "/%'"
+            first = False
+        qc += ");"
+        return qc
+
+
+
 
     def _run_tests(self, ssl_context, client_id, admin_email, client_list,
                    link_timeout, batch_size,
@@ -224,7 +264,7 @@ class DOIChecker(base.BaseChecker):
         or only those which are active.
 
         Production DOIs are those which have a status other than
-        "REQUESTED", and which have a doi_id beginning with "10.4".
+        "REQUESTED", and which have a doi_id beginning with a production prefix
 
         Active production DOIs are those production DOIs which have
         a status of "ACTIVE".
@@ -242,6 +282,13 @@ class DOIChecker(base.BaseChecker):
         client_id -- A client_id to use for searching the database,
             or None, if the DOIs of all clients are to be returned.
         """
+        prefix_list = []
+        self._get_prefix_list(prefix_list, client_id)
+
+        if len(prefix_list) == 0:
+            print("No Production Prefix for client_id ", client_id, file=sys.stderr)
+            return
+
         active_only = False
         if 'active_only' in self._params:
             active_only = bool(distutils.util.strtobool(
@@ -257,7 +304,7 @@ class DOIChecker(base.BaseChecker):
         else:
             # All production DOIs.
             query += " AND `status`!='REQUESTED'"
-        query += " AND `doi_id` LIKE '10.4%';"
+        query += self._get_prefix_query_comp(prefix_list)
         if self._debug:
             print("DEBUG: _get_DOI_links query:", query, file=sys.stderr)
         cur.execute(query)
@@ -628,9 +675,9 @@ owner_id: {}
 
     def _process_result_lists(self, client_list, result_list, error_count,
                               client_id=None, admin_email=None):
-        """Summarize the errors, log and email the results.
+        """Summarise the errors, log and email the results.
 
-        Summarize the logs, create appropriate headings, log an entry, and
+        Summarise the logs, create appropriate headings, log an entry, and
         email the content to whom it supposed to.
 
         An entry is logged to the database for all clients with an

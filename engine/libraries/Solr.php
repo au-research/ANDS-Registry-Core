@@ -591,6 +591,9 @@ class Solr
                         if ($value != 'all') $this->setOpt('fq', 'data_source_key:("' . $value . '")');
                     }
                     break;
+                case 'data_source_id':
+                    $this->setOpt('fq', "data_source_id:$value");
+                    break;
                 case 'related_object_id':
                     $this->setOpt('fq', '+related_object_id:' . $value . '');
                     break;

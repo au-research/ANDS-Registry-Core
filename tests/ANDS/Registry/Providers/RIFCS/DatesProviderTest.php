@@ -118,6 +118,18 @@ class DatesProviderTest extends \RegistryTestClass
         $this->assertNotNull($record->fresh()->deleted_at);
     }
 
+    /** @test */
+    function it_should_touch_delete_by_ids()
+    {
+        /** @var RegistryObject */
+        $record1 = $this->stub(RegistryObject::class, ['title' => 'test record']);
+        $record2 = $this->stub(RegistryObject::class, ['title' => 'test record 2']);
+
+        DatesProvider::touchDeleteByIDs([$record1->id, $record2->id]);
+        $this->assertNotNull($record1->fresh()->deleted_at);
+        $this->assertNotNull($record2->fresh()->deleted_at);
+    }
+
     /** @test TODO stubs**/
 //    public function it_should_get_the_correct_pub_date()
 //    {

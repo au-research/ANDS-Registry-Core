@@ -90,6 +90,7 @@ class Ingest extends ImportSubTask
                 $existingRecord->setRegistryObjectAttribute('manually_assessed', 'no');
             }
             $existingRecord->status = $this->parent()->getTaskData("targetStatus");
+            $existingRecord->setRegistryObjectAttribute('data_source_key', $this->data_source->key);
             $existingRecord->save();
             $this->parent()->addTaskData("importedRecords", $existingRecord->registry_object_id);
             $this->parent()->addTaskData("imported_".$existingRecord->class."_ids", $existingRecord->registry_object_id);
@@ -104,6 +105,7 @@ class Ingest extends ImportSubTask
             // can claim deleted records of different datasources
 
             $deletedRecord->data_source_id = $this->parent()->dataSourceID;
+            $deletedRecord->setRegistryObjectAttribute('data_source_key', $this->data_source->key);
 
             $deletedRecord->save();
 
@@ -124,7 +126,7 @@ class Ingest extends ImportSubTask
 
             // deal with previous versions
             RecordData::where('registry_object_id', $deletedRecord->registry_object_id)
-                ->update(['current' => '']);
+                ->update(['current' => 'FALSE']);
 
             // add new version in and set it to current
             $newVersion = Repo::addNewVersion(
@@ -161,7 +163,7 @@ class Ingest extends ImportSubTask
             if($this->data_source->getDataSourceAttributeValue('qa_flag') == 1){
                 $newRecord->setRegistryObjectAttribute('manually_assessed', 'no');
             }
-
+            $newRecord->setRegistryObjectAttribute('data_source_key', $this->data_source->key);
             $newRecord->setRegistryObjectAttribute('created_who', $user_name);
             $newRecord->setRegistryObjectAttribute('created', time());
             $newRecord->setRegistryObjectAttribute('updated', time());

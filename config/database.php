@@ -24,7 +24,8 @@ return [
         'hostname' => env('DB_DOI_HOSTNAME', env('DB_HOSTNAME', 'localhost')),
         'username' => env('DB_DOI_HOSTNAME', env('DB_USERNAME', 'webuser')),
         'password' => env('DB_DOI_PASSWORD', env('DB_PASSWORD', '')),
-        'database' => env('DB_DATABASE_DOIS', 'dbs_dois')
+        'database' => env('DB_DATABASE_DOIS', 'dbs_dois'),
+        'port' => env('DB_DOI_PORT', env('DB_PORT', 3306))
     ],
     'portal' => [
         'database' => env('DB_DATABASE_PORTAL', 'dbs_portal')

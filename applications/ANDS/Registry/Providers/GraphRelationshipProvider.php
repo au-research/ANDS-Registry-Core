@@ -160,10 +160,11 @@ class GraphRelationshipProvider implements RegistryContentProvider
     /**
      * Bulk delete an array of registryObject
      *
-     * @param array $records
+     * @param $records
      * @return \GraphAware\Common\Result\Result|\GraphAware\Neo4j\Client\Result\ResultCollection|null
+     * @throws \GraphAware\Neo4j\Client\Exception\Neo4jException
      */
-    public static function bulkDelete(array $records)
+    public static function bulkDelete($records)
     {
         $client = static::db();
         $stack = $client->stack();

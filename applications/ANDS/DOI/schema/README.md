@@ -1,0 +1,2 @@
+# Datacite schema
+The content of this directory is a trimmed down version of [DataCite Schema Repository](https://github.com/datacite/schema/tree/master/source/meta) aim to assist with local validation 
