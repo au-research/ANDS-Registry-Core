@@ -15,7 +15,7 @@
                 <div class="col-md-8 col-md-offset-2">
                     <p>The page or record you are looking for cannot be found or displayed.</p>
                     <p>We've let our engineers know so that they can take a look at the problem.</p>
-                    <p>You may wish to return to the <a href="{{base_url()}}">home page</a> or contact <a href="mailto:services@ands.org.au">services@ands.org.au</a> for further support.</p>
+                    <p>You may wish to return to the <a href="{{base_url()}}">home page</a> or contact <a href="mailto:services@ardc.edu.au">services@ardc.edu.au</a> for further support.</p>
                 </div>
                 @if ($message)
                     {{ $message }}
