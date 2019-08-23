@@ -378,7 +378,7 @@ class RelationshipProvider
                 $connections_preview_div = "";
                 if ($related_info->relation) {
                     foreach ($related_info->relation as $r) {
-                        $relation_type .= (string)$r['type'] . ", ";
+                        $relation_type[] = (string)$r['type'];
                         $relation_type_disp .= format_relationship($record->class, (string)$r['type'], 'IDENTIFIER',
                                 $related_info_type) . ", ";
 
@@ -390,13 +390,13 @@ class RelationshipProvider
                             $connections_preview_div .= "<div class='description'><p>" . (string)$r->description . '<br/><a href="' . $urlStr . '">' . (string)$r->url . "</a></p></div>";
                         }
                     }
-                    $relation_type = substr($relation_type, 0, strlen($relation_type) - 2);
+                  //  $relation_type = substr($relation_type, 0, strlen($relation_type) - 2);
                     $relation_type_disp = substr($relation_type_disp, 0, strlen($relation_type_disp) - 2);
                 }
                 $identifiers_div = "";
                 $identifier_count = 0;
-                if(trim($relation_type) == ''){
-                    $relation_type = "hasAssociationWith";
+                if(!isset($relation_type[0])){
+                    $relation_type[] = "hasAssociationWith";
                 }
                 foreach ($related_info->identifier as $i) {
                     $identifiers_div .= getResolvedLinkForIdentifier((string)$i['type'], trim((string)$i));
@@ -415,19 +415,21 @@ class RelationshipProvider
 
                 foreach ($related_info->identifier as $i) {
                     if (trim((string)$i) != '') {
-                        IdentifierRelationship::create([
-                                "registry_object_id" => $record->registry_object_id,
-                                "related_object_identifier" => trim((string)$i),
-                                "related_info_type" => $related_info_type,
-                                "related_object_identifier_type" => (string)$i['type'],
-                                "relation_type" => $relation_type,
-                                "related_title" => $related_info_title,
-                                "related_description" => $related_description,
-                                "related_url" => $related_url,
-                                "connections_preview_div" => $connections_preview_div,
-                                "notes" => (string) $related_info->notes
-                            ]
-                        );
+                        foreach($relation_type as $type) {
+                            IdentifierRelationship::create([
+                                    "registry_object_id" => $record->registry_object_id,
+                                    "related_object_identifier" => trim((string)$i),
+                                    "related_info_type" => $related_info_type,
+                                    "related_object_identifier_type" => (string)$i['type'],
+                                    "relation_type" => $type,
+                                    "related_title" => $related_info_title,
+                                    "related_description" => $related_description,
+                                    "related_url" => $related_url,
+                                    "connections_preview_div" => $connections_preview_div,
+                                    "notes" => (string)$related_info->notes
+                                ]
+                            );
+                        }
                     }
                 }
             }
