@@ -95,8 +95,13 @@ Database: Research Data Australia
 Content:text/plain; charset="utf-8"
 
 
-TY  - DATA
-Y2  - '.date("Y-m-d")."
+';
+
+        $type = $this->getType();
+        $endNote .= "TY  - ".$type."
+";
+
+        $endNote .= 'Y2  - '.date("Y-m-d")."
 ";
 
         $doi = $this->getDoi();
@@ -264,7 +269,12 @@ Y2  - '.date("Y-m-d")."
         if($rft_rights) $coins .= $rft_rights;
         if($rft_subjects) $coins .= $rft_subjects;
         if($rft_place) $coins .= '&rft_place='.$rft_place;
-        $coins .= '&rft.type=dataset&rft.language=English';
+        if($this->getType()=='COMP'){
+            $type = 'Computer Program';
+        }else{
+            $type = 'dataset';
+        }
+        $coins .= '&rft.type='.$type.'&rft.language=English';
 
 
         return $coins;
@@ -598,6 +608,16 @@ Y2  - '.date("Y-m-d")."
         }
 
         return $funders;
+    }
+
+    function getType()
+    {
+
+        if($this->xml->{$this->ro->class}['type'] == 'software'){
+            return 'COMP';
+        }
+
+        return 'DATA';
     }
 
     function getKeywords(){
