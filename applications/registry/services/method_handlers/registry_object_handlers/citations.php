@@ -90,7 +90,7 @@ class Citations extends ROHandler {
 
     public function getEndnoteText()
     {
-        $endNote = 'Provider: Australian National Data Service
+        $endNote = 'Provider: Australian Research Data Commons
 Database: Research Data Australia
 Content:text/plain; charset="utf-8"
 
