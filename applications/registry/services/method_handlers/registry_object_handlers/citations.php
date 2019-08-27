@@ -492,6 +492,7 @@ Y2  - '.date("Y-m-d")."
     function getContributors()
     {
         $contributors = Array();
+        $noseq = 9999;
         if (isset($this->xml->{$this->ro->class}->citationInfo->citationMetadata->contributor)) {
             foreach ($this->xml->{$this->ro->class}->citationInfo->citationMetadata->contributor as $contributor) {
                 $nameParts = Array();
@@ -501,11 +502,20 @@ Y2  - '.date("Y-m-d")."
                         'name' => (string)$namePart
                     );
                 }
+                // ensure that if no sequence number is available to
+                // set it to a high sequence number so that all contributors with a
+                // provided sequence number provided are displayed first
+                if(!isset($contributor['seq'])) {
+                    $contributor['seq'] = $noseq;
+                    $noseq++;
+                }
 
                 $contributors[] = array(
                     'name' => formatName($nameParts),
                     'seq' => (string)$contributor['seq']
                 );
+
+
             }
         }
 
