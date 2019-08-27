@@ -625,7 +625,7 @@ Content:text/plain; charset="utf-8"
         $keywords = Array();
         if($this->index && isset($this->index['subject_value_resolved'])) {
             foreach($this->index['subject_value_resolved'] as $key=>$sub) {
-                $keywords[] = htmlentities(titleCase($this->index['subject_value_resolved'][$key]));
+                $keywords[] = htmlentities($this->index['subject_value_resolved'][$key]);
             }
         }
 
