@@ -202,7 +202,7 @@ Content:text/plain; charset="utf-8"
         $endNote .= "ER  -
 ";
 
-        return $endNote;
+        return html_entity_decode($endNote);
     }
 
     private function getCoinsSpan()
