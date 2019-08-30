@@ -145,10 +145,69 @@ class SolrDependencyTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("0", $add->json()['responseHeader']['status']);
     }
 
+    /** @test */
+    function it_can_perform_solr_cross_core_query_for_relation()
+    {
+        $client = $this->getGuzzleClient();
+
+        // given John
+        $addJohn = $client->post('portal/update/?wt=json&commit=true', [
+            'Content-Type' => 'application/json'
+        ], json_encode([
+            'add' => [
+                "doc" => $john = [
+                    'id' => 'john',
+                    'type' => 'test'
+                ]
+            ]
+        ]))->send();
+        $this->assertEquals(200, $addJohn->getStatusCode());
+
+        // and Jane
+        $addJane = $client->post('portal/update/?wt=json&commit=true', [
+            'Content-Type' => 'application/json'
+        ], json_encode([
+            'add' => [
+                "doc" => $jane = [
+                    'id' => 'jane',
+                    'type' => 'test'
+                ]
+            ]
+        ]))->send();
+        $this->assertEquals(200, $addJane->getStatusCode());
+
+        // John knows Jane (test)
+        $addRelation = $client->post('relations/update/?wt=json&commit=true', [
+            'Content-Type' => 'application/json'
+        ], json_encode([
+            'add' => [
+                "doc" => $relation = [
+                    'from_id' => 'john',
+                    'to_id' => 'jane',
+                    'relation' => 'knows',
+                    'relation_origin' => 'test'
+                ]
+            ]
+        ]))->send();
+        $this->assertEquals(200, $addRelation->getStatusCode());
+
+        // cross core search query turns up when searching for John knows Jane
+        $search = $client->get("portal/select", [], [
+            'query' => [
+                'wt' => 'json',
+                'defType' => 'edismax',
+                'q' => '*:*',
+                'fq' => '{!join from=from_id to=id fromIndex=relations} +relation:knows +relation_origin:test'
+            ]
+        ])->send();
+        $this->assertEquals(200, $search->getStatusCode());
+        $result = $search->json();
+        $this->assertEquals(1, $result['response']['numFound']);
+    }
+
     // TODO test copyfields
     // TODO test temporal fields
     // TODO test relations collection
-    // TODO test cross-core search query
 
     /**
      * Helper method to get the current GuzzleClient for the current SOLR url
@@ -186,6 +245,12 @@ class SolrDependencyTest extends PHPUnit_Framework_TestCase
             'Content-Type' => 'application/json'
         ], json_encode([
             "delete" => ["query" => "type:test"]
+        ], true))->send();
+
+        $client->post('relations/update?commit=true', [
+            'Content-Type' => 'application/json'
+        ], json_encode([
+            "delete" => ["query" => "relation_origin:test"]
         ], true))->send();
     }
 }
