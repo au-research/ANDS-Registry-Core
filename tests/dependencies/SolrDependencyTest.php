@@ -15,12 +15,8 @@ class SolrDependencyTest extends PHPUnit_Framework_TestCase
     /** @test */
     function solr_is_reachable_with_guzzle()
     {
-        $url = \ANDS\Util\Config::get('app.solr_url');
-
         // http://localhost:8983/solr/admin/cores?action=status&wt=json
-        $url .= "admin/cores?action=status&wt=json";
-
-        $response = (new Client($url))->get(null)->send();
+        $response = $this->getGuzzleClient()->get("admin/cores?action=status&wt=json")->send();
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertNotEmpty($response->json());
     }
@@ -28,16 +24,15 @@ class SolrDependencyTest extends PHPUnit_Framework_TestCase
     /** @test */
     function solr_is_reachable_with_curl()
     {
-        $url = \ANDS\Util\Config::get('app.solr_url');
-
         // http://localhost:8983/solr/admin/cores?action=status&wt=json
+        $url = \ANDS\Util\Config::get('app.solr_url');
         $url .= "admin/cores?action=status&wt=json";
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $content = curl_exec($ch);
-        $HTTPCode = curl_getinfo( $ch, CURLINFO_HTTP_CODE );
+        $HTTPCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
         $this->assertNotEmpty($content);
         $this->assertEquals(200, $HTTPCode);
@@ -51,8 +46,8 @@ class SolrDependencyTest extends PHPUnit_Framework_TestCase
         $collections = $response->json()['collections'];
 
         $this->assertContains('portal', $collections);
-//        $this->assertContains('concepts', $collections);
-//        $this->assertContains('relations', $collections);
+        $this->assertContains('concepts', $collections);
+        $this->assertContains('relations', $collections);
     }
 
     /** @test */
@@ -89,7 +84,7 @@ class SolrDependencyTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test */
-    function solr_can_index_and_search_document_with_spatial_data_correctly()
+    function solr_can_index_and_search_portal_document_with_spatial_data_correctly()
     {
         $client = $this->getGuzzleClient();
 
@@ -133,6 +128,28 @@ class SolrDependencyTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("0", $add->json()['responseHeader']['status']);
     }
 
+    /** @test */
+    function it_can_index_a_basic_concepts_document()
+    {
+        $client = $this->getGuzzleClient();
+
+        $document = [
+            "id" => uniqid(),
+            "type" => "test",
+            "iri" => uniqid()
+        ];
+        $add = $client->post('concepts/update/?wt=json&commit=true', [
+            'Content-Type' => 'application/json'
+        ], json_encode(['add' => ["doc" => $document]]))->send();
+        $this->assertEquals(200, $add->getStatusCode());
+        $this->assertEquals("0", $add->json()['responseHeader']['status']);
+    }
+
+    // TODO test copyfields
+    // TODO test temporal fields
+    // TODO test relations collection
+    // TODO test cross-core search query
+
     /**
      * Helper method to get the current GuzzleClient for the current SOLR url
      *
@@ -160,6 +177,12 @@ class SolrDependencyTest extends PHPUnit_Framework_TestCase
         // delete all document that matches type:test
         $client = new Client(\ANDS\Util\Config::get('app.solr_url'));
         $client->post('portal/update?commit=true', [
+            'Content-Type' => 'application/json'
+        ], json_encode([
+            "delete" => ["query" => "type:test"]
+        ], true))->send();
+
+        $client->post('concepts/update?commit=true', [
             'Content-Type' => 'application/json'
         ], json_encode([
             "delete" => ["query" => "type:test"]
