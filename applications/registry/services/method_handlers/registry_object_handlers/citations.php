@@ -90,13 +90,18 @@ class Citations extends ROHandler {
 
     public function getEndnoteText()
     {
-        $endNote = 'Provider: Australian National Data Service
+        $endNote = 'Provider: Australian Research Data Commons
 Database: Research Data Australia
 Content:text/plain; charset="utf-8"
 
 
-TY  - DATA
-Y2  - '.date("Y-m-d")."
+';
+
+        $type = $this->getType();
+        $endNote .= "TY  - ".$type."
+";
+
+        $endNote .= 'Y2  - '.date("Y-m-d")."
 ";
 
         $doi = $this->getDoi();
@@ -197,7 +202,7 @@ Y2  - '.date("Y-m-d")."
         $endNote .= "ER  -
 ";
 
-        return $endNote;
+        return html_entity_decode($endNote);
     }
 
     private function getCoinsSpan()
@@ -264,7 +269,12 @@ Y2  - '.date("Y-m-d")."
         if($rft_rights) $coins .= $rft_rights;
         if($rft_subjects) $coins .= $rft_subjects;
         if($rft_place) $coins .= '&rft_place='.$rft_place;
-        $coins .= '&rft.type=dataset&rft.language=English';
+        if($this->getType()=='COMP'){
+            $type = 'Computer Program';
+        }else{
+            $type = 'dataset';
+        }
+        $coins .= '&rft.type='.$type.'&rft.language=English';
 
 
         return $coins;
@@ -600,12 +610,22 @@ Y2  - '.date("Y-m-d")."
         return $funders;
     }
 
+    function getType()
+    {
+
+        if($this->xml->{$this->ro->class}['type'] == 'software'){
+            return 'COMP';
+        }
+
+        return 'DATA';
+    }
+
     function getKeywords(){
 
         $keywords = Array();
         if($this->index && isset($this->index['subject_value_resolved'])) {
             foreach($this->index['subject_value_resolved'] as $key=>$sub) {
-                $keywords[] = htmlentities(titleCase($this->index['subject_value_resolved'][$key]));
+                $keywords[] = htmlentities($this->index['subject_value_resolved'][$key]);
             }
         }
 
