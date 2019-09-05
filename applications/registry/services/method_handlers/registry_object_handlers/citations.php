@@ -8,6 +8,8 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
  * @return array
  */
 class Citations extends ROHandler {
+
+    public $ro;
 	function handle() {
 
         $result = array();
@@ -535,28 +537,20 @@ Content:text/plain; charset="utf-8"
              * We do index reverse relationships BUT without the mirrored (reversed) relationship type
              * adding the reversed types to the query ensures that the party is found in either ways in the index
              */
-            $relationshipTypeArray = array(
-                'hasPrincipalInvestigator',
-                'isPrincipalInvestigatorOf',
-                'principalInvestigator',
-                'author',
-                'coInvestigator',
-                'isOwnedBy',
-                'isOwnerOf',
-                'hasCollector',
-                'isCollectorOf'
-            );
-            $classArray = array('party');
-            $authors = $this->ro->getRelatedObjectsIndex($classArray, $relationshipTypeArray);
-            if (sizeof($authors) > 0) {
-                foreach ($authors as $author) {
-                    $contributors[] = array(
-                        'name' => $author['to_title'],
-                        'seq' => ''
-                    );
+
+            /* utilising the relationships provider to obtain the contributors from direct relationships in a pre determined order */
+            $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($this->ro->id);
+
+            $validRelationTypes = ['hasPrincipalInvestigator', 'author', 'coInvestigator', 'isOwnedBy', 'hasCollector'];
+            foreach ($validRelationTypes as $relationType) {
+                $authors = \ANDS\Registry\Providers\RelationshipProvider::getRelationByType($record, [$relationType]);
+                $contributors = array_merge($contributors, $authors);
+                if (count($contributors)) {
+                    return $contributors;
                 }
             }
         }
+
         if (!$contributors) {
             $contributors[] = array(
                 'name' => 'Anonymous',
