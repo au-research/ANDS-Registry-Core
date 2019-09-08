@@ -8,6 +8,8 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
  * @return array
  */
 class Citations extends ROHandler {
+
+    public $ro;
 	function handle() {
 
         $result = array();
@@ -535,28 +537,38 @@ Content:text/plain; charset="utf-8"
              * We do index reverse relationships BUT without the mirrored (reversed) relationship type
              * adding the reversed types to the query ensures that the party is found in either ways in the index
              */
-            $relationshipTypeArray = array(
-                'hasPrincipalInvestigator',
-                'isPrincipalInvestigatorOf',
-                'principalInvestigator',
-                'author',
-                'coInvestigator',
-                'isOwnedBy',
-                'isOwnerOf',
-                'hasCollector',
-                'isCollectorOf'
-            );
-            $classArray = array('party');
-            $authors = $this->ro->getRelatedObjectsIndex($classArray, $relationshipTypeArray);
-            if (sizeof($authors) > 0) {
-                foreach ($authors as $author) {
-                    $contributors[] = array(
-                        'name' => $author['to_title'],
-                        'seq' => ''
-                    );
-                }
-            }
+                $relationshipTypeArray = array(
+                     'hasPrincipalInvestigator',
+                     'isPrincipalInvestigatorOf',
+                     'author',
+                     'coInvestigator',
+                     'isOwnedBy',
+                     'isOwnerOf',
+                     'hasCollector',
+                     'isCollectorOf'
+                 );
+                 $classArray = array('party');
+
+                 /* Ensure the search loops through the pre determined order of relationships
+                    and return as soon as a particular type is found */
+
+                 foreach ($relationshipTypeArray as $relationType) {
+                 $authors = $this->ro->getRelatedObjectsIndex($classArray, [$relationType]);
+                 if (sizeof($authors) > 0) {
+                     foreach ($authors as $author) {
+                         $contributors[] = array(
+                             'name' => $author['to_title'],
+                             'seq' => ''
+                         );
+                     }
+
+                    /* sort the  array by name */
+                     usort($contributors, "cmpTitle");
+                     return $contributors;
+                 }
+             }
         }
+
         if (!$contributors) {
             $contributors[] = array(
                 'name' => 'Anonymous',

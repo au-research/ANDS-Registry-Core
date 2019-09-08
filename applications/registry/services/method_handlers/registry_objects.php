@@ -326,6 +326,14 @@ function seq($a, $b)
     return ($a['seq'] < $b['seq']) ? -1 : 1;
 }
 
+function cmpTitle($a, $b)
+{
+    if ($a['name'] == $b['name']) {
+        return 0;
+    }
+    return ($a['name'] < $b['name']) ? -1 : 1;
+}
+
 //function to concatenate name values based on the name part type
 function formatName($a)
 {
