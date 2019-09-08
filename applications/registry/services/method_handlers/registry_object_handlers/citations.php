@@ -537,18 +537,36 @@ Content:text/plain; charset="utf-8"
              * We do index reverse relationships BUT without the mirrored (reversed) relationship type
              * adding the reversed types to the query ensures that the party is found in either ways in the index
              */
+                $relationshipTypeArray = array(
+                     'hasPrincipalInvestigator',
+                     'isPrincipalInvestigatorOf',
+                     'author',
+                     'coInvestigator',
+                     'isOwnedBy',
+                     'isOwnerOf',
+                     'hasCollector',
+                     'isCollectorOf'
+                 );
+                 $classArray = array('party');
 
-            /* utilising the relationships provider to obtain the contributors from direct relationships in a pre determined order */
-            $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($this->ro->id);
+                 /* Ensure the search loops through the pre determined order of relationships
+                    and return as soon as a particular type is found */
 
-            $validRelationTypes = ['hasPrincipalInvestigator', 'author', 'coInvestigator', 'isOwnedBy', 'hasCollector'];
-            foreach ($validRelationTypes as $relationType) {
-                $authors = \ANDS\Registry\Providers\RelationshipProvider::getRelationByType($record, [$relationType]);
-                $contributors = array_merge($contributors, $authors);
-                if (count($contributors)) {
-                    return $contributors;
-                }
-            }
+                 foreach ($relationshipTypeArray as $relationType) {
+                 $authors = $this->ro->getRelatedObjectsIndex($classArray, [$relationType]);
+                 if (sizeof($authors) > 0) {
+                     foreach ($authors as $author) {
+                         $contributors[] = array(
+                             'name' => $author['to_title'],
+                             'seq' => ''
+                         );
+                     }
+
+                    /* sort the  array by name */
+                     usort($contributors, "cmpTitle");
+                     return $contributors;
+                 }
+             }
         }
 
         if (!$contributors) {
