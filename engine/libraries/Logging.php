@@ -3,6 +3,8 @@
  * @author sjwood25890 https://github.com/sjwood25890/codeigniter-logging
  * Replaced default Codeigniter logging functionality
  */
+use ANDS\Util\Config as ConfigUtil;
+
 class Logging
 {
 	const CRITICAL = 0;
@@ -232,7 +234,8 @@ class FileLogger extends Logger
 	{
 		$this->_file_path = $file_path;
 
-		$config_log_path = $this->CI->config->item('log_path');
+		$storage = ConfigUtil::get('app.storage');
+        $config_log_path = $storage["logs"]["path"];
 
 		if ($this->_file_path == '')
 		{
@@ -252,7 +255,6 @@ class FileLogger extends Logger
 			// First try to create the directory
 			@mkdir($this->_file_path, 0777, TRUE);
 		}
-	   
 
 		if (!is_dir($this->_file_path) OR !is_really_writable($this->_file_path))
 		{
