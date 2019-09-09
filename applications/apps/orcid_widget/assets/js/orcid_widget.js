@@ -20,7 +20,7 @@
 ;(function($) {
 	
 	//settings
-    var WIDGET_NAME = "ANDS Orcid service";
+    var WIDGET_NAME = "ARDC Orcid service";
     var WIDGET_ID = "_orcid_widget_list";
 
     //init the orcid_widget()

@@ -324,6 +324,9 @@ class Sync_extension extends ExtensionBase{
                         } elseif ((float) $pred == -90) {
                             $pred = -86;
                         }
+                        else{
+                            $pred = round($pred, 5);
+                        }
                     }
                     if (isset($predicate[1]) && (float) $predicate[1] > 90) {
                         $predicate[1] = 86;

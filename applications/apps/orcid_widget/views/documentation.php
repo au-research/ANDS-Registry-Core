@@ -1,6 +1,6 @@
 <?php $this->load->view('header');?>
 <div class="content-header">
-    <h1>ANDS - ORCID Widget</h1>
+    <h1>ARDC - ORCID Widget</h1>
 </div>
 <div id="breadcrumb">
     <?php echo anchor(registry_url(), '<i class="icon-home"></i> Home', array('tip'=>'Go to Home')); ?>
@@ -26,7 +26,7 @@
 
             <h2>What is this widget?</h2>
             <p>
-                The ANDS ORCID Widget allows you to lookup an ORCID ID and search for one using <a href="http://support.orcid.org/knowledgebase/articles/116874-orcid-api-guide" target="_blank">ORCID JSONP API</a>
+                The ARDC ORCID Widget allows you to lookup an ORCID ID and search for one using <a href="http://support.orcid.org/knowledgebase/articles/116874-orcid-api-guide" target="_blank">ORCID JSONP API</a>
             </p>
             <p>
                 This widget is a jQuery plugin with extensible options over styling and functionality. Hence the widget is dependent on the jQuery plugin to function correctly.
