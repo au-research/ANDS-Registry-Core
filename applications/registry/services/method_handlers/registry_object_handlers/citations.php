@@ -136,7 +136,7 @@ Content:text/plain; charset="utf-8"
 ";
         }
 
-        $endNote .= "TI  - ".$this->ro->title."
+        $endNote .= "TI  - ".$this->getTitle()."
 ";
 
         $sourceUrl = $this->getSourceUrl($output='endNote');
@@ -260,7 +260,7 @@ Content:text/plain; charset="utf-8"
         $rft_place = $this->getPlace();
         $coins .=  'ctx_ver=Z39.88-2004&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Adc&rfr_id=info%3Asid%2FANDS';
         if($rft_id) $coins .= '&rft_id='.$rft_id;
-        $coins .= '&rft.title='.$this->ro->title;
+        $coins .= '&rft.title='.$this->getTitle();
         if($rft_identifier) $coins .= '&rft.identifier='.$rft_identifier;
         if($rft_publisher) $coins .= '&rft.publisher='.$rft_publisher;
         $coins .= '&rft.description='.$rft_description.$rft_creators;
@@ -727,6 +727,17 @@ Content:text/plain; charset="utf-8"
 
         }
         return $relations;
+    }
+
+    function getTitle(){
+
+        $title = $this->ro->title;
+        $ro_title = $this->gXPath->query("//ro:citationInfo/ro:citationMetadata/ro:title");
+        foreach($ro_title as $a_title) {
+            $title = $a_title->nodeValue;
+            return $title;
+        }
+        return $title;
     }
 }
 
