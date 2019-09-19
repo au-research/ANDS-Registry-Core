@@ -11,9 +11,11 @@
 
     @endif
     @if($contributors!='')
-    @foreach($contributors as $contributor)
-        {{$contributor}} <small>( Contributor )</small>
+        <span id="contributors">
+        @foreach($contributors as $contributor)
+            {{$contributor}} <small>( Contributor )</small>
         @endforeach
+        </span>
     @elseif (is_array($related['researchers']) && sizeof($related['researchers']['docs']) > 0)
         @foreach($related['researchers']['docs'] as $col)
             <a href="<?php echo base_url()?>{{$col['to_slug']}}/{{$col['to_id']}}"
