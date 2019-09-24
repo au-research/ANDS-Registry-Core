@@ -214,7 +214,7 @@ class IndexRelationship extends ImportSubTask
                 'to_identifier' => 'relation_identifier_identifier',
                 'to_identifier_type' => 'relation_identifier_type'
             ]);
-
+            unset($doc['related_description']);
             $doc['id'] = $key;
             unset($doc['from_data_source_id']);
             unset($doc['to_data_source_id']);
