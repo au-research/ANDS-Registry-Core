@@ -107,11 +107,12 @@ class SolrDependencyTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("0", $add->json()['responseHeader']['status']);
 
         // it can now find the document with the IsWithin param
-        $get = $client->get("portal/select?wt=json&q=+spatial_coverage_extents_wkt:\"IsWithin(POLYGON((154 -10, 154 -44, 112 -44, 112 -10, 154 -10)))\"")->send()->json();
+        $get = $client->get("portal/select?wt=json&q=%2Btype:test%20%2Bspatial_coverage_extents_wkt:\"IsWithin(POLYGON((154 -10, 154 -44, 112 -44, 112 -10, 154 -10)))\"")->send()->json();
         $this->assertGreaterThan(0, $get['response']['numFound']);
 
         // given a different polygon it will not be able to find
-        $get = $client->get("portal/select?wt=json&q=+spatial_coverage_extents_wkt:\"IsWithin(POLYGON((1 1, 1 -44, 2 -44, 3 -10, 1 1)))\"")->send()->json();
+        $get = $client->get("portal/select?wt=json&q=%2Btype:test%20%2Bspatial_coverage_extents_wkt:\"IsWithin(POLYGON((1 1, 1 -44, 2 -44, 3 -10, 1 1)))\"")->send()->json();
+
         $this->assertEquals(0, $get['response']['numFound']);
     }
 
@@ -182,6 +183,7 @@ class SolrDependencyTest extends PHPUnit_Framework_TestCase
         ], json_encode([
             'add' => [
                 "doc" => $relation = [
+                    'id' => uniqid(),
                     'from_id' => 'john',
                     'to_id' => 'jane',
                     'relation' => 'knows',
@@ -189,6 +191,7 @@ class SolrDependencyTest extends PHPUnit_Framework_TestCase
                 ]
             ]
         ]))->send();
+
         $this->assertEquals(200, $addRelation->getStatusCode());
 
         // cross core search query turns up when searching for John knows Jane
