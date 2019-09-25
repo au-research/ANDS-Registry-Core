@@ -208,6 +208,41 @@ class SolrDependencyTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, $result['response']['numFound']);
     }
 
+    /** @test */
+    function it_can_index_multiValued_relation_in_the_relations_core()
+    {
+        $client = $this->getGuzzleClient();
+
+        $addRelation = $client->post('relations/update/?wt=json&commit=true', [
+            'Content-Type' => 'application/json'
+        ], json_encode([
+            'add' => [
+                "doc" => $relation = [
+                    'id' => uniqid(),
+                    'from_id' => 'john',
+                    'to_id' => 'jane',
+                    'relation' => [
+                        'knows',
+                        'aquaint'
+                    ],
+                    'relation_origin' => 'test'
+                ]
+            ]
+        ]))->send();
+        $this->assertEquals(200, $addRelation->getStatusCode());
+
+        $search = $client->get("relations/select", [], [
+            'query' => [
+                'wt' => 'json',
+                'defType' => 'edismax',
+                'q' => '*:*',
+                'fq' => '+from_id:john +relation_origin:test'
+            ]
+        ])->send();
+        $doc = $search->json()['response']['docs'][0];
+        $this->assertTrue(is_array($doc['relation']));
+    }
+
     // TODO test copyfields
     // TODO test temporal fields
     // TODO test relations collection
