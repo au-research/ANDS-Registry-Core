@@ -3,54 +3,109 @@
 namespace ANDS\API\Task\ImportSubTask;
 use \ANDS\Registry\Versions as Versions;
 use \ANDS\Registry\Schema;
-use \ANDS\RegistryObject\RegistryObjectVersion;
+use \ANDS\API\Task\ImportSubTask\IngestNativeSchema;
 use \ANDS\Repository\RegistryObjectsRepository;
 use \DOMDocument;
+use \ANDS\Repository\DataSourceRepository;
+use \ANDS\Registry\ContentProvider\ContentProvider;
+use ReflectionClass;
+use Exception;
 
 class IngestNativeSchemaTest extends \RegistryTestClass
 {
+    
     /** @test */
-    public function test_iso_extraction()
+    
+    public function test_jsonld_provider_type()
     {
 
-        $this->markTestSkipped("requires record in the registry so shouldn't be run on its own");
-        $importTask = new IngestNativeSchema();
-        $dataSourceId = 14;
-        $dom = new \DOMDocument();
+        $dataSourceID = 38099;
+        $native_content_path = __DIR__ ."../../../resources/harvested_contents/oakridge.json";
 
-        $xml = file_get_contents(__DIR__ ."../../../resources/harvested_contents/oaipmh.xml");
-        //$xml = file_get_contents(__DIR__ ."../../../resources/harvested_contents/bom_csw.xml");
-        libxml_use_internal_errors(true);
-        $dom = new \DOMDocument();
-            try {
-                $dom->loadXML($xml, LIBXML_NONET );
-                $mdNodes = $dom->documentElement->getElementsByTagName('MD_Metadata');
-                $errors = libxml_get_errors();
-                if ($errors) {
-                    foreach ($errors as $error) {
-                        $this->print_load_error($error, $xml);
-                    }
-                } else {
-                    $counter = 0;
-                    foreach ($mdNodes as $mdNode) {
-                        $success = $this->insertNativeObject($mdNode);
-                        //if($success){
-                            $counter++;
-                        //}
-                    }
-                    $this->assertEquals(10, $counter);
-                }
-                libxml_clear_errors();
-            }
-            Catch(Exception $e){
-                print("Errors while loading testFile Error message:". $e->getMessage());
-            }
+        $data_source = DataSourceRepository::getByID($dataSourceID);
+
+        $providerType = $data_source->getDataSourceAttribute('provider_type');
+        $providerClassName = null;
+
+        $providerClassName = ContentProvider::obtain($providerType['value']);
+
+        if($providerClassName == null){
+            $harvestMethod = $data_source->getDataSourceAttribute('harvest_method');
+            $providerClassName = ContentProvider::obtain($harvestMethod['value']);
+        }
+
+        // couldn't find content handler for datasource
+        if($providerClassName == null)
+            return;
+
+        try{
+            $class = new ReflectionClass($providerClassName);
+            $contentProvider = $class->newInstanceArgs();
+        }
+        catch (Exception $e)
+        {
+            return;
+        }
+
+        $fileExtension = $contentProvider->getFileExtension();
+
+        $this->assertEquals('.json', $fileExtension);
+
+        $json = file_get_contents($native_content_path);
+
+        $contentProvider->loadContent($json);
+
+        $objects = $contentProvider->getContent();
+        foreach($objects as $o){
+            $success = IngestNativeSchema::insertNativeObject($o, $dataSourceID);
+            $this->assertTrue($success);
+        }
+
+    }
+    
+    /** @test */
+    public function test_iso_provider_type()
+    {
+        $dataSourceID = 10550;
+        $native_content_path = __DIR__ ."../../../resources/harvested_contents/csw.xml";
+
+        $data_source = DataSourceRepository::getByID($dataSourceID);
+
+        $providerType = $data_source->getDataSourceAttribute('provider_type');
+        $providerClassName = null;
+
+        $providerClassName = ContentProvider::obtain($providerType['value']);
+
+        if($providerClassName == null){
+            $harvestMethod = $data_source->getDataSourceAttribute('harvest_method');
+            $providerClassName = ContentProvider::obtain($harvestMethod['value']);
+        }
+
+        try{
+            $class = new ReflectionClass($providerClassName);
+            $contentProvider = $class->newInstanceArgs();
+        }
+        catch (Exception $e)
+        {
+            return;
+        }
+
+        $fileExtension = $contentProvider->getFileExtension();
+
+        $this->assertEquals('.tmp', $fileExtension);
+
+        $xml = file_get_contents($native_content_path);
+
+        $contentProvider->loadContent($xml);
+
+        $objects = $contentProvider->getContent();
+        foreach($objects as $o){
+            $success = IngestNativeSchema::insertNativeObject($o, $dataSourceID);
+            $this->assertTrue($success);
+        }
 
 
     }
-
-
-
 
     /**  @test */
     public function testPrefixGen(){
@@ -58,7 +113,8 @@ class IngestNativeSchemaTest extends \RegistryTestClass
         $uriList  = array(
             "http://bluenet3.antcrc.utas.edu.au/mcp" => "http://bluenet3.antcrc.utas.edu.au/mcp",
             "iso2005gmd" => "http://www.isotc211.org/2005/gmd",
-            "iso19115-3" => "http://standards.iso.org/iso/19115/-3/mdb/1.0"
+            "iso19115-3" => "http://standards.iso.org/iso/19115/-3/mdb/1.0",
+            "http://schema.org/" => "http://schema.org/"
         );
 
         foreach($uriList as $prefix=>$uri)
@@ -66,130 +122,33 @@ class IngestNativeSchemaTest extends \RegistryTestClass
             $this->assertEquals($prefix, Schema::getPrefix($uri));
         }
 
-
     }
 
-    private function insertNativeObject($mdNode)
+    function print_load_error($error, $xml)
     {
+        $error_msg  = $xml[$error->line - 1] . "\n";
+        $error_msg.= str_repeat('-', $error->column) . "^\n";
 
-        $dataSourceID = 14;
-        $identifiers = [];
-        $fileIdentifiers = $mdNode->getElementsByTagName('fileIdentifier');
-        if (sizeof($fileIdentifiers) > 0) {
-            foreach ($fileIdentifiers as $fileIdentifier) {
-                $identifiers[] = ['identifier' => trim($fileIdentifier->nodeValue), 'identifier_type' => 'local'];
-            }
+        switch ($error->level) {
+            case LIBXML_ERR_WARNING:
+                $error_msg .= "Warning $error->code: ";
+                break;
+            case LIBXML_ERR_ERROR:
+                $error_msg .= "Error $error->code: ";
+                break;
+            case LIBXML_ERR_FATAL:
+                $error_msg .= "Fatal Error $error->code: ";
+                break;
         }
 
-        if (sizeof($identifiers) == 0) {
-            $mdIdentifiers = $mdNode->getElementsByTagName('MD_Identifier');
-            if (sizeof($mdIdentifiers) > 0) {
-                foreach ($mdIdentifiers as $mdIdentifier) {
-                    if (sizeof($mdIdentifier->getElementsByTagName('codeSpace')) > 0) {
-                        $cspElement = $mdIdentifier->getElementsByTagName('codeSpace')[0];
-                        if ($cspElement != null && trim($cspElement->nodeValue) != '' && trim($cspElement->nodeValue) == 'urn:uuid') {
-                            $identifiers[] = ['identifier' => trim($mdIdentifier->getElementsByTagName('code')[0]->nodeValue),
-                                'identifier_type' => trim($cspElement->nodeValue)];
-                        }
-                    }
-                }
-            }
+        $error_msg .= trim($error->message) .
+            "\n  Line: $error->line" .
+            "\n  Column: $error->column";
+
+        if ($error->file) {
+            $error_msg .= "\n  File: $error->file";
         }
 
-        if (sizeof($identifiers) == 0) {
-            echo "Couldn't determine Identifiers so quiting";
-            return false;
-        }
-
-        $schema = Schema::where('uri', $mdNode->namespaceURI)->first();
-
-        if ($schema == null) {
-
-            $schema = new Schema();
-            $schema->setRawAttributes([
-                'prefix' => Schema::getPrefix($mdNode->namespaceURI),
-                'uri' => $mdNode->namespaceURI,
-                'exportable' => 1
-            ]);
-            $schema->save();
-        }
-
-        $IdentifierArray = [];
-
-        foreach ($identifiers as $identifier) {
-            $IdentifierArray[] = $identifier['identifier'];
-        }
-
-        $this->assertGreaterThanOrEqual(1, sizeof($IdentifierArray));
-
-        $registryObjects = RegistryObjectsRepository::getRecordsByIdentifier($IdentifierArray, $dataSourceID);
-
-        $recordIDs = collect($registryObjects)->pluck('registry_object_id')->toArray();
-
-        $dom = new DomDocument('1.0', 'UTF-8');
-        $dom->appendChild($dom->importNode($mdNode, True));
-        $data = $dom->saveXML();
-
-        $hash = md5($data);
-        $success = false;
-        foreach ($recordIDs as $id) {
-            $altVersionsIDs = RegistryObjectVersion::where('registry_object_id', $id)->get()->pluck('version_id')->toArray();
-            $existing = null;
-            if (count($altVersionsIDs) > 0) {
-                $existing = Versions::wherein('id', $altVersionsIDs)->where("schema_id", $schema->id)->first();
-            }
-            $success = true;
-            if (!$existing) {
-                echo "\nADDING NEW";
-                $version = Versions::create([
-                    'data' => $data,
-                    'hash' => $hash,
-                    'origin' => 'HARVESTER',
-                    'schema_id' => $schema->id,
-                ]);
-                RegistryObjectVersion::firstOrCreate([
-                    'version_id' => $version->id,
-                    'registry_object_id' => $id
-                ]);
-            } elseif ($hash != $existing->hash) {
-               echo "\nUPDATING";
-                $existing->update([
-                    'data' => $data,
-                    'hash' => $hash
-                ]);
-            }else{
-                echo "\nDIDN'T CHANGE" . $existing->hash;
-            }
-        }
-        return $success;
+        print("Errors while loading  Test file  Error message:". $error_msg);
     }
-
-
-        function print_load_error($error, $xml)
-        {
-            $error_msg  = $xml[$error->line - 1] . "\n";
-            $error_msg.= str_repeat('-', $error->column) . "^\n";
-
-            switch ($error->level) {
-                case LIBXML_ERR_WARNING:
-                    $error_msg .= "Warning $error->code: ";
-                    break;
-                case LIBXML_ERR_ERROR:
-                    $error_msg .= "Error $error->code: ";
-                    break;
-                case LIBXML_ERR_FATAL:
-                    $error_msg .= "Fatal Error $error->code: ";
-                    break;
-            }
-
-            $error_msg .= trim($error->message) .
-                "\n  Line: $error->line" .
-                "\n  Column: $error->column";
-
-            if ($error->file) {
-                $error_msg .= "\n  File: $error->file";
-            }
-
-            print("Errors while loading  Test file  Error message:". $error_msg);
-        }
 }
