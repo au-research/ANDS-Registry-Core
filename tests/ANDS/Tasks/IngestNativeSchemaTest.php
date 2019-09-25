@@ -49,7 +49,7 @@ class IngestNativeSchemaTest extends \RegistryTestClass
 
         $fileExtension = $contentProvider->getFileExtension();
 
-        $this->assertEquals('.json', $fileExtension);
+        $this->assertEquals('json', $fileExtension);
 
         $json = file_get_contents($native_content_path);
 
@@ -92,7 +92,7 @@ class IngestNativeSchemaTest extends \RegistryTestClass
 
         $fileExtension = $contentProvider->getFileExtension();
 
-        $this->assertEquals('.tmp', $fileExtension);
+        $this->assertEquals('tmp', $fileExtension);
 
         $xml = file_get_contents($native_content_path);
 

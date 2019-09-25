@@ -15,7 +15,7 @@ use ANDS\Registry\ContentProvider\JSONLD\IdentifierProvider;
 class JSONLDContentProvider extends MetadataContentProvider
 {
     protected $content = [];
-    protected $fileExtension = '.json';
+    protected $fileExtension = 'json';
     protected $payloadCounter = 0;
     protected $errors = [];
     protected $schema_prefix = 'http://schema.org';
