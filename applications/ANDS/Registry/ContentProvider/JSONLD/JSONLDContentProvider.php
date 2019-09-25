@@ -23,7 +23,7 @@ class JSONLDContentProvider extends MetadataContentProvider
     public function init()
     {
         $this->content = null;
-        $this->fileExtension = '.json';
+        $this->fileExtension = 'json';
         return $this;
     }
 
