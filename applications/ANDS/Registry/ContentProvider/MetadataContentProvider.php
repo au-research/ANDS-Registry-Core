@@ -11,7 +11,7 @@ namespace ANDS\Registry\ContentProvider;
 
 abstract class MetadataContentProvider
 {
-    protected $fileExtension = '.tmp';
+    protected $fileExtension = 'tmp';
     protected $payloadCounter = 0;
     protected $content = [];
     protected $errors = [];

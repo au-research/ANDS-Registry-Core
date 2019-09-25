@@ -14,7 +14,7 @@ use ANDS\Registry\ContentProvider\ISO\IdentifierProvider;
 
 class ISO191153ContentProvider extends MetadataContentProvider
 {
-    protected $fileExtension = '.tmp';
+    protected $fileExtension = 'tmp';
     protected $payloadCounter = 0;
     protected $content = [];
     protected $errors = [];
