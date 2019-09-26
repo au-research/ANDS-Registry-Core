@@ -13,6 +13,8 @@ use ANDS\Registry\Providers\LinkProvider;
 use ANDS\Util\Config;
 use ANDS\Util\XMLUtil;
 use ANDS\Registry\RelationshipView;
+use \ANDS\Registry\Schema;
+use \ANDS\RegistryObject\AltSchemaVersion;
 
 
 /**
@@ -22,6 +24,9 @@ use ANDS\Registry\RelationshipView;
 
 class JsonLDProvider implements RIFCSProvider
 {
+
+    private static $schema_uri = "https://schema.org";
+    private static $origin = "REGISTRY";
 
     public static function base_url() {
         return Config::get('app.default_base_url');
@@ -34,12 +39,19 @@ class JsonLDProvider implements RIFCSProvider
         if ($record->class <> "collection" && $record->class <> "service") return "";
         if ($record->class == "collection" && $record->type <> "collection" && $record->type <> "dataset" && $record->type <> "software") return "";
 
+
+        $existing = AltSchemaVersion::where('prefix', Schema::getPrefix(static::$schema_uri))
+            ->where('registry_object_id', $record->id)->first();
+        // don't generate one if we have an other instance from different origin eg HARVESTER, BUT  THIS MIGHT CHANGE !!
+        if($existing && $existing->origin != static::$origin)
+            return true;
+
         $data = [];
 
         $data['recordData'] = $record->getCurrentData()->data;
 
         $json_ld = new JsonLDProvider();
-        $json_ld->{'@context'} = "http://schema.org/";
+        $json_ld->{'@context'} = static::$schema_uri;
         if ($record->type == 'dataset' || $record->type == 'collection') {
             $json_ld->{'@type'} = "Dataset";
             $json_ld->distribution = self::getDistribution($record, $data);
@@ -84,11 +96,46 @@ class JsonLDProvider implements RIFCSProvider
         $json_ld->url = self::base_url() . $record->slug . "/" . $record->id;
 
         $json_ld = (object) array_filter((array) $json_ld);
+
+        $schema = Schema::where('uri', static::$schema_uri)->first();
+
+        if($schema == null){
+
+            $schema = new Schema();
+            $schema->setRawAttributes([
+                'prefix' => Schema::getPrefix(static::$schema_uri),
+                'uri' => static::$schema_uri,
+                'exportable' => 0
+            ]);
+            $schema->save();
+        }
+
+        $record->addVersion(json_encode($json_ld), static::$schema_uri, static::$origin);
+
         return json_encode($json_ld);
     }
 
-    public static function get(RegistryObject $record){
-        return ;
+    public static function get(RegistryObject $record)
+    {
+        $existingVersion = AltSchemaVersion::where('prefix', Schema::getPrefix(static::$schema_uri))
+            ->where('registry_object_id', $record->id)->first();
+        if ($existingVersion) {
+            if ($record->modified_at > $existingVersion->version->updated_at) {
+                static::process($record);
+                $existingVersion = AltSchemaVersion::where('prefix', Schema::getPrefix(static::$schema_uri))
+                    ->where('registry_object_id', $record->id)->first();
+            }
+            return $existingVersion->version->data;
+        }
+
+        if(static::process($record)){
+            $existingVersion = AltSchemaVersion::where('prefix', Schema::getPrefix(static::$schema_uri))
+                ->where('registry_object_id', $record->id)->first();
+            return $existingVersion->version->data;
+        }
+
+        return null;
+
     }
 
     public static function getIdentifier(

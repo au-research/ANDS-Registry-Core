@@ -29,6 +29,7 @@ class ISO191153ContentProvider extends MetadataContentProvider
     {
         libxml_use_internal_errors(true);
         $dom = new DOMDocument();
+        $this->content = [];
         try{
             $dom->loadXML($fileContent);
             $mdNodes = $dom->documentElement->getElementsByTagName('MD_Metadata');
