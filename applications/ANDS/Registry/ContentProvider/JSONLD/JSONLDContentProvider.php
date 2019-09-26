@@ -29,7 +29,7 @@ class JSONLDContentProvider extends MetadataContentProvider
 
     public function loadContent($json)
     {
-
+        $this->content = [];
         $jsonObjects = json_decode($json);
         $context = $jsonObjects[0]->{'@context'};
 

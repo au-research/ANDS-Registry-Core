@@ -25,10 +25,22 @@ class IngestNativeSchema extends ImportSubTask
         $this->data_source = DataSourceRepository::getByID($this->parent()->dataSourceID);
 
         $providerType = $this->data_source->getDataSourceAttribute('provider_type');
-        $providerClassName = ContentProvider::obtain($providerType);
+        $providerClassName = null;
+
+        $providerClassName = ContentProvider::obtain($providerType['value']);
+
+        if($providerClassName == null){
+            $harvestMethod = $this->data_source->getDataSourceAttribute('harvest_method');
+            $providerClassName = ContentProvider::obtain($harvestMethod['value']);
+        }
+
+        // couldn't find content handler for datasource
+        if($providerClassName == null)
+            return;
+
         try{
             $class = new ReflectionClass($providerClassName);
-            $this->contentProvider = $class->newInstanceArgs($this->parent()->getPayloads());
+            $this->contentProvider = $class->newInstanceArgs();
         }
         catch (Exception $e)
         {
@@ -54,8 +66,9 @@ class IngestNativeSchema extends ImportSubTask
                 break;
             }
             $this->contentProvider->loadContent($payloadContent);
+            $nativeObjects = $this->contentProvider->getContent();
 
-            foreach ($this->contentProvider->getContent as $nativeObject){
+            foreach ($nativeObjects as $nativeObject){
                 $success = static::insertNativeObject($nativeObject, $this->parent()->dataSourceID);
                 if($success)
                     $payloadCounter += 1;
