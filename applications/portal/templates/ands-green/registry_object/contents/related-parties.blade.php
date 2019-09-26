@@ -18,7 +18,7 @@
     This is needed to avoid displaying the same party multiple times when aggregators
     have registered the same party maultiple times as separate objects
     */
-
+    $arrayNames = array();
     foreach($related['organisations']['docs'] as $col){
         $arrayNames[] = $col['to_title'];
     }
