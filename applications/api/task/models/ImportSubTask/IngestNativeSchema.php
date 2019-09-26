@@ -17,7 +17,7 @@ class IngestNativeSchema extends ImportSubTask
     protected $requirePayload = true;
     protected $title = "INGESTING NATIVE CONTENT RECORDS";
     protected $data_source = null;
-    protected $payloadSource = "native";
+    protected $payloadSource = "original";
     private $contentProvider = null;
 
     public function run_task()
@@ -103,7 +103,6 @@ class IngestNativeSchema extends ImportSubTask
         $nativeObject['nameSpaceURI'];
         $data = $nativeObject['data'];
         $hash = $nativeObject['hash'];
-
         if (sizeof($identifiers) == 0) {
             echo "Couldn't determine Identifiers so quiting";
             return false;

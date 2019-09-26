@@ -19,8 +19,8 @@ class IngestNativeSchemaTest extends \RegistryTestClass
     public function test_jsonld_provider_type()
     {
 
-        $dataSourceID = 38099;
-        $native_content_path = __DIR__ ."../../../resources/harvested_contents/oakridge.json";
+        $dataSourceID = 38360;
+        $native_content_path = __DIR__ ."../../../resources/harvested_contents/open_top.json";
 
         $data_source = DataSourceRepository::getByID($dataSourceID);
 
