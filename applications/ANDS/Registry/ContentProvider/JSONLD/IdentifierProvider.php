@@ -22,11 +22,11 @@ class IdentifierProvider
         $identifiers = [];
         if(isset($json->identifier->value))
             $identifiers[] = (string) $json->identifier->value;
-        if(isset($json->identifier))
+        elseif(isset($json->identifier))
             $identifiers[] = $json->identifier;
-        if(isset($json->url))
+        elseif(isset($json->url))
             $identifiers[] = $json->url;
-        if(isset($json->id))
+        elseif(isset($json->id))
             $identifiers[] = $json->id;
         return $identifiers;
     }
