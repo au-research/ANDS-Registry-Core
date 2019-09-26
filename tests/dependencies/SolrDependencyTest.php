@@ -107,11 +107,12 @@ class SolrDependencyTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("0", $add->json()['responseHeader']['status']);
 
         // it can now find the document with the IsWithin param
-        $get = $client->get("portal/select?wt=json&q=+spatial_coverage_extents_wkt:\"IsWithin(POLYGON((154 -10, 154 -44, 112 -44, 112 -10, 154 -10)))\"")->send()->json();
+        $get = $client->get("portal/select?wt=json&q=%2Btype:test%20%2Bspatial_coverage_extents_wkt:\"IsWithin(POLYGON((154 -10, 154 -44, 112 -44, 112 -10, 154 -10)))\"")->send()->json();
         $this->assertGreaterThan(0, $get['response']['numFound']);
 
         // given a different polygon it will not be able to find
-        $get = $client->get("portal/select?wt=json&q=+spatial_coverage_extents_wkt:\"IsWithin(POLYGON((1 1, 1 -44, 2 -44, 3 -10, 1 1)))\"")->send()->json();
+        $get = $client->get("portal/select?wt=json&q=%2Btype:test%20%2Bspatial_coverage_extents_wkt:\"IsWithin(POLYGON((1 1, 1 -44, 2 -44, 3 -10, 1 1)))\"")->send()->json();
+
         $this->assertEquals(0, $get['response']['numFound']);
     }
 
@@ -182,6 +183,7 @@ class SolrDependencyTest extends PHPUnit_Framework_TestCase
         ], json_encode([
             'add' => [
                 "doc" => $relation = [
+                    'id' => uniqid(),
                     'from_id' => 'john',
                     'to_id' => 'jane',
                     'relation' => 'knows',
@@ -189,6 +191,7 @@ class SolrDependencyTest extends PHPUnit_Framework_TestCase
                 ]
             ]
         ]))->send();
+
         $this->assertEquals(200, $addRelation->getStatusCode());
 
         // cross core search query turns up when searching for John knows Jane
@@ -203,6 +206,41 @@ class SolrDependencyTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(200, $search->getStatusCode());
         $result = $search->json();
         $this->assertEquals(1, $result['response']['numFound']);
+    }
+
+    /** @test */
+    function it_can_index_multiValued_relation_in_the_relations_core()
+    {
+        $client = $this->getGuzzleClient();
+
+        $addRelation = $client->post('relations/update/?wt=json&commit=true', [
+            'Content-Type' => 'application/json'
+        ], json_encode([
+            'add' => [
+                "doc" => $relation = [
+                    'id' => uniqid(),
+                    'from_id' => 'john',
+                    'to_id' => 'jane',
+                    'relation' => [
+                        'knows',
+                        'aquaint'
+                    ],
+                    'relation_origin' => 'test'
+                ]
+            ]
+        ]))->send();
+        $this->assertEquals(200, $addRelation->getStatusCode());
+
+        $search = $client->get("relations/select", [], [
+            'query' => [
+                'wt' => 'json',
+                'defType' => 'edismax',
+                'q' => '*:*',
+                'fq' => '+from_id:john +relation_origin:test'
+            ]
+        ])->send();
+        $doc = $search->json()['response']['docs'][0];
+        $this->assertTrue(is_array($doc['relation']));
     }
 
     // TODO test copyfields
