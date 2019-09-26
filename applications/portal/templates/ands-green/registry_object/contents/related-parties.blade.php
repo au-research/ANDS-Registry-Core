@@ -32,9 +32,9 @@
     @if($contributors!='')
        <?php  $contributorString = ''; ?>
         @foreach($contributors as $contributor)
-            <?php $contributorString .= ' <span id="contributor">'.$contributor."</span>, "; ?>
+            <?php $contributorString .= ' <span id="contributor">'.$contributor."</span>; "; ?>
         @endforeach
-            <?php $contributorString = trim($contributorString, ", ") ;?>
+            <?php $contributorString = trim($contributorString, "; ") ;?>
             {{$contributorString}}
 
     @elseif (is_array($related['researchers']) && sizeof($related['researchers']['docs']) > 0)
