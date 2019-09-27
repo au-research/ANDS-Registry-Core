@@ -25,7 +25,7 @@ use \ANDS\RegistryObject\AltSchemaVersion;
 class JsonLDProvider implements RIFCSProvider
 {
 
-    private static $schema_uri = "https://schema.org";
+    private static $schema_uri = "https://schema.org/";
     private static $origin = "REGISTRY";
 
     public static function base_url() {
@@ -105,7 +105,7 @@ class JsonLDProvider implements RIFCSProvider
             $schema->setRawAttributes([
                 'prefix' => Schema::getPrefix(static::$schema_uri),
                 'uri' => static::$schema_uri,
-                'exportable' => 0
+                'exportable' => 1
             ]);
             $schema->save();
         }
@@ -119,6 +119,7 @@ class JsonLDProvider implements RIFCSProvider
     {
         $existingVersion = AltSchemaVersion::where('prefix', Schema::getPrefix(static::$schema_uri))
             ->where('registry_object_id', $record->id)->first();
+
         if ($existingVersion) {
             if ($record->modified_at > $existingVersion->version->updated_at) {
                 static::process($record);
