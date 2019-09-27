@@ -18,7 +18,7 @@ class JSONLDContentProvider extends MetadataContentProvider
     protected $fileExtension = 'json';
     protected $payloadCounter = 0;
     protected $errors = [];
-    protected $schema_prefix = 'http://schema.org';
+    protected $schema_prefix = 'https://schema.org/';
 
     public function init()
     {
@@ -31,11 +31,11 @@ class JSONLDContentProvider extends MetadataContentProvider
     {
         $this->content = [];
         $jsonObjects = json_decode($json);
-        $context = $jsonObjects[0]->{'@context'};
+        //$context = $jsonObjects[0]->{'@context'};
 
         foreach($jsonObjects as $jo){
             $record['identifiers'] = IdentifierProvider::getIdentifier($jo);
-            $record['nameSpaceURI'] = $context;
+            $record['nameSpaceURI'] = $this->schema_prefix; //$context;
             $record['data'] = json_encode($jo);
             $record['hash'] = md5($record['data']);
             $this->payloadCounter++;
