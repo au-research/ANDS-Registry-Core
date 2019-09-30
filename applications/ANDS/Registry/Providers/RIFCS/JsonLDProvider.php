@@ -5,11 +5,13 @@ namespace ANDS\Registry\Providers\RIFCS;
 
 
 use ANDS\Registry\IdentifierRelationshipView;
+use ANDS\Registry\Versions;
 use ANDS\RegistryObject;
 use ANDS\Registry\Providers\MetadataProvider;
 use ANDS\Registry\Providers\RIFCSProvider;
 use ANDS\Registry\Providers\GrantsConnectionsProvider;
 use ANDS\Registry\Providers\LinkProvider;
+use ANDS\RegistryObject\RegistryObjectVersion;
 use ANDS\Util\Config;
 use ANDS\Util\XMLUtil;
 use ANDS\Registry\RelationshipView;
@@ -39,11 +41,27 @@ class JsonLDProvider implements RIFCSProvider
         if ($record->class <> "collection" && $record->class <> "service") return "";
         if ($record->class == "collection" && $record->type <> "collection" && $record->type <> "dataset" && $record->type <> "software") return "";
 
+        $schema = Schema::where('uri', static::$schema_uri)->first();
 
-        $existing = AltSchemaVersion::where('prefix', Schema::getPrefix(static::$schema_uri))
-            ->where('registry_object_id', $record->id)->first();
+        if($schema == null){
+
+            $schema = new Schema();
+            $schema->setRawAttributes([
+                'prefix' => Schema::getPrefix(static::$schema_uri),
+                'uri' => static::$schema_uri,
+                'exportable' => 1
+            ]);
+            $schema->save();
+        }
+
+        $altVersionsIDs = RegistryObjectVersion::where('registry_object_id', $record->id)->get()->pluck('version_id')->toArray();
+        $existingVersion = null;
+        if (count($altVersionsIDs) > 0) {
+            $existingVersion = Versions::wherein('id', $altVersionsIDs)->where("schema_id", $schema->id)->first();
+        }
+
         // don't generate one if we have an other instance from different origin eg HARVESTER, BUT  THIS MIGHT CHANGE !!
-        if($existing && $existing->origin != static::$origin)
+        if($existingVersion && $existingVersion->origin != static::$origin)
             return true;
 
         $data = [];
@@ -97,18 +115,7 @@ class JsonLDProvider implements RIFCSProvider
 
         $json_ld = (object) array_filter((array) $json_ld);
 
-        $schema = Schema::where('uri', static::$schema_uri)->first();
 
-        if($schema == null){
-
-            $schema = new Schema();
-            $schema->setRawAttributes([
-                'prefix' => Schema::getPrefix(static::$schema_uri),
-                'uri' => static::$schema_uri,
-                'exportable' => 1
-            ]);
-            $schema->save();
-        }
 
         $record->addVersion(json_encode($json_ld), static::$schema_uri, static::$origin);
 
@@ -117,26 +124,36 @@ class JsonLDProvider implements RIFCSProvider
 
     public static function get(RegistryObject $record)
     {
-        $existingVersion = AltSchemaVersion::where('prefix', Schema::getPrefix(static::$schema_uri))
-            ->where('registry_object_id', $record->id)->first();
+        $schema = Schema::where('uri', static::$schema_uri)->first();
+        $altVersionsIDs = RegistryObjectVersion::where('registry_object_id', $record->id)->get()->pluck('version_id')->toArray();
+        $existingVersion = null;
+        if (count($altVersionsIDs) > 0) {
+            $existingVersion = Versions::wherein('id', $altVersionsIDs)->where("schema_id", $schema->id)->first();
+            if ($existingVersion) {
+                if ($record->modified_at > $existingVersion->updated_at) {
+                    static::process($record);
+                    $altVersionsIDs = RegistryObjectVersion::where('registry_object_id', $record->id)->get()->pluck('version_id')->toArray();
+                    $existingVersion = null;
+                    if (count($altVersionsIDs) > 0) {
+                        $existingVersion = Versions::wherein('id', $altVersionsIDs)->where("schema_id", $schema->id)->first();
+                        return $existingVersion->data;
+                    }
+                    return $existingVersion->data;
+                }
 
-        if ($existingVersion) {
-            if ($record->modified_at > $existingVersion->version->updated_at) {
-                static::process($record);
-                $existingVersion = AltSchemaVersion::where('prefix', Schema::getPrefix(static::$schema_uri))
-                    ->where('registry_object_id', $record->id)->first();
             }
-            return $existingVersion->version->data;
         }
 
         if(static::process($record)){
-            $existingVersion = AltSchemaVersion::where('prefix', Schema::getPrefix(static::$schema_uri))
-                ->where('registry_object_id', $record->id)->first();
-            return $existingVersion->version->data;
+            $altVersionsIDs = RegistryObjectVersion::where('registry_object_id', $record->id)->get()->pluck('version_id')->toArray();
+            $existingVersion = null;
+            if (count($altVersionsIDs) > 0) {
+                $existingVersion = Versions::wherein('id', $altVersionsIDs)->where("schema_id", $schema->id)->first();
+                return $existingVersion->data;
+            }
+
         }
-
         return null;
-
     }
 
     public static function getIdentifier(
