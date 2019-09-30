@@ -130,8 +130,8 @@ class JsonLDProvider implements RIFCSProvider
                 if ($record->modified_at > $existingVersion->updated_at){
                     return static::process($record);
                 }
+                return $existingVersion->data;
             }
-            return $existingVersion->data;
         }
 
         return static::process($record);
