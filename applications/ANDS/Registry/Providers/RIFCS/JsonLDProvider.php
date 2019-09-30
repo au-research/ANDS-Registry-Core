@@ -62,7 +62,7 @@ class JsonLDProvider implements RIFCSProvider
 
         // don't generate one if we have an other instance from different origin eg HARVESTER, BUT  THIS MIGHT CHANGE !!
         if($existingVersion && $existingVersion->origin != static::$origin)
-            return true;
+            $existingVersion->data;
 
         $data = [];
 
@@ -114,9 +114,6 @@ class JsonLDProvider implements RIFCSProvider
         $json_ld->url = self::base_url() . $record->slug . "/" . $record->id;
 
         $json_ld = (object) array_filter((array) $json_ld);
-
-
-
         $record->addVersion(json_encode($json_ld), static::$schema_uri, static::$origin);
 
         return json_encode($json_ld);
@@ -130,30 +127,14 @@ class JsonLDProvider implements RIFCSProvider
         if (count($altVersionsIDs) > 0) {
             $existingVersion = Versions::wherein('id', $altVersionsIDs)->where("schema_id", $schema->id)->first();
             if ($existingVersion) {
-                if ($record->modified_at > $existingVersion->updated_at) {
-                    static::process($record);
-                    $altVersionsIDs = RegistryObjectVersion::where('registry_object_id', $record->id)->get()->pluck('version_id')->toArray();
-                    $existingVersion = null;
-                    if (count($altVersionsIDs) > 0) {
-                        $existingVersion = Versions::wherein('id', $altVersionsIDs)->where("schema_id", $schema->id)->first();
-                        return $existingVersion->data;
-                    }
-                    return $existingVersion->data;
+                if ($record->modified_at > $existingVersion->updated_at){
+                    return static::process($record);
                 }
-
             }
+            return $existingVersion->data;
         }
 
-        if(static::process($record)){
-            $altVersionsIDs = RegistryObjectVersion::where('registry_object_id', $record->id)->get()->pluck('version_id')->toArray();
-            $existingVersion = null;
-            if (count($altVersionsIDs) > 0) {
-                $existingVersion = Versions::wherein('id', $altVersionsIDs)->where("schema_id", $schema->id)->first();
-                return $existingVersion->data;
-            }
-
-        }
-        return null;
+        return static::process($record);
     }
 
     public static function getIdentifier(
