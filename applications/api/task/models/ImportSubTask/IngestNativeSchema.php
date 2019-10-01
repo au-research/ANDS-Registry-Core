@@ -4,60 +4,75 @@ namespace ANDS\API\Task\ImportSubTask;
 
 use \ANDS\Registry\Versions as Versions;
 use \ANDS\Registry\Schema;
+use \ANDS\Registry\ContentProvider\ContentProvider;
 use \ANDS\RegistryObject\RegistryObjectVersion;
 use \ANDS\Repository\RegistryObjectsRepository;
 use \ANDS\Repository\DataSourceRepository;
 use \DOMDocument;
+use ReflectionClass;
+use Exception;
 
 class IngestNativeSchema extends ImportSubTask
 {
     protected $requirePayload = true;
     protected $title = "INGESTING NATIVE CONTENT RECORDS";
     protected $data_source = null;
-    protected $payloadSource = "native";
+    protected $payloadSource = "original";
+    private $contentProvider = null;
 
     public function run_task()
     {
-        if (!$this->parent()->hasPayloadExtension('tmp')) {
-            $this->log("No native schema exists");
+        $this->data_source = DataSourceRepository::getByID($this->parent()->dataSourceID);
+
+        $providerType = $this->data_source->getDataSourceAttribute('provider_type');
+        $providerClassName = null;
+
+        $providerClassName = ContentProvider::obtain($providerType['value']);
+
+        if($providerClassName == null){
+            $harvestMethod = $this->data_source->getDataSourceAttribute('harvest_method');
+            $providerClassName = ContentProvider::obtain($harvestMethod['value']);
+        }
+
+        // couldn't find content handler for datasource
+        if($providerClassName == null)
+            return;
+
+        try{
+            $class = new ReflectionClass($providerClassName);
+            $this->contentProvider = $class->newInstanceArgs();
+        }
+        catch (Exception $e)
+        {
             return;
         }
 
-        $payloads = $this->parent()->loadPayload('tmp')->getPayloads();
+        $fileExtension = $this->contentProvider->getFileExtension();
+
+        if (!$this->parent()->hasPayloadExtension($fileExtension)) {
+            $this->log("No native (". $fileExtension .") schema exists");
+            return;
+        }
+
+        $payloads = $this->parent()->loadPayload($fileExtension)->getPayloads();
         $multiplePayloads = count($payloads) > 1 ? true : false;
-        $this->data_source = DataSourceRepository::getByID($this->parent()->dataSourceID);
+
         $payloadCounter = 0;
         foreach ($this->parent()->getPayloads() as $payloadIndex => $payload) {
 
-            $xml = $payload->getContentByStatus($this->payloadSource);
-            if ($xml === null) {
+            $payloadContent = $payload->getContentByStatus($this->payloadSource);
+            if ($payloadContent === null) {
                 $this->addError("No Original content were found for ". $payload->getPath());
                 break;
             }
-            libxml_use_internal_errors(true);
-            $dom = new \DOMDocument();
-            try{
-                $dom->loadXML($xml);
-                $mdNodes = $dom->documentElement->getElementsByTagName('MD_Metadata');
-                $errors = libxml_get_errors();
-                if($errors) {
-                    foreach ($errors as $error) {
-                        $this->add_load_error($error, $xml);
-                    }
-                }
-                else{
-                    foreach ($mdNodes as $mdNode) {
-                        $success = $this->insertNativeObject($mdNode);
-                        if($success)
-                            $payloadCounter++;
-                    }
-                }
-                libxml_clear_errors();
-            }
-            Catch(Exception $e){
-                $this->addError("Errors while loading  ".$this->payloadSource. " Error message:". $e->getMessage());
-            }
+            $this->contentProvider->loadContent($payloadContent);
+            $nativeObjects = $this->contentProvider->getContent();
 
+            foreach ($nativeObjects as $nativeObject){
+                $success = static::insertNativeObject($nativeObject, $this->parent()->dataSourceID);
+                if($success)
+                    $payloadCounter += 1;
+            }
 
             if ($multiplePayloads) {
                 $this->updateProgress(
@@ -68,39 +83,12 @@ class IngestNativeSchema extends ImportSubTask
         }
 
         $this->parent()->updateHarvest([
-            "importer_message" => "Records Created: ".$payloadCounter
+            "importer_message" => "Records Created/Updated: ".$payloadCounter
         ]);
         $this->parent()->setTaskData("NativeObjectsCreated", $payloadCounter);
 
     }
 
-    function add_load_error($error, $xml)
-    {
-        $error_msg  = $xml[$error->line - 1] . "\n";
-        $error_msg.= str_repeat('-', $error->column) . "^\n";
-
-        switch ($error->level) {
-            case LIBXML_ERR_WARNING:
-                $error_msg .= "Warning $error->code: ";
-                break;
-            case LIBXML_ERR_ERROR:
-                $error_msg .= "Error $error->code: ";
-                break;
-            case LIBXML_ERR_FATAL:
-                $error_msg .= "Fatal Error $error->code: ";
-                break;
-        }
-
-        $error_msg .= trim($error->message) .
-            "\n  Line: $error->line" .
-            "\n  Column: $error->column";
-
-        if ($error->file) {
-            $error_msg .= "\n  File: $error->file";
-        }
-
-        $this->addError("Errors while loading  ".$this->payloadSource. " Error message:". $error_msg);
-    }
 
 
     /*Insert a record versions
@@ -108,75 +96,46 @@ class IngestNativeSchema extends ImportSubTask
      * @param nativeObject DomElement
      *
      */
-    private function insertNativeObject($mdNode)
+    public static function insertNativeObject($nativeObject, $dataSourceID)
     {
 
-        $identifiers = [];
-        $created = false;
-        $fileIdentifiers = $mdNode->getElementsByTagName('fileIdentifier');
-        if(sizeof($fileIdentifiers) > 0){
-            foreach ($fileIdentifiers as $fileIdentifier){
-                $identifiers[] = ['identifier' => trim($fileIdentifier->nodeValue), 'identifier_type' => 'local'];
-            }
+        $identifiers = $nativeObject['identifiers'];
+        $nativeObject['nameSpaceURI'];
+        $data = $nativeObject['data'];
+        $hash = $nativeObject['hash'];
+        if (sizeof($identifiers) == 0) {
+            echo "Couldn't determine Identifiers so quiting";
+            return false;
         }
 
-        if(sizeof($identifiers) == 0){
-            $mdIdentifiers = $mdNode->getElementsByTagName('MD_Identifier');
-            if(sizeof($mdIdentifiers) > 0){
-                foreach ($mdIdentifiers as $mdIdentifier){
-                    if(sizeof($mdIdentifier->getElementsByTagName('codeSpace')) > 0) {
-                        $cspElement = $mdIdentifier->getElementsByTagName('codeSpace')[0];
-                        if ($cspElement != null && trim($cspElement->nodeValue) != '' && trim($cspElement->nodeValue) == 'urn:uuid') {
-                            $identifiers[] = ['identifier' => trim($mdIdentifier->getElementsByTagName('code')[0]->nodeValue),
-                                'identifier_type' => trim($cspElement->nodeValue)];
-                        }
-                    }
-                }
-            }
-        }
+        $schema = Schema::where('uri', $nativeObject['nameSpaceURI'])->first();
 
-        if(sizeof($identifiers) == 0){
-            $this->log("Couldn't determine Identifiers");
-            return $created;
-        }
-
-        $schema = Schema::where('uri', $mdNode->namespaceURI)->first();
-
-        if($schema == null){
+        if ($schema == null) {
 
             $schema = new Schema();
             $schema->setRawAttributes([
-                'prefix' => Schema::getPrefix($mdNode->namespaceURI),
-                'uri' => $mdNode->namespaceURI,
+                'prefix' => Schema::getPrefix($nativeObject['nameSpaceURI']),
+                'uri' => $nativeObject['nameSpaceURI'],
                 'exportable' => 1
             ]);
             $schema->save();
         }
 
-        $IdentifierArray = [];
-
-        foreach($identifiers as $identifier) {
-            $IdentifierArray[] =  $identifier['identifier'];
-        }
-
-        $registryObjects = RegistryObjectsRepository::getRecordsByIdentifier($IdentifierArray, $this->parent()->dataSourceID);
+        $registryObjects = RegistryObjectsRepository::getRecordsByIdentifier($identifiers, $dataSourceID);
 
         $recordIDs = collect($registryObjects)->pluck('registry_object_id')->toArray();
 
-        $dom = new DomDocument('1.0', 'UTF-8');
-        $dom->appendChild($dom->importNode($mdNode, True));
-        $data = $dom->saveXML($dom->documentElement);
+        if(sizeof($recordIDs) == 0) // couldn't find matching record not good but not a fail either
+            return true;
 
-        $hash = md5($data);
-
+        $success = false;
         foreach ($recordIDs as $id) {
-
             $altVersionsIDs = RegistryObjectVersion::where('registry_object_id', $id)->get()->pluck('version_id')->toArray();
             $existing = null;
             if (count($altVersionsIDs) > 0) {
                 $existing = Versions::wherein('id', $altVersionsIDs)->where("schema_id", $schema->id)->first();
             }
-
+            $success = true;
             if (!$existing) {
                 $version = Versions::create([
                     'data' => $data,
@@ -194,10 +153,8 @@ class IngestNativeSchema extends ImportSubTask
                     'hash' => $hash
                 ]);
             }
-
-            $created = true;
         }
-        return $created;
+        return $success;
     }
 
 }
