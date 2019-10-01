@@ -35,8 +35,11 @@ class IngestNativeSchema extends ImportSubTask
         }
 
         // couldn't find content handler for datasource
-        if($providerClassName == null)
+        if($providerClassName == null){
+            $this->log("No native data handler for harvest");
             return;
+        }
+
 
         try{
             $class = new ReflectionClass($providerClassName);

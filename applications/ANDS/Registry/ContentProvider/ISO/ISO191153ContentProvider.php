@@ -22,6 +22,7 @@ class ISO191153ContentProvider extends MetadataContentProvider
     public function init()
     {
         $this->content = [];
+        $this->fileExtension = 'tmp';
         return $this;
     }
 
