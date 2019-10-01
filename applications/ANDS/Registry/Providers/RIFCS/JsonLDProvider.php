@@ -63,7 +63,7 @@ class JsonLDProvider implements RIFCSProvider
 
         // don't generate one if we have an other instance from different origin eg HARVESTER, BUT  THIS MIGHT CHANGE !!
         if($existingVersion && $existingVersion->origin != static::$origin)
-            $existingVersion->data;
+            return $existingVersion->data;
 
         $data = [];
 
