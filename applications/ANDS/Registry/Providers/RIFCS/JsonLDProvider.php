@@ -17,6 +17,7 @@ use ANDS\Util\XMLUtil;
 use ANDS\Registry\RelationshipView;
 use \ANDS\Registry\Schema;
 use \ANDS\RegistryObject\AltSchemaVersion;
+use Carbon\Carbon;
 
 
 /**
@@ -121,9 +122,11 @@ class JsonLDProvider implements RIFCSProvider
 
     public static function get(RegistryObject $record)
     {
+        // obtaining existing versions
         $schema = Schema::where('uri', static::$schema_uri)->first();
         $altVersionsIDs = RegistryObjectVersion::where('registry_object_id', $record->id)->get()->pluck('version_id')->toArray();
         $existingVersion = null;
+
         if (count($altVersionsIDs) > 0) {
             $existingVersion = Versions::wherein('id', $altVersionsIDs)->where("schema_id", $schema->id)->first();
             if ($existingVersion) {
