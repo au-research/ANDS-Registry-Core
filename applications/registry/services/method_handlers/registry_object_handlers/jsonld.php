@@ -9,7 +9,7 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
 class Jsonld extends ROHandler {
     function handle() {
         $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($this->ro->id);
-        $jsonld = \ANDS\Registry\Providers\RIFCS\JsonLDProvider::process($record);
+        $jsonld = \ANDS\Registry\Providers\RIFCS\JsonLDProvider::get($record);
         $return[] = $jsonld;
         return $return;
     }
