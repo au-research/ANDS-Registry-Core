@@ -182,12 +182,12 @@ date_default_timezone_set('Australia/Melbourne');
 							
 							<?php
                             if(sizeof($alt_versions) > 0){
-                               echo '<tr><th>Other formats</th>';
-                            foreach($alt_versions as $version)
-                            {
-									echo '<td><a href="'.base_url().'../api/registry/records/'.$ro_id.'/versions/'.$version['id'].'" class="btn btn-small" id="exportNative">'.$version['prefix'].'</a></td>';
-                            }
-                                echo '</tr>';
+                               echo '<tr><th>Other formats</th><td>';
+                                    foreach($alt_versions as $version)
+                                    {
+                                        echo '<a href="'.base_url().'../api/registry/records/'.$ro_id.'/versions/'.$version['id'].'" class="btn btn-small" id="exportNative">'.$version['prefix'].'</a><br/>';
+                                    }
+                                echo '</td></tr>';
                             }
 							?>
 							<?php if(!($viewing_revision && !$currentRevision)): ?>
