@@ -8,9 +8,7 @@ use \ANDS\Registry\ContentProvider\ContentProvider;
 use \ANDS\RegistryObject\RegistryObjectVersion;
 use \ANDS\Repository\RegistryObjectsRepository;
 use \ANDS\Repository\DataSourceRepository;
-use \DOMDocument;
-use ReflectionClass;
-use Exception;
+
 
 class IngestNativeSchema extends ImportSubTask
 {
@@ -25,28 +23,14 @@ class IngestNativeSchema extends ImportSubTask
         $this->data_source = DataSourceRepository::getByID($this->parent()->dataSourceID);
 
         $providerType = $this->data_source->getDataSourceAttribute('provider_type');
-        $providerClassName = null;
+        $harvestMethod = $this->data_source->getDataSourceAttribute('harvest_method');
 
-        $providerClassName = ContentProvider::obtain($providerType['value']);
 
-        if($providerClassName == null){
-            $harvestMethod = $this->data_source->getDataSourceAttribute('harvest_method');
-            $providerClassName = ContentProvider::obtain($harvestMethod['value']);
-        }
+        $this->contentProvider = ContentProvider::getProvider($providerType['value'], $harvestMethod['value']);
 
         // couldn't find content handler for datasource
-        if($providerClassName == null){
+        if($this->contentProvider == null){
             $this->log("No native data handler for harvest");
-            return;
-        }
-
-
-        try{
-            $class = new ReflectionClass($providerClassName);
-            $this->contentProvider = $class->newInstanceArgs();
-        }
-        catch (Exception $e)
-        {
             return;
         }
 

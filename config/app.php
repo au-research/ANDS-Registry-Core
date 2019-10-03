@@ -119,5 +119,10 @@ return [
         // 	- 	Developer API documentation
         			'toolbox',
 
+    ],
+    'content_providers' => [
+            'http://www.isotc211.org/2005/gmd' => \ANDS\Registry\ContentProvider\ISO\ISO191153ContentProvider::class,
+            'JSONLDHarvester' => \ANDS\Registry\ContentProvider\JSONLD\JSONLDContentProvider::class,
+            'CSWHarvester' =>  \ANDS\Registry\ContentProvider\ISO\ISO191153ContentProvider::class
     ]
 ];

@@ -7,36 +7,31 @@
  */
 
 namespace ANDS\Registry\ContentProvider;
-
+use \ANDS\Util\Config;
+use ReflectionClass;
 
 class ContentProvider
 {
-    static public function obtain($providerType) {
+    static public function getProvider($providerType, $harvestMethod) {
 
-        // not a good list but good start
-
-        $config = [
-            'schema' => [
-                'JSONLDHarvester' => [
-                    'provider' => \ANDS\Registry\ContentProvider\JSONLD\JSONLDContentProvider::class,
-                    'namespace' => 'schema.org',
-                ],
-                'http://www.isotc211.org/2005/gmd' => [
-                    'provider' => \ANDS\Registry\ContentProvider\ISO\ISO191153ContentProvider::class,
-                    'namespace' => 'dynamic',
-                ],
-                'CSWHarvester' => [
-                    'provider' => \ANDS\Registry\ContentProvider\ISO\ISO191153ContentProvider::class,
-                    'namespace' => 'http://www.isotc211.org/2005/gmd',
-                ]
-            ]
-        ];
-
-        if(!isset($config['schema'][$providerType]))
+        // This class will attempt to use reflection to obtain a content provider for the given content type or harvest method
+        // in that order
+        $providerConfig = Config::get('app.content_providers');
+        try{
+            if($providerType != null and isset($providerConfig[$providerType])){
+                $class = new ReflectionClass($providerConfig[$providerType]);
+                return $class->newInstanceArgs();
+            }
+            if ($harvestMethod != null and isset($providerConfig[$harvestMethod])){
+                $class = new ReflectionClass($providerConfig[$harvestMethod]);
+                return $class->newInstanceArgs();
+            }
+        }
+        catch (\Exception $e)
+        {
             return null;
+        }
 
-        $className = $config['schema'][$providerType]['provider'];
-
-        return $className;
+        return null;
     }
 }
