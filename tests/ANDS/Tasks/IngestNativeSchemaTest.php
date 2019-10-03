@@ -1,14 +1,10 @@
 <?php
 
 namespace ANDS\API\Task\ImportSubTask;
-use \ANDS\Registry\Versions as Versions;
 use \ANDS\Registry\Schema;
-use \ANDS\API\Task\ImportSubTask\IngestNativeSchema;
-use \ANDS\Repository\RegistryObjectsRepository;
-use \DOMDocument;
 use \ANDS\Repository\DataSourceRepository;
 use \ANDS\Registry\ContentProvider\ContentProvider;
-use ReflectionClass;
+
 use Exception;
 
 class IngestNativeSchemaTest extends \RegistryTestClass
@@ -20,32 +16,16 @@ class IngestNativeSchemaTest extends \RegistryTestClass
     {
 
         $dataSourceID = 38360;
+        $providerClassName = null;
+
         $native_content_path = __DIR__ ."../../../resources/harvested_contents/open_top.json";
 
         $data_source = DataSourceRepository::getByID($dataSourceID);
 
         $providerType = $data_source->getDataSourceAttribute('provider_type');
-        $providerClassName = null;
+        $harvestMethod = $data_source->getDataSourceAttribute('harvest_method');
 
-        $providerClassName = ContentProvider::obtain($providerType['value']);
-
-        if($providerClassName == null){
-            $harvestMethod = $data_source->getDataSourceAttribute('harvest_method');
-            $providerClassName = ContentProvider::obtain($harvestMethod['value']);
-        }
-
-        // couldn't find content handler for datasource
-        if($providerClassName == null)
-            return;
-
-        try{
-            $class = new ReflectionClass($providerClassName);
-            $contentProvider = $class->newInstanceArgs();
-        }
-        catch (Exception $e)
-        {
-            return;
-        }
+        $contentProvider = ContentProvider::getProvider($providerType['value'], $harvestMethod['value']);
 
         $fileExtension = $contentProvider->getFileExtension();
 
@@ -72,18 +52,10 @@ class IngestNativeSchemaTest extends \RegistryTestClass
         $data_source = DataSourceRepository::getByID($dataSourceID);
 
         $providerType = $data_source->getDataSourceAttribute('provider_type');
-        $providerClassName = null;
-
-        $providerClassName = ContentProvider::obtain($providerType['value']);
-
-        if($providerClassName == null){
-            $harvestMethod = $data_source->getDataSourceAttribute('harvest_method');
-            $providerClassName = ContentProvider::obtain($harvestMethod['value']);
-        }
+        $harvestMethod = $data_source->getDataSourceAttribute('harvest_method');
 
         try{
-            $class = new ReflectionClass($providerClassName);
-            $contentProvider = $class->newInstanceArgs();
+            $contentProvider = ContentProvider::getProvider($providerType['value'], $harvestMethod['value']);
         }
         catch (Exception $e)
         {
