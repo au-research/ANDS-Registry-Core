@@ -28,6 +28,8 @@ class IdentifierProvider
             $identifiers[] = $json->url;
         elseif(isset($json->id))
             $identifiers[] = $json->id;
+        elseif(isset($json->{'@id'}))
+            $identifiers[] = $json->{'@id'};
         return $identifiers;
     }
 
