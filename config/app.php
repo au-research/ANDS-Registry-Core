@@ -123,6 +123,7 @@ return [
     'content_providers' => [
             'http://www.isotc211.org/2005/gmd' => \ANDS\Registry\ContentProvider\ISO\ISO191153ContentProvider::class,
             'JSONLDHarvester' => \ANDS\Registry\ContentProvider\JSONLD\JSONLDContentProvider::class,
-            'CSWHarvester' =>  \ANDS\Registry\ContentProvider\ISO\ISO191153ContentProvider::class
+            'CSWHarvester' =>  \ANDS\Registry\ContentProvider\ISO\ISO191153ContentProvider::class,
+            'https://pure.bond.edu.au' =>  \ANDS\Registry\ContentProvider\PURE\BONDContentProvider::class
     ]
 ];

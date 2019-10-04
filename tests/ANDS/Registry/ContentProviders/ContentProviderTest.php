@@ -23,4 +23,14 @@ class ISO19115_3ProviderTest extends \RegistryTestClass
     }
 
 
+    /** @test */
+    public function test__pure_provider()
+    {
+
+        $providerClass = ContentProvider::getProvider('https://pure.bond.edu.au', 'PUREHarvester');
+        $this->assertEquals('tmp', $providerClass->getFileExtension());
+
+
+    }
+
 }
