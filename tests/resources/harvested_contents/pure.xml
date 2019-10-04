@@ -1,0 +1,1654 @@
+<result xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://pure.bond.edu.au/ws/api/513/xsd/schema1.xsd">
+    <count>63</count>
+    <navigationLink ref="next"
+        href="https://pure.bond.edu.au/ws/api/513/datasets?pageSize=10&amp;page=2"/>
+    <pageInformation>
+        <offset>0</offset>
+        <size>10</size>
+    </pageInformation>
+    <dataSet uuid="93b6c91c-6fe7-44d8-9eb5-f774a9da208d" pureId="27514927">
+        <title>Savouring and relationship satisfaction in couples coping with a stressful life event </title>
+        <type pureId="6102" uri="/dk/atira/pure/dataset/datasettypes/dataset/dataset">Dataset</type>
+        <description pureId="27514930"
+            typeUri="/dk/atira/pure/dataset/descriptions/datasetdescription" type="Description"><![CDATA[This project collected data from 135 Australian opposite-sex couples who had experienced a stressful life event in the past year. This project aimed to examine predictors of relationship satisfaction in times of stress. The data include measures of the psychological impact of the event, savouring, positive affect, and relationship satisfaction.
+    
+    
+    
+> Individual data set: Each couple member is a case in the data set (scale items included)
+
+> Pairwise data set: Pairwise structuring of data for multilevel modelling (scale scores only)
+
+> Dyad data set: Dyad structuring of data for structural equation modelling 
+
+(scale scores only).
+
+
+
+Formats: .sav and .csv files
+
+]]></description>
+        <dataProductionPeriod>
+            <startDate>
+                <year>2015</year>
+                <month>6</month>
+            </startDate>
+            <endDate>
+                <year>2015</year>
+                <month>8</month>
+            </endDate>
+        </dataProductionPeriod>
+        <personAssociations>
+            <personAssociation pureId="27514932">
+                <person uuid="9da05f50-43f0-4f3c-a520-63b146ae6b82" externalId="AL_006318"
+                    externalIdSource="synchronisedUnifiedPerson" externallyManaged="true">
+                    <link ref="content"
+                        href="https://pure.bond.edu.au/ws/api/513/persons/9da05f50-43f0-4f3c-a520-63b146ae6b82"/>
+                    <name>Christina Samios</name>
+                </person>
+                <name>
+                    <firstName>Christina</firstName>
+                    <lastName>Samios</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+                <organisationalUnits>
+                    <organisationalUnit uuid="3da066e4-4bf9-4cd2-a216-03ca3908549b"
+                        externalId="ORS_HS" externalIdSource="synchronisedUnifiedOrganisation">
+                        <link ref="content"
+                            href="https://pure.bond.edu.au/ws/api/513/organisational-units/3da066e4-4bf9-4cd2-a216-03ca3908549b"/>
+                        <name><![CDATA[Faculty of Society & Design]]></name>
+                        <type pureId="22568"
+                            uri="/dk/atira/pure/organisation/organisationtypes/organisation/faculty"
+                            >Faculty</type>
+                    </organisationalUnit>
+                </organisationalUnits>
+            </personAssociation>
+            <personAssociation pureId="27514934">
+                <externalPerson uuid="428309b8-52dd-45b7-b0e6-a1b283428e5a">
+                    <link ref="content"
+                        href="https://pure.bond.edu.au/ws/api/513/external-persons/428309b8-52dd-45b7-b0e6-a1b283428e5a"/>
+                    <name>Vidushi Khatri</name>
+                    <type pureId="22272"
+                        uri="/dk/atira/pure/externalperson/externalpersontypes/externalperson/externalperson"
+                        >External person</type>
+                </externalPerson>
+                <name>
+                    <firstName>Vidushi</firstName>
+                    <lastName>Khatri</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+                <externalOrganisations>
+                    <externalOrganisation uuid="87f16fdf-d504-4720-ab02-c4425a96174b"
+                        externalId="201047" externalIdSource="scival" externallyManaged="true">
+                        <link ref="content"
+                            href="https://pure.bond.edu.au/ws/api/513/external-organisations/87f16fdf-d504-4720-ab02-c4425a96174b"/>
+                        <name>Bond University</name>
+                        <type pureId="998"
+                            uri="/dk/atira/pure/ueoexternalorganisation/ueoexternalorganisationtypes/ueoexternalorganisation/unknown"
+                            >Unknown</type>
+                    </externalOrganisation>
+                </externalOrganisations>
+            </personAssociation>
+        </personAssociations>
+        <managingOrganisationalUnit uuid="3da066e4-4bf9-4cd2-a216-03ca3908549b" externalId="ORS_HS"
+            externalIdSource="synchronisedUnifiedOrganisation">
+            <link ref="content"
+                href="https://pure.bond.edu.au/ws/api/513/organisational-units/3da066e4-4bf9-4cd2-a216-03ca3908549b"/>
+            <name><![CDATA[Faculty of Society & Design]]></name>
+            <type pureId="22568"
+                uri="/dk/atira/pure/organisation/organisationtypes/organisation/faculty"
+                >Faculty</type>
+        </managingOrganisationalUnit>
+        <publisher uuid="3ea4e104-8320-48dd-8722-810911d7976f">
+            <link ref="content"
+                href="https://pure.bond.edu.au/ws/api/513/publishers/3ea4e104-8320-48dd-8722-810911d7976f"/>
+            <name>Bond University</name>
+            <type pureId="1090" uri="/dk/atira/pure/publisher/publishertypes/publisher/publisher"
+                >Publisher</type>
+        </publisher>
+        <doi>10.4225/57/5b21e34bff1f9</doi>
+        <contactPerson uuid="9da05f50-43f0-4f3c-a520-63b146ae6b82" externalId="AL_006318"
+            externalIdSource="synchronisedUnifiedPerson" externallyManaged="true">
+            <link ref="content"
+                href="https://pure.bond.edu.au/ws/api/513/persons/9da05f50-43f0-4f3c-a520-63b146ae6b82"/>
+            <name>Christina Samios</name>
+        </contactPerson>
+        <organisationalUnits>
+            <organisationalUnit uuid="3da066e4-4bf9-4cd2-a216-03ca3908549b" externalId="ORS_HS"
+                externalIdSource="synchronisedUnifiedOrganisation">
+                <link ref="content"
+                    href="https://pure.bond.edu.au/ws/api/513/organisational-units/3da066e4-4bf9-4cd2-a216-03ca3908549b"/>
+                <name><![CDATA[Faculty of Society & Design]]></name>
+                <type pureId="22568"
+                    uri="/dk/atira/pure/organisation/organisationtypes/organisation/faculty"
+                    >Faculty</type>
+            </organisationalUnit>
+        </organisationalUnits>
+        <publicationDate>
+            <year>2015</year>
+        </publicationDate>
+        <openAccessPermission pureId="11293872"
+            uri="/dk/atira/pure/dataset/accesspermission/restricted"
+            >Restricted</openAccessPermission>
+        <relatedResearchOutputs>
+            <relatedResearchOutput uuid="08ecd80f-59d1-46eb-ba48-872ed0d528cb"
+                externalId="84900832527" externalIdSource="Scopus">
+                <link ref="content"
+                    href="https://pure.bond.edu.au/ws/api/513/research-outputs/08ecd80f-59d1-46eb-ba48-872ed0d528cb"/>
+                <name>Vicarious posttraumatic growth: Predictors of growth and relationships with
+                    adjustment</name>
+                <type pureId="3969"
+                    uri="/dk/atira/pure/researchoutput/researchoutputtypes/contributiontojournal/article"
+                    >Article</type>
+            </relatedResearchOutput>
+        </relatedResearchOutputs>
+        <visibility key="FREE">Public - No restriction</visibility>
+        <confidential>false</confidential>
+        <info>
+            <createdBy>acass</createdBy>
+            <createdDate>2018-08-24T16:00:56.126+10:00</createdDate>
+            <modifiedBy>acass</modifiedBy>
+            <modifiedDate>2018-12-14T16:34:01.250+10:00</modifiedDate>
+            <portalUrl>https://research.bond.edu.au/en/datasets/93b6c91c-6fe7-44d8-9eb5-f774a9da208d</portalUrl>
+            <prettyURLIdentifiers>
+                <prettyURLIdentifier>savouring-and-relationship-satisfaction-in-couples-coping-with-a-</prettyURLIdentifier>
+            </prettyURLIdentifiers>
+        </info>
+    </dataSet>
+    <dataSet uuid="3b4802f5-9e07-4be9-b49d-aa41cc0e3a2a" pureId="27514942">
+        <title>Determining the gaps between Cochrane reviews and trials of effectiveness of
+            interventions for acute respiratory infections: An audit </title>
+        <type pureId="6102" uri="/dk/atira/pure/dataset/datasettypes/dataset/dataset">Dataset</type>
+        <description pureId="27514945"
+            typeUri="/dk/atira/pure/dataset/descriptions/datasetdescription" type="Description"
+            >Cochrane primarily aims to systematically review trials of effectiveness that are
+            important to inform clinical decisions. Editorial groups support authors to achieve high
+            quality reviews and prioritise review proposals in their clinical domain that are
+            submitted or elicited. Prioritising proposals requires two approaches, identifying: 1)
+            clinical practices for which the evidence of effectiveness is uncertain; and 2)
+            interventions in which there are trials of effectiveness (especially randomised
+            controlled trials, RCTs) not systematically reviewed. This study addresses this second
+            approach for the Cochrane Acute Respiratory Infections Group (CARIG).&#xd; &#xd; To
+            identify RCTs of acute respiratory infections that have not been systematically reviewed
+            we compared the Group’s trials register of RCTs against a list of current Cochrane ARI
+            (systematic) Reviews to identify gaps in topics (the same intervention and health
+            condition) where completed trials have not been systematically reviewed. We assigned a
+            principle intervention and health condition to each of 157 Cochrane Reviews (CRs) and
+            5,393 RCTs.&#xd; &#xd; We identified many RCT topics that have not been systematically
+            reviewed. They need to be addressed in a separate process to establish their priority to
+            clinicians.</description>
+        <dataProductionPeriod>
+            <startDate>
+                <year>2017</year>
+                <month>10</month>
+                <day>19</day>
+            </startDate>
+            <endDate>
+                <year>2017</year>
+                <month>10</month>
+                <day>19</day>
+            </endDate>
+        </dataProductionPeriod>
+        <personAssociations>
+            <personAssociation pureId="27514949">
+                <externalPerson uuid="86b86f19-942a-4169-8bff-29acee762313">
+                    <link ref="content"
+                        href="https://pure.bond.edu.au/ws/api/513/external-persons/86b86f19-942a-4169-8bff-29acee762313"/>
+                    <name>Jasmin Alloo</name>
+                    <type pureId="22272"
+                        uri="/dk/atira/pure/externalperson/externalpersontypes/externalperson/externalperson"
+                        >External person</type>
+                </externalPerson>
+                <name>
+                    <firstName>Jasmin</firstName>
+                    <lastName>Alloo</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+                <externalOrganisations>
+                    <externalOrganisation uuid="87f16fdf-d504-4720-ab02-c4425a96174b"
+                        externalId="201047" externalIdSource="scival" externallyManaged="true">
+                        <link ref="content"
+                            href="https://pure.bond.edu.au/ws/api/513/external-organisations/87f16fdf-d504-4720-ab02-c4425a96174b"/>
+                        <name>Bond University</name>
+                        <type pureId="998"
+                            uri="/dk/atira/pure/ueoexternalorganisation/ueoexternalorganisationtypes/ueoexternalorganisation/unknown"
+                            >Unknown</type>
+                    </externalOrganisation>
+                </externalOrganisations>
+            </personAssociation>
+            <personAssociation pureId="27514950">
+                <externalPerson uuid="f7a10302-1b9f-4948-9326-d84914ca67f9">
+                    <link ref="content"
+                        href="https://pure.bond.edu.au/ws/api/513/external-persons/f7a10302-1b9f-4948-9326-d84914ca67f9"/>
+                    <name>Sanya Vallath</name>
+                    <type pureId="22272"
+                        uri="/dk/atira/pure/externalperson/externalpersontypes/externalperson/externalperson"
+                        >External person</type>
+                </externalPerson>
+                <name>
+                    <firstName>Sanya</firstName>
+                    <lastName>Vallath</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+                <externalOrganisations>
+                    <externalOrganisation uuid="87f16fdf-d504-4720-ab02-c4425a96174b"
+                        externalId="201047" externalIdSource="scival" externallyManaged="true">
+                        <link ref="content"
+                            href="https://pure.bond.edu.au/ws/api/513/external-organisations/87f16fdf-d504-4720-ab02-c4425a96174b"/>
+                        <name>Bond University</name>
+                        <type pureId="998"
+                            uri="/dk/atira/pure/ueoexternalorganisation/ueoexternalorganisationtypes/ueoexternalorganisation/unknown"
+                            >Unknown</type>
+                    </externalOrganisation>
+                </externalOrganisations>
+            </personAssociation>
+            <personAssociation pureId="27514951">
+                <person uuid="4cc58c64-8959-415f-b985-83bba851c4da" externalId="AL_002196"
+                    externalIdSource="synchronisedUnifiedPerson" externallyManaged="true">
+                    <link ref="content"
+                        href="https://pure.bond.edu.au/ws/api/513/persons/4cc58c64-8959-415f-b985-83bba851c4da"/>
+                    <name>Chris Del Mar</name>
+                </person>
+                <name>
+                    <firstName>Chris B</firstName>
+                    <lastName>Del Mar</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+                <organisationalUnits>
+                    <organisationalUnit uuid="ade755af-d039-4bce-902b-574782fc6276"
+                        externalId="ORS_CEBP" externalIdSource="synchronisedUnifiedOrganisation">
+                        <link ref="content"
+                            href="https://pure.bond.edu.au/ws/api/513/organisational-units/ade755af-d039-4bce-902b-574782fc6276"/>
+                        <name>Institute for Evidence-Based Healthcare</name>
+                        <type pureId="22573"
+                            uri="/dk/atira/pure/organisation/organisationtypes/organisation/university_research_centre"
+                            >University Research Centre</type>
+                    </organisationalUnit>
+                </organisationalUnits>
+            </personAssociation>
+            <personAssociation pureId="27514953">
+                <name>
+                    <firstName>Matthew</firstName>
+                    <lastName>Carter</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+                <organisationalUnits>
+                    <organisationalUnit uuid="dda63667-8032-46ca-8f74-11cfee92571d"
+                        externalId="ORS_HSM" externalIdSource="synchronisedUnifiedOrganisation">
+                        <link ref="content"
+                            href="https://pure.bond.edu.au/ws/api/513/organisational-units/dda63667-8032-46ca-8f74-11cfee92571d"/>
+                        <name><![CDATA[Faculty of Health Sciences & Medicine]]></name>
+                        <type pureId="22568"
+                            uri="/dk/atira/pure/organisation/organisationtypes/organisation/faculty"
+                            >Faculty</type>
+                    </organisationalUnit>
+                </organisationalUnits>
+            </personAssociation>
+            <personAssociation pureId="27514955">
+                <name>
+                    <firstName>Sarah</firstName>
+                    <lastName>Thorning</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+                <externalOrganisations>
+                    <externalOrganisation uuid="20532aed-50b7-4a78-bda0-dced5ee419d4"
+                        externallyManaged="true">
+                        <link ref="content"
+                            href="https://pure.bond.edu.au/ws/api/513/external-organisations/20532aed-50b7-4a78-bda0-dced5ee419d4"/>
+                        <name>Gold Coast University Hospital</name>
+                        <type pureId="998"
+                            uri="/dk/atira/pure/ueoexternalorganisation/ueoexternalorganisationtypes/ueoexternalorganisation/unknown"
+                            >Unknown</type>
+                    </externalOrganisation>
+                </externalOrganisations>
+            </personAssociation>
+            <personAssociation pureId="27514956">
+                <name>
+                    <firstName>Justin</firstName>
+                    <lastName>Clark</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+                <organisationalUnits>
+                    <organisationalUnit uuid="ade755af-d039-4bce-902b-574782fc6276"
+                        externalId="ORS_CEBP" externalIdSource="synchronisedUnifiedOrganisation">
+                        <link ref="content"
+                            href="https://pure.bond.edu.au/ws/api/513/organisational-units/ade755af-d039-4bce-902b-574782fc6276"/>
+                        <name>Institute for Evidence-Based Healthcare</name>
+                        <type pureId="22573"
+                            uri="/dk/atira/pure/organisation/organisationtypes/organisation/university_research_centre"
+                            >University Research Centre</type>
+                    </organisationalUnit>
+                </organisationalUnits>
+            </personAssociation>
+        </personAssociations>
+        <publisher uuid="3ea4e104-8320-48dd-8722-810911d7976f">
+            <link ref="content"
+                href="https://pure.bond.edu.au/ws/api/513/publishers/3ea4e104-8320-48dd-8722-810911d7976f"/>
+            <name>Bond University</name>
+            <type pureId="1090" uri="/dk/atira/pure/publisher/publishertypes/publisher/publisher"
+                >Publisher</type>
+        </publisher>
+        <doi>10.4225/57/5b29e16c92809</doi>
+        <documents>
+            <document pureId="27514946">
+                <title>Acute_Respiratory_Infections_Groups_research_gaps_audit_data.xlsx</title>
+                <documentType pureId="16838" uri="/dk/atira/pure/dataset/documents/dataset"
+                    >Dataset</documentType>
+                <url>https://pure.bond.edu.au/ws/files/27514946/Acute_Respiratory_Infections_Groups_research_gaps_audit_data.xlsx</url>
+                <documentLicense pureId="16862" uri="/dk/atira/pure/dataset/documentlicenses/cc-by"
+                    >CC BY</documentLicense>
+                <visibility key="FREE">Public - No restriction</visibility>
+                <creator>acass</creator>
+                <created>2018-08-24T16:07:17.941+10:00</created>
+            </document>
+            <document pureId="27515432">
+                <title>Alloo_17_ARI_Cochrane_Group_gaps_Syst_Rev.pdf</title>
+                <documentType pureId="16834" uri="/dk/atira/pure/dataset/documents/audiovisual"
+                    >Audiovisual</documentType>
+                <url>https://pure.bond.edu.au/ws/files/27515432/Alloo_17_ARI_Cochrane_Group_gaps_Syst_Rev.pdf</url>
+                <visibility key="FREE">Public - No restriction</visibility>
+                <creator>cdelmar</creator>
+                <created>2018-08-24T17:42:45.770+10:00</created>
+            </document>
+        </documents>
+        <organisationalUnits>
+            <organisationalUnit uuid="ade755af-d039-4bce-902b-574782fc6276" externalId="ORS_CEBP"
+                externalIdSource="synchronisedUnifiedOrganisation">
+                <link ref="content"
+                    href="https://pure.bond.edu.au/ws/api/513/organisational-units/ade755af-d039-4bce-902b-574782fc6276"/>
+                <name>Institute for Evidence-Based Healthcare</name>
+                <type pureId="22573"
+                    uri="/dk/atira/pure/organisation/organisationtypes/organisation/university_research_centre"
+                    >University Research Centre</type>
+            </organisationalUnit>
+            <organisationalUnit uuid="dda63667-8032-46ca-8f74-11cfee92571d" externalId="ORS_HSM"
+                externalIdSource="synchronisedUnifiedOrganisation">
+                <link ref="content"
+                    href="https://pure.bond.edu.au/ws/api/513/organisational-units/dda63667-8032-46ca-8f74-11cfee92571d"/>
+                <name><![CDATA[Faculty of Health Sciences & Medicine]]></name>
+                <type pureId="22568"
+                    uri="/dk/atira/pure/organisation/organisationtypes/organisation/faculty"
+                    >Faculty</type>
+            </organisationalUnit>
+        </organisationalUnits>
+        <externalOrganisations>
+            <externalOrganisation uuid="20532aed-50b7-4a78-bda0-dced5ee419d4"
+                externallyManaged="true">
+                <link ref="content"
+                    href="https://pure.bond.edu.au/ws/api/513/external-organisations/20532aed-50b7-4a78-bda0-dced5ee419d4"/>
+                <name>Gold Coast University Hospital</name>
+                <type pureId="998"
+                    uri="/dk/atira/pure/ueoexternalorganisation/ueoexternalorganisationtypes/ueoexternalorganisation/unknown"
+                    >Unknown</type>
+            </externalOrganisation>
+        </externalOrganisations>
+        <publicationDate>
+            <year>2017</year>
+        </publicationDate>
+        <openAccessPermission pureId="11293866" uri="/dk/atira/pure/dataset/accesspermission/open"
+            >Open</openAccessPermission>
+        <relatedResearchOutputs>
+            <relatedResearchOutput uuid="9e8a5bc2-cb38-4a4f-8ecd-d098f597de30" externalId="28407780"
+                externalIdSource="PubMed">
+                <link ref="content"
+                    href="https://pure.bond.edu.au/ws/api/513/research-outputs/9e8a5bc2-cb38-4a4f-8ecd-d098f597de30"/>
+                <name>Determining the gaps between Cochrane reviews and trials of effectiveness of
+                    interventions for acute respiratory infections: An audit</name>
+                <type pureId="3969"
+                    uri="/dk/atira/pure/researchoutput/researchoutputtypes/contributiontojournal/article"
+                    >Article</type>
+            </relatedResearchOutput>
+        </relatedResearchOutputs>
+        <visibility key="FREE">Public - No restriction</visibility>
+        <confidential>false</confidential>
+        <info>
+            <createdBy>acass</createdBy>
+            <createdDate>2018-08-24T16:07:17.944+10:00</createdDate>
+            <modifiedBy>kharris</modifiedBy>
+            <modifiedDate>2019-02-13T13:49:04.570+10:00</modifiedDate>
+            <portalUrl>https://research.bond.edu.au/en/datasets/3b4802f5-9e07-4be9-b49d-aa41cc0e3a2a</portalUrl>
+            <prettyURLIdentifiers>
+                <prettyURLIdentifier>determining-the-gaps-between-cochrane-reviews-and-trials-of-effec</prettyURLIdentifier>
+            </prettyURLIdentifiers>
+        </info>
+    </dataSet>
+    <dataSet uuid="7efb75bd-58f6-48e8-8156-c4ae7fe5f7a3" pureId="27514982">
+        <title>Communicating about overdiagnosis: Learning from community focus groups on
+            osteoporosis</title>
+        <type pureId="6102" uri="/dk/atira/pure/dataset/datasettypes/dataset/dataset">Dataset</type>
+        <description pureId="27514985"
+            typeUri="/dk/atira/pure/dataset/descriptions/datasetdescription" type="Description"
+            >Overdiagnosis is considered a risk associated with the diagnosis of osteoporosis – as
+            many people diagnosed won’t experience harm from the condition. As yet there’s little
+            evidence on community understanding of overdiagnosis outside cancer- where it is an
+            established risk of some screening programs – or effective ways to communicate about it.
+            We examined community understanding around overdiagnosis of osteoporosis, to optimise
+            communication strategies about this problem.&#xd; &#xd; The data generated by the focus
+            groups study is provided in Excel format below.</description>
+        <dataProductionPeriod>
+            <startDate>
+                <year>2015</year>
+                <month>11</month>
+            </startDate>
+            <endDate>
+                <year>2016</year>
+                <month>3</month>
+            </endDate>
+        </dataProductionPeriod>
+        <personAssociations>
+            <personAssociation pureId="27514988">
+                <person uuid="beb525a5-be14-42ad-b37f-102b69f84508" externalId="AL_008679"
+                    externalIdSource="synchronisedUnifiedPerson" externallyManaged="true">
+                    <link ref="content"
+                        href="https://pure.bond.edu.au/ws/api/513/persons/beb525a5-be14-42ad-b37f-102b69f84508"/>
+                    <name>Raymond Moynihan</name>
+                </person>
+                <name>
+                    <firstName>Ray N</firstName>
+                    <lastName>Moynihan</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+                <organisationalUnits>
+                    <organisationalUnit uuid="ade755af-d039-4bce-902b-574782fc6276"
+                        externalId="ORS_CEBP" externalIdSource="synchronisedUnifiedOrganisation">
+                        <link ref="content"
+                            href="https://pure.bond.edu.au/ws/api/513/organisational-units/ade755af-d039-4bce-902b-574782fc6276"/>
+                        <name>Institute for Evidence-Based Healthcare</name>
+                        <type pureId="22573"
+                            uri="/dk/atira/pure/organisation/organisationtypes/organisation/university_research_centre"
+                            >University Research Centre</type>
+                    </organisationalUnit>
+                </organisationalUnits>
+            </personAssociation>
+            <personAssociation pureId="27514990">
+                <name>
+                    <firstName>Rebecca</firstName>
+                    <lastName>Sims</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+                <organisationalUnits>
+                    <organisationalUnit uuid="ade755af-d039-4bce-902b-574782fc6276"
+                        externalId="ORS_CEBP" externalIdSource="synchronisedUnifiedOrganisation">
+                        <link ref="content"
+                            href="https://pure.bond.edu.au/ws/api/513/organisational-units/ade755af-d039-4bce-902b-574782fc6276"/>
+                        <name>Institute for Evidence-Based Healthcare</name>
+                        <type pureId="22573"
+                            uri="/dk/atira/pure/organisation/organisationtypes/organisation/university_research_centre"
+                            >University Research Centre</type>
+                    </organisationalUnit>
+                </organisationalUnits>
+            </personAssociation>
+            <personAssociation pureId="27514992">
+                <externalPerson uuid="49b90d4e-d427-4949-a31e-f150121eb642">
+                    <link ref="content"
+                        href="https://pure.bond.edu.au/ws/api/513/external-persons/49b90d4e-d427-4949-a31e-f150121eb642"/>
+                    <name>Jolyn Hersch</name>
+                    <type pureId="22272"
+                        uri="/dk/atira/pure/externalperson/externalpersontypes/externalperson/externalperson"
+                        >External person</type>
+                </externalPerson>
+                <name>
+                    <firstName>Jolyn</firstName>
+                    <lastName>Hersch</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+                <externalOrganisations>
+                    <externalOrganisation uuid="e7937f9c-4278-4579-bb7d-49a0d66d3787"
+                        externalId="201032" externalIdSource="scival" externallyManaged="true">
+                        <link ref="content"
+                            href="https://pure.bond.edu.au/ws/api/513/external-organisations/e7937f9c-4278-4579-bb7d-49a0d66d3787"/>
+                        <name>University of Sydney</name>
+                        <type pureId="998"
+                            uri="/dk/atira/pure/ueoexternalorganisation/ueoexternalorganisationtypes/ueoexternalorganisation/unknown"
+                            >Unknown</type>
+                    </externalOrganisation>
+                </externalOrganisations>
+            </personAssociation>
+            <personAssociation pureId="27514993">
+                <person uuid="8c1cd71d-d458-4f73-bbc7-f021420ff778" externalId="AL_008571"
+                    externalIdSource="synchronisedUnifiedPerson" externallyManaged="true">
+                    <link ref="content"
+                        href="https://pure.bond.edu.au/ws/api/513/persons/8c1cd71d-d458-4f73-bbc7-f021420ff778"/>
+                    <name>Rae Thomas</name>
+                </person>
+                <name>
+                    <firstName>Rae Louise</firstName>
+                    <lastName>Thomas</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+                <organisationalUnits>
+                    <organisationalUnit uuid="ade755af-d039-4bce-902b-574782fc6276"
+                        externalId="ORS_CEBP" externalIdSource="synchronisedUnifiedOrganisation">
+                        <link ref="content"
+                            href="https://pure.bond.edu.au/ws/api/513/organisational-units/ade755af-d039-4bce-902b-574782fc6276"/>
+                        <name>Institute for Evidence-Based Healthcare</name>
+                        <type pureId="22573"
+                            uri="/dk/atira/pure/organisation/organisationtypes/organisation/university_research_centre"
+                            >University Research Centre</type>
+                    </organisationalUnit>
+                </organisationalUnits>
+            </personAssociation>
+            <personAssociation pureId="27514995">
+                <person uuid="ab49168b-e417-4bfa-8325-5e24bc314056" externalId="AL_007855"
+                    externalIdSource="synchronisedUnifiedPerson" externallyManaged="true">
+                    <link ref="content"
+                        href="https://pure.bond.edu.au/ws/api/513/persons/ab49168b-e417-4bfa-8325-5e24bc314056"/>
+                    <name>Paul Glasziou</name>
+                </person>
+                <name>
+                    <firstName>Paul P</firstName>
+                    <lastName>Glasziou</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+                <organisationalUnits>
+                    <organisationalUnit uuid="ade755af-d039-4bce-902b-574782fc6276"
+                        externalId="ORS_CEBP" externalIdSource="synchronisedUnifiedOrganisation">
+                        <link ref="content"
+                            href="https://pure.bond.edu.au/ws/api/513/organisational-units/ade755af-d039-4bce-902b-574782fc6276"/>
+                        <name>Institute for Evidence-Based Healthcare</name>
+                        <type pureId="22573"
+                            uri="/dk/atira/pure/organisation/organisationtypes/organisation/university_research_centre"
+                            >University Research Centre</type>
+                    </organisationalUnit>
+                </organisationalUnits>
+            </personAssociation>
+            <personAssociation pureId="27514997">
+                <externalPerson uuid="aa35951d-9962-47cb-97df-f44a12a21260">
+                    <link ref="content"
+                        href="https://pure.bond.edu.au/ws/api/513/external-persons/aa35951d-9962-47cb-97df-f44a12a21260"/>
+                    <name>Kirsten J McCaffery</name>
+                    <type pureId="22272"
+                        uri="/dk/atira/pure/externalperson/externalpersontypes/externalperson/externalperson"
+                        >External person</type>
+                </externalPerson>
+                <name>
+                    <firstName>Kirsten</firstName>
+                    <lastName>McCaffery</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+                <externalOrganisations>
+                    <externalOrganisation uuid="e7937f9c-4278-4579-bb7d-49a0d66d3787"
+                        externalId="201032" externalIdSource="scival" externallyManaged="true">
+                        <link ref="content"
+                            href="https://pure.bond.edu.au/ws/api/513/external-organisations/e7937f9c-4278-4579-bb7d-49a0d66d3787"/>
+                        <name>University of Sydney</name>
+                        <type pureId="998"
+                            uri="/dk/atira/pure/ueoexternalorganisation/ueoexternalorganisationtypes/ueoexternalorganisation/unknown"
+                            >Unknown</type>
+                    </externalOrganisation>
+                </externalOrganisations>
+            </personAssociation>
+        </personAssociations>
+        <publisher uuid="3ea4e104-8320-48dd-8722-810911d7976f">
+            <link ref="content"
+                href="https://pure.bond.edu.au/ws/api/513/publishers/3ea4e104-8320-48dd-8722-810911d7976f"/>
+            <name>Bond University</name>
+            <type pureId="1090" uri="/dk/atira/pure/publisher/publishertypes/publisher/publisher"
+                >Publisher</type>
+        </publisher>
+        <doi>10.4225/57/5885A1A9F1E3E</doi>
+        <documents>
+            <document pureId="27514986">
+                <title>Communicating_about_overdiagnosis_Thematic_Framework_with_elements.xlsx</title>
+                <documentType pureId="16838" uri="/dk/atira/pure/dataset/documents/dataset"
+                    >Dataset</documentType>
+                <url>https://pure.bond.edu.au/ws/files/27514986/Communicating_about_overdiagnosis_Thematic_Framework_with_elements.xlsx</url>
+                <documentLicense pureId="16862" uri="/dk/atira/pure/dataset/documentlicenses/cc-by"
+                    >CC BY</documentLicense>
+                <visibility key="FREE">Public - No restriction</visibility>
+                <creator>acass</creator>
+                <created>2018-08-24T16:12:23.344+10:00</created>
+            </document>
+        </documents>
+        <contactPerson uuid="beb525a5-be14-42ad-b37f-102b69f84508" externalId="AL_008679"
+            externalIdSource="synchronisedUnifiedPerson" externallyManaged="true">
+            <link ref="content"
+                href="https://pure.bond.edu.au/ws/api/513/persons/beb525a5-be14-42ad-b37f-102b69f84508"/>
+            <name>Raymond Moynihan</name>
+        </contactPerson>
+        <organisationalUnits>
+            <organisationalUnit uuid="ade755af-d039-4bce-902b-574782fc6276" externalId="ORS_CEBP"
+                externalIdSource="synchronisedUnifiedOrganisation">
+                <link ref="content"
+                    href="https://pure.bond.edu.au/ws/api/513/organisational-units/ade755af-d039-4bce-902b-574782fc6276"/>
+                <name>Institute for Evidence-Based Healthcare</name>
+                <type pureId="22573"
+                    uri="/dk/atira/pure/organisation/organisationtypes/organisation/university_research_centre"
+                    >University Research Centre</type>
+            </organisationalUnit>
+        </organisationalUnits>
+        <publicationDate>
+            <year>2017</year>
+        </publicationDate>
+        <openAccessPermission pureId="11293866" uri="/dk/atira/pure/dataset/accesspermission/open"
+            >Open</openAccessPermission>
+        <relatedResearchOutputs>
+            <relatedResearchOutput uuid="e4f22c90-6978-41d6-906e-ebfd927b5f7b"
+                externalId="85011664382" externalIdSource="Scopus">
+                <link ref="content"
+                    href="https://pure.bond.edu.au/ws/api/513/research-outputs/e4f22c90-6978-41d6-906e-ebfd927b5f7b"/>
+                <name>Communicating about overdiagnosis: Learning from community focus groups on
+                    osteoporosis</name>
+                <type pureId="3969"
+                    uri="/dk/atira/pure/researchoutput/researchoutputtypes/contributiontojournal/article"
+                    >Article</type>
+            </relatedResearchOutput>
+        </relatedResearchOutputs>
+        <visibility key="FREE">Public - No restriction</visibility>
+        <confidential>false</confidential>
+        <info>
+            <createdBy>acass</createdBy>
+            <createdDate>2018-08-24T16:12:23.347+10:00</createdDate>
+            <modifiedBy>acass</modifiedBy>
+            <modifiedDate>2019-03-12T14:24:45.608+10:00</modifiedDate>
+            <portalUrl>https://research.bond.edu.au/en/datasets/7efb75bd-58f6-48e8-8156-c4ae7fe5f7a3</portalUrl>
+            <prettyURLIdentifiers>
+                <prettyURLIdentifier>communicating-about-overdiagnosis-learning-from-community-focus-g</prettyURLIdentifier>
+            </prettyURLIdentifiers>
+        </info>
+    </dataSet>
+    <dataSet uuid="8091d188-cd4e-49ec-a594-be3cff1d0bcc" pureId="27515033">
+        <title>Public opinions about overdiagnosis: A national community survey</title>
+        <type pureId="6102" uri="/dk/atira/pure/dataset/datasettypes/dataset/dataset">Dataset</type>
+        <description pureId="27515036"
+            typeUri="/dk/atira/pure/dataset/descriptions/datasetdescription" type="Description">A
+            national community survey of 500 Australians about overdiagnosis.&#xd; The data has been
+            de-identified.&#xd; Data in SPSS and CSV formats.</description>
+        <dataProductionPeriod>
+            <startDate>
+                <year>2014</year>
+                <month>1</month>
+            </startDate>
+            <endDate>
+                <year>2014</year>
+                <month>11</month>
+            </endDate>
+        </dataProductionPeriod>
+        <personAssociations>
+            <personAssociation pureId="27515041">
+                <person uuid="beb525a5-be14-42ad-b37f-102b69f84508" externalId="AL_008679"
+                    externalIdSource="synchronisedUnifiedPerson" externallyManaged="true">
+                    <link ref="content"
+                        href="https://pure.bond.edu.au/ws/api/513/persons/beb525a5-be14-42ad-b37f-102b69f84508"/>
+                    <name>Raymond Moynihan</name>
+                </person>
+                <name>
+                    <firstName>Ray N</firstName>
+                    <lastName>Moynihan</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+                <organisationalUnits>
+                    <organisationalUnit uuid="ade755af-d039-4bce-902b-574782fc6276"
+                        externalId="ORS_CEBP" externalIdSource="synchronisedUnifiedOrganisation">
+                        <link ref="content"
+                            href="https://pure.bond.edu.au/ws/api/513/organisational-units/ade755af-d039-4bce-902b-574782fc6276"/>
+                        <name>Institute for Evidence-Based Healthcare</name>
+                        <type pureId="22573"
+                            uri="/dk/atira/pure/organisation/organisationtypes/organisation/university_research_centre"
+                            >University Research Centre</type>
+                    </organisationalUnit>
+                </organisationalUnits>
+            </personAssociation>
+            <personAssociation pureId="27515043">
+                <externalPerson uuid="e5fda53b-f7ca-4380-91bd-cb1a7cca6efe">
+                    <link ref="content"
+                        href="https://pure.bond.edu.au/ws/api/513/external-persons/e5fda53b-f7ca-4380-91bd-cb1a7cca6efe"/>
+                    <name>Brooke Nickel</name>
+                    <type pureId="22272"
+                        uri="/dk/atira/pure/externalperson/externalpersontypes/externalperson/externalperson"
+                        >External person</type>
+                </externalPerson>
+                <name>
+                    <firstName>Brooke</firstName>
+                    <lastName>Nickel</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+                <externalOrganisations>
+                    <externalOrganisation uuid="e7937f9c-4278-4579-bb7d-49a0d66d3787"
+                        externalId="201032" externalIdSource="scival" externallyManaged="true">
+                        <link ref="content"
+                            href="https://pure.bond.edu.au/ws/api/513/external-organisations/e7937f9c-4278-4579-bb7d-49a0d66d3787"/>
+                        <name>University of Sydney</name>
+                        <type pureId="998"
+                            uri="/dk/atira/pure/ueoexternalorganisation/ueoexternalorganisationtypes/ueoexternalorganisation/unknown"
+                            >Unknown</type>
+                    </externalOrganisation>
+                </externalOrganisations>
+            </personAssociation>
+            <personAssociation pureId="27515044">
+                <externalPerson uuid="49b90d4e-d427-4949-a31e-f150121eb642">
+                    <link ref="content"
+                        href="https://pure.bond.edu.au/ws/api/513/external-persons/49b90d4e-d427-4949-a31e-f150121eb642"/>
+                    <name>Jolyn Hersch</name>
+                    <type pureId="22272"
+                        uri="/dk/atira/pure/externalperson/externalpersontypes/externalperson/externalperson"
+                        >External person</type>
+                </externalPerson>
+                <name>
+                    <firstName>Jolyn</firstName>
+                    <lastName>Hersch</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+                <externalOrganisations>
+                    <externalOrganisation uuid="e7937f9c-4278-4579-bb7d-49a0d66d3787"
+                        externalId="201032" externalIdSource="scival" externallyManaged="true">
+                        <link ref="content"
+                            href="https://pure.bond.edu.au/ws/api/513/external-organisations/e7937f9c-4278-4579-bb7d-49a0d66d3787"/>
+                        <name>University of Sydney</name>
+                        <type pureId="998"
+                            uri="/dk/atira/pure/ueoexternalorganisation/ueoexternalorganisationtypes/ueoexternalorganisation/unknown"
+                            >Unknown</type>
+                    </externalOrganisation>
+                </externalOrganisations>
+            </personAssociation>
+            <personAssociation pureId="27515045">
+                <person uuid="24706a2e-86b9-4ee6-9b66-d8c34cfc7bc2" externalId="AL_007871"
+                    externalIdSource="synchronisedUnifiedPerson" externallyManaged="true">
+                    <link ref="content"
+                        href="https://pure.bond.edu.au/ws/api/513/persons/24706a2e-86b9-4ee6-9b66-d8c34cfc7bc2"/>
+                    <name>Elaine Beller</name>
+                </person>
+                <name>
+                    <firstName>Elaine M</firstName>
+                    <lastName>Beller</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+                <organisationalUnits>
+                    <organisationalUnit uuid="ade755af-d039-4bce-902b-574782fc6276"
+                        externalId="ORS_CEBP" externalIdSource="synchronisedUnifiedOrganisation">
+                        <link ref="content"
+                            href="https://pure.bond.edu.au/ws/api/513/organisational-units/ade755af-d039-4bce-902b-574782fc6276"/>
+                        <name>Institute for Evidence-Based Healthcare</name>
+                        <type pureId="22573"
+                            uri="/dk/atira/pure/organisation/organisationtypes/organisation/university_research_centre"
+                            >University Research Centre</type>
+                    </organisationalUnit>
+                </organisationalUnits>
+            </personAssociation>
+            <personAssociation pureId="27515047">
+                <person uuid="7c2b0eff-6a4f-4047-8b0f-35e57847c9f1" externalId="AL_006194"
+                    externalIdSource="synchronisedUnifiedPerson" externallyManaged="true">
+                    <link ref="content"
+                        href="https://pure.bond.edu.au/ws/api/513/persons/7c2b0eff-6a4f-4047-8b0f-35e57847c9f1"/>
+                    <name>Jennifer Doust</name>
+                </person>
+                <name>
+                    <firstName>Jenny</firstName>
+                    <lastName>Doust</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+                <organisationalUnits>
+                    <organisationalUnit uuid="ade755af-d039-4bce-902b-574782fc6276"
+                        externalId="ORS_CEBP" externalIdSource="synchronisedUnifiedOrganisation">
+                        <link ref="content"
+                            href="https://pure.bond.edu.au/ws/api/513/organisational-units/ade755af-d039-4bce-902b-574782fc6276"/>
+                        <name>Institute for Evidence-Based Healthcare</name>
+                        <type pureId="22573"
+                            uri="/dk/atira/pure/organisation/organisationtypes/organisation/university_research_centre"
+                            >University Research Centre</type>
+                    </organisationalUnit>
+                </organisationalUnits>
+            </personAssociation>
+            <personAssociation pureId="27515049">
+                <externalPerson uuid="518aa958-0364-4045-9f85-aa3c7fb22e8a">
+                    <link ref="content"
+                        href="https://pure.bond.edu.au/ws/api/513/external-persons/518aa958-0364-4045-9f85-aa3c7fb22e8a"/>
+                    <name>Shane Compton</name>
+                    <type pureId="22272"
+                        uri="/dk/atira/pure/externalperson/externalpersontypes/externalperson/externalperson"
+                        >External person</type>
+                </externalPerson>
+                <name>
+                    <firstName>Shane</firstName>
+                    <lastName>Compton</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+            </personAssociation>
+            <personAssociation pureId="27515050">
+                <externalPerson uuid="b39f3ee9-65be-4a2f-a693-773e5be1e734">
+                    <link ref="content"
+                        href="https://pure.bond.edu.au/ws/api/513/external-persons/b39f3ee9-65be-4a2f-a693-773e5be1e734"/>
+                    <name>Alexandra L Barratt</name>
+                    <type pureId="22272"
+                        uri="/dk/atira/pure/externalperson/externalpersontypes/externalperson/externalperson"
+                        >External person</type>
+                </externalPerson>
+                <name>
+                    <firstName>Alexandra L</firstName>
+                    <lastName>Barratt</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+                <externalOrganisations>
+                    <externalOrganisation uuid="e7937f9c-4278-4579-bb7d-49a0d66d3787"
+                        externalId="201032" externalIdSource="scival" externallyManaged="true">
+                        <link ref="content"
+                            href="https://pure.bond.edu.au/ws/api/513/external-organisations/e7937f9c-4278-4579-bb7d-49a0d66d3787"/>
+                        <name>University of Sydney</name>
+                        <type pureId="998"
+                            uri="/dk/atira/pure/ueoexternalorganisation/ueoexternalorganisationtypes/ueoexternalorganisation/unknown"
+                            >Unknown</type>
+                    </externalOrganisation>
+                </externalOrganisations>
+            </personAssociation>
+            <personAssociation pureId="27515051">
+                <externalPerson uuid="20c51c7f-0aeb-47e9-8a8d-9138958a2e93">
+                    <link ref="content"
+                        href="https://pure.bond.edu.au/ws/api/513/external-persons/20c51c7f-0aeb-47e9-8a8d-9138958a2e93"/>
+                    <name>Lisa Bero</name>
+                    <type pureId="22272"
+                        uri="/dk/atira/pure/externalperson/externalpersontypes/externalperson/externalperson"
+                        >External person</type>
+                </externalPerson>
+                <name>
+                    <firstName>Lisa</firstName>
+                    <lastName>Bero</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+            </personAssociation>
+            <personAssociation pureId="27515052">
+                <externalPerson uuid="aa35951d-9962-47cb-97df-f44a12a21260">
+                    <link ref="content"
+                        href="https://pure.bond.edu.au/ws/api/513/external-persons/aa35951d-9962-47cb-97df-f44a12a21260"/>
+                    <name>Kirsten J McCaffery</name>
+                    <type pureId="22272"
+                        uri="/dk/atira/pure/externalperson/externalpersontypes/externalperson/externalperson"
+                        >External person</type>
+                </externalPerson>
+                <name>
+                    <firstName>Kirsten</firstName>
+                    <lastName>McCaffery</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+                <externalOrganisations>
+                    <externalOrganisation uuid="e7937f9c-4278-4579-bb7d-49a0d66d3787"
+                        externalId="201032" externalIdSource="scival" externallyManaged="true">
+                        <link ref="content"
+                            href="https://pure.bond.edu.au/ws/api/513/external-organisations/e7937f9c-4278-4579-bb7d-49a0d66d3787"/>
+                        <name>University of Sydney</name>
+                        <type pureId="998"
+                            uri="/dk/atira/pure/ueoexternalorganisation/ueoexternalorganisationtypes/ueoexternalorganisation/unknown"
+                            >Unknown</type>
+                    </externalOrganisation>
+                </externalOrganisations>
+            </personAssociation>
+        </personAssociations>
+        <publisher uuid="3ea4e104-8320-48dd-8722-810911d7976f">
+            <link ref="content"
+                href="https://pure.bond.edu.au/ws/api/513/publishers/3ea4e104-8320-48dd-8722-810911d7976f"/>
+            <name>Bond University</name>
+            <type pureId="1090" uri="/dk/atira/pure/publisher/publishertypes/publisher/publisher"
+                >Publisher</type>
+        </publisher>
+        <doi>10.4225/57/5b29e5249280b</doi>
+        <documents>
+            <document pureId="27515037">
+                <title>1075_Medical_Overdiagnosis_FINAL_data_120214_backup_w_pilot_code_2_.sav</title>
+                <documentType pureId="16838" uri="/dk/atira/pure/dataset/documents/dataset"
+                    >Dataset</documentType>
+                <url>https://pure.bond.edu.au/ws/files/27515037/1075_Medical_Overdiagnosis_FINAL_data_120214_backup_w_pilot_code_2_.sav</url>
+                <documentLicense pureId="16862" uri="/dk/atira/pure/dataset/documentlicenses/cc-by"
+                    >CC BY</documentLicense>
+                <visibility key="FREE">Public - No restriction</visibility>
+                <creator>acass</creator>
+                <created>2018-08-24T16:22:51.298+10:00</created>
+            </document>
+            <document pureId="27515038">
+                <title>1075_Medical_Overdiagnosis_FINAL_data_120214_backup_w_pilot_code.csv</title>
+                <documentType pureId="16838" uri="/dk/atira/pure/dataset/documents/dataset"
+                    >Dataset</documentType>
+                <url>https://pure.bond.edu.au/ws/files/27515038/1075_Medical_Overdiagnosis_FINAL_data_120214_backup_w_pilot_code.csv</url>
+                <documentLicense pureId="16862" uri="/dk/atira/pure/dataset/documentlicenses/cc-by"
+                    >CC BY</documentLicense>
+                <visibility key="FREE">Public - No restriction</visibility>
+                <creator>acass</creator>
+                <created>2018-08-24T16:22:51.298+10:00</created>
+            </document>
+            <document pureId="27515039">
+                <title>1075_Medical_Overdiagnosis_FINAL_data_120214_backup_w_pilot_code_Variable_View.csv</title>
+                <documentType pureId="16838" uri="/dk/atira/pure/dataset/documents/dataset"
+                    >Dataset</documentType>
+                <url>https://pure.bond.edu.au/ws/files/27515039/1075_Medical_Overdiagnosis_FINAL_data_120214_backup_w_pilot_code_Variable_View.csv</url>
+                <documentLicense pureId="16862" uri="/dk/atira/pure/dataset/documentlicenses/cc-by"
+                    >CC BY</documentLicense>
+                <visibility key="FREE">Public - No restriction</visibility>
+                <creator>acass</creator>
+                <created>2018-08-24T16:22:51.298+10:00</created>
+            </document>
+        </documents>
+        <organisationalUnits>
+            <organisationalUnit uuid="ade755af-d039-4bce-902b-574782fc6276" externalId="ORS_CEBP"
+                externalIdSource="synchronisedUnifiedOrganisation">
+                <link ref="content"
+                    href="https://pure.bond.edu.au/ws/api/513/organisational-units/ade755af-d039-4bce-902b-574782fc6276"/>
+                <name>Institute for Evidence-Based Healthcare</name>
+                <type pureId="22573"
+                    uri="/dk/atira/pure/organisation/organisationtypes/organisation/university_research_centre"
+                    >University Research Centre</type>
+            </organisationalUnit>
+        </organisationalUnits>
+        <publicationDate>
+            <year>2015</year>
+        </publicationDate>
+        <openAccessPermission pureId="11293866" uri="/dk/atira/pure/dataset/accesspermission/open"
+            >Open</openAccessPermission>
+        <relatedResearchOutputs>
+            <relatedResearchOutput uuid="6c676eca-a194-46a4-8d49-31a72d3ac53c"
+                externalId="84930667582" externalIdSource="Scopus">
+                <link ref="content"
+                    href="https://pure.bond.edu.au/ws/api/513/research-outputs/6c676eca-a194-46a4-8d49-31a72d3ac53c"/>
+                <name>Public opinions about overdiagnosis: A national community survey</name>
+                <type pureId="3969"
+                    uri="/dk/atira/pure/researchoutput/researchoutputtypes/contributiontojournal/article"
+                    >Article</type>
+            </relatedResearchOutput>
+        </relatedResearchOutputs>
+        <visibility key="FREE">Public - No restriction</visibility>
+        <confidential>false</confidential>
+        <info>
+            <createdBy>acass</createdBy>
+            <createdDate>2018-08-24T16:22:51.313+10:00</createdDate>
+            <modifiedBy>acass</modifiedBy>
+            <modifiedDate>2019-04-01T15:25:43.086+10:00</modifiedDate>
+            <portalUrl>https://research.bond.edu.au/en/datasets/8091d188-cd4e-49ec-a594-be3cff1d0bcc</portalUrl>
+            <prettyURLIdentifiers>
+                <prettyURLIdentifier>public-opinions-about-overdiagnosis-a-national-community-survey</prettyURLIdentifier>
+            </prettyURLIdentifiers>
+        </info>
+    </dataSet>
+    <dataSet uuid="53474224-2cb8-49e9-b8b3-29469720c187" pureId="27515098">
+        <title>The perfect storm: The convergence of social, mobile and photo technologies in
+            libraries </title>
+        <type pureId="6102" uri="/dk/atira/pure/dataset/datasettypes/dataset/dataset">Dataset</type>
+        <description pureId="27515101"
+            typeUri="/dk/atira/pure/dataset/descriptions/datasetdescription" type="Description">Data
+            gathered for the paper presented at VALA 2014, February 3-5, Melbourne, Vic.&#xd; File
+            Formats: Text, KML, Excel, PDF, PNG, CSV&#xd; File Size: 3 MB (Compressed)&#xd; Includes
+            maps data, profile monitoring, survey responses and word cloud images.&#xd; Provided
+            under the terms of CC BY NC Creative Commons Licence</description>
+        <dataProductionPeriod>
+            <startDate>
+                <year>2013</year>
+            </startDate>
+            <endDate>
+                <year>2013</year>
+            </endDate>
+        </dataProductionPeriod>
+        <personAssociations>
+            <personAssociation pureId="27515104">
+                <name>
+                    <firstName>Wendy Anne</firstName>
+                    <lastName>Abbott</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+            </personAssociation>
+            <personAssociation pureId="27515106">
+                <person uuid="28c71667-5ea3-4999-96fd-711e815c98b3" externalId="AL_008397"
+                    externalIdSource="synchronisedUnifiedPerson" externallyManaged="true">
+                    <link ref="content"
+                        href="https://pure.bond.edu.au/ws/api/513/persons/28c71667-5ea3-4999-96fd-711e815c98b3"/>
+                    <name>Jessie Donaghey</name>
+                </person>
+                <name>
+                    <firstName>Jessie</firstName>
+                    <lastName>Donaghey</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+            </personAssociation>
+            <personAssociation pureId="27515108">
+                <name>
+                    <firstName>Joanna</firstName>
+                    <lastName>Hare</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+            </personAssociation>
+            <personAssociation pureId="27515110">
+                <person uuid="3e6e86f2-931e-44e2-b2ab-32a23eb6a7e2" externalId="AL_003594"
+                    externalIdSource="synchronisedUnifiedPerson" externallyManaged="true">
+                    <link ref="content"
+                        href="https://pure.bond.edu.au/ws/api/513/persons/3e6e86f2-931e-44e2-b2ab-32a23eb6a7e2"/>
+                    <name>Peta Hopkins</name>
+                </person>
+                <name>
+                    <firstName>Peta J.</firstName>
+                    <lastName>Hopkins</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+            </personAssociation>
+        </personAssociations>
+        <publisher uuid="3ea4e104-8320-48dd-8722-810911d7976f">
+            <link ref="content"
+                href="https://pure.bond.edu.au/ws/api/513/publishers/3ea4e104-8320-48dd-8722-810911d7976f"/>
+            <name>Bond University</name>
+            <type pureId="1090" uri="/dk/atira/pure/publisher/publishertypes/publisher/publisher"
+                >Publisher</type>
+        </publisher>
+        <doi>10.4225/57/5b29e39f9280a</doi>
+        <documents>
+            <document pureId="27515102">
+                <title>Data_Bundle_2_.zip</title>
+                <documentType pureId="16838" uri="/dk/atira/pure/dataset/documents/dataset"
+                    >Dataset</documentType>
+                <url>https://pure.bond.edu.au/ws/files/27515102/Data_Bundle_2_.zip</url>
+                <documentLicense pureId="16868"
+                    uri="/dk/atira/pure/dataset/documentlicenses/cc-by-nc">CC
+                    BY-NC</documentLicense>
+                <visibility key="FREE">Public - No restriction</visibility>
+                <creator>acass</creator>
+                <created>2018-08-24T16:29:06.417+10:00</created>
+            </document>
+        </documents>
+        <publicationDate>
+            <year>2014</year>
+        </publicationDate>
+        <openAccessPermission pureId="11293866" uri="/dk/atira/pure/dataset/accesspermission/open"
+            >Open</openAccessPermission>
+        <relatedResearchOutputs>
+            <relatedResearchOutput uuid="2b3e9d7b-567d-4311-9a93-83621b37b7e0">
+                <link ref="content"
+                    href="https://pure.bond.edu.au/ws/api/513/research-outputs/2b3e9d7b-567d-4311-9a93-83621b37b7e0"/>
+                <name>The perfect storm: The convergence of social, mobile and photo technologies in
+                    libraries</name>
+                <type pureId="4019"
+                    uri="/dk/atira/pure/researchoutput/researchoutputtypes/contributiontobookanthology/conference"
+                    >Conference contribution</type>
+            </relatedResearchOutput>
+        </relatedResearchOutputs>
+        <links>
+            <link pureId="29028244">
+                <url>https://creativecommons.org/licenses/by-nc/4.0/</url>
+                <description>Provided under CC BY NC licence</description>
+            </link>
+        </links>
+        <visibility key="FREE">Public - No restriction</visibility>
+        <confidential>false</confidential>
+        <info>
+            <createdBy>acass</createdBy>
+            <createdDate>2018-08-24T16:29:06.421+10:00</createdDate>
+            <modifiedBy>acass</modifiedBy>
+            <modifiedDate>2019-02-18T16:26:50.337+10:00</modifiedDate>
+            <portalUrl>https://research.bond.edu.au/en/datasets/53474224-2cb8-49e9-b8b3-29469720c187</portalUrl>
+            <prettyURLIdentifiers>
+                <prettyURLIdentifier>the-perfect-storm-the-convergence-of-social-mobile-and-photo-tech-2</prettyURLIdentifier>
+            </prettyURLIdentifiers>
+        </info>
+    </dataSet>
+    <dataSet uuid="774e8f05-8967-4d76-8873-890195413496" pureId="27515197">
+        <title>The nature and extent of violence against bus drivers </title>
+        <type pureId="6102" uri="/dk/atira/pure/dataset/datasettypes/dataset/dataset">Dataset</type>
+        <description pureId="27515200"
+            typeUri="/dk/atira/pure/dataset/descriptions/datasetdescription" type="Description"
+            >International transport literature indicates that violence and threats to bus drivers
+            is a major problem, albeit underreported. While there is no Australian research on this
+            topic there has been considerable media attention to violence against bus drivers that
+            highlights their complex and challenging work environment. Funded by the federal
+            government initiative Researchers in Business (Enterprise Connect) and local industry
+            stakeholders, this study aims to gather for the first time data about the patterns of
+            incivility and violence against urban bus drivers in Australia and inform crime
+            reduction techniques and crime prevention strategies.&#xd; &#xd; Several data sets will
+            be generated: qualitative data from focus gropes with bus drivers; qualitative data from
+            interviews with industry spokespersons; survey responses from bus drivers re
+            victimization; observational data of aggression on buses.&#xd; &#xd; Data in NVIVO
+            format.</description>
+        <dataProductionPeriod>
+            <startDate>
+                <year>2013</year>
+            </startDate>
+            <endDate>
+                <year>2013</year>
+            </endDate>
+        </dataProductionPeriod>
+        <personAssociations>
+            <personAssociation pureId="27515202">
+                <person uuid="694db003-fb5d-47fb-856f-36094c740fb3" externalId="AL_000374"
+                    externalIdSource="synchronisedUnifiedPerson" externallyManaged="true">
+                    <link ref="content"
+                        href="https://pure.bond.edu.au/ws/api/513/persons/694db003-fb5d-47fb-856f-36094c740fb3"/>
+                    <name>Robyn Lincoln</name>
+                </person>
+                <name>
+                    <firstName>RA</firstName>
+                    <lastName>Lincoln</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+                <organisationalUnits>
+                    <organisationalUnit uuid="3da066e4-4bf9-4cd2-a216-03ca3908549b"
+                        externalId="ORS_HS" externalIdSource="synchronisedUnifiedOrganisation">
+                        <link ref="content"
+                            href="https://pure.bond.edu.au/ws/api/513/organisational-units/3da066e4-4bf9-4cd2-a216-03ca3908549b"/>
+                        <name><![CDATA[Faculty of Society & Design]]></name>
+                        <type pureId="22568"
+                            uri="/dk/atira/pure/organisation/organisationtypes/organisation/faculty"
+                            >Faculty</type>
+                    </organisationalUnit>
+                </organisationalUnits>
+            </personAssociation>
+        </personAssociations>
+        <publisher uuid="3ea4e104-8320-48dd-8722-810911d7976f">
+            <link ref="content"
+                href="https://pure.bond.edu.au/ws/api/513/publishers/3ea4e104-8320-48dd-8722-810911d7976f"/>
+            <name>Bond University</name>
+            <type pureId="1090" uri="/dk/atira/pure/publisher/publishertypes/publisher/publisher"
+                >Publisher</type>
+        </publisher>
+        <doi>10.4225/57/5b29e7ca9280c</doi>
+        <contactPerson uuid="694db003-fb5d-47fb-856f-36094c740fb3" externalId="AL_000374"
+            externalIdSource="synchronisedUnifiedPerson" externallyManaged="true">
+            <link ref="content"
+                href="https://pure.bond.edu.au/ws/api/513/persons/694db003-fb5d-47fb-856f-36094c740fb3"/>
+            <name>Robyn Lincoln</name>
+        </contactPerson>
+        <organisationalUnits>
+            <organisationalUnit uuid="3da066e4-4bf9-4cd2-a216-03ca3908549b" externalId="ORS_HS"
+                externalIdSource="synchronisedUnifiedOrganisation">
+                <link ref="content"
+                    href="https://pure.bond.edu.au/ws/api/513/organisational-units/3da066e4-4bf9-4cd2-a216-03ca3908549b"/>
+                <name><![CDATA[Faculty of Society & Design]]></name>
+                <type pureId="22568"
+                    uri="/dk/atira/pure/organisation/organisationtypes/organisation/faculty"
+                    >Faculty</type>
+            </organisationalUnit>
+        </organisationalUnits>
+        <publicationDate>
+            <year>2013</year>
+        </publicationDate>
+        <openAccessPermission pureId="11293872"
+            uri="/dk/atira/pure/dataset/accesspermission/restricted"
+            >Restricted</openAccessPermission>
+        <visibility key="FREE">Public - No restriction</visibility>
+        <confidential>false</confidential>
+        <info>
+            <createdBy>acass</createdBy>
+            <createdDate>2018-08-24T16:37:45.752+10:00</createdDate>
+            <modifiedBy>acass</modifiedBy>
+            <modifiedDate>2019-03-12T16:45:31.338+10:00</modifiedDate>
+            <portalUrl>https://research.bond.edu.au/en/datasets/774e8f05-8967-4d76-8873-890195413496</portalUrl>
+            <prettyURLIdentifiers>
+                <prettyURLIdentifier>the-nature-and-extent-of-violence-against-bus-drivers</prettyURLIdentifier>
+            </prettyURLIdentifiers>
+        </info>
+    </dataSet>
+    <dataSet uuid="a5908fa4-4926-449b-8c27-0f5db0879183" pureId="27515223">
+        <title>Naming and shaming of indigenous youth in the justice system: An exploratory study of
+            the impact in the Northern Territory </title>
+        <type pureId="6102" uri="/dk/atira/pure/dataset/datasettypes/dataset/dataset">Dataset</type>
+        <description pureId="27515226"
+            typeUri="/dk/atira/pure/dataset/descriptions/datasetdescription" type="Description">The
+            Northern Territory is the only Australian jurisdiction which permits public
+            identification of young offenders and yet there has been no empirical study of this
+            practice and its impact on indigenous youth in particular. This study gathers
+            information from key stakeholders, analyses media representations, and examines
+            exemplary cases to explore the consequences of ‘naming and shaming’ at the individual,
+            community and justice system levels.&#xd; &#xd; Data in NVIVO format.</description>
+        <dataProductionPeriod>
+            <startDate>
+                <year>2013</year>
+            </startDate>
+            <endDate>
+                <year>2013</year>
+            </endDate>
+        </dataProductionPeriod>
+        <personAssociations>
+            <personAssociation pureId="27515228">
+                <person uuid="694db003-fb5d-47fb-856f-36094c740fb3" externalId="AL_000374"
+                    externalIdSource="synchronisedUnifiedPerson" externallyManaged="true">
+                    <link ref="content"
+                        href="https://pure.bond.edu.au/ws/api/513/persons/694db003-fb5d-47fb-856f-36094c740fb3"/>
+                    <name>Robyn Lincoln</name>
+                </person>
+                <name>
+                    <firstName>RA</firstName>
+                    <lastName>Lincoln</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+                <organisationalUnits>
+                    <organisationalUnit uuid="3da066e4-4bf9-4cd2-a216-03ca3908549b"
+                        externalId="ORS_HS" externalIdSource="synchronisedUnifiedOrganisation">
+                        <link ref="content"
+                            href="https://pure.bond.edu.au/ws/api/513/organisational-units/3da066e4-4bf9-4cd2-a216-03ca3908549b"/>
+                        <name><![CDATA[Faculty of Society & Design]]></name>
+                        <type pureId="22568"
+                            uri="/dk/atira/pure/organisation/organisationtypes/organisation/faculty"
+                            >Faculty</type>
+                    </organisationalUnit>
+                </organisationalUnits>
+            </personAssociation>
+            <personAssociation pureId="27515230">
+                <externalPerson uuid="00d0049e-ddb1-47e0-ac7a-304bc29471f7">
+                    <link ref="content"
+                        href="https://pure.bond.edu.au/ws/api/513/external-persons/00d0049e-ddb1-47e0-ac7a-304bc29471f7"/>
+                    <name>Duncan Chappell</name>
+                    <type pureId="22272"
+                        uri="/dk/atira/pure/externalperson/externalpersontypes/externalperson/externalperson"
+                        >External person</type>
+                </externalPerson>
+                <name>
+                    <firstName>Duncan</firstName>
+                    <lastName>Chappell</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+                <externalOrganisations>
+                    <externalOrganisation uuid="e7937f9c-4278-4579-bb7d-49a0d66d3787"
+                        externalId="201032" externalIdSource="scival" externallyManaged="true">
+                        <link ref="content"
+                            href="https://pure.bond.edu.au/ws/api/513/external-organisations/e7937f9c-4278-4579-bb7d-49a0d66d3787"/>
+                        <name>University of Sydney</name>
+                        <type pureId="998"
+                            uri="/dk/atira/pure/ueoexternalorganisation/ueoexternalorganisationtypes/ueoexternalorganisation/unknown"
+                            >Unknown</type>
+                    </externalOrganisation>
+                </externalOrganisations>
+            </personAssociation>
+        </personAssociations>
+        <publisher uuid="3ea4e104-8320-48dd-8722-810911d7976f">
+            <link ref="content"
+                href="https://pure.bond.edu.au/ws/api/513/publishers/3ea4e104-8320-48dd-8722-810911d7976f"/>
+            <name>Bond University</name>
+            <type pureId="1090" uri="/dk/atira/pure/publisher/publishertypes/publisher/publisher"
+                >Publisher</type>
+        </publisher>
+        <doi>10.4225/57/58ad32cf6f668</doi>
+        <contactPerson uuid="694db003-fb5d-47fb-856f-36094c740fb3" externalId="AL_000374"
+            externalIdSource="synchronisedUnifiedPerson" externallyManaged="true">
+            <link ref="content"
+                href="https://pure.bond.edu.au/ws/api/513/persons/694db003-fb5d-47fb-856f-36094c740fb3"/>
+            <name>Robyn Lincoln</name>
+        </contactPerson>
+        <organisationalUnits>
+            <organisationalUnit uuid="3da066e4-4bf9-4cd2-a216-03ca3908549b" externalId="ORS_HS"
+                externalIdSource="synchronisedUnifiedOrganisation">
+                <link ref="content"
+                    href="https://pure.bond.edu.au/ws/api/513/organisational-units/3da066e4-4bf9-4cd2-a216-03ca3908549b"/>
+                <name><![CDATA[Faculty of Society & Design]]></name>
+                <type pureId="22568"
+                    uri="/dk/atira/pure/organisation/organisationtypes/organisation/faculty"
+                    >Faculty</type>
+            </organisationalUnit>
+        </organisationalUnits>
+        <publicationDate>
+            <year>2013</year>
+        </publicationDate>
+        <openAccessPermission pureId="11293872"
+            uri="/dk/atira/pure/dataset/accesspermission/restricted"
+            >Restricted</openAccessPermission>
+        <relatedResearchOutputs>
+            <relatedResearchOutput uuid="ff6d3ed1-3203-4592-9f41-03ba5aa19f74">
+                <link ref="content"
+                    href="https://pure.bond.edu.au/ws/api/513/research-outputs/ff6d3ed1-3203-4592-9f41-03ba5aa19f74"/>
+                <name>'Shhh ... We can't tell you': An update on the naming prohibition of young
+                    offenders</name>
+                <type pureId="3969"
+                    uri="/dk/atira/pure/researchoutput/researchoutputtypes/contributiontojournal/article"
+                    >Article</type>
+            </relatedResearchOutput>
+            <relatedResearchOutput uuid="0a4795ed-63da-4f44-bd0f-4509a8fd10a2">
+                <link ref="content"
+                    href="https://pure.bond.edu.au/ws/api/513/research-outputs/0a4795ed-63da-4f44-bd0f-4509a8fd10a2"/>
+                <name>Abandoning identity protection for juvenile offenders</name>
+                <type pureId="3969"
+                    uri="/dk/atira/pure/researchoutput/researchoutputtypes/contributiontojournal/article"
+                    >Article</type>
+            </relatedResearchOutput>
+            <relatedResearchOutput uuid="8329cd14-bba8-4df7-ac71-738e1dbded1b">
+                <link ref="content"
+                    href="https://pure.bond.edu.au/ws/api/513/research-outputs/8329cd14-bba8-4df7-ac71-738e1dbded1b"/>
+                <name>To name or shame or not</name>
+                <type pureId="3969"
+                    uri="/dk/atira/pure/researchoutput/researchoutputtypes/contributiontojournal/article"
+                    >Article</type>
+            </relatedResearchOutput>
+        </relatedResearchOutputs>
+        <visibility key="FREE">Public - No restriction</visibility>
+        <confidential>false</confidential>
+        <info>
+            <createdBy>acass</createdBy>
+            <createdDate>2018-08-24T16:40:41.536+10:00</createdDate>
+            <modifiedBy>acass</modifiedBy>
+            <modifiedDate>2019-06-19T12:25:13.598+10:00</modifiedDate>
+            <portalUrl>https://research.bond.edu.au/en/datasets/a5908fa4-4926-449b-8c27-0f5db0879183</portalUrl>
+            <prettyURLIdentifiers>
+                <prettyURLIdentifier>naming-and-shaming-of-indigenous-youth-in-the-justice-system-an-e</prettyURLIdentifier>
+            </prettyURLIdentifiers>
+        </info>
+    </dataSet>
+    <dataSet uuid="47576a3c-6690-447e-b647-5ffab3f9dfec" pureId="27515240">
+        <title>Macular regeneration</title>
+        <type pureId="6102" uri="/dk/atira/pure/dataset/datasettypes/dataset/dataset">Dataset</type>
+        <description pureId="27515243"
+            typeUri="/dk/atira/pure/dataset/descriptions/datasetdescription" type="Description"
+            >Age-related macular degeneration (AMD) is the leading cause of blindness in the
+            population over 60 in the western world. There are two clinical forms of AMD: dry and
+            wet. The initial damage of AMD is the dysfunction of the retinal pigment epithelial
+            (RPE) cells and the underlying supportive Bruch’s membrane, which results in the
+            dysfunction or loss of photoreceptors. Subsequently the patients undergo blindness.
+            Currently there is no therapy for the dry AMD which accounts for the majority of the
+            cases (~90%). Cell-based therapy, replacing the damaged cells in the retina, is the most
+            promising treatment. Our rationale is to engineer a therapeutic intact functional RPE
+            monolayer derived from human stem cells on the prosthetic Bruch’s membrane ready for
+            subretinal implantation in order to restore the vision. We are able to develop a
+            3-dimensional nanofibrous membrane with surface modification which mimics the natural
+            human Bruch’s membrane. The prosthetic Bruch’s membrane is made of FDA approved polymer
+            which gives advantages for clinical application. A long-term functional RPE monolayer
+            has been engineered on such substrate and is ready for subretinal implantation to
+            investigate its potential of visual improvement. A further step is to develop a retinal
+            multilayer consisting of the photoreceptors and RPE, which can benefit not only the AMD
+            but also the other retinal diseases.&#xd; &#xd; Data in the form of interviews,
+            statistics and images.&#xd; &#xd; Contact the author to determine access
+            conditions.</description>
+        <dataProductionPeriod>
+            <startDate>
+                <year>2010</year>
+            </startDate>
+            <endDate>
+                <year>2015</year>
+            </endDate>
+        </dataProductionPeriod>
+        <personAssociations>
+            <personAssociation pureId="27515245">
+                <name>
+                    <firstName>Qin</firstName>
+                    <lastName>Liu</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+                <organisationalUnits>
+                    <organisationalUnit uuid="2e375d45-57ac-4c53-8dc1-704238ba00c0"
+                        externalId="ORS_CJSC" externalIdSource="synchronisedUnifiedOrganisation">
+                        <link ref="content"
+                            href="https://pure.bond.edu.au/ws/api/513/organisational-units/2e375d45-57ac-4c53-8dc1-704238ba00c0"/>
+                        <name>Clem Jones Centre for Regenerative Medicine</name>
+                        <type pureId="22576"
+                            uri="/dk/atira/pure/organisation/organisationtypes/organisation/faculty_research_centre"
+                            >Faculty Research Centre</type>
+                    </organisationalUnit>
+                </organisationalUnits>
+            </personAssociation>
+        </personAssociations>
+        <publisher uuid="3ea4e104-8320-48dd-8722-810911d7976f">
+            <link ref="content"
+                href="https://pure.bond.edu.au/ws/api/513/publishers/3ea4e104-8320-48dd-8722-810911d7976f"/>
+            <name>Bond University</name>
+            <type pureId="1090" uri="/dk/atira/pure/publisher/publishertypes/publisher/publisher"
+                >Publisher</type>
+        </publisher>
+        <doi>10.4225/57/5b29e8c69280d</doi>
+        <organisationalUnits>
+            <organisationalUnit uuid="2e375d45-57ac-4c53-8dc1-704238ba00c0" externalId="ORS_CJSC"
+                externalIdSource="synchronisedUnifiedOrganisation">
+                <link ref="content"
+                    href="https://pure.bond.edu.au/ws/api/513/organisational-units/2e375d45-57ac-4c53-8dc1-704238ba00c0"/>
+                <name>Clem Jones Centre for Regenerative Medicine</name>
+                <type pureId="22576"
+                    uri="/dk/atira/pure/organisation/organisationtypes/organisation/faculty_research_centre"
+                    >Faculty Research Centre</type>
+            </organisationalUnit>
+        </organisationalUnits>
+        <publicationDate>
+            <year>2013</year>
+        </publicationDate>
+        <openAccessPermission pureId="11293872"
+            uri="/dk/atira/pure/dataset/accesspermission/restricted"
+            >Restricted</openAccessPermission>
+        <visibility key="FREE">Public - No restriction</visibility>
+        <confidential>false</confidential>
+        <info>
+            <createdBy>acass</createdBy>
+            <createdDate>2018-08-24T16:42:51.651+10:00</createdDate>
+            <modifiedBy>acass</modifiedBy>
+            <modifiedDate>2018-12-14T16:29:38.662+10:00</modifiedDate>
+            <portalUrl>https://research.bond.edu.au/en/datasets/47576a3c-6690-447e-b647-5ffab3f9dfec</portalUrl>
+            <prettyURLIdentifiers>
+                <prettyURLIdentifier>macular-regeneration</prettyURLIdentifier>
+            </prettyURLIdentifiers>
+        </info>
+    </dataSet>
+    <dataSet uuid="e7bcdd53-c80b-43ef-ba60-54c091279c77" pureId="27515251">
+        <title>Contractile activity of the bladder urothelium and lamina propria</title>
+        <type pureId="6102" uri="/dk/atira/pure/dataset/datasettypes/dataset/dataset">Dataset</type>
+        <description pureId="27515254"
+            typeUri="/dk/atira/pure/dataset/descriptions/datasetdescription" type="Description">This
+            project involves investigating the receptors, genes and neuronal systems modulating a
+            unique contractile activity generated from within the bladder wall. The activity may be
+            an underlying cause of lower urinary tract diseases and this research has identified a
+            range of novel therapeutic targets which can be clinically utilised for therapeutic
+            treatments.&#xd; &#xd; Data in the form of Excel Spreadsheets and statistical software
+            (Graphpad Prism).</description>
+        <dataProductionPeriod>
+            <startDate>
+                <year>2008</year>
+            </startDate>
+            <endDate>
+                <year>2013</year>
+            </endDate>
+        </dataProductionPeriod>
+        <personAssociations>
+            <personAssociation pureId="27515256">
+                <person uuid="ad1a68e8-0bdc-45a7-9190-dc33a6d448bd" externalId="AL_006845"
+                    externalIdSource="synchronisedUnifiedPerson" externallyManaged="true">
+                    <link ref="content"
+                        href="https://pure.bond.edu.au/ws/api/513/persons/ad1a68e8-0bdc-45a7-9190-dc33a6d448bd"/>
+                    <name>Christian Moro</name>
+                </person>
+                <name>
+                    <firstName>Christian</firstName>
+                    <lastName>Moro</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+                <organisationalUnits>
+                    <organisationalUnit uuid="f715081a-c164-4206-95d9-126d55766cea"
+                        externalId="ORS_CUR" externalIdSource="synchronisedUnifiedOrganisation">
+                        <link ref="content"
+                            href="https://pure.bond.edu.au/ws/api/513/organisational-units/f715081a-c164-4206-95d9-126d55766cea"/>
+                        <name>Centre for Urology Research</name>
+                        <type pureId="22576"
+                            uri="/dk/atira/pure/organisation/organisationtypes/organisation/faculty_research_centre"
+                            >Faculty Research Centre</type>
+                    </organisationalUnit>
+                </organisationalUnits>
+            </personAssociation>
+            <personAssociation pureId="27515258">
+                <person uuid="0c021b50-1515-4ef2-882c-a7cb851f6f6f" externalId="AL_003287"
+                    externalIdSource="synchronisedUnifiedPerson" externallyManaged="true">
+                    <link ref="content"
+                        href="https://pure.bond.edu.au/ws/api/513/persons/0c021b50-1515-4ef2-882c-a7cb851f6f6f"/>
+                    <name>Russ Chess-Williams</name>
+                </person>
+                <name>
+                    <firstName>Russ</firstName>
+                    <lastName>Chess-Williams</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+                <organisationalUnits>
+                    <organisationalUnit uuid="f715081a-c164-4206-95d9-126d55766cea"
+                        externalId="ORS_CUR" externalIdSource="synchronisedUnifiedOrganisation">
+                        <link ref="content"
+                            href="https://pure.bond.edu.au/ws/api/513/organisational-units/f715081a-c164-4206-95d9-126d55766cea"/>
+                        <name>Centre for Urology Research</name>
+                        <type pureId="22576"
+                            uri="/dk/atira/pure/organisation/organisationtypes/organisation/faculty_research_centre"
+                            >Faculty Research Centre</type>
+                    </organisationalUnit>
+                </organisationalUnits>
+            </personAssociation>
+        </personAssociations>
+        <publisher uuid="3ea4e104-8320-48dd-8722-810911d7976f">
+            <link ref="content"
+                href="https://pure.bond.edu.au/ws/api/513/publishers/3ea4e104-8320-48dd-8722-810911d7976f"/>
+            <name>Bond University</name>
+            <type pureId="1090" uri="/dk/atira/pure/publisher/publishertypes/publisher/publisher"
+                >Publisher</type>
+        </publisher>
+        <doi>10.4225/57/5b29dcd792808</doi>
+        <contactPerson uuid="ad1a68e8-0bdc-45a7-9190-dc33a6d448bd" externalId="AL_006845"
+            externalIdSource="synchronisedUnifiedPerson" externallyManaged="true">
+            <link ref="content"
+                href="https://pure.bond.edu.au/ws/api/513/persons/ad1a68e8-0bdc-45a7-9190-dc33a6d448bd"/>
+            <name>Christian Moro</name>
+        </contactPerson>
+        <organisationalUnits>
+            <organisationalUnit uuid="f715081a-c164-4206-95d9-126d55766cea" externalId="ORS_CUR"
+                externalIdSource="synchronisedUnifiedOrganisation">
+                <link ref="content"
+                    href="https://pure.bond.edu.au/ws/api/513/organisational-units/f715081a-c164-4206-95d9-126d55766cea"/>
+                <name>Centre for Urology Research</name>
+                <type pureId="22576"
+                    uri="/dk/atira/pure/organisation/organisationtypes/organisation/faculty_research_centre"
+                    >Faculty Research Centre</type>
+            </organisationalUnit>
+        </organisationalUnits>
+        <publicationDate>
+            <year>2013</year>
+        </publicationDate>
+        <openAccessPermission pureId="11293872"
+            uri="/dk/atira/pure/dataset/accesspermission/restricted"
+            >Restricted</openAccessPermission>
+        <relatedResearchOutputs>
+            <relatedResearchOutput uuid="3a7f1bc5-4936-4383-b940-b7f4273263a8"
+                externalId="84871943394" externalIdSource="Scopus">
+                <link ref="content"
+                    href="https://pure.bond.edu.au/ws/api/513/research-outputs/3a7f1bc5-4936-4383-b940-b7f4273263a8"/>
+                <name>Adrenoceptor function and expression in bladder urothelium and lamina
+                    propria</name>
+                <type pureId="3969"
+                    uri="/dk/atira/pure/researchoutput/researchoutputtypes/contributiontojournal/article"
+                    >Article</type>
+            </relatedResearchOutput>
+            <relatedResearchOutput uuid="386a9958-b218-44d7-b4ec-3f090710ae69"
+                externalId="84866612190" externalIdSource="Scopus">
+                <link ref="content"
+                    href="https://pure.bond.edu.au/ws/api/513/research-outputs/386a9958-b218-44d7-b4ec-3f090710ae69"/>
+                <name>Non-adrenergic, non-cholinergic, non-purinergic contractions of the
+                    urothelium/lamina propria of the pig bladder</name>
+                <type pureId="3969"
+                    uri="/dk/atira/pure/researchoutput/researchoutputtypes/contributiontojournal/article"
+                    >Article</type>
+            </relatedResearchOutput>
+        </relatedResearchOutputs>
+        <visibility key="FREE">Public - No restriction</visibility>
+        <confidential>false</confidential>
+        <info>
+            <createdBy>acass</createdBy>
+            <createdDate>2018-08-24T16:45:40.199+10:00</createdDate>
+            <modifiedBy>acass</modifiedBy>
+            <modifiedDate>2019-03-12T14:33:04.940+10:00</modifiedDate>
+            <portalUrl>https://research.bond.edu.au/en/datasets/e7bcdd53-c80b-43ef-ba60-54c091279c77</portalUrl>
+            <prettyURLIdentifiers>
+                <prettyURLIdentifier>contractile-activity-of-the-bladder-urothelium-and-lamina-propria</prettyURLIdentifier>
+            </prettyURLIdentifiers>
+        </info>
+    </dataSet>
+    <dataSet uuid="a48a78c3-807a-4c77-bb2b-da671493da0b" pureId="27515273">
+        <title>Contract law in aid channels</title>
+        <type pureId="6102" uri="/dk/atira/pure/dataset/datasettypes/dataset/dataset">Dataset</type>
+        <description pureId="27515276"
+            typeUri="/dk/atira/pure/dataset/descriptions/datasetdescription" type="Description">This
+            research into contracting in development aid offers a unique opportunity for exploring
+            the boundaries of, and new approaches to, the function and utility of contract and
+            contract law. By framing aid effectiveness as a contractual problem ­ in some ways
+            similar to contracting in commercial arrangements such as networks, franchising, and
+            even trusts, with many related thematic lines, this research takes a critical step
+            toward promoting aid effectiveness. It adopts an innovative, pluralist approach,
+            adducing relevant threads of contract and organizational theory, such as relational
+            contracting, incomplete contracting, and organizational learning theory in its empirical
+            analysis of contracting in development aid.&#xd; &#xd; Data in the form of
+            interviews.&#xd; &#xd; This dataset is closed, but interested researchers may apply for
+            access by contacting the University using the adjacent email address. </description>
+        <dataProductionPeriod>
+            <startDate>
+                <year>2012</year>
+            </startDate>
+            <endDate>
+                <year>2013</year>
+            </endDate>
+        </dataProductionPeriod>
+        <personAssociations>
+            <personAssociation pureId="27515278">
+                <name>
+                    <firstName>Elizabeth</firstName>
+                    <lastName>Spencer</lastName>
+                </name>
+                <personRole pureId="6118" uri="/dk/atira/pure/dataset/roles/dataset/creator"
+                    >Creator</personRole>
+                <organisationalUnits>
+                    <organisationalUnit uuid="8a1da42a-26d1-4cc3-abe7-17e35a72618c"
+                        externalId="ORS_LA" externalIdSource="synchronisedUnifiedOrganisation">
+                        <link ref="content"
+                            href="https://pure.bond.edu.au/ws/api/513/organisational-units/8a1da42a-26d1-4cc3-abe7-17e35a72618c"/>
+                        <name>Faculty of Law</name>
+                        <type pureId="22568"
+                            uri="/dk/atira/pure/organisation/organisationtypes/organisation/faculty"
+                            >Faculty</type>
+                    </organisationalUnit>
+                </organisationalUnits>
+            </personAssociation>
+        </personAssociations>
+        <publisher uuid="3ea4e104-8320-48dd-8722-810911d7976f">
+            <link ref="content"
+                href="https://pure.bond.edu.au/ws/api/513/publishers/3ea4e104-8320-48dd-8722-810911d7976f"/>
+            <name>Bond University</name>
+            <type pureId="1090" uri="/dk/atira/pure/publisher/publishertypes/publisher/publisher"
+                >Publisher</type>
+        </publisher>
+        <doi>10.4225/57/5b29e9c09280e</doi>
+        <organisationalUnits>
+            <organisationalUnit uuid="8a1da42a-26d1-4cc3-abe7-17e35a72618c" externalId="ORS_LA"
+                externalIdSource="synchronisedUnifiedOrganisation">
+                <link ref="content"
+                    href="https://pure.bond.edu.au/ws/api/513/organisational-units/8a1da42a-26d1-4cc3-abe7-17e35a72618c"/>
+                <name>Faculty of Law</name>
+                <type pureId="22568"
+                    uri="/dk/atira/pure/organisation/organisationtypes/organisation/faculty"
+                    >Faculty</type>
+            </organisationalUnit>
+        </organisationalUnits>
+        <publicationDate>
+            <year>2013</year>
+        </publicationDate>
+        <openAccessPermission pureId="11293872"
+            uri="/dk/atira/pure/dataset/accesspermission/restricted"
+            >Restricted</openAccessPermission>
+        <visibility key="FREE">Public - No restriction</visibility>
+        <confidential>false</confidential>
+        <info>
+            <createdBy>acass</createdBy>
+            <createdDate>2018-08-24T16:49:43.567+10:00</createdDate>
+            <modifiedBy>acass</modifiedBy>
+            <modifiedDate>2019-06-17T15:48:46.262+10:00</modifiedDate>
+            <portalUrl>https://research.bond.edu.au/en/datasets/a48a78c3-807a-4c77-bb2b-da671493da0b</portalUrl>
+            <prettyURLIdentifiers>
+                <prettyURLIdentifier>contract-law-in-aid-channels</prettyURLIdentifier>
+            </prettyURLIdentifiers>
+        </info>
+    </dataSet>
+</result>

@@ -42,7 +42,41 @@ class IngestNativeSchemaTest extends \RegistryTestClass
         }
 
     }
-    
+
+    /** @test */
+
+    public function test_pure_provider_type()
+    {
+
+        $dataSourceID = 36825;
+        $providerClassName = null;
+
+        $native_content_path = __DIR__ ."../../../resources/harvested_contents/pure.xml";
+
+        $data_source = DataSourceRepository::getByID($dataSourceID);
+
+        $providerType = $data_source->getDataSourceAttribute('provider_type');
+        $harvestMethod = $data_source->getDataSourceAttribute('harvest_method');
+
+        $contentProvider = ContentProvider::getProvider($providerType['value'], $harvestMethod['value']);
+
+        $fileExtension = $contentProvider->getFileExtension();
+
+        $this->assertEquals('tmp', $fileExtension);
+
+        $json = file_get_contents($native_content_path);
+
+        $contentProvider->loadContent($json);
+
+        $objects = $contentProvider->getContent();
+        foreach($objects as $o){
+            $success = IngestNativeSchema::insertNativeObject($o, $dataSourceID);
+            $this->assertTrue($success);
+        }
+
+    }
+
+
     /** @test */
     public function test_iso_provider_type()
     {
@@ -86,7 +120,8 @@ class IngestNativeSchemaTest extends \RegistryTestClass
             "http://bluenet3.antcrc.utas.edu.au/mcp" => "http://bluenet3.antcrc.utas.edu.au/mcp",
             "iso2005gmd" => "http://www.isotc211.org/2005/gmd",
             "iso19115-3" => "http://standards.iso.org/iso/19115/-3/mdb/1.0",
-            "http://schema.org/" => "http://schema.org/"
+            "http://schema.org/" => "http://schema.org/",
+            "https://pure.bond.edu.au" => "https://pure.bond.edu.au"
         );
 
         foreach($uriList as $prefix=>$uri)
