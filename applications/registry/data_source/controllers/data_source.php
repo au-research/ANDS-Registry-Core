@@ -364,7 +364,7 @@ class Data_source extends MX_Controller {
 			}
 
             if ($attrib == "export_dci") {
-                if ($new_value === DB_FALSE || $new_value === "") {
+                if ($new_value == DB_FALSE || $new_value == "" || $new_value == "0") {
                     \ANDS\Registry\Providers\DCI\DCI::where('registry_object_data_source_id', $ds->id)->delete();
                 } else {
                     $this->queueDCIGenerationTask($ds->id);
