@@ -1,0 +1,24 @@
+		{
+			"@context": "http://schema.org",
+		    "@type": "Dataset",
+             	"name": "Global 30s resolution land use for 2005",
+            	"description": "A global map of 5 land use types at 30s (approx. 1km) resolution for 2005. The data set was generated through the statistical downscaling of the Land-use Harmonisation data set (Hurt et al 2011) at http:\/\/luh.umd.edu\/. Five land use types (primary, secondary, pasture, crop, urban) are provided as separate raster layers, with the value of each cell representing the proportion of the grid cell occupied by that land use type. An additional layer representing cells defined as permanent ice (value of 1) is also provided.",
+				"datePublished": "2015",
+            	"keywords": "Land Use; cropping; global; pasture; primary habitat; secondary habitat; urban",
+	 			"license": "https://confluence.csiro.au/display/daphelp/CSIRO+Data+Licence",
+				"citation": "Hoskins, Andrew; Bush, Alex; Gilmore, James; Harwood, Tom; Ware, Chris; Williams, Kristen; Ferrier, Simon (2015): Global 30s resolution land use for 2005. v3. CSIRO. Data Collection. 10.4225/08/56DCD9249B224",
+			   	"publisher" : "CSIRO",
+				"temporalCoverage": "2005-01-01/2005-01-01",
+				"author": [{"@type": "Person",  "name" : "Andrew Hoskins" },{"@type": "Person",  "name" : "Alex Bush" },{"@type": "Person",  "name" : "James Gilmore" },{"@type": "Person",  "name" : "Tom Harwood" },{"@type": "Person",  "name" : "Chris Ware" },{"@type": "Person",  "name" : "Kristen Williams" },{"@type": "Person",  "name" : "Simon Ferrier" }],
+				"funder": [{"@type": "Organization",  "name" : "CSIRO" }],
+				"identifier" : "10.4225/08/56DCD9249B224",
+			    "URL" : "https://doi.org/10.4225/08/56DCD9249B224"
+ 				 ,
+"spatialCoverage" : {
+              "@type": "Place",
+              "geo": {
+          "@type": "GeoShape",
+        "polygon": "-60.0 -180.0 90.0 180.0"}
+         }
+
+		}

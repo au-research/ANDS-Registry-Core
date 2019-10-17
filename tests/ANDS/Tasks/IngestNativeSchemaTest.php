@@ -43,6 +43,41 @@ class IngestNativeSchemaTest extends \RegistryTestClass
 
     }
 
+
+    /** @test */
+
+    public function only_dev_test_single_son()
+    {
+
+        $dataSourceID = 42618;
+        $providerClassName = null;
+
+        $native_content_path = __DIR__ ."../../../resources/harvested_contents/single_json.json";
+        //$native_content_path = __DIR__ ."../../../resources/harvested_contents/open_top.json";
+
+        $data_source = DataSourceRepository::getByID($dataSourceID);
+
+        $providerType = $data_source->getDataSourceAttribute('provider_type');
+        $harvestMethod = $data_source->getDataSourceAttribute('harvest_method');
+
+        $contentProvider = ContentProvider::getProvider($providerType['value'], $harvestMethod['value']);
+
+        $fileExtension = $contentProvider->getFileExtension();
+
+        $this->assertEquals('json', $fileExtension);
+
+        $json = file_get_contents($native_content_path);
+
+        $contentProvider->loadContent($json);
+
+        $objects = $contentProvider->getContent();
+        foreach($objects as $o){
+            $success = IngestNativeSchema::insertNativeObject($o, $dataSourceID);
+            $this->assertTrue($success);
+        }
+
+    }
+
     /** @test */
 
     public function test_pure_provider_type()
