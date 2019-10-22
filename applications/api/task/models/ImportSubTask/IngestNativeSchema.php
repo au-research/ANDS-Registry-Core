@@ -95,18 +95,7 @@ class IngestNativeSchema extends ImportSubTask
             return false;
         }
 
-        $schema = Schema::where('uri', $nativeObject['nameSpaceURI'])->first();
-
-        if ($schema == null) {
-
-            $schema = new Schema();
-            $schema->setRawAttributes([
-                'prefix' => Schema::getPrefix($nativeObject['nameSpaceURI']),
-                'uri' => $nativeObject['nameSpaceURI'],
-                'exportable' => 1
-            ]);
-            $schema->save();
-        }
+        $schema = Schema::get($nativeObject['nameSpaceURI']);
 
         $registryObjects = RegistryObjectsRepository::getRecordsByIdentifier($identifiers, $dataSourceID);
 

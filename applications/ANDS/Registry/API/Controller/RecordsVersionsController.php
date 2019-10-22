@@ -38,7 +38,7 @@ class RecordsVersionsController extends HTTPController
 
         $version = Versions::find($versionID);
         $data = $version->data;
-        if($data[0] == '<'){
+        if($data != '' && $data[0] == '<'){
            // try{
 
             //   $dom = new DOMDocument();

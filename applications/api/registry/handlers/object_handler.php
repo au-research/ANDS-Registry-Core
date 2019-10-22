@@ -10,6 +10,9 @@ use \Exception as Exception;
 use \XSLTProcessor as XSLTProcessor;
 
 define('SERVICES_MODULE_PATH', REGISTRY_APP_PATH . 'services/');
+// TODO: find a better way to handle hanging contet generation
+// cache what we can and generate the rest
+set_time_limit(60);
 
 /**
  * Handles registry/object

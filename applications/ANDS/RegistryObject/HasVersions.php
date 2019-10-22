@@ -17,13 +17,7 @@ trait HasVersions
 {
     public function addVersion($data, $schemaURI, $origin='REGISTRY')
     {
-        $schema = Schema::where('uri', $schemaURI)->first();
-        if($schema == null){
-            $schema = Schema::create([
-                'prefix' => Schema::getPrefix($schemaURI),
-                'uri' => $schemaURI,
-                'exportable' => 1]);
-        }
+        $schema = Schema::get($schemaURI);
 
         // quicker way of obtaining existing Versions
         $altVersionsIDs = RegistryObjectVersion::where('registry_object_id', $this->id)->get()->pluck('version_id')->toArray();

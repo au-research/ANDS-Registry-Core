@@ -292,7 +292,16 @@ class OAIRecordRepository implements OAIRepository
                 $oaiRecord->setMetadata($dci->data);
             }
         } else{
-            if ($altRecord = AltSchemaVersion::where('registry_object_id', $record->id)->where('prefix', $metadataFormat)->first()) {
+            $schema = Schema::where('prefix', $metadataFormat)->first();
+            if(!$schema)
+                return $oaiRecord->setMetadata("");
+
+            $altVersionsIDs = RegistryObjectVersion::where('registry_object_id', $record->id)->get()->pluck('version_id')->toArray();
+            $altRecord = null;
+            if (count($altVersionsIDs) > 0) {
+                $altRecord = Versions::wherein('id', $altVersionsIDs)->where("schema_id", $schema->id)->first();
+            }
+            if ($altRecord) {
                 $oaiRecord->setMetadata($altRecord->data);
             }
         }
@@ -838,10 +847,8 @@ class OAIRecordRepository implements OAIRepository
             }
         }
 
-        $count = $records->count();
-        if ($count == 0) {
-            $count = DCI::count();
-        }
+        $count = sizeof($records);
+
 
         return [
             'total' => $count,

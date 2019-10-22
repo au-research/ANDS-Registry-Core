@@ -16,8 +16,7 @@ use ANDS\Util\Config;
 use ANDS\Util\XMLUtil;
 use ANDS\Registry\RelationshipView;
 use \ANDS\Registry\Schema;
-use \ANDS\RegistryObject\AltSchemaVersion;
-use Carbon\Carbon;
+
 
 
 /**
@@ -42,18 +41,7 @@ class JsonLDProvider implements RIFCSProvider
         if ($record->class <> "collection" && $record->class <> "service") return "";
         if ($record->class == "collection" && $record->type <> "collection" && $record->type <> "dataset" && $record->type <> "software") return "";
 
-        $schema = Schema::where('uri', static::$schema_uri)->first();
-
-        if($schema == null){
-
-            $schema = new Schema();
-            $schema->setRawAttributes([
-                'prefix' => Schema::getPrefix(static::$schema_uri),
-                'uri' => static::$schema_uri,
-                'exportable' => 1
-            ]);
-            $schema->save();
-        }
+        $schema = Schema::get(static::$schema_uri);
 
         $altVersionsIDs = RegistryObjectVersion::where('registry_object_id', $record->id)->get()->pluck('version_id')->toArray();
         $existingVersion = null;
@@ -123,7 +111,7 @@ class JsonLDProvider implements RIFCSProvider
     public static function get(RegistryObject $record)
     {
         // obtaining existing versions
-        $schema = Schema::where('uri', static::$schema_uri)->first();
+        $schema = Schema::get(static::$schema_uri);
         $altVersionsIDs = RegistryObjectVersion::where('registry_object_id', $record->id)->get()->pluck('version_id')->toArray();
         $existingVersion = null;
 
