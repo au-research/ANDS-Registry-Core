@@ -536,13 +536,13 @@ class ServiceProvider
                 $el->appendChild(
                     $response->getContent()->importNode($doc->documentElement, true)
                 );
-
                 $recordNode->appendChild($el);
             } catch (\Exception $e) {
-                monolog([
-                    'event' => 'error',
-                    'message' => "OAI-PMH Error:". get_exception_msg($e)
-                ], 'error', 'error', true);
+                // most likely not xml content so add it as cdata section
+                $el = $response->createElement('metadata');
+                $cdata = $recordNode->ownerDocument->createCDATASection($data['metadata']);
+                $el->appendChild($cdata);
+                $recordNode->appendChild($el);
             }
 
 
