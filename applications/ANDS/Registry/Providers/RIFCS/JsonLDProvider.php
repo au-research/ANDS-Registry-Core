@@ -38,8 +38,12 @@ class JsonLDProvider implements RIFCSProvider
     {
         // CC-2143.
         // Do the truth test first and early return to fix super node issue
-        if ($record->class <> "collection" && $record->class <> "service") return "";
-        if ($record->class == "collection" && $record->type <> "collection" && $record->type <> "dataset" && $record->type <> "software") return "";
+        if ($record->class <> "collection" && $record->class <> "service")
+            return "";
+
+        $allowedTypeList = ['collection','dataset','software'];
+        if ($record->class == "collection" && !in_array(strtolower($record->type), $allowedTypeList))
+            return "";
 
         $schema = Schema::get(static::$schema_uri);
 
@@ -48,7 +52,6 @@ class JsonLDProvider implements RIFCSProvider
         if (count($altVersionsIDs) > 0) {
             $existingVersion = Versions::wherein('id', $altVersionsIDs)->where("schema_id", $schema->id)->first();
         }
-
         // don't generate one if we have an other instance from different origin eg HARVESTER, BUT  THIS MIGHT CHANGE !!
         if($existingVersion && $existingVersion->origin != static::$origin)
             return $existingVersion->data;
