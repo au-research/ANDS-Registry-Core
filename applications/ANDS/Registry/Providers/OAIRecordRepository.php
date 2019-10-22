@@ -293,9 +293,6 @@ class OAIRecordRepository implements OAIRepository
             }
         } else{
             $schema = Schema::where('prefix', $metadataFormat)->first();
-            if(!$schema)
-                return $oaiRecord->setMetadata("");
-
             $altVersionsIDs = RegistryObjectVersion::where('registry_object_id', $record->id)->get()->pluck('version_id')->toArray();
             $altRecord = null;
             if (count($altVersionsIDs) > 0) {
@@ -818,7 +815,7 @@ class OAIRecordRepository implements OAIRepository
                     break;
                 case "group":
                     if ($value = $this->getGroupName($value)) {
-                        $records = $records->where('registry_object_group', $value);
+                        $records = $records->where('group', $value);
                     } else {
                         throw new NoRecordsMatch();
                     }
