@@ -1,6 +1,9 @@
 <?php
 $protocol = env('PROTOCOL', 'http://');
-$_SERVER['SERVER_NAME'] = 'dev.ands.org.au';
+
+if(!isset($_SERVER['SERVER_NAME']))
+    $_SERVER['SERVER_NAME']= 'test.ands.org.au';
+
 return [
     'release_version' => env('VERSION', '31'),
     'environment_name' => env("ENVIRONMENT_NAME", "RDA"),
