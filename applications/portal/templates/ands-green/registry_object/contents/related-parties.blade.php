@@ -78,14 +78,13 @@
                 $multi[$col['to_title']] = 'found';
                 ?>
             @elseif($multi[$col['to_title']] != 'found')
-
             <a href="<?php echo base_url()?>{{$col['to_slug']}}/{{$col['to_id']}}"
                tip="{{ $col['display_description'] }}"
                class="ro_preview"
-               @if(isset($col['relation_identifier_id']))
-                    identifier_relation_id="{{ $col['relation_identifier_id'] }}"
-               @elseif(isset($col['to_id']))
+               @if(isset($col['to_id']) AND $col['to_id'] != "false")
                     ro_id="{{$col['to_id']}}"
+               @elseif(isset($col['relation_identifier_id']))
+                    identifier_relation_id="{{ $col['relation_identifier_id'] }}"
                @endif
                style="margin-right:5px;">
                  {{ $col['to_title'] }}
