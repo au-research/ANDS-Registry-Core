@@ -1,13 +1,14 @@
 <?php
-
+$protocol = env('PROTOCOL', 'http://');
+$_SERVER['SERVER_NAME'] = 'dev.ands.org.au';
 return [
     'release_version' => env('VERSION', '31'),
     'environment_name' => env("ENVIRONMENT_NAME", "RDA"),
     'environment_colour' => env("ENVIRONMENT_COLOUR" , "#6EBF21"),
     'environment_logo' => 'img/ardc_logo_white.png',
-    'protocol' => env('PROTOCOL', 'http://'),
-    'default_base_url' => env('PROTOCOL', 'http://') . env("BASE_URL", "localhost").'/',
-    'subject_vocab_proxy' => env('PROTOCOL', 'http://') . env("BASE_URL", "localhost").'/apps/vocab_widget/proxy/',
+    'protocol' => $protocol,
+    'default_base_url' => $protocol . env("BASE_URL", $_SERVER['SERVER_NAME']).'/',
+    'subject_vocab_proxy' => $protocol . env("BASE_URL", $_SERVER['SERVER_NAME']).'/apps/vocab_widget/proxy/',
     'solr_url' => env('SOLR_URL', 'http://localhost:8983/solr/'),
     'elasticsearch_url' => env('ELASTICSEARCH_URL', 'http://localhost:9200/'),
     'socket_url' => env('SOCKET_URL', 'http://localhost:3001/'),

@@ -10,23 +10,35 @@ use \ANDS\Registry\Transforms;
 use \DOMDocument as DOMDocument;
 use \Exception;
 use \ANDS\Registry\Schema;
-use \ANDS\RegistryObject\AltSchemaVersion;
+use \ANDS\Registry\Versions;
+use ANDS\RegistryObject\RegistryObjectVersion;
+
 
 class ISO19115_3Provider implements RegistryContentProvider
 {
     private static $schema_uri = 'http://standards.iso.org/iso/19115/-3/mdb/1.0';
     private static $origin = "REGISTRY";
+
     public static function process(RegistryObject $record)
     {
 
         if(!static::isValid($record))
             return false;
 
-        $existing = AltSchemaVersion::where('prefix', Schema::getPrefix(static::$schema_uri))
-            ->where('registry_object_id', $record->id)->first();
-// don't generate one if we have an other instance from different origin eg HARVESTER
-        if($existing && $existing->origin != static::$origin)
-            return false;
+
+        $schema = Schema::get(static::$schema_uri);
+
+        $altVersionsIDs = RegistryObjectVersion::where('registry_object_id', $record->id)->get()->pluck('version_id')->toArray();
+        $existing = null;
+
+        if (count($altVersionsIDs) > 0) {
+            $existing = Versions::wherein('id', $altVersionsIDs)->where("schema_id", $schema->id)->first();
+        }
+
+        // don't generate one if we have an other instance from different origin eg HARVESTER
+
+       // if($existing && $existing->origin != static::$origin)
+       //     $existing->data;
         // use the resolved subjects for the iso
         $subjects = SubjectProvider::processSubjects($record);
         $subjectStr = "";
@@ -38,47 +50,31 @@ class ISO19115_3Provider implements RegistryContentProvider
         }
 
         $iso = static::generateISO($record->getCurrentData()->data, $subjectStr);
-        $schema = Schema::where('uri', static::$schema_uri)->first();
-
-        if($schema == null){
-
-            $schema = new Schema();
-            $schema->setRawAttributes([
-                'prefix' => Schema::getPrefix(static::$schema_uri),
-                'uri' => static::$schema_uri,
-                'exportable' => 1
-            ]);
-            $schema->save();
-        }
 
         $record->addVersion($iso, static::$schema_uri, static::$origin);
 
-        return true;
+        return $iso;
 
     }
 
-
     public static function get(RegistryObject $record)
     {
-        $existingVersion = AltSchemaVersion::where('prefix', Schema::getPrefix(static::$schema_uri))
-            ->where('registry_object_id', $record->id)->first();
-        if ($existingVersion) {
-            if ($record->modified_at > $existingVersion->version->updated_at) {
-                static::process($record);
-                $existingVersion = AltSchemaVersion::where('prefix', Schema::getPrefix(static::$schema_uri))
-                    ->where('registry_object_id', $record->id)->first();
+        $schema = Schema::get(static::$schema_uri);
+
+        $altVersionsIDs = RegistryObjectVersion::where('registry_object_id', $record->id)->get()->pluck('version_id')->toArray();
+        $existing = null;
+
+        if (count($altVersionsIDs) > 0) {
+            $existing = Versions::wherein('id', $altVersionsIDs)->where("schema_id", $schema->id)->first();
+        }
+        if ($existing) {
+            if ($record->modified_at > $existing->updated_at) {
+                return static::process($record);
             }
-            return $existingVersion->version->data;
+            return $existing->data;
         }
 
-        if(static::process($record)){
-            $existingVersion = AltSchemaVersion::where('prefix', Schema::getPrefix(static::$schema_uri))
-                ->where('registry_object_id', $record->id)->first();
-            return $existingVersion->version->data;
-        }
-
-        return null;
-
+        return static::process($record);
     }
 
     private static function isValid(RegistryObject $record){

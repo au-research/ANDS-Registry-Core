@@ -156,12 +156,14 @@ class IngestNativeSchemaTest extends \RegistryTestClass
             "iso2005gmd" => "http://www.isotc211.org/2005/gmd",
             "iso19115-3" => "http://standards.iso.org/iso/19115/-3/mdb/1.0",
             "http://schema.org/" => "http://schema.org/",
-            "https://pure.bond.edu.au" => "https://pure.bond.edu.au"
+            "https://pure.bond.edu.au" => "https://pure.bond.edu.au",
+            "json-ld" => "json-ld"
         );
 
         foreach($uriList as $prefix=>$uri)
         {
             $this->assertEquals($prefix, Schema::getPrefix($uri));
+            $this->assertEquals($prefix, Schema::get($uri)->prefix);
         }
 
     }
