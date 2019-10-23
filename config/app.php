@@ -1,6 +1,7 @@
 <?php
 $protocol = env('PROTOCOL', 'http://');
-
+// this line is added for running PHPUnit Tests,
+// the $_SERVER variable will not have a SERVER_NAME so we have to add one
 if(!isset($_SERVER['SERVER_NAME']))
     $_SERVER['SERVER_NAME']= 'test.ands.org.au';
 
