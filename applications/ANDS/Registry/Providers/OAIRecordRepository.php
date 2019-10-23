@@ -794,7 +794,7 @@ class OAIRecordRepository implements OAIRepository
 
     private function getAltSchemaVersions($options)
     {
-        $records = AltSchemaVersion::where('prefix', $options['metadataPrefix'])->limit($options['limit'])->offset($options['offset']);
+        $records = AltSchemaVersion::where('prefix', $options['metadataPrefix']);
 
         // set
         if (array_key_exists('set', $options) && $options['set']) {
@@ -844,12 +844,12 @@ class OAIRecordRepository implements OAIRepository
             }
         }
 
-        $count = sizeof($records);
+        $count = $records->count();
 
 
         return [
             'total' => $count,
-            'records' => $records->get()
+            'records' => $records->limit($options['limit'])->offset($options['offset'])->get()
         ];
     }
 
