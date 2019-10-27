@@ -1,13 +1,18 @@
 <?php
+$protocol = env('PROTOCOL', 'http://');
+// this line is added for running PHPUnit Tests,
+// the $_SERVER variable will not have a SERVER_NAME so we have to add one
+if(!isset($_SERVER['SERVER_NAME']))
+    $_SERVER['SERVER_NAME']= 'test.ands.org.au';
 
 return [
     'release_version' => env('VERSION', '31'),
     'environment_name' => env("ENVIRONMENT_NAME", "RDA"),
     'environment_colour' => env("ENVIRONMENT_COLOUR" , "#6EBF21"),
     'environment_logo' => 'img/ardc_logo_white.png',
-    'protocol' => env('PROTOCOL', 'http://'),
-    'default_base_url' => env('PROTOCOL', 'http://') . env("BASE_URL", "localhost").'/',
-    'subject_vocab_proxy' => env('PROTOCOL', 'http://') . env("BASE_URL", "localhost").'/apps/vocab_widget/proxy/',
+    'protocol' => $protocol,
+    'default_base_url' => $protocol . env("BASE_URL", $_SERVER['SERVER_NAME']).'/',
+    'subject_vocab_proxy' => $protocol . env("BASE_URL", $_SERVER['SERVER_NAME']).'/apps/vocab_widget/proxy/',
     'solr_url' => env('SOLR_URL', 'http://localhost:8983/solr/'),
     'elasticsearch_url' => env('ELASTICSEARCH_URL', 'http://localhost:9200/'),
     'socket_url' => env('SOCKET_URL', 'http://localhost:3001/'),
@@ -35,7 +40,7 @@ return [
             'path' => 'etc/schema'
         ],
         'logs' => [
-            'path' => env('LOGS_PATH', 'logs'),
+            'path' => env('LOGS_PATH', '/var/log/'),
 
             // legacy_path for CodeIgniter, default empty for engine/logs location
             'legacy_path' => env('LOGS_PATH_LEGACY', '')
@@ -119,5 +124,13 @@ return [
         // 	- 	Developer API documentation
         			'toolbox',
 
+    ],
+    'content_providers' => [
+            'http://www.isotc211.org/2005/gmd' => \ANDS\Registry\ContentProvider\ISO\ISO191153ContentProvider::class,
+            'json-ld' => \ANDS\Registry\ContentProvider\JSONLD\JSONLDContentProvider::class,
+            'JSONLD' => \ANDS\Registry\ContentProvider\JSONLD\JSONLDContentProvider::class,
+            'JSONLDHarvester' => \ANDS\Registry\ContentProvider\JSONLD\JSONLDContentProvider::class,
+            'CSWHarvester' =>  \ANDS\Registry\ContentProvider\ISO\ISO191153ContentProvider::class,
+            'https://pure.bond.edu.au' =>  \ANDS\Registry\ContentProvider\PURE\BONDContentProvider::class
     ]
 ];

@@ -7,7 +7,7 @@ use ANDS\Registry\Providers\Quality\Types;
 use ANDS\RegistryObject\AltSchemaVersion;
 use ANDS\Registry\Providers\ServiceDiscovery\ServiceProducer;
 use ANDS\Registry\Providers\ServiceDiscovery\ServiceDiscovery;
-use \Transforms as Transforms;
+use \ANDS\Registry\Schema;
 /**
  * Registry Object controller
  *
@@ -84,14 +84,14 @@ class Registry_object extends MX_Controller {
              */
             $altVersionsIDs = \ANDS\Registry\RegistryObjectVersions::where('registry_object_id', $ro_id)->get()->pluck('version_id')->toArray();
             if (count($altVersionsIDs) > 0) {
-                $data['alt_versions'] = \ANDS\Registry\Versions::where('id', $altVersionsIDs)->get()->map(function (
-                    $item
-                ) {
-                    return [
-                        'prefix' => $item->schema->prefix,
-                        'id' => $item->id
+                $versions = \ANDS\Registry\Versions::wherein('id', $altVersionsIDs)->get();
+                foreach ($versions as $version) {
+                    $schema = Schema::where('id', $version->schema_id)->first();
+                    $data['alt_versions'][] = [
+                        'prefix' => $schema->uri,
+                        'id' => $version->id
                     ];
-                })->toArray();
+                }
             }
 
            // $generatedContent = \ANDS\RegistryObject\AltSchemaVersion::where('registry_object_id', $ro_id )->get();

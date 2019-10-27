@@ -8,6 +8,8 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
  * @return array
  */
 class Citations extends ROHandler {
+
+    public $ro;
 	function handle() {
 
         $result = array();
@@ -90,13 +92,18 @@ class Citations extends ROHandler {
 
     public function getEndnoteText()
     {
-        $endNote = 'Provider: Australian National Data Service
+        $endNote = 'Provider: Australian Research Data Commons
 Database: Research Data Australia
 Content:text/plain; charset="utf-8"
 
 
-TY  - DATA
-Y2  - '.date("Y-m-d")."
+';
+
+        $type = $this->getType();
+        $endNote .= "TY  - ".$type."
+";
+
+        $endNote .= 'Y2  - '.date("Y-m-d")."
 ";
 
         $doi = $this->getDoi();
@@ -129,7 +136,7 @@ Y2  - '.date("Y-m-d")."
 ";
         }
 
-        $endNote .= "TI  - ".$this->ro->title."
+        $endNote .= "TI  - ".$this->getTitle()."
 ";
 
         $sourceUrl = $this->getSourceUrl($output='endNote');
@@ -197,7 +204,7 @@ Y2  - '.date("Y-m-d")."
         $endNote .= "ER  -
 ";
 
-        return $endNote;
+        return html_entity_decode($endNote);
     }
 
     private function getCoinsSpan()
@@ -253,7 +260,7 @@ Y2  - '.date("Y-m-d")."
         $rft_place = $this->getPlace();
         $coins .=  'ctx_ver=Z39.88-2004&rft_val_fmt=info%3Aofi%2Ffmt%3Akev%3Amtx%3Adc&rfr_id=info%3Asid%2FANDS';
         if($rft_id) $coins .= '&rft_id='.$rft_id;
-        $coins .= '&rft.title='.$this->ro->title;
+        $coins .= '&rft.title='.$this->getTitle();
         if($rft_identifier) $coins .= '&rft.identifier='.$rft_identifier;
         if($rft_publisher) $coins .= '&rft.publisher='.$rft_publisher;
         $coins .= '&rft.description='.$rft_description.$rft_creators;
@@ -264,7 +271,12 @@ Y2  - '.date("Y-m-d")."
         if($rft_rights) $coins .= $rft_rights;
         if($rft_subjects) $coins .= $rft_subjects;
         if($rft_place) $coins .= '&rft_place='.$rft_place;
-        $coins .= '&rft.type=dataset&rft.language=English';
+        if($this->getType()=='COMP'){
+            $type = 'Computer Program';
+        }else{
+            $type = 'dataset';
+        }
+        $coins .= '&rft.type='.$type.'&rft.language=English';
 
 
         return $coins;
@@ -492,6 +504,7 @@ Y2  - '.date("Y-m-d")."
     function getContributors()
     {
         $contributors = Array();
+        $noseq = 9999;
         if (isset($this->xml->{$this->ro->class}->citationInfo->citationMetadata->contributor)) {
             foreach ($this->xml->{$this->ro->class}->citationInfo->citationMetadata->contributor as $contributor) {
                 $nameParts = Array();
@@ -501,11 +514,20 @@ Y2  - '.date("Y-m-d")."
                         'name' => (string)$namePart
                     );
                 }
+                // ensure that if no sequence number is available to
+                // set it to a high sequence number so that all contributors with a
+                // provided sequence number provided are displayed first
+                if(!isset($contributor['seq'])) {
+                    $contributor['seq'] = $noseq;
+                    $noseq++;
+                }
 
                 $contributors[] = array(
                     'name' => formatName($nameParts),
                     'seq' => (string)$contributor['seq']
                 );
+
+
             }
         }
 
@@ -515,28 +537,38 @@ Y2  - '.date("Y-m-d")."
              * We do index reverse relationships BUT without the mirrored (reversed) relationship type
              * adding the reversed types to the query ensures that the party is found in either ways in the index
              */
-            $relationshipTypeArray = array(
-                'hasPrincipalInvestigator',
-                'isPrincipalInvestigatorOf',
-                'principalInvestigator',
-                'author',
-                'coInvestigator',
-                'isOwnedBy',
-                'isOwnerOf',
-                'hasCollector',
-                'isCollectorOf'
-            );
-            $classArray = array('party');
-            $authors = $this->ro->getRelatedObjectsIndex($classArray, $relationshipTypeArray);
-            if (sizeof($authors) > 0) {
-                foreach ($authors as $author) {
-                    $contributors[] = array(
-                        'name' => $author['to_title'],
-                        'seq' => ''
-                    );
-                }
-            }
+                $relationshipTypeArray = array(
+                     'hasPrincipalInvestigator',
+                     'isPrincipalInvestigatorOf',
+                     'author',
+                     'coInvestigator',
+                     'isOwnedBy',
+                     'isOwnerOf',
+                     'hasCollector',
+                     'isCollectorOf'
+                 );
+                 $classArray = array('party');
+
+                 /* Ensure the search loops through the pre determined order of relationships
+                    and return as soon as a particular type is found */
+
+                 foreach ($relationshipTypeArray as $relationType) {
+                 $authors = $this->ro->getRelatedObjectsIndex($classArray, [$relationType]);
+                 if (sizeof($authors) > 0) {
+                     foreach ($authors as $author) {
+                         $contributors[] = array(
+                             'name' => $author['to_title'],
+                             'seq' => ''
+                         );
+                     }
+
+                    /* sort the  array by name */
+                     usort($contributors, "cmpTitle");
+                     return $contributors;
+                 }
+             }
         }
+
         if (!$contributors) {
             $contributors[] = array(
                 'name' => 'Anonymous',
@@ -590,12 +622,22 @@ Y2  - '.date("Y-m-d")."
         return $funders;
     }
 
+    function getType()
+    {
+
+        if($this->xml->{$this->ro->class}['type'] == 'software'){
+            return 'COMP';
+        }
+
+        return 'DATA';
+    }
+
     function getKeywords(){
 
         $keywords = Array();
         if($this->index && isset($this->index['subject_value_resolved'])) {
             foreach($this->index['subject_value_resolved'] as $key=>$sub) {
-                $keywords[] = htmlentities(titleCase($this->index['subject_value_resolved'][$key]));
+                $keywords[] = htmlentities($this->index['subject_value_resolved'][$key]);
             }
         }
 
@@ -685,6 +727,17 @@ Y2  - '.date("Y-m-d")."
 
         }
         return $relations;
+    }
+
+    function getTitle(){
+
+        $title = $this->ro->title;
+        $ro_title = $this->gXPath->query("//ro:citationInfo/ro:citationMetadata/ro:title");
+        foreach($ro_title as $a_title) {
+            $title = $a_title->nodeValue;
+            return $title;
+        }
+        return $title;
     }
 }
 

@@ -336,7 +336,7 @@ class Solr
         }
 
         // Filter records that match the search terms (boost according to where the terms match)
-        $this->setOpt('qf', 'title_search^1 alt_title_search^0.9 description_value~10^0.01 description_value^0.05 identifier_value^0.05 tag_search^0.05 fulltext^0.00001 _text_^0.00001 related_party_one_search^0.2');
+        $this->setOpt('qf', 'title_search^1 alt_title_search^0.9 description_value^0.05 identifier_value^0.05 tag_search^0.05 fulltext^0.00001 _text_^0.00001 related_party_one_search^0.2');
 
         // Amount of slop applied to phrases in the user's query string filter (1 = 1 word apart)
         // Disable slopping for exact phrase search

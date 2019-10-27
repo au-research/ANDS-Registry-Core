@@ -366,7 +366,7 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 			});
 		}
 
-        if($scope.ds.harvest_method=='CSWHarvester') {
+        if($scope.ds.harvest_method=='CSWHarvester' || $scope.ds.harvest_method=='PUREHarvester') {
             if(!$scope.ds.user_defined_params){
 				$scope.ds.user_defined_params = [];
 				$.each($scope.csw_harvest_params, function(){

@@ -10,6 +10,8 @@ namespace ANDS\Registry\API\Controller;
 
 use ANDS\Registry\Versions;
 use ANDS\Repository\RegistryObjectsRepository;
+use Exception;
+use DOMDocument;
 
 class RecordsVersionsController extends HTTPController
 {
@@ -33,8 +35,32 @@ class RecordsVersionsController extends HTTPController
      */
     public function show($recordID, $versionID)
     {
+
         $version = Versions::find($versionID);
-        return $this->printXML($version->data);
+        $data = $version->data;
+        if($data != '' && $data[0] == '<'){
+           // try{
+
+            //   $dom = new DOMDocument();
+            ////   $dom->loadXML($version->data);
+            $this->printXML($version->data);
+            //}
+            //catch (Exception $e){
+                //not XML
+            //}
+        }else{
+            //try{
+                header('Content-type: application/json');
+           //     $jsonData = json_encode($version->data);
+                echo $version->data;
+                die();
+           // }
+           // catch (Exception $e){
+                // not JSON
+          //  }
+        }
+        //echo $version->data;
+        //die();
 
     }
 }

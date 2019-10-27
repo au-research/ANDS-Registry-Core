@@ -292,7 +292,13 @@ class OAIRecordRepository implements OAIRepository
                 $oaiRecord->setMetadata($dci->data);
             }
         } else{
-            if ($altRecord = AltSchemaVersion::where('registry_object_id', $record->id)->where('prefix', $metadataFormat)->first()) {
+            $schema = Schema::where('prefix', $metadataFormat)->first();
+            $altVersionsIDs = RegistryObjectVersion::where('registry_object_id', $record->id)->get()->pluck('version_id')->toArray();
+            $altRecord = null;
+            if (count($altVersionsIDs) > 0) {
+                $altRecord = Versions::wherein('id', $altVersionsIDs)->where("schema_id", $schema->id)->first();
+            }
+            if ($altRecord) {
                 $oaiRecord->setMetadata($altRecord->data);
             }
         }
@@ -788,7 +794,7 @@ class OAIRecordRepository implements OAIRepository
 
     private function getAltSchemaVersions($options)
     {
-        $records = AltSchemaVersion::where('prefix', $options['metadataPrefix'])->limit($options['limit'])->offset($options['offset']);
+        $records = AltSchemaVersion::where('prefix', $options['metadataPrefix']);
 
         // set
         if (array_key_exists('set', $options) && $options['set']) {
@@ -809,7 +815,7 @@ class OAIRecordRepository implements OAIRepository
                     break;
                 case "group":
                     if ($value = $this->getGroupName($value)) {
-                        $records = $records->where('registry_object_group', $value);
+                        $records = $records->where('group', $value);
                     } else {
                         throw new NoRecordsMatch();
                     }
@@ -839,13 +845,11 @@ class OAIRecordRepository implements OAIRepository
         }
 
         $count = $records->count();
-        if ($count == 0) {
-            $count = DCI::count();
-        }
+
 
         return [
             'total' => $count,
-            'records' => $records->get()
+            'records' => $records->limit($options['limit'])->offset($options['offset'])->get()
         ];
     }
 

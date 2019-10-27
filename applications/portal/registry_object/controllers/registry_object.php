@@ -585,7 +585,7 @@ class Registry_object extends MX_Controller
         foreach($related as $key=>$relation){
             if(isset($relation['relation'])){
                 foreach($relation['relation']as $relationship) {
-                    if($relationship == 'isPrincipalInvestigatorOf'||$relationship == 'hasPrincipalInvestigator') {
+                    if(strpos($relationship,"PrincipalInvestigator")!==false){
                         array_push($r, $relation);
                         unset($related[$key]);
                     }
@@ -1069,7 +1069,7 @@ class Registry_object extends MX_Controller
         $this->solr
             ->setOpt('hl', 'true')
             ->setOpt('hl.fl',
-                'identifier_value_search, related_party_one_search, related_party_multi_search, related_activity_search, related_service_search, group_search, related_info_search, subject_value_resolved_search, description_value, date_to, date_from, citation_info_search')
+                'identifier_value_search, related_party_one_search, related_party_multi_search, related_activity_search, related_service_search, group_search, related_info_search, subject_value_resolved_search, description_value, citation_info_search')
             ->setOpt('hl.simple.pre', '&lt;b&gt;')
             ->setOpt('hl.simple.post', '&lt;/b&gt;')
             ->setOpt('hl.snippets', '2');
