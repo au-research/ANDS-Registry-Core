@@ -75,8 +75,7 @@ class RecordsMiscController
     public function json_ld($id)
     {
         $record = RegistryObjectsRepository::getRecordByID($id);
-        $jsonLD = JsonLDProvider::process($record);
-
+        $jsonLD = JsonLDProvider::get($record);
         return json_decode($jsonLD);
     }
 

@@ -278,7 +278,11 @@ class Task
             'data' => json_encode($this->taskData)
         ];
 
-        if ($this->getLastRun()) $data['last_run'] = $this->getLastRun();
+        if ($this->getLastRun())
+            $data['last_run'] = $this->getLastRun();
+
+        if ($this->dateAdded)
+            $data['date_added'] = $this->dateAdded;
 
         if ($this->getId() === false || $this->getId() == "") {
             // $this->log('This task does not have an ID, does not save');

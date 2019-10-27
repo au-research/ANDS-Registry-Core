@@ -833,7 +833,7 @@
 									</div>
 								</div>
 								<?php endif; ?>
-                                <div class="control-group" ng-show="ds.harvest_method=='CSWHarvester'" id="user_defined_params">
+                                <div class="control-group" ng-show="ds.harvest_method=='CSWHarvester' || ds.harvest_method=='PUREHarvester'" id="user_defined_params">
                                     <label class="control-label" for="user_defined_params">Harvest Params</label>
                                     <div class="controls">
                                         <table>
@@ -853,7 +853,7 @@
                                 </div>
 
 
-                                <div class="control-group" ng-show="ds.harvest_method=='CSWHarvester'">
+                                <div class="control-group" ng-show="ds.harvest_method=='CSWHarvester' || ds.harvest_method=='PUREHarvester'">
                                     <div class="controls">
                                         <a class="btn btn-primary" ng-click="addHarvestParam(ds)"><i class="icon icon-white icon-plus"></i> Add Parameters</a>
                                         <a href="javascript:void(0);"><i class="icon icon-question-sign" tip="url parameters required by provider (name:value)"></i></a>

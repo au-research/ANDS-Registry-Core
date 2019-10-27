@@ -12,6 +12,22 @@ class Schema extends Model
     protected $fillable = ['prefix', 'uri', 'exportable'];
 
 
+    public static function get($schemaURI){
+        $schema = Schema::where('uri', $schemaURI)->first();
+
+        if($schema == null){
+
+            $schema = new Schema();
+            $schema->setRawAttributes([
+                'prefix' => static::getPrefix($schemaURI),
+                'uri' => $schemaURI,
+                'exportable' => 1
+            ]);
+            $schema->save();
+        }
+        return $schema;
+    }
+
     public static function getPrefix($schemaURI){
         $prefixMap = explode('/', $schemaURI);
         $bigNum = 1000;

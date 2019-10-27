@@ -32,6 +32,9 @@ class Connectiontrees extends ROHandler {
     }
 
 	function handle() {
+        if ($this->ro->status == "DELETED")
+            return [];
+
         $ci =& get_instance();
         $ci->load->model('registry_object/registry_objects','thisro');
         $ci->load->model('services/connectiontree','connectiontree');

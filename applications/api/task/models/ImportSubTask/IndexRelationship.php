@@ -214,11 +214,11 @@ class IndexRelationship extends ImportSubTask
                 'to_identifier' => 'relation_identifier_identifier',
                 'to_identifier_type' => 'relation_identifier_type'
             ]);
-
+            unset($doc['related_description']);
             $doc['id'] = $key;
             unset($doc['from_data_source_id']);
             unset($doc['to_data_source_id']);
-            $doc['relation'] = [$doc['relation_type']];
+            $doc['relation'] = $doc['relation_type'];
             unset($doc['relation_type']);
             if (!is_array($doc['relation'])) {
                 $doc['relation'] = [$doc['relation']];

@@ -14,7 +14,7 @@
 *******************************************************************************/
 
 ;(function($) {
-    var WIDGET_NAME = "ANDS Orcid service";
+    var WIDGET_NAME = "ARDC Orcid service";
     var WIDGET_ID = "_orcid_widget_list";
     var WIDGET_DATA = "orcid_data";
 

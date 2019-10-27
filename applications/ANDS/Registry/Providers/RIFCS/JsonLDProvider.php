@@ -5,14 +5,18 @@ namespace ANDS\Registry\Providers\RIFCS;
 
 
 use ANDS\Registry\IdentifierRelationshipView;
+use ANDS\Registry\Versions;
 use ANDS\RegistryObject;
 use ANDS\Registry\Providers\MetadataProvider;
 use ANDS\Registry\Providers\RIFCSProvider;
 use ANDS\Registry\Providers\GrantsConnectionsProvider;
 use ANDS\Registry\Providers\LinkProvider;
+use ANDS\RegistryObject\RegistryObjectVersion;
 use ANDS\Util\Config;
 use ANDS\Util\XMLUtil;
 use ANDS\Registry\RelationshipView;
+use \ANDS\Registry\Schema;
+
 
 
 /**
@@ -23,6 +27,9 @@ use ANDS\Registry\RelationshipView;
 class JsonLDProvider implements RIFCSProvider
 {
 
+    private static $schema_uri = "https://schema.org/";
+    private static $origin = "REGISTRY";
+
     public static function base_url() {
         return Config::get('app.default_base_url');
     }
@@ -31,15 +38,30 @@ class JsonLDProvider implements RIFCSProvider
     {
         // CC-2143.
         // Do the truth test first and early return to fix super node issue
-        if ($record->class <> "collection" && $record->class <> "service") return "";
-        if ($record->class == "collection" && $record->type <> "collection" && $record->type <> "dataset" && $record->type <> "software") return "";
+        if ($record->class <> "collection" && $record->class <> "service")
+            return "";
+
+        $allowedTypeList = ['collection','dataset','software'];
+        if ($record->class == "collection" && !in_array(strtolower($record->type), $allowedTypeList))
+            return "";
+
+        $schema = Schema::get(static::$schema_uri);
+
+        $altVersionsIDs = RegistryObjectVersion::where('registry_object_id', $record->id)->get()->pluck('version_id')->toArray();
+        $existingVersion = null;
+        if (count($altVersionsIDs) > 0) {
+            $existingVersion = Versions::wherein('id', $altVersionsIDs)->where("schema_id", $schema->id)->first();
+        }
+        // don't generate one if we have an other instance from different origin eg HARVESTER, BUT  THIS MIGHT CHANGE !!
+        if($existingVersion && $existingVersion->origin != static::$origin)
+            return $existingVersion->data;
 
         $data = [];
 
         $data['recordData'] = $record->getCurrentData()->data;
 
         $json_ld = new JsonLDProvider();
-        $json_ld->{'@context'} = "http://schema.org/";
+        $json_ld->{'@context'} = static::$schema_uri;
         if ($record->type == 'dataset' || $record->type == 'collection') {
             $json_ld->{'@type'} = "Dataset";
             $json_ld->distribution = self::getDistribution($record, $data);
@@ -84,11 +106,29 @@ class JsonLDProvider implements RIFCSProvider
         $json_ld->url = self::base_url() . $record->slug . "/" . $record->id;
 
         $json_ld = (object) array_filter((array) $json_ld);
+        $record->addVersion(json_encode($json_ld), static::$schema_uri, static::$origin);
+
         return json_encode($json_ld);
     }
 
-    public static function get(RegistryObject $record){
-        return ;
+    public static function get(RegistryObject $record)
+    {
+        // obtaining existing versions
+        $schema = Schema::get(static::$schema_uri);
+        $altVersionsIDs = RegistryObjectVersion::where('registry_object_id', $record->id)->get()->pluck('version_id')->toArray();
+        $existingVersion = null;
+
+        if (count($altVersionsIDs) > 0) {
+            $existingVersion = Versions::wherein('id', $altVersionsIDs)->where("schema_id", $schema->id)->first();
+            if ($existingVersion) {
+                if ($record->modified_at > $existingVersion->updated_at){
+                    return static::process($record);
+                }
+                return $existingVersion->data;
+            }
+        }
+
+        return static::process($record);
     }
 
     public static function getIdentifier(

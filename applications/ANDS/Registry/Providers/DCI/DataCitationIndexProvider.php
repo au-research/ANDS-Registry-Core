@@ -46,7 +46,9 @@ class DataCitationIndexProvider implements RegistryContentProvider
     {
         // only provide dci if the data source is allowed
         $allow = $record->datasource->getDataSourceAttributeValue('export_dci');
-        if (!$allow) {
+
+        // TODO: should create a helper function to test for True and False
+        if ($allow == null || $allow == DB_FALSE || $allow == "" || $allow == "0") {
             return false;
         }
 
