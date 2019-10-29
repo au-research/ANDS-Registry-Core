@@ -13,6 +13,9 @@ class Connectiontrees extends ROHandler {
 
     public function handle()
     {
+        if ($this->ro->status == "DELETED")
+            return [];
+
         $conn = new NestedConnectionsProvider(new EloquentConnectionsRepository);
         $links = $conn->getNestedCollectionsFromChild($this->ro->key, 5);
 
@@ -32,6 +35,7 @@ class Connectiontrees extends ROHandler {
     }
 
 	function handle_slow_and_memory_hungry() {
+
         if ($this->ro->status == "DELETED")
             return [];
 
