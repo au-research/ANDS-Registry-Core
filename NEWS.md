@@ -1,3 +1,30 @@
+
+## Release 34
+
+Release 34 of ARDC Online Services is scheduled for implementation on **Tuesday, 29 October 2019 between 8am and 12pm AEDT**. This release implements a number of enhancements and bug fixes to Research Data Australia (RDA) portal, RDA Registry and Research Vocabularies Australia (RVA). Below is the list of all the changes planned for this release.
+
+**Research Data Australia**
+
+* Enhance the RDA EndNote Export process:
+    * Export collections of type software as 'computer program' 
+    * Export authors in the same order as they are displayed in the title bar in RDA 
+    * Maintain the original case of the input characters when generating .ris file
+    * Decode HTML character coding prior to writing the content to .ris file 
+* Improve how authors under the record title in RDA view page are displayed:
+    * Where citation metadata exist for datasets:
+        * Display citation contributors as related researchers under the record title ordered by citation sequence number
+        * Remove the '(Contributor)' relationship displayed after citationMetadata contributors in the RDA title bar
+    * For collections, grants and activities, order related parties in the title bar and description, by Principal Investigators first (display name A-Z), followed by all other related parties in alphabetical order (display name A-Z).
+    * For an activity record, remove 'Participant' relationship for all researchers and only specify the Principal Investigators.
+    * Where a party displayed in the title bar has duplicates via identifier, attempt to display and link to the contributor's party before others 
+
+**RDA Registry**
+
+* Update the RDA Harvester to support Elsevier Pure 
+* Modify the harvest/import process to allow crosswalks and imports to re-rerun on previously harvested records rather than to rerun the entire harvest when the crosswalk is updated
+* Add support for the harvesting of JSON content via the 'GET Harvester' method (e.g. CKAN) 
+* Addition of new harvest method 'JSONLD' for the harvesting and import of [schema.org](http://schema.org/) JSON-LD
+
 ## Release 31
 
 Release 31 of ARDC Online Services is scheduled for implementation on 2 April 2019, between 8am and 12pm AEDT. This release implements a number of enhancements and bug fixes to the Research Data Australia Registry and Research Vocabularies Australia. Below is the list of all the changes planned for this release.
