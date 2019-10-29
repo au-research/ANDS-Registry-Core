@@ -32,8 +32,6 @@ class NestedConnectionsProvider extends Connections
         if($width === 0)
             return [];
         $this->processedChildrenList[] = $parentKey;
-        //var_dump("parent: " . $parentKey. " width: ". $width);
-        //var_dump($this->processedChildrenList);
         $links = $this
             ->init()
             ->setFilter('from_key', $parentKey)
@@ -46,7 +44,7 @@ class NestedConnectionsProvider extends Connections
 
         foreach ($links as $key => &$relation) {
             $to_key = $relation->getProperty('to_key');
-            //var_dump("to_key1: " . $to_key);
+            $relation = $relation->flip();
             if(!in_array($to_key, $this->processedChildrenList)){
                 $nested = $this->getNestedCollections($to_key, $width - 1);
                 if (sizeof($nested) > 0) {
@@ -57,7 +55,6 @@ class NestedConnectionsProvider extends Connections
 
         $reverseLinks = $this
             ->init()
-            ->setReverse(true)
             ->setFilter('to_key', $parentKey)
             ->setLimit($this->limit)
             ->setFilter('from_class', 'collection')
@@ -65,16 +62,11 @@ class NestedConnectionsProvider extends Connections
             ->setFilter('relation_type', 'isPartOf')
             ->get();
 
-        //var_dump($reverseLinks);
 
         foreach ($reverseLinks as $key => &$relation) {
-
-            $relation = $relation->flip();
             $to_key = $relation->getProperty('from_key');
-            //var_dump("to_key2: " . $to_key);
             if(!in_array($to_key, $this->processedChildrenList)){
                 $nested = $this->getNestedCollections($to_key, $width - 1);
-                //var_dump($nested);
                 if (sizeof($nested) > 0) {
                     $reverseLinks[$key]->setProperty('children', $nested);
                 }
@@ -95,7 +87,6 @@ class NestedConnectionsProvider extends Connections
     {
 
         $this->getTopParents($key);
-        //dd("START_FROM: " . $this->topParent);
         $topParent = RegistryObjectsRepository::getPublishedByKey($this->topParent);
 
         $nestedCollection = new Relation([
@@ -120,13 +111,11 @@ class NestedConnectionsProvider extends Connections
     public function getTopParents($key)
     {
         if(in_array($key, $this->processedParentList)){
-            //var_dump("Already been there" . $key);
             $this->topParent = $key;
             return $key;
         }
         $this->processedParentList[] = $key;
         $moreParents = [];
-        //var_dump("getTopParents" . $key);
         $parents = $this
             ->init()
             ->setFilter('to_key', $key)
@@ -135,11 +124,9 @@ class NestedConnectionsProvider extends Connections
             ->setFilter('from_class', 'collection')
             ->setFilter('relation_type', 'hasPart')
             ->get();
-        //var_dump("getTopParents" . $key);
         if(sizeof($parents) > 0){
             foreach ($parents as $relation) {
                 $from_key = $relation->getProperty('from_key');
-                //var_dump("getTopParents sub1: " . $from_key);
                 $moreParents[] = $this->getTopParents($from_key);
             }
         }
@@ -155,17 +142,13 @@ class NestedConnectionsProvider extends Connections
             ->setFilter('to_status', 'PUBLISHED')
             ->setFilter('relation_type', 'isPartOf')
             ->get();
-        //var_dump("getTopParents" . $key);
         if(sizeof($parents) > 0) {
             foreach ($parents as $relation) {
                 $from_key = $relation->getProperty('from_key');
-                //var_dump("getTopParents sub2: " . $from_key);
                 $moreParents[] = $this->getTopParents($from_key);
             }
         }
-        //var_dump("getTopParents4" . $key);
         if (sizeof($moreParents) == 0) {
-            //var_dump("return: " . $key);
             $this->topParent = $key;
         }
     }
