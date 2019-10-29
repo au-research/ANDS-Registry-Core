@@ -1,7 +1,34 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-ANDS Research Data Registry follows a quarterly release cycle
+## Release 34
+* Enhance the RDA EndNote Export process:
+  * Export collections of type software as 'computer program' 
+  * Export authors in the same order as they are displayed in the title bar in RDA 
+  * Maintain the original case of the input characters when generating .ris file
+  * Decode HTML character coding prior to writing the content to .ris file 
+* Improve how authors under the record title in RDA view page are displayed:
+  * Where citation metadata exist for datasets:
+    * Display citation contributors as related researchers under the record title ordered by citation sequence number
+    * Remove the '(Contributor)' relationship displayed after citationMetadata contributors in the RDA title bar
+  * For collections, grants and activities, order related parties in the title bar and description, by Principal Investigators first (display name A-Z), followed by all other related parties in alphabetical order (display name A-Z).
+  * For an activity record, remove 'Participant' relationship for all researchers and only specify the Principal Investigators.
+  * Where a party displayed in the title bar has duplicates via identifier, attempt to display and link to the contributor's party before others 
+
+## Release 33
+* Fix issue causing imports to fail due to the number of impacted records.
+
+## Release 32
+* Optimisation of CSS to improve page load times.
+* Improvements to RIF-CS to Schema.org mapping.
+
+## Release 31
+* Remove Google share functionality 
+
+## Release 30.1
+* Fix bug where the type icon is not displayed for service records 
+* Ensure collection type is indexed correctly 
+* Optimisation of the Similar Datasets pools and queries 
 
 ## Release 30
 
