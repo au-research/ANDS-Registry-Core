@@ -19,42 +19,69 @@ class NestedConnectionsProvider extends Connections
      * @param int $width
      * @return array
      */
-    public function getNestedCollections($key, $width = 5)
+    // use this list when searching for the topParent
+    private $processedParentList = [];
+
+    // use this list when building the tree from top down
+    private $processedChildrenList = [];
+    private $topParent = null;
+    private $limit = 100;
+
+    public function getNestedCollections($parentKey, $width = 5)
     {
-        $limit = 100;
+        if($width === 0)
+            return [];
+        $this->processedChildrenList[] = $parentKey;
+        //var_dump("parent: " . $parentKey. " width: ". $width);
+        //var_dump($this->processedChildrenList);
         $links = $this
             ->init()
-            ->setFilter('from_key', $key)
-            ->setLimit($limit)
+            ->setFilter('from_key', $parentKey)
+            ->setLimit($this->limit)
             ->setFilter('to_class', 'collection')
             ->setFilter('to_status', 'PUBLISHED')
             ->setFilter('relation_type', 'hasPart')
             ->get();
 
+
+        foreach ($links as $key => &$relation) {
+            $to_key = $relation->getProperty('to_key');
+            //var_dump("to_key1: " . $to_key);
+            if(!in_array($to_key, $this->processedChildrenList)){
+                $nested = $this->getNestedCollections($to_key, $width - 1);
+                if (sizeof($nested) > 0) {
+                    $links[$key]->setProperty('children', $nested);
+                }
+            }
+        }
+
         $reverseLinks = $this
             ->init()
             ->setReverse(true)
-            ->setFilter('to_key', $key)
-            ->setLimit($limit)
+            ->setFilter('to_key', $parentKey)
+            ->setLimit($this->limit)
             ->setFilter('from_class', 'collection')
             ->setFilter('from_status', 'PUBLISHED')
             ->setFilter('relation_type', 'isPartOf')
             ->get();
 
-        $links = array_merge($links, $reverseLinks);
+        //var_dump($reverseLinks);
 
-        if ($width <= 0 || count($links) == 0) {
-            return $links;
-        }
+        foreach ($reverseLinks as $key => &$relation) {
 
-        foreach ($links as $key => $relation) {
-            $nested = $this->getNestedCollections($relation->getProperty('to_key'), $width - 1);
-            if (sizeof($nested) > 0) {
-                $links[$key]->setProperty('children', $nested);
+            $relation = $relation->flip();
+            $to_key = $relation->getProperty('from_key');
+            //var_dump("to_key2: " . $to_key);
+            if(!in_array($to_key, $this->processedChildrenList)){
+                $nested = $this->getNestedCollections($to_key, $width - 1);
+                //var_dump($nested);
+                if (sizeof($nested) > 0) {
+                    $reverseLinks[$key]->setProperty('children', $nested);
+                }
             }
         }
 
-        return $links;
+        return array_merge($links, $reverseLinks);
     }
 
     /**
@@ -62,27 +89,15 @@ class NestedConnectionsProvider extends Connections
      *
      * @param $key
      * @param int $width
-     * @return array
+     * @return Relation
      */
     public function getNestedCollectionsFromChild($key, $width = 5)
     {
-        $parents = $this->getParentNestedCollections($key);
 
-        $startFrom = $key;
+        $this->getTopParents($key);
+        //dd("START_FROM: " . $this->topParent);
+        $topParent = RegistryObjectsRepository::getPublishedByKey($this->topParent);
 
-        if (sizeof($parents) > 0) {
-            $topParent = array_pop($parents);
-            $topParent = array_shift(array_values($topParent));
-            $parentKey = $topParent->getProperty('from_key');
-            if ($topParent->isReverse()) {
-                $parentKey = $topParent->getProperty('to_key');
-            }
-            $startFrom = $parentKey;
-        }
-
-        $width = $width - 1;
-
-        $topParent = RegistryObjectsRepository::getPublishedByKey($startFrom);
         $nestedCollection = new Relation([
             'from_id' => $topParent->id,
             'from_title' => $topParent->title,
@@ -90,7 +105,7 @@ class NestedConnectionsProvider extends Connections
             'from_slug' => $topParent->slug,
             'from_status' => $topParent->status,
             'relation_type' => 'hasPart',
-            'children' => $this->init()->getNestedCollections($startFrom, $width)
+            'children' => $this->getNestedCollections($this->topParent,  $width - 1)
         ]);
 
         return $nestedCollection;
@@ -102,8 +117,16 @@ class NestedConnectionsProvider extends Connections
      * @param $key
      * @return array
      */
-    public function getParentNestedCollections($key)
+    public function getTopParents($key)
     {
+        if(in_array($key, $this->processedParentList)){
+            //var_dump("Already been there" . $key);
+            $this->topParent = $key;
+            return $key;
+        }
+        $this->processedParentList[] = $key;
+        $moreParents = [];
+        //var_dump("getTopParents" . $key);
         $parents = $this
             ->init()
             ->setFilter('to_key', $key)
@@ -112,8 +135,18 @@ class NestedConnectionsProvider extends Connections
             ->setFilter('from_class', 'collection')
             ->setFilter('relation_type', 'hasPart')
             ->get();
+        //var_dump("getTopParents" . $key);
+        if(sizeof($parents) > 0){
+            foreach ($parents as $relation) {
+                $from_key = $relation->getProperty('from_key');
+                //var_dump("getTopParents sub1: " . $from_key);
+                $moreParents[] = $this->getTopParents($from_key);
+            }
+        }
 
-        $reverseLinks = $this
+        $parents = [];
+
+        $parents = $this
             ->init()
             ->setReverse(true)
             ->setFilter('from_key', $key)
@@ -122,17 +155,20 @@ class NestedConnectionsProvider extends Connections
             ->setFilter('to_status', 'PUBLISHED')
             ->setFilter('relation_type', 'isPartOf')
             ->get();
-
-        $parents = array_merge($parents, $reverseLinks);
-
-        foreach ($parents as $key=>$relation) {
-            $moreParents = $this->getParentNestedCollections($relation->getProperty('from_key'));
-            if (sizeof($moreParents) > 0) {
-                $parents[] = $moreParents;
+        //var_dump("getTopParents" . $key);
+        if(sizeof($parents) > 0) {
+            foreach ($parents as $relation) {
+                $from_key = $relation->getProperty('from_key');
+                //var_dump("getTopParents sub2: " . $from_key);
+                $moreParents[] = $this->getTopParents($from_key);
             }
         }
-
-        return $parents;
+        //var_dump("getTopParents4" . $key);
+        if (sizeof($moreParents) == 0) {
+            //var_dump("return: " . $key);
+            $this->topParent = $key;
+        }
     }
+
 
 }
