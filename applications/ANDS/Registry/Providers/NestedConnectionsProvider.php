@@ -32,6 +32,7 @@ class NestedConnectionsProvider extends Connections
         if($width === 0)
             return [];
         $this->processedChildrenList[] = $parentKey;
+        $currentChildrenList = [];
         $links = $this
             ->init()
             ->setFilter('from_key', $parentKey)
@@ -45,12 +46,15 @@ class NestedConnectionsProvider extends Connections
         foreach ($links as $key => &$relation) {
             $to_key = $relation->getProperty('to_key');
             $relation = $relation->flip();
-            if(!in_array($to_key, $this->processedChildrenList)){
-                $this->processedChildrenList[] = $to_key;
-                $nested = $this->getNestedCollections($to_key, $width - 1);
-                if (sizeof($nested) > 0) {
-                    $links[$key]->setProperty('children', $nested);
-                }
+            if(!in_array($to_key, $currentChildrenList)) {
+                $currentChildrenList[] = $to_key;
+                if(!in_array($to_key, $this->processedChildrenList)){
+                    $this->processedChildrenList[] = $to_key;
+                    $nested = $this->getNestedCollections($to_key, $width - 1);
+                    if (sizeof($nested) > 0) {
+                        $links[$key]->setProperty('children', $nested);
+                    }
+                 }
             }else{
                 unset($links[$key]);
             }
@@ -69,18 +73,23 @@ class NestedConnectionsProvider extends Connections
 
         foreach ($reverseLinks as $key => &$relation) {
             $to_key = $relation->getProperty('from_key');
-            if(!in_array($to_key, $this->processedChildrenList)){
-                $this->processedChildrenList[] = $to_key;
-                $nested = $this->getNestedCollections($to_key, $width - 1);
-                if (sizeof($nested) > 0) {
-                    $reverseLinks[$key]->setProperty('children', $nested);
+           // remove duplicate children
+            if(!in_array($to_key, $currentChildrenList)){
+                $currentChildrenList[] = $to_key;
+                // to avoid recursion don't follow brunches that are already done ones
+                if(!in_array($to_key, $this->processedChildrenList)) {
+                    $this->processedChildrenList[] = $to_key;
+                    $nested = $this->getNestedCollections($to_key, $width - 1);
+                    if (sizeof($nested) > 0) {
+                        $reverseLinks[$key]->setProperty('children', $nested);
+                    }
                 }
             }else{
                 unset($reverseLinks[$key]);
             }
         }
 
-        return array_merge($links, $reverseLinks);
+        return array_slice(array_merge($links, $reverseLinks), 0 , $this->limit);
     }
 
     /**
