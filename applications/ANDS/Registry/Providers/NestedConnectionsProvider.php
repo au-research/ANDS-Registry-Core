@@ -51,7 +51,10 @@ class NestedConnectionsProvider extends Connections
                 if (sizeof($nested) > 0) {
                     $links[$key]->setProperty('children', $nested);
                 }
+            }else{
+                unset($links[$key]);
             }
+
         }
 
         $reverseLinks = $this
@@ -72,6 +75,8 @@ class NestedConnectionsProvider extends Connections
                 if (sizeof($nested) > 0) {
                     $reverseLinks[$key]->setProperty('children', $nested);
                 }
+            }else{
+                unset($reverseLinks[$key]);
             }
         }
 
