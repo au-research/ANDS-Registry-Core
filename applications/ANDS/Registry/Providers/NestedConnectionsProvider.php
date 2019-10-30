@@ -46,6 +46,7 @@ class NestedConnectionsProvider extends Connections
             $to_key = $relation->getProperty('to_key');
             $relation = $relation->flip();
             if(!in_array($to_key, $this->processedChildrenList)){
+                $this->processedChildrenList[] = $to_key;
                 $nested = $this->getNestedCollections($to_key, $width - 1);
                 if (sizeof($nested) > 0) {
                     $links[$key]->setProperty('children', $nested);
@@ -66,6 +67,7 @@ class NestedConnectionsProvider extends Connections
         foreach ($reverseLinks as $key => &$relation) {
             $to_key = $relation->getProperty('from_key');
             if(!in_array($to_key, $this->processedChildrenList)){
+                $this->processedChildrenList[] = $to_key;
                 $nested = $this->getNestedCollections($to_key, $width - 1);
                 if (sizeof($nested) > 0) {
                     $reverseLinks[$key]->setProperty('children', $nested);
