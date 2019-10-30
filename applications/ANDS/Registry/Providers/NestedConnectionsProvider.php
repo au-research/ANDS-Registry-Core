@@ -155,14 +155,16 @@ class NestedConnectionsProvider extends Connections
             ->init()
             ->setFilter('to_key', $key)
             ->setFilter('to_status', 'PUBLISHED')
-            ->setLimit(200)
+            ->setLimit(5)
             ->setFilter('from_class', 'collection')
             ->setFilter('relation_type', 'hasPart')
             ->get();
         if(sizeof($parents) > 0){
             foreach ($parents as $relation) {
                 $from_key = $relation->getProperty('from_key');
-                $moreParents[] = $this->getTopParents($from_key);
+                if(!in_array($from_key, $this->processedParentList)) {
+                    $moreParents[] = $this->getTopParents($from_key);
+                }
             }
         }
 
@@ -172,15 +174,17 @@ class NestedConnectionsProvider extends Connections
             ->init()
             ->setReverse(true)
             ->setFilter('from_key', $key)
-            ->setLimit(200)
+            ->setLimit(5)
             ->setFilter('to_class', 'collection')
             ->setFilter('to_status', 'PUBLISHED')
             ->setFilter('relation_type', 'isPartOf')
             ->get();
         if(sizeof($parents) > 0) {
             foreach ($parents as $relation) {
-                $from_key = $relation->getProperty('from_key');
-                $moreParents[] = $this->getTopParents($from_key);
+                $to_key = $relation->getProperty('to_key');
+                if(!in_array($to_key, $this->processedParentList)) {
+                    $moreParents[] = $this->getTopParents($to_key);
+                }
             }
         }
         if (sizeof($moreParents) == 0) {
