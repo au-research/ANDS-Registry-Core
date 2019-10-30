@@ -46,7 +46,7 @@ class NestedConnectionsProvider extends Connections
         foreach ($links as $key => &$relation) {
             $to_key = $relation->getProperty('to_key');
             $relation = $relation->flip();
-            if(!in_array($to_key, $currentChildrenList)) {
+            if($to_key != $parentKey && !in_array($to_key, $currentChildrenList)) {
                 $currentChildrenList[] = $to_key;
                 if(!in_array($to_key, $this->processedChildrenList)){
                     $this->processedChildrenList[] = $to_key;
@@ -74,7 +74,7 @@ class NestedConnectionsProvider extends Connections
         foreach ($reverseLinks as $key => &$relation) {
             $to_key = $relation->getProperty('from_key');
            // remove duplicate children
-            if(!in_array($to_key, $currentChildrenList)){
+            if($to_key != $parentKey && !in_array($to_key, $currentChildrenList)){
                 $currentChildrenList[] = $to_key;
                 // to avoid recursion don't follow brunches that are already done ones
                 if(!in_array($to_key, $this->processedChildrenList)) {
@@ -97,14 +97,14 @@ class NestedConnectionsProvider extends Connections
      *
      * @param $key
      * @param int $width
-     * @return Relation
+     * @return Relation[]
      */
     public function getNestedCollectionsFromChild($key, $width = 5)
     {
 
         $this->getTopParents($key);
         $topParent = RegistryObjectsRepository::getPublishedByKey($this->topParent);
-
+        $nestedCollections = [];
         $nestedCollection = new Relation([
             'from_id' => $topParent->id,
             'from_title' => $topParent->title,
@@ -114,8 +114,27 @@ class NestedConnectionsProvider extends Connections
             'relation_type' => 'hasPart',
             'children' => $this->getNestedCollections($this->topParent,  $width - 1)
         ]);
+// chek if we left out some parents (https://test.ands.org.au/card-indexes-family-community-services/619832)
+        $nestedCollections[] = $nestedCollection;
+        //dd($this->processedParentList);
+        foreach ($this->processedParentList as $toParent){
 
-        return $nestedCollection;
+            if(!in_array($toParent, $this->processedChildrenList)){
+                $topParent = RegistryObjectsRepository::getPublishedByKey($toParent);
+                $nestedCollection = new Relation([
+                    'from_id' => $topParent->id,
+                    'from_title' => $topParent->title,
+                    'from_class' => $topParent->class,
+                    'from_slug' => $topParent->slug,
+                    'from_status' => $topParent->status,
+                    'relation_type' => 'hasPart',
+                    'children' => $this->getNestedCollections($toParent,  $width - 1)
+                ]);
+                $nestedCollections[] = $nestedCollection;
+            }
+        }
+
+        return $nestedCollections;
     }
 
     /**
