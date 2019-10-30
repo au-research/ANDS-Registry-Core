@@ -102,7 +102,9 @@ class NestedConnectionsProvider extends Connections
     public function getNestedCollectionsFromChild($key, $width = 5)
     {
 
-        $this->getTopParents($key);
+        $this->getTopParents($key, $width);
+        //var_dump($this->processedParentList);
+        //dd($this->topParent);
         $topParent = RegistryObjectsRepository::getPublishedByKey($this->topParent);
         $nestedCollections = [];
         $nestedCollection = new Relation([
@@ -117,10 +119,10 @@ class NestedConnectionsProvider extends Connections
 // chek if we left out some parents (https://test.ands.org.au/card-indexes-family-community-services/619832)
         $nestedCollections[] = $nestedCollection;
         //dd($this->processedParentList);
-        foreach ($this->processedParentList as $toParent){
+        foreach ($this->processedParentList as $key => $level){
 
-            if(!in_array($toParent, $this->processedChildrenList)){
-                $topParent = RegistryObjectsRepository::getPublishedByKey($toParent);
+            if(!in_array($key, $this->processedChildrenList)){
+                $topParent = RegistryObjectsRepository::getPublishedByKey($key);
                 $nestedCollection = new Relation([
                     'from_id' => $topParent->id,
                     'from_title' => $topParent->title,
@@ -128,7 +130,7 @@ class NestedConnectionsProvider extends Connections
                     'from_slug' => $topParent->slug,
                     'from_status' => $topParent->status,
                     'relation_type' => 'hasPart',
-                    'children' => $this->getNestedCollections($toParent,  $width - 1)
+                    'children' => $this->getNestedCollections($key,  $width - 1)
                 ]);
                 $nestedCollections[] = $nestedCollection;
             }
@@ -141,55 +143,53 @@ class NestedConnectionsProvider extends Connections
      * Return an array of all parents in the nested connections
      *
      * @param $key
-     * @return array
+     * @return int
      */
-    public function getTopParents($key)
+    public function getTopParents($key, $level)
     {
-        if(in_array($key, $this->processedParentList)){
+        if($level == 0){
             $this->topParent = $key;
-            return $key;
+            return 0;
         }
-        $this->processedParentList[] = $key;
-        $moreParents = [];
+        $this->processedParentList[$key] = $level;
+
         $parents = $this
             ->init()
             ->setFilter('to_key', $key)
             ->setFilter('to_status', 'PUBLISHED')
-            ->setLimit(5)
+            ->setLimit(200)
             ->setFilter('from_class', 'collection')
             ->setFilter('relation_type', 'hasPart')
             ->get();
+
         if(sizeof($parents) > 0){
             foreach ($parents as $relation) {
                 $from_key = $relation->getProperty('from_key');
-                if(!in_array($from_key, $this->processedParentList)) {
-                    $moreParents[] = $this->getTopParents($from_key);
-                }
+                $this->getTopParents($from_key, $level -1);
             }
         }
 
-        $parents = [];
 
-        $parents = $this
+        $revParents = $this
             ->init()
-            ->setReverse(true)
             ->setFilter('from_key', $key)
-            ->setLimit(5)
+            ->setLimit(200)
             ->setFilter('to_class', 'collection')
             ->setFilter('to_status', 'PUBLISHED')
             ->setFilter('relation_type', 'isPartOf')
             ->get();
-        if(sizeof($parents) > 0) {
-            foreach ($parents as $relation) {
-                $to_key = $relation->getProperty('to_key');
-                if(!in_array($to_key, $this->processedParentList)) {
-                    $moreParents[] = $this->getTopParents($to_key);
-                }
+
+        if(sizeof($revParents) > 0) {
+            foreach ($revParents as $relation) {
+                $from_key = $relation->getProperty('to_key');
+                $this->getTopParents($from_key, $level -1);
             }
         }
-        if (sizeof($moreParents) == 0) {
+
+        if(sizeof($parents) == 0 && sizeof($revParents) == 0)
             $this->topParent = $key;
-        }
+
+
     }
 
 
