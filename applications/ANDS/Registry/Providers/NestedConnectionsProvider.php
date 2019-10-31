@@ -31,8 +31,12 @@ class NestedConnectionsProvider extends Connections
     {
         if($width === 0)
             return [];
+        // keep the processed records' keys so we can print polyhierarchical trees
         $this->processedChildrenList[] = $parentKey;
+        // have a list of children to remove duplicates
         $currentChildrenList = [];
+
+        // find children that are part of this collection
         $links = $this
             ->init()
             ->setFilter('from_key', $parentKey)
@@ -48,6 +52,7 @@ class NestedConnectionsProvider extends Connections
             $relation = $relation->flip();
             if($to_key != $parentKey && !in_array($to_key, $currentChildrenList)) {
                 $currentChildrenList[] = $to_key;
+                // don't follow children that are already processed
                 if(!in_array($to_key, $this->processedChildrenList)){
                     $this->processedChildrenList[] = $to_key;
                     $nested = $this->getNestedCollections($to_key, $width - 1);
@@ -56,11 +61,13 @@ class NestedConnectionsProvider extends Connections
                     }
                  }
             }else{
+                // delete duplicate children
                 unset($links[$key]);
             }
 
         }
 
+        // find children that claims to be part of this collection
         $reverseLinks = $this
             ->init()
             ->setFilter('to_key', $parentKey)
@@ -85,10 +92,11 @@ class NestedConnectionsProvider extends Connections
                     }
                 }
             }else{
+                // delete duplicate children
                 unset($reverseLinks[$key]);
             }
         }
-
+        // each query might return the maximum number so slice it to the limit once merged
         return array_slice(array_merge($links, $reverseLinks), 0 , $this->limit);
     }
 
@@ -101,10 +109,10 @@ class NestedConnectionsProvider extends Connections
      */
     public function getNestedCollectionsFromChild($key, $width = 5)
     {
-
+        // find the most top parent up to level $width
+        // if we go up too high the child won't be included in the tree
         $this->getTopParents($key, $width);
-        //var_dump($this->processedParentList);
-        //dd($this->topParent);
+
         $topParent = RegistryObjectsRepository::getPublishedByKey($this->topParent);
         $nestedCollections = [];
         $nestedCollection = new Relation([
@@ -116,7 +124,9 @@ class NestedConnectionsProvider extends Connections
             'relation_type' => 'hasPart',
             'children' => $this->getNestedCollections($this->topParent,  $width - 1)
         ]);
-// chek if we left out some parents (https://test.ands.org.au/card-indexes-family-community-services/619832)
+        // chek if we left out some parents (https://test.ands.org.au/card-indexes-family-community-services/619832)
+        // some collection have multiple unrelated parents
+        // then we need to create multiple trees
         $nestedCollections[] = $nestedCollection;
         //dd($this->processedParentList);
         foreach ($this->processedParentList as $key => $level){
@@ -147,12 +157,14 @@ class NestedConnectionsProvider extends Connections
      */
     public function getTopParents($key, $level)
     {
+        // if we've reached the highest point let this parent be the top one
         if($level == 0){
             $this->topParent = $key;
             return 0;
         }
+        // level is not used but might be handy one day
         $this->processedParentList[$key] = $level;
-
+        // find parent that has this record
         $parents = $this
             ->init()
             ->setFilter('to_key', $key)
@@ -169,7 +181,7 @@ class NestedConnectionsProvider extends Connections
             }
         }
 
-
+        // find parent that this record is part of
         $revParents = $this
             ->init()
             ->setFilter('from_key', $key)
@@ -185,7 +197,7 @@ class NestedConnectionsProvider extends Connections
                 $this->getTopParents($from_key, $level -1);
             }
         }
-
+        // if this object has no parent then let this be the top parent
         if(sizeof($parents) == 0 && sizeof($revParents) == 0)
             $this->topParent = $key;
 
