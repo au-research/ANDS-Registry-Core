@@ -11,27 +11,33 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
 */
 class Connectiontrees extends ROHandler {
 
-    public function handle_wip()
+    public function handle()
     {
+        if ($this->ro->status == "DELETED")
+            return [];
+
         $conn = new NestedConnectionsProvider(new EloquentConnectionsRepository);
-        $links = $conn->getNestedCollectionsFromChild($this->ro->key, 5);
+        $linksArray = $conn->getNestedCollectionsFromChild($this->ro->key, 5);
 
-        $links = $links->format([
-            'from_id' => 'registry_object_id',
-            'from_title' => 'title',
-            'from_class' => 'class',
-            'from_slug' => 'slug',
-            'relation_type' => 'relation_type',
-            'from_status' => 'status',
-            'children' => 'children'
-        ], true);
+        foreach ($linksArray as $links){
+            $links = $links->format([
+                'from_id' => 'registry_object_id',
+                'from_title' => 'title',
+                'from_class' => 'class',
+                'from_slug' => 'slug',
+                'relation_type' => 'relation_type',
+                'from_status' => 'status',
+                'children' => 'children'
+            ], true);
 
-        $links = [$links];
+            $result[] = $links;
+        }
 
-        return $links;
+        return $result;
     }
 
-	function handle() {
+	function handle_slow_and_memory_hungry() {
+
         if ($this->ro->status == "DELETED")
             return [];
 
