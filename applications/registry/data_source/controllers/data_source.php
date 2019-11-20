@@ -223,7 +223,12 @@ class Data_source extends MX_Controller {
 			if($ds->harvest_frequency==''){//once off
 				$status[0]['last_run'] = $status[0]['next_run'];
 				$status[0]['next_run'] = false;
-			}
+			}else{
+                date_default_timezone_set('UTC');
+                $lastRun = strtotime($status[0]['last_run']);
+                date_default_timezone_set('Australia/Canberra');
+                $status[0]['last_run'] = date("Y-m-d H:i:s", $lastRun);
+            }
 			$jsonData['items'] = $status;
 		} else {
 			$jsonData['items'] = array(
