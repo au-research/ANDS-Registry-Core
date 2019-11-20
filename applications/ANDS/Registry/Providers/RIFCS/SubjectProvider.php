@@ -173,7 +173,8 @@ class SubjectProvider implements RIFCSProvider
         $match = ['\\', '&', '!', '(', ')', '{', '}', '[', ']', '^', '~', '*', '?', ':', '/', '||'];
         $replace = ['\\\\', '&', '\\!', '\\(', '\\)', '\\{', '\\}', '\\[', '\\]', '\\^', '\\~', '\\*', '\\?', '\\:', '\\/', '\\||'];
 
-        // determine if string has a preceding numeric notation before the prefLabel then don't quote the search string
+        // determine if string has a preceding numeric notation before the prefLabel BUT still quote the search string
+        // TODO: according to specs it should also drop the notation from the subject value
         $notation = explode(" ", $string);
         if (is_numeric($notation[0])) {
             return str_replace($match, $replace, $string);
