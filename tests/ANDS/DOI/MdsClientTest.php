@@ -125,6 +125,10 @@ class MdsClientTest extends PHPUnit_Framework_TestCase
             $this->createTestDOI();
         }
 
+        if (!$this->isTestDOIExists()) {
+            $this->markTestSkipped("DOI Creation Failed. Check DataCite");
+        }
+
         // setup the url (make sure)
         $this->client->clearResponse();
         $this->client->updateURL($this->testDoiId, "https://devl.ands.org.au/leo/");
