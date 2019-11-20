@@ -194,11 +194,11 @@ function SettingsCtrl($scope, $routeParams, ds_factory) {
 		});
 	}
 
-	$scope.load_contributor = function() {
-		ds_factory.contributor($scope.ds.id).then(function(data){
-			$scope.ds.contributor = data;
-		});
-	}
+	// $scope.load_contributor = function() {
+	// 	ds_factory.contributor($scope.ds.id).then(function(data){
+	// 		$scope.ds.contributor = data;
+	// 	});
+	// }
 }
 
 function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
@@ -241,7 +241,7 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 		if(data.status=='OK'){
 			$scope.ds = data.items[0];
 
-			$scope.load_contributor();
+			//$scope.load_contributor();
 			$scope.process_values();
 			bind_plugins($scope);
 			document.title = $scope.ds.title + ' - Edit Settings';
