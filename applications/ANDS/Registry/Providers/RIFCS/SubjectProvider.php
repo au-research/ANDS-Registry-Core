@@ -170,11 +170,12 @@ class SubjectProvider implements RIFCSProvider
         $search_string = $string;
         $label_string = $string;
 
+        // escape special characters
         $match = ['\\', '&', '!', '(', ')', '{', '}', '[', ']', '^', '~', '*', '?', ':', '/', '||'];
         $replace = ['\\\\', '&', '\\!', '\\(', '\\)', '\\{', '\\}', '\\[', '\\]', '\\^', '\\~', '\\*', '\\?', '\\:', '\\/', '\\||'];
 
-        // determine if string has a preceding numeric notation before the prefLabel BUT still quote the search string
-        // TODO: according to specs it should also drop the notation from the subject value
+        // determine if string has a preceding numeric notation before the prefLabel . If so, then don't quote the search string
+        // search string needs to be escaped to ensure that special characters don't break SOLR
         $notation = explode(" ", $string);
         if (is_numeric($notation[0])) {
             return str_replace($match, $replace, $string);
@@ -182,8 +183,6 @@ class SubjectProvider implements RIFCSProvider
 
         // determine if the string has &gt; divider and convert to |
         $search_string = str_replace("&gt;", "|", $search_string);
-
-        // escape special characters
 
         $search_string = str_replace($match, $replace, $search_string);
         $label_string = str_replace($match, $replace, $label_string);
