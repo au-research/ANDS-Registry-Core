@@ -205,13 +205,15 @@ class OAIRecordRepository implements OAIRepository
 
         if (!in_array($metadataFormat, array_keys($this->formats))) {
 
-            $record = AltSchemaVersion::where('key', $identifier)->first();
-            if (!$record) {
+            $record = $this->getAltSchemaVersion($identifier, $metadataFormat);
+
+            if (!$record || sizeof($record) == 0)  {
                 return null;
             }
 
+            $record = $record[0];
             $oaiRecord = new Record(
-                $record->registryObject->key,
+                $record->key,
                 Carbon::parse($record->updated_at)->setTimezone('UTC')->format($this->getDateFormat())
             );
             $oaiRecord = $this->addAltSchemaVersionsSets($oaiRecord, $record);
@@ -755,7 +757,7 @@ class OAIRecordRepository implements OAIRepository
 
         foreach ($records['records'] as $record) {
             $oaiRecord = new Record(
-                $record->registryObject->key,
+                $record->key,
                 Carbon::parse($record->updated_at)->setTimezone('UTC')->format($this->getDateFormat())
             );
             $oaiRecord = $this->addAltSchemaVersionsSets($oaiRecord, $record);
@@ -796,15 +798,46 @@ class OAIRecordRepository implements OAIRepository
         ];
     }
 
+    /*
+     *
+     * for performance improvements dropping the usage of the AltChemaVersion View :-(
+     * can't get it to work as fast as a query
+     * need to read more
+     *
+     */
+    private function getAltSchemaVersion($registry_object_key, $metadataPrefix)
+    {
+
+        $version =  Capsule::table('versions')->join('registry_object_versions', 'versions.id', '=' , 'registry_object_versions.version_id' )
+            ->join('registry_objects', 'registry_object_versions.registry_object_id', '=', 'registry_objects.registry_object_id')
+            ->join('schemas', 'versions.schema_id', '=', 'schemas.id')
+            ->where('schemas.prefix', $metadataPrefix)
+            ->where('schemas.exportable', 1)
+            ->where('registry_objects.key', $registry_object_key)
+            ->where('registry_objects.status', 'PUBLISHED')
+            ->select('versions.data', 'versions.updated_at', 'registry_objects.key','registry_objects.group', 'registry_objects.registry_object_id', 'registry_objects.class', 'registry_objects.data_source_id')
+            ->get();
+
+        return $version;
+
+    }
+
+    /*
+     *
+     * for performance improvements dropping the usage of the AltChemaVersion View :-(
+     * can't get it to work as fast as a query
+     * need to read more
+     *
+     */
     private function getAltSchemaVersions($options)
     {
 
         $versions =  Capsule::table('versions')->join('registry_object_versions', 'versions.id', '=' , 'registry_object_versions.version_id' )
             ->join('registry_objects', 'registry_object_versions.registry_object_id', '=', 'registry_objects.registry_object_id')
             ->join('schemas', 'versions.schema_id', '=', 'schemas.id')
-            ->where('registry_objects.status', 'PUBLISHED')
+            ->where('schemas.prefix', $options['metadataPrefix'])
             ->where('schemas.exportable', 1)
-            ->where('schemas.prefix', $options['metadataPrefix']);
+            ->where('registry_objects.status', 'PUBLISHED');
 
         if ($options['set']) {
             $set = $options['set'];
@@ -851,9 +884,7 @@ class OAIRecordRepository implements OAIRepository
             }
         }
 
-
         $count = $versions->count();
-        $records = $versions->limit($options['limit'])->offset($options['offset'])->get();
 
         return [
             'total' => $count,
