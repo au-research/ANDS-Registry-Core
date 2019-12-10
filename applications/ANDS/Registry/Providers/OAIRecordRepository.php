@@ -26,7 +26,10 @@ use ANDS\OAI\Interfaces\OAIRepository;
 use ANDS\OAI\Exception\OAIException;
 use ANDS\OAI\Record;
 use ANDS\OAI\Set;
-use ANDS\RegistryObject\AltSchemaVersion;
+use \ANDS\Registry\Schema;
+use \ANDS\Registry\Versions;
+use ANDS\RegistryObject\RegistryObjectVersion;
+use Illuminate\Database\Capsule\Manager as Capsule;
 
 class OAIRecordRepository implements OAIRepository
 {
@@ -772,10 +775,11 @@ class OAIRecordRepository implements OAIRepository
         $records = $this->getAltSchemaVersions($options);
 
         $result = [];
+
         foreach ($records['records'] as $record) {
 
             $oaiRecord = new Record(
-                $record->registryObject->key,
+                $record->key,
                 Carbon::parse($record->updated_at)->setTimezone('UTC')->format($this->getDateFormat())
             );
             $oaiRecord = $this->addAltSchemaVersionsSets($oaiRecord, $record);
@@ -794,30 +798,33 @@ class OAIRecordRepository implements OAIRepository
 
     private function getAltSchemaVersions($options)
     {
-        $records = AltSchemaVersion::where('prefix', $options['metadataPrefix']);
 
-        // set
-        if (array_key_exists('set', $options) && $options['set']) {
+        $versions =  Capsule::table('versions')->join('registry_object_versions', 'versions.id', '=' , 'registry_object_versions.version_id' )
+            ->join('registry_objects', 'registry_object_versions.registry_object_id', '=', 'registry_objects.registry_object_id')
+            ->join('schemas', 'versions.schema_id', '=', 'schemas.id')
+            ->where('registry_objects.status', 'PUBLISHED')
+            ->where('schemas.exportable', 1)
+            ->where('schemas.prefix', $options['metadataPrefix']);
+
+        if ($options['set']) {
             $set = $options['set'];
-            $set = urldecode($set);
             $set = explode(':', $set);
 
             $opt = $set[0];
             $value = $set[1];
 
             switch ($opt) {
+                case "class":
+                    $versions = $versions->where('registry_objects.class', $value);
+                    break;
                 case "datasource":
                     if ($value = $this->getDataSourceID($value)) {
-                        $records = $records->where('registry_object_data_source_id', $value);
-                    } else {
-                        throw new NoRecordsMatch();
+                        $versions = $versions->where('registry_objects.data_source_id', $value);
                     }
                     break;
                 case "group":
                     if ($value = $this->getGroupName($value)) {
-                        $records = $records->where('group', $value);
-                    } else {
-                        throw new NoRecordsMatch();
+                        $versions = $versions->where('registry_objects.group', $value);
                     }
                     break;
             }
@@ -825,8 +832,8 @@ class OAIRecordRepository implements OAIRepository
 
         // from
         if (array_key_exists('from', $options) && $options['from']) {
-            $records = $records->where(
-                'updated_at', '>=',
+            $records = $versions->where(
+                'versions.updated_at', '>=',
                 DatesProvider::parseUTCToLocal($options['from'])->toDateTimeString()
             );
         }
@@ -838,31 +845,34 @@ class OAIRecordRepository implements OAIRepository
             $until = $until->setTimezone(Config::get('app.timezone'));
             if (array_key_exists('until', $options) && $options['until']) {
                 $records = $records->where(
-                    'updated_at', '<=',
+                    'versions.updated_at', '<=',
                     $until->toDateTimeString()
                 );
             }
         }
 
-        $count = $records->count();
 
+        $count = $versions->count();
+        $records = $versions->limit($options['limit'])->offset($options['offset'])->get();
 
         return [
             'total' => $count,
-            'records' => $records->limit($options['limit'])->offset($options['offset'])->get()
+            'records' => $versions->select('versions.data', 'versions.updated_at', 'registry_objects.key','registry_objects.group', 'registry_objects.registry_object_id', 'registry_objects.class', 'registry_objects.data_source_id')
+                ->limit($options['limit'])->offset($options['offset'])->get()
         ];
+
     }
 
 
-    private function addAltSchemaVersionsSets(Record $oaiRecord, AltSchemaVersion $record)
+    private function addAltSchemaVersionsSets(Record $oaiRecord, $record)
     {
-        if ($dataSource = DataSource::find($record->registry_object_data_source_id)) {
+        if ($dataSource = DataSource::find($record->data_source_id)) {
             $oaiRecord
                 ->addSet(new Set("datasource:". $dataSource->id))
                 ->addSet(new Set("datasource:". $this->nameBackwardCompat($dataSource->title)));
         }
 
-        if ($group = Group::where('title', $record->registry_object_group)->first()) {
+        if ($group = Group::where('title', $record->group)->first()) {
             $oaiRecord
                 ->addSet(new Set("group:".$group->id))
                 ->addSet(new Set("group:".$this->nameBackwardCompat($group->title)));
