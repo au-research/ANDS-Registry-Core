@@ -885,11 +885,17 @@ class OAIRecordRepository implements OAIRepository
         }
 
         $count = $versions->count();
+        $records = $versions->select('versions.data',
+            'versions.updated_at',
+            'registry_objects.key',
+            'registry_objects.group',
+            'registry_objects.registry_object_id',
+            'registry_objects.class',
+            'registry_objects.data_source_id')->limit($options['limit'])->offset($options['offset'])->get();
 
         return [
             'total' => $count,
-            'records' => $versions->select('versions.data', 'versions.updated_at', 'registry_objects.key','registry_objects.group', 'registry_objects.registry_object_id', 'registry_objects.class', 'registry_objects.data_source_id')
-                ->limit($options['limit'])->offset($options['offset'])->get()
+            'records' => $records
         ];
 
     }
@@ -897,6 +903,9 @@ class OAIRecordRepository implements OAIRepository
 
     private function addAltSchemaVersionsSets(Record $oaiRecord, $record)
     {
+
+        $oaiRecord->addSet(new Set("class:".$record->class));
+
         if ($dataSource = DataSource::find($record->data_source_id)) {
             $oaiRecord
                 ->addSet(new Set("datasource:". $dataSource->id))
