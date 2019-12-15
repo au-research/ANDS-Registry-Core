@@ -194,9 +194,32 @@ class SubjectsProviderTest extends \RegistryTestClass
         $this->assertEquals($subjects['01']['resolved'], "MATHEMATICAL SCIENCES");
         $this->assertEquals($subjects['11 0000']['resolved'], "11 0000");
 
+
         // TODO: value is both notation and label 0806 Information Services
         // https://test.ands.org.au/registry/registry_object/view/1304
     }
+
+    /** @test **/
+    public function it_should_resolve_anzsrc_for_preceeding_with_notation_and_bad_character_subject() {
+
+        // convert error & warnings into exception
+        // because this function raised a warning instead of an exception
+        set_error_handler(function ($severity, $message, $file, $line) {
+            throw new \ErrorException($message, $severity, $severity, $file, $line);
+        });
+
+
+        // if there's an exception, fail the test
+        try {
+            SubjectProvider::resolveSubjects([
+                ['type' => 'anzsrc-seo', 'value' => '920499 Public Health (excl. Specific Population Health) not elsewhere classified))))))']
+            ]);
+        } catch (\Exception $e) {
+            $this->fail("Failed");
+        }
+    }
+
+
 
     /** @test **/
     public function it_should_resolve_gcmd_delimited_typed()

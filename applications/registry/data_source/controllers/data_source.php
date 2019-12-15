@@ -206,6 +206,9 @@ class Data_source extends MX_Controller {
 	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
 	 * @param  data_source_id $id
 	 * @return json
+     * CC-460 changes
+     * since last_run date is saved as UTC we need to convert it into the client's timezone
+     * at this stage just use the server's time zone and try to aquire the client's using javascript in the browser
 	 */
 	public function harvester_status($id=false) {
 		//prepare
@@ -223,7 +226,13 @@ class Data_source extends MX_Controller {
 			if($ds->harvest_frequency==''){//once off
 				$status[0]['last_run'] = $status[0]['next_run'];
 				$status[0]['next_run'] = false;
-			}
+			}else{
+                date_default_timezone_set('UTC');
+                $lastRun = strtotime($status[0]['last_run']);
+                $server_timezone = \ANDS\Util\Config::get('app.timezone');
+                date_default_timezone_set($server_timezone);
+                $status[0]['last_run'] = date("Y-m-d H:i:s", $lastRun);
+            }
 			$jsonData['items'] = $status;
 		} else {
 			$jsonData['items'] = array(

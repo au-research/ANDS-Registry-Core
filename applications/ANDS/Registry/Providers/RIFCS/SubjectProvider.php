@@ -164,25 +164,28 @@ class SubjectProvider implements RIFCSProvider
      * @param $string
      * @return string
      */
-    public static function formatSearchString($string,$type)
+    public static function formatSearchString($string, $type)
     {
 
         $search_string = $string;
         $label_string = $string;
 
-        // determine if string has a preceding numeric notation before the prefLabel then don't quote the search string
+        // escape special characters
+        $match = ['\\', '&', '!', '(', ')', '{', '}', '[', ']', '^', '~', '*', '?', ':', '/', '||'];
+        $replace = ['\\\\', '&', '\\!', '\\(', '\\)', '\\{', '\\}', '\\[', '\\]', '\\^', '\\~', '\\*', '\\?', '\\:', '\\/', '\\||'];
+
+        // determine if string has a preceding numeric notation before the prefLabel . If so, then don't quote the search string
+        // search string needs to be escaped to ensure that special characters don't break SOLR
         $notation = explode(" ", $string);
         if (is_numeric($notation[0])) {
-            return $string;
+            return str_replace($match, $replace, $string);
         }
 
         // determine if the string has &gt; divider and convert to |
         $search_string = str_replace("&gt;", "|", $search_string);
 
-        // escape special characters
-        $match = ['\\', '&', '!', '(', ')', '{', '}', '[', ']', '^', '~', '*', '?', ':', '/', '||'];
-        $replace = ['\\\\', '&', '\\!', '\\(', '\\)', '\\{', '\\}', '\\[', '\\]', '\\^', '\\~', '\\*', '\\?', '\\:', '\\/', '\\||'];
         $search_string = str_replace($match, $replace, $search_string);
+        $label_string = str_replace($match, $replace, $label_string);
 
         //determine the actual final term of a gcmd value
         if(self::isMultiValue($string) && ($type=='gcmd'||$type=='local'))

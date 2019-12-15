@@ -194,11 +194,11 @@ function SettingsCtrl($scope, $routeParams, ds_factory) {
 		});
 	}
 
-	$scope.load_contributor = function() {
-		ds_factory.contributor($scope.ds.id).then(function(data){
-			$scope.ds.contributor = data;
-		});
-	}
+	// $scope.load_contributor = function() {
+	// 	ds_factory.contributor($scope.ds.id).then(function(data){
+	// 		$scope.ds.contributor = data;
+	// 	});
+	// }
 }
 
 function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
@@ -215,7 +215,7 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
         {name:'service', value:'CSW'},
         {name:'version', value:'2.0.2'},
         {name:'namespace', value:'xmlns(csw=http://www.opengis.net/cat/csw)'},
-		{name:'outputFormat', value:'application/xml'},
+        {name:'outputFormat', value:'application/xml'},
         {name:'resultType', value:'results'},
         {name:'typeNames', value:'csw:Record'},
         {name:'elementSetName', value:'full'},
@@ -223,7 +223,10 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
         {name:'constraint_language_version', value:'1.1.0v'}
     ];
 
-
+    $scope.pure_harvest_params = [
+        {name:'apiKey', value:''},
+        {name:'pageSize', value:'100'}
+    ];
 
 
 	$scope.provider_types = [
@@ -238,7 +241,7 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 		if(data.status=='OK'){
 			$scope.ds = data.items[0];
 
-			$scope.load_contributor();
+			//$scope.load_contributor();
 			$scope.process_values();
 			bind_plugins($scope);
 			document.title = $scope.ds.title + ' - Edit Settings';
@@ -366,7 +369,13 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 			});
 		}
 
-        if($scope.ds.harvest_method=='CSWHarvester' || $scope.ds.harvest_method=='PUREHarvester') {
+		// reset user_defined_params if switching between CSW and PURE
+		if(oldv != undefined && (newv == 'PUREHarvester' || newv == 'CSWHarvester')){
+			$scope.ds.user_defined_params = false;
+		}
+
+
+        if($scope.ds.harvest_method=='CSWHarvester') {
             if(!$scope.ds.user_defined_params){
 				$scope.ds.user_defined_params = [];
 				$.each($scope.csw_harvest_params, function(){
@@ -377,7 +386,22 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 					}
 				});
 			}
-        }
+        }else if($scope.ds.harvest_method=='PUREHarvester') {
+            if(!$scope.ds.user_defined_params){
+                $scope.ds.user_defined_params = [];
+                $.each($scope.pure_harvest_params, function(){
+                    if(!isParamSet(this.name)){
+                        $scope.ds.user_defined_params.push({
+                            name:this.name, value:this.value
+                        });
+                    }
+                });
+            }
+        }else{
+			// unset user defined params if not CSW or PURE
+            $scope.ds.user_defined_params = false;
+		}
+
 
 		if($scope.ds.harvest_method=='PMHHarvester') {
 			$scope.adv_harvest_modes = [
