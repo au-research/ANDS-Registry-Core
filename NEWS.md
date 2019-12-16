@@ -1,3 +1,13 @@
+## Release 35
+Release 35 of ARDC Online Services is scheduled for implementation on **Tuesday, 17 December 2019 between 8am and 12pm AEDT**.
+This release implements a number of enhancements and bug fixes to Research Data Australia (RDA) harvester and indexing of subjects. 
+
+**Research Data Australia**
+
+* Enhancements to the harvester to support chunked transfer encoding via HTTP v1.1 
+* Addition of new harvest method to support harvesting from MAGDA API 
+* Fix bug where records with special characters in subject label are failing to index due to error thrown during subject resolution 
+* Fix bug where RDA Registry pre populates PURE Harvest params with CSW values Fix issue where harvest last run date on the Dashboard is shown in the past 
 
 ## Release 34
 
