@@ -419,8 +419,9 @@ class ServiceProvider
                 );
         }
 
-        if ($data['metadata']) {
-            try {
+        if ($xml = $data['metadata']) {
+            // test is xml
+            if (strpos($xml, '<', 0)) {
                 $el = $response->createElement('metadata');
                 $doc = new DOMDocument();
                 $doc->loadXml($data['metadata'], LIBXML_NSCLEAN);
@@ -428,14 +429,13 @@ class ServiceProvider
                     $response->getContent()->importNode($doc->documentElement, true)
                 );
                 $recordNode->appendChild($el);
-            } catch (\Exception $e) {
-                // most likely not xml content so add it as cdata section
+            } else {
+                // is not xml, embed it as cdata
                 $el = $response->createElement('metadata');
                 $cdata = $recordNode->ownerDocument->createCDATASection($data['metadata']);
                 $el->appendChild($cdata);
                 $recordNode->appendChild($el);
             }
-
 
         }
 
@@ -539,7 +539,8 @@ class ServiceProvider
                     );
             }
 
-            try {
+            $xml = $data['metadata'];
+            if (strpos($xml, '<', 0)) {
                 $el = $response->createElement('metadata');
                 $doc = new DOMDocument();
                 $doc->loadXml($data['metadata'], LIBXML_NSCLEAN);
@@ -547,14 +548,13 @@ class ServiceProvider
                     $response->getContent()->importNode($doc->documentElement, true)
                 );
                 $recordNode->appendChild($el);
-            } catch (\Exception $e) {
-                // most likely not xml content so add it as cdata section
+            } else {
+                // is not xml, embed it as cdata
                 $el = $response->createElement('metadata');
                 $cdata = $recordNode->ownerDocument->createCDATASection($data['metadata']);
                 $el->appendChild($cdata);
                 $recordNode->appendChild($el);
             }
-
 
             $element->appendChild($recordNode);
         }
