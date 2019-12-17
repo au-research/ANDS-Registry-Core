@@ -421,7 +421,7 @@ class ServiceProvider
 
         if ($xml = $data['metadata']) {
             // test is xml
-            if (strpos($xml, '<', 0)) {
+            if (strpos($xml, '<') === 0) {
                 $el = $response->createElement('metadata');
                 $doc = new DOMDocument();
                 $doc->loadXml($data['metadata'], LIBXML_NSCLEAN);
@@ -540,7 +540,7 @@ class ServiceProvider
             }
 
             $xml = $data['metadata'];
-            if (strpos($xml, '<', 0)) {
+            if (strpos($xml, '<') === 0) {
                 $el = $response->createElement('metadata');
                 $doc = new DOMDocument();
                 $doc->loadXml($data['metadata'], LIBXML_NSCLEAN);
