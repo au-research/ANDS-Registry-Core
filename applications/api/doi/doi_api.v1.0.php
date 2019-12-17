@@ -1354,17 +1354,22 @@ class Doi_api
 
     private function _isDataCiteAlive($timeout = 5)
     {
+        // This function was updated 17/12/2019 to cater for Datacite redirecting from the base_url to a documentation page.
+        // We now sign onto Datacite mds and retrieve the metadata of a known doi
+        // to ensure that mds api is active and responsive to client requests
+
         $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, (Config::get('datacite.base_url')));
+        curl_setopt($curl, CURLOPT_URL, (Config::get('datacite.base_url'))."metadata/".Config::get('datacite.known_doi'));
         curl_setopt($curl, CURLOPT_FILETIME, true);
         curl_setopt($curl, CURLOPT_NOBODY, true);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, $timeout);
         curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);
+        curl_setopt($curl, CURLOPT_USERPWD,
+            Config::get('datacite.password'). ":" . Config::get('datacite.name_prefix'));
         curl_exec($curl);
-
         return !(curl_errno($curl) || curl_getinfo($curl,
-                CURLINFO_HTTP_CODE) != "200");
+            CURLINFO_HTTP_CODE) != "200");
     }
 
     public function __construct()
