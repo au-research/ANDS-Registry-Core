@@ -745,6 +745,11 @@ function isbot($useragent = false)
 	}
 }
 
+/***
+ *
+ * added MYSQL_ATTR_MAX_BUFFER_SIZE to config default value of 1MB is not enough for some registryObjects
+ * CC-2691
+ */
 function initEloquent() {
     $dotenv = new \Dotenv\Dotenv(__DIR__ . '/../../');
     $dotenv->load();
@@ -767,6 +772,7 @@ function initEloquent() {
                 'prefix' => '',
                 'options' => [
                     \PDO::ATTR_PERSISTENT => true,
+                    \PDO::MYSQL_ATTR_MAX_BUFFER_SIZE => 2 * 1024 * 1024
                 ]
             ], $key
         );
