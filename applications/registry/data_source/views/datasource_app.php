@@ -111,7 +111,7 @@
 		<a href="#!/">Manage My Data Sources</a>
 		<a href="javascript:;" class="current">{{ds.title}} - Dashboard</a>
 		<div class="pull-right">
-			<span class="label"><i class="icon-question-sign icon-white"></i> <a target="_blank" style="color:white;" href="http://services.ands.org.au/documentation/DashboardHelp/">Help</a></span>
+			<span class="label"><i class="icon-question-sign icon-white"></i> <a target="_blank" style="color:white;" href="https://documentation.ands.org.au/display/DOC/Data+Source+Account+Dashboard">Help</a></span>
 		</div>
 	</div>
 	<div class="container-fluid">
@@ -503,7 +503,7 @@
 		<a href="#!/view/{{ds.id}}">{{ds.title}} - Dashboard</a>
 		<a href="#!/settings/{{ds.id}}" class="current">Settings</a>
 		<div class="pull-right">
-			<span class="label"><i class="icon-question-sign icon-white"></i> <a target="_blank" style="color:white;" href="http://services.ands.org.au/documentation/SettingsHelp/">Help</a></span>
+			<span class="label"><i class="icon-question-sign icon-white"></i> <a target="_blank" style="color:white;" href="https://documentation.ands.org.au/display/DOC/Account+Administration+Information">Help</a></span>
 		</div>
 	</div>
 	<div class="container-fluid">
@@ -514,7 +514,7 @@
 						<a href="#!/edit/{{ds.id}}" class="btn btn-primary">Edit Settings</a>
 					</div>
 					<div class="widget-content">
-						<h4>Account Administration Information <sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#account_info" target="_blank" class="muted">?</a></sup></h4>
+						<h4>Account Administration Information <sup><a href="https://documentation.ands.org.au/display/DOC/Account+Administration+Information" target="_blank" class="muted">?</a></sup></h4>
 						<dl class="dl-horizontal dl-wide">
 							<dt>Key</dt><dd>{{ds.key}}</dd>
 							<dt>Title</dt><dd>{{ds.title}}</dd>
@@ -526,19 +526,19 @@
 						</dl>
 						<h4>Records Management Setttings</h4>
 						<dl class="dl-horizontal dl-wide">
-							<dt>Reverse Links <sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#reverse_links" target="_blank" class="muted">?</a></sup></dt>
+							<dt>Reverse Links <sup><a href="https://documentation.ands.org.au/display/DOC/Account+Administration+Information" target="_blank" class="muted">?</a></sup></dt>
 							<dd>
 								<p><span checkbox="ds.allow_reverse_internal_links"></span> Allow reverse internal links</p>
 								<p><span checkbox="ds.allow_reverse_external_links"></span> Allow reverse external links</p>
 							</dd>
-							<dt>Create Primary Relationships <sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#primary_rels" target="_blank" class="muted">?</a></sup></dt>
+							<dt>Create Primary Relationships <sup><a href="https://documentation.ands.org.au/display/DOC/Records+Management+Settings" target="_blank" class="muted">?</a></sup></dt>
 							<dd><p><span checkbox="ds.create_primary_relationships"></span></p></dd>
-							<dt>Manually Publish <sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#man_publish" target="_blank" class="muted">?</a></sup></dt>
+							<dt>Manually Publish <sup><a href="https://documentation.ands.org.au/display/DOC/Records+Management+Settings" target="_blank" class="muted">?</a></sup></dt>
 							<dd><p><span checkbox="ds.manual_publish"></span></p></dd>
-							<dt>Quality Assessment Required <sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#qa_required" target="_blank" class="muted">?</a></sup></dt>
+							<dt>Quality Assessment Required <sup><a href="https://documentation.ands.org.au/display/DOC/Records+Management+Settings" target="_blank" class="muted">?</a></sup></dt>
 							<dd><p><span checkbox="ds.qa_flag"></span></p></dd>
 							<span ng-show="ds.assessment_notify_email_addr">
-								<dt>Assessment Notification Email <sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#qa_required" target="_blank" class="muted">?</a></sup></dt>
+								<dt>Assessment Notification Email <sup><a href="https://documentation.ands.org.au/display/DOC/Records+Management+Settings" target="_blank" class="muted">?</a></sup></dt>
 								<dd><p>{{ds.assessment_notify_email_addr}}</p></dd>
 							</span>
 							<span ng-show="ds.export_dci">
@@ -546,21 +546,7 @@
 								<dd><span checkbox="ds.export_dci"></span></dd>
 							</span>
 						</dl>
-						<h4>Contributor Pages <sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#contributor_pgs" target="_blank" class="muted">?</a></sup></h4>
-						<div ng-show="ds.contributor">
-							<p>{{ds.contributor.contributor_page}}</p>
-							<table class="table table-hover headings-left">
-								<thead><tr><th class="align-left">GROUP</th><th class="align-left">Contributor Page Key</th></tr></thead>
-								<tbody>
-									<tr ng-repeat="item in ds.contributor.items">
-										<td>{{item.group}}</td>
-										<td ng-show="item.contributor_page_key"><a href="{{item.contributor_page_link}}">{{item.contributor_page_key}}</a></td>
-										<td ng-show="!item.contributor_page_key"><em>Not Managed!</em></td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-						<h4>Harvester Settings <sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#harvest_settings" target="_blank" class="muted">?</a></sup></h4>
+						<h4>Harvester Settings <sup><a href="https://documentation.ands.org.au/display/DOC/Harvester+Settings" target="_blank" class="muted">?</a></sup></h4>
 						<dl class="dl-horizontal dl-wide">
 							<span ng-show="ds.uri"><dt>URI</dt><dd>{{ds.uri}}</dd></span>
 							<span ng-show="ds.provider_type"><dt>Provider Type</dt><dd>{{ds.provider_type}}</dd></span>
@@ -595,7 +581,7 @@
 		<a href="#!/settings/{{ds.id}}">Settings</a>
 		<a href="#!/edit/{{ds.id}}" class="current">Edit Settings</a>
 		<div class="pull-right">
-			<span class="label"><i class="icon-question-sign icon-white"></i> <a target="_blank" style="color:white;" href="http://services.ands.org.au/documentation/SettingsHelp/">Help</a></span>
+			<span class="label"><i class="icon-question-sign icon-white"></i> <a target="_blank" style="color:white;" href="https://documentation.ands.org.au/display/DOC/Data+Source+Account+Settings">Help</a></span>
 		</div>
 	</div>
 	<div class="container-fluid" ng-show="ds">
@@ -670,7 +656,7 @@
 							<fieldset>
 								<legend>Records Management Settings</legend>
 								<div class="control-group">
-									<label class="control-label">Reverse Links <sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#reverse_links" target="_blank" class="muted">?</a></sup></label>
+									<label class="control-label">Reverse Links <sup><a href="https://documentation.ands.org.au/display/DOC/Records+Management+Settings" target="_blank" class="muted">?</a></sup></label>
 									<div class="controls">
 		    							<input type="checkbox" for="allow_reverse_internal_links" ng-model="ds.allow_reverse_internal_links">
 										<p class="help-inline">Allow reverse internal links</p>
@@ -681,12 +667,12 @@
 								</div>
 								<div class="control-group">
 									<label class="control-label">
-										Primary Relationships <sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#primary_rels" target="_blank" class="muted">?</a></sup>
+										Primary Relationships <sup><a href="https://documentation.ands.org.au/display/DOC/Records+Management+Settings" target="_blank" class="muted">?</a></sup>
 									</label>
 									<div class="controls">
 										<input type="checkbox" ng-model="ds.create_primary_relationships">
 										<div ng-show="ds.create_primary_relationships" class="well" style="margin-top:10px;">
-											<i>Data Sources can have up to 2 Primary Records <sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#primary_rels" target="_blank" class="muted">?</a></sup></i>
+											<i>Data Sources can have up to 2 Primary Records <sup><a href="https://documentation.ands.org.au/display/DOC/Records+Management+Settings" target="_blank" class="muted">?</a></sup></i>
 											<div class="clearfix"></div>
 											<div class="pull-left">
 												<div class="control-group">
@@ -763,7 +749,7 @@
 
 								<div class="control-group">
 									<label class="control-label">Manually Publish Records
-										<sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#man_publish" target="_blank" class="muted">?</a></sup>
+										<sup><a href="https://documentation.ands.org.au/display/DOC/Records+Management+Settings" target="_blank" class="muted">?</a></sup>
 									</label>
 									<div class="controls">
 	    								<input type="checkbox" for="manual_publish" ng-model="ds.manual_publish">
@@ -773,7 +759,7 @@
 								<?php if ($this->user->hasFunction('REGISTRY_STAFF')): ?>
 									<div class="control-group">
 										<label class="control-label">Quality Assessment Required
-											<sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#qa_required" target="_blank" class="muted">?</a></sup>
+											<sup><a href="https://documentation.ands.org.au/display/DOC/Records+Management+Settings" target="_blank" class="muted">?</a></sup>
 										</label>
 										<div class="controls">
 			    							<input type="checkbox" for="qa_flag" ng-model="ds.qa_flag">    																
@@ -801,7 +787,7 @@
 						<div ng-show="tab=='harvester' && ds.harvester_methods">
 							<fieldset>
 								<legend>Harvester Settings
-									<sup><a href="http://services.ands.org.au/documentation/SettingsHelp/#harvest_settings" target="_blank" class="muted">?</a></sup>
+									<sup><a href="https://documentation.ands.org.au/display/DOC/Harvester+Settings" target="_blank" class="muted">?</a></sup>
 								</legend>
 
 								<div class="control-group">
