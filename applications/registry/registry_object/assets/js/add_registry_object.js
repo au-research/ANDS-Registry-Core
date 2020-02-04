@@ -9,7 +9,7 @@ var SIMPLE_MODE = 'simple';
 var ADVANCED_MODE = 'advanced';
 var loading_box = "<div id='loading_box'><img src='"+base_url+"/assets/img/ajax-loader-large.gif' alt='Loading...' />"+
 					"<br/><br/><span id='loading_box_text'>Loading...</span></div>";
-var default_help_link = "http://guides.ands.org.au/rda-cpg/";
+var default_help_link = "https://documentation.ands.org.au/display/DOC/About+RIF-CS";
 
 $(function(){
 	$('body').css('background-color', '#454545');
@@ -1808,30 +1808,26 @@ function generateActionBar(data_response)
 function updateHelpLink()
 {
 	// Update the help link - hard coded values to cater for change to new cpg (29/04/16) which has no default naming standards for the tabs
+	help_base_url = 'https://documentation.ands.org.au/display/DOC/';
+	help_link = help_base_url + 'RDA+Publishing+Workflow';
+	if(typeof active_tab !== 'undefined' && active_tab != ''){
 
-    the_active_tab=active_tab;
-
-    if(active_tab=='admin'){the_active_tab='recordadmin'}
-    if(active_tab=='descriptions_rights'){the_active_tab='description'}
-    if(active_tab=='coverages'){the_active_tab='coverage'}
-    if(active_tab=='relatedinfos'){the_active_tab='relatedinfo'}
-    if(active_tab=='citationInfos'){the_active_tab='citationinfo'}
-    if(active_tab=='qa'){the_active_tab='savedraft'}
-    if(active_tab=='accesspolicies'|| active_tab=='existencedates' ){
-      the_active_tab = "no_tab_help"
-    }
-
-    if (the_active_tab!="no_tab_help")
-	{
-		$('#aro_help_link').attr("href", default_help_link+the_active_tab+"tab");
+		if(active_tab == 'admin'){help_link = help_base_url + 'About+RIF-CS'}
+		if(active_tab == 'names'){help_link = help_base_url + 'Name'}
+		if(active_tab == 'descriptions_rights'){help_link = help_base_url + 'Description'}
+		if(active_tab == 'identifiers'){help_link = help_base_url + 'Identifier'}
+		if(active_tab == 'dates'){help_link = help_base_url + 'Dates:+collections'}
+		if(active_tab == 'locations'){help_link = help_base_url + 'Location'}
+		if(active_tab == 'coverages'){help_link = help_base_url + 'Coverage'}
+		if(active_tab == 'relatedObjects'){help_link = help_base_url + 'Related+objects+and+relationships'}
+		if(active_tab == 'subjects'){help_link = help_base_url + 'Subject'}
+		if(active_tab == 'relatedinfos'){help_link = help_base_url + 'Related+information'}
+		if(active_tab == 'citationInfos'){help_link = help_base_url + 'Citation+Information'}
+		if(active_tab == 'existencedates'){help_link = help_base_url + 'Existence+dates'}
+		if(active_tab == 'accesspolicies'){help_link = help_base_url + 'Access+policy'}
+		if(active_tab == 'qa'){help_link = help_base_url + 'RDA+Publishing+Workflow'}
 	}
-	else if(active_tab=='accesspolicies'){
-        $('#aro_help_link').attr("href", default_help_link+"service-accesspolicy");
-    }
-    else
-	{
-		$('#aro_help_link').attr("href", default_help_link);
-	}
+	$('#aro_help_link').attr("href", help_link);
 }
 
 function loadingBoxMessage(message)
