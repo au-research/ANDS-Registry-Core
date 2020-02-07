@@ -294,7 +294,7 @@ class LinkProvider implements RegistryContentProvider
 
     public static function cleanUrl($url)
     {
-        $url = str_replace("&amp;", "&", trim($url," []():.,"));
+        $url = str_replace("&amp;", "&", trim(trim($url)," []():.,"));
         return $url;
     }
 
