@@ -977,23 +977,28 @@ class FabricaClient implements DataCiteClient
      */
     public function getClientInfo(TrustedClient $client , $mode='prod')
     {
+        if($mode == 'test'){
+            $prefixes = $this->getTestPrefixes($client);
+            $passwordInput = $client->test_shared_secret;
+        }else {
+            $prefixes = $this->getPrefixes($client);
+            $passwordInput = $client->shared_secret;
+        }
         $attributes = [
             "name" => $client->client_name,
             "symbol" => $client->datacite_symbol,
             "domains" => $this->getClientDomains($client),
             "isActive" => true,
             "contactName" => $client->client_contact_name,
-            "contactEmail" => getenv("DATACITE_CONTACT_EMAIL")
+            "contactEmail" => getenv("DATACITE_CONTACT_EMAIL"),
+            "passwordInput" => $passwordInput
         ];
         $provider = ["data" => ["type" => "providers",
             "id" => "ands"]];
-        if($mode == 'test'){
-            $prefixes = $this->getTestPrefixes($client);
-        }else {
-            $prefixes = $this->getPrefixes($client);
-        }
+
         $relationships = ["provider" => $provider, "prefixes" => $prefixes];
         $clientInfo = ["data" => ["attributes" => $attributes, "relationships" => $relationships, "type" => "client"]];
+        //var_dump($clientInfo);
         return json_encode($clientInfo);
     }
 
@@ -1054,7 +1059,7 @@ class FabricaClient implements DataCiteClient
     public function getPrefixes(TrustedClient $client){
         $prefixes = array();
         foreach ($client->prefixes as $clientPrefix) {
-            if(!$clientPrefix->prefix->is_test == 0) {
+            if($clientPrefix->prefix->is_test == 0) {
                 $prefixes[] = array("id" => trim($clientPrefix->prefix->prefix_value, "/"),
                     "type" => "prefixes");
             }

@@ -227,6 +227,36 @@ class FabricaClientTest extends PHPUnit_Framework_TestCase
     }
 
     /** @test  **/
+    public function it_should_get_clientPrefixes_from_local_client_object()
+    {
+        $this->trustedClient = $this->repo->getBySymbol(getenv("TEST_CLIENT_SYMBOL"));
+        $clientPrefixes = $this->fabricaClient->getPrefixes($this->trustedClient);
+        $this->assertContains(getenv("TEST_DOI_PROD_PREFIX"),json_encode($clientPrefixes));
+        $clientTestPrefixes = $this->fabricaClient->getTestPrefixes($this->trustedClient);
+        $this->assertContains(getenv("TEST_DOI_PREFIX"),json_encode($clientTestPrefixes));
+
+    }
+
+    /** @test  **/
+    public function it_should_get_clientInfo_from_local_client_object()
+    {
+        $this->trustedClient = $this->repo->getBySymbol(getenv("TEST_CLIENT_SYMBOL"));
+        $clientInfoTest = $this->fabricaClient->getClientInfo($this->trustedClient, "test");
+        $this->assertContains(getenv("TEST_DOI_PREFIX"),$clientInfoTest);
+        $this->assertContains(getenv("TEST_DOI_TEST_SHARED_SECRET"),$clientInfoTest);
+        $clientInfo = $this->fabricaClient->getClientInfo($this->trustedClient);
+        $this->assertContains(getenv("TEST_DOI_PROD_PREFIX"),json_encode($clientInfo));
+        $this->assertContains(getenv("TEST_DOI_SHARED_SECRET"),json_encode($clientInfo));
+
+    }
+    /** @test  **/
+    public function it_should_update_client_with_shared_secret()
+    {
+        $this->trustedClient = $this->repo->getBySymbol(getenv("TEST_CLIENT_SYMBOL"));
+        $this->fabricaClient->updateClient($this->trustedClient, "test");
+    }
+
+    /** @test  **/
    public function it_should_get_list_of_client_dois()
     {
         $dois = $this->testFabricaClient->getDOIs('test');
