@@ -200,28 +200,27 @@ class Mydois extends MX_Controller {
             $client['datacite_test_prefix'] = $this->getTrustedClientActiveTestPrefix($client->client_id);
             $client['not_active_prefixes'] = $this->getTrustedClientNonActivePrefixes($client->client_id);
             $client['not_active_text_prefixes'] = $this->getTrustedClientNonActiveTestPrefixes($client->client_id);
-            if($client->datacite_symbol == "ANDS.CENTRE-0") {
-                $clientToUpdate = $this->clientRepository->getByID($client->client_id);
-                $this->fabricaClient->updateClient($clientToUpdate);
-                // updates the client on datacite prod
-                if ($this->fabricaClient->hasError()) {
-                    // if error occurred return the result message to the user
-                    $response['responseCode'] = $this->fabricaClient->responseCode;
-                    $response['errorMessages'] = $this->fabricaClient->getErrorMessage();
-                    $response['Messages'] = $this->fabricaClient->getMessages();
-                    echo json_encode($response);
-                    exit();
-                }
-                $this->fabricaClient->updateClient($clientToUpdate, "test");
-                // updates the client on datacite test
-                if ($this->fabricaClient->hasError()) {
-                    // if error occurred return the result message to the user
-                    $response['responseCode'] = $this->fabricaClient->responseCode;
-                    $response['errorMessages'] = $this->fabricaClient->getErrorMessage();
-                    $response['Messages'] = $this->fabricaClient->getMessages();
-                    echo json_encode($response);
-                    exit();
-                }
+
+            //update the Fabrica repository with new password
+            $clientToUpdate = $this->clientRepository->getByID($client->client_id);
+            $this->fabricaClient->updateClient($clientToUpdate);
+            if ($this->fabricaClient->hasError()) {
+                // if error occurred return the result message to the user
+                $response['responseCode'] = $this->fabricaClient->responseCode;
+                $response['errorMessages'] = $this->fabricaClient->getErrorMessage();
+                $response['Messages'] = $this->fabricaClient->getMessages();
+                echo json_encode($response);
+                exit();
+            }
+            //update the Fabrica test repository with new password
+            $this->fabricaClient->updateClient($clientToUpdate, "test");
+            if ($this->fabricaClient->hasError()) {
+                // if error occurred return the result message to the user
+                $response['responseCode'] = $this->fabricaClient->responseCode;
+                $response['errorMessages'] = $this->fabricaClient->getErrorMessage();
+                $response['Messages'] = $this->fabricaClient->getMessages();
+                echo json_encode($response);
+                exit();
             }
         }
         return $allClients;
