@@ -195,6 +195,7 @@ class FabricaClientTest extends PHPUnit_Framework_TestCase
 //    }
 
     /** @test  **/
+    /*
     public function it_should_update_the_test_client_on_datacite()
     {
         $params = [
@@ -217,7 +218,7 @@ class FabricaClientTest extends PHPUnit_Framework_TestCase
 
         $this->fabricaClient->updateClient($this->trustedClient,'test');
         $this->assertFalse($this->fabricaClient->hasError());
-    }
+    } */
 
     /** @test  **/
     public function it_should_create_clientInfo_from_local_client_object()
@@ -250,11 +251,12 @@ class FabricaClientTest extends PHPUnit_Framework_TestCase
 
     }
     /** @test  **/
+    /* Need to remove update tests until after the release as it changes passwords and
     public function it_should_update_client_with_shared_secret()
     {
         $this->trustedClient = $this->repo->getBySymbol(getenv("TEST_CLIENT_SYMBOL"));
         $this->fabricaClient->updateClient($this->trustedClient, "test");
-    }
+    } */
 
     /** @test  **/
    public function it_should_get_list_of_client_dois()
