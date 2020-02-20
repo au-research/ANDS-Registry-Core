@@ -73,6 +73,19 @@ class Mydois extends MX_Controller {
     }
 
     /**
+     * mydois/update_all_password
+     * Update the datacite fabrica repository definition to use the clients shared_secret
+     * Front end for update trusted doi clients app
+     */
+    function update_all_password(){
+        acl_enforce('SUPERUSER');
+        $this->load->view('update_all_clients_index', [
+            'title' => 'Update Trusted Clients',
+            'scripts' => ['update_clients'],
+            'js_lib' => ['core', 'dataTables']
+        ]);
+    }
+    /**
      *
      * to add or edit a client we allow to populate the drop down with unallocatedPrefixLimit of prefixes
      * starting with the test prefix
@@ -144,6 +157,13 @@ class Mydois extends MX_Controller {
 	}
 
     /**
+     * AJAX entry for mydois/list_trusted
+     */
+    function update_trusted_clients(){
+        echo json_encode($this->updateTrustedClients());
+    }
+
+    /**
      * AJAX entry for mydois/merge_trusted
      * This function will be called once to merge prod and test datacite accounts as part of Release 29
      */
@@ -170,6 +190,41 @@ class Mydois extends MX_Controller {
         return $allClients;
     }
 
+
+    private function updateTrustedClients(){
+        $allClients =  $this->clientRepository->getAll();
+        foreach($allClients as $key=>$client){
+            $client["url"] = $this->fabricaUrl . "/clients/" . strtolower($client->datacite_symbol);
+            $client['domain_list'] = str_replace(",", " ", $this->getTrustedClientDomains($client->client_id));
+            $client['datacite_prefix'] = $this->getTrustedClientActivePrefix($client->client_id);
+            $client['datacite_test_prefix'] = $this->getTrustedClientActiveTestPrefix($client->client_id);
+            $client['not_active_prefixes'] = $this->getTrustedClientNonActivePrefixes($client->client_id);
+            $client['not_active_text_prefixes'] = $this->getTrustedClientNonActiveTestPrefixes($client->client_id);
+
+            //update the Fabrica repository with new password
+            $clientToUpdate = $this->clientRepository->getByID($client->client_id);
+            $this->fabricaClient->updateClient($clientToUpdate);
+            if ($this->fabricaClient->hasError()) {
+                // if error occurred return the result message to the user
+                $response['responseCode'] = $this->fabricaClient->responseCode;
+                $response['errorMessages'] = $this->fabricaClient->getErrorMessage();
+                $response['Messages'] = $this->fabricaClient->getMessages();
+                echo json_encode($response);
+                exit();
+            }
+            //update the Fabrica test repository with new password
+            $this->fabricaClient->updateClient($clientToUpdate, "test");
+            if ($this->fabricaClient->hasError()) {
+                // if error occurred return the result message to the user
+                $response['responseCode'] = $this->fabricaClient->responseCode;
+                $response['errorMessages'] = $this->fabricaClient->getErrorMessage();
+                $response['Messages'] = $this->fabricaClient->getMessages();
+                echo json_encode($response);
+                exit();
+            }
+        }
+        return $allClients;
+    }
 
     private function getMergeClients(){
 
