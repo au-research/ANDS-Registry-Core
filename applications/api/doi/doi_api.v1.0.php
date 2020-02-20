@@ -366,7 +366,7 @@ class Doi_api
 
     private function getDataciteClientForClient(Client $client,$mode = 'prod')
     {
-        // constructing the dataciteclient to talk with datacite services
+        // constructing the datacite client to talk with datacite services
         $config = Config::get('datacite');
 
 
@@ -377,8 +377,15 @@ class Doi_api
                     2, '-', STR_PAD_LEFT);
         }
 
+        // changed from using default password to using client's shared secrets to access their datacite repository
+
+        $clientPassword = (isset($client->shared_secret) AND $client->shared_secret !='')
+            ? $client->shared_secret :  $config['password'];
+        $clientTestPassword = (isset($client->test_shared_secret) AND $client->test_shared_secret !='')
+           ? $client->test_shared_secret :  $config['testPassword'];
+
         $dataciteClient = new MdsClient(
-            $clientUsername, $config['password'], $config['testPassword']
+            $clientUsername, $clientPassword, $clientTestPassword
         );
 
         // set to the default DOI Service in global config
