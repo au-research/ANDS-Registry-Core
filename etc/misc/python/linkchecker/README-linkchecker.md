@@ -1,7 +1,7 @@
-ANDS Registry link checker
+ARDC Registry link checker
 ==========================
 
-This directory contains the ANDS Registry link checker, a Python
+This directory contains the ARDC Registry link checker, a Python
 package to check the links associated with:
 
 * DOIs (digital object identifiers)
@@ -9,7 +9,7 @@ package to check the links associated with:
 
 This link checker is intended to serve the following functions:
 
-* as a drop-in replacement for the existing DOI link checker script
+* as a drop-in replacement for the legacy DOI link checker script
   `doi_link_checker.py`;
 * as support for checking links within registry objects; and
 * as a framework for link checking of additional types of links.
@@ -19,9 +19,15 @@ it uses the `asyncio` library that was first made available in
 version 3.4 of Python.
 
 
+## Other prerequisites
+
+The link checker can send emails containing details of broken
+links. If you want to use this functionality, you will need to have a
+suitable mail server (e.g., sendmail) installed and configured.
+
 ## Release versions
 
-* ANDS Registry Release 14: initial release of the link checker.
+* ARDC Registry Release 14: initial release of the link checker.
 
 
 ## Modules currently supported
@@ -37,19 +43,19 @@ As explained below, the link checker uses module names as:
 * values specified with the `-m` command-line option.
 
 The behaviour of the link checker modules is determined largely by the
-needs of ANDS. If you need other behaviour, please contact
-`services@ands.org.au` with your requirements.
+needs of ARDC. If you need other behaviour, please contact
+`services@ardc.edu.au` with your requirements.
 
 
 ### The DOI link checker
 
 As mentioned above, this checker is intended as a replacement for the
-existing DOI link checker. As such, a certain level of compatibility
-has been provided. For example, the existing DOI link checker always
+legacy DOI link checker. As such, a certain level of compatibility
+has been provided. For example, the legacy DOI link checker always
 outputs HTML on the console. This new DOI link checker module normally
 outputs plain text, but can be configured to output HTML using a
 command-line option (`--html_output`). When incorporating the link
-checker into the ANDS Registry administration web interface, this
+checker into the ARDC Registry administration web interface, this
 option should be used to maintain compatibility.  See the invocation
 section below for specific examples.
 
@@ -157,11 +163,11 @@ look like this:
 
 ### RO link checker called from cron
 
-A crontab entry to send reports to all data source contacts quarterly
-might look like this:
+A crontab entry to send reports to all data source contacts
+biannually might look like this:
 
-    30 03 05 */3 * /full/path/to/python3.4 /full/path/to/linkchecker.py -i /full/path/to/linkchecker.ini -m RO >/dev/null 2>&1
+    30 03 03 */6 * /full/path/to/python3.4 /full/path/to/linkchecker.py -i /full/path/to/linkchecker.ini -m RO >/dev/null 2>&1
 
 Or, to send all reports to a central administrator::
 
-    30 03 05 */3 * /full/path/to/python3.4 /full/path/to/linkchecker.py -i /full/path/to/linkchecker.ini -m RO -e admin.email@admin.com >/dev/null 2>&1
+    30 03 03 */6 * /full/path/to/python3.4 /full/path/to/linkchecker.py -i /full/path/to/linkchecker.ini -m RO -e admin.email@admin.com >/dev/null 2>&1
