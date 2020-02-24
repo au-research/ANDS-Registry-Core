@@ -11,7 +11,7 @@ if(isset($description)){
 }
 
 $citation = implode("; ", $creator);
-$citation .= '('.$publicationYear.'): '.$title[0].'; '.$publisher.'. http://dx.doi.org/'.$doi;
+$citation .= '('.$publicationYear.'): '.$title[0].'; '.$publisher.'. https://doi.org/'.$doi;
 
 echo "<p><strong>Citation:</strong></p>";
 echo $citation;
@@ -23,7 +23,7 @@ if(isset($resourceTypeGeneral)){
 }
 
 echo '<a href="http://data.datacite.org/'.$doi.'" class="button" target="_blank">View DataCite Metadata</a>';
-echo '<div style="float:right;position:relative;"><a href="http://dx.doi.org/'.$doi.'" class="button" target="_blank">View record webpage</a></div>';
+echo '<div style="float:right;position:relative;"><a href="https://doi.org/'.$doi.'" class="button" target="_blank">View record webpage</a></div>';
 echo '</div><br/>';
 
 ?>

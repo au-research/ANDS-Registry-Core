@@ -532,9 +532,9 @@ function getIdentifierURL($type, $identifier) {
     switch ($type) {
         case 'doi':
             if(!strpos($identifier,"doi.org/")) {
-                $url ="http://dx.doi.org/".$identifier;
+                $url ="https://doi.org/".$identifier;
             } else {
-                $url = "http://dx.doi.org/".substr($identifier,strpos($identifier,"doi.org/")+8);
+                $url = "https://doi.org/".substr($identifier,strpos($identifier,"doi.org/")+8);
             }
             break;
         case 'orcid':
