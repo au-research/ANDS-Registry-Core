@@ -164,7 +164,7 @@ look like this:
 ### RO link checker called from cron
 
 A crontab entry to send reports to all data source contacts
-binannually might look like this:
+biannually might look like this:
 
     30 03 03 */6 * /full/path/to/python3.4 /full/path/to/linkchecker.py -i /full/path/to/linkchecker.ini -m RO >/dev/null 2>&1
 
