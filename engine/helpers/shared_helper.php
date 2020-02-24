@@ -297,8 +297,8 @@ function getResolvedLinkForIdentifier($type, $value)
                 'base_path') . '" alt="ISNI icon"></a><br/>';
             break;
 		case 'doi':
-			if (strpos($value, 'http://dx.doi.org/') === false) {
-				$urlValue = 'http://dx.doi.org/' . $value;
+			if (strpos($value, 'doi.org/') === false) {
+				$urlValue = 'https://doi.org/' . $value;
 			}
 			return 'DOI: <a class="identifier" href="' . $urlValue . '" title="Resolve this DOI">' . $value . '<img class="identifier_logo" src="' . asset_url('assets/core/images/icons/doi_icon.png',
 				'base_path') . '" alt="DOI icon"></a><br/>';
