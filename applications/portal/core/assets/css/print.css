@@ -9,7 +9,7 @@
   }
   .panel-content .panel-heading {
     float: right;
-    background: #6c6c6c !important;
+    background: #00A2C4 !important;
     color: white !important;
     font-size: 12px;
     padding: 4px 11px;
@@ -61,7 +61,7 @@
   }
   .btn-noaction:hover {
     background: transparent !important;
-    color: #638363 !important;
+    color: #00b0d5 !important;
   }
   .round {
     padding: 15px;

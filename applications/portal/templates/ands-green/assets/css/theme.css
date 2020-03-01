@@ -5107,7 +5107,7 @@ video.section-background-video {
 .mejs-container {
   position: relative;
   background: none;
-  font-family: Helvetica, Arial;
+  font-family: 'Roboto', sans-serif;
   text-align: left;
   vertical-align: top;
   text-indent: 0;
@@ -5348,7 +5348,7 @@ video.section-background-video {
   height: 26px;
   font-size: 11px;
   line-height: 11px;
-  font-family: Helvetica, Arial;
+  font-family: "Roboto", sans-serif;
   border: 0;
 }
 
@@ -5810,7 +5810,7 @@ video.section-background-video {
   float: left;
   padding: 4px 0 0 0;
   line-height: 15px;
-  font-family: helvetica, arial;
+  font-family: "Roboto", sans-serif;
   font-size: 10px;
 }
 
@@ -5988,7 +5988,7 @@ video.section-background-video {
 }
 
 .mejs-contextmenu .mejs-contextmenu-item {
-  font-family: Helvetica, Arial;
+  font-family: "Roboto", sans-serif;
   font-size: 12px;
   padding: 4px 6px;
   cursor: pointer;
@@ -6054,7 +6054,7 @@ video.section-background-video {
   float: left;
   padding: 4px 0 0 0;
   line-height: 15px;
-  font-family: helvetica, arial;
+  font-family: "Roboto", sans-serif;
   font-size: 10px;
 }
 
@@ -6158,7 +6158,7 @@ div.mejs-speed-button {
   float: left;
   padding: 4px 0 0 0;
   line-height: 15px;
-  font-family: helvetica, arial;
+  font-family: "Roboto", sans-serif;
   font-size: 11.5px;
   color: white;
   margin-left: 5px;
