@@ -23,7 +23,7 @@ span.dynatree-drag-helper-img,
 
 ul.dynatree-container
 {
-    font-family: tahoma, arial, helvetica;
+    font-family: 'Roboto', sans-serif;
     font-size: 10pt; /* font size should not be too big */
     white-space: nowrap;
     padding: 3px;
@@ -49,7 +49,7 @@ span.dynatree-selected a
     display: block;
     white-space: nowrap;
     text-decoration: none !important;
-    font-family: arial,FreeSans,Helvetica,sans-serif;
+    font-family: 'Roboto',sans-serif;
     cursor: pointer;
     font-size: 14px;
     z-index: 99;
@@ -64,7 +64,7 @@ span.dynatree-selected a
     display: block;
     white-space: nowrap;
     text-decoration: none !important;
-    font-family: arial,FreeSans,Helvetica,sans-serif;
+    font-family: 'Roboto',sans-serif;
     cursor: pointer;
     font-size: 14px;
     z-index: 99;
@@ -77,7 +77,7 @@ span.dynatree-selected a
     color: #fff;
     font-size: 14px;
     font-weight: bold;
-    background: #f58000;
+    background: #F8B20E;
     border: none;
     padding: 5px 5px;
     margin: 10px 0;
@@ -86,7 +86,7 @@ span.dynatree-selected a
 }
 
 .yellow_button:hover {
-    background: #F58072;
+    background: rgba(227, 171, 37, 0.51);
     color: #fff;
 }
 ul{
@@ -194,7 +194,7 @@ h1.bordered:after{
 
 #toggle-visualisation {
     font-size: 23px;
-    background: #f58000;
+    background: #f8b20e;
     position: absolute;
     bottom: -18px;
     right: 35px;
@@ -281,23 +281,28 @@ h1.bordered:after{
 
 .btn_access{
     margin-bottom: 15px;
-    background: linear-gradient(#becdba,#84a07b);
-    border: .5px solid #657f65;
+    background: linear-gradient(#9ad1d5, #00b0d5);
+    border: .5px solid #00b0d5;
     border-radius: 4px;
 }
 .btn_access:hover {
-    background: linear-gradient(rgb(255, 185, 102), rgb(244, 129, 0));
-    border: .5px solid #ed7b00;
+    background: linear-gradient(#DEB7FF, #8e489b);
+    border: .5px solid #8e489b;
     border-radius: 4px;
     color: #fff;
 }
 .btn_access:focus {
-    background: linear-gradient(#becdba,#84a07b);
-    border: .5px solid #657f65;
+    background: linear-gradient(#71c7d5, #00b0d5);
+    border: .5px solid #00b0d5;
     border-radius: 4px;
 }
 
 .formats_block{
     margin-top:-15px;
     margin-bottom:15px;
+}
+.header_logo{
+    width: 280px;
+    padding-bottom: 30px;
+    margin-top: -10px;
 }

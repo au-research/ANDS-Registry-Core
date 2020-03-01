@@ -72,6 +72,8 @@ function profile_image() {
 	}
 }
 
-
+function logo_image(){
+    return asset_url('images/generic_user.png', 'core');
+}
 
 ?>
