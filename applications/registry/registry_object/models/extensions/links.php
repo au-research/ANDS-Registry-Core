@@ -181,8 +181,8 @@ class links_Extension extends ExtensionBase
                 return $value;
                 break;
             case 'doi':
-                if (strpos($value,'http://dx.doi.org/') === false){
-                    $value = 'http://dx.doi.org/'.$value;
+                if (strpos($value,'doi.org/') === false){
+                    $value = 'https://doi.org/'.$value;
                 }
                 return $value;
                 break;
