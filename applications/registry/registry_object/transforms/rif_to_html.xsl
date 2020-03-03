@@ -1,7 +1,5 @@
 <?xml version="1.0"?>
-<xsl:stylesheet version="1.0" xmlns:ro="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-	xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects"
-	exclude-result-prefixes="extRif ro">
+<xsl:stylesheet version="1.0" xmlns:ro="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"  exclude-result-prefixes="ro">
 	<xsl:output method="html" encoding="UTF-8" indent="yes" omit-xml-declaration="yes"/>
 	<xsl:param name="dataSource"/>
 	<xsl:param name="dateCreated"/>

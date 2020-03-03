@@ -46,7 +46,7 @@
 
     //ands environment
     if (typeof(window.real_base_url) !== 'undefined'){
-        DEFAULT_SERVICE_POINT =  window.real_base_url +'/api/location.jsonp/'
+        DEFAULT_SERVICE_POINT =  window.real_base_url + 'api/location.jsonp/'
 
     }
 

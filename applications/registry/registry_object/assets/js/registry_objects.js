@@ -521,39 +521,6 @@ function initEditForm(){
 	});
 
 
-	//Load external XML modal dialog
-	$('#load_xml').die().live({
-		click: function(e){
-			e.preventDefault();
-			$('#myModal .modal-header h3').html('<h3>Paste RIFCS Here</h3>');
-			$('#myModal .modal-body').html('<textarea id="load_xml_rifcs"></textarea>');
-			$('#myModal .modal-footer').html('<button id="load_edit_xml" class="btn btn-primary">Load</button>');
-			$('#myModal').modal();
-		}
-	});
-
-	//This button stays inside the Load xml modal dialog
-	//This will post the input rifcs to the server and replace the current edit form with the response
-	$('#load_edit_xml').die().live({
-		click: function(e){
-			var rifcs = $('textarea#load_xml_rifcs').val();
-			var ro_id = $('#ro_id').val();
-			console.log(ro_id);
-			if(rifcs!=''){
-				$('#view-ro .tab-content[name=edit]').html('Loading...');
-				$.ajax({
-					type: 'POST',
-					data: {rifcs:rifcs},
-					url: base_url+'registry_object/get_edit_form_custom/'+ro_id,
-					success:function(data){
-						$('#view-ro .tab-content[name=edit]').html(data);						
-						initEditForm();
-						$('#myModal').modal('hide');
-					}
-				});
-			}
-		}
-	});
 
 	//initalize the datepicker, format is optional
 	$('#view-ro .tab-content[name=edit] input.datepicker').datepicker({
