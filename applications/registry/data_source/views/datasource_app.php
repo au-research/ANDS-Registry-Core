@@ -598,7 +598,7 @@
 					<form class="form-horizontal">
 						<div ng-show="tab=='admin'">
 							<fieldset>
-								<legend>Account Administration Information <sup><a href="http://guides.ands.org.au/rda-cpg/dsaccount#accountadmin" target="_blank" class="muted">?</a></sup></legend>
+								<legend>Account Administration Information <sup><a href="https://documentation.ands.org.au/display/DOC/Data+Source+Account+Settings" target="_blank" class="muted">?</a></sup></legend>
 								<div class="control-group">
 									<label class="control-label">Key</label>
 									<div class="controls">

@@ -25,7 +25,7 @@
 		<form action="#" method="get" class="form-vertical" autocomplete="off">
 			<div class="control-group" style="background-color:#ffffff;margin-bottom:10px;padding:0em">
 				<label class="control-label" for="key">Key 
-					<span class="label"><a href="http://guides.ands.org.au/rda-cpg/key" target="_blank" title="View Content Providers' Guide">?</a></span>
+					<span class="label"><a href="https://documentation.ands.org.au/display/DOC/Key" target="_blank" title="View Content Providers' Guide">?</a></span>
 				</label>
 				<div class="controls">
 					<div class="input-append">
@@ -56,7 +56,7 @@
 
 			<div class="control-group" style="background-color:#ffffff;margin-bottom:10px;padding:0em">
 				<label class="control-label" for="key">Group
-					<span class="label"><a href="http://guides.ands.org.au/rda-cpg/group" target="_blank" title="View Content Providers' Guide">?</a></span>
+					<span class="label"><a href="https://documentation.ands.org.au/display/DOC/Group" target="_blank" title="View Content Providers' Guide">?</a></span>
 				</label>
 				<div class="controls">
 					<input required type="text" class="input-xlarge rifcs-type" vocab="GroupSuggestor" name="group" value="" autocomplete="off">
