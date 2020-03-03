@@ -16,7 +16,7 @@
 		<?php echo anchor(registry_url('auth/dashboard'), '<i class="icon-home"></i> Home'); ?>
 		<a href="#/" class="current">Bulk Tagging Tool</a>
 		<div class="pull-right">
-			<span class="label"><i class="icon-question-sign icon-white"></i> <a target="_blank" style="color:white;" href="https://documentation.ands.org.au/display/DOC/Bulk+Tagging+Tool"> Help</a></span>
+			<span class="label"><i class="icon-question-sign icon-white"></i> <a target="_blank" style="color:white;" href="https://documentation.ardc.edu.au/display/DOC/Bulk+Tagging+Tool"> Help</a></span>
 		</div>
 	</div>
 	<div class="container-fluid">

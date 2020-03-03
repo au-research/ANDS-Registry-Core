@@ -285,7 +285,7 @@ Release 24 of ANDS Online Services is scheduled for implementation on **5 Ju
 *   Enhance CMD DOI request events to capture more transaction information 
 
 *Handle Service (PIDS)*
-*   As part a recent infrastructure migration project we have implemented a new service URL for the Handle Service ([https://handle.ands.org.au/pids](https://handle.ands.org.au/pids)) . While we will continue to support the previous URL but we encourage users of the service to migrate to the new URL when convenient. Please refer to the [Handle Service documentation](https://documentation.ands.org.au/display/DOC/Basic+Service+Information) for more information.
+*   As part a recent infrastructure migration project we have implemented a new service URL for the Handle Service ([https://handle.ands.org.au/pids](https://handle.ands.org.au/pids)) . While we will continue to support the previous URL but we encourage users of the service to migrate to the new URL when convenient. Please refer to the [Handle Service documentation](https://documentation.ardc.edu.au/display/DOC/Basic+Service+Information) for more information.
 
 *Research Vocabularies Australia (RVA)*
 *   Fix the display of the organisations in the RVA CMS' 'Owner' field to also include the complete name of the organisation (e.g from 'ANDS' to 'Australian National Data Service (ANDS)) 

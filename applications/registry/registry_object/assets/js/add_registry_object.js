@@ -9,7 +9,7 @@ var SIMPLE_MODE = 'simple';
 var ADVANCED_MODE = 'advanced';
 var loading_box = "<div id='loading_box'><img src='"+base_url+"/assets/img/ajax-loader-large.gif' alt='Loading...' />"+
 					"<br/><br/><span id='loading_box_text'>Loading...</span></div>";
-var default_help_link = "https://documentation.ands.org.au/display/DOC/About+RIF-CS";
+var default_help_link = "https://documentation.ardc.edu.au/display/DOC/About+RIF-CS";
 
 $(function(){
 	$('body').css('background-color', '#454545');
@@ -1808,7 +1808,7 @@ function generateActionBar(data_response)
 function updateHelpLink()
 {
 	// Update the help link - hard coded values to cater for change to new cpg (29/04/16) which has no default naming standards for the tabs
-	help_base_url = 'https://documentation.ands.org.au/display/DOC/';
+	help_base_url = 'https://documentation.ardc.edu.au/display/DOC/';
 	help_link = help_base_url + 'RDA+Publishing+Workflow';
 	if(typeof active_tab !== 'undefined' && active_tab != ''){
 
