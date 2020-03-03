@@ -966,7 +966,7 @@ class _vocabulary
                                'visible for this vocabulary.<br />' .
                                'For more information, please see ' .
                                '<a target="_blank" ' .
-                               ' href="https://documentation.ands.org.au/' .
+                               ' href="https://documentation.ardc.edu.au/' .
                                'display/DOC/Support+for+concept+browsing+' .
                                'within+the+portal">' .
                                'Portal concept browsing</a>.');
