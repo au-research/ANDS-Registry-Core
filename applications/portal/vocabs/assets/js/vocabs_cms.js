@@ -925,8 +925,8 @@ RewriteRule ^/ands_doc/tooltips$  /ands_doc/pages/viewpage.action?pageId=2247884
 # Need to proxy the Confluence pages so as to be able to get images too.
 <Location /ands_doc>
 
-  ProxyPass https://documentation.ands.org.au/
-  ProxyPassReverse https://documentation.ands.org.au/
+  ProxyPass https://documentation.ardc.edu.au/
+  ProxyPassReverse https://documentation.ardc.edu.au/
 
   # Confluence adds this header. Once you view such a page in Firefox,
   # it "infects" access to _this_ server, preventing non-SSL access via

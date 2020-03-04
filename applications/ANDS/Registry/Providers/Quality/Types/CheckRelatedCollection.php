@@ -12,8 +12,8 @@ class CheckRelatedCollection extends CheckType
 {
     protected $descriptor = [
         'collection' => '',
-        'party' => 'Is connected to <a target="_blank" href="https://documentation.ands.org.au/display/DOC/Collection">collections</a> associated with the party',
-        'service' => 'Is connected to <a target="_blank" href="https://documentation.ands.org.au/display/DOC/Collection">collections</a> that can be accessed through, or acted upon by, the service',
+        'party' => 'Is connected to <a target="_blank" href="https://documentation.ardc.edu.au/display/DOC/Collection">collections</a> associated with the party',
+        'service' => 'Is connected to <a target="_blank" href="https://documentation.ardc.edu.au/display/DOC/Collection">collections</a> that can be accessed through, or acted upon by, the service',
         'activity' => ''
     ];
 

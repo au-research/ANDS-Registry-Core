@@ -1,7 +1,7 @@
-ANDS Registry citation data updater
+ARDC Registry citation data updater
 ===================================
 
-This directory contains the ANDS Registry citation data updater, a Python
+This directory contains the ARDC Registry citation data updater, a Python
 package to fetch citation data from service providers, currently:
 
 * Thomson Reuters Data Citation Index
@@ -14,9 +14,19 @@ This updater is intended to serve the following functions:
 The updater has been developed using Python 3.4.
 
 
+## Other prerequisites
+
+There are no other prerequisites.
+
+The citation data updater includes code for sending emails. This code
+has been copied from the link checker in case it is required in the
+future. For now, it is _not_ active. The citation data updater does
+not (yet) send emails, and no mail server is required for its
+operation.
+
 ## Release versions
 
-* ANDS Registry Release 15: initial release of the citation data updater.
+* ARDC Registry Release 15: initial release of the citation data updater.
 
 
 ## Important note about the Git repository
@@ -39,8 +49,8 @@ As explained below, the citation data updater uses module names as:
 * values specified with the `-m` command-line option.
 
 The behaviour of the updater modules is determined largely by the
-needs of ANDS. If you need other behaviour, please contact
-`services@ands.org.au` with your requirements.
+needs of ARDC. If you need other behaviour, please contact
+`services@ardc.edu.au` with your requirements.
 
 
 ### The TRDCI citation data updater
@@ -128,11 +138,11 @@ integrated into a production system.
 A crontab entry to update citation data for all registry objects might
 look like this:
 
-    30 03 05 */3 * /full/path/to/python3.4 /full/path/to/update_citation_data.py -i /full/path/to/update_citation_data.ini -m TRDCI >/dev/null 2>&1
+    05 02 * * 0 /full/path/to/python3.4 /full/path/to/update_citation_data.py -i /full/path/to/update_citation_data.ini -m TRDCI >/dev/null 2>&1
 
 Or, to send all reports to a central administrator:
 
-    30 03 05 */3 * /full/path/to/python3.4 /full/path/to/update_citation_data.py -i /full/path/to/update_citation_data.ini -m TRDCI -e admin.email@admin.com >/dev/null 2>&1
+    05 02 * * 0 /full/path/to/python3.4 /full/path/to/update_citation_data.py -i /full/path/to/update_citation_data.ini -m TRDCI -e admin.email@admin.com >/dev/null 2>&1
 
 Note: as mentioned above, currently, no emails are sent.
 This may be added in a future release.
