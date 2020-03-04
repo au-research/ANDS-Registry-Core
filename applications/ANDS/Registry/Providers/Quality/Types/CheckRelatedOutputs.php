@@ -9,7 +9,7 @@ use ANDS\Registry\Providers\MetadataProvider;
 class CheckRelatedOutputs extends CheckType
 {
     protected $descriptor = [
-        'collection' => 'Is connected to <a target="_blank" href="https://documentation.ands.org.au/display/DOC/Related+information">related outputs</a>, such as publications, that give context to the data'
+        'collection' => 'Is connected to <a target="_blank" href="https://documentation.ardc.edu.au/display/DOC/Related+information">related outputs</a>, such as publications, that give context to the data'
     ];
 
     protected $message = [

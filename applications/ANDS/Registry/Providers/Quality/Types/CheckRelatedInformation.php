@@ -9,7 +9,7 @@ use ANDS\Registry\Providers\MetadataProvider;
 class CheckRelatedInformation extends CheckType
 {
     protected $descriptor = [
-        'service' => 'Is connected to <a target="_blank" href="https://documentation.ands.org.au/display/DOC/Related+information">related information</a> that supports use of the service, such as additional protocol information'
+        'service' => 'Is connected to <a target="_blank" href="https://documentation.ardc.edu.au/display/DOC/Related+information">related information</a> that supports use of the service, such as additional protocol information'
     ];
 
     protected $message = [

@@ -1568,17 +1568,17 @@ class Registry_object extends MX_Controller {
 	 *
 	 */
 
-	public function get_edit_form($id){
-		// ro is the alias for the registry object model
-		$this->load->model('registry_objects', 'ro');
-		$ro = $this->ro->getByID($id);
-		$data['extrif'] = $ro->getExtRif();
-
-		$data['preview_link'] = 'http://demo.ands.org.au/'.$ro->slug;
-		$data['transform'] = $ro->transformForFORM();
-		echo $data['transform'];
-		//$this->load->view('registry_object_edit', $data);
-	}
+//	public function get_edit_form($id){
+//		// ro is the alias for the registry object model
+//		$this->load->model('registry_objects', 'ro');
+//		$ro = $this->ro->getByID($id);
+//		//$data['extrif'] = $ro->getExtRif();
+//
+//		$data['preview_link'] = 'http://demo.ands.org.au/'.$ro->slug;
+//		$data['transform'] = $ro->transformForFORM();
+//		echo $data['transform'];
+//		//$this->load->view('registry_object_edit', $data);
+//	}
 
 
 	/**
@@ -1591,14 +1591,14 @@ class Registry_object extends MX_Controller {
 	 * @return [HTML] transformed form from extrif
 	 *
 	 */
-	public function get_edit_form_custom($id){
-		$this->load->model('registry_objects', 'ro');
-		$ro = $this->ro->getByID($id);
-		$rifcs = $this->input->post('rifcs');
-
-		$data['transform'] = $ro->transformCustomForFORM($rifcs);
-		echo $data['transform'];
-	}
+//	public function get_edit_form_custom($id){
+//		$this->load->model('registry_objects', 'ro');
+//		$ro = $this->ro->getByID($id);
+//		$rifcs = $this->input->post('rifcs');
+//
+//		$data['transform'] = $ro->transformCustomForFORM($rifcs);
+//		echo $data['transform'];
+//	}
 
 	/**
 	 * Get a list of records based on the filters

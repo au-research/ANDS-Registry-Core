@@ -22,7 +22,7 @@
     // 	"https://" :
     // 	"http://";
     var DEFAULT_SERVICE_POINT = DEFAULT_PROTOCOL +
-	'services.ands.org.au/api/resolver';
+	'researchdata.ands.org.au/api/location.jsonp/';
     var ENABLE_GAZETTEER = false;
     //some display constants
     var POLY_COLOUR      = '#008dce';
