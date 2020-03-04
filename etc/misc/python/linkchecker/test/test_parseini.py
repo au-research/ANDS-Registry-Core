@@ -5,8 +5,11 @@ Tests of the parsing of INI-style configuration data.
 """
 
 import configparser
+import ssl
+import pymysql
 
 # A list of required options for each section.
+
 ALL_REQUIRED_OPTIONS = {
     'sender_email',
     'smtp_host',
@@ -16,10 +19,11 @@ ALL_REQUIRED_OPTIONS = {
     'database_password',
     'ssl_certificate',
     'database_name',
+    'database_port'
 }
 
 # Simple test with multiple sections. One option is missing from RO.
-test_parse_ini1_conf = """\
+test_parse_ini1_conf = u"""
 # Test configuration for link checker.
 # If you modify this file, you must also update the tests!
 
@@ -41,6 +45,7 @@ database_module   = pymysql
 database_host     = testhost
 database_user     = testuser
 database_password = testpassword
+database_port     = testport
 
 # Location of an SSL certificate to use when checking a link over HTTPS.
 # In general, this should not be anything special.  However, some
@@ -68,7 +73,7 @@ def test_parse_ini1():
     config.read_string(test_parse_ini1_conf)
     assert set(config.sections()) == {'DOI', 'RO'}
     for s in config.sections():
-        print('Found section: [', s, ']', sep='')
+        print('Found section: [', s, ']')
         for c in config.options(s):
             print('Found option:', c, '=', config[s][c])
         options_missing = ALL_REQUIRED_OPTIONS - set(config[s])
@@ -78,5 +83,20 @@ def test_parse_ini1():
                 print(missing)
                 assert s == 'RO' and missing == 'database_name'
 
+def test_connection():
+    """Simple test to connect to the db database_name.
+    """
+
+    theconnect = pymysql.connect(
+        host='xxx.xx.xx.xxx',
+        user='xxxxxxx',
+        passwd='xxxxxxx',
+        db='xxx_xxxx',
+        port=XXXX,
+        charset='utf8')
+    print(theconnect)
+
+
 if __name__ == '__main__':
     test_parse_ini1()
+    ###test_connection()###
