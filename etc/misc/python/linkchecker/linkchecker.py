@@ -170,6 +170,7 @@ ALL_REQUIRED_OPTIONS = {
     'database_host',
     'database_user',
     'database_password',
+    'database_port',
     'ssl_certificate',
     'database_name',
 }
@@ -219,6 +220,7 @@ def open_db_connection(params):
             user=params['database_user'],
             passwd=params['database_password'],
             db=params['database_name'],
+            port=int(params['database_port']),
             charset='utf8')
     except Exception as e:
         print("Database Exception:", e)
