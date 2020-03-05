@@ -204,7 +204,6 @@ class DOIServiceProviderTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($result);
 
         $response = $service->getResponse();
-        var_dump($response);
 
         $doi = $response['doi'];
         $service->activate($doi);
