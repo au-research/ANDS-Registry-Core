@@ -430,10 +430,10 @@ class DOISyncCommand extends Command
 
         $config = Config::get('database');
         $clientRepository = new ClientRepository(
-            $config['dois']['hostname'], $config['dois']['database'], $config['dois']['username'], $config['dois']['password']
+            $config['dois']['hostname'], $config['dois']['database'], $config['dois']['username'], $config['dois']['password'], $config['dois']['port']
         );
         $doiRepository = new DoiRepository(
-            $config['dois']['hostname'], $config['dois']['database'], $config['dois']['username'], $config['dois']['password']
+            $config['dois']['hostname'], $config['dois']['database'], $config['dois']['username'], $config['dois']['password'], $config['dois']['port']
         );
 
         $dataciteClient = $this->getDataciteClient($client);
@@ -572,10 +572,10 @@ class DOISyncCommand extends Command
             $config = Config::get('database');
 
             $clientRepository = new ClientRepository(
-                $config['dois']['hostname'], $config['dois']['database'], $config['dois']['username'], $config['dois']['password']
+                $config['dois']['hostname'], $config['dois']['database'], $config['dois']['username'], $config['dois']['password'], $config['dois']['port']
             );
             $doiRepository = new DoiRepository(
-                $config['dois']['hostname'], $config['dois']['database'], $config['dois']['username'], $config['dois']['password']
+                $config['dois']['hostname'], $config['dois']['database'], $config['dois']['username'], $config['dois']['password'], $config['dois']['port']
             );
 
             $dataciteClient = $this->getDataciteClient($client);
