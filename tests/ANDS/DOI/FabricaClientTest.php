@@ -111,7 +111,6 @@ class FabricaClientTest extends PHPUnit_Framework_TestCase
        // $this->markTestSkipped("Test is failing in DOI app.test. Behaviour is inconsistent. Dev needs another look");
 
         // when there are unallocated prefix
-        
         $unAllocatedPrefix = $this->repo->getOneUnallocatedPrefix('prod');
         if (!$unAllocatedPrefix) {
             $this->markTestSkipped("There are no unallocated prefixes available");
