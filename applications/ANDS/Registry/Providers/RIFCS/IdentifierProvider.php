@@ -178,9 +178,9 @@ class IdentifierProvider implements RIFCSProvider
         switch($type)
         {
             case 'doi':
-                if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
-                elseif(!strpos($identifier,"doi.org/")) $identifier_href ="http://dx.doi.org/".$identifier;
-                else $identifier_href = "http://dx.doi.org/".substr($identifier,strpos($identifier,"doi.org/")+8);
+                //if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier."mystuff";
+                if(!strpos($identifier,"doi.org/")) $identifier_href ="https://doi.org/".$identifier;
+                else $identifier_href = "https://doi.org/".substr($identifier,strpos($identifier,"doi.org/")+8);
                 $identifiers['href'] = $identifier_href;
                 $identifiers['display_text'] = strtoupper($type);
                 $identifiers['hover_text'] = 'Resolve this DOI';

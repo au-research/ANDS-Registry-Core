@@ -225,9 +225,9 @@ class LinkProvider implements RegistryContentProvider
                 break;
             case 'doi':
                 if(strpos($identifier,"doi.org/") === false )
-                    return "http://dx.doi.org/" . $identifier;
+                    return "https://doi.org/" . $identifier;
                 else
-                    return "http://dx.doi.org/" . substr($identifier, strpos($identifier, "doi.org/") + 8 );
+                    return "https://doi.org/" . substr($identifier, strpos($identifier, "doi.org/") + 8 );
                 break;
             case 'uri':
                 return 'http://'  .$identifier;
@@ -294,7 +294,7 @@ class LinkProvider implements RegistryContentProvider
 
     public static function cleanUrl($url)
     {
-        $url = str_replace("&amp;", "&", trim($url," []():.,"));
+        $url = str_replace("&amp;", "&", trim(trim($url)," []():.,"));
         return $url;
     }
 

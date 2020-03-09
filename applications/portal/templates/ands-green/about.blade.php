@@ -155,7 +155,7 @@
                     </div>
                     <div class="row " data-os-animation="" data-os-animation-delay="">
                         <div class="col-md-4 ">
-                            <a href="https://documentation.ands.org.au/display/DOC/Providing+metadata+records+to+Research+Data+Australia" target="_blank">
+                            <a href="https://documentation.ardc.edu.au/display/DOC/Providing+metadata+records+to+Research+Data+Australia" target="_blank">
                                 <div class="element-medium-top element-medium-bottom text-center os-animation animated fadeInUp"
                                      data-os-animation="fadeInUp" data-os-animation-delay=".0s"
                                      style="-webkit-animation: 0s;">
