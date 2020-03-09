@@ -128,6 +128,7 @@ class Registry_objects extends CI_Model {
 
 			//prepare identifier, strip out http
 			$identifier = str_replace("http://dx.doi.org/", "", $identifier);
+            $identifier = str_replace("https://doi.org/", "", $identifier);
 
 			//Crossref
 			$ch = curl_init();
@@ -169,7 +170,7 @@ class Registry_objects extends CI_Model {
 							'publisher' => isset($record['publisher']) ? $record['publisher'] : '',
 							'doi' => isset($record['doi']) ? $record['doi'] : '',
 							'type' => isset($record['resourceTypeGeneral']) ? $record['resourceTypeGeneral'] : '',
-							'url' => 'http://dx.doi.org/'.$identifier,
+							'url' => 'https://doi.org/'.$identifier,
 							'source' => '',
 							'description' => isset($record['description']) ? $record['description'][0] : ''
 						);

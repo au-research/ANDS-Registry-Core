@@ -17,6 +17,7 @@ database_module   = <Python module for db connector; only pymysql supported!>
 database_host     = <database server hostname or IP address>
 database_user     = <database username>
 database_password = <database password>
+database_port     = <database port>
 
 # Location of an SSL certificate to use when checking a link over HTTPS.
 # In general, this should not be anything special.  However, some

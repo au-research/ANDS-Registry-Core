@@ -138,14 +138,16 @@ class DoiBulkTask extends Task
             $dbconf['hostname'],
             $dbconf['database'],
             $dbconf['username'],
-            $dbconf['password']
+            $dbconf['password'],
+            $dbconf['port']
         );
 
         $doiRepository = new DoiRepository(
             $dbconf['hostname'],
             $dbconf['database'],
             $dbconf['username'],
-            $dbconf['password']
+            $dbconf['password'],
+            $dbconf['port']
         );
 
         $bulkRequest = BulkRequest::find($this->bulkID);

@@ -195,6 +195,7 @@ class FabricaClientTest extends PHPUnit_Framework_TestCase
 //    }
 
     /** @test  **/
+    /*
     public function it_should_update_the_test_client_on_datacite()
     {
         $params = [
@@ -217,7 +218,7 @@ class FabricaClientTest extends PHPUnit_Framework_TestCase
 
         $this->fabricaClient->updateClient($this->trustedClient,'test');
         $this->assertFalse($this->fabricaClient->hasError());
-    }
+    } */
 
     /** @test  **/
     public function it_should_create_clientInfo_from_local_client_object()
@@ -225,6 +226,37 @@ class FabricaClientTest extends PHPUnit_Framework_TestCase
         $clientInfo = $this->fabricaClient->getClientInfo($this->trustedClient, 'test');
         $this->assertContains($this->trustedClient->datacite_symbol, $clientInfo);
     }
+
+    /** @test  **/
+    public function it_should_get_clientPrefixes_from_local_client_object()
+    {
+        $this->trustedClient = $this->repo->getBySymbol(getenv("DATACITE_USERNAME"));
+        $clientPrefixes = $this->fabricaClient->getPrefixes($this->trustedClient);
+        $this->assertContains(getenv("TEST_DOI_PROD_PREFIX"),json_encode($clientPrefixes));
+        $clientTestPrefixes = $this->fabricaClient->getTestPrefixes($this->trustedClient);
+        $this->assertContains(getenv("TEST_DOI_PREFIX"),json_encode($clientTestPrefixes));
+
+    }
+
+    /** @test  **/
+    public function it_should_get_clientInfo_from_local_client_object()
+    {
+        $this->trustedClient = $this->repo->getBySymbol(getenv("DATACITE_USERNAME"));
+        $clientInfoTest = $this->fabricaClient->getClientInfo($this->trustedClient, "test");
+        $this->assertContains(getenv("TEST_DOI_PREFIX"),$clientInfoTest);
+        $this->assertContains(getenv("TEST_DOI_TEST_SHARED_SECRET"),$clientInfoTest);
+        $clientInfo = $this->fabricaClient->getClientInfo($this->trustedClient);
+        $this->assertContains(getenv("TEST_DOI_PROD_PREFIX"),json_encode($clientInfo));
+        $this->assertContains(getenv("TEST_DOI_SHARED_SECRET"),json_encode($clientInfo));
+
+    }
+    /** @test  **/
+    /* Need to remove update tests until after the release as it changes passwords and
+    public function it_should_update_client_with_shared_secret()
+    {
+        $this->trustedClient = $this->repo->getBySymbol(getenv("TEST_CLIENT_SYMBOL"));
+        $this->fabricaClient->updateClient($this->trustedClient, "test");
+    } */
 
     /** @test  **/
    public function it_should_get_list_of_client_dois()
