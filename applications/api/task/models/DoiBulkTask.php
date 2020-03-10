@@ -221,7 +221,6 @@ class DoiBulkTask extends Task
 
 
         if ($parameters['type'] == 'url') {
-        if ($parameters['type'] == 'url') {
 
             $prefix_query ="(";
             $count = count($search_prefixes);
