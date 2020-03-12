@@ -253,6 +253,9 @@ class ClientRepository
         }
 
         // ip address matching
+        // Need to determine if the obtained ip address is now a comma concatenated string with the proxy ips and use the first address as the real one
+        $ipAddresses = explode(",", $ipAddress);
+        $ipAddress = trim($ipAddresses[0]);
         if ($ipAddress &&
             IPValidator::validate($ipAddress, $client->ip_address) === false
         ) {
