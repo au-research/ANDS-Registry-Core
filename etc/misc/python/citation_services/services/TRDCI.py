@@ -517,6 +517,7 @@ class TRDCIService(base.BaseService):
                 user=self._params['database_user'],
                 passwd=self._params['database_password'],
                 db=self._params['portal_database_name'],
+                port=int(self._params['database_port']),
                 client_flag=pymysql.constants.CLIENT.FOUND_ROWS)
         except Exception as e:
             print("Database Exception:", e)
