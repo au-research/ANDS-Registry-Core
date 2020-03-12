@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+
+## Release 36
+
+* Create resolvable DOI links using https://doi.org instead of http://dx.doi.org to conform with the DOI display guidelines 
+* Update RDA Registry help links to point to the new documentation.ardc.edu.au pages 
+* Fix the issue where RDA Registry users could not save changes to records using TinyMCE WYSIWYG editor
+
+
 ## Release 35
 * Enhancements to the harvester to support chunked transfer encoding via HTTP v1.1 
 * Addition of new harvest method to support harvesting from MAGDA API 
