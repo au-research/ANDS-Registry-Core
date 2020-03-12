@@ -1,3 +1,15 @@
+## Release 36 (12 March 2020)
+**Research Data Australia**
+* Create resolvable DOI links using https://doi.org instead of http://dx.doi.org to conform with the DOI display guidelines 
+* Update RDA Registry help links to point to the new documentation.ardc.edu.au pages 
+* Fix the issue where RDA Registry users could not save changes to records using TinyMCE WYSIWYG editor
+
+**DOI Service**
+* Updates to support DataCite Fabrica account authentication changes 
+
+**Handle Service**
+* Improve the handle service response time by simplifying the mint and update process
+
 ## Release 35
 Release 35 of ARDC Online Services is scheduled for implementation on **Tuesday, 17 December 2019 between 8am and 12pm AEDT**.
 This release implements a number of enhancements and bug fixes to Research Data Australia (RDA) harvester and indexing of subjects. 
