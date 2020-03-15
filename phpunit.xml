@@ -24,9 +24,13 @@
     <testsuites>
         <testsuite name="unit">
             <directory>tests/ANDS</directory>
+            <exclude>tests/ANDS/DOI</exclude>
         </testsuite>
         <testsuite name="dependencies">
             <directory>tests/dependencies</directory>
+        </testsuite>
+        <testsuite name="integration">
+            <directory>tests/ANDS</directory>
         </testsuite>
     </testsuites>
 
