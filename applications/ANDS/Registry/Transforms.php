@@ -6,21 +6,24 @@ use \XSLTProcessor as XSLTProcessor;
 
 class Transforms
 {
-    static $extrif_to_iso_19115_tranformer = NULL;
+    static $rif_to_iso19115_3_transformer = NULL;
 
-
-    static function get_extrif_to_iso19115_3_transformer()
+    /**
+     * @return XSLTProcessor
+     * to Transform rifcs xml to ISO19115-5
+     */
+    static function get_rif_to_iso19115_3_transformer()
     {
-        if (is_null(self::$extrif_to_iso_19115_tranformer))
+        if (is_null(self::$rif_to_iso19115_3_transformer))
         {
             $iso_xsl = new DomDocument();
             $iso_xsl->load(REGISTRY_APP_PATH.'registry_object/transforms/RIFCS-to-ISO19115-3.xsl');
             $isoProc = new XSLTProcessor();
             $isoProc->importStyleSheet($iso_xsl);
-            self::$extrif_to_iso_19115_tranformer = $isoProc;
+            self::$rif_to_iso19115_3_transformer = $isoProc;
         }
 
-        return self::$extrif_to_iso_19115_tranformer;
+        return self::$rif_to_iso19115_3_transformer;
     }
 
 }
