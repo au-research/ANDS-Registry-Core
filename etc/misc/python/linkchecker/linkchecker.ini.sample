@@ -17,9 +17,10 @@ smtp_host         = localhost
 
 # Database connection for accessing the links to be checked.
 database_module   = pymysql
-database_host     = dbhost.organization.org
+database_host     = dbhostip
 database_user     = webuser
 database_password = mypassword
+database_port     = myport
 
 # Location of an SSL certificate to use when checking a link over HTTPS.
 # In general, this should not be anything special.  However, some

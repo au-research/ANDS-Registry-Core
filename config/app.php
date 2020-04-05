@@ -30,7 +30,7 @@ return [
     'rda_urchin_id' => env('RDA_URCHIN_ID', ''),
     'svc_urchin_id' => env('SVC_URCHIN_ID', ''),
     'python_bin' => env('PYTHON_BIN', '/usr/bin/python3.6'),
-    'doi_link_checker_script' => env('DOI_LINK_CHECKER_SCRIPT','/opt/ands/registry/etc/misc/python/linkchecker/linkchecker.py --html_output -i /opt/ands/registry/etc/misc/python/linkchecker/linkchecker.ini -m DOI'),
+    'doi_link_checker_script' => env('DOI_LINK_CHECKER_SCRIPT','/opt/apps/registry/current/etc/misc/python/linkchecker/linkchecker.py --html_output -i /opt/apps/registry/current/etc/misc/python/linkchecker/linkchecker.ini -m DOI'),
     'storage' => [
         'test' => [
             'driver' => 'file',

@@ -227,11 +227,7 @@ class Registry_object extends MX_Controller
             // record view event for logging
             $event = [
                 'event' => 'portal_view',
-                'record' => $this->getRecordFields($ro),
-                'user' => [
-                    'ip' => $this->input->ip_address(),
-                    'user_agent' => $this->input->user_agent()
-                ]
+                'record' => $this->getRecordFields($ro)
             ];
 
             // Record Source

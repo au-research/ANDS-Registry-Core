@@ -87,7 +87,7 @@ class ISO19115_3Provider implements RegistryContentProvider
 
     private static function generateISO($recordData, $subjects = ""){
         try {
-            $xslt_processor = Transforms::get_extrif_to_iso19115_3_transformer();
+            $xslt_processor = Transforms::get_rif_to_iso19115_3_transformer();
             $xslt_processor->setParameter ('','subjects' , $subjects);
             $dom = new DOMDocument();
             $dom->loadXML($recordData, LIBXML_NOENT);

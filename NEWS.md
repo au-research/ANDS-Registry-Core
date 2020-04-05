@@ -1,3 +1,15 @@
+## Release 36 (12 March 2020)
+**Research Data Australia**
+* Create resolvable DOI links using https://doi.org instead of http://dx.doi.org to conform with the DOI display guidelines 
+* Update RDA Registry help links to point to the new documentation.ardc.edu.au pages 
+* Fix the issue where RDA Registry users could not save changes to records using TinyMCE WYSIWYG editor
+
+**DOI Service**
+* Updates to support DataCite Fabrica account authentication changes 
+
+**Handle Service**
+* Improve the handle service response time by simplifying the mint and update process
+
 ## Release 35
 Release 35 of ARDC Online Services is scheduled for implementation on **Tuesday, 17 December 2019 between 8am and 12pm AEDT**.
 This release implements a number of enhancements and bug fixes to Research Data Australia (RDA) harvester and indexing of subjects. 
@@ -285,7 +297,7 @@ Release 24 of ANDS Online Services is scheduled for implementation on **5 Ju
 *   Enhance CMD DOI request events to capture more transaction information 
 
 *Handle Service (PIDS)*
-*   As part a recent infrastructure migration project we have implemented a new service URL for the Handle Service ([https://handle.ands.org.au/pids](https://handle.ands.org.au/pids)) . While we will continue to support the previous URL but we encourage users of the service to migrate to the new URL when convenient. Please refer to the [Handle Service documentation](https://documentation.ands.org.au/display/DOC/Basic+Service+Information) for more information.
+*   As part a recent infrastructure migration project we have implemented a new service URL for the Handle Service ([https://handle.ands.org.au/pids](https://handle.ands.org.au/pids)) . While we will continue to support the previous URL but we encourage users of the service to migrate to the new URL when convenient. Please refer to the [Handle Service documentation](https://documentation.ardc.edu.au/display/DOC/Basic+Service+Information) for more information.
 
 *Research Vocabularies Australia (RVA)*
 *   Fix the display of the organisations in the RVA CMS' 'Owner' field to also include the complete name of the organisation (e.g from 'ANDS' to 'Australian National Data Service (ANDS)) 

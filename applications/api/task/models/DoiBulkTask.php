@@ -48,6 +48,7 @@ class DoiBulkTask extends Task
         $bulks = Bulk::where('bulk_id', $bulkRequest->id)
             ->where('status', 'PENDING')->take($this->limit)->get();
 
+
         $totalPending = Bulk::where('bulk_id', $bulkRequest->id)
             ->where('status', 'PENDING')->count();
 
@@ -138,14 +139,16 @@ class DoiBulkTask extends Task
             $dbconf['hostname'],
             $dbconf['database'],
             $dbconf['username'],
-            $dbconf['password']
+            $dbconf['password'],
+            $dbconf['port']
         );
 
         $doiRepository = new DoiRepository(
             $dbconf['hostname'],
             $dbconf['database'],
             $dbconf['username'],
-            $dbconf['password']
+            $dbconf['password'],
+            $dbconf['port']
         );
 
         $bulkRequest = BulkRequest::find($this->bulkID);
@@ -158,8 +161,14 @@ class DoiBulkTask extends Task
         $config = Config::get('datacite');
 
 
-        $clientUsername = $config['name_prefix'] . "." . $config['name_middle'] . str_pad($client->client_id, 2, '-', STR_PAD_LEFT);
-        $dataciteClient = new MdsClient($clientUsername,$config['password'],$config['testPassword']);
+       // $clientUsername = $config['name_prefix'] . "." . $config['name_middle'] . str_pad($client->client_id, 2, '-', STR_PAD_LEFT);
+        $clientUsername = $client->datacite_symbol;
+        $clientPassword = (isset($client->shared_secret) AND $client->shared_secret !='')
+            ? $client->shared_secret :  $config['password'];
+        $clientTestPassword = (isset($client->test_shared_secret) AND $client->test_shared_secret !='')
+            ? $client->test_shared_secret :  $config['testPassword'];
+
+        $dataciteClient = new MdsClient($clientUsername,$clientPassword,$clientTestPassword );
 
         if($params['mode'] == 'test'){
             $dataciteClient->setDataciteUrl($config['base_test_url']);
@@ -168,6 +177,8 @@ class DoiBulkTask extends Task
         }
 
         $doiService = new DOIServiceProvider($clientRepository, $doiRepository, $dataciteClient);
+
+
         $doiService->setAuthenticatedClient($client);
 
         $this->doiService = $doiService;
@@ -256,7 +267,6 @@ class DoiBulkTask extends Task
         $JSONFormater = new JSONFormatter();
         $stringFormater = new StringFormatter();
         $arrayFormater = new ArrayFormatter();
-
 
         $this->log('Executing bulk: '.$bulk->id .' Updating ('.$bulk->doi.') URL from '.$bulk->from.' to '.$bulk->to);
 
