@@ -11,7 +11,7 @@ use ANDS\Repository\RegistryObjectsRepository;
 class CheckRelatedActivityOutput extends CheckType
 {
     protected $descriptor = [
-        'activity' => 'Is connected to any related <a target="_blank" href="https://documentation.ands.org.au/display/DOC/Collection">collection</a> or <a target="_blank"  href="https://documentation.ands.org.au/display/DOC/Service">service</a> that is an output of the activity'
+        'activity' => 'Is connected to any related <a target="_blank" href="https://documentation.ardc.edu.au/display/DOC/Collection">collection</a> or <a target="_blank"  href="https://documentation.ardc.edu.au/display/DOC/Service">service</a> that is an output of the activity'
     ];
 
     protected $message = [

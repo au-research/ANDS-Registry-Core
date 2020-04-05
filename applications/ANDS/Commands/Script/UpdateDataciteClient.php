@@ -25,7 +25,8 @@ class UpdateDataciteClient extends GenericScript implements GenericScriptRunnabl
             $database['hostname'],
             $database['database'],
             $database['username'],
-            $database['password']
+            $database['password'],
+            $database['port']
         );
 
         $params = $this->getInput()->getOption('params');

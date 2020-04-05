@@ -14,23 +14,15 @@ class TestRegistryObjectTransforms extends UnitTest
      * @name Test getting ORCID xml for collection
      * @note B#
      */
-    public function testGetORCID_XMLByKey()
+    public function testTransformToHtml()
     {
         $ro = $this->ci->ro->getPublishedByKey("10.4225/06/565E7702F1E12");
         $this->assertInstanceOf($ro, new \_registry_object());
-        $xml = $ro->transformToORCID();
+        $xml = $ro->transformForHtml();
         echo($xml);
     }
 
 
-    public function testOrcidImport()
-    {
-        $ro = $this->ci->ro->getPublishedByKey("10.4225/06/565E7702F1E12");
-        $this->assertInstanceOf($ro, new \_registry_object());
-        $xml = $ro->transformToORCID('88888');
-        echo($xml);
-
-    }
 
     public function setUp()
     {

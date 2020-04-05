@@ -699,7 +699,8 @@ ip_address = "'.$r["combined_ip"].'"  WHERE app_id = "'.$r["app_id"].'"');
             $database['hostname'],
             $database['database'],
             $database['username'],
-            $database['password']
+            $database['password'],
+            $database['port']
         );
 
         $fabricaConfig = \ANDS\Util\Config::get('datacite.fabrica');

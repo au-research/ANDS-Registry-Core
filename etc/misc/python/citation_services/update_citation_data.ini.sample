@@ -17,9 +17,10 @@ smtp_host         = localhost
 
 # Database connection for accessing the registry objects to be checked.
 database_module   = pymysql
-database_host     = dbhost.organization.org
+database_host     = dbhostip
 database_user     = webuser
 database_password = mypassword
+database_port     = myport
 
 
 # (Override) settings for Thomson Reuters Data Citation Index

@@ -84,7 +84,7 @@
 		    		<a target="_blank" href="{{ json_decode($ap['portal_data'])->uri }}">{{ json_decode($ap['portal_data'])->uri }}</a>
 		    	</p>
 		    	<p>
-		    		<a target="_blank" href="https://documentation.ands.org.au/display/DOC/SPARQL+endpoint">Learn More</a>
+		    		<a target="_blank" href="https://documentation.ardc.edu.au/display/DOC/SPARQL+endpoint">Learn More</a>
 		    	</p>
 		    </div>
 		    @endif
@@ -205,7 +205,7 @@
 			    		<a target="_blank" href="{{ json_decode($ap['portal_data'])->uri }}">{{ json_decode($ap['portal_data'])->uri }}</a>
 			    	</p>
 			    	<p>
-			    		<a target="_blank" href="https://documentation.ands.org.au/display/DOC/SPARQL+endpoint">Learn More</a>
+			    		<a target="_blank" href="https://documentation.ardc.edu.au/display/DOC/SPARQL+endpoint">Learn More</a>
 			    	</p>
 			    </div>
 			    @endif

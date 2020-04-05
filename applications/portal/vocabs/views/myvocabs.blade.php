@@ -10,7 +10,7 @@
 						<div class="panel-body">
                             <div align="center">
                                 <p class="small center"> <span class="yellow_exclamation"><i class="fa fa-exclamation" style="color:#fff"></i></span>
-                                    Please review the <a href="https://documentation.ands.org.au/display/DOC/Research+Vocabularies+Australia+participant+agreement" target="_blank">Research Vocabularies Australia participant agreement</a> before you proceed.<br />
+                                    Please review the <a href="https://documentation.ardc.edu.au/display/DOC/Research+Vocabularies+Australia+participant+agreement" target="_blank">Research Vocabularies Australia participant agreement</a> before you proceed.<br />
                                     If you have questions, please email <a href="mailto:services.ands.org.au">services.ands.org.au</a>.
                                 </p>
 
