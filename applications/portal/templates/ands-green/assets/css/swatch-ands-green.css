@@ -28,7 +28,7 @@
   color: #4c4c4c;
 }
 .swatch-white blockquote:before, [class*="swatch-"] .swatch-white blockquote:before {
-  background-color:  #00A2C4;
+  background-color:  #00819D;
 }
 .swatch-white blockquote small, .swatch-white blockquote footer, [class*="swatch-"] .swatch-white blockquote small, [class*="swatch-"] .swatch-white blockquote footer {
   color: #1c1c1c;
@@ -52,7 +52,7 @@
   color: #4f9bc2;
 }
 .swatch-white .btn-primary, .swatch-white button, .swatch-white input[type="submit"], [class*="swatch-"] .swatch-white .btn-primary, [class*="swatch-"] .swatch-white button, [class*="swatch-"] .swatch-white input[type="submit"] {
-  background-color:  #00A2C4;
+  background-color:  #00819D;
   color: white;
 }
 .swatch-white .btn-primary:hover, .swatch-white button:hover, .swatch-white input[type="submit"]:hover, [class*="swatch-"] .swatch-white .btn-primary:hover, [class*="swatch-"] .swatch-white button:hover, [class*="swatch-"] .swatch-white input[type="submit"]:hover {
@@ -79,7 +79,7 @@
 }
 .swatch-white .btn-link:hover, [class*="swatch-"] .swatch-white .btn-link:hover {
   text-decoration: none;
-  background-color:  #00A2C4;
+  background-color:  #00819D;
   color: white;
   box-shadow: 0px 0px 0px 1px  #00A2C4;
 }
@@ -134,7 +134,7 @@
   color: #4c4c4c;
 }
 .swatch-white .table th, [class*="swatch-"] .swatch-white .table th {
-  background-color:  #00A2C4;
+  background-color:  #00819D;
   text-transform: uppercase;
   color: white;
 }
@@ -171,7 +171,7 @@
   background: none;
 }
 .swatch-white.navbar .nav > li > a:before, [class*="swatch-"] .swatch-white.navbar .nav > li > a:before {
-  background-color:  #00A2C4;
+  background-color:  #00819D;
 }
 .swatch-white.navbar a .menu-icon, [class*="swatch-"] .swatch-white.navbar a .menu-icon {
   color: #4c4c4c;
@@ -273,7 +273,7 @@
   color: white;
 }
 .swatch-white .tooltip-inner, [class*="swatch-"] .swatch-white .tooltip-inner {
-  background-color:  #00A2C4;
+  background-color:  #00819D;
   color: white;
 }
 .swatch-white .tooltip.in, [class*="swatch-"] .swatch-white .tooltip.in {
@@ -302,7 +302,7 @@
   color: white;
 }
 .swatch-white .progress-bar-primary.progress-striped .progress-bar, .swatch-white .progress-striped .progress-bar-primary, [class*="swatch-"] .swatch-white .progress-bar-primary.progress-striped .progress-bar, [class*="swatch-"] .swatch-white .progress-striped .progress-bar-primary {
-  background-color:  #00A2C4;
+  background-color:  #00819D;
   background-image: -webkit-gradient(linear, 0 100%, 100% 0, color-stop(0.25, rgba(255, 255, 255, 0.15)), color-stop(0.25, transparent), color-stop(0.5, transparent), color-stop(0.5, rgba(255, 255, 255, 0.15)), color-stop(0.75, rgba(255, 255, 255, 0.15)), color-stop(0.75, transparent), to(transparent));
   background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
   background-image: -moz-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
@@ -319,7 +319,7 @@
 }
 .swatch-white .nav-tabs > li > a:hover, .swatch-white .nav-tabs > li > a:focus, [class*="swatch-"] .swatch-white .nav-tabs > li > a:hover, [class*="swatch-"] .swatch-white .nav-tabs > li > a:focus {
   color: white;
-  background-color:  #00A2C4;
+  background-color:  #00819D;
 }
 .swatch-white .nav-tabs > li.active > a, [class*="swatch-"] .swatch-white .nav-tabs > li.active > a {
   color: white;
@@ -400,12 +400,12 @@
   stroke: #4c4c4c;
 }
 .swatch-white .social-icons li a, [class*="swatch-"] .swatch-white .social-icons li a {
-  background-color:  #00A2C4;
+  background-color:  #00819D;
 }
 .swatch-white .social-icons li a i, [class*="swatch-"] .swatch-white .social-icons li a i {
   color: white;
 }
-.swatch-white .social-icons li a:not([data-iconcolor]):hover, [class*="swatch-"] .swatch-white .social-icons li a:not([data-iconcolor]):hover {
+.swatch-white .social-icons li a:not([data-iconcolor]):.swatch-white .btn-primary, .swatch-white button,, [class*="swatch-"] .swatch-white .social-icons li a:not([data-iconcolor]):hover {
   background-color: rgba(130, 201, 237, 0.8);
 }
 .swatch-white .social-simple li a i, [class*="swatch-"] .swatch-white .social-simple li a i {
@@ -428,13 +428,13 @@
   background-color: #1c1c1c;
 }
 .swatch-white .bordered-link:after, [class*="swatch-"] .swatch-white .bordered-link:after {
-  background-color:  #00A2C4 !important;
+  background-color:  #00819D !important;
 }
 .swatch-white .bordered > a:after, [class*="swatch-"] .swatch-white .bordered > a:after {
-  background-color:  #00A2C4;
+  background-color:  #00819D;
 }
 .swatch-white .bordered-link:after, [class*="swatch-"] .swatch-white .bordered-link:after {
-  background-color:  #00A2C4 !important;
+  background-color:  #00819D !important;
 }
 .swatch-white #infscr-loading, [class*="swatch-"] .swatch-white #infscr-loading {
   background:  #00A2C4;
@@ -463,7 +463,7 @@
   color: white;
 }
 .swatch-white .mejs-audio, [class*="swatch-"] .swatch-white .mejs-audio {
-  background-color:  #00A2C4;
+  background-color:  #00819D;
   color: white;
 }
 .swatch-white .mejs-container .mejs-controls .mejs-time span, [class*="swatch-"] .swatch-white .mejs-container .mejs-controls .mejs-time span {
@@ -507,7 +507,7 @@
   background:  #00A2C4;
 }
 .swatch-white .author-info, [class*="swatch-"] .swatch-white .author-info {
-  background-color:  #00A2C4;
+  background-color:  #00819D;
   color: white;
 }
 .swatch-white .author-info .media-heading, [class*="swatch-"] .swatch-white .author-info .media-heading {
@@ -526,7 +526,7 @@
   color: rgba(76, 76, 76, 0.8);
 }
 .swatch-white .post-related-post, [class*="swatch-"] .swatch-white .post-related-post {
-  background-color:  #00A2C4;
+  background-color:  #00819D;
 }
 .swatch-white .post-related-post a, [class*="swatch-"] .swatch-white .post-related-post a {
   background: rgba(28, 28, 28, 0.9);

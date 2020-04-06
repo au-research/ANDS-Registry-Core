@@ -3370,6 +3370,7 @@ input[type=number] {
 .navbar-nav {
   margin-left: 0;
   margin-right: 0;
+  text-transform: uppercase;
 }
 
 /* - Icons on menus - */

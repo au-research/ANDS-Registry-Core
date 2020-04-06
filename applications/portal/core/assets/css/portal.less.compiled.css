@@ -32,7 +32,7 @@
   background-color: white;
 }
 .icon-portal {
-  color: #00b0d5 !important;
+  color: #00819d !important;
 }
 .icon-white {
   color: white !important;
@@ -262,7 +262,7 @@ div.vertical-center span.vertical-center {
 }
 .btn-noaction:hover {
   background: transparent !important;
-  color: #00b0d5 !important;
+  color: #00819d !important;
 }
 .round {
   padding: 15px;
@@ -471,7 +471,7 @@ ul.listy li a small {
  */
 .navbar-brand {
   font-size: 25px;
-  padding: 33px 15px 0px;
+  padding: 10px 15px 0px;
   height: auto;
 }
 .navbar-brand span {
@@ -489,7 +489,7 @@ h1 {
   font-size: 30px;
 }
 small a {
-  color: #00b0d5 !important;
+  color: #00819d !important;
 }
 .alert-info {
   color: white;
@@ -498,7 +498,7 @@ small a {
   margin: auto;
 }
 .flex-direction-nav a {
-  color: #00b0d5 !important;
+  color: #00819d !important;
 }
 .swatch-white .panel-footer a,
 .swatch-white .panel-header a,
@@ -517,7 +517,7 @@ small a {
 }
 .swatch-gray a,
 .panel a {
-  color: #00b0d5;
+  color: #00819d;
 }
 .swatch-gray a:hover,
 .panel a:hover {
@@ -530,19 +530,19 @@ small a {
 }
 .swatch-black input::selection {
   color: white;
-  background: #00b0d5;
+  background: #00819d;
 }
 .swatch-black input::-moz-selection {
   color: white;
-  background: #00b0d5;
+  background: #00819d;
 }
 ::selection {
   color: white;
-  background: #00b0d5;
+  background: #00819d;
 }
 ::-moz-selection {
   color: white;
-  background: #00b0d5;
+  background: #00819d;
 }
 .mce-panel button {
   background-color: inherit !important;
@@ -569,7 +569,7 @@ small a {
   box-shadow: 0px 3px 0px #84a07b;
 }
 .btn-primary {
-  background-color: #00b0d5;
+  background-color: #00819d;
 }
 .btn-primary:hover {
   color: white !important;
@@ -602,7 +602,7 @@ small a {
   background: white !important;
 }
 .swatch-white a {
-  color: #00b0d5;
+  color: #00819d;
 }
 .swatch-white a:hover {
   color: #a65fc4;

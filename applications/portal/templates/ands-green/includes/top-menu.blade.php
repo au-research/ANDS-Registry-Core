@@ -17,7 +17,7 @@
             @endif
         </div>
         <nav class="collapse navbar-collapse main-navbar" role="navigation">
-            <ul class="nav navbar-nav navbar-right" style="margin-top: 30px">
+            <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
                     <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Explore <i class="fa fa-caret-down"></i></a>
                     <ul class="dropdown-menu" role="menu">
