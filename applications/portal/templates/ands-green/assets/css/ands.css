@@ -74,7 +74,7 @@ span.dynatree-selected a
 }
 
 .yellow_button {
-    color: #fff;
+    color: #000;
     font-size: 14px;
     font-weight: bold;
     background: #F8B20E;
@@ -302,7 +302,17 @@ h1.bordered:after{
     margin-bottom:15px;
 }
 .header_logo{
-    width: 280px;
-    padding-bottom: 30px;
-    margin-top: -10px;
+    width: 250px;
+}
+
+#footer h5,h4,li{
+    text-transform: uppercase;
+}
+
+#footer li{
+    font-size: 12px;
+}
+.footer-text{
+    font-size:10px;
+    line-height: 16px;
 }
