@@ -851,3 +851,7 @@
   color: #00A2C4;
 
 }
+
+.swatch-black .input-group-btn {
+  border-radius: 4px;
+}
