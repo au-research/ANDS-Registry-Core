@@ -1,16 +1,18 @@
 <footer id="footer" role="contentinfo">
     <section class="section swatch-black">
-        <div class="container">
+        <div class=" ardc-logo-footer footer-col-width">
+            <a href="https://www.ardc.edu.au/" class="footer_logo">
+            <!--   <img src="{{ asset_url(\ANDS\Util\config::get('app.environment_logo'), 'base')}}" alt=""/></a> -->
+                <img src="https://ardc.edu.au/wp-content/themes/ardc/img/ardc_logo.svg" alt="" /></a>
+        </div>
+        <div class="container" style="margin-left: 280px">
+
+
 
             <div class="row element-normal-top element-normal-bottom">
 
-                    <div class="col-md-2 ardc-logo-footer">
-                        <a href="https://www.ardc.edu.au/" class="footer_logo">
-                          <!--   <img src="{{ asset_url(\ANDS\Util\config::get('app.environment_logo'), 'base')}}" alt=""/></a> -->
-                        <img src="https://ardc.edu.au/wp-content/themes/ardc/img/ardc_logo.svg" alt="" /></a>
-                    </div>
 
-                <div class="col-md-2">
+                <div class="col-md-2 footer-col-width">
                     <div id="categories-3" class="sidebar-widget  widget_categories">
                         <h4 class="sidebar-header">Quick Links</h4>
                         <ul>
@@ -23,7 +25,7 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-2 footer-col-width">
                     <div id="categories-3" class="sidebar-widget  widget_categories">
                         <h4 class="sidebar-header">Explore</h4>
                         <ul>
@@ -34,7 +36,7 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-2 footer-col-width">
                     <div id="categories-4" class="sidebar-widget  widget_categories">
                         <h4 class="sidebar-header">External Resources</h4>
                         <ul>
@@ -46,7 +48,7 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-2 footer-col-width">
                     <?php
 
                         $params = [
@@ -70,7 +72,7 @@
                 </div>
 
 
-                <div class="col-md-2">
+                <div class="col-md-2 ncris_footer footer-col-width">
                     <p class="footer-text">
                         The Australian Research Data Commons (ARDC) is enabled by NCRIS.
                     </p>
