@@ -405,7 +405,7 @@
 .swatch-white .social-icons li a i, [class*="swatch-"] .swatch-white .social-icons li a i {
   color: white;
 }
-.swatch-white .social-icons li a:not([data-iconcolor]):.swatch-white .btn-primary, .swatch-white button,, [class*="swatch-"] .swatch-white .social-icons li a:not([data-iconcolor]):hover {
+.swatch-white .social-icons li a:not([data-iconcolor]):hover .swatch-white .btn-primary, .swatch-white button, [class*="swatch-"] .swatch-white .social-icons li a:not([data-iconcolor]):hover {
   background-color: rgba(130, 201, 237, 0.8);
 }
 .swatch-white .social-simple li a i, [class*="swatch-"] .swatch-white .social-simple li a i {
@@ -844,4 +844,10 @@
 .swatch-white .post-count, [class*="swatch-"] .swatch-white .post-count {
   background:  #00A2C4;
   color: white;
+}
+
+.swatch-white a:hover {
+  text-decoration: underline;
+  color: #00A2C4;
+
 }

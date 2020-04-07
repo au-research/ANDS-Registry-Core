@@ -3545,7 +3545,7 @@ select[multiple].input-lg,
 
 .btn-info {
   color: white;
-  background-color: #5d89ac;
+  background-color: #1B7CBD;
   border-color: #517c9e;
 }
 .btn-info:hover, .btn-info:focus, .btn-info:active, .btn-info.active, .open > .btn-info.dropdown-toggle {
@@ -19980,7 +19980,7 @@ p.stars span a.star-5.active:after, p.stars span a.star-5:hover:after, p.stars s
 .swatch-white .social-icons li a i, [class*="swatch-"] .swatch-white .social-icons li a i {
   color: white;
 }
-.swatch-white .social-icons li a:not([data-iconcolor]):.swatch-white .btn-primary, .swatch-white button,, [class*="swatch-"] .swatch-white .social-icons li a:not([data-iconcolor]):hover {
+.swatch-white .social-icons li a:not([data-iconcolor]):hover .swatch-white .btn-primary, .swatch-white button, [class*="swatch-"] .swatch-white .social-icons li a:not([data-iconcolor]):hover {
   background-color: rgba(130, 201, 237, 0.8);
 }
 .swatch-white .social-simple li a i, [class*="swatch-"] .swatch-white .social-simple li a i {
@@ -20420,7 +20420,12 @@ p.stars span a.star-5.active:after, p.stars span a.star-5:hover:after, p.stars s
   background:  #00A2C4;
   color: white;
 }
-body{font-family:'Roboto',Calibri, sans-serif;font-weight:400}body .btn,body button,body input,body textarea{font-family:'Roboto',sans-serif}blockquote p{font-weight:300}.light{font-weight:300!important}.hairline{font-weight:200!important}.hairline strong{font-weight:400}h1,h2,h3,h4,h5,h6{font-weigsht:600}.lead{font-weight:300}.lead strong{font-weight:600}/*******************************************************************************
+
+.swatch-white a:hover {
+  text-decoration: underline;
+  color: #00A2C4;
+
+}body{font-family:'Roboto',Calibri, sans-serif;font-weight:400}body .btn,body button,body input,body textarea{font-family:'Roboto',sans-serif}blockquote p{font-weight:300}.light{font-weight:300!important}.hairline{font-weight:200!important}.hairline strong{font-weight:400}h1,h2,h3,h4,h5,h6{font-weigsht:600}.lead{font-weight:300}.lead strong{font-weight:600}/*******************************************************************************
  * Tree container
  */
 ul.dynatree-container
@@ -21567,8 +21572,8 @@ span.dynatree-selected a
 }
 
 .yellow_button:hover {
-    background: rgba(227, 171, 37, 0.51);
-    color: #fff;
+    background: #e2a20c;
+    color: #000;
 }
 ul{
     list-style-position:inside;
@@ -21762,19 +21767,19 @@ h1.bordered:after{
 
 .btn_access{
     margin-bottom: 15px;
-    background: linear-gradient(#9ad1d5, #00b0d5);
+    background: linear-gradient(#00A2C4, #00819D);
     border: .5px solid #00b0d5;
     border-radius: 4px;
 }
 .btn_access:hover {
-    background: linear-gradient(#DEB7FF, #8e489b);
-    border: .5px solid #8e489b;
+    background: #026d84;
+    border: .5px solid #00A2C4;
     border-radius: 4px;
     color: #fff;
 }
 .btn_access:focus {
-    background: linear-gradient(#71c7d5, #00b0d5);
-    border: .5px solid #00b0d5;
+    background: #026d84;
+    border: .5px solid #00A2C4;
     border-radius: 4px;
 }
 
@@ -21786,17 +21791,34 @@ h1.bordered:after{
     width: 250px;
 }
 
-#footer h5,h4,li{
+#footer{
     text-transform: uppercase;
 }
-
-#footer li{
-    font-size: 12px;
+.cat-item{
+    font-size: 16px;
+    text-transform: uppercase;
 }
 .footer-text{
     font-size:10px;
     line-height: 16px;
-}/**
+    text-transform: none;
+}
+
+.swatch-white a:hover {
+    text-decoration: underline;
+    color: #00A2C4;
+
+}
+
+.swatch-white .btn-link, [class*="swatch-"] .swatch-white .btn-link{
+    color: #00819D;
+    box-shadow: 0px 0px 0px 1px #00819D inset;
+    background: #fff;
+}
+.swatch-white button a:hover{
+    color: #00819D;
+}
+/**
  * Single Purpose Content Styling
  * This file is for the single purpose styling
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
@@ -22319,12 +22341,13 @@ small a {
 }
 .swatch-gray a:hover,
 .panel a:hover {
-  color: #a65fc4;
+  color: #00A2C4;
+  text-decoration: underline;
 }
 .swatch-black input:focus {
-  -webkit-box-shadow: 0 3px 0 #a65fc4;
-  -moz-box-shadow: 0 3px 0 #a65fc4;
-  box-shadow: 0 3px 0 #a65fc4;
+  -webkit-box-shadow: 0 3px 0 #00A2C4;
+  -moz-box-shadow: 0 3px 0 #00A2C4;
+  box-shadow: 0 3px 0 #00A2C4;
 }
 .swatch-black input::selection {
   color: white;
@@ -22371,7 +22394,7 @@ small a {
 }
 .btn-primary:hover {
   color: white !important;
-  background-color: #a65fc4 !important;
+  background-color: #00A2C4 !important;
 }
 .btn-default {
   color: white !important;
@@ -22387,6 +22410,7 @@ small a {
 }
 .btn-info {
   color: white !important;
+  background-color: #1B7CBD;
 }
 .btn-info i {
   color: white !important;
@@ -22403,22 +22427,25 @@ small a {
   color: #00819d;
 }
 .swatch-white a:hover {
-  color: #a65fc4;
+  color: #00A2C4;
 }
 .btn-group .dropdown-menu li a {
   color: #4c4c4c;
 }
 .btn-group .dropdown-menu li a:hover {
   color: white;
-  background: #a65fc4;
+  background: #00A2C4;
 }
 .open > .btn-primary.dropdown-toggle {
-  background-color: #a65fc4;
+  background-color: #00A2C4;
 }
 .flex-prev {
   left: -70px;
 }
 .flex-next {
   right: -70px;
+}
+.btn-link-white {
+  background: #fff;
 }
 /*OVERWRITE*/

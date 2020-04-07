@@ -86,8 +86,8 @@ span.dynatree-selected a
 }
 
 .yellow_button:hover {
-    background: rgba(227, 171, 37, 0.51);
-    color: #fff;
+    background: #e2a20c;
+    color: #000;
 }
 ul{
     list-style-position:inside;
@@ -281,19 +281,19 @@ h1.bordered:after{
 
 .btn_access{
     margin-bottom: 15px;
-    background: linear-gradient(#9ad1d5, #00b0d5);
+    background: linear-gradient(#00A2C4, #00819D);
     border: .5px solid #00b0d5;
     border-radius: 4px;
 }
 .btn_access:hover {
-    background: linear-gradient(#DEB7FF, #8e489b);
-    border: .5px solid #8e489b;
+    background: #026d84;
+    border: .5px solid #00A2C4;
     border-radius: 4px;
     color: #fff;
 }
 .btn_access:focus {
-    background: linear-gradient(#71c7d5, #00b0d5);
-    border: .5px solid #00b0d5;
+    background: #026d84;
+    border: .5px solid #00A2C4;
     border-radius: 4px;
 }
 
@@ -305,14 +305,30 @@ h1.bordered:after{
     width: 250px;
 }
 
-#footer h5,h4,li{
+#footer{
     text-transform: uppercase;
 }
-
-#footer li{
-    font-size: 12px;
+.cat-item{
+    font-size: 16px;
+    text-transform: uppercase;
 }
 .footer-text{
     font-size:10px;
     line-height: 16px;
+    text-transform: none;
+}
+
+.swatch-white a:hover {
+    text-decoration: underline;
+    color: #00A2C4;
+
+}
+
+.swatch-white .btn-link, [class*="swatch-"] .swatch-white .btn-link{
+    color: #00819D;
+    box-shadow: 0px 0px 0px 1px #00819D inset;
+    background: #fff;
+}
+.swatch-white button a:hover{
+    color: #00819D;
 }
