@@ -19650,7 +19650,7 @@ p.stars span a.star-5.active:after, p.stars span a.star-5:hover:after, p.stars s
   background: none;
 }
 .swatch-white .btn-link i, [class*="swatch-"] .swatch-white .btn-link i {
-  color:  #00A2C4 !important;
+  color:  #00819D !important;
 }
 .swatch-white .btn-link:hover, [class*="swatch-"] .swatch-white .btn-link:hover {
   text-decoration: none;
@@ -22529,6 +22529,9 @@ textarea::-webkit-input-placeholder {
 .btn-link,
 .btn-link-white {
   border-radius: 4px;
+}
+.swatch-white .btn-link i {
+  color: #00819D !important;
 }
 .swatch-white .sidebar a,
 [class*="swatch-"] .swatch-white .sidebar a {

@@ -650,6 +650,9 @@ textarea::-webkit-input-placeholder {
 .btn-link-white {
   border-radius: 4px;
 }
+.swatch-white .btn-link i {
+  color: #00819D !important;
+}
 .swatch-white .sidebar a,
 [class*="swatch-"] .swatch-white .sidebar a {
   color: #00819D;
