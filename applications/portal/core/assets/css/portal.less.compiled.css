@@ -628,4 +628,20 @@ small a {
 .btn-link-white {
   background: #fff;
 }
+:-moz-placeholder,
+textarea:-moz-placeholder {
+  color: #696969;
+}
+:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+  color: #696969;
+}
+::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+  color: #696969;
+}
+::placeholder {
+  color: darkred;
+  opacity: 1;
+}
 /*OVERWRITE*/

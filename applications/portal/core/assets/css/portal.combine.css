@@ -21798,10 +21798,34 @@ h1.bordered:after{
     font-size: 16px;
     text-transform: uppercase;
 }
+.cat-item a:hover{
+    text-decoration: underline;
+}
 .footer-text{
     font-size:10px;
     line-height: 16px;
     text-transform: none;
+}
+.footer_ncris{
+    float: right;
+    width: 150px;
+    margin-top: -320px;
+    margin-right: 72px !important;
+}
+
+.footer_ardc{
+    float: left;
+    margin: 72px;
+    width: 200px;
+}
+
+.footer_container {
+    width: 80%;
+}
+
+
+.width-210{
+    width: 210px;
 }
 
 .swatch-white a:hover {
@@ -21818,7 +21842,37 @@ h1.bordered:after{
 .swatch-white button a:hover{
     color: #00819D;
 }
-/**
+
+:-moz-placeholder,
+textarea:-moz-placeholder {
+    color: #696969;
+}
+:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+    color: #696969;
+}
+::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+    color: #696969;
+}
+::placeholder {
+    color: darkred;
+    opacity: 1;
+}
+
+.ardc-logo-footer{
+    float: left;
+    margin: 72px;
+}
+.ncris_footer{
+    margin-right: -72px;
+    max-width:200px;
+}
+.footer-col-width{
+    max-width: 250px;
+    width: 210px;
+
+}/**
  * Single Purpose Content Styling
  * This file is for the single purpose styling
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
@@ -22447,5 +22501,21 @@ small a {
 }
 .btn-link-white {
   background: #fff;
+}
+:-moz-placeholder,
+textarea:-moz-placeholder {
+  color: #696969;
+}
+:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+  color: #696969;
+}
+::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+  color: #696969;
+}
+::placeholder {
+  color: darkred;
+  opacity: 1;
 }
 /*OVERWRITE*/
