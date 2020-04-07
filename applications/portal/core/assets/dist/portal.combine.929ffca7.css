@@ -19644,7 +19644,7 @@ p.stars span a.star-5.active:after, p.stars span a.star-5:hover:after, p.stars s
   background: none;
   color:  #00A2C4;
   text-decoration: none;
-  box-shadow: 0px 0px 0px 1px  #00A2C4 inset;
+  box-shadow: 0px 0px 0px 1px  #00819D inset;
 }
 .swatch-white .btn-link span, [class*="swatch-"] .swatch-white .btn-link span {
   background: none;
@@ -19947,7 +19947,7 @@ p.stars span a.star-5.active:after, p.stars span a.star-5:hover:after, p.stars s
   background: #e9e9e9;
 }
 .swatch-white .panel-primary .panel-heading, [class*="swatch-"] .swatch-white .panel-primary .panel-heading {
-  background:  #00A2C4;
+  background:  #00819D;
 }
 .swatch-white .panel-primary .panel-heading a, .swatch-white .panel-primary .panel-heading .panel-title, [class*="swatch-"] .swatch-white .panel-primary .panel-heading a, [class*="swatch-"] .swatch-white .panel-primary .panel-heading .panel-title {
   color: white;
@@ -20147,7 +20147,7 @@ p.stars span a.star-5.active:after, p.stars span a.star-5:hover:after, p.stars s
   color: #1c1c1c;
 }
 .swatch-white .sidebar a, [class*="swatch-"] .swatch-white .sidebar a {
-  color: #4c4c4c;
+  color: #00819D;
 }
 .swatch-white .sidebar a:hover, [class*="swatch-"] .swatch-white .sidebar a:hover {
   color:  #00A2C4;
@@ -21872,6 +21872,12 @@ textarea::-webkit-input-placeholder {
     max-width: 250px;
     width: 210px;
 
+}
+.search-section a:hover{
+    text-decoration: underline;
+}
+.nav-pills > li > a:hover{
+    text-decoration: underline;
 }/**
  * Single Purpose Content Styling
  * This file is for the single purpose styling
@@ -22517,5 +22523,15 @@ textarea::-webkit-input-placeholder {
 ::placeholder {
   color: darkred;
   opacity: 1;
+}
+.btn,
+.btn-primary,
+.btn-link,
+.btn-link-white {
+  border-radius: 4px;
+}
+.swatch-white .sidebar a,
+[class*="swatch-"] .swatch-white .sidebar a {
+  color: #00819D;
 }
 /*OVERWRITE*/

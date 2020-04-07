@@ -75,23 +75,23 @@
   background: none;
 }
 .swatch-white .btn-link i, [class*="swatch-"] .swatch-white .btn-link i {
-  color: #82c9ed;
+  color: #00819D;
 }
 .swatch-white .btn-link:hover, [class*="swatch-"] .swatch-white .btn-link:hover {
   text-decoration: none;
-  background-color: #82c9ed;
+  background-color: #00819D;
   color: white;
-  box-shadow: 0px 0px 0px 1px #82c9ed;
+  box-shadow: 0px 0px 0px 1px #00819D;
 }
 .swatch-white .btn-link:hover i, [class*="swatch-"] .swatch-white .btn-link:hover i {
   color: white !important;
 }
 .swatch-white .open .dropdown-toggle.btn-primary, [class*="swatch-"] .swatch-white .open .dropdown-toggle.btn-primary {
-  background-color: #82c9ed;
+  background-color: #00819D;
   color: white;
 }
 .swatch-white .btn-group .dropdown-menu, [class*="swatch-"] .swatch-white .btn-group .dropdown-menu {
-  background-color: #82c9ed;
+  background-color: #00819D;
 }
 .swatch-white .btn-group .dropdown-menu > li > a, [class*="swatch-"] .swatch-white .btn-group .dropdown-menu > li > a {
   color: white;
@@ -677,7 +677,7 @@
   color: #1c1c1c;
 }
 .swatch-white .sidebar a, [class*="swatch-"] .swatch-white .sidebar a {
-  color: #4c4c4c;
+  color: #00819D;
 }
 .swatch-white .sidebar a:hover, [class*="swatch-"] .swatch-white .sidebar a:hover {
   color: #82c9ed;
