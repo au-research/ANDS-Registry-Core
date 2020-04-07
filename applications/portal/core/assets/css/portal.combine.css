@@ -20425,6 +20425,10 @@ p.stars span a.star-5.active:after, p.stars span a.star-5:hover:after, p.stars s
   text-decoration: underline;
   color: #00A2C4;
 
+}
+
+.swatch-black .input-group-btn {
+  border-radius: 4px;
 }body{font-family:'Roboto',Calibri, sans-serif;font-weight:400}body .btn,body button,body input,body textarea{font-family:'Roboto',sans-serif}blockquote p{font-weight:300}.light{font-weight:300!important}.hairline{font-weight:200!important}.hairline strong{font-weight:400}h1,h2,h3,h4,h5,h6{font-weigsht:600}.lead{font-weight:300}.lead strong{font-weight:600}/*******************************************************************************
  * Tree container
  */
