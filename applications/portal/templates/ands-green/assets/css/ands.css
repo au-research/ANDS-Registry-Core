@@ -387,3 +387,9 @@ textarea::-webkit-input-placeholder {
     width: 210px;
 
 }
+.search-section a:hover{
+    text-decoration: underline;
+}
+.nav-pills > li > a:hover{
+    text-decoration: underline;
+}
