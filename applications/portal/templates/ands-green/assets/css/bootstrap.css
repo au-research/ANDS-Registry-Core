@@ -3441,7 +3441,7 @@ select[multiple].input-lg,
 
 .btn-info {
   color: white;
-  background-color: #5d89ac;
+  background-color: #1B7CBD;
   border-color: #517c9e;
 }
 .btn-info:hover, .btn-info:focus, .btn-info:active, .btn-info.active, .open > .btn-info.dropdown-toggle {

@@ -12,7 +12,7 @@
 
                 <div class="col-md-2">
                     <div id="categories-3" class="sidebar-widget  widget_categories">
-                        <h5 class="sidebar-header">Quick Links</h5>
+                        <h4 class="sidebar-header">Quick Links</h4>
                         <ul>
                             <li class="cat-item"> <a href="{{portal_url()}}" title="">Home</a> </li>
                             <li class="cat-item"> <a href="{{portal_url('page/about')}}" title="">About</a> </li>
@@ -25,7 +25,7 @@
                 </div>
                 <div class="col-md-2">
                     <div id="categories-3" class="sidebar-widget  widget_categories">
-                        <h5 class="sidebar-header">Explore</h5>
+                        <h4 class="sidebar-header">Explore</h4>
                         <ul>
                             <li class="cat-item"> <a href="{{portal_url('themes')}}" title="">Themed Collections</a> </li>
                             <li class="cat-item"> <a href="{{portal_url('theme/open-data')}}#!/access_rights=open" title="">Open Data</a> </li>
@@ -36,7 +36,7 @@
                 </div>
                 <div class="col-md-2">
                     <div id="categories-4" class="sidebar-widget  widget_categories">
-                        <h5 class="sidebar-header">External Resources</h5>
+                        <h4 class="sidebar-header">External Resources</h4>
                         <ul>
                             <li class="cat-item"> <a href="https://ardc.edu.au" title="" target="_blank">ARDC Website</a> </li>
                             <li class="cat-item"> <a href="{{base_url('registry/')}}" title="">ARDC Online Services</a> </li>
@@ -61,7 +61,7 @@
                         $params = http_build_query($params);
                     ?>
                     <div id="categories-5" class="sidebar-widget widget_categories">
-                        <h5 class="sidebar-header">Share</h5>
+                        <h4 class="sidebar-header">Share</h4>
                         <ul>
                             <li class="cat-item"><a class="noexicon social-sharing" href="{{ portal_url('page/share/facebook?'.$params) }}" target="_blank"><i class="fa fa-facebook"></i> Facebook</a></li>
                             <li class="cat-item"><a class="noexicon social-sharing" href="{{ portal_url('page/share/twitter/?'.$params) }}" target="_blank"><i class="fa fa-twitter"></i> Twitter</a></li>

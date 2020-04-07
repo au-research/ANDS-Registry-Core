@@ -140,9 +140,9 @@
         @endif
         @include('registry_object/contents/access')
     	<div class="btn-group btn-group-justified element element-shorter-bottom element-no-top" role="group" aria-label="...">
-            <a class="btn btn-sm btn-default" ng-click="openCitationModal()"><i class="fa fa-edit"></i> Cite</a>
-            <a class="btn btn-sm btn-default" ng-click="bookmark()" ng-if="ro.bookmarked"><i class="fa fa-bookmark"></i> Saved to MyRDA</a>
-            <a class="btn btn-sm btn-default" ng-click="bookmark()" ng-if="!ro.bookmarked"><i class="fa fa-bookmark-o"></i> Save to MyRDA</a>
+            <a class="btn btn-sm swatch_white btn-link btn-link-white" ng-click="openCitationModal()"><i class="fa fa-edit"></i> Cite</a>
+            <a class="btn btn-sm swatch_white btn-link btn-link-white" ng-click="bookmark()" ng-if="ro.bookmarked"><i class="fa fa-bookmark"></i> Saved to MyRDA</a>
+            <a class="btn btn-sm swatch_white btn-link btn-link-white" ng-click="bookmark()" ng-if="!ro.bookmarked"><i class="fa fa-bookmark-o"></i> Save to MyRDA</a>
         </div>
 
         <div>

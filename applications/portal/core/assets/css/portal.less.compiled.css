@@ -521,12 +521,13 @@ small a {
 }
 .swatch-gray a:hover,
 .panel a:hover {
-  color: #a65fc4;
+  color: #00A2C4;
+  text-decoration: underline;
 }
 .swatch-black input:focus {
-  -webkit-box-shadow: 0 3px 0 #a65fc4;
-  -moz-box-shadow: 0 3px 0 #a65fc4;
-  box-shadow: 0 3px 0 #a65fc4;
+  -webkit-box-shadow: 0 3px 0 #00A2C4;
+  -moz-box-shadow: 0 3px 0 #00A2C4;
+  box-shadow: 0 3px 0 #00A2C4;
 }
 .swatch-black input::selection {
   color: white;
@@ -573,7 +574,7 @@ small a {
 }
 .btn-primary:hover {
   color: white !important;
-  background-color: #a65fc4 !important;
+  background-color: #00A2C4 !important;
 }
 .btn-default {
   color: white !important;
@@ -589,6 +590,7 @@ small a {
 }
 .btn-info {
   color: white !important;
+  background-color: #1B7CBD;
 }
 .btn-info i {
   color: white !important;
@@ -605,22 +607,25 @@ small a {
   color: #00819d;
 }
 .swatch-white a:hover {
-  color: #a65fc4;
+  color: #00A2C4;
 }
 .btn-group .dropdown-menu li a {
   color: #4c4c4c;
 }
 .btn-group .dropdown-menu li a:hover {
   color: white;
-  background: #a65fc4;
+  background: #00A2C4;
 }
 .open > .btn-primary.dropdown-toggle {
-  background-color: #a65fc4;
+  background-color: #00A2C4;
 }
 .flex-prev {
   left: -70px;
 }
 .flex-next {
   right: -70px;
+}
+.btn-link-white {
+  background: #fff;
 }
 /*OVERWRITE*/
