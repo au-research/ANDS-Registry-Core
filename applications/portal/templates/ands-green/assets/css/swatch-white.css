@@ -54,10 +54,13 @@
 .swatch-white .btn-primary, .swatch-white button, .swatch-white input[type="submit"], [class*="swatch-"] .swatch-white .btn-primary, [class*="swatch-"] .swatch-white button, [class*="swatch-"] .swatch-white input[type="submit"] {
   background-color: #82c9ed;
   color: white;
+  text-decoration: none;
 }
+
 .swatch-white .btn-primary:hover, .swatch-white button:hover, .swatch-white input[type="submit"]:hover, [class*="swatch-"] .swatch-white .btn-primary:hover, [class*="swatch-"] .swatch-white button:hover, [class*="swatch-"] .swatch-white input[type="submit"]:hover {
   background-color: rgba(130, 201, 237, 0.9);
   color: white;
+  text-decoration: none;
 }
 .swatch-white .btn-primary.btn-icon-left span, .swatch-white .btn-primary.btn-icon-right span, .swatch-white button.btn-icon-left span, .swatch-white button.btn-icon-right span, .swatch-white input[type="submit"].btn-icon-left span, .swatch-white input[type="submit"].btn-icon-right span, [class*="swatch-"] .swatch-white .btn-primary.btn-icon-left span, [class*="swatch-"] .swatch-white .btn-primary.btn-icon-right span, [class*="swatch-"] .swatch-white button.btn-icon-left span, [class*="swatch-"] .swatch-white button.btn-icon-right span, [class*="swatch-"] .swatch-white input[type="submit"].btn-icon-left span, [class*="swatch-"] .swatch-white input[type="submit"].btn-icon-right span {
   background-color: rgba(255, 255, 255, 0.3);
@@ -949,4 +952,8 @@
 .swatch-white .post-count, [class*="swatch-"] .swatch-white .post-count {
   background: #82c9ed;
   color: white;
+}
+
+.panel-body .btn-danger:hover, [class*="btn"] .panel-body .btn-danger:hover {
+  text-decoration: none;
 }
