@@ -2,9 +2,8 @@
     <section class="section swatch-black">
         <div class=" ardc-logo-footer footer-col-width">
             <a href="https://www.ardc.edu.au/" class="footer_logo">
-            <!--   <img src="{{ asset_url(\ANDS\Util\config::get('app.environment_logo'), 'base')}}" alt=""/></a> -->
-                <img src="https://ardc.edu.au/wp-content/themes/ardc/img/ardc_logo.svg" alt="" /></a>
-        </div>
+                <img src="{{ asset_url(\ANDS\Util\config::get('app.environment_logo'), 'base')}}" alt=""/></a>
+            </div>
         <div class="container" style="margin-left: 280px">
 
 
