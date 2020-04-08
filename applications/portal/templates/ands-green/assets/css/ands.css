@@ -372,7 +372,7 @@ textarea::-webkit-input-placeholder {
     color: #696969;
 }
 ::placeholder {
-    color: darkred;
+    color: #696969;
     opacity: 1;
 }
 
@@ -398,4 +398,12 @@ textarea::-webkit-input-placeholder {
 
 a[class*="btn"]{
     text-decoration: none;
+}
+
+h1, h2{
+    font-family: Spectral, serif;
+}
+
+h2 {
+    color: #00819D;
 }
