@@ -290,6 +290,7 @@ h1.bordered:after{
     border: .5px solid #00A2C4;
     border-radius: 4px;
     color: #fff;
+    text-decoration: none;
 }
 .btn_access:focus {
     background: #026d84;
@@ -355,6 +356,7 @@ h1.bordered:after{
 }
 .swatch-white button a:hover{
     color: #00819D;
+    text-decoration: none;
 }
 
 :-moz-placeholder,
@@ -392,4 +394,8 @@ textarea::-webkit-input-placeholder {
 }
 .nav-pills > li > a:hover{
     text-decoration: underline;
+}
+
+a[class*="btn"]{
+    text-decoration: none;
 }

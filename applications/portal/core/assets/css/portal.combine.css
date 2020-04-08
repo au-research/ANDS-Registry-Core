@@ -19629,10 +19629,12 @@ p.stars span a.star-5.active:after, p.stars span a.star-5:hover:after, p.stars s
 .swatch-white .btn-primary, .swatch-white button, .swatch-white input[type="submit"], [class*="swatch-"] .swatch-white .btn-primary, [class*="swatch-"] .swatch-white button, [class*="swatch-"] .swatch-white input[type="submit"] {
   background-color:  #00819D;
   color: white;
+  text-decoration: none;
 }
 .swatch-white .btn-primary:hover, .swatch-white button:hover, .swatch-white input[type="submit"]:hover, [class*="swatch-"] .swatch-white .btn-primary:hover, [class*="swatch-"] .swatch-white button:hover, [class*="swatch-"] .swatch-white input[type="submit"]:hover {
   background-color: rgba(130, 201, 237, 0.9);
   color: white;
+  text-decoration: none;
 }
 .swatch-white .btn-primary.btn-icon-left span, .swatch-white .btn-primary.btn-icon-right span, .swatch-white button.btn-icon-left span, .swatch-white button.btn-icon-right span, .swatch-white input[type="submit"].btn-icon-left span, .swatch-white input[type="submit"].btn-icon-right span, [class*="swatch-"] .swatch-white .btn-primary.btn-icon-left span, [class*="swatch-"] .swatch-white .btn-primary.btn-icon-right span, [class*="swatch-"] .swatch-white button.btn-icon-left span, [class*="swatch-"] .swatch-white button.btn-icon-right span, [class*="swatch-"] .swatch-white input[type="submit"].btn-icon-left span, [class*="swatch-"] .swatch-white input[type="submit"].btn-icon-right span {
   background-color: rgba(255, 255, 255, 0.3);
@@ -20429,6 +20431,19 @@ p.stars span a.star-5.active:after, p.stars span a.star-5:hover:after, p.stars s
 
 .swatch-black .input-group-btn {
   border-radius: 4px;
+}
+
+a.btn:hover{
+  text-decoration: none;
+}
+a.btn-primary:hover{
+  text-decoration: none;
+}
+a.btn-danger:hover{
+  text-decoration: none;
+}
+a.btn_access:hover{
+  text-decoration: none;
 }body{font-family:'Roboto',Calibri, sans-serif;font-weight:400}body .btn,body button,body input,body textarea{font-family:'Roboto',sans-serif}blockquote p{font-weight:300}.light{font-weight:300!important}.hairline{font-weight:200!important}.hairline strong{font-weight:400}h1,h2,h3,h4,h5,h6{font-weigsht:600}.lead{font-weight:300}.lead strong{font-weight:600}/*******************************************************************************
  * Tree container
  */
@@ -21780,6 +21795,7 @@ h1.bordered:after{
     border: .5px solid #00A2C4;
     border-radius: 4px;
     color: #fff;
+    text-decoration: none;
 }
 .btn_access:focus {
     background: #026d84;
@@ -21845,6 +21861,7 @@ h1.bordered:after{
 }
 .swatch-white button a:hover{
     color: #00819D;
+    text-decoration: none;
 }
 
 :-moz-placeholder,
@@ -21882,7 +21899,12 @@ textarea::-webkit-input-placeholder {
 }
 .nav-pills > li > a:hover{
     text-decoration: underline;
-}/**
+}
+
+a[class*="btn"]{
+    text-decoration: none;
+}
+/**
  * Single Purpose Content Styling
  * This file is for the single purpose styling
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
@@ -22512,21 +22534,22 @@ small a {
 .btn-link-white {
   background: #fff;
 }
-:-moz-placeholder,
-textarea:-moz-placeholder {
+input {
   color: #696969;
 }
-:-ms-input-placeholder,
+input:-ms-input-placeholder,
 textarea:-ms-input-placeholder {
-  color: #696969;
+  color: #6B6868 !important;
 }
-::-webkit-input-placeholder,
+input::-webkit-input-placeholder,
 textarea::-webkit-input-placeholder {
-  color: #696969;
+  color: #6B6868 !important;
 }
-::placeholder {
-  color: darkred;
-  opacity: 1;
+input::placeholder {
+  color: #6B6868 !important;
+}
+input::-webkit-input-placeholder {
+  color: #6B6868 !important;
 }
 .btn,
 .btn-primary,
@@ -22540,5 +22563,12 @@ textarea::-webkit-input-placeholder {
 .swatch-white .sidebar a,
 [class*="swatch-"] .swatch-white .sidebar a {
   color: #00819D;
+}
+a[class*="btn"] {
+  text-decoration: none !important;
+}
+.panel-body .btn-danger:hover,
+[class*="btn"] .panel-body .btn-danger:hover {
+  text-decoration: none !important;
 }
 /*OVERWRITE*/
