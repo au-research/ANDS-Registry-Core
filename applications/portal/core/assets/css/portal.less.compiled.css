@@ -200,6 +200,82 @@ div.vertical-center span.vertical-center {
     text-align: center;
   }
 }
+#footer-array {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+#footer-link-array {
+  display: flex;
+  flex-wrap: wrap;
+}
+.ardc-logo-footer {
+  margin: 0 35px;
+}
+@media only screen and (min-width: 1280px) {
+  .ncris_footer {
+    margin-right: 0;
+  }
+}
+/*  Tablets in landscape mode, older desktop monitors */
+@media only screen and (min-width: 1024px) and (max-width: 1278px) {
+  #footer-array {
+    flex-direction: row;
+  }
+  .ardc-logo-footer {
+    margin: 0 auto 72px;
+  }
+  .ncris_footer {
+    margin-right: 0;
+  }
+  #footer-link-array {
+    width: 550px;
+  }
+}
+/*  Tablets in portrait mode, large display smartphones landscape mode */
+@media only screen and (min-width: 768px) and (max-width: 1023px) {
+  .ardc-logo-footer {
+    margin: 0 auto;
+  }
+  .ncris_footer {
+    margin: 0 auto;
+  }
+  #footer-array {
+    flex-direction: column;
+  }
+  #footer-link-array {
+    width: 550px;
+    margin: 35px auto;
+    justify-content: center;
+  }
+}
+/*  Smartphones in landscape mode */
+@media only screen and (min-width: 421px) and (max-width: 767px) {
+  .ardc-logo-footer {
+    margin: 0 auto 35px;
+  }
+  #footer-array {
+    flex-direction: column;
+  }
+  #footer-link-array {
+    flex-direction: column;
+  }
+}
+/*  Smartphones in portrait mode  */
+@media only screen and (max-width: 420px) {
+  .ardc-logo-footer {
+    margin: 0 auto 35px;
+  }
+  #footer-array {
+    flex-direction: column;
+  }
+  #footer-link-array {
+    flex-direction: column;
+  }
+}
 /**
  * Modules used mainly in view page
  */
