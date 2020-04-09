@@ -15,7 +15,7 @@
 		<form class="element-short-top input-group" style="width:270px" ng-submit="addTag()">
 			<input type="text" class="form-control col-md-4" placeholder="Start typing to add tags" ng-model="newTag" typeahead="value.name for value in getSuggestTag($viewValue)" typeahead-min-length="2" typeahead-loading="loadingSuggestions">
 			<span class="input-group-btn">
-				<input type="submit" class="btn btn-primary" value="Add Tag"><i class="fa fa-tag"></i> Add Tag</input>
+				<input type="submit" class="swatch-white btn btn-primary" value="Add Tag"><i class="fa fa-tag"></i> Add Tag</input>
 			</span>
 		</form> <br /><em><span id="tag_error"/></em>
 
