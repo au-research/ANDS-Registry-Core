@@ -19630,6 +19630,7 @@ p.stars span a.star-5.active:after, p.stars span a.star-5:hover:after, p.stars s
   background-color:  #00819D;
   color: white;
   text-decoration: none;
+  border-radius: 4px;
 }
 .swatch-white .btn-primary:hover, .swatch-white button:hover, .swatch-white input[type="submit"]:hover, [class*="swatch-"] .swatch-white .btn-primary:hover, [class*="swatch-"] .swatch-white button:hover, [class*="swatch-"] .swatch-white input[type="submit"]:hover {
   background-color: rgba(130, 201, 237, 0.9);
@@ -20167,11 +20168,11 @@ p.stars span a.star-5.active:after, p.stars span a.star-5:hover:after, p.stars s
   border-color: #e9e9e9;
 }
 .swatch-white .widget_tag_cloud ul a, [class*="swatch-"] .swatch-white .widget_tag_cloud ul a {
-  background:  #00A2C4;
+  background: #00819D;
   color: white;
 }
 .swatch-white .widget_tag_cloud ul a:hover, [class*="swatch-"] .swatch-white .widget_tag_cloud ul a:hover {
-  background: rgba(130, 201, 237, 0.9);
+  background: #00A2C4;
   color: white;
 }
 .swatch-white .widget_calendar tbody a, [class*="swatch-"] .swatch-white .widget_calendar tbody a {
@@ -21912,7 +21913,16 @@ h1, h2{
 h2 {
     color: #00819D;
 }
-/**
+
+.input-group .form-control:first-child,
+.input-group-addon:first-child,
+.input-group-btn:first-child > .btn,
+.input-group-btn:first-child > .btn-group > .btn,
+.input-group-btn:first-child > .dropdown-toggle,
+.input-group-btn:last-child > .btn:not(:last-child):not(.dropdown-toggle),
+.input-group-btn:last-child > .btn-group:not(:last-child) > .btn {
+    bottom-radius: 4px;
+}/**
  * Single Purpose Content Styling
  * This file is for the single purpose styling
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>

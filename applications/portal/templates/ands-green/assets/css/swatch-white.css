@@ -55,6 +55,7 @@
   background-color: #82c9ed;
   color: white;
   text-decoration: none;
+  border-radius: 4px;
 }
 
 .swatch-white .btn-primary:hover, .swatch-white button:hover, .swatch-white input[type="submit"]:hover, [class*="swatch-"] .swatch-white .btn-primary:hover, [class*="swatch-"] .swatch-white button:hover, [class*="swatch-"] .swatch-white input[type="submit"]:hover {
@@ -698,11 +699,11 @@
   border-color: #e9e9e9;
 }
 .swatch-white .widget_tag_cloud ul a, [class*="swatch-"] .swatch-white .widget_tag_cloud ul a {
-  background: #82c9ed;
+  background: #00819D;
   color: white;
 }
 .swatch-white .widget_tag_cloud ul a:hover, [class*="swatch-"] .swatch-white .widget_tag_cloud ul a:hover {
-  background: rgba(130, 201, 237, 0.9);
+  background: #00a2c4;
   color: white;
 }
 .swatch-white .widget_calendar tbody a, [class*="swatch-"] .swatch-white .widget_calendar tbody a {

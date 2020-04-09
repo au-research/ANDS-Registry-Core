@@ -104,7 +104,7 @@
                         if($this->input->get('m')!='allsubjects') array_splice($group['facet']['subjects'], 50);
                     ?>
                     @foreach($group['facet']['subjects'] as $subject)
-                        <li><a href="{{base_url()}}search#!/group={{$group['title']}}/subject_value_resolved={{ rawurlencode($subject['name']) }}">{{ ucwords(strtolower($subject['name'])) }} <span>({{$subject['num']}})</span></a></li>
+                        <li><a href="{{base_url()}}search#!/group={{$group['title']}}/subject_value_resolved={{ rawurlencode($subject['name']) }}" class="swatch-white btn btn-primary">{{ ucwords(strtolower($subject['name'])) }} <span>({{$subject['num']}})</span></a></li>
                     @endforeach
                 </ul>
                 @if($orig > sizeof($group['facet']['subjects']))
