@@ -43,8 +43,6 @@ class ProcessGraphRelationships extends ImportSubTask
 
             $record = RegistryObjectsRepository::getRecordByID($id);
             try {
-                Cache::file()->forget("graph.{$record->id}");
-
                 /** @var CombinedStatistics $statistics */
                 $stat = GraphRelationshipProvider::process($record);
 
