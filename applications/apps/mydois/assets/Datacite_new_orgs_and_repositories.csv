@@ -1,0 +1,68 @@
+﻿Production: Old Repository ID,Organization,Consortium_organisation id,Consortium_organisation name,Production: New Repository ID,Production Prefix,Production: Number of DOIs (as at 29May2020),Other (old) Production Prefix
+ANDS.C113,University of Southern Queensland,ARDCX,Australian Research Data Commons,ARDCX.USQ,10.26192,115,10.4227
+ANDS.CENTRE48,University of Wollongong,ARDCX,Australian Research Data Commons,ARDCX.UOW,10.259,9,10.4225
+ANDS.CENTRE80,Victoria University,ARDCX,Australian Research Data Commons,ARDCX.VU,10.26196,26,10.4226
+ANDS.CENTRE57,Bond University,ARDCX,Australian Research Data Commons,ARDCX.BOND,10.26139,129,10.4225
+ANDS.CENTRE64,University of Canberra,ARDCX,Australian Research Data Commons,ARDCX.UC,10.26191,4,10.4225
+ANDS.C133,Macquarie University,ARDCX,Australian Research Data Commons,ARDCX.MQU,10.25949,1,10.4227
+ANDS.CENTRE61,RMIT University,ARDCX,Australian Research Data Commons,ARDCX.RMIT,10.25956,11,10.4225
+ANDS.CENTRE43,Charles Sturt University,ARDCX,Australian Research Data Commons,ARDCX.CSU,10.26189,8,10.4226
+ANDS.C174,University of Newcastle,ARDCX,Australian Research Data Commons,ARDCX.UON,10.25817,5,
+ANDS.CENTRE47,Bureau of Meteorology,ARDCX,Australian Research Data Commons,ARDCX.SCU,10.25918,70,10.4226
+ANDS.CENTRE16,Deakin University,ARDCX,Australian Research Data Commons,ARDCX.DEAKIN,10.26187,125,10.4225
+ANDS.C122,Federation University Australia,ARDCX,Australian Research Data Commons,ARDCX.FEDERATION,10.25955,20,10.4227
+ANDS.CENTRE-1,Griffith University,ARDCX,Australian Research Data Commons,ARDCX.GRIFFITH,10.25904,57,10.4225
+ANDS.CENTRE59,"University of Technology, Sydney",ARDCX,Australian Research Data Commons,ARDCX.UTS,10.26195,23,10.4225
+ANDS.CENTRE75,Edith Cowan University,ARDCX,Australian Research Data Commons,ARDCX.ECU,10.25958,575,10.4225
+ANDS.CENTRE-6,Curtin University,ARDCX,Australian Research Data Commons,ARDCX.CURTIN,10.25917,2701,10.4225
+ANDS.CENTRE39,University of the Sunshine Coast,ARDCX,Australian Research Data Commons,ARDCX.USC,10.25907,42,10.4227
+ANDS.CENTRE78,University of South Australia,ARDCX,Australian Research Data Commons,ARDCX.UNISA,10.25954,42,10.4226
+ANDS.C171,Torrens University,ARDCX,Australian Research Data Commons,ARDCX.TORRENS,10.25905,101,
+ANDS.CENTRE95,University of New England,ARDCX,Australian Research Data Commons,ARDCX.UNE,10.25952,47,10.4226
+ANDS.CENTRE86,Flinders University Library Research Data,ARDCX,Australian Research Data Commons,ARDCX.FLINDERS,10.25957,53,10.4226
+ANDS.CENTRE77,University of Tasmania,ARDCX,Australian Research Data Commons,ARDCX.UTAS,10.25959,250,"10.4226, 10.4227"
+ANDS.CENTRE11,University of Sydney Library,ARDCX,Australian Research Data Commons,ARDCX.USYD,10.2591,2658,10.4227
+ANDS.CENTRE35,Western Sydney University,ARDCX,Australian Research Data Commons,ARDCX.WSU,10.26183,156,10.4225
+ANDS.CENTRE-9,Queensland University of Technology,ARDCX,Australian Research Data Commons,ARDCX.QUT1,10.25912,254,10.4225
+ANDS.CENTRE10,Institute for Future Environments,ARDCX,Australian Research Data Commons,ARDCX.QUT2,10.25902,13,10.4225
+ANDS.C145,Central Queensland University,ARDCX,Australian Research Data Commons,ARDCX.CQU,10.25946,116,10.4226
+ANDS.CENTRE66,Australian Catholic University,ARDCX,Australian Research Data Commons,ARDCX.ACU,10.26199,791,10.4226
+ANDS.C172,Nan Tien Institute,ARDCX,Australian Research Data Commons,ARDCX.NTI,,0,
+ANDS.CENTRE14,Australian National Data Service,ARDCX,Australian Research Data Commons,ARDCX.ARDC,10.25906,4,10.4225
+ANDS.CENTRE92,Agriculture Victoria,ARDCX,Australian Research Data Commons,ARDCX.VICTORIA,10.26279,16,10.4226
+ANDS.C139,Alveo,ARDCX,Australian Research Data Commons,ARDCX.ALVEO,10.25947,1,10.4227
+ANDS.CENTRE52,Australian Synchrotron,ARDCX,Australian Research Data Commons,ARDCX.AS,10.26184,42,10.4225
+ANDS.CENTRE71,Bioplatforms Australia,ARDCX,Australian Research Data Commons,ARDCX.BPA,10.25953,1,10.4227
+ANDS.CENTRE94,Department of Environment,ARDCX,Australian Research Data Commons,ARDCX.DOE,10.26194,12,10.4226
+ANDS.C175,Australian Institute of Marine Science (AIMS),ARDCX,Australian Research Data Commons,ARDCX.AIMS,10.25845,4,
+ANDS.C177,Australian Institute of Health and Welfare,ARDCX,Australian Research Data Commons,ARDCX.AIHW,10.25816,3,
+ANDS.C166,Bureau of Meteorology,ARDCX,Australian Research Data Commons,ARDCX.BOM,10.25941,4,10.4227
+ANDS.C169,HMInfo,ARDCX,Australian Research Data Commons,ARDCX.HMINFO,10.26288,42,10.4227
+ANDS.C163,NSW Office of the Environment and Heritage,ARDCX,Australian Research Data Commons,ARDCX.OEH,10.25948,8,10.4227
+ANDS.CENTRE-5,TERN Central Portal,ARDCX,Australian Research Data Commons,ARDCX.TERN,10.25901,282,10.4227
+ANDS.CENTRE41,National Computational Infrastructure,ARDCX,Australian Research Data Commons,ARDCX.NCI,10.25914,214,10.4225
+ANDS.C176,Department of Agriculture and Water Resources - ABARES,ARDCX,Australian Research Data Commons,ARDCX.ABARES,10.25814,105,
+ANDS.CENTRE69,Australian Ocean Data Network,ARDCX,Australian Research Data Commons,ARDCX.AODN,10.26198,49,"10.4225, 10.4227"
+ANDS.CENTRE25,Geoscience Australia,ARDCX,Australian Research Data Commons,ARDCX.GA,10.26186,7602,10.4225
+ANDS.CENTRE65,Department of Parks and Wildlife,ARDCX,Australian Research Data Commons,ARDCX.DPAW,,0,
+ANDS.C195,Australian Institute of Criminology ,ARDCX,Australian Research Data Commons,ARDCX.AIC,,0,
+ANDS.CENTRE-7,Australian Nuclear Science and Technology Organisation,ARDCX,Australian Research Data Commons,ARDCX.ANSTO,10.25908,0,10.4225
+ANDS.C253,Geological Survey of NSW,ARDCX,Australian Research Data Commons,ARDCX.GSNSW,,,
+ANDS.C254,Austroads,ARDCX,Australian Research Data Commons,ARDCX.AUSTROADS,,,
+ANDS.CENTRE37,Charles Darwin University,CDU,Charles Darwin University,CDU.REPO1,10.25913,416,10.4225
+ANDS.CENTRE53,University of New South Wales,UNSW,University of New South Wales,UNSW.REPO,10.2619,593,10.4225
+ANDS.CENTRE27,Swinburne University of Technology,SWIN,Swinburne University of Technology,SWIN.REPO1,10.26185,4,10.4227
+ANDS.CENTRE50,Analysis and Policy Observatory,SWIN,Swinburne University of Technology,SWIN.REPO2,10.25916,1153,10.4225
+ANDS.CENTRE28,James Cook University,JCU,James Cook University,JCU.REPO,10.25903,604,10.4225
+ANDS.CENTRE55,The University of Adelaide,ADELAIDE,The University of Adelaide,ADELAIDE.REPO,10.25909,1240,10.4225
+ANDS.CENTRE22,La Trobe University,LATROBE,La Trobe University,LATROBE.REPO,10.26181,688,10.4225
+ANDS.CENTRE87,Australian Data Archive,ADA,Australian Data Archive,ADA.REPO,10.26193,1536,10.4225
+ANDS.CENTRE15,Australian Antarctic Division,AAD,Australian Antarctic Division,AAD.REPO,10.26179,1586,10.4225
+ANDS.CENTRE49,The University of Melbourne,UNIMELB,The University of Melbourne,UNIMELB.REPO1,10.26188,795,10.4225
+ANDS.CENTRE-2,CSSE Uni Melbourne,UNIMELB,The University of Melbourne,UNIMELB.REPO2,10.25915,4,10.4225
+ANDS.CENTRE23,The University of Western Australia,UWA,The University of Western Australia,UWA.REPO,10.26182,1515,10.4225
+ANDS.CENTRE-8,CSIRO,CSIRO,CSIRO,CSIRO.REPO,10.25919,8141,10.4225
+ANDS.CENTRE-3,Monash University,MONASH,Monash University,MONASH.REPO,10.2618,16970,10.4225
+ANDS.CENTRE72,PARADISEC,PDSC,PARADISEC,PDSC.REPO,10.26278,275975,10.4225
+ANDS.CENTRE68,Atlas of Living Australia,ALA,Atlas of Living Australia,ALA.REPO,10.26197,24471,10.4226
+ANDS.CENTRE13,The Australian National University,ANU,The Australian National University,ANU.REPO,10.25911,20710,10.4225
