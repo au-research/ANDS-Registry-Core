@@ -71,7 +71,6 @@ class Mydois extends MX_Controller {
             'js_lib' => ['core', 'dataTables']
         ]);
     }
-
     /**
      * mydois/update_all_password
      * Update the datacite fabrica repository definition to use the clients shared_secret
@@ -162,6 +161,12 @@ class Mydois extends MX_Controller {
     function update_trusted_clients(){
         echo json_encode($this->updateTrustedClients());
     }
+    /**
+     * AJAX entry for mydois/created_new_trusted
+     */
+    function create_clients(){
+        echo json_encode($this->createNewClients());
+    }
 
     /**
      * AJAX entry for mydois/merge_trusted
@@ -224,6 +229,38 @@ class Mydois extends MX_Controller {
             }
         }
         return $allClients;
+    }
+
+    private function createNewClients(){
+        $all_rows = array();
+        $consortium_orgs= array();
+        $csv_file = fopen("/opt/apps/registry/current/applications/apps/mydois/assets/Datacite_new_orgs_and_repositories.csv", "r");
+        $data = fgetcsv($csv_file, 1000, ",");
+        while (($data = fgetcsv($csv_file, 1000, ",")) !== FALSE)
+        {
+            $all_clients[] = $data;
+            if(isset($data[2]) && $data[2] != 'FALSE' && $data[2]!='') {
+                $consortium_orgs[] = $data[2]."||".$data[3];
+            }
+        }
+
+       $consortium_orgs = array_unique($consortium_orgs);
+        /* we need to create datacite members with the member-type of consortium_organisations for each member of the consortium_orgs list */
+        foreach($consortium_orgs as $new_org){
+            $new_org1 = explode("||",$new_org);
+            $this->fabricaClient->createNewCustodianOrg($new_org1);
+            print("Consortium_organisation ".$new_org1[0]." created. </br>");
+        }
+
+        foreach($all_clients as $client){
+            /* Now we create the repositiryies for the newly created consortium organisations */
+            if(isset($client[2]) && $client[2] != 'FALSE' && $client[2]!='') {
+                $newRepository = $this->clientRepository->getBySymbol($client[0]);
+                $this->fabricaClient->createNewClient($newRepository, $client);
+                print("Repository ".$client[4]. " created with provider " .$client[2]."</br>");
+            }
+        }
+
     }
 
     private function getMergeClients(){

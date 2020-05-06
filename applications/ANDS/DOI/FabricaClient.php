@@ -440,6 +440,137 @@ class FabricaClient implements DataCiteClient
         $this->messages[] = $response;
     }
 
+    /**
+     * @param TrustedClient $newRepository, $client(new repo info), $mode
+     * adds a new repository to DataCite using a POST request
+     * This function is being called to create new repositories using Datacite's consortium_organisation model
+     * The new repositories will be set up only once - May 2020
+     */
+    public function createNewClient( $newRepository, $client, $mode='test')
+    {
+        if($mode == 'test'){
+            $passwordInput = $newRepository->test_shared_secret;
+            $this->setDataciteUrl(getenv("DATACITE_FABRICA_API_TEST_URL"));
+            $headers = [
+                'Content-type' => 'application/json; charset=utf-8',
+                'Accept' => 'application/json',
+                'Authorization' => 'Basic ' . base64_encode("ARDC:". $this->testPassword),
+            ];
+        } else{
+            $passwordInput = $newRepository->shared_secret;
+            $headers = [
+                'Content-type' => 'application/json; charset=utf-8',
+                'Accept' => 'application/json',
+                'Authorization' => 'Basic ' . base64_encode("ARDC:". $this->password),
+            ];
+        }
+        $attributes = [
+            "name" => $client[1],
+            "symbol" => $client[4],
+            "isActive" => true,
+            "contactName" => $newRepository->client_contact_name,
+            "systemEmail" => getenv("DATACITE_CONTACT_EMAIL"),
+            "software" => null,
+            "passwordInput" => $passwordInput,
+            "hasPassword" => true,
+            "keepPassword" => true,
+            "created" => null,
+            "updated" => null
+        ];
+        $provider = ["data" => ["type" => "providers",
+            "id" => strtolower($client[2])]];
+
+        $relationships = ["provider" => $provider];
+
+        // clientinfo is fabrica's JSON representation of repository metadata
+
+        $clientInfo = ["data" => ["id" => strtolower($client[4]), "attributes" => $attributes, "relationships" => $relationships, "type" => "repositories"]];
+        $request = $this->http->post('/repositories', $headers, json_encode($clientInfo));
+
+       $response = "";
+        try {
+            $response = $request->send();
+            $this->responseCode = $response->getStatusCode();
+        }
+        catch (ClientErrorResponseException $e) {
+            $this->errors = $e->getResponse()->json();
+            $this->responseCode = $e->getResponse()->getStatusCode();
+        }
+        catch (ServerErrorResponseException $e){
+            $this->errors[] = $e->getResponse()->json();
+            $this->responseCode = $e->getCode();
+        }
+        $this->messages[] = $response;
+
+      //  $params['client_id'] = $newRepository->client_id;
+      //  $params['repository_symbol'] = $client[4];
+      //  $params['active_prod'] = true;
+
+      //  $this->clientRepository->updateClient($params);
+    }
+
+
+    /**
+     * @param Array $custodian_org,$name
+     * adds a new custodian_organisation to DataCite using a POST request
+     * This function is being called to create new consortium_organisation using Datacite's consortium_organisation model
+     * The new consortium_organisation will be set up only once - May 2020
+     */
+    public function createNewCustodianOrg($custodian_org, $mode='test')
+    {
+        // memberinfo is fabrica's JSON representation of a providers metadata
+
+        if($mode == 'test'){
+            $this->setDataciteUrl(getenv("DATACITE_FABRICA_API_TEST_URL"));
+            $headers = [
+                'Content-type' => 'application/json; charset=utf-8',
+                'Accept' => 'application/json',
+                'Authorization' => 'Basic ' . base64_encode("ARDC:". $this->testPassword),
+            ];
+        } else{
+            $headers = [
+                'Content-type' => 'application/json; charset=utf-8',
+                'Accept' => 'application/json',
+                'Authorization' => 'Basic ' . base64_encode("ARDC:". $this->password),
+            ];
+        }
+        $memberInfo = [];
+        $attributes = [
+            "name" => $custodian_org[1],
+            "displayName" => $custodian_org[1],
+            "symbol" => "X".$custodian_org[0],
+            "memberType" => "consortium_organization",
+            "systemEmail" => "liz.woods@ardc.edu.au",
+            "isActive" => true,
+            "hasPassword" => true,
+            "keepPassword" => true,
+            "passwordInput" => $this->testPassword,
+            "created" => null,
+            "updated" => null
+        ];
+        $relationships = [
+         "consortium" => ["data"=>["type"=>"providers", "id"=>"ardcco"]]
+        ];
+        $memberInfo = ["data" => ["id" =>  strtolower("x".$custodian_org[0]),  "type" => "providers" ,  "attributes" => $attributes, "relationships" => $relationships]];
+        $memberInfo = json_encode($memberInfo);
+        $response = "";
+        $request = $this->http->post('/providers/', $headers, $memberInfo);
+
+        try {
+            $response = $request->send();
+            $this->responseCode = $response->getStatusCode();
+        }
+        catch (ClientErrorResponseException $e) {
+            $this->errors = $e->getResponse()->json();
+            $this->responseCode = $e->getResponse()->getStatusCode();
+        }
+        catch (ServerErrorResponseException $e){
+            $this->errors[] = $e->getResponse()->json();
+            $this->responseCode = $e->getCode();
+        }
+        $this->messages[] = $response;
+    }
+
     /*
      * @param Trustedclient
      * same as addclient but PATCH request to url containing the datacite_symbol of the client
@@ -1001,6 +1132,7 @@ class FabricaClient implements DataCiteClient
         //var_dump($clientInfo);
         return json_encode($clientInfo);
     }
+
 
     /**
      * @param TrustedClient $client
