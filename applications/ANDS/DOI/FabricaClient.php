@@ -470,6 +470,7 @@ class FabricaClient implements DataCiteClient
             "isActive" => true,
             "contactName" => $newRepository->client_contact_name,
             "systemEmail" => getenv("DATACITE_CONTACT_EMAIL"),
+            "domains" => $this->getClientDomains($newRepository),
             "software" => null,
             "passwordInput" => $passwordInput,
             "hasPassword" => true,
@@ -481,7 +482,6 @@ class FabricaClient implements DataCiteClient
             "id" => strtolower($client[2])]];
 
         $relationships = ["provider" => $provider];
-
         // clientinfo is fabrica's JSON representation of repository metadata
 
         $clientInfo = ["data" => ["id" => strtolower($client[4]), "attributes" => $attributes, "relationships" => $relationships, "type" => "repositories"]];
