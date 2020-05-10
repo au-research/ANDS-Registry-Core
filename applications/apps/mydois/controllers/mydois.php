@@ -165,7 +165,10 @@ class Mydois extends MX_Controller {
      * AJAX entry for mydois/created_new_trusted
      */
     function create_clients(){
-        echo json_encode($this->createNewClients());
+
+        $mode = $_GET["mode"];
+        echo strtoupper($mode )." system";
+        echo json_encode($this->createNewClients($mode));
     }
 
     /**
@@ -231,7 +234,7 @@ class Mydois extends MX_Controller {
         return $allClients;
     }
 
-    private function createNewClients(){
+    private function createNewClients($mode="test"){
         $all_rows = array();
         $consortium_orgs= array();
         $csv_file = fopen("/opt/apps/registry/current/applications/apps/mydois/assets/Datacite_new_orgs_and_repositories.csv", "r");
@@ -248,7 +251,7 @@ class Mydois extends MX_Controller {
         /* we need to create datacite members with the member-type of consortium_organisations for each member of the consortium_orgs list */
         foreach($consortium_orgs as $new_org){
             $new_org1 = explode("||",$new_org);
-            $this->fabricaClient->createNewCustodianOrg($new_org1);
+            $this->fabricaClient->createNewCustodianOrg($new_org1,$mode);
             print("Consortium_organisation ".$new_org1[0]." created. </br>");
         }
 
@@ -256,8 +259,8 @@ class Mydois extends MX_Controller {
             /* Now we create the repositiryies for the newly created consortium organisations */
             if(isset($client[2]) && $client[2] != 'FALSE' && $client[2]!='') {
                 $newRepository = $this->clientRepository->getBySymbol($client[0]);
-                $this->fabricaClient->createNewClient($newRepository, $client);
-                print("Repository ".$client[4]. " created with provider " .$client[2]."</br>");
+                $this->fabricaClient->createNewClient($newRepository, $client, $mode);
+                print("Repository ".$client[4]. " created with provider " .$client[2]." Old client symbol  was ".$client[0]." </br>");
             }
         }
 
