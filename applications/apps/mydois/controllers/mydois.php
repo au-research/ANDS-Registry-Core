@@ -167,7 +167,7 @@ class Mydois extends MX_Controller {
     function create_clients(){
 
         $mode = $_GET["mode"];
-        echo strtoupper($mode )." system";
+        echo strtoupper($mode )." system:  </br>";
         echo json_encode($this->createNewClients($mode));
     }
 
