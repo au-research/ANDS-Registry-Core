@@ -448,8 +448,12 @@ class FabricaClient implements DataCiteClient
      */
     public function createNewClient( $newRepository, $client, $mode='test')
     {
-        if($mode == 'test'){
-            $passwordInput = $newRepository->test_shared_secret;
+        if($mode == 'test') {
+            if (!isset($newRepository->test_shared_secret) || trim($newRepository->test_shared_secret) == "") {
+                $passwordInput = $this->testPassword;
+            } else {
+                $passwordInput = $newRepository->test_shared_secret;
+            }
             $this->setDataciteUrl(getenv("DATACITE_FABRICA_API_TEST_URL"));
             $headers = [
                 'Content-type' => 'application/json; charset=utf-8',
@@ -457,7 +461,11 @@ class FabricaClient implements DataCiteClient
                 'Authorization' => 'Basic ' . base64_encode("ARDC:". $this->testPassword),
             ];
         } else{
-            $passwordInput = $newRepository->shared_secret;
+            if (!isset($newRepository->shared_secret) || trim($newRepository->shared_secret) == "") {
+                $passwordInput = $this->password;
+            } else {
+                $passwordInput = $newRepository->shared_secret;
+            }
             $headers = [
                 'Content-type' => 'application/json; charset=utf-8',
                 'Accept' => 'application/json',
@@ -485,37 +493,38 @@ class FabricaClient implements DataCiteClient
         // clientinfo is fabrica's JSON representation of repository metadata
 
         $clientInfo = ["data" => ["id" => strtolower($client[4]), "attributes" => $attributes, "relationships" => $relationships, "type" => "repositories"]];
+
         $request = $this->http->post('/repositories', $headers, json_encode($clientInfo));
 
-       $response = "";
-        try {
-            $response = $request->send();
-            $this->responseCode = $response->getStatusCode();
-        }
-        catch (ClientErrorResponseException $e) {
-            $this->errors = $e->getResponse()->json();
-            $this->responseCode = $e->getResponse()->getStatusCode();
-        }
-        catch (ServerErrorResponseException $e){
-            $this->errors[] = $e->getResponse()->json();
-            $this->responseCode = $e->getCode();
-        }
-        $this->messages[] = $response;
+        $response = "";
+          try {
+              $response = $request->send();
+              $this->responseCode = $response->getStatusCode();
+          }
+          catch (ClientErrorResponseException $e) {
+              $this->errors = $e->getResponse()->json();
+              $this->responseCode = $e->getResponse()->getStatusCode();
+          }
+          catch (ServerErrorResponseException $e){
+              $this->errors[] = $e->getResponse()->json();
+              $this->responseCode = $e->getCode();
+          }
+          $this->messages[] = $response;
 
-      //  $params['client_id'] = $newRepository->client_id;
-      //  $params['repository_symbol'] = $client[4];
-      //  $params['active_prod'] = true;
+        //  $params['client_id'] = $newRepository->client_id;
+        //  $params['repository_symbol'] = $client[4];
+        //  $params['active_prod'] = true;
 
-      //  $this->clientRepository->updateClient($params);
-    }
+        //  $this->clientRepository->updateClient($params);
+      }
 
 
-    /**
-     * @param Array $custodian_org,$name
-     * adds a new custodian_organisation to DataCite using a POST request
-     * This function is being called to create new consortium_organisation using Datacite's consortium_organisation model
-     * The new consortium_organisation will be set up only once - May 2020
-     */
+      /**
+       * @param Array $custodian_org,$name
+       * adds a new custodian_organisation to DataCite using a POST request
+       * This function is being called to create new consortium_organisation using Datacite's consortium_organisation model
+       * The new consortium_organisation will be set up only once - May 2020
+       */
     public function createNewCustodianOrg($custodian_org, $mode='test')
     {
         // memberinfo is fabrica's JSON representation of a providers metadata
