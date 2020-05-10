@@ -549,7 +549,7 @@ class FabricaClient implements DataCiteClient
             "displayName" => $custodian_org[1],
             "symbol" => "X".$custodian_org[0],
             "memberType" => "consortium_organization",
-            "systemEmail" => "liz.woods@ardc.edu.au",
+            "systemEmail" => "services@ardc.edu.au",
             "isActive" => true,
             "hasPassword" => true,
             "keepPassword" => true,
@@ -558,7 +558,7 @@ class FabricaClient implements DataCiteClient
             "updated" => null
         ];
         $relationships = [
-         "consortium" => ["data"=>["type"=>"providers", "id"=>"ardcco"]]
+         "consortium" => ["data"=>["type"=>"providers", "id"=>"ardc"]]
         ];
         $memberInfo = ["data" => ["id" =>  strtolower("x".$custodian_org[0]),  "type" => "providers" ,  "attributes" => $attributes, "relationships" => $relationships]];
         $memberInfo = json_encode($memberInfo);
