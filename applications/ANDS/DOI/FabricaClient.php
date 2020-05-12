@@ -547,7 +547,7 @@ class FabricaClient implements DataCiteClient
         $attributes = [
             "name" => $custodian_org[1],
             "displayName" => $custodian_org[1],
-            "symbol" => "X".$custodian_org[0],
+            "symbol" => $custodian_org[0],
             "memberType" => "consortium_organization",
             "systemEmail" => "services@ardc.edu.au",
             "isActive" => true,
