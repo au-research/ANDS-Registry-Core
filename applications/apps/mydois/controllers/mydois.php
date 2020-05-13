@@ -1,6 +1,10 @@
-<?php use ANDS\DOI\DataCiteClient;
+<?php
+use ANDS\DOI\DataCiteClient;
 use ANDS\DOI\FabricaClient;
+use ANDS\DOI\Model\Client as TrustedClient;
 use ANDS\DOI\Repository\ClientRepository;
+use Guzzle\Http\Exception\ClientErrorResponseException;
+use Guzzle\Http\Exception\ServerErrorResponseException;
 
 if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
@@ -170,7 +174,21 @@ class Mydois extends MX_Controller {
         echo strtoupper($mode )." system:  </br>";
         echo json_encode($this->createNewClients($mode));
     }
+    /**
+     * AJAX entry for mydois/update_new_repositories
+     */
+    function update_new_repositories(){
 
+        $mode = $_GET["mode"];
+        echo strtoupper($mode )." system:  </br>";
+        echo json_encode($this->updateNewClients($mode));
+    }
+
+    function assign_new_prefix(){
+        $mode = $_GET["mode"];
+        echo strtoupper($mode )." system:  </br>";
+        echo json_encode($this->assignNewPrefix($mode));
+    }
     /**
      * AJAX entry for mydois/merge_trusted
      * This function will be called once to merge prod and test datacite accounts as part of Release 29
@@ -251,21 +269,69 @@ class Mydois extends MX_Controller {
         /* we need to create datacite members with the member-type of consortium_organisations for each member of the consortium_orgs list */
         foreach($consortium_orgs as $new_org){
             $new_org1 = explode("||",$new_org);
-            $this->fabricaClient->createNewCustodianOrg($new_org1,$mode);
-            print("Consortium_organisation ".$new_org1[0]." created. </br>");
+            $this->fabricaClient->createNewCustodianOrg($new_org1, $mode);
+            print("Consortium_organisation " . $new_org1[0] . " created. </br>");
         }
 
         foreach($all_clients as $client){
-            /* Now we create the repositiryies for the newly created consortium organisations */
+            /* Now we create the repositories for the newly created consortium organisations */
             if(isset($client[2]) && $client[2] != 'FALSE' && $client[2]!='') {
                 $newRepository = $this->clientRepository->getBySymbol($client[0]);
                 $this->fabricaClient->createNewClient($newRepository, $client, $mode);
-                print("Repository ".$client[4]. " created with provider " .$client[2]." Old client symbol  was ".$client[0]." </br>");
+                print("Repository " . $client[4] . " created with provider " . $client[2] . " Old client symbol  was " . $client[0] . " </br>");
             }
         }
 
     }
 
+    private function updateNewClients($mode="test"){
+        $csv_file = fopen("/opt/apps/registry/current/applications/apps/mydois/assets/Datacite_new_orgs_and_repositories.csv", "r");
+        $data = fgetcsv($csv_file, 1000, ",");
+        while (($data = fgetcsv($csv_file, 1000, ",")) !== FALSE)
+        {
+            $all_clients[] = $data;
+        }
+
+        foreach($all_clients as $client){
+            /* Now we create the repositories for the newly created consortium organisations */
+            if(isset($client[2]) && $client[2] != 'FALSE' && $client[2]!='') {
+                $newRepository = $this->clientRepository->getBySymbol($client[0]);
+                $params['client_id'] = $newRepository->client_id;
+                $params['repository_symbol'] = $client[4];
+                $params['in_production'] = 1;
+                $updatedClient = $this->clientRepository->updateClient($params);
+                print("update db for ".$client[0]." by setting the repository symbol to ".$client[4]." and the production flag to true </br>");
+            }
+        }
+    }
+
+    private function assignNewPrefix($mode="test"){
+        $csv_file = fopen("/opt/apps/registry/current/applications/apps/mydois/assets/Datacite_new_orgs_and_repositories.csv", "r");
+        $data = fgetcsv($csv_file, 1000, ",");
+        while (($data = fgetcsv($csv_file, 1000, ",")) !== FALSE)
+        {
+            $all_clients[] = $data;
+        }
+
+        foreach($all_clients as $client){
+            /* determine who the consortium org is and what prefixes are available to it, if none than claim one */
+
+            if(isset($client[2]) && $client[2] != 'FALSE' && $client[2]!='' && $client[0] != 'ANDS.C113') {
+
+              /*  if($client[4] != "ARDCX.USQ" && $client[4] != "ARDCX.VICTORIA" && $client[4] != "ARDCX.ARDCTEST" ) {
+                    $this->fabricaClient->assignTestPrefix($client);
+                } */
+
+                $newRepository = $this->clientRepository->getBySymbol($client[0]);
+                $getThePrefix = file_get_contents('http://api.test.datacite.org/repositories/'.$client[4]) ;
+                $PrefixArray = json_decode($getThePrefix, true);
+                print_pre($PrefixArray["data"]["relationships"]["prefixes"]["data"][0]["id"]);
+                $datacite_test_prefix = $PrefixArray["data"]["relationships"]["prefixes"]["data"][0]["id"];
+                $newRepository->addClientPrefix($datacite_test_prefix, 'test',true);
+                print("Added ".$datacite_test_prefix." to the client_prefixes db for ".$client[0]." , ".$newRepository->client_id);
+             }
+        }
+    }
     private function getMergeClients(){
 
 
@@ -637,20 +703,20 @@ ip_address = "'.$r["combined_ip"].'"  WHERE app_id = "'.$r["app_id"].'"');
         $client->addClientPrefix($datacite_prefix, 'prod',true);
         $client->addClientPrefix($datacite_test_prefix, 'test',true);
 
-        // updates the client on datacite prod
-        $this->fabricaClient->updateClient($client,'prod');
+            // updates the client on datacite prod
+        if($client->in_production === 1) {
+            $this->fabricaClient->updateClient($client, 'prod');
 
-
-        if($this->fabricaClient->hasError()){
-            //if error occurred return the result message to the user
-            $response['responseCode'] = $this->fabricaClient->responseCode;
-            $response['errorMessages'] = $this->fabricaClient->getErrorMessage();
-            $response['Messages'] = $this->fabricaClient->getMessages();
-            echo json_encode($this->fabricaClient);
-            echo json_encode($response);
-            exit();
+            if($this->fabricaClient->hasError()){
+                //if error occurred return the result message to the user
+                $response['responseCode'] = $this->fabricaClient->responseCode;
+                $response['errorMessages'] = $this->fabricaClient->getErrorMessage();
+                $response['Messages'] = $this->fabricaClient->getMessages();
+                echo json_encode($this->fabricaClient);
+                echo json_encode($response);
+                exit();
+            }
         }
-
 
         // if new production prefix is assigned to client
         // update client prefix on datacite

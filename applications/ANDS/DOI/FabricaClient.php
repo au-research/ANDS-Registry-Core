@@ -580,6 +580,69 @@ class FabricaClient implements DataCiteClient
         $this->messages[] = $response;
     }
 
+    public function assignTestPrefix($client){
+
+        $prefixJson = file_get_contents('https://api.test.datacite.org/prefixes/?state=unassigned&page[size]=1');
+        $prefixArray = json_decode($prefixJson,true);
+        $newPrefix = $prefixArray["data"][0]["id"];
+
+        $attributes = ["created" => null,];
+        $provider = ["data" => ["type" => "providers", "id" => $client[2]]];
+        $prefix = ["data" => ["type" => "prefixes", "id" => $newPrefix]];
+        $relationships = ["provider" => $provider, "prefix" => $prefix];
+        $prefixInfo = ["data" => ["attributes" => $attributes, "relationships" => $relationships, "type" => "provider-prefixes"]];
+        // print_pre($prefixInfo);
+        $is_test = 1;
+        $this->setDataciteUrl(getenv("DATACITE_FABRICA_API_TEST_URL"));
+        $headers = [
+            'Content-type' => 'application/json; charset=utf-8',
+            'Accept' => 'application/json',
+            'Authorization' => 'Basic ' . base64_encode($client[2] .":". $this->testPassword),
+        ];
+
+        $response = "";
+        $responseid ="";
+        try {
+            $response = $this->http->post('/provider-prefixes', $headers, json_encode($prefixInfo))->send();
+            $result = $response->json();
+            $this->responseCode = $response->getStatusCode();
+            if($this->responseCode == 201){
+                $newPrefix2 = array("prefix_value" => $newPrefix,
+                    "datacite_id" => $result['data']['id'],
+                    "created" => $result['data']['attributes']['createdAt'],
+                    "is_test" => $is_test);
+                // add the prefix to our registry if successfully claimed
+                $this->clientRepository->addOrUpdatePrefix($newPrefix2);
+            }
+            $responseid = $result['data']['id'];
+        }
+        catch (ClientErrorResponseException $e) {
+            $this->errors[] = $e->getMessage();
+            $this->responseCode = $e->getCode();
+        }
+        catch (ServerErrorResponseException $e){
+            $this->errors[] = $e->getMessage();
+            $this->responseCode = $e->getCode();
+        }
+        $this->messages[] = $response;
+
+        $attributes = ["createdAt" => null];
+        $repository = ["data" => ["type" => "repositories", "id" => $client[4]]];
+        $providerprefix = ["data" => ["type" => "provider-prefix", "id" => $responseid]];
+        $prefix = ["data" => ["type" => "prefixes", "id" => $newPrefix]];
+        $relationships = ["repository" => $repository, "provider-prefix" => $providerprefix, "prefix" => $prefix];
+        $prefixInfo = ["data" => ["attributes" => $attributes, "relationships" => $relationships, "type" => "repository-prefixes"]];
+        // now we need to assign the prefix to the repository on datacite as this org and claim the prefix and then assign the prefix to the repository
+        $response = $this->http->post('/repository-prefixes', $headers, json_encode($prefixInfo))->send();
+        $newRepository = $this->clientRepository->getBySymbol($client[0]);
+        $params['client_id'] = $newRepository->client_id;
+        $params['repository_symbol'] = $client[4];
+        $params['in_production'] = 1;
+
+
+
+        print("Assigned ".$client[4]." prefix ".$newPrefix." </br>");
+    }
     /*
      * @param Trustedclient
      * same as addclient but PATCH request to url containing the datacite_symbol of the client
