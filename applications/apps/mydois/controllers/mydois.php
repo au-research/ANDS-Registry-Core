@@ -703,8 +703,8 @@ ip_address = "'.$r["combined_ip"].'"  WHERE app_id = "'.$r["app_id"].'"');
         $client->addClientPrefix($datacite_prefix, 'prod',true);
         $client->addClientPrefix($datacite_test_prefix, 'test',true);
 
-            // updates the client on datacite prod
-        if($client->in_production === 1) {
+            // updates the client on datacite prod if the client is a production client
+        if($client->in_production == 1) {
             $this->fabricaClient->updateClient($client, 'prod');
 
             if($this->fabricaClient->hasError()){
@@ -721,18 +721,16 @@ ip_address = "'.$r["combined_ip"].'"  WHERE app_id = "'.$r["app_id"].'"');
         // if new production prefix is assigned to client
         // update client prefix on datacite
 
-        if($datacite_prefix && $datacite_prefix != $this->testPrefix && !$hasPrefix){
+    /*    if($datacite_prefix && $datacite_prefix != $this->testPrefix && !$hasPrefix){
             $this->fabricaClient->updateClientPrefixes($client,'prod');
             if($this->fabricaClient->hasError()){
                 //if error occurred return the result message to the user
                 $response['responseCode'] = $this->fabricaClient->responseCode;
                 $response['errorMessages'] = $this->fabricaClient->getErrorMessage();
                 $response['Messages'] = $this->fabricaClient->getMessages();
-               // var_dump($this->fabricaClient);
-                // echo json_encode($response);
                 exit();
             }
-        }
+        } */
         // updates the client on datacite test
         $this->fabricaClient->updateClient($client,'test');
 

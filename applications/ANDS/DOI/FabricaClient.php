@@ -651,22 +651,31 @@ class FabricaClient implements DataCiteClient
     public function updateClient(TrustedClient $client,$mode='prod')
     {
         $clientInfo = $this->getClientInfo($client,$mode);
+        if(trim($client->repository_symbol) != ""){
+            $clientSymbol = $client->repository_symbol;
+            $endpoint = "/repositories/";
+        }else {
+            $clientSymbol = $client->datacite_symbol;
+            $endpoint = "/clients/";
+        }
         if($mode == 'test'){
             $this->setDataciteUrl(getenv("DATACITE_FABRICA_API_TEST_URL"));
             $headers = [
                 'Content-type' => 'application/json; charset=utf-8',
                 'Accept' => 'application/json',
-                'Authorization' => 'Basic ' . base64_encode($this->username .":". $this->testPassword),
+                'Authorization' => 'Basic ' . base64_encode($clientSymbol .":". $client->test_shared_secret),
             ];
         } else{
             $headers = [
                 'Content-type' => 'application/json; charset=utf-8',
                 'Accept' => 'application/json',
-                'Authorization' => 'Basic ' . base64_encode($this->username .":". $this->password),
+                'Authorization' => 'Basic ' . base64_encode($clientSymbol .":". $client->shared_secret),
             ];
         }
         $response = "";
-        $request = $this->http->patch('/clients/'.$client->datacite_symbol, $headers, $clientInfo);
+
+        $request = $this->http->patch($endpoint.$clientSymbol, $headers, $clientInfo);
+
         try {
             $response = $request->send();
             $this->responseCode = $response->getStatusCode();
@@ -1187,19 +1196,30 @@ class FabricaClient implements DataCiteClient
             $prefixes = $this->getPrefixes($client);
             $passwordInput = $client->shared_secret;
         }
+
+        if(trim($client->repository_symbol) != ""){
+            $clientSymbol = $client->repository_symbol;
+
+        }else {
+            $clientSymbol = $client->datacite_symbol;
+
+        }
+        $orginfo = explode(".", $clientSymbol);
+        $org = $orginfo[0];
+
         $attributes = [
             "name" => $client->client_name,
-            "symbol" => $client->datacite_symbol,
+            "symbol" => $clientSymbol,
             "domains" => $this->getClientDomains($client),
             "isActive" => true,
             "contactName" => $client->client_contact_name,
-            "contactEmail" => getenv("DATACITE_CONTACT_EMAIL"),
+            "systemEmail" => getenv("DATACITE_CONTACT_EMAIL"),
             "passwordInput" => $passwordInput
         ];
         $provider = ["data" => ["type" => "providers",
-            "id" => "ands"]];
+            "id" => $org ]];
 
-        $relationships = ["provider" => $provider, "prefixes" => $prefixes];
+        $relationships = ["provider" => $provider];
         $clientInfo = ["data" => ["attributes" => $attributes, "relationships" => $relationships, "type" => "client"]];
         //var_dump($clientInfo);
         return json_encode($clientInfo);
