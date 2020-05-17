@@ -99,8 +99,8 @@ $(document).on('click', '#add_confirm', function(){
 			$('#edit_trusted_client_form input[name=domainList]').val(data['domain_list']);
 			$('#edit_trusted_client_form input[name=app_id]').val(data['app_id']);
 			$('#edit_trusted_client_form input[name=test_app_id]').val(data['test_app_id']);
-			$('#edit_trusted_client_form select[name=datacite_prefix]').val(data['datacite_prefix']);
-            $('#edit_trusted_client_form select[name=datacite_test_prefix]').val(data['datacite_test_prefix']);
+			$('#edit_trusted_client_form input[name=datacite_prefix]').val(data['datacite_prefix']);
+            $('#edit_trusted_client_form input[name=datacite_test_prefix]').val(data['datacite_test_prefix']);
 			$('#edit_trusted_client_form input[name=shared_secret]').val(data['shared_secret']);
 			$('#edit_trusted_client_form input[name=test_shared_secret]').val(data['test_shared_secret']);
 			$('#edit_trusted_client_modal').modal('show');
