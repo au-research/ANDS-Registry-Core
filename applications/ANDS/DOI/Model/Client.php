@@ -18,6 +18,8 @@ class Client extends Model
         'test_shared_secret',
         'mode',
         'status',
+        'repository_symbol',
+        'in_production'
     ];
 
     public $timestamps = false;

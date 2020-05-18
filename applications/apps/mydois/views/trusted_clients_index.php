@@ -144,15 +144,14 @@
 				<div class="control-group">
 					<label class="control-label">DOI Prod Prefix</label>
 					<div class="controls">
-						<select name="datacite_prefix" id="prefix_select">
+                        <input type="text" name="datacite_prefix" value="" readonly/>
 						</select>
 					</div>
 				</div>
                 <div class="control-group">
                     <label class="control-label">DOI Test Prefix</label>
                     <div class="controls">
-                        <select name="datacite_test_prefix" id="prefix_test_select">
-                        </select>
+                        <input type="text" name="datacite_test_prefix" value="" readonly/>
                     </div>
                 </div>
                 <div class="control-group">

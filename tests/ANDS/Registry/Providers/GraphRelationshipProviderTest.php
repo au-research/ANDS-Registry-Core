@@ -2,12 +2,16 @@
 
 namespace ANDS\Registry\Providers;
 
+use ANDS\Cache\Cache;
 use ANDS\RegistryObject;
 use ANDS\Repository\DataSourceRepository;
+use ANDS\Util\Config;
+use Exception;
 use GraphAware\Neo4j\Client\ClientInterface;
 use GraphAware\Neo4j\Client\Stack;
+use RegistryTestClass;
 
-class GraphRelationshipProviderTest extends \RegistryTestClass
+class GraphRelationshipProviderTest extends RegistryTestClass
 {
 
     /** @var ClientInterface */
@@ -313,7 +317,7 @@ class GraphRelationshipProviderTest extends \RegistryTestClass
     }
 
     /** @test
-     * @throws \Exception
+     * @throws Exception
      */
     function it_should_process_direct_relationship()
     {
@@ -495,6 +499,39 @@ class GraphRelationshipProviderTest extends \RegistryTestClass
         $this->assertCount(2, $graph['nodes']);
     }
 
+    /** @test
+     * @throws Exception
+     */
+    function it_bust_the_graph_cache()
+    {
+        // given a record
+        $record = $this->stub(RegistryObject::class, ['title' => 'A', 'key' => 'a']);
+
+        // make sure whoever runs this test can write to the graph file cache, if not then mark this test skipped
+        $config = Config::get('app.cache');
+        $graphCacheDirectoryPath = $config['drivers']['file']['path'];
+        if (! is_writable($graphCacheDirectoryPath)) {
+            $this->markTestSkipped("Directory $graphCacheDirectoryPath is not writable by the user running this test");
+        }
+
+        // there is no cache initially
+        $this->assertFalse(Cache::driver('graph')->has("graph.{$record->id}"));
+
+        // cache the graph
+        Cache::driver('graph')->rememberForever("graph.{$record->id}", function() use ($record){
+            return GraphRelationshipProvider::get($record);
+        });
+
+        // make sure the cache exists
+        $this->assertTrue(Cache::driver('graph')->has("graph.{$record->id}"));
+
+        // when process graph
+        GraphRelationshipProvider::process($record);
+
+        // cache is busted
+        $this->assertFalse(Cache::driver('graph')->has("graph.{$record->id}"));
+    }
+
     /**
      * Helper method to mass add relations
      *
@@ -579,7 +616,7 @@ class GraphRelationshipProviderTest extends \RegistryTestClass
         try {
             $this->client = GraphRelationshipProvider::db();
             $this->client->getLabels();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->markTestSkipped("Neo4j connection failed: ". $e->getMessage());
         }
     }
