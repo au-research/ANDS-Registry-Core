@@ -69,6 +69,9 @@ class GraphRelationshipProvider implements RegistryContentProvider
     {
         $client = static::db();
 
+        // bust the graph cache
+        Cache::driver('graph')->forget("graph.{$record->id}");
+
         // CYPHER queries are pushed onto a stack for processing
         $stack = $client->stack();
 

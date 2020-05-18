@@ -371,7 +371,11 @@ class Doi_api
 
 
         // no need to construct the name if it's provided by datacite_symbol
-        $clientUsername = $client->datacite_symbol;
+        if(trim($client->repository_symbol) != ""){
+            $clientUsername = $client->repository_symbol;
+        }else {
+            $clientUsername = $client->datacite_symbol;
+        }
         if (!$clientUsername) {
             $clientUsername = $config['name_prefix'] . "." . $config['name_middle'] . str_pad($client->client_id,
                     2, '-', STR_PAD_LEFT);
