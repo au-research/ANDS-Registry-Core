@@ -1143,7 +1143,7 @@ html {
 }
 
 body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Roboto", sans-serif;
   font-size: 16px;
   line-height: 1.5;
   color: #4c4c4c;
@@ -1160,7 +1160,7 @@ textarea {
 }
 
 a {
-  color: #428bca;
+  color: #00819D;
   text-decoration: none;
 }
 a:hover, a:focus {
@@ -1392,7 +1392,7 @@ mark,
 }
 
 .text-primary {
-  color: #428bca;
+  color: #00819D;
 }
 
 a.text-primary:hover {
@@ -1436,7 +1436,7 @@ a.text-danger:hover {
 }
 
 .bg-primary {
-  background-color: #428bca;
+  background-color: #00819D;
 }
 
 a.bg-primary:hover {
@@ -3441,7 +3441,7 @@ select[multiple].input-lg,
 
 .btn-info {
   color: white;
-  background-color: #5d89ac;
+  background-color: #1B7CBD;
   border-color: #517c9e;
 }
 .btn-info:hover, .btn-info:focus, .btn-info:active, .btn-info.active, .open > .btn-info.dropdown-toggle {
@@ -3506,7 +3506,7 @@ select[multiple].input-lg,
 }
 
 .btn-link {
-  color: #428bca;
+  color: #00819D;
   font-weight: normal;
   cursor: pointer;
   border-radius: 0;
@@ -3669,7 +3669,7 @@ tbody.collapse.in {
   color: white;
   text-decoration: none;
   outline: 0;
-  background-color: #428bca;
+  background-color: #00819D;
 }
 
 .dropdown-menu > .disabled > a, .dropdown-menu > .disabled > a:hover, .dropdown-menu > .disabled > a:focus {
@@ -4108,7 +4108,7 @@ tbody.collapse.in {
 }
 .nav .open > a, .nav .open > a:hover, .nav .open > a:focus {
   background-color: #e9e9e9;
-  border-color: #428bca;
+  border-color: #00819D;
 }
 .nav .nav-divider {
   height: 1px;
@@ -4155,7 +4155,7 @@ tbody.collapse.in {
 }
 .nav-pills > li.active > a, .nav-pills > li.active > a:hover, .nav-pills > li.active > a:focus {
   color: white;
-  background-color: #428bca;
+  background-color: #00819D;
 }
 
 .nav-stacked > li {
@@ -4738,7 +4738,7 @@ tbody.collapse.in {
   padding: 6px 12px;
   line-height: 1.5;
   text-decoration: none;
-  color: #428bca;
+  color: #00819D;
   background-color: white;
   border: 1px solid #dddddd;
   margin-left: -1px;
@@ -4767,8 +4767,8 @@ tbody.collapse.in {
 .pagination > .active > span:focus {
   z-index: 2;
   color: white;
-  background-color: #428bca;
-  border-color: #428bca;
+  background-color: #00819D;
+  border-color: #00819D;
   cursor: default;
 }
 .pagination > .disabled > span,
@@ -4895,7 +4895,7 @@ a.label:hover, a.label:focus {
 }
 
 .label-primary {
-  background-color: #428bca;
+  background-color: #00819D;
 }
 .label-primary[href]:hover, .label-primary[href]:focus {
   background-color: #3071a9;
@@ -4955,7 +4955,7 @@ a.label:hover, a.label:focus {
   padding: 1px 5px;
 }
 a.list-group-item.active > .badge, .nav-pills > .active > a > .badge {
-  color: #428bca;
+  color: #00819D;
   background-color: white;
 }
 .nav-pills > li > a > .badge {
@@ -5036,7 +5036,7 @@ a.badge:hover, a.badge:focus {
 a.thumbnail:hover,
 a.thumbnail:focus,
 a.thumbnail.active {
-  border-color: #428bca;
+  border-color: #00819D;
 }
 
 .alert {
@@ -5085,7 +5085,7 @@ a.thumbnail.active {
 }
 
 .alert-info {
-  background-color: #7cbfec;
+  background-color: #1B7CBD;
   border-color: #6f7c84;
   color: #6f7c84;
 }
@@ -5158,7 +5158,7 @@ a.thumbnail.active {
   line-height: 24px;
   color: white;
   text-align: center;
-  background-color: #428bca;
+  background-color: #00819D;
   -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
   box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
   -webkit-transition: width 0.6s ease;
@@ -5318,8 +5318,8 @@ a.list-group-item:hover, a.list-group-item:focus {
 .list-group-item.active, .list-group-item.active:hover, .list-group-item.active:focus {
   z-index: 2;
   color: white;
-  background-color: #428bca;
-  border-color: #428bca;
+  background-color: #00819D;
+  border-color: #00819D;
 }
 .list-group-item.active .list-group-item-heading,
 .list-group-item.active .list-group-item-heading > small,
@@ -5665,22 +5665,22 @@ a.list-group-item-danger.active, a.list-group-item-danger.active:hover, a.list-g
 }
 
 .panel-primary {
-  border-color: #428bca;
+  border-color: #00819D;
 }
 .panel-primary > .panel-heading {
   color: white;
-  background-color: #428bca;
-  border-color: #428bca;
+  background-color: #00819D;
+  border-color: #00819D;
 }
 .panel-primary > .panel-heading + .panel-collapse > .panel-body {
-  border-top-color: #428bca;
+  border-top-color: #00819D;
 }
 .panel-primary > .panel-heading .badge {
-  color: #428bca;
+  color: #00819D;
   background-color: white;
 }
 .panel-primary > .panel-footer + .panel-collapse > .panel-body {
-  border-bottom-color: #428bca;
+  border-bottom-color: #00819D;
 }
 
 .panel-success {

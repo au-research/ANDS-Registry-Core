@@ -6,14 +6,14 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <div>
+            <div >
                 <a href="{{portal_url()}}" class="navbar-brand">
-                    <span>Research Data</span> Australia
+                    <img  class="header_logo"  src="{{ asset_url(\ANDS\Util\config::get('app.environment_rda_logo'), 'base')}}" alt=""/>
                 </a>
             </div>
 
             @if(current_url()!=base_url())
-            <div class="clear"><small>Find data for research</small></div>
+            <!-- <div class="clear"><small>Find data for research</small></div> -->
             @endif
         </div>
         <nav class="collapse navbar-collapse main-navbar" role="navigation">
