@@ -10,7 +10,7 @@ return [
     'environment_name' => env("ENVIRONMENT_NAME", "RDA"),
     'environment_colour' => env("ENVIRONMENT_COLOUR" , "#6EBF21"),
     'environment_logo' => 'img/ardc_logo.svg',
-    'environment_rda_logo' => 'img/ARDC_Research_Data_RGB_FA_Reverse.png',
+    'environment_rda_logo' => 'img/ARDC_Research_Data_RGB_FA_Reverse_sml.png',
     'protocol' => $protocol,
     'default_base_url' => $protocol . env("BASE_URL", $_SERVER['SERVER_NAME']).'/',
     'subject_vocab_proxy' => $protocol . env("BASE_URL", $_SERVER['SERVER_NAME']).'/apps/vocab_widget/proxy/',

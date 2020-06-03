@@ -17,7 +17,7 @@
         @if(isset($logo) && $logo !== false)
             <meta property="og:image" content="{{$logo}}"/>
         @else
-            <meta property="og:image" content="{{\ANDS\Util\config::get('app.default_base_url')}}assets/core/images/ANDS_logo.JPG"/>
+            <meta property="og:image" content="{{\ANDS\Util\config::get('app.default_base_url')}}assets/img/ARDC_Research_Data_RGB_FA_Reverse_sml.png"/>
         @endif
         @if(isset($ro->core['description']))
             <?php
@@ -39,7 +39,7 @@
     @else
         <meta property="og:title" content="Research Data Australia"/>
 
-        <meta property="og:image" content="{{\ANDS\Util\config::get('app.default_base_url')}}assets/core/images/ANDS_logo.JPG"/>
+        <meta property="og:image" content="{{\ANDS\Util\config::get('app.default_base_url')}}assets/img/ARDC_Research_Data_RGB_FA_Reverse_sml.png"/>
 
         <meta property="og:description" content="Find, access, and re-use data for research - from over one hundred Australian research organisations, government agencies, and cultural institutions."/>
 
