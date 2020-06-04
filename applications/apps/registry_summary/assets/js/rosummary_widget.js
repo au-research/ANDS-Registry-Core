@@ -18,7 +18,7 @@
 
         var defaults = {
             //jsonp  endpoint
-            endpoint: 'http://researchdata.ands.org.au/apps/registry_summary'
+            endpoint: 'https://researchdata.edu.au/apps/registry_summary'
         }
 
         //ANDS Environment
