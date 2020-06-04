@@ -31,7 +31,7 @@
 
 		var defaults = {
 			//jsonp proxy endpoint
-			proxy: 'http://researchdata.ands.org.au/apps/registry_widget/proxy/',
+			proxy: 'http://researchdata.edu.au/apps/registry_widget/proxy/',
 
 			//mode: [search, display_single, display_result]
 			mode: 'search',
