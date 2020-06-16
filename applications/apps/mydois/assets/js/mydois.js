@@ -52,6 +52,8 @@ $(document).on('click', '#doi_mint_confirm', function(){
     var client_id = $("input[name='client_id']").val();
     var app_id= $("input[name='app_id']").val();
     var url = apps_url+'mydois/mint.json/?manual_mint=true&url='+doi_url+'&app_id='+app_id;
+    alert(apps_url)
+    console.log(apps_url)
     var xml = $("input[name='xml']").val();
 
     if(req_element_error!=''){
@@ -83,6 +85,7 @@ $(document).on('click', '#doi_mint_confirm', function(){
             type: 'POST',
             data: {doi_id:doi, xml:xml, client_id:client_id},
             success: function(data){
+                alert(url)
                 if(data.response.type=='failure'){
                     var message =  data.response.message;
                     if(data.response.verbosemessage!='') message = message + ' <br /><i>'+data.response.verbosemessage+'</i>'
