@@ -13,7 +13,6 @@ return [
     'environment_rda_logo' => 'img/ARDC_Research_Data_RGB_FA_Reverse_sml.png',
     'protocol' => $protocol,
     'default_base_url' => $protocol . env("BASE_URL", $_SERVER['SERVER_NAME']).'/',
-    'identifier_base_url' =>$protocol . env("IDENTIFIER_BASE_URL", $_SERVER['SERVER_NAME']).'/',
     'subject_vocab_proxy' => $protocol . env("BASE_URL", $_SERVER['SERVER_NAME']).'/apps/vocab_widget/proxy/',
     'solr_url' => env('SOLR_URL', 'http://localhost:8983/solr/'),
     'elasticsearch_url' => env('ELASTICSEARCH_URL', 'http://localhost:9200/'),
