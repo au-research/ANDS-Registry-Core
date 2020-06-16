@@ -50,7 +50,7 @@
             },
             mint: function (data) {
                 return APIService.postlegacy(
-                    api_url+'doi/mint.json/?token='+$('#token').val()+'&url='+data.url+'&app_id='+data.app_id, {
+                    identifier_api_url+'doi/mint.json/?token='+$('#token').val()+'&url='+data.url+'&app_id='+data.app_id, {
                         xml:data.xml,
                         doi_id:data.doi,
                         client_id:data.client_id
@@ -59,7 +59,7 @@
             },
             update: function (data) {
                 return APIService.postlegacy(
-                    api_url+'doi/update.json/?token='+$('#token').val()+'&doi='+data.doi+'&url='+data.url+'&app_id='+data.app_id, {
+                    identifier_api_url+'doi/update.json/?token='+$('#token').val()+'&doi='+data.doi+'&url='+data.url+'&app_id='+data.app_id, {
                         xml:data.xml,
                         doi_id:data.doi,
                         client_id:data.client_id
@@ -68,7 +68,7 @@
             },
             activate: function (data) {
                 return APIService.postlegacy(
-                    api_url+'doi/activate.json/?token='+$('#token').val()+'&app_id='+data.app_id+'&doi='+data.doi, {
+                    identifier_api_url+'doi/activate.json/?token='+$('#token').val()+'&app_id='+data.app_id+'&doi='+data.doi, {
                         doi_id:data.doi,
                         client_id:data.client_id
                     }
@@ -76,7 +76,7 @@
             },
             deactivate: function (data) {
                 return APIService.postlegacy(
-                    api_url+'doi/deactivate.json/?token='+$('#token').val()+'&app_id='+data.app_id+'&doi='+data.doi, {
+                    identifier_api_url+'doi/deactivate.json/?token='+$('#token').val()+'&app_id='+data.app_id+'&doi='+data.doi, {
                         doi_update:data.doi,
                         client_id:data.client_id
                     }
