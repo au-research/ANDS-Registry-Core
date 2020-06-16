@@ -92,8 +92,8 @@ $('#custom_settings_grant').grant_widget({
 
 <?php 
     $config = array(
-        array('search_endpoint', 'http://researchdata.ands.org.au/registry/services/api/getGrants/', 'JSONP search API for Grants'),
-        array('lookup_endpoint','http://researchdata.ands.org.au/registry/services/api/getGrants/?id=','JSONP API for Grants Lookup service'),
+        array('search_endpoint', 'https://researchdata.edu.au/registry/services/api/getGrants/', 'JSONP search API for Grants'),
+        array('lookup_endpoint','https://researchdata.edu.au/registry/services/api/getGrants/?id=','JSONP API for Grants Lookup service'),
         array('pre_lookup', 'false','Automatically Do a lookup on the current value of the input field'),
         array('search','true', 'Display Search Button, enable searching functionality'),
         array('pre_open_search','false','Open Search Box by default'),

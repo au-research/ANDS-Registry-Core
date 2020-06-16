@@ -28,7 +28,7 @@
         @else
             <meta property="og:description" content="Find, access, and re-use data for research - from over one hundred Australian research organisations, government agencies, and cultural institutions."/>
         @endif
-        @if(isset($ro->core['url']) && \ANDS\Util\config::get('app.default_base_url') == 'https://researchdata.ands.org.au/')
+        @if(isset($ro->core['url']) && \ANDS\Util\config::get('app.default_base_url') == 'https://researchdata.edu.au/')
             <meta property="og:url" content="{{$ro->core['url']}}"/>
         @else
             <meta property="og:url" content="{{\ANDS\Util\config::get('app.default_base_url')}}{{$ro->core['slug']}}/{{$ro->core['id']}}"/>

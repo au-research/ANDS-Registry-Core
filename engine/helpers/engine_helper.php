@@ -360,6 +360,12 @@ function api_url($suffix=''){
 	return $CI->config->item('default_base_url') . 'api/'. $suffix;
 }
 
+function identifier_api_url($suffix=''){
+    $CI =& get_instance();
+
+    return $CI->config->item('identifier_base_url') . $suffix;
+}
+
 function identifier_url($suffix=''){
 	$CI =& get_instance();
 

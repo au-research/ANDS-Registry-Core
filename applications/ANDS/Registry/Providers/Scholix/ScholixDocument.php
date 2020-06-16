@@ -113,7 +113,7 @@ class ScholixDocument
         $sourceID = $link['link']['source']['identifier'][0]['identifier'];
         $targetID = $link['link']['target']['identifier'][0]['identifier'];
 
-        $namespace = Uuid::uuid5(Uuid::NAMESPACE_URL, "https://researchdata.ands.org.au")->toString();
+        $namespace = Uuid::uuid5(Uuid::NAMESPACE_URL, "https://researchdata.edu.au")->toString();
         $uuid5 = Uuid::uuid5($namespace, $sourceID . $targetID)->toString();
 
         $identifier = $prefix . $uuid5;
