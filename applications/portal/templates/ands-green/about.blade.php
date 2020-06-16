@@ -36,7 +36,12 @@
 
                                 A service built on sharing </h1>
                         </div>
+
                         <div style="padding-left:50px;padding-right:50px">
+                            <p>
+                                Research Data Australia is the data discovery service of the Australian Research Data Commons (ARDC).
+                                The ARDC is supported by the Australian Government through the National Collaborative Research Infrastructure Strategy Program.
+                            </p>
                             <p>Research Data Australia helps you find, access, and reuse data for research from over one
                                 hundred
                                 Australian research organisations, government agencies, and cultural institutions.

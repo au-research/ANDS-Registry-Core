@@ -6,7 +6,8 @@
     <meta name="referrer" content="always">
 
     <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,200,200italic,300,300italic,400italic,600,600italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
-
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Spectral' rel='stylesheet' type='text/css'>
     <meta property="og:type" content="article"/>
 
     @if(isset($ro))
@@ -16,7 +17,7 @@
         @if(isset($logo) && $logo !== false)
             <meta property="og:image" content="{{$logo}}"/>
         @else
-            <meta property="og:image" content="{{\ANDS\Util\config::get('app.default_base_url')}}assets/core/images/ANDS_logo.JPG"/>
+            <meta property="og:image" content="{{\ANDS\Util\config::get('app.default_base_url')}}assets/img/ARDC_Research_Data_RGB_FA_Reverse_sml.png"/>
         @endif
         @if(isset($ro->core['description']))
             <?php
@@ -27,7 +28,7 @@
         @else
             <meta property="og:description" content="Find, access, and re-use data for research - from over one hundred Australian research organisations, government agencies, and cultural institutions."/>
         @endif
-        @if(isset($ro->core['url']) && \ANDS\Util\config::get('app.default_base_url') == 'https://researchdata.ands.org.au/')
+        @if(isset($ro->core['url']) && \ANDS\Util\config::get('app.default_base_url') == 'https://researchdata.edu.au/')
             <meta property="og:url" content="{{$ro->core['url']}}"/>
         @else
             <meta property="og:url" content="{{\ANDS\Util\config::get('app.default_base_url')}}{{$ro->core['slug']}}/{{$ro->core['id']}}"/>
@@ -38,7 +39,7 @@
     @else
         <meta property="og:title" content="Research Data Australia"/>
 
-        <meta property="og:image" content="{{\ANDS\Util\config::get('app.default_base_url')}}assets/core/images/ANDS_logo.JPG"/>
+        <meta property="og:image" content="{{\ANDS\Util\config::get('app.default_base_url')}}assets/img/ARDC_Research_Data_RGB_FA_Reverse_sml.png"/>
 
         <meta property="og:description" content="Find, access, and re-use data for research - from over one hundred Australian research organisations, government agencies, and cultural institutions."/>
 

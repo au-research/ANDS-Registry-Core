@@ -32,8 +32,8 @@
 
 		var defaults = {
 		    //location (absolute URL) of the jsonp proxy
-		    search_endpoint: 'https://researchdata.ands.org.au/registry/services/api/getGrants/?',
-		   	lookup_endpoint: 'https://researchdata.ands.org.au/registry/services/api/getGrants/?id=',
+		    search_endpoint: 'https://researchdata.edu.au/registry/services/api/getGrants/?',
+		   	lookup_endpoint: 'https://researchdata.edu.au/registry/services/api/getGrants/?id=',
 
 		    //auto _lookup once init
 		    pre_lookup: false,

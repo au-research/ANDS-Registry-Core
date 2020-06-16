@@ -23,7 +23,7 @@ span.dynatree-drag-helper-img,
 
 ul.dynatree-container
 {
-    font-family: tahoma, arial, helvetica;
+    font-family: 'Roboto', sans-serif;
     font-size: 10pt; /* font size should not be too big */
     white-space: nowrap;
     padding: 3px;
@@ -49,7 +49,7 @@ span.dynatree-selected a
     display: block;
     white-space: nowrap;
     text-decoration: none !important;
-    font-family: arial,FreeSans,Helvetica,sans-serif;
+    font-family: 'Roboto',sans-serif;
     cursor: pointer;
     font-size: 14px;
     z-index: 99;
@@ -64,7 +64,7 @@ span.dynatree-selected a
     display: block;
     white-space: nowrap;
     text-decoration: none !important;
-    font-family: arial,FreeSans,Helvetica,sans-serif;
+    font-family: 'Roboto',sans-serif;
     cursor: pointer;
     font-size: 14px;
     z-index: 99;
@@ -74,10 +74,10 @@ span.dynatree-selected a
 }
 
 .yellow_button {
-    color: #fff;
+    color: #000;
     font-size: 14px;
     font-weight: bold;
-    background: #f58000;
+    background: #F8B20E;
     border: none;
     padding: 5px 5px;
     margin: 10px 0;
@@ -86,8 +86,8 @@ span.dynatree-selected a
 }
 
 .yellow_button:hover {
-    background: #F58072;
-    color: #fff;
+    background: #e2a20c;
+    color: #000;
 }
 ul{
     list-style-position:inside;
@@ -194,7 +194,7 @@ h1.bordered:after{
 
 #toggle-visualisation {
     font-size: 23px;
-    background: #f58000;
+    background: #f8b20e;
     position: absolute;
     bottom: -18px;
     right: 35px;
@@ -281,23 +281,139 @@ h1.bordered:after{
 
 .btn_access{
     margin-bottom: 15px;
-    background: linear-gradient(#becdba,#84a07b);
-    border: .5px solid #657f65;
+    background: linear-gradient(#00A2C4, #00819D);
+    border: .5px solid #00b0d5;
     border-radius: 4px;
 }
 .btn_access:hover {
-    background: linear-gradient(rgb(255, 185, 102), rgb(244, 129, 0));
-    border: .5px solid #ed7b00;
+    background: #026d84;
+    border: .5px solid #00A2C4;
     border-radius: 4px;
     color: #fff;
+    text-decoration: none;
 }
 .btn_access:focus {
-    background: linear-gradient(#becdba,#84a07b);
-    border: .5px solid #657f65;
+    background: #026d84;
+    border: .5px solid #00A2C4;
     border-radius: 4px;
 }
 
 .formats_block{
     margin-top:-15px;
     margin-bottom:15px;
+}
+.header_logo{
+    width: 250px;
+}
+
+#footer{
+    text-transform: uppercase;
+}
+.cat-item{
+    font-size: 16px;
+    text-transform: uppercase;
+}
+.cat-item a:hover{
+    text-decoration: underline;
+}
+.footer-text{
+    font-size:10px;
+    line-height: 16px;
+    text-transform: none;
+}
+.footer_ncris{
+    float: right;
+    width: 150px;
+    margin-top: -320px;
+    margin-right: 72px !important;
+}
+
+.footer_ardc{
+    float: left;
+    margin: 72px;
+    width: 200px;
+}
+
+.footer_container {
+    width: 80%;
+}
+
+
+.width-210{
+    width: 210px;
+}
+
+.swatch-white a:hover {
+    text-decoration: underline;
+    color: #00A2C4;
+
+}
+
+.swatch-white .btn-link, [class*="swatch-"] .swatch-white .btn-link{
+    color: #00819D;
+    box-shadow: 0px 0px 0px 1px #00819D inset;
+    background: #fff;
+}
+.swatch-white button a:hover{
+    color: #00819D;
+    text-decoration: none;
+}
+
+:-moz-placeholder,
+textarea:-moz-placeholder {
+    color: #696969;
+}
+:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+    color: #696969;
+}
+::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+    color: #696969;
+}
+::placeholder {
+    color: #696969;
+    opacity: 1;
+}
+
+.ardc-logo-footer{
+    float: left;
+    margin: 72px;
+}
+.ncris_footer{
+    margin-right: -72px;
+    max-width:200px;
+}
+.footer-col-width{
+    max-width: 250px;
+    width: 210px;
+
+}
+.search-section a:hover{
+    text-decoration: underline;
+}
+.nav-pills > li > a:hover{
+    text-decoration: underline;
+}
+
+a[class*="btn"]{
+    text-decoration: none;
+}
+
+h1, h2{
+    font-family: Spectral, serif;
+}
+
+h2 {
+    color: #00819D;
+}
+
+.input-group .form-control:first-child,
+.input-group-addon:first-child,
+.input-group-btn:first-child > .btn,
+.input-group-btn:first-child > .btn-group > .btn,
+.input-group-btn:first-child > .dropdown-toggle,
+.input-group-btn:last-child > .btn:not(:last-child):not(.dropdown-toggle),
+.input-group-btn:last-child > .btn-group:not(:last-child) > .btn {
+    bottom-radius: 4px;
 }
