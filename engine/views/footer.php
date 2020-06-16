@@ -33,6 +33,7 @@ $base_url = str_replace('/apps','/registry',base_url());
         var portal_url = '<?php echo portal_url();?>';
         var apps_url = '<?php echo apps_url();?>';
         var api_url = '<?php echo api_url();?>';
+        var identifier_api_url = '<?php echo identifier_api_url();?>';
         var real_base_url = "<?php echo \ANDS\Util\config::get('app.default_base_url');?>";
         var suffix = '<?php echo url_suffix();?>';
         var internal_api_key = 'api';

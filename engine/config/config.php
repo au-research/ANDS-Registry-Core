@@ -21,7 +21,7 @@ setlocale(LC_CTYPE, 'en_AU');
 // Fix URL resolution issues with aboslute URLs (for now...)
 
 $config['default_base_url'] = \ANDS\Util\config::get('app.default_base_url');
-
+$config['identifier_base_url'] = \ANDS\Util\config::get('app.identifier_base_url');
 //if (isset($config['default_base_url']))
 //{
 //	if (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off' && strpos($config['default_base_url'],"https:") == FALSE)
