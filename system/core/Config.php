@@ -251,24 +251,19 @@ class CI_Config {
 	 */
 	function site_url($uri = '')
 	{
-
-
-	    if ($uri == '')
+		if ($uri == '')
 		{
 			return $this->slash_item('base_url').$this->item('index_page');
 		}
 
 		if ($this->item('enable_query_strings') == FALSE)
 		{
-		    $suffix = ($this->item('url_suffix') == FALSE) ? '' : $this->item('url_suffix');
-		    if(strpos($uri,"api/doi")===0){
-		        return $this->slash_item('identifier_base_url').$this->slash_item('index_page').$this->_uri_string($uri).$suffix;
-            }
-			return $this->slash_item('default_base_url').$this->slash_item('index_page').$this->_uri_string($uri).$suffix;
+			$suffix = ($this->item('url_suffix') == FALSE) ? '' : $this->item('url_suffix');
+			return $this->slash_item('base_url').$this->slash_item('index_page').$this->_uri_string($uri).$suffix;
 		}
 		else
 		{
-		    return $this->slash_item('base_url').$this->item('index_page').'?'.$this->_uri_string($uri);
+			return $this->slash_item('base_url').$this->item('index_page').'?'.$this->_uri_string($uri);
 		}
 	}
 
