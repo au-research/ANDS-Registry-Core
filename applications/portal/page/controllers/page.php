@@ -392,7 +392,7 @@ class Page extends MX_Controller
         monolog($event, 'portal', 'info');
 
         // Decide the sharing URL
-        $shareUrl = "http://researchdata.ands.org.au";
+        $shareUrl = "https://researchdata.edu.au";
         switch ($social) {
             case "facebook":
                 $shareUrl = "http://www.facebook.com/sharer.php?u=".$url;

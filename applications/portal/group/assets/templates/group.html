@@ -83,7 +83,7 @@
 							<input type="checkbox" ng-model="group.data.hide_logo"> Hide Logo <i class="fa fa-info" tip="Checking this box will hide the default and provided logo from Research Data Australia. Please note that this will also remove the group from the home page carousel of Research Data Australia, the group will be still be present in Who Contributes to Research Data Australia page"></i>
 							<hr>
 							<img src="[[ group.data.logo ]]" alt="" ng-if="group.data.logo" style="max-width:50%;">
-							<div class="button" ng-file-select ng-file-change="upload($files)">Upload Logo</div> <i class="fa fa-refresh fa-spin" ng-if="uploading"></i>
+							<a class="swatch-white btn btn-primary" ng-file-select ng-file-change="upload($files)">Upload Logo</a> <i class="fa fa-refresh fa-spin" ng-if="uploading"></i>
 							<div class="alert alert-danger" ng-if="error_upload_msg" ng-bind-html="error_upload_msg"></div>
 						</div>
 					</div>

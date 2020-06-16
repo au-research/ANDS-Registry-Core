@@ -5,7 +5,7 @@
 
 .navbar-brand {
 	font-size:25px;
-	padding: 33px 15px 0px;
+	padding: 10px 15px 0px;
 	height:auto;
 	span {
 		color: #eb7700;
@@ -43,9 +43,9 @@ small {
 		color:white;
 	}
 	.active {
-		color: #eb7700 !important;
+		color:  #00A2C4 !important;
 		a {
-			color: #eb7700 !important;
+			color:  #00A2C4 !important;
 		}
 	}
 }
@@ -60,6 +60,7 @@ small {
 	color: @primaryColor;
 	&:hover{
 		color:@secondaryColor;
+		text-decoration: underline;
 	}
 }
 
@@ -73,7 +74,7 @@ small {
 			-moz-box-shadow: 0 3px 0 @secondaryColor;
 			box-shadow: 0 3px 0 @secondaryColor;
 		}
-		&::selection,  {
+		&::selection{
 			color: white;
 			background: @primaryColor;
 		}
@@ -147,6 +148,7 @@ small {
 
 .btn-info {
 	color:white !important;
+	background-color: #1B7CBD;
 	i {
 		color:white !important;
 	}
@@ -187,3 +189,47 @@ small {
 
 .flex-prev { left:-70px; }
 .flex-next { right:-70px; }
+
+
+.btn-link-white{
+	background: #fff;
+}
+
+input {
+	color: #696969;
+}
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+	color: #6B6868 !important;
+}
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+	color: #6B6868 !important;
+}
+input::placeholder {
+	color: #6B6868 !important;
+}
+
+input::-webkit-input-placeholder {
+	color: #6B6868 !important;
+}
+
+.btn, .btn-primary, .btn-link, .btn-link-white {
+	border-radius: 4px;
+}
+
+.swatch-white .btn-link i{
+	color: #00819D !important;
+}
+
+.swatch-white .sidebar a, [class*="swatch-"] .swatch-white .sidebar a {
+	color: #00819D;
+}
+
+a[class*="btn"]{
+	text-decoration: none !important;
+}
+.panel-body .btn-danger:hover, [class*="btn"] .panel-body .btn-danger:hover {
+	text-decoration: none !important;
+}
+
