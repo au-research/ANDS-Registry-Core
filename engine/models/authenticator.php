@@ -34,10 +34,33 @@ class Authenticator extends CI_Model {
     public function getUserByProfile($profile)
     {
         $serviceID = $profile['authentication_service_id'];
-        $user = $this->cosi_db->get_where('roles',[
+
+        // check by identifier first
+
+        $user = $this->cosi_db->get_where('roles', [
             'role_id' => $profile['identifier'],
             'authentication_service_id' => $serviceID
         ]);
+
+        // in case the identifier changes for rapidconnect users
+        // and user no longer identifiable by id
+        // try email first
+        // then display name if $serviceID is Shibboleth
+
+        if(!$user->num_rows() && $serviceID == gCOSI_AUTH_METHOD_SHIBBOLETH){
+            $user = $this->cosi_db->get_where('roles',[
+                'email' => $profile['email'],
+                'authentication_service_id' => $serviceID
+            ]);
+            
+            if(!$user->num_rows()){
+                $user = $this->cosi_db->get_where('roles',[
+                    'name' => $profile['displayName'],
+                    'authentication_service_id' => $serviceID
+                ]);
+            }
+        }
+
 
         if(!$user->num_rows()) {
             //create a new role
@@ -49,7 +72,7 @@ class Authenticator extends CI_Model {
                 'name' => $profile['displayName'],
                 'oauth_access_token' => $profile['accessToken'],
                 'oauth_data' => json_encode($profile),
-                'email' => ''
+                'email' => $profile['email']
             ];
             $this->cosi_db->insert('roles',$data);
             $user = $this->cosi_db->get_where('roles', [
