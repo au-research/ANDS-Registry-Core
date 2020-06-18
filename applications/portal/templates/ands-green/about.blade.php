@@ -190,7 +190,7 @@
                             </a>
                         </div>
                         <div class="col-md-4 ">
-                            <a href="http://www.ands.org.au/discovery/reuse.html" target="_blank">
+                            <a href="https://ardc.edu.au/resources/working-with-data/sensitive-data/" target="_blank">
                                 <div class="element-medium-top element-medium-bottom text-center os-animation animated fadeInUp"
                                      data-os-animation="fadeInUp" data-os-animation-delay=".6s"
                                      style="-webkit-animation: 0.6s;">
