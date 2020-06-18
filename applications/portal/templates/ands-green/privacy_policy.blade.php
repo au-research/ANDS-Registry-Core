@@ -10,7 +10,7 @@
                    </header>
                    <p>
                        The following document sets forth the Privacy Policy for the ARDC website Research Data Australia,
-                       <a href="http://researchdata.ands.org.au">http://researchdata.ands.org.au</a>.
+                       <a href="http://researchdata.edu.au">http://researchdata.edu.au</a>.
                    </p>
 
                    <p>
