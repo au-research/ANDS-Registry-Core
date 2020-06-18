@@ -35,14 +35,17 @@ class Authenticator extends CI_Model {
     {
         $serviceID = $profile['authentication_service_id'];
 
+        // check by identifier first
+
         $user = $this->cosi_db->get_where('roles', [
             'role_id' => $profile['identifier'],
             'authentication_service_id' => $serviceID
         ]);
 
         // in case the identifier changes for rapidconnect users
+        // and user no longer identifiable by id
         // try email first
-        //then display name if $serviceID is Shibboleth
+        // then display name if $serviceID is Shibboleth
 
         if(!$user->num_rows() && $serviceID == gCOSI_AUTH_METHOD_SHIBBOLETH){
             $user = $this->cosi_db->get_where('roles',[
