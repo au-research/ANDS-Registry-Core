@@ -162,7 +162,7 @@ class DoiBulkTask extends Task
 
 
        // $clientUsername = $config['name_prefix'] . "." . $config['name_middle'] . str_pad($client->client_id, 2, '-', STR_PAD_LEFT);
-        $clientUsername = $client->datacite_symbol;
+        $clientUsername = $client->repository_symbol;
         $clientPassword = (isset($client->shared_secret) AND $client->shared_secret !='')
             ? $client->shared_secret :  $config['password'];
         $clientTestPassword = (isset($client->test_shared_secret) AND $client->test_shared_secret !='')
