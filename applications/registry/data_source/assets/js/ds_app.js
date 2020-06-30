@@ -434,13 +434,18 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 
 	$scope.$watch('ds.provider_type', function(newv, oldv){
 		if($scope.ds.provider_type) {
-			if($scope.ds.provider_type=='rif') {
+			/*
+			/* The following was commented out for release 38.
+			/* left in the code in case there was a valid reason for not allowing cross walks for rif provider_type
+			*/
+
+			/* if($scope.ds.provider_type=='rif') {
 				$scope.ds.xsl_file = '';
 				$.each($scope.ds.crosswalks, function(){
 					this.active = false;
 				});
 				return;
-			}
+			} */
 			if($scope.ds.crosswalks){
 				$.each($scope.ds.crosswalks, function(){
 					if(this.type=='crosswalk' && this.prefix==newv){
