@@ -120,7 +120,8 @@ return [
 
         //  -   Twitter announcement app
         			'twitter',
-
+        //  -   Doi test of supported endpojnts app
+                    'doi_test',
         // These modules require: ANDS-Developer-Portal to be installed:
         // 	- 	Developer API documentation
         			'toolbox',
