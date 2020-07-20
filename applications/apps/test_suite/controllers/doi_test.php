@@ -22,7 +22,6 @@ class Doi_test extends MX_Controller {
 		$incorrect_url = 'http://no.domain.exists/example.php';
 
         $doiversion_service_points = array(
-            'v1.0'=>'https://services.ands.org.au/home/dois/doi_' ,
             'v1.1'=>'https://services.ands.org.au/doi/1.1/',
             'ands' => 'https://researchdata.ands.org.au/api/doi/',
             'ardc' => 'https://researchdata.edu.au/api/doi/',
@@ -193,7 +192,6 @@ $invalidxml = 'xml='.urlencode('<?xml version="1.0" encoding="UTF-8"?>
 	{
 
 		$test_xml_cases = array(
-			array('Update a doi - v1.0 service url', $app_id, $shared_secret, $url,$testDOI,'update', 'string',$doiversion_service_points['v1.0'],$validxml, '[MT002]'),
 			array('Update a doi - v1.1 service url', $app_id, $shared_secret, $url,$testDOI,'update', 'string',$doiversion_service_points['v1.1'] ,$validxml,'[MT002]'),
             array('Update a doi - ANDS service url', $app_id, $shared_secret, $url,$testDOI,'update', 'string',$doiversion_service_points['ands'],$validxml, '[MT002]'),
             array('Update a doi - ARDC service url', $app_id, $shared_secret, $url,$testDOI,'update', 'string',$doiversion_service_points['ardc'] ,$validxml,'[MT002]'),
