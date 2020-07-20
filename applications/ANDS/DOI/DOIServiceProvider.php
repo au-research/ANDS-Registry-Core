@@ -318,12 +318,12 @@ class DOIServiceProvider
         // check if this client owns this doi
         if (!$this->isDoiAuthenticatedClients($doiValue, $doi->client_id)) {
             $this->setResponse('responsecode', 'MT008');
-            $this->setResponse('verbosemessage',$doiValue." is not owned by ".$this->getAuthenticatedClient()->client_name);
+            $this->setResponse('verbosemessage', $doiValue . " is not owned by " . $this->getAuthenticatedClient()->client_name);
             return false;
         }
 
         // Validate URL and URL Domain
-        if (isset($url) && $url!="") {
+        if (isset($url) && $url != "") {
             $this->setResponse('url', $url);
             $validDomain = URLValidator::validDomains(
                 $url, $this->getAuthenticatedClient()->domains
@@ -334,13 +334,28 @@ class DOIServiceProvider
             }
         }
 
-        if(isset($xml) && $xml!="") {
+        if (isset($xml) && $xml != "") {
             // need to check that doi provided in xml matches doi
             $xml = XMLValidator::replaceDOIValue($doiValue, $xml);
+        }else{
+            $xml = $doi->datacite_xml;
+            $xml = XMLValidator::replaceDOIValue($doiValue, $xml);
+        }
 
-            // Validate xml
-            if ($this->validateXML($xml) === false) {
-                $this->setResponse('responsecode', 'MT007');
+        if ($this->validateXML($xml) === false) {
+            $this->setResponse('responsecode', 'MT007');
+            return false;
+        }
+
+        if(isset($xml) && $xml!="") {
+            $result = $this->dataciteClient->update($xml);
+            if ($result === true) {
+                $this->setResponse('responsecode', 'MT002');
+                //update the database DOIRepository
+                $this->doiRepo->doiUpdate($doi, array('datacite_xml'=>$xml,'status'=>'ACTIVE'));
+            } else {
+                $this->setResponse('responsecode', 'MT010');
+                $this->setResponse('verbosemessage', array_first($this->dataciteClient->getErrors()));
                 return false;
             }
         }
@@ -351,20 +366,6 @@ class DOIServiceProvider
                 $this->setResponse('responsecode', 'MT002');
                 //update the database DOIRepository
                 $this->doiRepo->doiUpdate($doi, array('url'=>$url));
-            } else {
-                $this->setResponse('responsecode', 'MT010');
-                $this->setResponse('verbosemessage', array_first($this->dataciteClient->getErrors()));
-                return false;
-            }
-        }
-
-
-        if(isset($xml) && $xml!="") {
-            $result = $this->dataciteClient->update($xml);
-            if ($result === true) {
-                $this->setResponse('responsecode', 'MT002');
-                //update the database DOIRepository
-                $this->doiRepo->doiUpdate($doi, array('datacite_xml'=>$xml,'status'=>'ACTIVE'));
             } else {
                 $this->setResponse('responsecode', 'MT010');
                 $this->setResponse('verbosemessage', array_first($this->dataciteClient->getErrors()));
