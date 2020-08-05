@@ -258,7 +258,7 @@
                             <span style="font-weight: 400;">900 Dandenong Road, Caulfield East, Victoria 3145.</span>
                         </p>
                         <p class="text-center">
-                            <span style="font-weight: 400;">For further information about privacy issues, see the Office of the Australian Information Commissioner’s website at <a class="purple-cls" target="_blank" href="www.oaic.gov.au">www.oaic.gov.au</a>.</span>
+                            <span style="font-weight: 400;">For further information about privacy issues, see the Office of the Australian Information Commissioner’s website at <a class="purple-cls" target="_blank" href="https://www.oaic.gov.au">www.oaic.gov.au</a>.</span>
                         </p>
                     </div>
                 </div>
