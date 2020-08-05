@@ -119,6 +119,47 @@
   #colorbox {
     z-index: 9999;
   }
+  /* two column div */
+  h2.blue-header {
+    color: #00A2C4;
+  }
+  div.column {
+    float: left;
+    padding-left: 10px;
+    padding-right: 10px;
+    width: 50%;
+  }
+  div.row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  .content-divider-box {
+    display: inline-block;
+    background: rgba(150, 150, 150, 0.2);
+  }
+  .divider-cls {
+    padding: 50px 0px;
+    text-align: center;
+  }
+  .divider-cls span {
+    height: 15px !important;
+    width: 15px !important;
+    display: inline-block;
+    margin-right: 15px;
+  }
+  .divider-cls span:nth-child(1) {
+    background: #00B0D5;
+  }
+  .divider-cls span:nth-child(2) {
+    background: #E51875;
+  }
+  .divider-cls span:nth-child(3) {
+    background: #F8B20E;
+  }
+  .divider-cls span:nth-child(4) {
+    background: #8E489B;
+  }
   .environment,
   .navbar,
   .search-section,
