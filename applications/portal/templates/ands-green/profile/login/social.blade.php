@@ -9,6 +9,9 @@
         @if($oauth_conf['providers']['Twitter']['enabled'])
             <a href="{{registry_url('auth/authenticate/twitter')}}" class="btn btn-primary btn-block btn-icon-left">Login with Twitter <span><i class="fa fa-twitter"></i></span></a>
         @endif
+        @if($oauth_conf['providers']['Google']['enabled'])
+            <a href="{{registry_url('auth/authenticate/google')}}" class="btn btn-primary btn-block btn-icon-left">Login with Google <span><i class="fa fa-google"></i></span></a>
+        @endif
         @if($oauth_conf['providers']['LinkedIn']['enabled'])
             <a href="{{registry_url('auth/authenticate/linkedin')}}" class="btn btn-primary btn-block btn-icon-left">Login with LinkedIn <span><i class="fa fa-linkedin"></i></span></a>
         @endif
