@@ -34,7 +34,7 @@ class GrantsConnectionsProvider extends Connections
             return null;
         }
 
-        debug("Getting funder for $record->title($record->registry_object_id)");
+        // debug("Getting funder for $record->title($record->registry_object_id)");
         $this->processed_by_getFunder[] = $record->registry_object_id;
 
         // check in the view for existing funder
@@ -45,7 +45,7 @@ class GrantsConnectionsProvider extends Connections
 
         if ($implicitRelation) {
             $funder = RegistryObjectsRepository::getRecordByID($implicitRelation->to_id);
-            debug('Found funder: '. $funder->title);
+            // debug('Found funder: '. $funder->title);
             return $funder;
         }
 
