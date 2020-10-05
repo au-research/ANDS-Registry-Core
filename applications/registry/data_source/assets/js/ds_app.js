@@ -420,13 +420,18 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 	$scope.$watch('ds.crosswalks', function(newv, oldv){
 		if($scope.ds.crosswalks){
 			$scope.provider_types = [
-				{name: 'rif',value:'rif'}
+				{name: 'RIF-CS',value:'rif'}
 			]
 			$.each($scope.ds.crosswalks, function(){
 				if(this.type=='crosswalk'){
 					$scope.provider_types.push({
 						name:this.prefix + ((this.path) ? ' - '+this.path : ''), value:this.prefix
 					});
+					if(this.prefix=='rif' ){
+						this.active = true;
+						$scope.ds.xsl_file = this.full_path;
+
+					}
 				}
 			});
 		}
@@ -434,18 +439,6 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 
 	$scope.$watch('ds.provider_type', function(newv, oldv){
 		if($scope.ds.provider_type) {
-			/*
-			/* The following was commented out for release 38.
-			/* left in the code in case there was a valid reason for not allowing cross walks for rif provider_type
-			*/
-
-			/* if($scope.ds.provider_type=='rif') {
-				$scope.ds.xsl_file = '';
-				$.each($scope.ds.crosswalks, function(){
-					this.active = false;
-				});
-				return;
-			} */
 			if($scope.ds.crosswalks){
 				$.each($scope.ds.crosswalks, function(){
 					if(this.type=='crosswalk' && this.prefix==newv){
@@ -458,7 +451,6 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
                             });
                             this.active = true;
                         }
-
 					}
 				});
 			}
@@ -477,6 +469,9 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 
 	$scope.removeFromList = function(list, index){
 		list.splice(index, 1);
+		if(list.length == 0){
+			$scope.ds.xsl_file = '';
+		}
 	}
 
 	$scope.$watch('ds.manual_publish', function(newv, oldv){
