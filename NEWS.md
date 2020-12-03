@@ -309,7 +309,7 @@ Release 24 of ANDS Online Services is scheduled for implementation on **5 Ju
 *   ORCID Wizard: Update the API to prevent relatedInfo/identifier from being picked up as a collection(works) identifier 
 
 Please also note: 
-*   As part of Release 24 ANDS will be migrating it's [services.ands.org.au](http://services.ands.org.au/) domain to a new host. This however should not impact any of our service consumers. If you have any concerns please get in contact before the 5th July. 
+*   As part of Release 24 ANDS will be migrating its [services.ands.org.au](http://services.ands.org.au/) domain to a new host. This however should not impact any of our service consumers. If you have any concerns please get in contact before the 5th July. 
 
 A reminder email will be sent out on implementation day.
 
