@@ -249,7 +249,7 @@ Please note that changes listed above are the planned features, subject to  time
 
 A separate email with the list of impact and requirements for each change will be sent out before the release. 
 
-For any comments or questions, please email [services@ands.org.au](mail:toservices@ands.org.au). Thank you.
+For any comments or questions, please email [services@ardc.edu.au](mailto:services@ardc.edu.au). Thank you.
 
 
 ## Release 25
@@ -313,4 +313,4 @@ Please also note: 
 
 A reminder email will be sent out on implementation day.
 
-Please schedule your activities accordingly. For any comments or questions, please email [services@ands.org.au](mailto:services@ands.org.au). Thank you.
+Please schedule your activities accordingly. For any comments or questions, please email [services@ardc.edu.au](mailto:services@ardc.edu.au). Thank you.
