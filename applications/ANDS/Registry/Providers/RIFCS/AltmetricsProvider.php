@@ -59,7 +59,7 @@ class AltmetricsProvider implements RIFCSProvider
 
         /* citation_publisher */
         $altmetrics[] = [
-            'type' => "citation_provider",
+            'type' => "citation_publisher",
             'value' => (string) self::getPublisher($record )
         ];
 
@@ -270,6 +270,22 @@ class AltmetricsProvider implements RIFCSProvider
         // registryObject/collection/citationInfo/citationMetadata/date[@type=’created’]
         foreach ($citationMedataDates AS $date) {
             if ((string) $date['type'] == 'created') {
+                $publicationDate = DatesProvider::formatDate((string) $date, $format);
+            }
+        }
+        if ($publicationDate) return $publicationDate;
+
+        // registryObject/collection/citationInfo/citationMetadata/date[@type=’available’]
+        foreach ($citationMedataDates AS $date) {
+            if ((string) $date['type'] == 'available') {
+                $publicationDate = DatesProvider::formatDate((string) $date, $format);
+            }
+        }
+        if ($publicationDate) return $publicationDate;
+
+        // registryObject/collection/citationInfo/citationMetadata/date[@type=’startPublicationDate’]
+        foreach ($citationMedataDates AS $date) {
+            if ((string) $date['type'] == 'startPublicationDate') {
                 $publicationDate = DatesProvider::formatDate((string) $date, $format);
             }
         }
