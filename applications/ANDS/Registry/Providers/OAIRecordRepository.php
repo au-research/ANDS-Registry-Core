@@ -66,7 +66,7 @@ class OAIRecordRepository implements OAIRepository
             'repositoryName' => 'Australian National Data Services (ANDS)',
             'baseURL' => $this->getBaseUrl(),
             'protocolVersion' => '2.0',
-            'adminEmail' => 'services@ands.org.au',
+            'adminEmail' => 'services@ardc.edu.au',
             'earliestDatestamp' => $earliestDate,
             'deletedRecord' => 'transient',
             'granularity' => 'YYYY-MM-DDThh:mm:ssZ'
