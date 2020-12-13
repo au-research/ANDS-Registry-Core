@@ -121,7 +121,7 @@ else
 								if ($this->user->affiliations())
 								{
 									echo '<small><span class="label label-warning"> &nbsp; ! &nbsp;</span> You are already registered as an affiliate with an organisation.</small><br/>';
-									echo '<small><span class="label label-important"> &nbsp; ! &nbsp;</span> Please contact <a href="mailto:services@ands.org.au">services@ands.org.au</a> to register for a new Data Source.</small>';
+									echo '<small><span class="label label-important"> &nbsp; ! &nbsp;</span> Please contact <a href="mailto:services@ardc.edu.au">services@ardc.edu.au</a> to register for a new Data Source.</small>';
 								}
 								else
 								{
@@ -130,7 +130,7 @@ else
 								//		you may wish to use the <a href="'.registry_url('publish_my_data').'"><b>Publish My Data self-service tool</b></a>.</p>
 								//		<p><small><em>Note:</em> Publish My Data self-service is intended for use by researchers at organisations where there is no formal data archiving service and where ANDS has no distributed services in place.
 								//		Please first check for processes within your institution before using the self-service facility.</small></p></small><br/>';
-									echo '<p>If you would like to contribute to Research Data Australia, please contact <a href="mailto:services@ands.org.au">services@ands.org.au</a>.</p>';
+									echo '<p>If you would like to contribute to Research Data Australia, please contact <a href="mailto:services@ardc.edu.au">services@ardc.edu.au</a>.</p>';
 								}
 							}
 							elseif(sizeof($data_sources)>0){

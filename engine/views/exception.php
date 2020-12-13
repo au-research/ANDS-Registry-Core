@@ -7,6 +7,6 @@
   
   <pre style='padding:15px;'><strong><?=$message;?></strong></pre>
  
-  You may wish to <a href="javascript:history.go(-1);">return to the previous page</a> or contact <?=mailto('services@ands.org.au');?> for further support.
+  You may wish to <a href="javascript:history.go(-1);">return to the previous page</a> or contact <?=mailto('services@ardc.edu.au');?> for further support.
   </div>
 </div>

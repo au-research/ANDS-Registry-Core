@@ -267,7 +267,7 @@ Please note that changes listed above are the planned features, subject to  time
 
 A separate email with the list of impact and requirements for each change will be sent out before the release. 
 
-For any comments or questions, please email [services@ands.org.au](mail:toservices@ands.org.au). Thank you.
+For any comments or questions, please email [services@ardc.edu.au](mailto:services@ardc.edu.au). Thank you.
 
 
 ## Release 25
@@ -327,8 +327,8 @@ Release 24 of ANDS Online Services is scheduled for implementation on **5 Ju
 *   ORCID Wizard: Update the API to prevent relatedInfo/identifier from being picked up as a collection(works) identifier 
 
 Please also note: 
-*   As part of Release 24 ANDS will be migrating it's [services.ands.org.au](http://services.ands.org.au/) domain to a new host. This however should not impact any of our service consumers. If you have any concerns please get in contact before the 5th July. 
+*   As part of Release 24 ANDS will be migrating its [services.ands.org.au](http://services.ands.org.au/) domain to a new host. This however should not impact any of our service consumers. If you have any concerns please get in contact before the 5th July. 
 
 A reminder email will be sent out on implementation day.
 
-Please schedule your activities accordingly. For any comments or questions, please email [services@ands.org.au](mailto:services@ands.org.au). Thank you.
+Please schedule your activities accordingly. For any comments or questions, please email [services@ardc.edu.au](mailto:services@ardc.edu.au). Thank you.

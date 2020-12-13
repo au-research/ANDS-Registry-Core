@@ -8,8 +8,12 @@
     <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,200,200italic,300,300italic,400italic,600,600italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Spectral' rel='stylesheet' type='text/css'>
+    @if(isset($ro->altmetrics[0]) && $ro->core['class'] == 'collection')
+        @foreach($ro->altmetrics as $metric)
+        <meta property="{{$metric['type']}}" content="{{$metric['value']}}"/>
+        @endforeach
+    @endif
     <meta property="og:type" content="article"/>
-
     @if(isset($ro))
         @if(isset($ro->core['title']))
         <meta property="og:title" content="{{$ro->core['title']}}"/>
