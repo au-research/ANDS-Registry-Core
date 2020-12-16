@@ -1,3 +1,8 @@
+
+## Release 40
+**Research Data Australia**
+* Add meta tags to head element of collection view pages to support Altmetrics.
+
 ## Release 39
 **DOI Service**
 * Decommission My DOIs. Manual minting via My DOIs will no longer be available through the RDA Registry. All manual minting will be performed through DataCite Fabrica.
