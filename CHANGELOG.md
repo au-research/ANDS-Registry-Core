@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 
 
+## Release 40
+* Add meta tags to head element of collection view pages to support Altmetrics
+
+
 ## Release 36
 
 * Create resolvable DOI links using https://doi.org instead of http://dx.doi.org to conform with the DOI display guidelines 
