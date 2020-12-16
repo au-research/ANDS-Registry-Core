@@ -1,3 +1,26 @@
+
+## Release 40
+**Research Data Australia**
+* Add meta tags to head element of collection view pages to support Altmetrics.
+
+## Release 39
+**DOI Service**
+* Decommission My DOIs. Manual minting via My DOIs will no longer be available through the RDA Registry. All manual minting will be performed through DataCite Fabrica.
+**Research Data Australia**
+* Add new harvest method that can crawl asynchronously loaded JSON-LD.
+* Add new harvest method to support the harvesting of grant information from the ARC Data Portal.
+
+## Release 38
+* Privacy Policy update.
+* Restore the My RDA Google login button.
+* Implement support for crosswalking between the same harvest metadata prefix.
+
+## Release 37
+* New harvest method to support harvesting from APIs that implement the US Government Project Open Data API.
+* New harvest method to support harvesting from the Australian Research Council Grants portal API.
+* Increase allocated processing time for Scholix metadata to prevent process from failing.
+* Fix bug where cache for graph visualisation is not refreshed after record content is updated.
+
 ## Release 36 (12 March 2020)
 **Research Data Australia**
 * Create resolvable DOI links using https://doi.org instead of http://dx.doi.org to conform with the DOI display guidelines 
