@@ -37,7 +37,10 @@
                 @else
                     <li><a href="{{portal_url('profile')}}">MyRDA</a></li>
                 @endif
-
+                @if(!(get_cookie("rda_long_survey")))
+                <li><a href="{{portal_url('page/survey')}}" class="click_to_long">
+                        <button  id="click_to_long" >RDA Survey</button></a></li>
+                @endif
                 <?php
                     $profile_image = profile_image();
                 ?>
@@ -47,8 +50,17 @@
             </ul>
         </nav>
     </div>
+
 </div>
+
+
+
+
 @if(!isBot())
+    @if(!(get_cookie("rda_short_survey")))
+        @include('includes/short_survey')
+    @endif
+
     <button class="yellow_button feedback_button">Feedback</button>
     <button class="yellow_button help_button" data-toggle="modal" data-target="#help_modal"><i class="fa fa-question-circle"></i> Help</button>
     @include('includes/help-modal')

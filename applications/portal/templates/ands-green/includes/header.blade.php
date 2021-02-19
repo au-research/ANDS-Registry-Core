@@ -54,12 +54,12 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="yes" name="apple-mobile-web-app-capable">
     @include('includes/styles')
-
+    <link href="https://unpkg.com/survey-jquery@1.8.29/modern.css" type="text/css" rel="stylesheet" />
+    <script src="https://unpkg.com/survey-jquery@1.8.29/survey.jquery.min.js"></script>
 </head>
-
 <!-- Environment Indicator -->
 @if(ENVIRONMENT!='production')
 	<div class="environment" style="background:{{\ANDS\Util\config::get('app.environment_colour')}};color:white;padding:5px 10px;">
-		<h3>{{\ANDS\Util\config::get('app.environment_name')}} - {{ENVIRONMENT}}</h3>
+		<h3>{{\ANDS\Util\config::get('app.environment_name')}} - {{ENVIRONMENT}} ...</h3>
 	</div>
 @endif

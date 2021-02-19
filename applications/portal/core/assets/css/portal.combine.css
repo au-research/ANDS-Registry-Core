@@ -21504,14 +21504,7 @@ span.custom1 a
 .qtipmodal-ie6fix{
 	position: absolute !important;
 }
-/*! 
- * angular-loading-bar v0.7.1
- * https://chieffancypants.github.io/angular-loading-bar
- * Copyright (c) 2015 Wes Cruver
- * License: MIT
- */
-
-#loading-bar,#loading-bar-spinner{pointer-events:none;-webkit-pointer-events:none;-webkit-transition:350ms linear all;-moz-transition:350ms linear all;-o-transition:350ms linear all;transition:350ms linear all}#loading-bar.ng-enter,#loading-bar.ng-leave.ng-leave-active,#loading-bar-spinner.ng-enter,#loading-bar-spinner.ng-leave.ng-leave-active{opacity:0}#loading-bar.ng-enter.ng-enter-active,#loading-bar.ng-leave,#loading-bar-spinner.ng-enter.ng-enter-active,#loading-bar-spinner.ng-leave{opacity:1}#loading-bar .bar{-webkit-transition:width 350ms;-moz-transition:width 350ms;-o-transition:width 350ms;transition:width 350ms;background:#29d;position:fixed;z-index:10002;top:0;left:0;width:100%;height:2px;border-bottom-right-radius:1px;border-top-right-radius:1px}#loading-bar .peg{position:absolute;width:70px;right:0;top:0;height:2px;opacity:.45;-moz-box-shadow:#29d 1px 0 6px 1px;-ms-box-shadow:#29d 1px 0 6px 1px;-webkit-box-shadow:#29d 1px 0 6px 1px;box-shadow:#29d 1px 0 6px 1px;-moz-border-radius:100%;-webkit-border-radius:100%;border-radius:100%}#loading-bar-spinner{display:block;position:fixed;z-index:10002;top:10px;left:10px}#loading-bar-spinner .spinner-icon{width:14px;height:14px;border:solid 2px transparent;border-top-color:#29d;border-left-color:#29d;border-radius:10px;-webkit-animation:loading-bar-spinner 400ms linear infinite;-moz-animation:loading-bar-spinner 400ms linear infinite;-ms-animation:loading-bar-spinner 400ms linear infinite;-o-animation:loading-bar-spinner 400ms linear infinite;animation:loading-bar-spinner 400ms linear infinite}@-webkit-keyframes loading-bar-spinner{0%{-webkit-transform:rotate(0deg);transform:rotate(0deg)}100%{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@-moz-keyframes loading-bar-spinner{0%{-moz-transform:rotate(0deg);transform:rotate(0deg)}100%{-moz-transform:rotate(360deg);transform:rotate(360deg)}}@-o-keyframes loading-bar-spinner{0%{-o-transform:rotate(0deg);transform:rotate(0deg)}100%{-o-transform:rotate(360deg);transform:rotate(360deg)}}@-ms-keyframes loading-bar-spinner{0%{-ms-transform:rotate(0deg);transform:rotate(0deg)}100%{-ms-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes loading-bar-spinner{0%{transform:rotate(0deg);transform:rotate(0deg)}100%{transform:rotate(360deg);transform:rotate(360deg)}}.navbar {
+.navbar {
 	margin-bottom:0px;
 }
 span.dynatree-empty,
@@ -21554,6 +21547,8 @@ span.dynatree-selected a
     font-style: italic;
     font-weight: bold;
 }
+
+
 
 .feedback_button {
     box-shadow: -1px 1px 2px rgba(0, 0, 0, 0.5);
@@ -21929,7 +21924,183 @@ h2 {
 .input-group-btn:last-child > .btn:not(:last-child):not(.dropdown-toggle),
 .input-group-btn:last-child > .btn-group:not(:last-child) > .btn {
     bottom-radius: 4px;
-}/**
+}
+
+div.sv_window {
+    position: absolute;
+    background-color: cadetblue;
+    padding: 1px;
+    top: 10%;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    height: fit-content;
+    width: fit-content;
+    width-max: 100%;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.2;
+    text-align: left;
+    text-align: start;
+    text-decoration: none;
+    text-shadow: none;
+    text-transform: none;
+    letter-spacing: normal;
+    word-break: normal;
+    word-spacing: normal;
+    word-wrap: normal;
+    white-space: normal;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    line-break: auto;
+    z-index: 100;
+    overflow: auto;
+}
+
+.sv_window_title {
+    padding: 10px;
+    cursor: move;
+    z-index: 10;
+    background-color: #00819D;
+}
+
+.sv-root-modern .sv-footer__complete-btn {
+    background-color: #00819D;
+}
+
+.sv_main.sv_default_css input[type="button"], .sv_default_css button {
+    color: white;
+    background-color: #00819D;
+}
+
+.sv-question__title {
+    position: relative;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0.25em 0.44em;
+    cursor: default;
+    font-size: 1.25em;
+    word-break: break-word;
+}
+.sv-container-modern {
+    color: #404040;
+    font-size: 12px;
+    font-family: "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.sv_main .sv_q_num + span {
+    font-size: 14px;
+}
+
+[data-toggle="collapse"] .fa:before {
+    content: "\f139";
+}
+[aria-expanded="true"] .fas:before {
+    content: "\f056";
+}
+
+[data-toggle="collapse"].collapsed .fa:before {
+    content: "\f13a";
+}
+
+.survey_button {
+    -moz-box-shadow: 3px 3px 5px #535353;
+    -webkit-box-shadow: 3px 3px 5px #535353;
+    box-shadow: 3px 3px 5px #535353;
+    -moz-border-radius: 6px 6px 6px 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px 6px 6px 6px;
+    position: fixed;
+    bottom: 10px;
+    left:10px;
+    display: inline;
+    white-space: nowrap;
+    text-decoration: none !important;
+    font-family: 'Roboto',sans-serif;
+    cursor: pointer;
+    font-size: 14px;
+    max-height:90%;
+    z-index: 99;
+    bottom:0;
+  /*  border: 0; */
+    font-size: 100%;
+    vertical-align: baseline;
+    overflow: auto;
+    max-width: fit-content;
+    margin-right: 40px;
+    z-index:999;
+    float: none !important;
+}
+.survey_button .panel{
+    margin-bottom: 0 !important;
+}
+.survey_button .panel-title {
+    margin-bottom: 0 !important;
+    /* padding-left: 40px; */
+    padding-right: 40px;
+}
+
+.row{
+    margin-top:40px;
+    padding: 0 10px;
+}
+
+.clickable{
+    cursor: pointer;
+}
+
+.panel-heading span {
+    margin-top: -20px;
+    font-size: 15px;
+}
+
+.panel-body .sv_nav1 {
+
+   display: block;
+    white-space: nowrap;
+    text-decoration: none !important;
+    font-family: 'Roboto',sans-serif;
+    cursor: pointer;
+    font-size: 14px;
+    z-index: 99;
+    border: 1px;
+    font-size: 100%;
+    vertical-align: middle;
+    horiz-align: center;
+    margin: 0;
+    overflow: auto;
+    max-width: fit-content;
+    padding-bottom: 10px;
+    margin-left:20px;
+
+
+}
+.panel-body .sv_nav {
+
+    display: block;
+    white-space: nowrap;
+    text-decoration: none !important;
+    font-family: 'Roboto',sans-serif;
+    cursor: pointer;
+    font-size: 14px;
+    z-index: 99;
+    border: 1px;
+    font-size: 100%;
+    vertical-align: middle;
+    margin: 0;
+    overflow: auto;
+    margin-top: -46px;
+    margin-left: 176px;
+
+
+}
+/**
  * Single Purpose Content Styling
  * This file is for the single purpose styling
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
