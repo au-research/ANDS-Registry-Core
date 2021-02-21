@@ -166,7 +166,7 @@ jQuery(document).ready(function( $ ) {
             survey
                 .onComplete
                 .add(function (result) {
-                    $.getJSON('http://gd.geobytes.com/GetCityDetails?callback=?', function(ipdata) {
+                    $.getJSON('https://gd.geobytes.com/GetCityDetails?callback=?', function(ipdata) {
                         var user_ip =  ipdata.geobytesipaddress;
                         $.ajax({
                             url: '/survey_results',
@@ -196,7 +196,7 @@ jQuery(document).ready(function( $ ) {
         surveyLong
             .onComplete
             .add(function (result) {
-                $.getJSON('http://gd.geobytes.com/GetCityDetails?callback=?', function (ipdata) {
+                $.getJSON('https://gd.geobytes.com/GetCityDetails?callback=?', function (ipdata) {
                     var user_ip = ipdata.geobytesipaddress;
                     $.ajax({
                         url: '/survey_results',
