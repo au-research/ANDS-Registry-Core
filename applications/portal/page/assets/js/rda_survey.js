@@ -6,10 +6,9 @@ defaultThemeColors["$header-color"] = "#00819D";
 defaultThemeColors["$header-background-color"] = "#4a4a4a";
 defaultThemeColors["$body-container-background-color"] = "#f8f8f8";
 
-Survey
-    .StylesManager
-    .applyTheme();
-var surveyID = "rda_short_survey"
+Survey.StylesManager.applyTheme("modern");
+
+var surveyID = "rda_short_survey";
 var longSurveyID ="rda_long_survey";
 var hasrun = getCookie(surveyID);
 var hasrunlong = getCookie(longSurveyID);
@@ -155,8 +154,6 @@ var surveyJSON = {
     "completeText": "Submit"
 }
 
-Survey.StylesManager.applyTheme("modern");
-
 jQuery(document).ready(function( $ ) {
     if(!hasrun) {
         var survey = new Survey.Model(surveyJSON);
@@ -166,13 +163,20 @@ jQuery(document).ready(function( $ ) {
             survey
                 .onComplete
                 .add(function (result) {
-                    $.getJSON('https://gd.geobytes.com/GetCityDetails?callback=?', function(ipdata) {
-                        var user_ip =  ipdata.geobytesipaddress;
+                     $.get('https://www.cloudflare.com/cdn-cgi/trace', function (ipdata) {
+                        words = ipdata.split('\n');
+                        for (i = 0; i < words.length; i++) {
+                            if (words[i].substr(0, 3) == "ip=") {
+                                user_ip = words[i].substr(3);
+                                break;
+                            }
+                        }
                         $.ajax({
                             url: '/survey_results',
                             type: 'POST',
                             data:{"survey": surveyID, "results": JSON.stringify(result.data), "user_ip": user_ip},
                             success: function (response) {
+                                console.log(response);
                                 var theSurvey = $("#survey_button").css("visibility","hidden");
                             },
                             error: function (response) {
@@ -196,8 +200,14 @@ jQuery(document).ready(function( $ ) {
         surveyLong
             .onComplete
             .add(function (result) {
-                $.getJSON('https://gd.geobytes.com/GetCityDetails?callback=?', function (ipdata) {
-                    var user_ip = ipdata.geobytesipaddress;
+                $.get('https://www.cloudflare.com/cdn-cgi/trace', function (ipdata) {
+                    words = ipdata.split('\n');
+                    for (i = 0; i < words.length; i++) {
+                        if (words[i].substr(0, 3) == "ip=") {
+                            user_ip = words[i].substr(3);
+                            break;
+                        }
+                    }
                     $.ajax({
                         url: '/survey_results',
                         type: 'POST',
@@ -219,7 +229,6 @@ jQuery(document).ready(function( $ ) {
         });
     }
 });
-
 
 function getCookie(cname) {
     var name = cname + "=";
@@ -278,8 +287,10 @@ var existCondition = setInterval(function() {
         $('.survey_button .sv-footer').css("margin-top","10px");
     }
 }, 100); // chec  k every 100ms
-var footerClass = $(".sv-footer");
-console.log(footerClass);
+
+
+/* var footerClass = $(".sv-footer");
+console.log(footerClass); */
 /* footerClass[0].innerHTML = footerClass[0].innerHTML + "<p> we can add anything </p>"; */
 
 

@@ -70,7 +70,9 @@ class Dispatcher extends MX_Controller {
             $json["user_ip"] = $_POST["user_ip"];
             $json["results"] = $_POST["results"];
             $output = json_encode($json, JSON_FORCE_OBJECT);
-            fwrite($fp, $output);
+
+            fwrite($fp, $output.PHP_EOL);
+            fclose($fp);
             echo $output;
             return;
 
