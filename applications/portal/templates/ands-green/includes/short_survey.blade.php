@@ -83,16 +83,16 @@
 </style>
 <div class="survey_button" id="survey_button">
 
-    <div class="panel panel-primary">
-        <div class="panel-heading">
-            <h3 class="panel-title">Research Data Australia - Short Survey </h3>
-            <span class="pull-right">
+    <div class="panel panel-primary" id="survey_focus_id">
+        <div class="panel-heading" id="survey_focus_id">
+            <h3 class="panel-title" id="survey_focus_id">Research Data Australia - Short Survey </h3>
+            <span class="pull-right" id="survey_focus_id">
                 <a style="color:white" onclick="$('#collapsed-chevron').toggleClass('fa-rotate-180')"
-                    data-toggle="collapse" href="#collapse">
+                    data-toggle="collapse" href="#collapse" id="collapse_chevron">
    <i class="fa fa-chevron-circle-up" id="collapsed-chevron"></i></a></span>
         </div>
         <div class="panel-body collapse in" id="collapse">
-            <div id="surveyContainer"></div>
+            <div id="surveyContainer" id="survey_focus_id"></div>
             <div id="surveyResult"></div>
         </div>
     </div>

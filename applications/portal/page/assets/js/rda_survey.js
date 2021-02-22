@@ -59,7 +59,7 @@ var surveyJSON = {
     "pages":
         [{"name":"page1",
             "elements":[{"type":"html","name":"introduction","html":"" +
-                    "<p>Please complete a short survey.</p>" +
+                    "<p>Please complete a short, 2 question survey.</p>" +
                     "<div class='sv_nav1'>" +
                     "<input width='250' id='survey_not_now' type='button' value='Not now' class='sv_prev_btn'> &nbsp;" +
                     "<input type='button'  width='250' id='survey_never' value='Never' class='sv_prev_btn'> &nbsp;" +
@@ -246,11 +246,11 @@ function getCookie(cname) {
     return "";
 }
 
-function createCookie(name,value,days){
+function createCookie(name,value,hours){
     var expires = "";
-    if (days) {
+    if (hours) {
         var date = new Date();
-        date.setTime(date.getTime()+(days*24*60*60*1000));
+        date.setTime(date.getTime()+(hours*60*60*1000));
         expires = "; expires="+date.toGMTString();
     }
     document.cookie = name+"="+value+expires+"; path=/";
@@ -275,7 +275,7 @@ $(document).on('click', '#survey_never', function(e){
 })
 
 $(document).on('click', '#survey_not_now', function(e){
-    createCookie(surveyID,true,1);
+    createCookie(surveyID,true,4);
     var theSurvey = $("#survey_button").css("visibility","hidden");
 
 })
@@ -283,14 +283,9 @@ $(document).on('click', '#survey_not_now', function(e){
 var existCondition = setInterval(function() {
     if ($('#survey_not_now').length <= 0) {
         clearInterval(existCondition);
-
         $('.survey_button .sv-footer').css("margin-top","10px");
     }
-}, 100); // chec  k every 100ms
+}, 100); // check every 100ms
 
-
-/* var footerClass = $(".sv-footer");
-console.log(footerClass); */
-/* footerClass[0].innerHTML = footerClass[0].innerHTML + "<p> we can add anything </p>"; */
 
 
