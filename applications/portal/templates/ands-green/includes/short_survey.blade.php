@@ -14,13 +14,12 @@
         color: #fff;
         text-decoration: none;
     }
-  /*  .survey_button .sv-footer {
+    .survey_button .sv-footer {
         min-height: 2em;
         padding: 2.5em 0 0.87em 0;
         margin-left: 194px;
         margin-top: -98px;
-        position: fixed;
-    } */
+    }
     .sv-container-modern {
         color: #404040;
         font-size: 14px;
