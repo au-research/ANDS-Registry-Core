@@ -30,6 +30,11 @@
             height: 38px;
             text-decoration: none;
         }
+        .sv-root-modern input.sv-text, textarea.sv-comment, select.sv-dropdown {
+            color: rgb(64, 64, 64);
+            background-color: transparent;
+            border: 1px ridge #e9e9e9;
+        }
 
     </style>
     <article>

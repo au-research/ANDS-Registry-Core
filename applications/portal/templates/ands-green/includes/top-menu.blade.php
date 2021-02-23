@@ -57,7 +57,7 @@
 
 
 @if(!isBot())
-    @if(!(get_cookie("rda_short_survey")))
+    @if(!get_cookie("rda_short_survey") && !get_cookie("rda_long_survey"))
         @include('includes/short_survey')
     @endif
 
