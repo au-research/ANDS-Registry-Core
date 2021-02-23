@@ -29,7 +29,9 @@ var longSurveyJSON  = {"pages":
                     "(for example, if the system retrieved relevant data records to satisfy your search).</p>\n\n       " +
                     "<p> We don’t ask your name, email address, and employer name, unless you are willing to be contacted for a further interview. </p>\n\n" +
                     "       <p> If you have any question about your response after you participated the survey, you can contact the principle investigator of the project via \n " +
-                    "      email: data-discovery@ardc.edu.au</p>\n\n       <p> Your participation in this survey is completely voluntary. You can choose not to participate. \n " +
+                    "      email: <A href='&#109;&#97;&#105;&#108;&#116;&#111;&#58;%64%61%74%61%2D%64%69%73%63%6F%76%65%72%79%40%61%72%64%63%2E%65%64%75%2E%61%75'>" +
+                    "data-discovery@ardc.edu.au</A> </p>" +
+                    "<p> Your participation in this survey is completely voluntary. You can choose not to participate. \n " +
                     "      If you decide to participate in this survey, you can withdraw at any time.</p>\n        \n        <h3>What are we going to do with your survey response?</h3>\n" +
                     "        <p>The project follows the <a href='https://researchdata.edu.au/page/privacy' target='_blank'>ARDC Privacy Policy</a>. We will treat all survey responses anonymously. \n       " +
                     " All responses will be stored security in a file system that is only accessible to project members.  \n       " +
@@ -98,12 +100,12 @@ var longSurveyJSON  = {"pages":
                          {"value":"service","text":"Data service"},
                          {"value":"grant_projects","text":"Grant/Projects"},
                          {"value":"research_paper","text":"Research paper"}],
-                     "hasOther":true,"otherText":"Other, please specify:","colCount":2},
+                     "hasComment":true,"commentText":"Other, please specify:","colCount":2},
                  {"type":"checkbox","name":"primary_purpose","title":"What is the primary purpose for you to search for data?","choices":[
                      {"value":"research","text":"For Research"},
                          {"value":"teaching","text":"For Teaching/training"},
                          {"value":"policy_making","text":"For Policy making"}
-                         ],"hasComment":true,"otherText":"Other (or if you have any comment), please specify:"},
+                         ],"hasComment":true,"commentText":"Other (or if you have any comment), please specify:"},
                  {"type":"checkbox","name":"major_criteria","title":"What are the major criteria/characteristics  for the dataset you are searching for?","choices":[
                      {"value":"subject_relevance","text":"Subject relevance"},
                          {"value":"certain_organisation","text":"From a certain organisation"},
@@ -113,11 +115,12 @@ var longSurveyJSON  = {"pages":
                          {"value":"specific_location","text":"From a specific location(s)"},
                          {"value":"include_some_variables","text":"Include some variables"},
                          {"value":"instruction_to_cite","text":"Instruction of how to cite the data"}
-                         ],"hasComment":true,"otherText":"Other, please specify:","colCount":2}]},
+                         ],"hasComment":true,"commentText":"Other, please specify:","colCount":2}]},
             {"name":"page3","elements":[{"type":"radiogroup","name":"found_dataset","title":"Have you found the dataset you are looking for from Research Data Australia? ","choices":[
                         {"value":"item1","text":"Yes, I found exactly I was looking for"},
-                        {"value":"item2","text":"Kind of, not exactly what I searched for, but I found something lead to further exploration"}
-                        ],"hasOther":true,"otherText":"No, I didn’t get any useful information. Please specify why not (e.g. no dataset fits my criteria)"},
+                        {"value":"item2","text":"Kind of, not exactly what I searched for, but I found something lead to further exploration"},
+                        {"value":"item3","text":"No, I didn’t get any useful information"}
+                        ],"hasComment":true,"commentText":"If no, please specify why not (e.g. no dataset fits my criteria)"},
                     {"type":"rating","name":"rate_rda","title":"How do you rate your data search experience with Research Data Australia",
                         "minRateDescription":"Extremely unsatisfied ",
                         "maxRateDescription":"Extremely satisfied"},
@@ -125,7 +128,7 @@ var longSurveyJSON  = {"pages":
                     ]},
 
          {"name":"page4","elements":[{"type":"ranking","name":"most_used_search_tool","title":"What is the most used tool/website/other methods you search for data? (rank from high to low)",
-                 "isRequired":true,"hasComment":true,"choices":[
+                 "isRequired":false,"hasComment":true,"commentText":"Other, please specify","choices":[
                      {"value":"web_search_engines","text":"Web search engines"},
                      {"value":"web_data_search_tools","text":"Web data search tools"},
                      {"value":"repository_external","text":"Data repository/Data catalogue external to my institution/organisation (e.g, Research Data Australia, data.gov, Zenodo, DRYAD, etc)"},
