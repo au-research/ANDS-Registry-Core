@@ -154,7 +154,7 @@ var surveyJSON = {
     "pages":
         [{"name":"page1",
             "elements":[{"type":"html","name":"introduction","html":"" +
-                    "<p>Please complete a short, 2 question survey.</p>" +
+                    "<p>Please complete this very short survey (only two questions) to improve the service for you.</p>" +
                     "<div class='sv_nav1'>" +
                     "<input width='250' id='survey_not_now' type='button' value='Not now' class='sv_prev_btn'> &nbsp;" +
                     "<input type='button'  width='250' id='survey_never' value='Never' class='sv_prev_btn'> &nbsp;" +
@@ -167,43 +167,43 @@ var surveyJSON = {
                     "type": "checkbox",
                     "name": "describe_yourself",
                     "minWidth": "300px",
-                    "title": "How do you describe yourself?",
+                    "title": "How do you describe yourself? (Please mark/tick all that apply)",
                     "choices": [
                         {
                             "value": "researcher",
-                            "text": "A researcher"
+                            "text": "Research/Scientist"
+                        },
+                        {
+                            "value": "University_employee",
+                            "text": "University/Research Institute employee"
                         },
                         {
                             "value": "student ",
-                            "text": "A student "
-                        },
-                        {
-                            "value": "Data_manager ",
-                            "text": "Data manager "
-                        },
-                        {
-                            "value": "Librarian_archivist_supporter",
-                            "text": "Librarian, archivist or research/data supporter"
-                        },
-                        {
-                            "value": "Policy_maker",
-                            "text": "Policy maker/supporter"
-                        },
-                        {
-                            "value": "Educator_school",
-                            "text": "Educator from primary/secondary school"
-                        },
-                        {
-                            "value": "Government_employee",
-                            "text": "Government employee (non research)"
+                            "text": "Student "
                         },
                         {
                             "value": "Industry_employee",
                             "text": "Industry/business employee"
                         },
                         {
-                            "value": "University_employee",
-                            "text": "University/Research Institute employee"
+                            "value": "Data_manager ",
+                            "text": "Data manager "
+                        }                        ,
+                        {
+                            "value": "Government_employee",
+                            "text": "Government employee (non research)"
+                        },
+                        {
+                            "value": "Librarian_archivist_supporter",
+                            "text": "Librarian, archivist or research/data supporter"
+                        },
+                        {
+                            "value": "Educator_school",
+                            "text": "Educator from primary/secondary school"
+                        },
+                        {
+                            "value": "Policy_maker",
+                            "text": "Policy maker/supporter"
                         }
                     ],
                     "hasComment": true,
@@ -213,7 +213,7 @@ var surveyJSON = {
                     "type": "checkbox",
                     "name": "looking_for",
                     "minWidth": "300px",
-                    "title": "What dataset, information or other resources (e.g. project, grant, data service) are you looking for this visit? ",
+                    "title": "What dataset, information or other resources (e.g. project, grant, data service) are you looking for this visit? (Please mark/tick all that apply)",
                     "choices": [
                         {
                             "value": "Specific",
@@ -252,6 +252,10 @@ var surveyJSON = {
 jQuery(document).ready(function( $ ) {
     if(!hasrun) {
         var survey = new Survey.Model(surveyJSON);
+        survey.completedHtml = "<p>Thank you for helping out!</p>" +
+        "<p>We also conduct a longer survey with 13 questions.</p>" +
+            "<p> If you are willing to participate in the longer survey, please click " +
+            " <a href='/page/survey'>here</a></p>";
         survey.showCompletedPage = true;
         survey.firstPageIsStarted = true;
         survey.startSurveyText = "Start >>";
@@ -271,7 +275,7 @@ jQuery(document).ready(function( $ ) {
                             type: 'POST',
                             data:{"survey": surveyID, "results": JSON.stringify(result.data), "user_ip": user_ip},
                             success: function (response) {
-                                $("#survey_button").css("visibility","hidden");
+                               // $("#survey_button").css("visibility","hidden");
                             },
                             error: function (response) {
                                 console.log(response);

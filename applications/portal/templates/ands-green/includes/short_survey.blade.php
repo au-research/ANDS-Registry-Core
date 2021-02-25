@@ -17,8 +17,9 @@
     .survey_button .sv-footer {
         min-height: 2em;
         padding: 2.5em 0 0.87em 0;
-        margin-left: 194px;
-        margin-top: -98px;
+        margin-left: 250px;
+        margin-top: -30px;
+        align-content: center;
     }
     .sv-container-modern {
         color: #404040;
@@ -50,6 +51,30 @@
 
     }
 
+    .sv_nav1 input[type="button"], .sv_default_css button {
+        color: white;
+        /*background-color: #00819D; */
+        margin-bottom: 15px;
+        background: linear-gradient(#00A2C4, #00819D);
+        border: .5px solid #00b0d5;
+        border-radius: 4px;
+        font-family: 'Roboto',sans-serif;
+        padding: 3px 12px;
+        height: 28px;
+        text-decoration: none;
+
+    }
+    .sv_nav1 input[type="button"]:hover {
+        background: #026d84;
+        border: .5px solid #00A2C4;
+        border-radius: 4px;
+        color: #fff;
+        font-family: 'Roboto',sans-serif;
+        padding: 6px 12px;
+        height: 28px;
+        text-decoration: none;
+
+    }
     .sv-selectbase__label {
         display: block;
         box-sizing: border-box;
@@ -59,25 +84,50 @@
 
     }
     .panel-body .sv_nav1 {
-        display: inline-flex;
+        position: fixed;
+        bottom: -20px;
+        left: 220px;
         white-space: nowrap;
         text-decoration: none !important;
-        font-family: 'Roboto',sans-serif;
+        font-family: 'Roboto', sans-serif;
         cursor: pointer;
         font-size: 14px;
         z-index: 99;
         border: 1px;
         font-size: 100%;
-        vertical-align: middle;
-        horiz-align: center;
-        margin-left:20px;
-        margin-right: 2px;
     }
 
     @media only screen and (max-width: 1000px) {
 
         .sv-container-modern{
             margin: 10px;
+        }
+    }
+    @media only screen and (min-width: 1000px) {
+        .sv-body__page, .sv-body__footer {
+            margin-right: 10px;
+            margin-left: 10px;
+        }
+    }
+
+    .sv-completedpage {
+        font-family: Raleway;
+        font-size: 1em;
+        box-sizing: border-box;
+        height: 14em;
+        padding-top: 4.5em;
+        padding-bottom: 4.5em;
+        text-align: center;
+        color: #404040;
+        background-color: #f5f5f5;
+    }
+    .sv-completedpage:before {
+        display: none;
+    }
+    @media only screen and (min-width: 1000px) {
+        .sv-completedpage {
+            margin-left: calc(10px + 0.293em);
+            margin-right: 10px;
         }
     }
 </style>
