@@ -271,7 +271,7 @@ jQuery(document).ready(function( $ ) {
                             type: 'POST',
                             data:{"survey": surveyID, "results": JSON.stringify(result.data), "user_ip": user_ip},
                             success: function (response) {
-                                var theSurvey = $("#survey_button").css("visibility","hidden");
+                                $("#survey_button").css("visibility","hidden");
                             },
                             error: function (response) {
                                 console.log(response);
@@ -284,6 +284,10 @@ jQuery(document).ready(function( $ ) {
                 isExpanded: true,
                 scrollable: true,
             });
+    }
+
+    if ($('#surveyContainerLong').length > 0) {
+        $("#survey_button").css("visibility","hidden");
     }
 
     if(!hasrunlong) {
