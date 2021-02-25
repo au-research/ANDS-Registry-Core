@@ -492,17 +492,6 @@ div.sv_window {
     font-size: 14px;
 }
 
-[data-toggle="collapse"] .fa:before {
-    content: "\f139";
-}
-[aria-expanded="true"] .fas:before {
-    content: "\f056";
-}
-
-[data-toggle="collapse"].collapsed .fa:before {
-    content: "\f13a";
-}
-
 .survey_button {
     -moz-box-shadow: 3px 3px 5px #535353;
     -webkit-box-shadow: 3px 3px 5px #535353;

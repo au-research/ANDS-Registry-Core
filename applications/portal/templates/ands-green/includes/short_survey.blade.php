@@ -89,7 +89,7 @@
             <span class="pull-right" id="survey_focus_id">
                 <a style="color:white" onclick="$('#collapsed-chevron').toggleClass('fa-rotate-180')"
                     data-toggle="collapse" href="#collapse" id="collapse_chevron">
-   <i class="fa fa-chevron-circle-up" id="collapsed-chevron"></i></a></span>
+   <i class="fa fa-chevron-circle-down" id="collapsed-chevron"></i></a></span>
         </div>
         <div class="panel-body collapse in" id="collapse">
             <div id="surveyContainer" id="survey_focus_id"></div>
