@@ -14,47 +14,42 @@ var hasrun = getCookie(surveyID);
 var hasrunlong = getCookie(longSurveyID);
 var longSurveyJSON  = {"pages":
         [{"name":"page1",
-            "elements":[{"type":"html","name":"introduction","html":"<h3>Why is this survey being conducted?</h3>\n" +
-                    "       <p> Research Data Australia (RDA) is the data discovery service of the Australian Research Data Commons (ARDC).\n" +
-                    "       RDA helps data seekers find, access, and reuse data from over one hundred Australian research organisations, government agencies, and " +
-                    "cultural institutions.\n       We do not store the data itself here but provide descriptions of, and links to, the data from our " +
-                    "data publishing partners.</p>\n\n        <p>ARDC is conducting a project on how to improve the data discovery service. " +
-                    "This survey is part of the project. \n        Through the survey, we are trying to understand why and how data seekers search for data. \n " +
-                    "       Your responses will inform us how to design the data discovery service in a way so you can have a better data search experience in future.</p>" +
-                    "\n\n        <h3>What are expected to participate in the survey?</h3>\n       " +
-                    "<p> The survey has 14 questions, the questions asking about what is your job role and type of employment organisation, \n       " +
-                    "why you search for data/information and what is your search experience. The survey will take approximately 15 minutes to complete. </p>\n\n" +
-                    "        <p>Apart from collecting your responses to the survey questions, we may also collect the IP address the time you are participating in the survey. \n" +
-                    "        We may use the IP address to check our search log on how well the data discovery system supported you to search what you set out to look for \n        " +
-                    "(for example, if the system retrieved relevant data records to satisfy your search).</p>\n\n       " +
-                    "<p> We don’t ask your name, email address, and employer name, unless you are willing to be contacted for a further interview. </p>\n\n" +
-                    "       <p> If you have any question about your response after you participated the survey, you can contact the principle investigator of the project via \n " +
-                    "      email: <A href='&#109;&#97;&#105;&#108;&#116;&#111;&#58;%64%61%74%61%2D%64%69%73%63%6F%76%65%72%79%40%61%72%64%63%2E%65%64%75%2E%61%75'>" +
-                    "data-discovery@ardc.edu.au</A> </p>" +
-                    "<p> Your participation in this survey is completely voluntary. You can choose not to participate. \n " +
-                    "      If you decide to participate in this survey, you can withdraw at any time.</p>\n        \n        <h3>What are we going to do with your survey response?</h3>\n" +
-                    "        <p>The project follows the <a href='https://researchdata.edu.au/page/privacy' target='_blank'>ARDC Privacy Policy</a>. We will treat all survey responses anonymously. \n       " +
-                    " All responses will be stored security in a file system that is only accessible to project members.  \n       " +
-                    " If  we publish the survey response, we will remove any personal information that may identify an individual. \n        " +
-                    "We may also present the survey findings at conferences and workshops, but with aggregated and summarised responses from all survey participants. \n        " +
-                    "Should we extract any text from your survey response as a quotation, we will refer the extract from a participant.</p>\n\n       " +
-                    " <h3>Your consent</h3>\n        I consent to participate in the survey, I confirm that:\n    " +
-                    "<ul>\n        " +
-                    "<li>\tI understand my  participation in this survey is voluntary.</li>\n        " +
-                    "<li>\tI understand that even if I choose to start the survey, I can withdraw at any time.</li>\n        " +
-                    "<li>\tI understand that all information I provide for the survey will be treated confidently.</li>\n       " +
-                    " <li>\tI understand that in any report or presentation on the result of this survey my identity will remain anonymous.</li>\n        " +
-                    "<li>\tI understand that disguised extracts from my survey may be quoted in presentations and publications.</li>\n        " +
-                    "<li>\tI understand that I am free to contact the principal investigator of the project for any clarification or questions about the survey and my responses.</li>\n" +
-                    "    </ul>\n\n" +
-                    "        <p>By clicking the “Start” button below to start the survey, you are consenting to the above conditions and to participate in the survey.</p>\n<p>" +
-                    "Thank you for your participation.</p>"}],
+            "elements":[{"type":"html","name":"introduction","html":"<h3>Welcome to the ARDC Survey on Research Data Australia</h3>\n" +
+                    "<p>Research Data Australia (RDA) is the data discovery service of the Australian Research Data Commons (ARDC).\n" +
+                    "    The ARDC enables the Australian research community and industry access to nationally significant,\n" +
+                    "    leading edge data intensive eInfrastructure, platforms, skills and collections of high-quality data.</p>\n" +
+                    "\n" +
+                    "<p>RDA helps data seekers find, access, and reuse data from over one hundred Australian research organisations,\n" +
+                    "    government agencies, and cultural institutions. We do not store the data itself here but provide descriptions of,\n" +
+                    "    and links to, the data from our data publishing partners.</p>\n" +
+                    "\n" +
+                    "<p>This survey asks you about your search experience with the RDA. Your responses will help us to understand why\n" +
+                    "    and how you search for data, and inform us how to design the data discovery service in a way so you can have a\n" +
+                    "    better data search experience in future.</p>\n" +
+                    "<p>The survey has 14 questions, will take approximately 15 minutes to complete.</p>\n" +
+                    "<p>Please read the ARDC <a href='/page/privacy' target='_blank'> Privacy Policy</a> about how ARDC manages survey responses.</p>\n" +
+                    "<h3>Your consent</h3>\n" +
+                    "<p>I consent to participate in the survey, I confirm that:\n" +
+                    "<ul>\n" +
+                    "    <li>I understand my  participation in this survey is voluntary.</li>\n" +
+                    "    <li>I understand that even if I choose to start the survey, I can withdraw at any time.</li>\n" +
+                    "    <li>I understand that all information I provide for the survey will be treated confidentially confidently.</li>\n" +
+                    "    <li>I understand that in any report or presentation on the result of this survey my identity will remain anonymous.</li>\n" +
+                    "    <li>I understand that anonymous disguised extracts from my survey may be quoted in presentations and publications.</li>\n" +
+                    "    <li>I understand that I am free to contact ARDC via email (services@ardc.edu.au) for any clarification or questions about the survey and my responses.</li>\n" +
+                    "</ul>\n" +
+                    "</p>\n" +
+                    "<p>\n" +
+                    "    By clicking the “Start” button below to start the survey, you are consenting to the above conditions and to participate in the survey.</p>\n" +
+                    "<p>Thank you for your participation.</p>"}],
             "title":"Online Survey"},
-         {"name":"page2","elements":[
-             {"type":"radiogroup","name":"background","title":"What is your primary background?","isRequired":true,
+         {"name":"page2",
+             "title": "Search experience with Research Data Australia",
+             "elements":[
+             {"type":"radiogroup","name":"background","title":"What is your primary job role?","isRequired":true,
                  "choices":[
-                     {"value":"researcher","text":"A researcher/scientist"},
-                     {"value":"student","text":"A student "},
+                     {"value":"researcher","text":"Researcher/scientist"},
+                     {"value":"student","text":"Student "},
                      {"value":"data_manager","text":"Data manager"},
                      {"value":"librarian","text":"Librarian, archivist or research/data supporter"},
                      {"value":"policy_maker","text":"Policy maker/supporter"},{"value":"educator","text":"Educator from primary/secondary school"}
@@ -65,11 +60,15 @@ var longSurveyJSON  = {"pages":
                       {"value":"research_institution ","text":"Research institution "},
                          {"value":"museum_cultural_institution","text":"Museum or cultural institution"},
                          {"value":"government","text":"Government"},
-                         {"value":"private_organisation","text":"Private organisation"},
+                         {"value":"private_organisation","text":"Industry/business"},
                          {"value":"ngo_non-profit_charity","text":"NGO/non-profit/charity"},
                          {"value":"school","text":"School"}
                          ],"hasOther":true,"otherText":"Other, please specify:","colCount":2},
-                 {"type":"checkbox","name":"research_area","title":"What is your research area or topic of interest?","choices":[
+                 {"type":"checkbox",
+                     "name":"research_area",
+                     "hasComment":true,
+                     "commentText":"Others, please specify",
+                     "title":"What are your research areas or topics of interest? (Please mark/tick all that apply)","choices":[
                      {"value":"30","text":"Agricultural, Veterinary and Food Sciences"},
                          {"value":"31","text":"Biological Sciences"},
                          {"value":"32","text":"Biomedical and Clinical Services"},
@@ -100,52 +99,96 @@ var longSurveyJSON  = {"pages":
                          {"value":"service","text":"Data service"},
                          {"value":"grant_projects","text":"Grant/Projects"},
                          {"value":"research_paper","text":"Research paper"}],
-                     "hasComment":true,"commentText":"Other, please specify:","colCount":2},
-                 {"type":"checkbox","name":"primary_purpose","title":"What is the primary purpose for you to search for data?","choices":[
+                     "hasComment":true,"commentText":"Others, please specify:","colCount":2},
+                 {"type":"checkbox","name":"primary_purpose","title":"What is the primary purpose for you to search for data? (Please mark/tick all that apply)","choices":[
                      {"value":"research","text":"For Research"},
                          {"value":"teaching","text":"For Teaching/training"},
                          {"value":"policy_making","text":"For Policy making"}
                          ],"hasComment":true,"commentText":"Other (or if you have any comment), please specify:"},
-                 {"type":"checkbox","name":"major_criteria","title":"What are the major criteria/characteristics  for the dataset you are searching for?","choices":[
+                 {"type":"checkbox","name":"major_criteria","title":"What are the major criteria/characteristics  for the dataset you are searching for? (Please mark/tick all that apply)","choices":[
                      {"value":"subject_relevance","text":"Subject relevance"},
                          {"value":"certain_organisation","text":"From a certain organisation"},
                          {"value":"clear_licence","text":"Have a clear licence statement"},
                          {"value":"permission_re-use","text":"Have permission for re-use"},
                          {"value":"specific_time_range","text":"From a specific time range"},
                          {"value":"specific_location","text":"From a specific location(s)"},
-                         {"value":"include_some_variables","text":"Include some variables"},
-                         {"value":"instruction_to_cite","text":"Instruction of how to cite the data"}
-                         ],"hasComment":true,"commentText":"Other, please specify:","colCount":2}]},
-            {"name":"page3","elements":[{"type":"radiogroup","name":"found_dataset","title":"Have you found the dataset you are looking for from Research Data Australia? ","choices":[
-                        {"value":"item1","text":"Yes, I found exactly I was looking for"},
-                        {"value":"item2","text":"Kind of, not exactly what I searched for, but I found something lead to further exploration"},
-                        {"value":"item3","text":"No, I didn’t get any useful information"}
+                         {"value":"include_some_variables","text":"Include common variables"},
+                         {"value":"instruction_to_cite","text":"Instruction of how to cite the data"},
+                         {"value":"able_to_download","text":"Be able to download"}
+                         ],"hasComment":true,"commentText":"Others, please specify:","colCount":2}]},
+            {"name":"page3",
+                "title": "Search experience with Research Data Australia",
+                "elements":[{"type":"radiogroup","name":"found_dataset","title":"Have you found what you are looking for from Research Data Australia? ","choices":[
+                        {"value":"yes","text":"Yes, I found exactly I was looking for"},
+                        {"value":"somehow","text":"Somehow, not exactly what I searched for, but I found some useful information"},
+                        {"value":"no","text":"No, I didn’t get any useful information"}
                         ],"hasComment":true,"commentText":"If no, please specify why not (e.g. no dataset fits my criteria)"},
                     {"type":"rating","name":"rate_rda","title":"How do you rate your data search experience with Research Data Australia",
                         "minRateDescription":"Extremely unsatisfied ",
                         "maxRateDescription":"Extremely satisfied"},
-                    {"type":"text","name":"what_works","title":"Can you tell us what search functionality/interface from the Research Data Australia work or not work for you? "}
+                    {"type":"comment","name":"what_works","title":"Can you tell us what helped you search from the Research Data Australia  and/or what didn't work for you? "}
                     ]},
 
-         {"name":"page4","elements":[{"type":"ranking","name":"most_used_search_tool","title":"What is the most used tool/website/other methods you search for data? (rank from high to low)",
-                 "isRequired":false,"hasComment":true,"commentText":"Other, please specify","choices":[
-                     {"value":"web_search_engines","text":"Web search engines"},
-                     {"value":"web_data_search_tools","text":"Web data search tools"},
-                     {"value":"repository_external","text":"Data repository/Data catalogue external to my institution/organisation (e.g, Research Data Australia, data.gov, Zenodo, DRYAD, etc)"},
-                     {"value":"repository_own_institution","text":"Data repository/Data catalogue from my own institution"},
-                     {"value":"website_government","text":"Website from government agencies (e.g. Australian Bureau of Statistics, Australian Government Bureau of Meteorology, etc)"},
-                     {"value":"following_citation","text":"Following citation of research paper"},
-                     {"value":"colleagues","text":"Asking colleagues"},
-                     {"value":"conferences","text":"Attending conferences"}
-                     ]},
-                 {"type":"rating","name":"search_frequency","title":"How often do you search for data out of your research area(s)?","minRateDescription":"Hardly","maxRateDescription":"Almost all the time "},
+         {"name":"page4","title": "Search experience with other tools","elements":[{
+             "type":"checkbox",
+              "name":"used_search_tools",
+              "title":"What are the tools/websites/other methods you use to search for data? (Please mark/tick all that apply)",
+             "isRequired":false,
+                 "choicesOrder": "asc",
+                 "hasComment":true,
+                 "commentText":"If other, please specify",
+                 "choices":[
+                    {"value":"web_search_engines","text":"Web search engines"},
+                    {"value":"web_data_search_tools","text":"Web data search tools"},
+                    {"value":"repository_external","text":"Data repository/Data catalogue external to my institution/organisation (e.g, Research Data Australia, data.gov, Zenodo, DRYAD, etc)"},
+                    {"value":"repository_own_institution","text":"Data repository/Data catalogue from my own institution"},
+                    {"value":"website_government","text":"Website from government agencies (e.g. Australian Bureau of Statistics, Australian Government Bureau of Meteorology, etc)"},
+                    {"value":"following_citation","text":"Following citation of research paper"},
+                    {"value":"colleagues","text":"Asking colleagues"},
+                    {"value":"conferences","text":"Attending conferences"},
+                    {"value":"other","text":"Other"}
+                    ]},
+                 {
+                     "type": "ranking",
+                     "title":"Please rank from highest to lowest the tools/websites/other methods you use to search for data (drag and drop)",
+                     "name": "most_used_search_tool",
+                     "visible": true,
+                     "choicesFromQuestion": "used_search_tools",
+                     "choices": [
+                         {"value":"web_search_engines","text":"Web search engines"},
+                         {"value":"web_data_search_tools","text":"Web data search tools"},
+                         {"value":"repository_external","text":"Data repository/Data catalogue external to my institution/organisation (e.g, Research Data Australia, data.gov, Zenodo, DRYAD, etc)"},
+                         {"value":"repository_own_institution","text":"Data repository/Data catalogue from my own institution"},
+                         {"value":"website_government","text":"Website from government agencies (e.g. Australian Bureau of Statistics, Australian Government Bureau of Meteorology, etc)"},
+                         {"value":"following_citation","text":"Following citation of research paper"},
+                         {"value":"colleagues","text":"Asking colleagues"},
+                         {"value":"conferences","text":"Attending conferences"},
+                         {"value":"other","text":"Other"}
+                     ],
+                     "choicesFromQuestionMode": "selected",
+                     "hideIfChoicesEmpty": true
+                 },
+                 {"type":"rating","name":"search_frequency","title":"How often do you search for data outside of your usual research area(s) (or topics of interest)?","minRateDescription":"Never","maxRateDescription":"All the time"},
                  {"type":"rating","name":"search_success","title":"If you use web search engines to find data, how successful are you at finding data with the search engines?","minRateDescription":"Not successful","maxRateDescription":"Very successful"},
-                 {"type":"checkbox","name":"what_search_tools_used","title":"In general, what tools do you mostly use for searching for information  (e.g. research papers) other than data? ","choices":[
-                     {"value":"web_search_engines","text":"Web search engines"},
+                 {"type":"checkbox","name":"what_search_tools_used", "choicesOrder": "asc","title":"In general, what tools do you mostly use for searching for information  (e.g. research papers) other than data? Please mark/tick all that apply","choices":[
+                         {"value":"disciplinary_portals","text":"Disciplinary portals (e.g. Digital Library of Association for Computing Machinery, PubMed.gov of National Library of Medicine)"},
+                         {"value":"library_catalogues","text":"Library catalogues"},
                          {"value":"google_scholar","text":"Google scholar"},
-                         {"value":"disciplinary_portals","text":"Disciplinary portals (e.g. Digital Library of Association for Computing Machinery)"},
-                         {"value":"publisher_websites","text":"Publisher websites (e.g. PubMed.gov of National Library of Medicine)"}],"hasComment":true,"otherText":"Other, please specify:"}]},{"name":"page5","elements":[
-                          {"type":"multipletext","name":"question13","titleLocation":"hidden","items":[{"name":"name","title":"Name"},{"name":"employer_name","title":"Employer name"},{"name":"email_contact","title":"Email contact"}]}],"description":"Thank you for your participation in the survey, your feedback is valuable for us to improve the RDA data discovery service and beyond.   We plan to conduct a further interview to elicit more information about what information and discovery functionality matter to data seekers when they search for data.   If you would like to participate in a further interview of your data search experience and expectation, Please leave your contact below. (Participants in the interview will be eligible for gifts.) "}],
+                         {"value":"publisher_websites","text":"Publisher websites (e.g. Elsevier,  Springer)"},
+                         {"value":"web_search_engines","text":"Web search engines"}
+                        ],"hasComment":true,"otherText":"Other, please specify:"}]},
+            {"name":"page5","elements":[
+                          {"type":"multipletext",
+                              "name":"question13",
+                              "titleLocation":"hidden",
+                              "items":[
+                                  {"name":"name","title":"Name"},
+                                  {"name":"organisation","title":"Organisation"},
+                                  {"name":"email_contact","title":"Email contact"}]}],
+                "description":"Thank you for your participation in the survey, your feedback is valuable for us to improve the RDA data discovery service and beyond.   " +
+                    "We plan to conduct a further interview to elicit more information about what information and discovery functionality matter to data seekers when they search for data.   " +
+                    "If you would like to participate in a further interview of your data search experience and expectation, Please leave your contact below. " +
+                    "(Participants in the interview will be eligible for gift cards.) "}],
     "cookieName": longSurveyID,
     "completeText": "Submit"}
 var surveyJSON = {
@@ -171,15 +214,18 @@ var surveyJSON = {
                     "choices": [
                         {
                             "value": "researcher",
-                            "text": "Research/Scientist"
+                            "text": "Research/Scientist",
+                            "startWithNewLine": false,
                         },
                         {
                             "value": "University_employee",
-                            "text": "University/Research Institute employee"
+                            "text": "University/Research Institute employee",
+                            "startWithNewLine": false,
                         },
                         {
                             "value": "student ",
-                            "text": "Student "
+                            "text": "Student ",
+                            "startWithNewLine": false,
                         },
                         {
                             "value": "Industry_employee",
@@ -253,7 +299,7 @@ jQuery(document).ready(function( $ ) {
     if(!hasrun) {
         var survey = new Survey.Model(surveyJSON);
         survey.completedHtml = "<p>Thank you for helping out!</p>" +
-        "<p>We also conduct a longer survey with 13 questions.</p>" +
+        "<p>We also conduct a longer survey with 14 questions.</p>" +
             "<p> If you are willing to participate in the longer survey, please click " +
             " <a href='/page/survey'>here</a></p>";
         survey.showCompletedPage = true;
