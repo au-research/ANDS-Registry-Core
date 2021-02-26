@@ -43,9 +43,7 @@ var longSurveyJSON  = {"pages":
                     "    By clicking the “Start” button below to start the survey, you are consenting to the above conditions and to participate in the survey.</p>\n" +
                     "<p>Thank you for your participation.</p>"}],
             "title":"Online Survey"},
-         {"name":"page2",
-             "title": "Search experience with Research Data Australia",
-             "elements":[
+         {"name":"page2", "elements":[
              {"type":"radiogroup","name":"background","title":"What is your primary job role?","isRequired":true,
                  "choices":[
                      {"value":"researcher","text":"Researcher/scientist"},
