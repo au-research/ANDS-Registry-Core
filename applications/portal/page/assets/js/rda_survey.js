@@ -26,16 +26,16 @@ var longSurveyJSON  = {"pages":
                     "<p>This survey asks you about your search experience with the RDA. Your responses will help us to understand why\n" +
                     "    and how you search for data, and inform us how to design the data discovery service in a way so you can have a\n" +
                     "    better data search experience in future.</p>\n" +
-                    "<p>The survey has 14 questions, will take approximately 15 minutes to complete.</p>\n" +
+                    "<p>The survey has 15 questions, will take approximately 15 minutes to complete.</p>\n" +
                     "<p>Please read the ARDC <a href='/page/privacy' target='_blank'> Privacy Policy</a> about how ARDC manages survey responses.</p>\n" +
                     "<h3>Your consent</h3>\n" +
                     "<p>I consent to participate in the survey, I confirm that:\n" +
                     "<ul>\n" +
                     "    <li>I understand my  participation in this survey is voluntary.</li>\n" +
                     "    <li>I understand that even if I choose to start the survey, I can withdraw at any time.</li>\n" +
-                    "    <li>I understand that all information I provide for the survey will be treated confidentially confidently.</li>\n" +
+                    "    <li>I understand that all information I provide for the survey will be treated confidentially.</li>\n" +
                     "    <li>I understand that in any report or presentation on the result of this survey my identity will remain anonymous.</li>\n" +
-                    "    <li>I understand that anonymous disguised extracts from my survey may be quoted in presentations and publications.</li>\n" +
+                    "    <li>I understand that anonymous extracts from my survey may be quoted in presentations and publications.</li>\n" +
                     "    <li>I understand that I am free to contact ARDC via email (services@ardc.edu.au) for any clarification or questions about the survey and my responses.</li>\n" +
                     "</ul>\n" +
                     "</p>\n" +
@@ -65,7 +65,7 @@ var longSurveyJSON  = {"pages":
                  {"type":"checkbox",
                      "name":"research_area",
                      "hasComment":true,
-                     "commentText":"Others, please specify",
+                     "commentText":"Please specify if your choice(s) includes other; or leave any comment here",
                      "title":"What are your research areas or topics of interest? (Please mark/tick all that apply)","choices":[
                      {"value":"30","text":"Agricultural, Veterinary and Food Sciences"},
                          {"value":"31","text":"Biological Sciences"},
@@ -89,20 +89,24 @@ var longSurveyJSON  = {"pages":
                          {"value":"49","text":"Mathematical Sciences"},
                          {"value":"50","text":"Philosophy and Religios Studies"},
                          {"value":"51","text":"Physical Sciences"},
-                         {"value":"52","text":"Psychology"}
+                         {"value":"52","text":"Psychology"},
+                         {"value":"other","text":"Other"}
                          ],"colCount":2},
                  {"type":"radiogroup","name":"searching_for","title":"If you just searched from Research Data Australia, what are you searching for?","choices":[
                      {"value":"dataset","text":"Dataset"},
                          {"value":"software","text":"Software"},
                          {"value":"service","text":"Data service"},
                          {"value":"grant_projects","text":"Grant/Projects"},
-                         {"value":"research_paper","text":"Research paper"}],
-                     "hasComment":true,"commentText":"Others, please specify:","colCount":2},
+                         {"value":"research_paper","text":"Research paper"},
+                         {"value":"other","text":"Other"}
+                     ],
+                     "hasComment":true,"commentText":"Please specify if your choice(s) includes other; or leave any comment here","colCount":2},
                  {"type":"checkbox","name":"primary_purpose","title":"What is the primary purpose for you to search for data? (Please mark/tick all that apply)","choices":[
                      {"value":"research","text":"For Research"},
                          {"value":"teaching","text":"For Teaching/training"},
-                         {"value":"policy_making","text":"For Policy making"}
-                         ],"hasComment":true,"commentText":"Other (or if you have any comment), please specify:"},
+                         {"value":"policy_making","text":"For Policy making"},
+                         {"value":"other","text":"Other"}
+                         ],"hasComment":true,"commentText":"Please specify if your choice(s) includes other; or leave any comment here"},
                  {"type":"checkbox","name":"major_criteria","title":"What are the major criteria/characteristics  for the dataset you are searching for? (Please mark/tick all that apply)","choices":[
                      {"value":"subject_relevance","text":"Subject relevance"},
                          {"value":"certain_organisation","text":"From a certain organisation"},
@@ -112,8 +116,9 @@ var longSurveyJSON  = {"pages":
                          {"value":"specific_location","text":"From a specific location(s)"},
                          {"value":"include_some_variables","text":"Include common variables"},
                          {"value":"instruction_to_cite","text":"Instruction of how to cite the data"},
-                         {"value":"able_to_download","text":"Be able to download"}
-                         ],"hasComment":true,"commentText":"Others, please specify:","colCount":2}]},
+                         {"value":"able_to_download","text":"Be able to download"},
+                         {"value":"other","text":"Other"}
+                         ],"hasComment":true,"commentText":"Please specify if your choice(s) includes other; or leave any comment here","colCount":2}]},
             {"name":"page3",
                 "title": "Search experience with Research Data Australia",
                 "elements":[{"type":"radiogroup","name":"found_dataset","title":"Have you found what you are looking for from Research Data Australia? ","choices":[
@@ -124,7 +129,16 @@ var longSurveyJSON  = {"pages":
                     {"type":"rating","name":"rate_rda","title":"How do you rate your data search experience with Research Data Australia",
                         "minRateDescription":"Extremely unsatisfied ",
                         "maxRateDescription":"Extremely satisfied"},
-                    {"type":"comment","name":"what_works","title":"Can you tell us what helped you search from the Research Data Australia  and/or what didn't work for you? "}
+                    {
+                        "type": "comment",
+                        "name": "rda_what_worked",
+                        "title": "Can you tell us what helped you search in the Research Data Australia?  ",
+                    },
+                    {
+                        "type": "comment",
+                        "name": "rda_what_didnt_work",
+                        "title": "Can you tell us what didn’t work out for you when you search in the Research Data Australia?",
+                    },
                     ]},
 
          {"name":"page4","title": "Search experience with other tools","elements":[{
@@ -134,7 +148,7 @@ var longSurveyJSON  = {"pages":
              "isRequired":false,
                  "choicesOrder": "asc",
                  "hasComment":true,
-                 "commentText":"If other, please specify",
+                 "commentText":"Please specify if your choice(s) includes other; or leave any comment here",
                  "choices":[
                     {"value":"web_search_engines","text":"Web search engines"},
                     {"value":"web_data_search_tools","text":"Web data search tools"},
@@ -148,7 +162,7 @@ var longSurveyJSON  = {"pages":
                     ]},
                  {
                      "type": "ranking",
-                     "title":"Please rank from highest to lowest the tools/websites/other methods you use to search for data (drag and drop)",
+                     "title":"Please rank your choices from Question 11 from high to low frequency of use. (drag a choice and drop it to the right rank)",
                      "name": "most_used_search_tool",
                      "visible": true,
                      "choicesFromQuestion": "used_search_tools",
@@ -173,20 +187,32 @@ var longSurveyJSON  = {"pages":
                          {"value":"library_catalogues","text":"Library catalogues"},
                          {"value":"google_scholar","text":"Google scholar"},
                          {"value":"publisher_websites","text":"Publisher websites (e.g. Elsevier,  Springer)"},
-                         {"value":"web_search_engines","text":"Web search engines"}
-                        ],"hasComment":true,"otherText":"Other, please specify:"}]},
+                         {"value":"web_search_engines","text":"Web search engines"},
+                         {"value":"other","text":"Other"}
+                        ],"hasComment":true,"commentText":"Please specify if your choice(s) includes other; or leave any comment here"}]},
             {"name":"page5","elements":[
-                          {"type":"multipletext",
-                              "name":"question13",
-                              "titleLocation":"hidden",
-                              "items":[
-                                  {"name":"name","title":"Name"},
-                                  {"name":"organisation","title":"Organisation"},
-                                  {"name":"email_contact","title":"Email contact"}]}],
-                "description":"Thank you for your participation in the survey, your feedback is valuable for us to improve the RDA data discovery service and beyond.   " +
-                    "We plan to conduct a further interview to elicit more information about what information and discovery functionality matter to data seekers when they search for data.   " +
-                    "If you would like to participate in a further interview of your data search experience and expectation, Please leave your contact below. " +
-                    "(Participants in the interview will be eligible for gift cards.) "}],
+                    {
+                        "type": "html",
+                        "name": "thanks_text",
+                        "html": "<p>Thank you for your participation in the survey, your feedback is valuable for us to improve the RDA data discovery service and beyond. </p>" +
+                            "<p>We plan to conduct a further interview to elicit more information about what information and discovery " +
+                            "functionality matter to data seekers when they search for data." +
+                            "If you would like to participate in a further interview of your data search experience and expectation, " +
+                            "please leave your contact below. (Participants in the interview will be eligible for gift cards.) </p>"
+                    },
+                      {
+                          "type":"multipletext",
+                          "name":"user_contact",
+                          "titleLocation":"hidden",
+                          "items":[
+                              {"name":"name","title":"Name"},
+                              {"name":"organisation","title":"Organisation"},
+                              {"name":"email_contact","title":"Email contact"}
+                              ]
+                      }
+                      ],
+                }
+                    ],
     "cookieName": longSurveyID,
     "completeText": "Submit"}
 var surveyJSON = {
@@ -297,9 +323,10 @@ jQuery(document).ready(function( $ ) {
     if(!hasrun) {
         var survey = new Survey.Model(surveyJSON);
         survey.completedHtml = "<p>Thank you for helping out!</p>" +
-        "<p>We also conduct a longer survey with 14 questions.</p>" +
+        "<p>We also conduct a longer survey with 15 questions.</p>" +
             "<p> If you are willing to participate in the longer survey, please click " +
-            " <a href='/page/survey'>here</a></p>";
+            " <a href='/page/survey'>here</a></p>" +
+        "<p> ARDC <a href='/page/privacy'>Privacy Policy</a></p>";
         survey.showCompletedPage = true;
         survey.firstPageIsStarted = true;
         survey.startSurveyText = "Start >>";
@@ -360,7 +387,6 @@ jQuery(document).ready(function( $ ) {
                         success: function (response) {
                             createCookie(longSurveyID,true, 17520);
                             createCookie(surveyID,true, 17520);
-                            console.log(response);
                         },
                         error: function (response) {
                             console.log(response);
