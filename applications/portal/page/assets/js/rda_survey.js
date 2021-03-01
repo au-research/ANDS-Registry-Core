@@ -26,7 +26,7 @@ var longSurveyJSON  = {"pages":
                     "<p>This survey asks you about your search experience with the RDA. Your responses will help us to understand why\n" +
                     "    and how you search for data, and inform us how to design the data discovery service in a way so you can have a\n" +
                     "    better data search experience in future.</p>\n" +
-                    "<p>The survey has 15 questions, will take approximately 15 minutes to complete.</p>\n" +
+                    "<p>The survey has 14 questions, will take approximately 15 minutes to complete.</p>\n" +
                     "<p>Please read the ARDC <a href='/page/privacy' target='_blank'> Privacy Policy</a> about how ARDC manages survey responses.</p>\n" +
                     "<h3>Your consent</h3>\n" +
                     "<p>I consent to participate in the survey, I confirm that:\n" +
@@ -122,8 +122,8 @@ var longSurveyJSON  = {"pages":
             {"name":"page3",
                 "title": "Search experience with Research Data Australia",
                 "elements":[{"type":"radiogroup","name":"found_dataset","title":"Have you found what you are looking for from Research Data Australia? ","choices":[
-                        {"value":"yes","text":"Yes, I found exactly I was looking for"},
-                        {"value":"somehow","text":"Somehow, not exactly what I searched for, but I found some useful information"},
+                        {"value":"yes","text":"Yes, I found exactly what I was looking for"},
+                        {"value":"somewhat","text":"Somehow, not exactly what I searched for, but I found some useful information"},
                         {"value":"no","text":"No, I didn’t get any useful information"}
                         ],"hasComment":true,"commentText":"If no, please specify why not (e.g. no dataset fits my criteria)"},
                     {"type":"rating","name":"rate_rda","title":"How do you rate your data search experience with Research Data Australia",
@@ -132,12 +132,14 @@ var longSurveyJSON  = {"pages":
                     {
                         "type": "comment",
                         "name": "rda_what_worked",
-                        "title": "Can you tell us what helped you search in the Research Data Australia?  ",
+                        "title": "(a) Can you tell us what helped you search in the Research Data Australia?  ",
                     },
                     {
                         "type": "comment",
                         "name": "rda_what_didnt_work",
-                        "title": "Can you tell us what didn’t work out for you when you search in the Research Data Australia?",
+                        "title": "9. (b) Can you tell us what didn’t work out for you when you searched in the Research Data Australia?",
+                        "hideNumber": true
+
                     },
                     ]},
 
@@ -323,7 +325,7 @@ jQuery(document).ready(function( $ ) {
     if(!hasrun) {
         var survey = new Survey.Model(surveyJSON);
         survey.completedHtml = "<p>Thank you for helping out!</p>" +
-        "<p>We also conduct a longer survey with 15 questions.</p>" +
+        "<p>We also conduct a longer survey with 14 questions.</p>" +
             "<p> If you are willing to participate in the longer survey, please click " +
             " <a href='/page/survey'>here</a></p>" +
         "<p> ARDC <a href='/page/privacy'>Privacy Policy</a></p>";
@@ -346,7 +348,7 @@ jQuery(document).ready(function( $ ) {
                             type: 'POST',
                             data:{"survey": surveyID, "results": JSON.stringify(result.data), "user_ip": user_ip},
                             success: function (response) {
-                               // $("#survey_button").css("visibility","hidden");
+                                console.log(response);
                             },
                             error: function (response) {
                                 console.log(response);
@@ -387,6 +389,7 @@ jQuery(document).ready(function( $ ) {
                         success: function (response) {
                             createCookie(longSurveyID,true, 17520);
                             createCookie(surveyID,true, 17520);
+                            console.log(response);
                         },
                         error: function (response) {
                             console.log(response);
