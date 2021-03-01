@@ -38,12 +38,27 @@
 
     </style>
     <article>
+
         <section class="section swatch-white element-normal-bottom">
             <div  class="container" >
+                @if(get_cookie("rda_long_survey"))
+                    <div class="container" style="padding-top: 20px;padding-bottom: 20px">
+                        <div class="col-md-12">
+                            <header class="text-center">
+                                <h1 class="blue-header">Online Survey</h1>
+                            </header><hr/>
+                            <div>
+                        <p class="text-center">
+                            <span style="font-weight: 400;">Thank you, we appreciate you having completed the survey before.</span>
+                        </p>
 
+                    </div>
+                @else
                 <div id="surveyContainerLong"></div>
                 <script type="text/javascript" src="{{asset_url('js/rda_survey.js')}}"></script>
+                @endif
             </div>
         </section>
+
     </article>
 @stop
