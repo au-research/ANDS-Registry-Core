@@ -123,7 +123,7 @@ var longSurveyJSON  = {"pages":
                 "title": "Search experience with Research Data Australia",
                 "elements":[{"type":"radiogroup","name":"found_dataset","title":"Have you found what you are looking for from Research Data Australia? ","choices":[
                         {"value":"yes","text":"Yes, I found exactly what I was looking for"},
-                        {"value":"somewhat","text":"Somehow, not exactly what I searched for, but I found some useful information"},
+                        {"value":"somewhat","text":"Somewhat, not exactly what I searched for, but I found some useful information"},
                         {"value":"no","text":"No, I didn’t get any useful information"}
                         ],"hasComment":true,"commentText":"If no, please specify why not (e.g. no dataset fits my criteria)"},
                     {"type":"rating","name":"rate_rda","title":"How do you rate your data search experience with Research Data Australia",
