@@ -312,7 +312,6 @@ class Pids extends MX_Controller {
 		$searchText = (isset($params['searchText'])? $params['searchText']: null);
 		$authDomain = (isset($params['authDomain'])? $params['authDomain']: $this->user->authDomain());
 		$identifier = (isset($params['identifier'])? $params['identifier']: $this->user->localIdentifier());
-
 		$ownerHandle = $this->pids->getOwnerHandle($identifier,$authDomain);
 
 		if($ownerHandle)
@@ -364,22 +363,18 @@ class Pids extends MX_Controller {
 
 
         $pidsDetails = array();
-        $params = $this->input->post('params');
-        $searchText = (isset($params['searchText'])? $params['searchText']: null);
-        $authDomain = (isset($params['authDomain'])? $params['authDomain']: $this->user->authDomain());
-        $identifier = (isset($params['identifier'])? $params['identifier']: $this->user->localIdentifier());
         $fileName = preg_replace('-\W-','_',$this->pids->getFilePrefixForCurrentIdentifier())."_".date('Y-m-d')."_all_pids.csv";
         header('Cache-Control: no-cache, must-revalidate');
         header('Content-type: application/csv');
         header("Content-Disposition: attachment; filename={$fileName}");
         header("Pragma: no-cache");
         header("Expires: 0");
-
-        $ownerHandle = $this->pids->getOwnerHandle($identifier,$authDomain);
+        // The current Identifier can be either the current user or an organisation
+        $ownerHandle = $this->pids->getCurrentOwnerHandle($this->user->localIdentifier(), $this->user->authDomain());
 
         if($ownerHandle)
         {
-            $handles = $this->pids->getHandles($ownerHandle, $searchText);
+            $handles = $this->pids->getHandles($ownerHandle);
             if(sizeof($handles) > 0){
                 $result = $this->pids->getHandlesDetails($handles);
                 foreach($result as $r)
