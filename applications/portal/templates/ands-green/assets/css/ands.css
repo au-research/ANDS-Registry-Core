@@ -583,3 +583,42 @@ div.sv_window {
 
 
 }
+
+.sv_nav1 input[type="button"], .sv_default_css button {
+    color: white;
+    /*background-color: #00819D; */
+    margin-bottom: 15px;
+    background: linear-gradient(#00A2C4, #00819D);
+    border: .5px solid #00b0d5;
+    border-radius: 4px;
+    font-family: 'Roboto',sans-serif;
+    padding: 3px 12px;
+    height: 28px;
+    text-decoration: none;
+
+}
+.sv_nav1 input[type="button"]:hover {
+    background: #026d84;
+    border: .5px solid #00A2C4;
+    border-radius: 4px;
+    color: #fff;
+    font-family: 'Roboto',sans-serif;
+    padding: 6px 12px;
+    height: 28px;
+    text-decoration: none;
+
+}
+.survey_base_button {
+    box-shadow: -1px 1px 2px rgba(0, 0, 0, 0.5);
+    border-radius: 2px 0px 0px;
+    position: fixed;
+    display: block;
+    white-space: nowrap;
+    text-decoration: none !important;
+    font-family: 'Roboto',sans-serif;
+    cursor: pointer;
+    font-size: 14px;
+    z-index: 99;
+    bottom:0;
+    right:206px;
+}
