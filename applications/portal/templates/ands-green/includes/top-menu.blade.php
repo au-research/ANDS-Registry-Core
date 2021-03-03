@@ -1,4 +1,4 @@
-<div class="navbar swatch-black" role="banner">
+<div class="navbar swatch-black" role="banner" xmlns="http://www.w3.org/1999/html">
     <div class="container" style="z-index:10">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".main-navbar">
@@ -37,16 +37,17 @@
                 @else
                     <li><a href="{{portal_url('profile')}}">MyRDA</a></li>
                 @endif
-                @if(!(get_cookie("rda_long_survey")))
-                <li><a href="{{portal_url('page/survey')}}" class="click_to_long">
-                        <button  id="click_to_long" >RDA Survey</button></a></li>
-                @endif
                 <?php
-                    $profile_image = profile_image();
+                $profile_image = profile_image();
                 ?>
                 @if($profile_image)
-                   <li><a href="{{portal_url('profile')}}"><img src="{{ $profile_image }}" alt="" class="profile_image_small"></a></li>
+                    <li><a href="{{portal_url('profile')}}"><img src="{{ $profile_image }}" alt="" class="profile_image_small"></a></li>
                 @endif
+                @if(!(get_cookie("rda_long_survey")))
+                <li><a href="{{portal_url('page/survey')}}" class="click_to_long">
+                        <div class="sv_nav1"><input type="button"  class="sv-btn sv-footer__start-btn" value="RDA Survey" id="click_to_long" style="height:34px"/></div></a></li>
+                @endif
+
             </ul>
         </nav>
     </div>
@@ -60,7 +61,9 @@
     @if(!get_cookie("rda_short_survey") && !get_cookie("rda_long_survey"))
         @include('includes/short_survey')
     @endif
-
+    @if(!(get_cookie("rda_long_survey")))
+    <a href="/page/survey"><button class="yellow_button survey_base_button">RDA Survey </button></a>
+    @endif
     <button class="yellow_button feedback_button">Feedback</button>
     <button class="yellow_button help_button" data-toggle="modal" data-target="#help_modal"><i class="fa fa-question-circle"></i> Help</button>
     @include('includes/help-modal')
