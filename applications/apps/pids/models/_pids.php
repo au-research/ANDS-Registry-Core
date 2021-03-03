@@ -290,6 +290,22 @@ class _pids extends CI_Model
 		}
 	}
 
+    function getCurrentOwnerHandle($userIdentifier, $userDomain)
+    {
+        if($this->_CI->session->userdata(PIDS_USER_IDENTIFIER) != null && $this->_CI->session->userdata(PIDS_USER_IDENTIFIER) != ""){
+            $userIdentifier = $this->_CI->session->userdata(PIDS_USER_IDENTIFIER);
+        }
+        if($this->_CI->session->userdata(PIDS_USER_DOMAIN) != null && $this->_CI->session->userdata(PIDS_USER_DOMAIN) != ""){
+            $userDomain = $this->_CI->session->userdata(PIDS_USER_DOMAIN);
+        }
+        $identifierStr = $userIdentifier.'####'.$userDomain;
+        $query = $this->pid_db->get_where("handles", array("type"=>'DESC', 'data'=>$identifierStr));
+        if($query->num_rows()>0){
+            $array = $query->result_array();
+            return $array[0]['handle'];
+        }
+    }
+
 	function getHandles($ownerHandle, $searchText = null)
 	{
 		$aHandles = array();
