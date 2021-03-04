@@ -164,7 +164,7 @@ var longSurveyJSON  = {"pages":
                     ]},
                  {
                      "type": "ranking",
-                     "title":"Please rank your choices from Question 11 from high to low frequency of use. (drag a choice and drop it to the right rank)",
+                     "title":"Please rank your choices from Question 10 from high to low frequency of use. (drag a choice and drop it to the right rank)",
                      "name": "most_used_search_tool",
                      "visible": true,
                      "choicesFromQuestion": "used_search_tools",
@@ -184,7 +184,7 @@ var longSurveyJSON  = {"pages":
                  },
                  {"type":"rating","name":"search_frequency","title":"How often do you search for data outside of your usual research area(s) (or topics of interest)?","minRateDescription":"Never","maxRateDescription":"All the time"},
                  {"type":"rating","name":"search_success","title":"If you use web search engines to find data, how successful are you at finding data with the search engines?","minRateDescription":"Not successful","maxRateDescription":"Very successful"},
-                 {"type":"checkbox","name":"what_search_tools_used", "choicesOrder": "asc","title":"In general, what tools do you mostly use for searching for information  (e.g. research papers) other than data? Please mark/tick all that apply","choices":[
+                 {"type":"checkbox","name":"what_search_tools_used", "choicesOrder": "asc","title":"In general, what tools do you mostly use for searching for information  (e.g. research papers) other than data? (Please mark/tick all that apply)","choices":[
                          {"value":"disciplinary_portals","text":"Disciplinary portals (e.g. Digital Library of Association for Computing Machinery, PubMed.gov of National Library of Medicine)"},
                          {"value":"library_catalogues","text":"Library catalogues"},
                          {"value":"google_scholar","text":"Google scholar"},
@@ -276,9 +276,14 @@ var surveyJSON = {
                         {
                             "value": "Policy_maker",
                             "text": "Policy maker/supporter"
+                        },
+                        {
+                            "value": "other",
+                            "text": "Other"
                         }
                     ],
                     "hasComment": true,
+                    "commentText": "Please specify if your choice(s) includes other; or leave any comment here",
                     "colCount": 2
                 },
                 {
@@ -310,8 +315,14 @@ var surveyJSON = {
                         {
                             "value": "Nothing_specific",
                             "text": "Nothing specific"
+                        },
+                        {
+                            "value": "other",
+                            "text": "Other"
                         }
                     ],
+                    "hasComment":true,
+                    "commentText": "Please specify if your choice(s) includes other; or leave any comment here",
                     "colCount": 2
                 }
             ]
