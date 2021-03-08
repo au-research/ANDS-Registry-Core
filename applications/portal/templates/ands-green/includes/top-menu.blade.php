@@ -59,6 +59,7 @@
 
 @if(!isBot())
     @if(!get_cookie("rda_short_survey") && !get_cookie("rda_long_survey"))
+        <script src="{{asset_url('js/rda_survey.js', 'core')}}"></script>
         @include('includes/short_survey')
     @endif
     @if(!(get_cookie("rda_long_survey")))
