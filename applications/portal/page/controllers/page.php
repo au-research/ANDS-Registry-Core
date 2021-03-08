@@ -75,6 +75,40 @@ class Page extends MX_Controller
     }
 
     /**
+     * Survey page
+     * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @return view
+     */
+    public function survey()
+    {
+        $highlevel = $this->config->item('subjects');
+        foreach ($highlevel as &$item) {
+            $query = '';
+            foreach ($item['codes'] as $code) {
+                $query .= '/anzsrc-for=' . $code;
+            }
+            $item['query'] = $query;
+        }
+
+        //contributors
+        $this->load->model('group/groups', 'groups');
+        $this->load->model('registry_object/registry_objects', 'registry_object');
+        $contributors = $this->groups->getAll();
+        $filters = array('class' => 'collection', 'status' => 'PUBLISHED');
+        $collections = $this->registry_object->checkRecordCount($filters);
+
+        $this->record_hit('survey');
+        $this->blade
+            ->set('scripts', array('home'))
+            ->set('highlevel', $highlevel)
+            ->set('contributors', $contributors)
+            ->set('collections', $collections)
+            ->render('survey');
+
+    }
+
+
+    /**
      * Privacy Policy
      * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
      * @return view
@@ -203,6 +237,7 @@ class Page extends MX_Controller
             $pages = array(
                 base_url(),
                 base_url('home/about'),
+                base_url('home/survey'),
                 base_url('home/contact'),
                 base_url('home/privacy'),
                 base_url('home/disclaimer'),

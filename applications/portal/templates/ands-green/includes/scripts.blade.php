@@ -72,6 +72,7 @@
 <script>
     _.contains = _.includes;
 </script>
+<script src="https://unpkg.com/survey-jquery@1.8.31/survey.jquery.min.js"></script>
 
 @if(isset($scripts))
 	@foreach($scripts as $script)

@@ -13,6 +13,7 @@
  * 
  * @author Ben Greenwood <ben.greenwood@anu.edu.au>
  */
+
 class Dispatcher extends MX_Controller {
 
 	public function __construct()
@@ -62,6 +63,19 @@ class Dispatcher extends MX_Controller {
             $params = array($action_model);
             echo Modules::run(implode("/",$params));
             return;
+        }else if($params[0]=='survey_results') {
+
+            $fp = fopen("/var/data/portal/" . $_POST["survey"] . ".log", "a");
+            $json["timestamp"] = date("Y-m-dTh:i:s");
+            $json["user_ip"] = $_POST["user_ip"];
+            $json["results"] = $_POST["results"];
+            $output = json_encode($json, JSON_FORCE_OBJECT);
+
+            fwrite($fp, $output.PHP_EOL);
+            fclose($fp);
+            echo $output;
+            return;
+
         } else {
 
 			// If no match, assume it is a SLUG view request
