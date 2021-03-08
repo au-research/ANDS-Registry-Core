@@ -42,6 +42,8 @@ span.dynatree-selected a
     font-weight: bold;
 }
 
+
+
 .feedback_button {
     box-shadow: -1px 1px 2px rgba(0, 0, 0, 0.5);
     border-radius: 2px 0px 0px;
@@ -416,4 +418,207 @@ h2 {
 .input-group-btn:last-child > .btn:not(:last-child):not(.dropdown-toggle),
 .input-group-btn:last-child > .btn-group:not(:last-child) > .btn {
     bottom-radius: 4px;
+}
+
+div.sv_window {
+    position: absolute;
+    background-color: cadetblue;
+    padding: 1px;
+    top: 10%;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    height: fit-content;
+    width: fit-content;
+    width-max: 100%;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.2;
+    text-align: left;
+    text-align: start;
+    text-decoration: none;
+    text-shadow: none;
+    text-transform: none;
+    letter-spacing: normal;
+    word-break: normal;
+    word-spacing: normal;
+    word-wrap: normal;
+    white-space: normal;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    line-break: auto;
+    z-index: 100;
+    overflow: auto;
+}
+
+.sv_window_title {
+    padding: 10px;
+    cursor: move;
+    z-index: 10;
+    background-color: #00819D;
+}
+
+.sv-root-modern .sv-footer__complete-btn {
+    background-color: #00819D;
+}
+
+.sv_main.sv_default_css input[type="button"], .sv_default_css button {
+    color: white;
+    background-color: #00819D;
+}
+
+.sv-question__title {
+    position: relative;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0.25em 0.44em;
+    cursor: default;
+    font-size: 1.25em;
+    word-break: break-word;
+}
+.sv-container-modern {
+    color: #404040;
+    font-size: 12px;
+    font-family: "Segoe UI", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.sv_main .sv_q_num + span {
+    font-size: 14px;
+}
+
+.survey_button {
+    -moz-box-shadow: 3px 3px 5px #535353;
+    -webkit-box-shadow: 3px 3px 5px #535353;
+    box-shadow: 3px 3px 5px #535353;
+    -moz-border-radius: 6px 6px 6px 6px;
+    -webkit-border-radius: 6px;
+    border-radius: 6px 6px 6px 6px;
+    position: fixed;
+    bottom: 10px;
+    left:10px;
+    display: inline;
+    white-space: nowrap;
+    text-decoration: none !important;
+    font-family: 'Roboto',sans-serif;
+    cursor: pointer;
+    font-size: 14px;
+    max-height:90%;
+    z-index: 99;
+    bottom:0;
+  /*  border: 0; */
+    font-size: 100%;
+    vertical-align: baseline;
+    overflow: auto;
+    max-width: fit-content;
+    margin-right: 40px;
+    z-index:999;
+    float: none !important;
+}
+.survey_button .panel{
+    margin-bottom: 0 !important;
+}
+.survey_button .panel-title {
+    margin-bottom: 0 !important;
+    /* padding-left: 40px; */
+    padding-right: 40px;
+}
+
+.row{
+    margin-top:40px;
+    padding: 0 10px;
+}
+
+.clickable{
+    cursor: pointer;
+}
+
+.panel-heading span {
+    margin-top: -20px;
+    font-size: 15px;
+}
+
+.panel-body .sv_nav1 {
+
+   display: block;
+    white-space: nowrap;
+    text-decoration: none !important;
+    font-family: 'Roboto',sans-serif;
+    cursor: pointer;
+    font-size: 14px;
+    z-index: 99;
+    border: 1px;
+    font-size: 100%;
+    vertical-align: middle;
+    horiz-align: center;
+    margin: 0;
+    overflow: auto;
+    max-width: fit-content;
+    padding-bottom: 10px;
+    margin-left:20px;
+
+
+}
+.panel-body .sv_nav {
+
+    display: block;
+    white-space: nowrap;
+    text-decoration: none !important;
+    font-family: 'Roboto',sans-serif;
+    cursor: pointer;
+    font-size: 14px;
+    z-index: 99;
+    border: 1px;
+    font-size: 100%;
+    vertical-align: middle;
+    margin: 0;
+    overflow: auto;
+    margin-top: -46px;
+    margin-left: 176px;
+
+
+}
+
+.sv_nav1 input[type="button"], .sv_default_css button {
+    color: white;
+    /*background-color: #00819D; */
+    margin-bottom: 15px;
+    background: linear-gradient(#00A2C4, #00819D);
+    border: .5px solid #00b0d5;
+    border-radius: 4px;
+    font-family: 'Roboto',sans-serif;
+    padding: 3px 12px;
+    height: 28px;
+    text-decoration: none;
+
+}
+.sv_nav1 input[type="button"]:hover {
+    background: #026d84;
+    border: .5px solid #00A2C4;
+    border-radius: 4px;
+    color: #fff;
+    font-family: 'Roboto',sans-serif;
+    padding: 6px 12px;
+    height: 28px;
+    text-decoration: none;
+
+}
+.survey_base_button {
+    box-shadow: -1px 1px 2px rgba(0, 0, 0, 0.5);
+    border-radius: 2px 0px 0px;
+    position: fixed;
+    display: block;
+    white-space: nowrap;
+    text-decoration: none !important;
+    font-family: 'Roboto',sans-serif;
+    cursor: pointer;
+    font-size: 14px;
+    z-index: 99;
+    bottom:0;
+    right:206px;
 }
