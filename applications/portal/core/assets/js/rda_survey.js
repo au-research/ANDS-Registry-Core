@@ -290,7 +290,7 @@ var surveyJSON = {
                     "type": "checkbox",
                     "name": "looking_for",
                     "minWidth": "300px",
-                    "title": "What dataset, information or other resources (e.g. project, grant, data service) are you looking for this visit? (Please mark/tick all that apply)",
+                    "title": "What dataset, information or other resources (e.g. project, grant, data service) are you looking for today? (Please mark/tick all that apply)",
                     "choices": [
                         {
                             "value": "Specific",
