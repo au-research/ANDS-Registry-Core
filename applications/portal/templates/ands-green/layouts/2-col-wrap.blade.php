@@ -63,7 +63,7 @@
                                         <div class="panel-tools">
                                             <div ng-if="ro.stat">
                                                 <span style="padding-right:4px;" tip="This page has been viewed [[ro.stat.viewed]] times.<br/><span style='font-size:0.8em'>Statistics collected since April 2015</span>"><small>Viewed: </small>[[ro.stat.viewed]]</span>
-                                                <span style="padding-right:4px;" tip="Data Citation Index&#153; All Databases Times Cited: [[ro.stat.cited]]<br/><span style='font-size:0.8em'>Please note the citation count is currently a trial service between Research<br/> Data Australia and the Thomson Reuters Data Citation Index&#153;.</span>" ng-if="ro.stat.cited > 0"><small>Cited: </small>[[ro.stat.cited]]</span>
+                                                <span style="padding-right:4px;" tip="Data Citation Index&#153; All Databases Times Cited: [[ro.stat.cited]]<br/><span style='font-size:0.8em'>Please note the citation count is currently a trial service between Research<br/> Data Australia and the Clarivate Data Citation Index&#153;.</span>" ng-if="ro.stat.cited > 0"><small>Cited: </small>[[ro.stat.cited]]</span>
                                                 <span style="padding-right:4px;" tip="The ‘Go To Data Provider’ button has been used [[ro.stat.accessed]] times <br/>to access the source of the data for this record.<br/><span style='font-size:0.8em'>Statistics collected since April 2015</span>" ng-if="ro.stat.accessed > 0"><small>Accessed: </small>[[ro.stat.accessed]]</span>
                                             </div>
                                         </div>
