@@ -418,7 +418,7 @@ class RelationshipProvider
                         foreach($relation_type as $type) {
                             IdentifierRelationship::create([
                                     "registry_object_id" => $record->registry_object_id,
-                                    "related_object_identifier" => trim((string)$i),
+                                    "related_object_identifier" => IdentifierProvider::getNormalisedIdentifier((string)$i, (string)$i['type']),
                                     "related_info_type" => $related_info_type,
                                     "related_object_identifier_type" => (string)$i['type'],
                                     "relation_type" => $type,
