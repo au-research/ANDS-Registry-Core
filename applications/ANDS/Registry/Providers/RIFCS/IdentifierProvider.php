@@ -54,7 +54,7 @@ class IdentifierProvider implements RIFCSProvider
         $xml = $record->getCurrentData()->data;
         foreach (XMLUtil::getElementsByXPath($xml,
             'ro:registryObject/ro:' . $record->class . '/ro:identifier') AS $identifier) {
-            $identifierValue = trim((string)$identifier);
+            $identifierValue = IdentifierProvider::getNormalisedIdentifier(trim((string)$identifier), $identifier['type']);
             if ($identifierValue == "") {
                 continue;
             }
@@ -326,5 +326,35 @@ class IdentifierProvider implements RIFCSProvider
 
 
         throw new \Exception("$type not supported for formatting");
+    }
+
+    /**
+     * returns a standard representation for any given Identifier
+     * this is needed to match Identifiers that are identical but using a different form
+     * eg: all these identifiers are identical for type="doi"
+     * DOI:10.234/455
+     * http://doi.org/10.234/455
+     * https://doi.org/10.234/455
+     * 10.234/455
+     * @param $identifierValue
+     * @param $type
+     */
+    public static function getNormalisedIdentifier($identifierValue, $type){
+
+        $identifierValue = trim($identifierValue);
+        $type = trim($type);
+        switch ($type)
+        {
+            case "doi":
+                // if it's a valid DOI eg there is a string that starts with 10.
+                if(str_contains($identifierValue, "10.")){
+                    return strtoupper(substr($identifierValue, strpos($identifierValue, "10.")));
+                }
+                return $identifierValue;
+            break;
+            default:
+                return strtolower($identifierValue);
+        }
+
     }
 }
