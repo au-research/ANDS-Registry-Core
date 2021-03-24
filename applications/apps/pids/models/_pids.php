@@ -89,17 +89,24 @@ class _pids extends CI_Model
         $userIdentifier = $this->_CI->session->userdata(PIDS_USER_IDENTIFIER);
         $userDomain = $this->_CI->session->userdata(PIDS_USER_DOMAIN);
         $ownerHandle = $this->getOwnerHandle($userIdentifier, $userDomain);
-        $userHandles = $this->getHandles($ownerHandle);
+        /*
+         * getAll user's handles worked for a while but some of our users have 100k + PIDS
+         * we should check ownership in a less memory hungry way
+         */
+        //$userHandles = $this->getHandles($ownerHandle);
         $file = fopen($upload_path.$fileName.'_result.csv','x+');
         fputcsv($file,  array("NUMBER",'HANDLE','DESC','URL'), ',', '"');
         $i = 0;
         foreach($csv as $handleInfo)
         {
             $i++;
+
             $handleValue = $handleInfo['HANDLE'];
+            $log.= $handleValue;
             if($handleValue != '')
             {
-                if(in_array($handleValue, $userHandles)){
+                // use isOwnerHandle instead of checking the preloaded array of all user's handles
+                if($this->isOwnerHandle($handleValue, $ownerHandle)){
                     $log .= $this->updateHandle($handleInfo);
                     fputcsv($file, array($i, $handleInfo['HANDLE'], $handleInfo['DESC'], $handleInfo['URL']), ',',  '"');
                     $updateCount++;
@@ -289,6 +296,24 @@ class _pids extends CI_Model
 			return $array[0]['handle'];
 		}
 	}
+
+    /**
+     * tests if the given handle belongs to the current User
+     * @param $handle the handle value that the user trying to modify
+     * @param $ownerhandle the owner handle Value of the current user
+     * @return bool true if the AGENTID attribute of the given handle equals the ownerHandle Value
+     *
+     */
+    function isOwnerHandle($handle, $ownerhandle)
+    {
+
+        $query = $this->pid_db->get_where("handles", array("handle"=>$handle, "type"=>'AGENTID', "data"=>$ownerhandle));
+        if($query->num_rows()>0){
+            return true;
+        }
+        return false;
+    }
+    
 
 	function getHandles($ownerHandle, $searchText = null)
 	{
