@@ -416,11 +416,12 @@ class RelationshipProvider
                 foreach ($related_info->identifier as $i) {
                     if (trim((string)$i) != '') {
                         foreach($relation_type as $type) {
+                            $normalisedIdentifier = IdentifierProvider::getNormalisedIdentifier((string)$i, (string)$i['type']);
                             IdentifierRelationship::create([
                                     "registry_object_id" => $record->registry_object_id,
-                                    "related_object_identifier" => IdentifierProvider::getNormalisedIdentifier((string)$i, (string)$i['type']),
+                                    "related_object_identifier" => $normalisedIdentifier["value"],
                                     "related_info_type" => $related_info_type,
-                                    "related_object_identifier_type" => (string)$i['type'],
+                                    "related_object_identifier_type" => $normalisedIdentifier['type'],
                                     "relation_type" => $type,
                                     "related_title" => $related_info_title,
                                     "related_description" => $related_description,
