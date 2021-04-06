@@ -54,16 +54,17 @@ class IdentifierProvider implements RIFCSProvider
         $xml = $record->getCurrentData()->data;
         foreach (XMLUtil::getElementsByXPath($xml,
             'ro:registryObject/ro:' . $record->class . '/ro:identifier') AS $identifier) {
-            $identifierValue = IdentifierProvider::getNormalisedIdentifier(trim((string)$identifier), $identifier['type']);
-            if ($identifierValue == "") {
+            if (trim((string)$identifier) == "") {
                 continue;
             }
-            $identifiers[] = $identifierValue;
+            $normalisedIdentifier = IdentifierProvider::getNormalisedIdentifier(trim((string)$identifier), trim((string)$identifier['type']));
+
+            $identifiers[] = $normalisedIdentifier["value"];
             Identifier::create(
                 [
                     'registry_object_id' => $record->registry_object_id,
-                    'identifier' => $identifierValue,
-                    'identifier_type' => trim((string)$identifier['type'])
+                    'identifier' => $normalisedIdentifier["value"],
+                    'identifier_type' => $normalisedIdentifier["type"]
                 ]
             );
 
@@ -341,20 +342,89 @@ class IdentifierProvider implements RIFCSProvider
      */
     public static function getNormalisedIdentifier($identifierValue, $type){
 
-        $identifierValue = trim($identifierValue);
-        $type = trim($type);
-        switch ($type)
+        // first overwrite type if it is not specific enough
+        $identifier["type"] = IdentifierProvider::getNormalisedIdentifierType($identifierValue, $type);
+        $identifier["value"] = $identifierValue;
+
+        switch ($identifier["type"])
         {
             case "doi":
                 // if it's a valid DOI eg there is a string that starts with 10.
+                $identifierValue = strtoupper(trim($identifierValue));
                 if(str_contains($identifierValue, "10.")){
-                    return strtoupper(substr($identifierValue, strpos($identifierValue, "10.")));
+                    $identifier["value"] = strtoupper(substr($identifierValue, strpos($identifierValue, "10.")));
                 }
-                return $identifierValue;
+                return $identifier;
             break;
+            case "orcid":
+                // ORCID is 19 character long with 4 sets of 4 digit numbers
+                if(substr_count($identifierValue, "-") >= 3){
+                    $identifier["value"] = strtoupper(substr($identifierValue, strpos($identifierValue, "-") - 4, 19));
+                }
+                return $identifier;
+                break;
+            case "handle":
+                $identifierValue = strtolower(trim($identifierValue));
+                if(str_contains($identifierValue, "hdl:")){
+                    $identifier["value"] = substr($identifierValue, strpos($identifierValue, "hdl:") + 4);
+                }
+                else if(str_contains($identifierValue, "http")){
+                    $parsedUrl = parse_url($identifierValue);
+                    $identifier["value"] = substr($parsedUrl["path"],1);
+                }
+                else if(str_contains($identifierValue, "handle.")){
+                    $parsedUrl = parse_url("http://".$identifierValue);
+                    $identifier["value"] = substr($parsedUrl["path"],1);
+                }
+                return $identifier;
+                break;
+            case "purl":
+                if(str_contains($identifierValue, "purl.org")){
+                    $identifier["value"] = "https://" . substr($identifierValue, strpos($identifierValue, "purl.org"));
+                }
+                return $identifier;
+            case "AU-ANL:PEAU":
+                if(str_contains($identifierValue, "nla.gov.au/nla.party-")){
+                    $identifier["value"] = "https://" . substr($identifierValue, strpos($identifierValue, "nla.gov.au/nla.party-"));
+                }
+                return $identifier;
             default:
-                return strtolower($identifierValue);
+                return $identifier;
         }
 
+    }
+
+    /**
+     * trying to best guess the more specific IdentifierType based on the Identifier value
+     * or a regular missmatch from
+     * eg: uri with value http://doi.org/10.5412 should be changed to doi
+     * @param $identifierValue
+     * @param $type
+     * @return string
+     */
+    public static function getNormalisedIdentifierType($identifierValue, $type){
+
+        $identifierValue = strtoupper(trim($identifierValue));
+
+        // first overwrite type is it's not correct
+        if($type == "nla.party"){
+            $type = "AU-ANL:PEAU";
+        }
+        if(strpos($identifierValue, "10.") > 0  && strpos($identifierValue, "DOI") > 0){
+            $type = "doi";
+        }
+        else if(strpos($identifierValue, "ORCID.ORG") > 0  && substr_count($identifierValue, "-") >= 3){
+            $type = "orcid";
+        }
+        else if(strpos($identifierValue, "HANDLE.") > 0  || str_contains($identifierValue, "HDL:")){
+            $type = "handle";
+        }
+        else if(strpos($identifierValue, "PURL.ORG") > 0){
+            $type = "purl";
+        }
+        else if(str_contains($identifierValue, "NLA.GOV.AU/NLA.PARTY-")){
+            $type = "AU-ANL:PEAU";
+        }
+        return $type;
     }
 }
