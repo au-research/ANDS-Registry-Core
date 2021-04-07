@@ -355,7 +355,7 @@ class IdentifierProvider implements RIFCSProvider
                     $identifier["value"] = strtoupper(substr($identifierValue, strpos($identifierValue, "10.")));
                 }
                 return $identifier;
-            break;
+                break;
             case "orcid":
                 // ORCID is 19 character long with 4 sets of 4 digit numbers
                 if(substr_count($identifierValue, "-") >= 3){
@@ -383,11 +383,24 @@ class IdentifierProvider implements RIFCSProvider
                     $identifier["value"] = "https://" . substr($identifierValue, strpos($identifierValue, "purl.org"));
                 }
                 return $identifier;
+                break;
             case "AU-ANL:PEAU":
-                if(str_contains($identifierValue, "nla.gov.au/nla.party-")){
-                    $identifier["value"] = "https://" . substr($identifierValue, strpos($identifierValue, "nla.gov.au/nla.party-"));
+                if(str_contains($identifierValue, "nla.party-")){
+                    $identifier["value"] = substr($identifierValue, strpos($identifierValue, "nla.party-"));
+                }else{
+                    $identifier["value"] = "nla.party-".$identifierValue;
                 }
                 return $identifier;
+                break;
+            case "igsn":
+                if(str_contains($identifierValue, "10273/")){
+                    $identifier["value"] = substr($identifierValue, strpos($identifierValue, "10273/") + 6);
+                }
+                else if(str_contains($identifierValue, "igsn.org/")){
+                    $identifier["value"] = substr($identifierValue, strpos($identifierValue, "igsn.org/") + 9);
+                }
+                return $identifier;
+                break;
             default:
                 return $identifier;
         }
@@ -407,23 +420,26 @@ class IdentifierProvider implements RIFCSProvider
         $identifierValue = strtoupper(trim($identifierValue));
 
         // first overwrite type is it's not correct
-        if($type == "nla.party"){
-            $type = "AU-ANL:PEAU";
+        if(strtolower($type) == "nla.party"){
+            return "AU-ANL:PEAU";
+        }
+        if(str_contains($identifierValue, "HDL.HANDLE.NET/10273/")){
+            return "igsn";
         }
         if(strpos($identifierValue, "10.") > 0  && strpos($identifierValue, "DOI") > 0){
-            $type = "doi";
+            return "doi";
         }
-        else if(strpos($identifierValue, "ORCID.ORG") > 0  && substr_count($identifierValue, "-") >= 3){
-            $type = "orcid";
+        if(strpos($identifierValue, "ORCID.ORG") > 0  && substr_count($identifierValue, "-") >= 3){
+            return "orcid";
         }
-        else if(strpos($identifierValue, "HANDLE.") > 0  || str_contains($identifierValue, "HDL:")){
-            $type = "handle";
+        if(strpos($identifierValue, "HANDLE.") > 0  || str_contains($identifierValue, "HDL:")){
+            return "handle";
         }
-        else if(strpos($identifierValue, "PURL.ORG") > 0){
-            $type = "purl";
+        if(strpos($identifierValue, "PURL.ORG") > 0){
+            return "purl";
         }
-        else if(str_contains($identifierValue, "NLA.GOV.AU/NLA.PARTY-")){
-            $type = "AU-ANL:PEAU";
+        if(str_contains($identifierValue, "NLA.PARTY-")){
+            return "AU-ANL:PEAU";
         }
         return $type;
     }
