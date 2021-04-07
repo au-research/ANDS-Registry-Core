@@ -53,7 +53,8 @@ class IdentifierProviderTest extends \RegistryTestClass
             ['value' => 'hdl:1959.7/512474', 'type' => 'global', 'expectedValue' => '1959.7/512474', 'expectedType' => 'handle'],
             ['value' => 'hdl.handle.net/1959.7/512474', 'type' => 'url', 'expectedValue' => '1959.7/512474', 'expectedType' => 'handle'],
             ['value' => 'https://hdl.handle.net/1959.7/512474', 'type' => 'uri', 'expectedValue' => '1959.7/512474', 'expectedType' => 'handle'],
-            ['value' => 'http://hdl.handle.net/1959.7/512474', 'type' => 'handle', 'expectedValue' => '1959.7/512474', 'expectedType' => 'handle']
+            ['value' => 'http://hdl.handle.net/1959.7/512474', 'type' => 'handle', 'expectedValue' => '1959.7/512474', 'expectedType' => 'handle'],
+            ['value' => '1959.7/512474', 'type' => 'handle', 'expectedValue' => '1959.7/512474', 'expectedType' => 'handle']
         ];
         foreach($tests as $test){
             $identifier = IdentifierProvider::getNormalisedIdentifier($test["value"], $test["type"]);
@@ -82,12 +83,34 @@ class IdentifierProviderTest extends \RegistryTestClass
     public function it_should_process_nla_parties()
     {
         $tests = [
-            ['value' => 'http://nla.gov.au/nla.party-1692395', 'type' => 'uri', 'expectedValue' => 'https://nla.gov.au/nla.party-1692395', 'expectedType' => 'AU-ANL:PEAU'],
-            ['value' => 'http://nla.gov.au/nla.party-1692395', 'type' => 'nla-party', 'expectedValue' => 'https://nla.gov.au/nla.party-1692395', 'expectedType' => 'AU-ANL:PEAU'],
-            ['value' => 'http://nla.gov.au/nla.party-1692395', 'type' => 'AU-VANDS', 'expectedValue' => 'https://nla.gov.au/nla.party-1692395', 'expectedType' => 'AU-ANL:PEAU'],
-            ['value' => 'nla.gov.au/nla.party-1692395', 'type' => 'AU-QGU', 'expectedValue' => 'https://nla.gov.au/nla.party-1692395', 'expectedType' => 'AU-ANL:PEAU'],
-            ['value' => 'https://nla.gov.au/nla.party-1692395', 'type' => 'AU-QUT', 'expectedValue' => 'https://nla.gov.au/nla.party-1692395', 'expectedType' => 'AU-ANL:PEAU'],
-            ['value' => 'http://nla.gov.au/nla.party-1692395', 'type' => 'nla.party', 'expectedValue' => 'https://nla.gov.au/nla.party-1692395', 'expectedType' => 'AU-ANL:PEAU']
+            ['value' => 'http://nla.gov.au/nla.party-1692395', 'type' => 'uri', 'expectedValue' => 'nla.party-1692395', 'expectedType' => 'AU-ANL:PEAU'],
+            ['value' => 'http://nla.gov.au/nla.party-1692395', 'type' => 'nla-party', 'expectedValue' => 'nla.party-1692395', 'expectedType' => 'AU-ANL:PEAU'],
+            ['value' => 'http://nla.gov.au/nla.party-1692395', 'type' => 'AU-VANDS', 'expectedValue' => 'nla.party-1692395', 'expectedType' => 'AU-ANL:PEAU'],
+            ['value' => 'nla.gov.au/nla.party-1692395', 'type' => 'AU-QGU', 'expectedValue' => 'nla.party-1692395', 'expectedType' => 'AU-ANL:PEAU'],
+            ['value' => 'https://nla.gov.au/nla.party-1692395', 'type' => 'AU-QUT', 'expectedValue' => 'nla.party-1692395', 'expectedType' => 'AU-ANL:PEAU'],
+            ['value' => 'http://nla.gov.au/nla.party-1692395', 'type' => 'nla.party', 'expectedValue' => 'nla.party-1692395', 'expectedType' => 'AU-ANL:PEAU'],
+            ['value' => 'nla.party-1692395', 'type' => 'AU-ANL:PEAU', 'expectedValue' => 'nla.party-1692395', 'expectedType' => 'AU-ANL:PEAU'],
+            ['value' => 'nla.party-1692395', 'type' => 'AU-QGU', 'expectedValue' => 'nla.party-1692395', 'expectedType' => 'AU-ANL:PEAU'],
+            ['value' => '1692395', 'type' => 'NLA.PARTY', 'expectedValue' => 'nla.party-1692395', 'expectedType' => 'AU-ANL:PEAU']
+        ];
+        foreach($tests as $test){
+            $identifier = IdentifierProvider::getNormalisedIdentifier($test["value"], $test["type"]);
+            $this->assertEquals($test["expectedValue"], $identifier["value"]);
+            $this->assertEquals($test["expectedType"], $identifier["type"]);
+        }
+    }
+
+    // IGSN : 10273/  http://igsn.org/
+    /** @test * */
+    public function it_should_process_igsns()
+    {
+        $tests = [
+            ['value' => 'http://igsn.org/AU1243', 'type' => 'igsn', 'expectedValue' => 'AU1243', 'expectedType' => 'igsn'],
+            ['value' => 'https://igsn.org/AU1243', 'type' => 'igsn', 'expectedValue' => 'AU1243', 'expectedType' => 'igsn'],
+            ['value' => 'hdl.handle.net/10273/AU1243', 'type' => 'handle', 'expectedValue' => 'AU1243', 'expectedType' => 'igsn'],
+            ['value' => '10273/AU1243', 'type' => 'igsn', 'expectedValue' => 'AU1243', 'expectedType' => 'igsn'],
+            ['value' => 'AU1243', 'type' => 'igsn', 'expectedValue' => 'AU1243', 'expectedType' => 'igsn'],
+            ['value' => 'https://igsn.org/AU1243', 'type' => 'uri', 'expectedValue' => 'https://igsn.org/AU1243', 'expectedType' => 'uri']
         ];
         foreach($tests as $test){
             $identifier = IdentifierProvider::getNormalisedIdentifier($test["value"], $test["type"]);
