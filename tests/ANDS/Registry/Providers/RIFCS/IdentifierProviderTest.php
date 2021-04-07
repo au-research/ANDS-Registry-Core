@@ -109,7 +109,7 @@ class IdentifierProviderTest extends \RegistryTestClass
             ['value' => 'https://igsn.org/AU1243', 'type' => 'igsn', 'expectedValue' => 'AU1243', 'expectedType' => 'igsn'],
             ['value' => 'hdl.handle.net/10273/AU1243', 'type' => 'handle', 'expectedValue' => 'AU1243', 'expectedType' => 'igsn'],
             ['value' => '10273/AU1243', 'type' => 'igsn', 'expectedValue' => 'AU1243', 'expectedType' => 'igsn'],
-            ['value' => 'AU1243', 'type' => 'igsn', 'expectedValue' => 'AU1243', 'expectedType' => 'igsn'],
+            ['value' => 'au1243', 'type' => 'igsn', 'expectedValue' => 'AU1243', 'expectedType' => 'igsn'],
             ['value' => 'https://igsn.org/AU1243', 'type' => 'uri', 'expectedValue' => 'https://igsn.org/AU1243', 'expectedType' => 'uri']
         ];
         foreach($tests as $test){

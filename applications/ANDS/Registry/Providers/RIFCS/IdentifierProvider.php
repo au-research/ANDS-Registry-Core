@@ -350,6 +350,7 @@ class IdentifierProvider implements RIFCSProvider
         {
             case "doi":
                 // if it's a valid DOI eg there is a string that starts with 10.
+                // upper case DOI values they are case insensitive
                 $identifierValue = strtoupper(trim($identifierValue));
                 if(str_contains($identifierValue, "10.")){
                     $identifier["value"] = strtoupper(substr($identifierValue, strpos($identifierValue, "10.")));
@@ -393,11 +394,14 @@ class IdentifierProvider implements RIFCSProvider
                 return $identifier;
                 break;
             case "igsn":
+                // upper case IGSN values they are case insensitive
+                $identifierValue = strtoupper(trim($identifierValue));
+                $identifier["value"] = $identifierValue;
                 if(str_contains($identifierValue, "10273/")){
                     $identifier["value"] = substr($identifierValue, strpos($identifierValue, "10273/") + 6);
                 }
-                else if(str_contains($identifierValue, "igsn.org/")){
-                    $identifier["value"] = substr($identifierValue, strpos($identifierValue, "igsn.org/") + 9);
+                else if(str_contains($identifierValue, "IGSN.ORG/")){
+                    $identifier["value"] = substr($identifierValue, strpos($identifierValue, "IGSN.ORG/") + 9);
                 }
                 return $identifier;
                 break;
