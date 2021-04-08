@@ -36,7 +36,19 @@ class Analytics extends MX_Controller
             'analytics_modal_detail_controller',
         );
 
-        $data['app_js_lib'] = array(
+    /*    $data['app_js_lib'] = array(
+            'angular/angular.min.js',
+            'angular-route/angular-route.min.js',
+            'Chart.js/Chart.min.js',
+            'angular-chart.js/angular-chart.js',
+            'moment/moment.js',
+            'angular-bootstrap/ui-bootstrap.min.js',
+            'angular-bootstrap/ui-bootstrap-tpls.min.js',
+            'bootstrap-daterangepicker/daterangepicker.js',
+            'angular-daterangepicker/js/angular-daterangepicker.js',
+        ); */
+
+        $data['app_js_dist'] = array(
             'angular/angular.min.js',
             'angular-route/angular-route.min.js',
             'Chart.js/Chart.min.js',

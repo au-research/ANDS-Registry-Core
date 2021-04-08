@@ -53,6 +53,13 @@ $base_url = str_replace('/apps','/registry',base_url());
         <link rel="stylesheet" href="<?php echo asset_url('js/lib/'. $lib);?>"/>
     <?php endforeach; endif; ?>
 
+<?php if (isset($app_js_dist)): foreach($app_js_dist as $lib):?>
+    <script src="<?php echo asset_url('js/lib/' . $lib);?>"></script>
+<?php endforeach; endif; ?>
+<?php if (isset($app_css_dist)): foreach($app_css_dist as $lib):?>
+    <link rel="stylesheet" href="<?php echo asset_url('js/lib/'. $lib);?>"/>
+<?php endforeach; endif; ?>
+
     <?php foreach($js_lib as $lib):?>
 
         <?php if($lib=='graph'):?>
