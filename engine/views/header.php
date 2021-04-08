@@ -107,8 +107,10 @@ else
                   <a class="dropdown-toggle" data-toggle="dropdown" href="#">My Data <b class="caret"></b></a>
                   <ul class="dropdown-menu pull-right">
                     <li class=""><?php echo anchor(registry_url('data_source/manage'), 'Manage My Data Sources');?></li>
-                      <!-- this link was removed temporarily https://jira.ardc.edu.au/browse/RDA-109 -->
-                     <!?php if(count($this->user->affiliations())==1){
+
+                      <!-- this link was removed temporarily https://jira.ardc.edu.au/browse/RDA-109
+                      and reinstated for testing of new analytics campaign-->
+                     <?php if(count($this->user->affiliations())==1){
                             echo '<li class="">'.anchor(apps_url('analytics#/report/'.$this->user->affiliations()[0]), 'Analytics <sup style="color:red;">new!</sup>').'</li>';
                         }else {
                             echo '<li class="">'.anchor(apps_url('analytics'), 'Analytics <sup style="color:red;">new!</sup>').'</li>';

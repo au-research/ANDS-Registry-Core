@@ -43,7 +43,7 @@ $base_url = str_replace('/apps','/registry',base_url());
         <?php echo urchin_for(\ANDS\Util\config::get('app.svc_urchin_id')); ?>
     </script>
 
-    <script type="text/javascript" src="<?php echo$base_url;?>assets/js/arms.scripts.js"></script>
+<script type="text/javascript" src="<?php echo $base_url;?>assets/js/arms.scripts.js"></script>
 
     <!-- Module-specific styles and scripts -->
     <?php if (isset($app_js_lib)): foreach($app_js_lib as $lib):?>
@@ -59,6 +59,7 @@ $base_url = str_replace('/apps','/registry',base_url());
 <?php if (isset($app_css_dist)): foreach($app_css_dist as $lib):?>
     <link rel="stylesheet" href="<?php echo asset_url('js/lib/'. $lib);?>"/>
 <?php endforeach; endif; ?>
+
 
     <?php foreach($js_lib as $lib):?>
 
@@ -199,6 +200,9 @@ $base_url = str_replace('/apps','/registry',base_url());
 
     <?php endforeach;?>
 
+<?php if (isset($app_scripts)): foreach($app_scripts as $script):?>
+    <script src="<?php echo asset_url('dist/'.$script);?>"></script>
+<?php endforeach; endif; ?>
 
     <?php if (isset($scripts)): foreach($scripts as $script):?>
         <script src="<?php echo asset_url('js/' . $script);?>.js"></script>
@@ -206,6 +210,9 @@ $base_url = str_replace('/apps','/registry',base_url());
 
 
 	<!-- Bootstrap javascripts, need to be placed after all else -->
+
+
+
     <script src="<?php echo$base_url;?>assets/lib/twitter_bootstrap/js/bootstrap.js"></script>
 
   </body>

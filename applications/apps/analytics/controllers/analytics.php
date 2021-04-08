@@ -22,9 +22,8 @@ class Analytics extends MX_Controller
     {
 //        acl_enforce('REGISTRY_USER');
         $data = array(
-            'title' => 'ANDS Services Analytics',
+            'title' => 'ARDC Services Analytics',
         );
-
         $data['scripts'] = array(
             'analytics_app',
             'main_ctrl',
@@ -35,6 +34,7 @@ class Analytics extends MX_Controller
             'analytics_factory',
             'analytics_modal_detail_controller',
         );
+
 
     /*    $data['app_js_lib'] = array(
             'angular/angular.min.js',
@@ -48,21 +48,25 @@ class Analytics extends MX_Controller
             'angular-daterangepicker/js/angular-daterangepicker.js',
         ); */
 
+
         $data['app_js_dist'] = array(
             'angular/angular.min.js',
             'angular-route/angular-route.min.js',
             'Chart.js/Chart.min.js',
             'angular-chart.js/angular-chart.js',
             'moment/moment.js',
-            'angular-bootstrap/ui-bootstrap.min.js',
-            'angular-bootstrap/ui-bootstrap-tpls.min.js',
+            'angular-bootstrap/ui-bootstrap.js',
+            'angular-bootstrap/ui-bootstrap-tpls.js',
             'bootstrap-daterangepicker/daterangepicker.js',
             'angular-daterangepicker/js/angular-daterangepicker.js',
         );
 
-        $data['app_css_lib'] = array(
-            'angular-chart.js/dist/angular-chart.css',
-            'bootstrap-daterangepicker/daterangepicker-bs2.css',
+
+
+
+        $data['app_css'] = array(
+            'daterangepicker-bs2.css',
+            'angular-chart.css'
         );
 
         $data['js_lib'] = array('core');
