@@ -24,7 +24,7 @@ class Analytics extends MX_Controller
         $data = array(
             'title' => 'ARDC Services Analytics',
         );
-        $data['scripts'] = array(
+      /*  $data['scripts'] = array(
             'analytics_app',
             'main_ctrl',
             'report_ctrl',
@@ -33,7 +33,7 @@ class Analytics extends MX_Controller
             'analytics_filter_service',
             'analytics_factory',
             'analytics_modal_detail_controller',
-        );
+        ); */
 
 
     /*    $data['app_js_lib'] = array(
@@ -50,21 +50,13 @@ class Analytics extends MX_Controller
 
 
         $data['app_js_dist'] = array(
-            'angular/angular.min.js',
-            'angular-route/angular-route.min.js',
-            'Chart.js/Chart.min.js',
-            'angular-chart.js/angular-chart.js',
-            'moment/moment.js',
-            'angular-bootstrap/ui-bootstrap.js',
-            'angular-bootstrap/ui-bootstrap-tpls.js',
-            'bootstrap-daterangepicker/daterangepicker.js',
-            'angular-daterangepicker/js/angular-daterangepicker.js',
+            'analytics_js_combined.js'
         );
 
 
 
 
-        $data['app_css'] = array(
+        $data['app_css_dist'] = array(
             'daterangepicker-bs2.css',
             'angular-chart.css'
         );

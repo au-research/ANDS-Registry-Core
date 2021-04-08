@@ -1,9 +1,9 @@
 <div class="content-header">
-    <h1>ANDS Services Analytics</h1>
+    <h1>ARDC Services Analytics</h1>
 </div>
 <div id="breadcrumb" style="clear:both;">
     <a href="#/"><i class="icon-home"></i> Home</a>
-    <a href="#/">ANDS Services Analytics</a>
+    <a href="#/">ARDC Services Analytics</a>
     <a href="#/{{vm.org.role_id}}" class="current">{{ vm.org.name }} - RDA statistics</a>
 </div>
 <div class="container-fluid">
@@ -22,11 +22,8 @@
                         <div class="control-group">
                             <label for="" class="control-label">Date Range</label>
                             <div class="controls">
-                                <input
-                                    class="form-control date-picker"
-                                    type="text"
-                                    ng-model="vm.filters.period"
-                                    ng-change="vm.getData()"/>
+                                <input date-range-picker class="form-control date-picker" type="text"
+                                       ng-model="vm.filters.period" ng-change="vm.getData()"/>
                             </div>
                         </div>
                         <div class="control-group">

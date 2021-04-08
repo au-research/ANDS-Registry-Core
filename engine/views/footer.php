@@ -54,10 +54,10 @@ $base_url = str_replace('/apps','/registry',base_url());
     <?php endforeach; endif; ?>
 
 <?php if (isset($app_js_dist)): foreach($app_js_dist as $lib):?>
-    <script src="<?php echo asset_url('js/lib/' . $lib);?>"></script>
+    <script src="<?php echo asset_url('dist/' . $lib);?>"></script>
 <?php endforeach; endif; ?>
 <?php if (isset($app_css_dist)): foreach($app_css_dist as $lib):?>
-    <link rel="stylesheet" href="<?php echo asset_url('js/lib/'. $lib);?>"/>
+    <link rel="stylesheet" href="<?php echo asset_url('css/'. $lib);?>"/>
 <?php endforeach; endif; ?>
 
 
