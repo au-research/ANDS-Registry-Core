@@ -5486,15 +5486,15 @@ angular.module("ui.bootstrap",["ui.bootstrap.tpls","ui.bootstrap.transition","ui
             });
 
             //get doi breakdown
-            analyticFactory.getStat('doi', vm.filters).then(function(data){
+         /*   analyticFactory.getStat('doi', vm.filters).then(function(data){
                 vm.doiChartData = {
                     labels: ["Missing DOI", "ANDS DOI", "Non-ANDS DOI"],
                     data: [data['missing_doi'], data['has_ands_doi'], data['has_non_ands_doi']],
                 }
-            });
+            }); */
 
             //doi activity
-            analyticFactory.getStat('doi_activity', vm.filters).then(function(data){
+        /*    analyticFactory.getStat('doi_activity', vm.filters).then(function(data){
                 vm.doiActivityChartData = {
                     labels:[], data:[]
                 }
@@ -5517,10 +5517,10 @@ angular.module("ui.bootstrap",["ui.bootstrap.tpls","ui.bootstrap.transition","ui
                         }
                     });
                 })
-            });
+            }); */
 
             //link check
-            analyticFactory.getStat('doi_client', vm.filters).then(function(data){
+         /*   analyticFactory.getStat('doi_client', vm.filters).then(function(data){
                 vm.brokenLinksByAppID = {
                     labels:[],data:[]
                 }
@@ -5530,7 +5530,7 @@ angular.module("ui.bootstrap",["ui.bootstrap.tpls","ui.bootstrap.transition","ui
                     vm.brokenLinksByAppID.data.push(obj.url_broken_num);
                     vm.linkCheckerReport.push(obj.linkchecker_report);
                 });
-            });
+            }); */
 
             //quality level
             analyticFactory.getStat('ro_ql', vm.filters).then(function(data){

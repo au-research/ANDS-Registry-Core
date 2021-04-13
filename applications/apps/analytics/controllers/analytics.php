@@ -6,6 +6,7 @@
  * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
  */
 
+use ANDS\Cache\Cache;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
 
 class Analytics extends MX_Controller
@@ -18,42 +19,19 @@ class Analytics extends MX_Controller
      * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
      * @return view
      */
+
+
     public function index()
     {
 //        acl_enforce('REGISTRY_USER');
         $data = array(
             'title' => 'ARDC Services Analytics',
         );
-      /*  $data['scripts'] = array(
-            'analytics_app',
-            'main_ctrl',
-            'report_ctrl',
-            'analytics_chart_directive',
-            'ro_directive',
-            'analytics_filter_service',
-            'analytics_factory',
-            'analytics_modal_detail_controller',
-        ); */
-
-
-    /*    $data['app_js_lib'] = array(
-            'angular/angular.min.js',
-            'angular-route/angular-route.min.js',
-            'Chart.js/Chart.min.js',
-            'angular-chart.js/angular-chart.js',
-            'moment/moment.js',
-            'angular-bootstrap/ui-bootstrap.min.js',
-            'angular-bootstrap/ui-bootstrap-tpls.min.js',
-            'bootstrap-daterangepicker/daterangepicker.js',
-            'angular-daterangepicker/js/angular-daterangepicker.js',
-        ); */
 
 
         $data['app_js_dist'] = array(
             'analytics_js_combined.js'
         );
-
-
 
 
         $data['app_css_dist'] = array(
@@ -99,7 +77,6 @@ class Analytics extends MX_Controller
 
     public function getUser(){
         if($this->user->isSuperAdmin()){
-           // var_dump($this->user);
             $superUser=true;
         }else{
             $superUser=false;
@@ -143,7 +120,6 @@ class Analytics extends MX_Controller
         $postdata = file_get_contents("php://input");
         $request = json_decode($postdata, true);
         $filters = isset($request['filters']) ? $request['filters'] : false;
-
 
         $log = isset($filters['log']) ? $filters['log'] : 'rdalogs';
         $this->elasticsearch->init();
@@ -219,18 +195,18 @@ class Analytics extends MX_Controller
         $result = array();
         $search_result = $this->summary->getStat('/rda/production/', $filters);
         switch ($stat) {
-            case 'doi':
-                $result = $this->summary->getSolrDOIStat($filters);
-                break;
+           // case 'doi':
+            //    $result = $this->summary->getSolrDOIStat($filters);
+            //    break;
             case 'tr':
                 $result = $this->summary->getSolrStat('tr_cited', $filters);
                 break;
-            case 'doi_activity':
-                $result = $this->dois->getDOIActivityStat($filters);
-                break;
-            case 'doi_client':
-                $result = $this->dois->getClientStat($filters);
-                break;
+           // case 'doi_activity':
+             //   $result = $this->dois->getDOIActivityStat($filters);
+             //   break;
+           // case 'doi_client':
+            //    $result = $this->dois->getClientStat($filters);
+            //    break;
             case 'ro_ql':
                 $result = $this->summary->getSolrStat('quality_level', $filters);
                 break;
@@ -260,18 +236,14 @@ class Analytics extends MX_Controller
     public function getOrg($format = 'json') {
 
         set_exception_handler('json_exception_handler');
-
         // check in the cache
-        $this->load->driver('cache');
         $cache_id = 'org-role-analytics';
-        if(! $result = $this->cache->file->get($cache_id)) {
+           if(!$result = Cache::driver('file')->get($cache_id)) {
             //not in the cache, get it and save it
             $this->load->model('summary');
             $result = $this->summary->getOrgs();
-            //save for 30 minutes
-            $this->cache->file->save($cache_id, $result, 30);
-        }
-
+            Cache::driver('file')->put($cache_id, $result, 3000);
+          }
         $role_id = $this->input->get('role_id') ? $this->input->get('role_id') : false;
         if ($role_id) {
             foreach ($result as $r) {
