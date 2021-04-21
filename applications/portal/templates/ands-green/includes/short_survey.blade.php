@@ -147,5 +147,5 @@
         </div>
     </div>
 </div>
-<script type="text/javascript" src="{{asset_url('js/rda_survey.js')}}"></script>
+<script type="text/javascript" src="{{asset_url('js/rda_survey.js','core')}}"></script>
 
