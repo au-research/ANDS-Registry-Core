@@ -437,6 +437,10 @@ class IdentifierProvider implements RIFCSProvider
             return "orcid";
         }
         if(strpos($identifierValue, "HANDLE.") > 0  || str_contains($identifierValue, "HDL:")){
+            if(substr_count($identifierValue, "HTTP:") > 1){
+                // unable to confirm it's a handle
+                return $type;
+            }
             return "handle";
         }
         if(strpos($identifierValue, "PURL.ORG") > 0){

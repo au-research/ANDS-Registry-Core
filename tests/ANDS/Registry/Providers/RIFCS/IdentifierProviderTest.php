@@ -2,6 +2,8 @@
 
 use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 
+use Illuminate\Database\Capsule\Manager as Capsule;
+
 class IdentifierProviderTest extends \RegistryTestClass
 {
     /** @test * */
@@ -54,7 +56,9 @@ class IdentifierProviderTest extends \RegistryTestClass
             ['value' => 'hdl.handle.net/1959.7/512474', 'type' => 'url', 'expectedValue' => '1959.7/512474', 'expectedType' => 'handle'],
             ['value' => 'https://hdl.handle.net/1959.7/512474', 'type' => 'uri', 'expectedValue' => '1959.7/512474', 'expectedType' => 'handle'],
             ['value' => 'http://hdl.handle.net/1959.7/512474', 'type' => 'handle', 'expectedValue' => '1959.7/512474', 'expectedType' => 'handle'],
-            ['value' => '1959.7/512474', 'type' => 'handle', 'expectedValue' => '1959.7/512474', 'expectedType' => 'handle']
+            ['value' => '1959.7/512474', 'type' => 'handle', 'expectedValue' => '1959.7/512474', 'expectedType' => 'handle'],
+            ['value' => 'http://researchdata.ands.org.au/view/?key=http://hdl.handle.net/1959.14/201435', 'type' => 'uri', 'expectedValue' => 'http://researchdata.ands.org.au/view/?key=http://hdl.handle.net/1959.14/201435', 'expectedType' => 'uri']
+
         ];
         foreach($tests as $test){
             $identifier = IdentifierProvider::getNormalisedIdentifier($test["value"], $test["type"]);
@@ -119,4 +123,4 @@ class IdentifierProviderTest extends \RegistryTestClass
         }
     }
 
-}
+    }
