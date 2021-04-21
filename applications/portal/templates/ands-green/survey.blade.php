@@ -55,7 +55,7 @@
                     </div>
                 @else
                 <div id="surveyContainerLong"></div>
-                <script type="text/javascript" src="{{asset_url('js/rda_survey.js')}}"></script>
+                <script type="text/javascript" src="{{asset_url('js/rda_survey.js', 'core')}}"></script>
                 @endif
             </div>
         </section>
