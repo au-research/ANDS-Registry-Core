@@ -28,7 +28,8 @@ var longSurveyJSON  = {"pages":
                     "    better data search experience in future.</p>\n" +
                     "<p>The survey has 14 questions, will take approximately 15 minutes to complete.</p>\n" +
                     "<p>Please read the ARDC <a href='/page/privacy' target='_blank'> Privacy Policy</a> about how ARDC manages survey responses.</p>\n" +
-                    "<p><b>We advise you to start this survey after you have searched and experienced RDA and before you exit RDA, as some survey questions ask your data discovery experience with the RDA.</b></p>\n" +
+                    "<p><b>We advise you to start this survey after you have searched and experienced Research Data Australia and before you exit the site, " +
+                    "as some survey questions ask about your data discovery experience with Research Data Australia.</b></p>\n" +
                     "<h3>Your consent</h3>\n" +
                     "<p>I consent to participate in the survey, I confirm that:\n" +
                     "<ul>\n" +
@@ -337,8 +338,7 @@ jQuery(document).ready(function( $ ) {
     if(!hasrun) {
         var survey = new Survey.Model(surveyJSON);
         survey.completedHtml = "<p>Thank you for helping out!</p>" +
-        '<p>We welcome you to take a longer survey with 14 questions, after you have searched <br/>' +
-            'and experienced the Research Data Australia Catalogue and before you exit the catalogue. </p>' +
+        '<p>We welcome you to take a longer survey with 14 questions, after you have searched and experienced the Research Data Australia catalogue and before you exit the site. </p>' +
             '<p>The link to the longer survey, namely "RDA Survey", is available at <br/>the right top and bottom of each RDA page. </p>';
         survey.showCompletedPage = true;
         survey.firstPageIsStarted = true;
