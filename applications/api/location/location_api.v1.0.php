@@ -69,6 +69,7 @@ class Location_api
                 exit();
             }
             curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('User-Agent:ARDC-LOCATION-CAPTURE-WIDGET', 'Content-Type: application/x-www-form-urlencoded'));
             curl_setopt($ch, CURLOPT_POSTFIELDS, "filter=" . rawurlencode($filterText));
             curl_setopt($ch, CURLOPT_URL, $mctGazetteerGeocoderUrl);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
