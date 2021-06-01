@@ -406,7 +406,8 @@ class IdentifierProvider implements RIFCSProvider
                 return $identifier;
                 break;
             default:
-                return $identifier;
+                // RDA-141  remove http or https protocol for all other identifiers
+                return preg_replace("(^https?://)", "", $identifier );
         }
 
     }

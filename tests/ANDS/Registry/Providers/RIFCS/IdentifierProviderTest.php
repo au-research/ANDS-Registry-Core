@@ -17,7 +17,7 @@ class IdentifierProviderTest extends \RegistryTestClass
             ['value' => '10.234/455','type' => 'doi', 'expectedValue' => '10.234/455', 'expectedType' => 'doi'],
             // NOT DOIs
             ['value' => '1.234/455', 'type' => 'fish','expectedValue' => '1.234/455', 'expectedType' => 'fish'],
-            ['value' => 'http://doi.org/1.234/455','type' => 'url', 'expectedValue' => 'http://doi.org/1.234/455', 'expectedType' => 'url']
+            ['value' => 'http://doi.org/1.234/455','type' => 'url', 'expectedValue' => 'doi.org/1.234/455', 'expectedType' => 'url']
         ];
         foreach($tests as $test){
             $identifier = IdentifierProvider::getNormalisedIdentifier($test["value"], $test["type"]);
@@ -36,8 +36,8 @@ class IdentifierProviderTest extends \RegistryTestClass
             ['value' => 'https://orcid.org/0000-0002-9539-5716/userInfo.csv', 'type' => 'url', 'expectedValue' => '0000-0002-9539-5716', 'expectedType' => 'orcid'],
             ['value' => '0000-0002-9539-5716', 'type' => 'orcid', 'expectedValue' => '0000-0002-9539-5716', 'expectedType' => 'orcid'],
             // NOT ORCIDS
-            ['value' => 'http://orcid.org/index.php', 'type' => 'url', 'expectedValue' => 'http://orcid.org/index.php', 'expectedType' => 'url'],
-            ['value' => 'http://forcid.org/9539-5716', 'type' => 'url', 'expectedValue' => 'http://forcid.org/9539-5716', 'expectedType' => 'url']
+            ['value' => 'http://orcid.org/index.php', 'type' => 'url', 'expectedValue' => 'orcid.org/index.php', 'expectedType' => 'url'],
+            ['value' => 'http://forcid.org/9539-5716', 'type' => 'url', 'expectedValue' => 'forcid.org/9539-5716', 'expectedType' => 'url']
         ];
         foreach($tests as $test){
             $identifier = IdentifierProvider::getNormalisedIdentifier($test["value"], $test["type"]);
@@ -57,7 +57,7 @@ class IdentifierProviderTest extends \RegistryTestClass
             ['value' => 'https://hdl.handle.net/1959.7/512474', 'type' => 'uri', 'expectedValue' => '1959.7/512474', 'expectedType' => 'handle'],
             ['value' => 'http://hdl.handle.net/1959.7/512474', 'type' => 'handle', 'expectedValue' => '1959.7/512474', 'expectedType' => 'handle'],
             ['value' => '1959.7/512474', 'type' => 'handle', 'expectedValue' => '1959.7/512474', 'expectedType' => 'handle'],
-            ['value' => 'http://researchdata.ands.org.au/view/?key=http://hdl.handle.net/1959.14/201435', 'type' => 'uri', 'expectedValue' => 'http://researchdata.ands.org.au/view/?key=http://hdl.handle.net/1959.14/201435', 'expectedType' => 'uri']
+            ['value' => 'http://researchdata.ands.org.au/view/?key=http://hdl.handle.net/1959.14/201435', 'type' => 'uri', 'expectedValue' => 'researchdata.ands.org.au/view/?key=http://hdl.handle.net/1959.14/201435', 'expectedType' => 'uri']
 
         ];
         foreach($tests as $test){
@@ -114,7 +114,7 @@ class IdentifierProviderTest extends \RegistryTestClass
             ['value' => 'hdl.handle.net/10273/AU1243', 'type' => 'handle', 'expectedValue' => 'AU1243', 'expectedType' => 'igsn'],
             ['value' => '10273/AU1243', 'type' => 'igsn', 'expectedValue' => 'AU1243', 'expectedType' => 'igsn'],
             ['value' => 'au1243', 'type' => 'igsn', 'expectedValue' => 'AU1243', 'expectedType' => 'igsn'],
-            ['value' => 'https://igsn.org/AU1243', 'type' => 'uri', 'expectedValue' => 'https://igsn.org/AU1243', 'expectedType' => 'uri']
+            ['value' => 'https://igsn.org/AU1243', 'type' => 'uri', 'expectedValue' => 'igsn.org/AU1243', 'expectedType' => 'uri']
         ];
         foreach($tests as $test){
             $identifier = IdentifierProvider::getNormalisedIdentifier($test["value"], $test["type"]);
@@ -122,5 +122,24 @@ class IdentifierProviderTest extends \RegistryTestClass
             $this->assertEquals($test["expectedType"], $identifier["type"]);
         }
     }
+
+    /** @test * */
+    public function it_should_remove_protocol_from_all_other()
+    {
+        $tests = [
+            ['value' => 'http://geoserver-123.aodn.org.au/geoserver/ncwms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities', 'type' => 'url', 'expectedValue' => 'geoserver-123.aodn.org.au/geoserver/ncwms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities', 'expectedType' => 'url'],
+            ['value' => 'https://geoserver.imas.utas.edu.au/geoserver/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities', 'type' => 'uri', 'expectedValue' => 'geoserver.imas.utas.edu.au/geoserver/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities', 'expectedType' => 'uri'],
+            ['value' => 'http://google.com', 'type' => 'local', 'expectedValue' => 'google.com', 'expectedType' => 'local'],
+            ['value' => 'fish.org', 'type' => 'global', 'expectedValue' => 'fish.org', 'expectedType' => 'global'],
+            ['value' => 'https://fish.org?url=http://google.com', 'type' => 'noidea', 'expectedValue' => 'fish.org?url=http://google.com', 'expectedType' => 'noidea'],
+            ['value' => 'fish.org?url="http://google.com', 'type' => 'uri', 'expectedValue' => 'fish.org?url="http://google.com', 'expectedType' => 'uri']
+        ];
+        foreach($tests as $test){
+            $identifier = IdentifierProvider::getNormalisedIdentifier($test["value"], $test["type"]);
+            $this->assertEquals($test["expectedValue"], $identifier["value"]);
+            $this->assertEquals($test["expectedType"], $identifier["type"]);
+        }
+    }
+
 
     }
