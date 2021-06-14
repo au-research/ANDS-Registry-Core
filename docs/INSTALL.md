@@ -12,7 +12,7 @@ rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
 Install packages
 ```shell
 # install common packages
-sudo yum install git libsemanage-pythoin libselinux-python lsof wget mod_ssl openssl-devel ant vim-enhanced telnet iptables iptables-services net-tools
+sudo yum install git libsemanage-python libselinux-python lsof wget mod_ssl openssl-devel ant vim-enhanced telnet iptables iptables-services net-tools
 
 # install nodejs and yarn
 sudo yum install nodejs
@@ -131,9 +131,6 @@ Set up a virtual host block for Apache, _for e.g._
 TBA
 
 ## Harvester
-TBA
-
-## pubsub
 TBA
 
 ## Handle and PIDs Server
