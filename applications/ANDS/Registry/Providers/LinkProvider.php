@@ -187,16 +187,8 @@ class LinkProvider implements RegistryContentProvider
         }
 
         switch ($type){
-            case 'handle':
-                if(strpos($identifier,"hdl:") === 0) {
-                    return "http://hdl.handle.net/" . substr($identifier, strpos($identifier, "hdl:") + 4);
-                }
-                elseif(strpos($identifier, "hdl.handle.net/") === 0)
-                    return "http://hdl.handle.net/" . substr($identifier, strpos($identifier, "hdl.handle.net/") + 15);
-                else
-                    return "http://hdl.handle.net/" . $identifier;
-                break;
             case 'raid':
+            case 'handle':
                 if(strpos($identifier,"hdl:") === 0) {
                     return "http://hdl.handle.net/" . substr($identifier, strpos($identifier, "hdl:") + 4);
                 }
@@ -229,10 +221,8 @@ class LinkProvider implements RegistryContentProvider
                 else
                     return "https://doi.org/" . substr($identifier, strpos($identifier, "doi.org/") + 8 );
                 break;
-            case 'uri':
-                return 'http://'  .$identifier;
-                break;
             case 'url':
+            case 'uri':
                 return 'http://'  .$identifier;
                 break;
             case 'ark':
