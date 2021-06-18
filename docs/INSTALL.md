@@ -128,7 +128,41 @@ Set up a virtual host block for Apache, _for e.g._
 </Directory>
 ```
 ## TaskManager
-TBA
+Setup directories
+```shell
+mkdir -p /opt/apps/taskmanager
+mkdir -p /opt/apps/taskmanager/src
+mkdir -p /var/data/taskmanager
+mkdir -p /var/log/taskmanager
+```
+
+### Installation
+Requirements:
+* python 3.5 - 3.7
+* virtualenv 
+```
+/usr/bin/python3 -m venv venv && 
+venv/bin/pip3 install --upgrade pip && 
+venv/bin/pip3 install -r requirements.txt
+```
+Install from source
+```shell
+cd /opt/apps/taskmanager/src
+git clone https://github.com/au-research/ANDS-TaskManager.git taskmanager
+
+ln -sfn /opt/apps/taskmanagwer/src/taskmanager /opt/apps/taskmanager/current 
+```
+### Running the TaskManager as a Linux service
+
+The file `taskmanager.service` is an init script to be copied into
+`/usr/lib/systemd/system/`. Once copied into place, run:
+ 
+ ```
+ service taskmanager start
+ ```
+
+The Harvester will start up, and it will be started at each boot time.
+The script supports `start`, `stop`, and `status` commands.
 
 ## Harvester
 Setup directories
