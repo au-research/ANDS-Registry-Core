@@ -142,29 +142,28 @@ mkdir -p /var/log/harvester
 ### Installation
 Requirements:
 * python 3.5 - 3.7
-* pip3 for respective versions
-* virtualenv (optional)
+* virtualenv 
+
 ```
-pip3 install -r requirements.txt
+/usr/bin/python3 -m venv venv && 
+venv/bin/pip3 install --upgrade pip && 
+venv/bin/pip3 install -r requirements.txt
 ```
 Install from source
 ```shell
 cd /opt/apps/harvester/src
-https://github.com/au-research/ANDS-Harvester.git harvester
+git clone https://github.com/au-research/ANDS-Harvester.git harvester
 
 ln -sfn /opt/apps/harvester/src/harvester /opt/apps/harvester/current 
 ```
 ### Running the Harvester as a Linux service
 
-The file `ands-harvester` is a System V init script to be copied into
-`/etc/init.d`. Once copied into place, run:
-
-```
-chmod 755 /etc/init.d/ands-harvester
-chkconfig --add ands-harvester
-chkconfig ands-harvester on
-service ands-harvester start
-```
+The file `harvester.service` is an init script to be copied into
+`/usr/lib/systemd/system/`. Once copied into place, run:
+ 
+ ```
+ service harvester start
+ ```
 
 The Harvester will start up, and it will be started at each boot time.
 The script supports `start`, `stop`, and `status` commands.
