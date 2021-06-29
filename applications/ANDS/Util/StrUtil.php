@@ -109,7 +109,7 @@ class StrUtil
      */
     public static function removeStopWords($str)
     {
-        return str_replace(self::stopWords, "", $str);
+        return str_replace(self::stopWords, array_fill(0, count(self::stopWords), ' '), $str);
     }
 
 
