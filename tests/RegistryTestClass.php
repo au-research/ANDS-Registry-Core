@@ -97,7 +97,6 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
      * @param array $attributes
      * @param int $count
      * @return mixed
-     * @throws Exception
      */
     public function stub($class, $attributes = [], $count = 1)
     {
@@ -110,6 +109,7 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
                 'class' => 'collection',
                 'type' => 'dataset',
                 'slug' => str_slug($title),
+                'group' => uniqid(),
                 'data_source_id' => $this->dataSource->id
             ], $attributes);
             $record = RegistryObject::create($attrs);
@@ -148,7 +148,7 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
             return RegistryObject\Identifier::create($attrs);
         }
 
-        throw new Exception("unknown $class");
+        return null;
     }
 
     public function ensureKeyExist($key)
