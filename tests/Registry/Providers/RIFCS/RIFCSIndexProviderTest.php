@@ -28,12 +28,14 @@ class RIFCSIndexProviderTest extends \RegistryTestClass
 
         $this->assertNotNull($index);
         $this->assertNotEmpty($index);
-        $this->arrayHasKey('id');
-        $this->arrayHasKey('slug');
-        $this->arrayHasKey('key');
-        $this->arrayHasKey('title');
-        $this->arrayHasKey('display_title');
-        $this->arrayHasKey('description');
+        $this->assertArrayHasKey('id', $index);
+        $this->assertArrayHasKey('slug', $index);
+        $this->assertArrayHasKey('key', $index);
+        $this->assertArrayHasKey('title', $index);
+        $this->assertArrayHasKey('display_title', $index);
+        $this->assertArrayHasKey('description', $index);
+        $this->assertArrayHasKey('identifier_type', $index);
+        $this->assertArrayHasKey('identifier_value', $index);
     }
 
     public function test_getCoreIndexableValues()
@@ -83,6 +85,25 @@ class RIFCSIndexProviderTest extends \RegistryTestClass
         ]);
         $index = RIFCSIndexProvider::getDescriptionIndexableValues($record);
         $this->assertNotEmpty($index);
+        $this->assertArrayHasKey('description_type', $index);
+        $this->assertArrayHasKey('description_value', $index);
+        $this->assertGreaterThan(1, $index['description_type']);
+        $this->assertSameSize($index['description_type'], $index['description_value']);
+    }
+
+    public function test_getIdentifiersIndexableValues() {
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_all_elements.xml')
+        ]);
+        $index = RIFCSIndexProvider::getIdentifiersIndexableValues($record);
+        $this->assertNotEmpty($index);
+        $this->assertNotEmpty($index);
+        $this->assertArrayHasKey('identifier_type', $index);
+        $this->assertArrayHasKey('identifier_value', $index);
+        $this->assertGreaterThan(1, $index['identifier_type']);
+        $this->assertSameSize($index['identifier_type'], $index['identifier_value']);
     }
 
     public function test_isIndexable()

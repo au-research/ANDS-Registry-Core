@@ -31,6 +31,7 @@ class RIFCSIndexProvider implements RIFCSProvider
             ->merge(self::getCoreIndexableValues($record))
             ->merge(self::getTitleIndexableValues($record))
             ->merge(self::getDescriptionIndexableValues($record))
+            ->merge(self::getIdentifiersIndexableValues($record))
             ->toArray();
     }
 
@@ -50,6 +51,7 @@ class RIFCSIndexProvider implements RIFCSProvider
             : null;
 
         return [
+            'title' => $titles['display_title'],
             'display_title' => $titles['display_title'],
             'list_title' => $titles['list_title'],
             'alt_list_title' => $titles['alt_titles'],
@@ -107,10 +109,34 @@ class RIFCSIndexProvider implements RIFCSProvider
         $theDescription = !(strpos($theDescription, "&lt;br") !== FALSE || strpos($theDescription, "&lt;p") !== FALSE || strpos($theDescription, "&amp;#60;p") !== FALSE) ? nl2br($theDescription) : $theDescription;
 
         return [
-            'description_types' => $types,
-            'description_values' => $values,
+            'description_type' => $types,
+            'description_value' => $values,
             'list_description' => $listDescription,
             'description' => $theDescription
+        ];
+    }
+
+
+    /**
+     * Get indexable values for Identifiers
+     *
+     * @param \ANDS\RegistryObject $record
+     * @return array[]
+     */
+    public static function getIdentifiersIndexableValues(RegistryObject $record) {
+        $identifiers = IdentifierProvider::get($record);
+
+        $types = [];
+        $values = [];
+
+        foreach ($identifiers as $identifier) {
+            $types[] = $identifier['type'];;
+            $values[] = $identifier['value'];
+        }
+
+        return [
+            'identifier_type' => $types,
+            'identifier_value' => $values
         ];
     }
 
