@@ -30,6 +30,7 @@ class RIFCSIndexProvider implements RIFCSProvider
         return collect([])
             ->merge(self::getCoreIndexableValues($record))
             ->merge(self::getTitleIndexableValues($record))
+            ->merge(self::getDescriptionIndexableValues($record))
             ->toArray();
     }
 
@@ -77,6 +78,39 @@ class RIFCSIndexProvider implements RIFCSProvider
             'data_source_key' => $record->dataSource->key,
             'record_created_timestamp' => $record->created_at->format('Y-m-d\TH:i:s\Z'),
             'record_modified_timestamp' => $record->modified_at->format('Y-m-d\TH:i:s\Z')
+        ];
+    }
+
+    /**
+     * Obtain indexable descriptions for registryObject
+     *
+     * @param \ANDS\RegistryObject $record
+     * @return array
+     */
+    public static function getDescriptionIndexableValues(RegistryObject $record)
+    {
+        $types = [];
+        $values = [];
+
+        $descriptions = DescriptionProvider::get($record);
+        foreach ($descriptions['descriptions'] as $description) {
+            $types[] = $description['type'];
+            $values[] = $description['value'];
+        }
+
+        $theDescription = $descriptions['primary_description'];
+
+        // list description is the trimmed form of the description
+        $listDescription = trim(strip_tags(html_entity_decode(html_entity_decode($theDescription)), ENT_QUOTES));
+
+        //add <br/> for NL if doesn't already have <p> or <br/>
+        $theDescription = !(strpos($theDescription, "&lt;br") !== FALSE || strpos($theDescription, "&lt;p") !== FALSE || strpos($theDescription, "&amp;#60;p") !== FALSE) ? nl2br($theDescription) : $theDescription;
+
+        return [
+            'description_types' => $types,
+            'description_values' => $values,
+            'list_description' => $listDescription,
+            'description' => $theDescription
         ];
     }
 

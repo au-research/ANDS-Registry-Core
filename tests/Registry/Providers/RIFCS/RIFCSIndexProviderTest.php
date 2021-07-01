@@ -33,6 +33,7 @@ class RIFCSIndexProviderTest extends \RegistryTestClass
         $this->arrayHasKey('key');
         $this->arrayHasKey('title');
         $this->arrayHasKey('display_title');
+        $this->arrayHasKey('description');
     }
 
     public function test_getCoreIndexableValues()
@@ -72,6 +73,16 @@ class RIFCSIndexProviderTest extends \RegistryTestClass
         $this->assertEquals("Collection with all RIF v1.6 elements (primaryName)", $index['list_title']);
         $this->assertContains("alternativeName", $index['alt_list_title']);
         $this->assertContains("alternativeName", $index['alt_display_title']);
+    }
+
+    public function test_getDescriptionIndexableValues() {
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_all_elements.xml')
+        ]);
+        $index = RIFCSIndexProvider::getDescriptionIndexableValues($record);
+        $this->assertNotEmpty($index);
     }
 
     public function test_isIndexable()
