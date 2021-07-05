@@ -27,11 +27,23 @@ class RIFCSIndexProvider implements RIFCSProvider
             return [];
         }
 
+        // todo tags <- TagsProvider
+        // todo access_rights <- AccessRightsProvider?
+        // todo related_info_search
+        // todo spatial <- SpatialProvider
+        // todo temporal <- DatesProvider
+        // todo theme_page <- TagsProvider
+        // todo grants <- GrantsMetadataProvider
+        // todo license_class <- LicenseProvider
+        // todo access_methods_ss
+
+
         return collect([])
             ->merge(self::getCoreIndexableValues($record))
             ->merge(self::getTitleIndexableValues($record))
             ->merge(self::getDescriptionIndexableValues($record))
             ->merge(self::getIdentifiersIndexableValues($record))
+            ->merge(self::getSubjectsIndexableValues($record))
             ->toArray();
     }
 
@@ -159,5 +171,36 @@ class RIFCSIndexProvider implements RIFCSProvider
         }
 
         return true;
+    }
+
+    /**
+     * Get indexable values for subjects
+     *
+     * @param \ANDS\RegistryObject $record
+     * @return array[]
+     */
+    public static function getSubjectsIndexableValues(RegistryObject $record)
+    {
+        $subjects = SubjectProvider::processSubjects($record);
+
+        $unresolved = [];
+        $resolved = [];
+        $types = [];
+        $uris = [];
+
+        foreach ($subjects as $key => $subject) {
+            $unresolved[] = (string) $key;
+            $resolved[] = (string) $subject['resolved'];
+            $types[] = (string) $subject['type'];
+            $uris[] = (string) $subject['uri'];
+        }
+
+        return [
+            'subject_value_unresolved' => $unresolved,
+            'subject_value_resolved' => $resolved,
+            'subject_type' => $types,
+            'subject_vocab_uri' => $uris,
+        ];
+
     }
 }

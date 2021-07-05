@@ -106,6 +106,22 @@ class RIFCSIndexProviderTest extends \RegistryTestClass
         $this->assertSameSize($index['identifier_type'], $index['identifier_value']);
     }
 
+    public function test_getSubjectsIndexableValues()
+    {
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_all_elements.xml')
+        ]);
+        $index = RIFCSIndexProvider::getSubjectsIndexableValues($record);
+        $this->assertNotEmpty($index);
+        $this->assertArrayHasKey("subject_value_unresolved", $index);
+        $this->assertArrayHasKey("subject_value_resolved", $index);
+        $this->assertArrayHasKey("subject_type", $index);
+        $this->assertArrayHasKey("subject_vocab_uri", $index);
+    }
+
+
     public function test_isIndexable()
     {
         // PUBLISHED record is indexable
