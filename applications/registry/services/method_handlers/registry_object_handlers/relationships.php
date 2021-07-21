@@ -12,30 +12,243 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
 class Relationships extends ROHandler
 {
 
+    /** @var \MinhD\SolrClient\SolrClient */
+    private $solrClient = null;
+
     /**
      * Primary handle function
      *
      * @return array
      */
-    public function handle()
+    public function handle($params='')
     {
-        $result = array(
-            'data' => $this->getRelatedFromIndex('data'),
-            'software' => $this->getRelatedFromIndex('software'),
-            'publications' => $this->getRelatedFromIndex('publications'),
+        $this->solrClient = new \MinhD\SolrClient\SolrClient(\ANDS\Util\Config::get('app.solr_url'), 8983, 'relationships');
 
-            'programs' => $this->getRelatedFromIndex('programs'),
-            'grants_projects' => $this->getRelatedFromIndex('grants_projects'),
+        return [
+            'data' => $this->getRelatedData(),
+            'software' => $this->getRelatedSoftware(),
+            'publications' => $this->getRelatedPublication(),
+            'programs' => $this->getRelatedPrograms(),
+            'grants_projects' => $this->getRelatedGrantsProjects(),
+            'services' => $this->getRelatedService(),
+            'websites' => $this->getRelatedWebsites(),
+            'researchers' => $this->getRelatedResearchers(),
+            'organisations' => $this->getRelatedOrganisations()
+        ];
+    }
 
-            'services' => $this->getRelatedFromIndex('services'),
-            'websites' => $this->getRelatedFromIndex('websites'),
-            'researchers' => $this->getRelatedFromIndex('researchers'),
+    /**
+     * Obtain related data from SOLR
+     * @return array
+     */
+    private function getRelatedData() {
+        $result = $this->solrClient->search([
+            'q' => '*:*',
+            'fl' => '*,[child parentFilter=$parentFilter childFilter=$childFilter limit=100]',
+            'defType' => 'edismax',
+            'parentFilter' => 'type:relationship',
+            'childFilter' => 'type:edge',
+            'fq' => "+from_id:{$this->ro->id} +to_class:collection -to_type:software",
+            'rows' => 5
+        ]);
 
-            'organisations' => $this->getRelatedFromIndex('organisations')
+        return $this->renderBackwardCompatibleArray($result);
+    }
 
-        );
+    /**
+     * Obtain related software from SOLR
+     * @return array
+     */
+    private function getRelatedSoftware() {
+        $result = $this->solrClient->search([
+            'q' => '*:*',
+            'fl' => '*,[child parentFilter=$parentFilter childFilter=$childFilter limit=100]',
+            'defType' => 'edismax',
+            'parentFilter' => 'type:relationship',
+            'childFilter' => 'type:edge',
+            'fq' => "+from_id:{$this->ro->id} +to_class:collection +to_type:software",
+            'rows' => 5
+        ]);
 
-        return $result;
+        return $this->renderBackwardCompatibleArray($result);
+    }
+
+    /**
+     * Obtain related programs from SOLR
+     * @return array
+     */
+    private function getRelatedPrograms() {
+        $result = $this->solrClient->search([
+            'q' => '*:*',
+            'fl' => '*,[child parentFilter=$parentFilter childFilter=$childFilter limit=100]',
+            'defType' => 'edismax',
+            'parentFilter' => 'type:relationship',
+            'childFilter' => 'type:edge',
+            'fq' => "+from_id:{$this->ro->id} +to_class:activity +to_type:program",
+            'rows' => 5
+        ]);
+
+        return $this->renderBackwardCompatibleArray($result);
+    }
+
+    /**
+     * Obtain related activity that are grants or projects from SOLR
+     * @return array
+     */
+    private function getRelatedGrantsProjects() {
+        $result = $this->solrClient->search([
+            'q' => '*:*',
+            'fl' => '*,[child parentFilter=$parentFilter childFilter=$childFilter limit=100]',
+            'defType' => 'edismax',
+            'parentFilter' => 'type:relationship',
+            'childFilter' => 'type:edge',
+            'fq' => "+from_id:{$this->ro->id} +to_class:activity -to_type:program",
+            'rows' => 5
+        ]);
+
+        return $this->renderBackwardCompatibleArray($result);
+    }
+
+    /**
+     * Obtain related publications from SOLR
+     * @return array
+     */
+    private function getRelatedPublication() {
+        $result = $this->solrClient->search([
+            'q' => '*:*',
+            'fl' => '*,[child parentFilter=$parentFilter childFilter=$childFilter limit=100]',
+            'defType' => 'edismax',
+            'parentFilter' => 'type:relationship',
+            'childFilter' => 'type:edge',
+            'fq' => "+from_id:{$this->ro->id} +to_type:publication",
+            'rows' => 5
+        ]);
+
+        return $this->renderBackwardCompatibleArray($result);
+    }
+
+    /**
+     * Obtain related services from SOLR
+     * @return array
+     */
+    private function getRelatedService() {
+        $result = $this->solrClient->search([
+            'q' => '*:*',
+            'fl' => '*,[child parentFilter=$parentFilter childFilter=$childFilter limit=100]',
+            'defType' => 'edismax',
+            'parentFilter' => 'type:relationship',
+            'childFilter' => 'type:edge',
+            'fq' => "+from_id:{$this->ro->id} +to_class:service",
+            'rows' => 5
+        ]);
+
+        return $this->renderBackwardCompatibleArray($result);
+    }
+
+    /**
+     * Obtain related websites from SOLR
+     * @return array
+     */
+    private function getRelatedWebsites() {
+        $result = $this->solrClient->search([
+            'q' => '*:*',
+            'fl' => '*,[child parentFilter=$parentFilter childFilter=$childFilter limit=100]',
+            'defType' => 'edismax',
+            'parentFilter' => 'type:relationship',
+            'childFilter' => 'type:edge',
+            'fq' => "+from_id:{$this->ro->id} +to_type:website",
+            'rows' => 5
+        ]);
+
+        return $this->renderBackwardCompatibleArray($result);
+    }
+
+    /**
+     * Obtain related researchers from SOLR
+     * relationships where there's a hasPrincipalInvestigator edge is ranked higher via boosted query
+     * @return array
+     */
+    private function getRelatedResearchers() {
+        $result = $this->solrClient->search([
+            'q' => '*:*',
+            'fl' => '*,[child parentFilter=$parentFilter childFilter=$childFilter limit=100]',
+            'defType' => 'edismax',
+            'parentFilter' => 'type:relationship',
+            'childFilter' => 'type:edge',
+            'fq' => "+from_id:{$this->ro->id} +to_class:party -to_type:group",
+            'bq' => '{!parent which=$parentFilter score=total}relation_type:hasPrincipalInvestigator',
+            'sort' => 'score desc, to_title asc',
+            'rows' => 5
+        ]);
+
+        return $this->renderBackwardCompatibleArray($result);
+    }
+
+    /**
+     * Obtain related organisations from SOLR
+     * @return array
+     */
+    private function getRelatedOrganisations() {
+        $result = $this->solrClient->search([
+            'q' => '*:*',
+            'fl' => '*,[child parentFilter=$parentFilter childFilter=$childFilter limit=100]',
+            'defType' => 'edismax',
+            'parentFilter' => 'type:relationship',
+            'childFilter' => 'type:edge',
+            'fq' => "+from_id:{$this->ro->id} +to_class:party +to_type:group",
+            'rows' => 5
+        ]);
+
+        return $this->renderBackwardCompatibleArray($result);
+    }
+
+
+    /**
+     * Render a backward compatible array to be used for displaying in Portal
+     * @param \MinhD\SolrClient\SolrSearchResult $result
+     * @return array
+     */
+    private function renderBackwardCompatibleArray(\MinhD\SolrClient\SolrSearchResult $result) {
+        $docs = json_decode($result->getDocs('json'), true);
+
+        $formattedDoc = collect($docs)->map(function($doc) {
+
+            $toRecord = null;
+            if ($doc['to_identifier_type'] === "ro:id") {
+                $toRecord = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($doc['to_identifier']);
+            }
+
+            return [
+                'from_class' => $this->ro->class,
+                'from_id' => $this->ro->id,
+                'from_key' => $this->ro->key,
+                'from_slug' => $this->ro->slug,
+                'from_status' => $this->ro->status,
+                'from_title' => $this->ro->title,
+                'from_type' => $this->ro->type,
+                'id' => $doc['id'],
+                'relation' => collect($doc['_childDocuments_'])->map(function ($relation) {
+                    return array_key_exists('relation_type', $relation) ? $relation['relation_type'] : '';
+                }),
+                'relation_identifier_id' => $toRecord ? null : $doc['to_identifier'],
+                'relation_identifier_identifier' => $toRecord ? null : $doc['to_title'],
+                'relation_identifier_type' => $toRecord ? null : $doc['to_identifier_type'],
+                'relation_origin' => collect($doc['_childDocuments_'])->map(function ($relation) {
+                    return array_key_exists('relation_origin', $relation) ? $relation['relation_origin'] : '';
+                }),
+                'to_class' => $doc['to_class'],
+                'to_id' => $toRecord ? $doc['to_identifier'] : false,
+                'to_key' => $toRecord ? $toRecord->key : false,
+                'to_slug' => $toRecord ? $toRecord->slug : false,
+                'to_title' => $toRecord ? $doc['to_title'] : false,
+                'to_type' => $toRecord ? $doc['to_type'] : false,
+            ];
+        });
+
+        return [
+            'count' => $result->getNumFound(),
+            'docs' => $formattedDoc
+        ];
     }
 
     /**
