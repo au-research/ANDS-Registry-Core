@@ -45,9 +45,9 @@ class MyceliumServiceClient
      */
     public function importRecord(RegistryObject $record)
     {
-        return $this->client->post("api/services/import/", [
+        return $this->client->post("api/services/mycelium/import-record", [
             "headers" => [],
-            "body" => $record->getCurrentData()->data
+            "body" => MyceliumImportPayloadProvider::get($record)
         ]);
     }
 
