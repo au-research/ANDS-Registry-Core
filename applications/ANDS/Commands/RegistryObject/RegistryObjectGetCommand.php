@@ -5,6 +5,7 @@ namespace ANDS\Commands\RegistryObject;
 
 
 use ANDS\API\Task\ImportSubTask\IndexRelationship;
+use ANDS\Mycelium\MyceliumImportPayloadProvider;
 use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\Repository\RegistryObjectsRepository;
@@ -85,6 +86,11 @@ class RegistryObjectGetCommand extends Command
                 $index = $indexTask->getRelationshipIndex($relationships);
                 var_dump($index);
                 $output->writeln(count($index));
+                break;
+            case "mycelium-import-payload":
+                $payload = MyceliumImportPayloadProvider::get($record);
+                var_dump($payload);
+                $output->writeln(count($payload));
                 break;
             default:
                 $output->writeln("Unknown $what");
