@@ -46,8 +46,8 @@ class MyceliumServiceClient
     public function importRecord(RegistryObject $record)
     {
         return $this->client->post("api/services/mycelium/import-record", [
-            "headers" => [],
-            "body" => MyceliumImportPayloadProvider::get($record)
+            "headers" => ['Content-Type' => 'application/json'],
+            "body" => json_encode(MyceliumImportPayloadProvider::get($record))
         ]);
     }
 
