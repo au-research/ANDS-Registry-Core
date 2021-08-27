@@ -3,8 +3,10 @@
 
 namespace ANDS\API\Task\ImportSubTask;
 
+use ANDS\Mycelium\MyceliumServiceClient;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Registry\Providers\RelationshipProvider;
+use ANDS\Util\Config;
 
 /**
  * Class ProcessAffectedRelationships
@@ -17,61 +19,25 @@ class ProcessAffectedRelationships extends ImportSubTask
 
     public function run_task()
     {
-        $targetStatus = $this->parent()->getTaskData('targetStatus');
-        if (!RegistryObjectsRepository::isPublishedStatus($targetStatus)) {
-            $this->log("Target status is ". $targetStatus.' does not affect records');
-            return;
+        $sideEffectRequestId = $this->parent()->getTaskData("SideEffectRequestId");
+        $this->log("Processing Side Effect QueueID: $sideEffectRequestId");
+
+        $myceliumClient = new MyceliumServiceClient(Config::get('mycelium.url'));
+        $myceliumClient->startProcessingSideEffectQueue($sideEffectRequestId);
+
+        $requestStatus = null;
+        $startTime = microtime(true);
+        $elapsed = 0;
+        while ($requestStatus != "COMPLETED" && $elapsed < 10000) {
+            $now = microtime(true);
+            $elapsed = $now - $startTime;
+            $result = $myceliumClient->getRequestById($sideEffectRequestId);
+            $request = json_decode($result->getBody()->getContents(), true);
+            $requestStatus = $request['status'];
+            $this->log("Request Status is now $requestStatus, elapsed $elapsed");
+            sleep(1);
         }
 
-        $affectedRecords = $this->parent()->getTaskData('affectedRecords');
-        $duplicateRecords = $this->parent()->getTaskData("duplicateRecords") ? $this->parent()->getTaskData("duplicateRecords") : [];
-
-        $this->log("Size of affected records: ".count($affectedRecords));
-
-        $total = count($affectedRecords);
-
-        $this->log("Processing relationships of $total affected records");
-        debug("Processing $total affected records");
-        $affected_by_class = ["party"=>[],
-            "activity"=>[],
-            "service"=>[],
-            "collection"=>[]
-        ];
-
-        foreach ($affectedRecords as $index => $roID) {
-            $record = RegistryObjectsRepository::getRecordByID($roID);
-            if($record){
-                $affected_by_class[$record->class][] = $record;
-            }
-
-        }
-
-        foreach ($affected_by_class as $class => $classArray) {
-            foreach($classArray as $index=>$record) {
-                debug("Processing affected record: $record->title($record->registry_object_id)");
-                RelationshipProvider::process($record);
-                RelationshipProvider::processGrantsRelationship($record);
-                $this->updateProgress($index, $total, "Processed affected ($index/$total) $record->title($record->registry_object_id)");
-            }
-            tearDownEloquent();
-        }
-
-        $this->log("Size of duplicate records: ".count($duplicateRecords));
-
-        $total_dup = count($duplicateRecords);
-
-        foreach($duplicateRecords as $index => $roID) {
-            $record = RegistryObjectsRepository::getRecordByID($roID);
-            if($record){
-                debug("Processing duplicate record: $record->title($record->registry_object_id)");
-                RelationshipProvider::process($record);
-                RelationshipProvider::processGrantsRelationship($record);
-                $this->updateProgress($index, $total_dup, "Processed duplicate ($index/$total_dup) $record->title($record->registry_object_id)");
-            }
-        }
-
-        debug("Finished processing (".($total + $total_dup).") affected/duplicate records");
-
-        return;
+        $this->log("Processing Side Effect Queue Finished");
     }
 }

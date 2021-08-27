@@ -41,13 +41,17 @@ class MyceliumServiceClient
      * Import the record into Mycelium
      *
      * @param \ANDS\RegistryObject $record
+     * @param $sideEffectRequestId
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function importRecord(RegistryObject $record)
+    public function importRecord(RegistryObject $record, $sideEffectRequestId)
     {
         return $this->client->post("api/services/mycelium/import-record", [
             "headers" => ['Content-Type' => 'application/json'],
-            "body" => json_encode(MyceliumImportPayloadProvider::get($record))
+            "body" => json_encode(MyceliumImportPayloadProvider::get($record)),
+            "query" => [
+                "sideEffectRequestID" => $sideEffectRequestId
+            ]
         ]);
     }
 
@@ -64,6 +68,24 @@ class MyceliumServiceClient
             "query" => [
                 "registryObjectId" => $record->id
             ]
+        ]);
+    }
+
+    public function createNewAffectedRelationshipRequest()
+    {
+        return $this->client->post("api/resources/mycelium-requests/", [
+            "headers" => ['Content-Type' => 'application/json'],
+            "body" => json_encode(["type" => "mycelium-affected_relationships"])
+        ]);
+    }
+
+    public function getRequestById($uuid) {
+        return $this->client->get("api/resources/mycelium-requests/$uuid");
+    }
+
+    public function startProcessingSideEffectQueue($requestId) {
+        return $this->client->post("api/services/mycelium/start-queue-processing", [
+            "query" => ["requestId" => $requestId]
         ]);
     }
 }

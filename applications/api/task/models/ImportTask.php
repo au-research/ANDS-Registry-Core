@@ -251,6 +251,7 @@ class ImportTask extends Task
                     "ProcessCoreMetadata",
                     "ProcessGraphRelationships",
                     "IndexGraphRelationships",
+                    "ProcessAffectedRelationships",
                     "ProcessLinks",
 //                    "ProcessScholix", // TODO: reinstate once Mycelium is integrated correctly
                     "ProcessQualityMetadata",
@@ -270,6 +271,7 @@ class ImportTask extends Task
                     "ProcessDelete",
                     "ProcessGraphRelationships",
                     "IndexGraphRelationships",
+                    "ProcessAffectedRelationships",
                     "ProcessLinks", // needed by Link checker
 //                    "ProcessScholix", // TODO: reinstate once Mycelium is integrated correctly
                     "ProcessQualityMetadata",
@@ -287,6 +289,7 @@ class ImportTask extends Task
                 $tasks = [
                     "ProcessGraphRelationships",
                     "IndexGraphRelationships",
+                    "ProcessAffectedRelationships",
                 ];
                 break;
             case "SyncWorkflow":
@@ -295,6 +298,7 @@ class ImportTask extends Task
                     "ProcessLinks",
                     "ProcessGraphRelationships",
                     "IndexGraphRelationships",
+                    "ProcessAffectedRelationships",
 //                    "ProcessScholix", // TODO: reinstate once Mycelium is integrated correctly
                     "ProcessQualityMetadata",
                     "IndexPortal",
@@ -344,6 +348,7 @@ class ImportTask extends Task
                     "ProcessCoreMetadata",
                     "ProcessGraphRelationships",
                     "IndexGraphRelationships",
+                    "ProcessAffectedRelationships",
                     "ProcessLinks",
                     "ProcessQualityMetadata",
                     "IndexPortal",
@@ -365,6 +370,7 @@ class ImportTask extends Task
                     "IngestNativeSchema",
                     "ProcessGraphRelationships",
                     "IndexGraphRelationships",
+                    "ProcessAffectedRelationships",
                     "ProcessLinks",
                     "ProcessQualityMetadata",
                     "IndexPortal",
