@@ -231,7 +231,7 @@ class Relationships extends ROHandler
                     return array_key_exists('relation_type', $relation) ? $relation['relation_type'] : '';
                 }),
                 'relation_identifier_id' => $toRecord ? null : $doc['to_identifier'],
-                'relation_identifier_identifier' => $toRecord ? null : $doc['to_title'],
+                'relation_identifier_identifier' => $toRecord ? null : (isset($doc['to_title']) ? : ''),
                 'relation_identifier_type' => $toRecord ? null : $doc['to_identifier_type'],
                 'relation_origin' => collect($doc['_childDocuments_'])->map(function ($relation) {
                     return array_key_exists('relation_origin', $relation) ? $relation['relation_origin'] : '';
