@@ -55,6 +55,16 @@ class MyceliumServiceClient
         ]);
     }
 
+    public function deleteRecord($registryObjectId, $sideEffectRequestId) {
+        return $this->client->post("api/services/mycelium/delete-record", [
+            "headers" => [],
+            "query" => [
+                "registryObjectId" => $registryObjectId,
+                "sideEffectRequestID" => $sideEffectRequestId
+            ]
+        ]);
+    }
+
     /**
      * Perform a relationship indexing for a record via Mycelium
      *

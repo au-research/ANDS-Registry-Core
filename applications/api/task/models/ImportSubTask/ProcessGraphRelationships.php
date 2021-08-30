@@ -34,11 +34,14 @@ class ProcessGraphRelationships extends ImportSubTask
         $total = count($importedRecords);
 
         // create a new Mycelium Request
-        $result = $myceliumClient->createNewAffectedRelationshipRequest();
-        $request = json_decode($result->getBody()->getContents(), true);
-        $this->log("Affected Relationship Request created with id: ".$request['id']);
-        $sideEffectRequestId = $request['id'];
-        $this->parent()->setTaskData("SideEffectRequestId", $sideEffectRequestId);
+        $sideEffectRequestId = $this->parent()->getTaskData("SideEffectRequestId");
+        if ($sideEffectRequestId == null) {
+            $result = $myceliumClient->createNewAffectedRelationshipRequest();
+            $request = json_decode($result->getBody()->getContents(), true);
+            $this->log("Affected Relationship Request created with id: ".$request['id']);
+            $sideEffectRequestId = $request['id'];
+            $this->parent()->setTaskData("SideEffectRequestId", $sideEffectRequestId);
+        }
 
         foreach ($importedRecords as $index => $id) {
             $record = RegistryObjectsRepository::getRecordByID($id);
