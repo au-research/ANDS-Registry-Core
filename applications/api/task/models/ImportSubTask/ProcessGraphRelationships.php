@@ -23,7 +23,8 @@ class ProcessGraphRelationships extends ImportSubTask
     public function run_task()
     {
         $myceliumClient = new MyceliumServiceClient(Config::get('mycelium.url'));
-
+        $import_count = 0;
+        $error_count = 0;
         $startTime = microtime(true);
         $targetStatus = $this->parent()->getTaskData('targetStatus');
         if (!RegistryObjectsRepository::isPublishedStatus($targetStatus)) {
@@ -46,15 +47,24 @@ class ProcessGraphRelationships extends ImportSubTask
         foreach ($importedRecords as $index => $id) {
             $record = RegistryObjectsRepository::getRecordByID($id);
             $result = $myceliumClient->importRecord($record, $sideEffectRequestId);
+
             if ($result->getStatusCode() === 200) {
-                $this->log("Imported record {$record->id} to mycelium");
+                $import_count++;
+                //$this->log("Imported record {$record->id} to mycelium");
+                debug("Imported record {$record->id} to mycelium");
             } else {
+                $error_count++;
                 $reason = $result->getBody()->getContents();
                 $this->addError("Failed to import record {$record->id} to mycelium. Reason: $reason");
+                debug("Failed to import record {$record->id} to mycelium. Reason: $reason");
             }
             $this->updateProgress($index, $total, "Processed ($index/$total) $record->title($record->id)");
+            debug("Processed ($index/$total) $record->title($record->id)");
         }
-
-        $this->log("Process Graph Relationships completed for $total records");
+        debug("Process Graph Relationships completed for $import_count records");
+        $this->log("Process Graph Relationships completed for $import_count records");
+        if($error_count > 0){
+            $this->log("Failed to process Graph Relationships for $error_count records");
+        }
     }
 }

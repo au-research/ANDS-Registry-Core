@@ -173,6 +173,7 @@ class TaskManager
 
         try {
             if ($subTaskName) {
+                debug($subTaskName . "is starting");
                 $task->initialiseTask();
                 $subTask = $task->getTaskByName($subTaskName);
                 $subTask->run();

@@ -17,6 +17,7 @@ class IndexGraphRelationships extends ImportSubTask
     {
         $indexed_count = 0;
         $error_count = 0;
+        debug("INDEXING GRAPH RELATIONSHIPS");
         $myceliumClient = new MyceliumServiceClient(Config::get('mycelium.url'));
 
         $targetStatus = $this->parent()->getTaskData('targetStatus');
@@ -34,10 +35,12 @@ class IndexGraphRelationships extends ImportSubTask
             // it just says done with 200,
             if ($result->getStatusCode() === 200) {
                 $indexed_count++;
+                debug("Indexed Relationship for record id: $id  #:$indexed_count");
             } else {
                 $reason = $result->getBody()->getContents();
                 $error_count++;
-                $this->addError("Failed to index record {$record->id} to mycelium. Reason: $reason");
+                $this->addError("Failed to index record {$id} to mycelium. Reason: $reason");
+                debug("Failed to index record {$id} to mycelium. Reason: $reason");
             }
             $this->updateProgress($index, $total, "Processed ($index/$total) $record->title($record->id)");
         }
