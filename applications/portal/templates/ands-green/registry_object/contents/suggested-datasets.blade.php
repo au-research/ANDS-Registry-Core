@@ -1,6 +1,6 @@
 @if($ro->suggest && isset($ro->suggest['final']))
 <div class="panel swatch-white">
-	<div class="panel-heading">Similar datasets you may be interested in:</div>
+	<div class="panel-heading">Similar data you may be interested in:</div>
 	<div class="panel-body">
 		<div class="sidebar-widget widget_recent_entries">
 			<ul>
