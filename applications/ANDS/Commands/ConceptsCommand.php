@@ -60,7 +60,31 @@ class ConceptsCommand extends Command
             ->setHelp("This command allows you to add a vocabulary to the Solr Concepts index.");
     }
 
+    private function generate_concept_solr($concepts){
+        foreach($concepts as $concept){
 
+            $this->output->writeln(
+                "Indexing ".$concept['label_s'],
+                OutputInterface::VERBOSITY_VERBOSE
+            );
+
+            if ($this->output->isVeryVerbose()) {
+                print_r($concept);
+            }
+
+            $client = new SolrClient($this->solrUrl);
+            $client->setCore('concepts');
+
+            //   encode the concept in utf8
+            $concept = $this->utf8_encode_recursive($concept);
+
+            //   Adding document
+            $client->add(
+                new SolrDocument($concept)
+            );
+
+        }
+    }
     private function generate_solr($concepts_array, $broader, $iri, $notation, $type)
     {
 
@@ -111,18 +135,18 @@ class ConceptsCommand extends Command
                 print_r($concept);
             }
 
-            $client = new SolrClient($this->solrUrl);
-            $client->setCore('concepts');
+           $client = new SolrClient($this->solrUrl);
+           $client->setCore('concepts');
 
-            // encode the concept in utf8
+          //   encode the concept in utf8
             $concept = $this->utf8_encode_recursive($concept);
 
-            // Adding document
+          //   Adding document
             $client->add(
                 new SolrDocument($concept)
             );
 
-            if (array_key_exists('narrower', $concepts)) {
+           if (array_key_exists('narrower', $concepts)) {
                 $this->generate_solr(
                     $concepts['narrower'],
                     $current_broader,
@@ -148,16 +172,95 @@ class ConceptsCommand extends Command
         return $result;
     }
 
+    protected function getConceptsFromVocab($type, $conceptsVocabUrl){
+        $_page = 0;
+        //need to create the concepts
+        $concepts_in_vocab = true;
+        $concepts = [];
+        $count = 0;
+        while($concepts_in_vocab){
+            $conceptsUrl = $conceptsVocabUrl.$_page;
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $conceptsUrl);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $concepts_source = curl_exec($ch);
+            $file_concepts = json_decode($concepts_source, true);
+            if(isset($file_concepts['result']['items'][0])) {
+                $concepts_array = $file_concepts["result"]["items"];
+                foreach ($concepts_array as $concept_array) {
+                    $broader_iris_ss = NULL;
+                    //Set the flag if we need to extract the broader concept info later
+                    if (isset($concept_array['broader'])) {
+                        $broader_iris_ss[] = $concept_array['broader'];
+                    }
+                    $concept = [
+                        'broader_iris_ss' => $broader_iris_ss,
+                        'broader_labels_ss' => NULL,
+                        'broader_notations_ss' => NULL,
+                        'id' => $concept_array['_about'],
+                        'iri' => [$concept_array['_about']],
+                        'label' => isset($concept_array['prefLabel']['_value']) ? [(string)$concept_array['prefLabel']['_value']] : NULL,
+                        'label_s' => isset($concept_array['prefLabel']['_value']) ? (string)$concept_array['prefLabel']['_value'] : NULL,
+                        'notation_s' => isset($concept_array['notation']) ? (string)$concept_array['notation'] : NULL,
+                        'search_label_s' => isset($concept_array['prefLabel']['_value']) ? strtolower((string)$concept_array['prefLabel']['_value']) : NULL,
+                        'search_label_ss' =>isset($concept_array['prefLabel']['_value']) ? [(string)$concept_array['prefLabel']['_value']] : NULL,
+                        'description' => isset($concept_array['definition']) ? $concept_array['definition'] : '',
+                        'description_s' => isset($concept_array['definition']) ? $concept_array['definition'] : '',
+                        'search_labels_string_s' => isset($concept_array['prefLabel']['_value']) ? (string)$concept_array['prefLabel']['_value'] : NULL,
+                        'type' => [$type]
+                    ];
+                    $concepts[$concept['notation_s']] = $concept;
+                    $count++;
+                }
+            }else{
+                $concepts_in_vocab = false;
+            }
+            curl_close($ch);
+            $_page = $_page + 1;
+        }
+
+        foreach($concepts as $concept){
+            //if this concept has broader concepts let's get their info to add to the index
+            if(isset($concept['broader_iris_ss'])){
+                $broader_notation = str_replace('https://linked.data.gov.au/def/anzsrc-for/2020/','',$concept['broader_iris_ss'][0]);
+                $concepts[$concept['notation_s']]['search_labels_string_s'] = $concepts[$broader_notation]['search_labels_string_s'] . " " .$concept['search_labels_string_s'];
+                $concepts[$concept['notation_s']]["broader_labels_ss"][] = $concepts[$broader_notation]['label_s'];
+                $concepts[$concept['notation_s']]["broader_notations_ss"][] = $concepts[$broader_notation]['notation_s'];
+                $concepts[$concept['notation_s']]['search_label_ss'][] = $concepts[$broader_notation]['label_s'];
+                if(isset($concepts[$broader_notation]['broader_iris_ss'])) {
+                    $broader_notation_ = str_replace('https://linked.data.gov.au/def/anzsrc-for/2020/', '', $concepts[$broader_notation]['broader_iris_ss'][0]);
+                    $concepts[$concept['notation_s']]['broader_iris_ss'][] = $concepts[$broader_notation]['broader_iris_ss'][0];
+                    $concepts[$concept['notation_s']]["broader_labels_ss"][] = $concepts[$broader_notation_]['label_s'];
+                    $concepts[$concept['notation_s']]["broader_notations_ss"][] = $concepts[$broader_notation_]['notation_s'];
+                    $concepts[$concept['notation_s']]['search_labels_string_s'] = $concepts[$broader_notation_]['search_labels_string_s'] .
+                        " " . $concepts[$broader_notation]['search_labels_string_s'] . " " . $concept['search_labels_string_s'];
+                    $concepts[$concept['notation_s']]['search_label_ss'][] = $concepts[$broader_notation_]['label_s'];
+                }
+            }
+        }
+        return $concepts;
+    }
+
+    protected function generate_source_solr($type,$concepts_source,$output){
+        $concepts = json_decode($concepts_source, true);
+
+        $this->generate_solr(
+            $concepts,
+            $broader = [],
+            $broader_iri = [],
+            $broader_notation = [],
+            $type
+        );
+        $output->writeln('You have indexed concepts of a ' . $type . ' vocabulary from ' . $source . ".");
+    }
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->output = $output;
         $source = $input->getOption('concepts_file');
         $type = $input->getOption('vocab_type');
         $this->solrUrl = $input->getOption('solr_url');
-
         $output->writeln("Indexing: $type to {$this->solrUrl}");
-
-        // TODO: make dynamic, use the VocabsRegistryAPI to find the latest artefact version
         $conceptsSourceURLs = [
             'anzsrc-for' => 'https://vocabs.ands.org.au/registry/api/resource/versions/28/versionArtefacts/conceptTree',
             'anzsrc-seo' => 'https://vocabs.ands.org.au/registry/api/resource/versions/18/versionArtefacts/conceptTree',
@@ -168,28 +271,28 @@ class ConceptsCommand extends Command
             //'iso639-3' -> should come from file
         ];
 
-        if (in_array($type, array_keys($conceptsSourceURLs))) {
+        // to make dynamic, use the VocabsRegistryAPI to find the latest artefact version
+         $conceptsVocabURLs = [
+             'anzsrc-for-2020' => "https://vocabs.ardc.edu.au/repository/api/lda/anzsrc-2020-for/concept.json?_page=",
+             'anzsrc-seo-2020' => "https://vocabs.ardc.edu.au/repository/api/lda/anzsrc-2020-seo/concept.json?_page="
+        ];
+
+        if (in_array($type, array_keys($conceptsVocabURLs))){
+            $concepts = $this->getConceptsFromVocab($type,$conceptsVocabURLs[$type]);
+            $this->generate_concept_solr($concepts);
+            $output->writeln('You have indexed concepts of a ' . $type . ' vocabulary from ' . $conceptsVocabURLs[$type] . ".");
+        } elseif (in_array($type, array_keys($conceptsSourceURLs))) {
             $source = $conceptsSourceURLs[$type];
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $source);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             $concepts_source = curl_exec($ch);
             curl_close($ch);
-        } else {
-            $concepts_source = file_get_contents($source);
+            $this->generate_source_solr($type,$concepts_source,$output);
         }
-
-        $concepts = json_decode($concepts_source, true);
-
-        $this->generate_solr(
-            $concepts,
-            $broader = [],
-            $broader_iri = [],
-            $broader_notation = [],
-            $type
-        );
-
-        $output->writeln('You have indexed concepts of a ' . $type . ' vocabulary from ' . $source . ".");
-
+        else {
+            $concepts_source = file_get_contents($source);
+            $this->generate_source_solr($type,$concepts_source,$output);
+        }
     }
 }
