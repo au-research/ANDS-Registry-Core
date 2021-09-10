@@ -756,6 +756,16 @@ class Solr
                         $this->setOpt('fq', '+subject_vocab_uri:("http://purl.org/au-research/vocabulary/anzsrc-for/2008/' . $value . '")');
                     }
                     break;
+                case 'anzsrc-for-2020':
+                    if (is_array($value)) {
+                        $fq_str = '(';
+                        foreach ($value as $v) $fq_str .= ' subject_vocab_uri:("https://linked.data.gov.au/def/anzsrc-for/2020/' . $v . '")';
+                        $fq_str .= ')';
+                        $this->setOpt('fq', $fq_str);
+                    } else {
+                        $this->setOpt('fq', '+subject_vocab_uri:("https://linked.data.gov.au/def/anzsrc-for/2020/' . $value . '")');
+                    }
+                    break;
                 case 'anzsrc-seo':
                     if (is_array($value)) {
                         $fq_str = '(';
@@ -766,7 +776,16 @@ class Solr
                         $this->setOpt('fq', '+subject_vocab_uri:("http://purl.org/au-research/vocabulary/anzsrc-seo/2008/' . $value . '")');
                     }
                     break;
-
+                case 'anzsrc-seo-2020':
+                    if (is_array($value)) {
+                        $fq_str = '(';
+                        foreach ($value as $v) $fq_str .= ' subject_vocab_uri:("https://linked.data.gov.au/def/anzsrc-seo/2020/' . $v . '")';
+                        $fq_str .= ')';
+                        $this->setOpt('fq', $fq_str);
+                    } else {
+                        $this->setOpt('fq', '+subject_vocab_uri:("https://linked.data.gov.au/def/anzsrc-seo/2020/' . $value . '")');
+                    }
+                    break;
                 case 'title':
                     if (!$filters['q']) $this->setOpt('q', $value);
                     $this->setOpt('fq', '+title_search:(' . $value . ')');

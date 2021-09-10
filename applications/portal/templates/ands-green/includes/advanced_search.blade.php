@@ -175,12 +175,12 @@
 										<div ng-repeat="(name, value) in prefilters" ng-if="showFilter(name, 'advanced')">
 										    <h4 ng-if="(name!='q' && value!='') || (name=='q' && !prefilters.cq) ">[[name | filter_name]]</h4>
 										    <h4 ng-if="name=='q' && prefilters.cq">Search Terms</h4>
-										    <ul class="listy no-bottom" ng-show="isArray(value) && (name!='anzsrc-for' && name!='anzsrc-seo')">
+										    <ul class="listy no-bottom" ng-show="isArray(value) && (name!='anzsrc-for' && name!='anzsrc-seo' && name!='anzsrc-for-2020' && name!='anzsrc-seo-2020')">
 										        <li ng-repeat="v in value track by $index">
 										            <a href="" ng-click="togglePreFilter(name, v, true)">[[ v | truncate:30 ]]<small><i class="fa fa-remove" tip="Remove Item"></i></small> </a>
 										        </li>
 										    </ul>
-										    <ul class="listy no-bottom" ng-show="isArray(value)===false && (name!='anzsrc-for' && name!='anzsrc-seo') && value!=''">
+										    <ul class="listy no-bottom" ng-show="isArray(value)===false && (name!='anzsrc-for' && name!='anzsrc-seo'  && name!='anzsrc-for-2020' && name!='anzsrc-seo-2020') && value!=''">
 										        <li>
 										            <a href="" ng-click="togglePreFilter(name, value, true)">
 														<span ng-if="name!='related_party_one_id'">[[ value |  formatFacet | truncate:30 ]]</span>
@@ -190,7 +190,9 @@
 										        </li>
 										    </ul>
 										    <div resolve ng-if="name=='anzsrc-for'" subjects="value" vocab="'anzsrc-for'" prefilter="true"></div>
+											<div resolve ng-if="name=='anzsrc-for-2020'" subjects="value" vocab="'anzsrc-for-2020'" prefilter="true"></div>
 										    <div resolve ng-if="name=='anzsrc-seo'" subjects="value" vocab="'anzsrc-seo'" prefilter="true"></div>
+											<div resolve ng-if="name=='anzsrc-seo-2020'" subjects="value" vocab="'anzsrc-seo-2020'" prefilter="true"></div>
 										</div>
 										<div class="panel-body swatch-white">
 											<a href="" class="btn btn-primary" ng-click="advancedSearch();"><i class="fa fa-search"></i> Search</a>

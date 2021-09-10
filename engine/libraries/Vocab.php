@@ -78,6 +78,7 @@ class Vocab {
             //set the url, number of POST vars, POST data
             curl_setopt($ch,CURLOPT_URL,$curl_uri);//post to SOLR
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);//return to variable
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             $content = curl_exec($ch);//execute the curl
             //echo 'json received+<pre>'.$content.'</pre>';
             curl_close($ch);//close the curl
@@ -220,6 +221,11 @@ class Vocab {
 
         //execute curl
         $ch = curl_init();
+
+        //the anzsrc-xxx-2020 vocab breaks if the trailing slash is left on it and the anzsrc-xxx breaks if it's removed
+        //so check if its a 2020 and trim the slash (needed for retreival of topConcepts
+        if(str_replace("anzsrc-2020","",$queryStr)!=$queryStr) $queryStr = trim($queryStr,"/");
+
         curl_setopt($ch,CURLOPT_URL,$queryStr);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $content = curl_exec($ch);
@@ -232,7 +238,7 @@ class Vocab {
         if ($http_code === 200) {
             $this->CI->cache->file->save($cacheId, $content, 36000);
         } //else {
-         //   ulog("vocab response error: " . $http_code . " (" . $queryStr .")", "error", "error");
+        //   ulog("vocab response error: " . $http_code . " (" . $queryStr .")", "error", "error");
         //}
 
         return $content;
@@ -419,7 +425,11 @@ class Vocab {
         {
             // header('Cache-Control: no-cache, must-revalidate');
             // header('Content-type: application/json');
+           // $url = $this->resolvingServices[$vocab];
             $content = $this->post($this->constructUriString('resource', $this->resolvingServices[$vocab], ''));
+           // $tree = $this->constructUriString('resource', $this->resolvingServices[$vocab], '');
+          // return $content;
+
             if($json = json_decode($content, false)){
                 foreach($json->{'result'}->{'primaryTopic'}->{'hasTopConcept'} as $concept){
                     $concept_uri = $concept->{'_about'};
@@ -468,4 +478,14 @@ class Vocab {
         return $content;
     }
 
+    function getConceptDetailBySubject($vocab, $subject){
+        $content = '';
+        if(is_array($this->resolvingServices))
+        {
+            $vocab_uri['resolvingService'] = $this->resolvingServices[$vocab]['resolvingService'];
+            $vocab_uri['uriprefix'] = $this->resolvingServices[$vocab]['uriprefix'].$subject;
+            $content = $this->getResource($vocab_uri);
+        }
+        return $content;
+    }
 }

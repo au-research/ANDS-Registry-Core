@@ -21,7 +21,7 @@ use ANDS\Util\XMLUtil;
  */
 class SubjectProvider implements RIFCSProvider
 {
-    public static $RESOLVABLE = ['anzsrc', 'anzsrc-for', 'anzsrc-seo',
+    public static $RESOLVABLE = ['anzsrc', 'anzsrc-for', 'anzsrc-seo','anzsrc-for-2020', 'anzsrc-seo-2020',
         'gcmd', 'iso639-3','local'];
     public static $delimiter = ['|', '&gt;', '>'];
 
@@ -65,8 +65,19 @@ class SubjectProvider implements RIFCSProvider
         $subjects = [];
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class . '/ro:subject') AS $subject) {
+
+            // Release 42 enabled access to the anzsrc 2020 vocabs (for and seo) - code values are provided under the
+            // anzsrc-xxx vocab types - check of the code will determine which vocab we resolve the value to
+            if( (string)$subject["type"]=='anzsrc-for' && substr((string)$subject,0,2) >'29'){
+                $type='anzsrc-for-2020';
+            } elseif ((string)$subject["type"]=='anzsrc-seo' && substr((string)$subject,0,2) < '80'){
+                $type='anzsrc-seo-2020';
+            } else{
+                $type=(string)$subject["type"];
+            }
+
             $subjects[] = array(
-                'type' => (string)$subject["type"],
+                'type' => $type,
                 'value' => (string)$subject,
                 'uri' => (string)$subject["termIdentifier"]);
         };
@@ -150,7 +161,8 @@ class SubjectProvider implements RIFCSProvider
                     $subjectsResolved[$value] = array('type' => $type, 'value' => $value, 'resolved' => $value, 'uri' => $uri );
                 }else if (!$positive_hit || !in_array(strtolower($type), self::$RESOLVABLE)) {
                     //no match or a very loose match was found so it is not a gcmd vocab
-                    if((strtolower($type) =='gcmd' || strtolower($type) == 'anzsrc-for' || strtolower($type) == 'anzsrc-seo' || strtolower($type) == 'anzsrc')) $type = 'local';
+                    if((strtolower($type) =='gcmd' || strtolower($type) == 'anzsrc-for' || strtolower($type) == 'anzsrc-seo' ||
+                        strtolower($type) == 'anzsrc-for-2020' || strtolower($type) == 'anzsrc-seo-2020' || strtolower($type) == 'anzsrc')) $type = 'local';
                     $subjectsResolved[$value] = array('type' => $type, 'value' => $value, 'resolved' => $value, 'uri' => $uri );
                 }
             }
@@ -192,7 +204,7 @@ class SubjectProvider implements RIFCSProvider
             return 'search_label_s:("' . mb_strtolower(self::getNarrowestConcept($string)) . '") ^5 + search_labels_string_s:' . $search_string . ' OR "' . $search_string . '"';
 
         //if the provided type is anzsrc-for or anzsrc-seo then specifiy the type in the query so that duplicate values from the wrong type are not returned
-        if($type == "anzsrc-for" || $type == "anzsrc-seo")
+        if($type == "anzsrc-for" || $type == "anzsrc-seo" || $type == "anzsrc-for-2020" || $type == "anzsrc-seo-2020")
             return 'type:'.$type.' AND (search_label_s:("' . strtolower($label_string) . '") ^5 + notation_s:"' . $search_string . '" ^5 + "'.$search_string.'")';
 
         // quote the search string so solr reserved characters don't break the solr query
