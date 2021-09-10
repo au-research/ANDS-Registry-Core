@@ -119,12 +119,9 @@ app.directive('resolve', function($http, $log, vocab_factory){
 				if(newv) {
 					scope.result = [];
 					vocab_factory.resolveSubjects(scope.vocab, scope.subjects).then(function(data){
-						$log.debug(data);
-						$log.debug(scope.vocab);
 						angular.forEach(data, function(label, notation){
 							scope.result.push({notation:notation,label:label});
 						});
-						$log.debug(scope.result);
 					});
 				}
 			});

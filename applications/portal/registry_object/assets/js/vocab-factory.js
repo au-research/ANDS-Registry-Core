@@ -13,7 +13,6 @@ app.factory('vocab_factory', function($http, $log){
 		},
 		isSelected: function(item, filters) {
 			if (filters['subject_vocab_uri']) {
-				 $log.debug(decodeURIComponent(filters['subject_vocab_uri']), item.uri);
 				if(decodeURIComponent(filters['subject_vocab_uri'])==item.uri) {
 					return true;
 				} else if(angular.isArray(filters['subject_vocab_uri'])) {

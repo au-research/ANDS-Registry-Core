@@ -9,7 +9,8 @@ use ANDS\Repository\RegistryObjectsRepository;
 class UserDataSuggestorTest extends \RegistryTestClass
 {
 
-    /** @test **/
+    /** @not_test **/
+    // this test has been disabled until work can be done ensure that the required elasticsearch data is available
     public function it_should_be_able_to_get_suggestion_for_a_given_record()
     {
         // TODO populate content before the fact

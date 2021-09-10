@@ -1373,12 +1373,9 @@ app.directive('resolve', function($http, $log, vocab_factory){
 				if(newv) {
 					scope.result = [];
 					vocab_factory.resolveSubjects(scope.vocab, scope.subjects).then(function(data){
-						$log.debug(data);
-						$log.debug(scope.vocab);
 						angular.forEach(data, function(label, notation){
 							scope.result.push({notation:notation,label:label});
 						});
-						$log.debug(scope.result);
 					});
 				}
 			});
@@ -1688,7 +1685,6 @@ app.directive('focusMe', function($timeout, $parse) {
 		},
 		isSelected: function(item, filters) {
 			if (filters['subject_vocab_uri']) {
-				 $log.debug(decodeURIComponent(filters['subject_vocab_uri']), item.uri);
 				if(decodeURIComponent(filters['subject_vocab_uri'])==item.uri) {
 					return true;
 				} else if(angular.isArray(filters['subject_vocab_uri'])) {
