@@ -620,8 +620,9 @@ class Registry_object extends MX_Controller
         $this->load->library('vocab');
         if (!$uri) { //get top level
 
-            if ($vocab == 'anzsrc-for' || $vocab == 'anzsrc-seo') {
+            if ($vocab == 'anzsrc-for' || $vocab == 'anzsrc-seo' || $vocab == 'anzsrc-for-2020' || $vocab == 'anzsrc-seo-2020') {
                 $toplevel = $this->vocab->getTopLevel($vocab, $filters);
+               // var_dump($toplevel);
                 echo json_encode($toplevel['topConcepts']);
             } else {
                 $toplevel = $this->getSubjectsVocab($vocab, $filters);
@@ -820,13 +821,11 @@ class Registry_object extends MX_Controller
 
         if (is_array($subjects)) {
             foreach ($subjects as $subject) {
-                $r = json_decode($this->vocab->getConceptDetail($vocab,
-                    'http://purl.org/au-research/vocabulary/' . $vocab . '/2008/' . $subject), true);
+                $r = json_decode($this->vocab->getConceptDetailBySubject($vocab, $subject), true);
                 $result[$subject] = $r['result']['primaryTopic']['prefLabel']['_value'];
             }
         } else {
-            $r = json_decode($this->vocab->getConceptDetail($vocab,
-                'http://purl.org/au-research/vocabulary/' . $vocab . '/2008/' . $subjects), true);
+            $r = json_decode($this->vocab->getConceptDetailBySubject($vocab,$subjects), true);
             $result[$subjects] = $r['result']['primaryTopic']['prefLabel']['_value'];
         }
 

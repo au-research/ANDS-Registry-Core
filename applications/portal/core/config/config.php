@@ -87,7 +87,7 @@ $config['subjects_categories'] = array(
 	'anzsrc' 
 		=> array(
 			'display' => 'ANZSRC',
-			'list' => array('ANZSRC', 'anzsrc', 'anzsrc-rfcd', 'anzsrc-seo', 'anzsrc-toa')
+			'list' => array('ANZSRC', 'anzsrc', 'anzsrc-rfcd', 'anzsrc-for-2020','anzsrc-seo-2020', 'anzsrc-seo', 'anzsrc-toa')
 			),
 	'apt' 
 		=> array(

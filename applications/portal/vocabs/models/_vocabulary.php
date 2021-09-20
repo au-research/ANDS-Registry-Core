@@ -226,6 +226,14 @@ class _vocabulary
                 if(isset($subject['subject_notation'])
                    && $subject['subject_notation'] != ""){
                     $notation = $subject['subject_notation'];
+                    // this type check also occurs in getSubjects it is included to ensure that after release 42 the
+                    // anzsrc-xxx-2020 vocabs can be used and resolved after initially being input with a type of anzsrc-xxx
+                    if(substr($notation,0,2) > '29' && $type == 'anzsrc-for'){
+                        $type = 'anzsrc-for-2020';
+                    }
+                    if(substr($notation,0,2) < '80' && $type == 'anzsrc-seo'){
+                        $type = 'anzsrc-seo-2020';
+                    }
                 }
                 else{
                     try{

@@ -821,7 +821,17 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 				));
 			}
 
-			//get results from anzsrc-seo
+            //get results from anzsrc-for-2020
+            $this->load->library('vocab');
+            $matches = $this->vocab->anyContains($q, 'anzsrc-for-2020');
+            foreach($matches as $match){
+                array_push($result, array(
+                    'name' => $match,
+                    'source' => 'ANZSRC-FOR-2020'
+                ));
+            }
+
+            //get results from anzsrc-seo
 			$this->load->library('vocab');
 			$matches = $this->vocab->anyContains($q, 'anzsrc-seo');
 			foreach($matches as $match){
@@ -830,6 +840,15 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 					'source' => 'ANZSRC-SEO'
 				));
 			}
+            //get results from anzsrc-seo-2020
+            $this->load->library('vocab');
+            $matches = $this->vocab->anyContains($q, 'anzsrc-seo-2020');
+            foreach($matches as $match){
+                array_push($result, array(
+                    'name' => $match,
+                    'source' => 'ANZSRC-SEO-2020'
+                ));
+            }
 		}
 
 		//get results from lcsh

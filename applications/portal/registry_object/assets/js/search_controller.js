@@ -398,7 +398,6 @@
         $scope.toggleFilter = function(type, value, execute) {
 
             $scope.filters['p'] = 1;
-
             if($scope.filters[type]) {
                 if($scope.filters[type]==value) {
                     $scope.clearFilter(type,value);
@@ -487,7 +486,6 @@
                 if (angular.isArray($scope.filters['anzsrc-for'])) {
                     angular.forEach($scope.filters['anzsrc-for'], function(code){
                         if(indexOf(code ,notation) == 0) {
-                            console.log("found it");
                             found = true;
                         }
                     });
@@ -880,7 +878,7 @@
         };
 
         $scope.clearSubject = function() {
-            var fields_array = ['anzsrc-for', 'anzsrc-seo', 'anzsrc', 'keywords', 'scot', 'pont', 'psychit', 'apt', 'gcmd', 'lcsh','iso639-3'];
+            var fields_array = ['anzsrc-for', 'anzsrc-for-2020', 'anzsrc-seo', 'anzsrc-seo-2020', 'anzsrc', 'keywords', 'scot', 'pont', 'psychit', 'apt', 'gcmd', 'lcsh','iso639-3'];
             angular.forEach(fields_array, function(ss){
                 delete $scope.prefilters[ss];
             });
@@ -892,7 +890,7 @@
             var ret = 0;
             var fields_array = [];
             if(type=='subject') {
-                fields_array = ['anzsrc-for', 'anzsrc-seo', 'anzsrc', 'keywords', 'scot', 'pont', 'psychit', 'apt', 'gcmd', 'lcsh','iso639-3'];
+                fields_array = ['anzsrc-for', 'anzsrc-for-2020', 'anzsrc-seo','anzsrc-seo-2020', 'anzsrc', 'keywords', 'scot', 'pont', 'psychit', 'apt', 'gcmd', 'lcsh','iso639-3'];
                 angular.forEach(fields_array, function(ss){
                     ret = $scope.prefilters[ss] ? 1 : ret;
                 });
@@ -990,7 +988,7 @@
 
         $scope.getSubTree = function(item) {
             item['showsubtree'] = !item['showsubtree'];
-            if(!item['subtree'] && ($scope.vocab=='anzsrc-for' || $scope.vocab=='anzsrc-seo')) {
+            if(!item['subtree'] && ($scope.vocab=='anzsrc-for' || $scope.vocab=='anzsrc-seo' || $scope.vocab=='anzsrc-for-2020' || $scope.vocab=='anzsrc-seo-2020')) {
                 vocab_factory.get(item.uri, $scope.filters, $scope.vocab).then(function(data){
                     item['subtree'] = data;
                 });
@@ -998,7 +996,6 @@
         };
 
         $scope.isVocabSelected = function(item, filters) {
-            //console.log(item);
             if(!filters) filters = $scope.filters;
             var found = vocab_factory.isSelected(item, filters);
             if (found) {
@@ -1027,6 +1024,16 @@
                 } else if ($scope.filters['anzsrc-for'].indexOf(item.notation) ==0 && !found && $scope.filters['anzsrc-for']!=item.notation){
                     found = true;
                 }
+            }else if($scope.filters['anzsrc-for-2020']) {
+                if (angular.isArray($scope.filters['anzsrc-for-2020'])) {
+                    angular.forEach($scope.filters['anzsrc-for-2020'], function(code){
+                        if(code.indexOf(item.notation) == 0 && !found && code!=item.notation) {
+                            found =  true;
+                        }
+                    });
+                } else if ($scope.filters['anzsrc-for-2020'].indexOf(item.notation) ==0 && !found && $scope.filters['anzsrc-for-2020']!=item.notation){
+                    found = true;
+                }
             } else if($scope.filters['anzsrc-seo']) {
                 if (angular.isArray($scope.filters['anzsrc-seo'])) {
                     angular.forEach($scope.filters['anzsrc-seo'], function(code){
@@ -1035,6 +1042,16 @@
                         }
                     });
                 } else if ($scope.filters['anzsrc-seo'].indexOf(item.notation) ==0 && !found && $scope.filters['anzsrc-seo']!=item.notation){
+                    found = true;
+                }
+            } else if($scope.filters['anzsrc-seo-2020']) {
+                if (angular.isArray($scope.filters['anzsrc-seo-2020'])) {
+                    angular.forEach($scope.filters['anzsrc-seo-2020'], function(code){
+                        if(code.indexOf(item.notation) == 0 && !found && code!=item.notation) {
+                            found =  true;
+                        }
+                    });
+                } else if ($scope.filters['anzsrc-seo-2020'].indexOf(item.notation) ==0 && !found && $scope.filters['anzsrc-seo-2020']!=item.notation){
                     found = true;
                 }
             }

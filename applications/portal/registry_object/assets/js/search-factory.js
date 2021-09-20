@@ -32,7 +32,9 @@
 
             vocab_choices: [
                 {value: 'anzsrc-for', label: 'ANZSRC FOR'},
+                {value: 'anzsrc-for-2020', label: 'ANZSRC FOR 2020'},
                 {value: 'anzsrc-seo', label: 'ANZSRC SEO'},
+                {value: 'anzsrc-seo-2020', label: 'ANZSRC SEO 2020'},
                 {value: 'anzsrc', label: 'ANZSRC'},
                 {value: 'keywords', label: 'Keywords'},
                 {value: 'scot', label: 'School of Online Thesaurus'},
