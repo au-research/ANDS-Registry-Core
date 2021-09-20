@@ -41,7 +41,8 @@ class Core extends ROHandler {
 
         if($this->ro->class == 'activity' && $this->ro->type == 'grant' && strrpos($this->ro->key, 'purl') > 0) {
             $result['url'] = $this->ro->key;
-
+            // get Landing Page for Activities
+            $result['landingPage'] = $this->ro->getLandingPage();
             /**
              * Check if list_description exists in the index
              * @todo default description?

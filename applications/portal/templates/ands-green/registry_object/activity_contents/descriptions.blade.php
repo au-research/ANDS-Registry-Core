@@ -50,7 +50,11 @@
 					{{html_entity_decode($desc['description'])}}</p>
 				@endif
 			@endforeach
+			@if(isset($ro->core['landingPage']) && strpos($ro->core['landingPage'], "dataportal.arc.gov.au")  !== false)
+					<p><a href="{{ $ro->core['landingPage'] }}">View this grant in the ARC Data Portal</a></p>
+			@endif
 		</div>
 	</div>
 </div>
 @endif
+
