@@ -76,9 +76,11 @@ class ConceptsCommand extends Command
             $client->setCore('concepts');
 
             //   Adding document
-            $client->add(
+           $result =  $client->add(
                 new SolrDocument($concept)
             );
+            var_dump($result);
+            dd();
 
         }
     }
