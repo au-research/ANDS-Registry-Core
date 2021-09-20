@@ -75,9 +75,6 @@ class ConceptsCommand extends Command
             $client = new SolrClient($this->solrUrl);
             $client->setCore('concepts');
 
-            //   encode the concept in utf8
-            $concept = $this->utf8_encode_recursive($concept);
-
             //   Adding document
             $client->add(
                 new SolrDocument($concept)
@@ -141,6 +138,7 @@ class ConceptsCommand extends Command
           //   encode the concept in utf8
             $concept = $this->utf8_encode_recursive($concept);
 
+
           //   Adding document
             $client->add(
                 new SolrDocument($concept)
@@ -178,13 +176,17 @@ class ConceptsCommand extends Command
         $concepts_in_vocab = true;
         $concepts = [];
         $count = 0;
+        header("Content-Type: text/html; charset=utf-8");
         while($concepts_in_vocab){
             $conceptsUrl = $conceptsVocabUrl.$_page;
             $ch = curl_init();
             curl_setopt($ch, CURLOPT_URL, $conceptsUrl);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             $concepts_source = curl_exec($ch);
             $file_concepts = json_decode($concepts_source, true);
+
             if(isset($file_concepts['result']['items'][0])) {
                 $concepts_array = $file_concepts["result"]["items"];
                 foreach ($concepts_array as $concept_array) {
@@ -203,7 +205,7 @@ class ConceptsCommand extends Command
                         'label_s' => isset($concept_array['prefLabel']['_value']) ? (string)$concept_array['prefLabel']['_value'] : NULL,
                         'notation_s' => isset($concept_array['notation']) ? (string)$concept_array['notation'] : NULL,
                         'search_label_s' => isset($concept_array['prefLabel']['_value']) ? strtolower((string)$concept_array['prefLabel']['_value']) : NULL,
-                        'search_label_ss' =>isset($concept_array['prefLabel']['_value']) ? [(string)$concept_array['prefLabel']['_value']] : NULL,
+                        'search_label_ss' => isset($concept_array['prefLabel']['_value']) ? [(string)$concept_array['prefLabel']['_value']] : NULL,
                         'description' => isset($concept_array['definition']) ? $concept_array['definition'] : '',
                         'description_s' => isset($concept_array['definition']) ? $concept_array['definition'] : '',
                         'search_labels_string_s' => isset($concept_array['prefLabel']['_value']) ? (string)$concept_array['prefLabel']['_value'] : NULL,
