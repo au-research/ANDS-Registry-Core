@@ -307,11 +307,11 @@ class Registry_object extends MX_Controller {
         $ro->save();
 
         $response["error_count"] = $error_count;
-
-        // CC-2256. Replacing SetWarnings and SetInfos with fail rule from the report
+        //
+        // CC-2256. Replacing SetWarnings and SetInfos with fail rule from the report (reinstated @ RDA-340)
         // Leaving SetErrors because they are important
-        $response['SetWarnings'] = [];
-        $response['SetInfos'] = [];
+        // $response['SetWarnings'] = [];
+        // $response['SetInfos'] = [];
 
         // Removing the SetInfos as well, only errors exist for the tabs now
         // $response = $this->getInfosTabMessages($response, $report);
