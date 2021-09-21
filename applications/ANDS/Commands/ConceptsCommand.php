@@ -73,14 +73,13 @@ class ConceptsCommand extends Command
             }
 
             $client = new SolrClient($this->solrUrl);
+
             $client->setCore('concepts');
 
             //   Adding document
            $result =  $client->add(
                 new SolrDocument($concept)
             );
-            var_dump($result);
-            dd();
 
         }
     }
@@ -188,7 +187,7 @@ class ConceptsCommand extends Command
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             $concepts_source = curl_exec($ch);
             $file_concepts = json_decode($concepts_source, true);
-
+// var_dump($file_concepts);
             if(isset($file_concepts['result']['items'][0])) {
                 $concepts_array = $file_concepts["result"]["items"];
                 foreach ($concepts_array as $concept_array) {
@@ -264,7 +263,7 @@ class ConceptsCommand extends Command
         $source = $input->getOption('concepts_file');
         $type = $input->getOption('vocab_type');
         $this->solrUrl = $input->getOption('solr_url');
-        $output->writeln("Indexing: $type to {$this->solrUrl}");
+        $output->writeln("Indexing: $type to {$this->solrUrl} for {$type}");
         $conceptsSourceURLs = [
             'anzsrc-for' => 'https://vocabs.ands.org.au/registry/api/resource/versions/28/versionArtefacts/conceptTree',
             'anzsrc-seo' => 'https://vocabs.ands.org.au/registry/api/resource/versions/18/versionArtefacts/conceptTree',
