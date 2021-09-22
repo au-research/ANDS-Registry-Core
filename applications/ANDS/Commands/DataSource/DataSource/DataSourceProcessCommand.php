@@ -14,7 +14,7 @@ use ANDS\Registry\Providers\RIFCS\CoreMetadataProvider;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\Providers\RIFCS\SubjectProvider;
 use ANDS\Registry\Providers\ScholixProvider;
-use ANDS\Registry\Providers\TitleProvider;
+use ANDS\Registry\Providers\RIFCS\TitleProvider;
 use ANDS\RegistryObject;
 use ANDS\Repository\DataSourceRepository;
 use ANDS\Repository\RegistryObjectsRepository;

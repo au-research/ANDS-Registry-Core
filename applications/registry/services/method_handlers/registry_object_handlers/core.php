@@ -19,7 +19,7 @@ class Core extends ROHandler {
 
         // CC-2112. Alt title ordering
         $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($this->ro->id);
-        $titles = \ANDS\Registry\Providers\TitleProvider::get($record);
+        $titles = \ANDS\Registry\Providers\RIFCS\TitleProvider::get($record);
         if (array_key_exists('alt_titles', $titles)) {
             $result['alt_title'] = $titles['alt_titles'];
         }

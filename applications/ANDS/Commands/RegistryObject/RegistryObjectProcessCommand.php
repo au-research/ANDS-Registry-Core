@@ -14,7 +14,7 @@ use ANDS\Registry\Providers\RIFCS\CoreMetadataProvider;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\Providers\RIFCS\SubjectProvider;
 use ANDS\Registry\Providers\ScholixProvider;
-use ANDS\Registry\Providers\TitleProvider;
+use ANDS\Registry\Providers\RIFCS\TitleProvider;
 use ANDS\Repository\RegistryObjectsRepository;
 use ReflectionMethod;
 use Symfony\Component\Console\Input\InputArgument;
