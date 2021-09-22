@@ -13,7 +13,7 @@ use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\Registry\Providers\RIFCS\CoreMetadataProvider;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\Providers\RIFCS\SubjectProvider;
-use ANDS\Registry\Providers\ScholixProvider;
+use ANDS\Registry\Providers\Scholix\ScholixProvider;
 use ANDS\Registry\Providers\RIFCS\TitleProvider;
 use ANDS\Repository\RegistryObjectsRepository;
 use ReflectionMethod;
