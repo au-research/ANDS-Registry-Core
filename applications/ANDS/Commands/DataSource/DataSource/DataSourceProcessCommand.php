@@ -1,9 +1,10 @@
 <?php
 
 
-namespace ANDS\Commands;
+namespace ANDS\Commands\DataSource;
 
 
+use ANDS\Commands\ANDSCommand;
 use ANDS\Registry\Providers\DCI\DataCitationIndexProvider;
 use ANDS\Registry\Providers\GraphRelationshipProvider;
 use ANDS\Registry\Providers\LinkProvider;
