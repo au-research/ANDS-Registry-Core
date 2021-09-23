@@ -12,7 +12,7 @@ use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 use ANDS\Registry\Providers\RIFCS\SubjectProvider;
-use ANDS\Registry\Providers\ScholixProvider;
+use ANDS\Registry\Providers\Scholix\ScholixProvider;
 use ANDS\Registry\RelationshipView;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
