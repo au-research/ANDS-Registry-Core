@@ -144,7 +144,7 @@
                     // We are probably almost there now;
                     // we can distinguish the required behaviour
                     // based on the mode (tree/search/freetext).
-                    if (vocab == 'anzsrc-for' || vocab == 'anzsrc-seo') {
+                    if (vocab == 'anzsrc-for' || vocab == 'anzsrc-seo' || vocab == 'anzsrc-for-2020' || vocab == 'anzsrc-seo-2020') {
                         $(subjectValueInput).qtip(
                             {
                                 content: {
