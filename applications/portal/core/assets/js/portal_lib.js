@@ -15,9 +15,7 @@ jQuery(document).ready(function( $ ) {
                 setTimeout( function() {
                     var columns = 3;
                     var screenWidth = $(window).width();
-
                     var wideColumns = 2;
-
                     if( screenWidth < 768 ) {
                         columns = $container.attr( 'data-col-xs' );
                         wideColumns = 1;
