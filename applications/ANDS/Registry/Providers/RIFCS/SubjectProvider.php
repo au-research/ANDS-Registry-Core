@@ -192,7 +192,9 @@ class SubjectProvider implements RIFCSProvider
         if (is_numeric($notation[0]) && !in_array(strtolower($type), self::$RESOLVABLE)) {
            return str_replace($match, $replace, $string);
         }
-
+        if (is_numeric($notation[0]) && in_array(strtolower($type), self::$RESOLVABLE)) {
+            $search_string = $notation[0];
+        }
         // determine if the string has &gt; divider and convert to |
         $search_string = str_replace("&gt;", "|", $search_string);
 

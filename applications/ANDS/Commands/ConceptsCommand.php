@@ -224,14 +224,16 @@ class ConceptsCommand extends Command
 
         foreach($concepts as $concept){
             //if this concept has broader concepts let's get their info to add to the index
+            if($type=='anzsrc-seo-2020') $t = 'seo';
+            if($type=='anzsrc-for-2020') $t = 'for';
             if(isset($concept['broader_iris_ss'])){
-                $broader_notation = str_replace('https://linked.data.gov.au/def/anzsrc-for/2020/','',$concept['broader_iris_ss'][0]);
+                $broader_notation = str_replace('https://linked.data.gov.au/def/anzsrc-'.$t.'/2020/','',$concept['broader_iris_ss'][0]);
                 $concepts[$concept['notation_s']]['search_labels_string_s'] = $concepts[$broader_notation]['search_labels_string_s'] . " " .$concept['search_labels_string_s'];
                 $concepts[$concept['notation_s']]["broader_labels_ss"][] = $concepts[$broader_notation]['label_s'];
                 $concepts[$concept['notation_s']]["broader_notations_ss"][] = $concepts[$broader_notation]['notation_s'];
                 $concepts[$concept['notation_s']]['search_label_ss'][] = $concepts[$broader_notation]['label_s'];
                 if(isset($concepts[$broader_notation]['broader_iris_ss'])) {
-                    $broader_notation_ = str_replace('https://linked.data.gov.au/def/anzsrc-for/2020/', '', $concepts[$broader_notation]['broader_iris_ss'][0]);
+                    $broader_notation_ = str_replace('https://linked.data.gov.au/def/anzsrc-'.$t.'/2020/', '', $concepts[$broader_notation]['broader_iris_ss'][0]);
                     $concepts[$concept['notation_s']]['broader_iris_ss'][] = $concepts[$broader_notation]['broader_iris_ss'][0];
                     $concepts[$concept['notation_s']]["broader_labels_ss"][] = $concepts[$broader_notation_]['label_s'];
                     $concepts[$concept['notation_s']]["broader_notations_ss"][] = $concepts[$broader_notation_]['notation_s'];
