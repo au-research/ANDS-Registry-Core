@@ -5,7 +5,7 @@ namespace ANDS\API\Task\ImportSubTask;
 
 
 use ANDS\Registry\Providers\DCI\DataCitationIndexProvider;
-use ANDS\Registry\Providers\ScholixProvider;
+use ANDS\Registry\Providers\Scholix\ScholixProvider;
 use ANDS\Repository\RegistryObjectsRepository;
 
 class ProcessScholix extends ImportSubTask

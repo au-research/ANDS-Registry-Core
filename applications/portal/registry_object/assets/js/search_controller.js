@@ -735,6 +735,7 @@
             search_factory.search_no_record($scope.prefilters).then(function(data){
                 $scope.preresult = data;
                 $scope.prefacets = search_factory.construct_facets($scope.preresult, $scope.prefilters['class']);
+                $scope.temporal_range = search_factory.temporal_range(data);
                 $scope.populateCenters($scope.preresult.response.docs);
                 vocab_factory.get(false, $scope.prefilters, $scope.vocab).then(function(data){
                     $scope.vocab_tree_tmp = data;
