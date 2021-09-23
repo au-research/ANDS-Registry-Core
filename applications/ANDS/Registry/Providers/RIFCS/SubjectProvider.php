@@ -189,8 +189,8 @@ class SubjectProvider implements RIFCSProvider
         // determine if string has a preceding numeric notation before the prefLabel . If so, then don't quote the search string
         // search string needs to be escaped to ensure that special characters don't break SOLR
         $notation = explode(" ", $string);
-        if (is_numeric($notation[0])) {
-            return str_replace($match, $replace, $string);
+        if (is_numeric($notation[0]) && !in_array(strtolower($type), self::$RESOLVABLE)) {
+           return str_replace($match, $replace, $string);
         }
 
         // determine if the string has &gt; divider and convert to |
@@ -208,7 +208,7 @@ class SubjectProvider implements RIFCSProvider
             return 'type:'.$type.' AND (search_label_s:("' . strtolower($label_string) . '") ^5 + notation_s:"' . $search_string . '" ^5 + "'.$search_string.'")';
 
         // quote the search string so solr reserved characters don't break the solr query
-            return 'search_label_s:("' . mb_strtolower($label_string) . '") ^5 + notation_s:"' . $search_string . '" ^5 + "'.$search_string.'"' ;
+        return 'search_label_s:("' . mb_strtolower($label_string) . '") ^5 + notation_s:"' . $search_string . '" ^5 + "'.$search_string.'"' ;
     }
 
     /**
