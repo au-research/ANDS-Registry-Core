@@ -577,28 +577,38 @@ class Registry_object extends MX_Controller
 
     function researcherSort($related){
         //extract out the principal investigators into new array and remove them from the researcher's array
-        $r = array();
+        $principals = array();
+        $chiefs = array();
+
         foreach($related as $key=>$relation){
             if(isset($relation['relation'])){
                 foreach($relation['relation']as $relationship) {
-                    if(strpos($relationship,"PrincipalInvestigator")!==false){
-                        array_push($r, $relation);
+                    if(strpos($relationship,"rincipal")!==false){
+                        array_push($principals, $relation);
+                        unset($related[$key]);
+                    }
+                    if(strpos($relationship,"hief")!==false){
+                        array_push($chiefs, $relation);
                         unset($related[$key]);
                     }
                 } 
             }
         }
 
-        //sort both arrays on name of title of related party
-        uasort($r, function ($a, $b) {
-            return strnatcmp($a["to_title"], $b["to_title"]);
+        //sort both arrays on name of surname (most likely the last word) from the title of related party
+        uasort($principals, function ($a, $b) {
+            return strnatcmp(last(explode(' ', $a["to_title"])), last(explode(' ', $b["to_title"])));
         });
+        uasort($chiefs, function ($a, $b) {
+            return strnatcmp(last(explode(' ', $a["to_title"])), last(explode(' ', $b["to_title"])));
+        });
+
         uasort($related, function ($a, $b) {
-            return strnatcmp($a["to_title"], $b["to_title"]);
+            return strnatcmp(last(explode(' ', $a["to_title"])), last(explode(' ', $b["to_title"])));
         });
 
         //now join both arrays back together
-        $related = array_merge($r, $related);
+        $related = array_merge($principals, $chiefs , $related);
 
         return $related;
     }
