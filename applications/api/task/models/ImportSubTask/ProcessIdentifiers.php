@@ -22,9 +22,11 @@ class ProcessIdentifiers extends ImportSubTask
         foreach ($importedRecords as $index => $roID) {
             $record = RegistryObjectsRepository::getRecordByID($roID);
             $identifiers = IdentifierProvider::process($record);
-            foreach($identifiers as $identifier){
-                $this->parent()->addTaskData("imported_".$record->class."_identifiers", $identifier);
-            }
+            // RDA-442 very large harvests fail to update task data is too many identifiers are added to the taskData
+            // we should find these Identifiers when we need them using the imported record IDs instead
+            //foreach($identifiers as $identifier){
+            //    $this->parent()->addTaskData("imported_".$record->class."_identifiers", $identifier);
+            // }
 
             $duplicateCount = count($record->findAllDuplicates());
             $record->setRegistryObjectAttribute("duplicate_count", $duplicateCount);

@@ -1,10 +1,13 @@
 <?php
 
 
-namespace ANDS\Registry\Providers;
+namespace ANDS\Registry\Providers\Scholix;
 
 
 use ANDS\API\Task\ImportSubTask\ProcessDelete;
+use ANDS\Registry\Providers\MetadataProvider;
+use ANDS\Registry\Providers\RegistryContentProvider;
+use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 use ANDS\Registry\Providers\RIFCS\LocationProvider;
@@ -14,6 +17,9 @@ use ANDS\Registry\Relation;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\XMLUtil;
+use function baseUrl;
+use function collect;
+use function getReverseRelationshipString;
 
 class ScholixProvider implements RegistryContentProvider
 {
