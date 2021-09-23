@@ -4,7 +4,7 @@
 namespace ANDS\Commands\Script;
 
 use ANDS\Registry\Providers\RIFCS\CoreMetadataProvider;
-use ANDS\Registry\Providers\TitleProvider;
+use ANDS\Registry\Providers\RIFCS\TitleProvider;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 

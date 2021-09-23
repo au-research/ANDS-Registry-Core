@@ -102,7 +102,6 @@ angular.module('portal-filters', []).
 					case "presents" : return "Presents";break;
 					case "isDerivedFrom" : return "Derived from";break;
 					case "hasDerivedCollection" : return "Derives";break;
-					case "supports" : return "Supports";break;
 					case "isAvailableThrough" : return "Available through";break;
 					case "isProducedBy" : return "Produced by";break;
 					case "produces" : return "Produces";break;
@@ -111,6 +110,8 @@ angular.module('portal-filters', []).
 					case "isPrincipalInvestigator" : return "Principal investigator of";break;
 					case "hasValueAddedBy" : return "Value added by";break;
 					case "pointOfContact" : return "Point of Contact";break;
+					case "isVersionOf" : return "Is version of"; break;
+					case "hasVersion" : return "Has version"; break;
 				}
 			}else if(from_class=='party'){
 				switch(text){
