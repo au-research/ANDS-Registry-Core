@@ -630,9 +630,8 @@ class Registry_object extends MX_Controller
         $this->load->library('vocab');
         if (!$uri) { //get top level
 
-            if ($vocab == 'anzsrc-for' || $vocab == 'anzsrc-seo' || $vocab == 'anzsrc-for-2020' || $vocab == 'anzsrc-seo-2020') {
+            if ($vocab == 'anzsrc-for' || $vocab == 'anzsrc-seo'|| $vocab == 'anzsrc-for-2020' || $vocab == 'anzsrc-seo-2020') {
                 $toplevel = $this->vocab->getTopLevel($vocab, $filters);
-               // var_dump($toplevel);
                 echo json_encode($toplevel['topConcepts']);
             } else {
                 $toplevel = $this->getSubjectsVocab($vocab, $filters);
@@ -835,7 +834,7 @@ class Registry_object extends MX_Controller
                 $result[$subject] = $r['result']['primaryTopic']['prefLabel']['_value'];
             }
         } else {
-            $r = json_decode($this->vocab->getConceptDetailBySubject($vocab,$subjects), true);
+            $r = $r = json_decode($this->vocab->getConceptDetailBySubject($vocab, $subjects), true);
             $result[$subjects] = $r['result']['primaryTopic']['prefLabel']['_value'];
         }
 
