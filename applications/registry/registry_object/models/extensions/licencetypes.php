@@ -84,6 +84,7 @@ class LicenceTypes_Extension extends ExtensionBase
         "CC-BY-NC-ND" => "Non-Derivative Licence",
         "CC-BY-NC" => "Non-Commercial Licence",
         "CC-BY" => "Open Licence",
+        "CC0" => "Open Licence",
         "CSIRO Data Licence" => "Non-Commercial Licence",
         "AusGoalRestrictive" => "Restrictive Licence",
         "NoLicence" => "No Licence"
