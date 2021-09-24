@@ -218,6 +218,7 @@ class GraphRelationshipProvider implements RegistryContentProvider
         $sets = [];
         foreach ($data as $key => $value) {
             if ($value) {
+                $value = addslashes($value);
                 $sets[] = "n.$key = '$value'";
             }
         }
