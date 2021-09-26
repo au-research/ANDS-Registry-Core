@@ -108,7 +108,8 @@
 @section('sidebar')
 <div class="panel panel-primary panel-green element-no-top element-no-bottom os-animation animated fadeInUp">
     <div class="panel-heading">
-        <h3 class="panel-title"><span tip="Australia and New Zealand Standard Research Classification - Fields of Research (ANZSRC-FOR). <a href='http://www.abs.gov.au/ausstats/abs@.nsf/Latestproducts/1297.0Main%20Features32008?opendocument&tabname=Summary&prodno=1297.0&issue=2008'>Learn more...</a>">ANZSRC-FOR Subjects</span></h3>
+        <h3 class="panel-title"><span tip="Australia and New Zealand Standard Research Classification - Fields of Research (ANZSRC-FOR).
+        <a href='http://www.abs.gov.au/ausstats/abs@.nsf/Latestproducts/1297.0Main%20Features32008?opendocument&tabname=Summary&prodno=1297.0&issue=2008'>Learn more...</a>">ANZSRC-FOR Subjects</span></h3>
     </div>
 
     <!-- Subject Facet -->
