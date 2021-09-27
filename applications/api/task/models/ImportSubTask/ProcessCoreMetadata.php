@@ -7,6 +7,7 @@ namespace ANDS\API\Task\ImportSubTask;
 use ANDS\Registry\Group;
 use ANDS\Registry\Providers\RIFCS\CoreMetadataProvider;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
+use ANDS\Registry\Providers\RIFCS\SlugProvider;
 use ANDS\Registry\Providers\Scholix\ScholixProvider;
 use ANDS\Registry\Providers\RIFCS\TitleProvider;
 use ANDS\RegistryObject;
