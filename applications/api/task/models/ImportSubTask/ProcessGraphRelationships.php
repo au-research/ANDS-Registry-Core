@@ -18,10 +18,11 @@ class ProcessGraphRelationships extends ImportSubTask
     protected $title = "PROCESSING GRAPH RELATIONSHIPS";
 
     /** @var int time limit in seconds */
-    protected $timeLimit = 3600;
+    //protected $timeLimit = 3600;
 
     public function run_task()
     {
+
         $myceliumClient = new MyceliumServiceClient(Config::get('mycelium.url'));
         $import_count = 0;
         $error_count = 0;
@@ -33,7 +34,7 @@ class ProcessGraphRelationships extends ImportSubTask
         }
         $importedRecords = $this->parent()->getTaskData("importedRecords");
         $total = count($importedRecords);
-
+        
         // create a new Mycelium Request
         $sideEffectRequestId = $this->parent()->getTaskData("SideEffectRequestId");
         if ($sideEffectRequestId == null) {
