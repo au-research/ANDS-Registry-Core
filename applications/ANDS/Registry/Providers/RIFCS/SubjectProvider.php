@@ -68,9 +68,12 @@ class SubjectProvider implements RIFCSProvider
 
             // Release 42 enabled access to the anzsrc 2020 vocabs (for and seo) - code values are provided under the
             // anzsrc-xxx vocab types - check of the code will determine which vocab we resolve the value to
-            if( (string)$subject["type"]=='anzsrc-for' && substr((string)$subject,0,2) >'29'){
+            $notations = explode(" ",$subject);
+            $subject_notation = substr((string)$notations[0],0,2);
+
+            if( (string)$subject["type"]=='anzsrc-for' && is_numeric( $subject_notation) && $subject_notation >'29' ){
                 $type='anzsrc-for-2020';
-            } elseif ((string)$subject["type"]=='anzsrc-seo' && substr((string)$subject,0,2) < '80'){
+            } elseif ((string)$subject["type"]=='anzsrc-seo' && is_numeric( $subject_notation) && $subject_notation < '80'){
                 $type='anzsrc-seo-2020';
             } else{
                 $type=(string)$subject["type"];
@@ -207,7 +210,7 @@ class SubjectProvider implements RIFCSProvider
 
         //if the provided type is anzsrc-for or anzsrc-seo then specifiy the type in the query so that duplicate values from the wrong type are not returned
         if($type == "anzsrc-for" || $type == "anzsrc-seo" || $type == "anzsrc-for-2020" || $type == "anzsrc-seo-2020")
-            return 'type:'.$type.' AND (search_label_s:("' . strtolower($label_string) . '") ^5 + notation_s:"' . $search_string . '" ^5 + "'.$search_string.'")';
+            return 'type:' . $type . ' AND (search_label_s:("' . strtolower($label_string) . '") ^5 + notation_s:"' . $search_string . '" ^5 + "' . $search_string . '")';
 
         // quote the search string so solr reserved characters don't break the solr query
         return 'search_label_s:("' . mb_strtolower($label_string) . '") ^5 + notation_s:"' . $search_string . '" ^5 + "'.$search_string.'"' ;
