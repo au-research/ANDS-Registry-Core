@@ -62,7 +62,6 @@ class ConceptsCommand extends Command
 
     private function generate_concept_solr($concepts){
         foreach($concepts as $concept){
-
             $this->output->writeln(
                 "Indexing ".$concept['label_s'],
                 OutputInterface::VERBOSITY_VERBOSE
@@ -187,7 +186,7 @@ class ConceptsCommand extends Command
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             $concepts_source = curl_exec($ch);
             $file_concepts = json_decode($concepts_source, true);
-// var_dump($file_concepts);
+
             if(isset($file_concepts['result']['items'][0])) {
                 $concepts_array = $file_concepts["result"]["items"];
                 foreach ($concepts_array as $concept_array) {
@@ -195,6 +194,9 @@ class ConceptsCommand extends Command
                     //Set the flag if we need to extract the broader concept info later
                     if (isset($concept_array['broader'])) {
                         $broader_iris_ss[] = $concept_array['broader'];
+                    }
+                    if( isset ($concept_array['prefLabel']['_value'])){
+                        $concept_array['prefLabel']['_value'] = str_replace("’","'",$concept_array['prefLabel']['_value']);
                     }
                     $concept = [
                         'broader_iris_ss' => $broader_iris_ss,
