@@ -542,7 +542,7 @@ Content:text/plain; charset="utf-8"
                 $contributors[] = array(
                     'name' => formatName($nameParts),
                     'seq' => (string)$contributor['seq'],
-                    'to_id' => ''
+                    'to_id' => NULL
                 );
 
 
