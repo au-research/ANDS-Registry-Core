@@ -18,6 +18,8 @@ angular.module('portal-filters', [])
 				case 'subject_vocab_uri': return 'Subject Vocabulary URI'; break;
 				case 'anzsrc-for': return 'Subjects ANZSRC-FOR'; break;
 				case 'anzsrc-seo': return 'Subjects ANZSRC-SEO'; break;
+				case 'anzsrc-for-2020': return 'Subjects ANZSRC-FOR-2020'; break;
+				case 'anzsrc-seo-2020': return 'Subjects ANZSRC-SEO-2020'; break;
 				case 'year_from': return 'Time Period (from)'; break;
 				case 'year_to': return 'Time Period (to)'; break;
 				case 'funding_scheme': return 'Funding Scheme'; break;
