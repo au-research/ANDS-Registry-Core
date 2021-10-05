@@ -92,7 +92,7 @@ return [
     [
         'googleGA' => [
             'enabled' => env("GOOGLE_URCHIN_ID") ? true : false,
-            'keys' => ['id' => env("GOOGLE_URCHIN_ID", "")]
+            'keys' => ['id' => env("GOOGLE_URCHIN_ID",  ""), 'cookie_domain' => env("COOKIE_DOMAIN",  "")]
             ],
         'luckyOrange' => [
             'enabled' => false,

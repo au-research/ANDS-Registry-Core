@@ -621,7 +621,7 @@ class ImportTask extends Task
         }
 
         if (array_key_exists('error', $message) && $message['error']['errored'] === true) {
-            $this->setPipeline("ErrorWorkflow");
+            //$this->setPipeline("ErrorWorkflow");
             $this->addError($message['error']['log']);
         }
     }
