@@ -269,10 +269,10 @@
 	</xsl:if>
     </xsl:variable>
 
-	<xsl:if test="not(ro:name[@type='primary'])">
+	<xsl:if test="not(ro:name)">
             <xsl:choose>
 			    <xsl:when test="$output = 'script'">
-            		<xsl:text>SetWarnings("tab_names","At least one primary name is required for the Party record.","REQ_PRIMARY_NAME");</xsl:text>
+            		<xsl:text>SetErrors("tab_names","At least one name is required for the Party record.","REQ_PRIMARY_NAME");</xsl:text>
 			    </xsl:when>
 			    <xsl:otherwise>
 					<span class="warning">At least one primary name is required for the Party record.</span>
@@ -364,10 +364,10 @@
 	<xsl:text> &lt;i&gt;If you have created the relationship from the Party to the Activity, please ignore this message.&lt;/i&gt;</xsl:text>
 	</xsl:if>
     </xsl:variable>
-	<xsl:if test="not(ro:name[@type='primary'])">
+	<xsl:if test="not(ro:name)">
             <xsl:choose>
 			    <xsl:when test="$output = 'script'">
-            		<xsl:text>SetWarnings("tab_names","At least one primary name is required for the Activity record.","REQ_PRIMARY_NAME");</xsl:text>
+            		<xsl:text>SetErrors("tab_names","At least one name is required for the Activity record.","REQ_PRIMARY_NAME");</xsl:text>
 			    </xsl:when>
 			    <xsl:otherwise>
 					<span class="warning">At least one primary name is required for the Activity record.</span>
@@ -447,10 +447,10 @@
 	<xsl:text> &lt;i&gt;If you have created the relationship from the Party to the Service, please ignore this message.&lt;/i&gt;</xsl:text>
 	</xsl:if>
     </xsl:variable>
-	<xsl:if test="not(ro:name[@type='primary'])">
+	<xsl:if test="not(ro:name)">
             <xsl:choose>
 			    <xsl:when test="$output = 'script'">
-            		<xsl:text>SetWarnings("tab_names","At least one primary name is required for the Service record.","REQ_PRIMARY_NAME");</xsl:text>
+            		<xsl:text>SetErrors("tab_names","At least one name is required for the Service record.","REQ_PRIMARY_NAME");</xsl:text>
 			    </xsl:when>
 			    <xsl:otherwise>
 					<span class="warning">At least one primary name is required for the Service record.</span>
