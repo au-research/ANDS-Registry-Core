@@ -131,6 +131,7 @@ Content:text/plain; charset="utf-8"
                     $names = TitleProvider::get($record);
                     $nameParts = '';
                     foreach($names["raw"][0]["value"] as $namePart=>$nameParts_raw){
+                        if((string)$nameParts_raw['@attributes']['type']!='title')
                         $nameParts[] = array(
                             'namePart_type' => (string)$nameParts_raw['@attributes']['type'],
                             'name' => (string)$nameParts_raw['value']
@@ -526,6 +527,7 @@ Content:text/plain; charset="utf-8"
             foreach ($this->xml->{$this->ro->class}->citationInfo->citationMetadata->contributor as $contributor) {
                 $nameParts = Array();
                 foreach ($contributor->namePart as $namePart) {
+                    if((string)$namePart['type']!="title")
                     $nameParts[] = array(
                         'namePart_type' => (string)$namePart['type'],
                         'name' => (string)$namePart
@@ -544,7 +546,6 @@ Content:text/plain; charset="utf-8"
                     'seq' => (string)$contributor['seq'],
                     'to_id' => NULL
                 );
-
 
             }
         }
