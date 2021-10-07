@@ -1010,7 +1010,7 @@ function initVocabWidgets(container, _mode, _vocab){
 	
 		elem.on(mode+'.vocab.ands', function(event, data) {	
 			var dataArray = Array();
-			if(vocab == 'RIFCSSubjectType'){				
+			if(vocab == 'RIFCSSubjectType'){
 				$.each(data.items, function(idx, e) {
 					dataArray.push({value:e.notation, subtext:e.definition});
 				});
@@ -1152,7 +1152,6 @@ function _getVocab(vocab)
 function initSubjectWidget(elem){
 	var vocab_type = elem;
 	var vocab_value = $(elem).prev();
-
 	var vocab = vocab_type.val();
 	var vocab_term = $(vocab_value).val();
 	var term = vocab_value.attr('vocab');
@@ -1161,6 +1160,10 @@ function initSubjectWidget(elem){
 	// WE MIGHT NEED A WHITE LIST HERE
 
 	if(vocab == 'anzsrc-for' || vocab =='anzsrc-seo'){
+		//we want to use the 2020 versions of the anzrsc-for and anzsrc-seo vocabs ,
+		//but they are not a RIFCSSubjectType vocab so when we get an anzsrc from vocab make it 2020
+		if(vocab == "anzsrc-for") vocab = "anzsrc-2020-for";
+		if(vocab == "anzsrc-seo") vocab = "anzsrc-2020-seo";
 
 		$(vocab_value).qtip({
 			content:{text:'<div class="subject_chooser"></div>'},
