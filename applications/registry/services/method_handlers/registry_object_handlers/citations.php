@@ -1,18 +1,23 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_ro_handler.php');
 
+
 /**
  * Citations handler
  * @author Liz Woods <liz.woods@ands.org.au>
  * @param  string type
  * @return array
  */
+use ANDS\Registry\Providers\RIFCS\TitleProvider;
+use ANDS\RegistryObject;
 class Citations extends ROHandler {
 
     public $ro;
+
 	function handle() {
 
         $result = array();
+
 
         if ($this->xml) {
             $coins = $this->getCoinsSpan();
@@ -121,6 +126,18 @@ Content:text/plain; charset="utf-8"
         $contributors = $this->getContributors();
         if($contributors!=''){
             foreach($contributors as $contributor){
+                if(isset($contributor['to_id'])){
+                    $record = RegistryObject::find($contributor['to_id']);
+                    $names = TitleProvider::get($record);
+                    $nameParts = '';
+                    foreach($names["raw"][0]["value"] as $namePart=>$nameParts_raw){
+                        $nameParts[] = array(
+                            'namePart_type' => (string)$nameParts_raw['@attributes']['type'],
+                            'name' => (string)$nameParts_raw['value']
+                        );
+                    }
+                    $contributor["name"] = formatName($nameParts);
+                }
                 $endNote .= "AU  - ".$contributor['name']."
 ";
             }
@@ -524,7 +541,8 @@ Content:text/plain; charset="utf-8"
 
                 $contributors[] = array(
                     'name' => formatName($nameParts),
-                    'seq' => (string)$contributor['seq']
+                    'seq' => (string)$contributor['seq'],
+                    'to_id' => NULL
                 );
 
 
@@ -558,7 +576,8 @@ Content:text/plain; charset="utf-8"
                      foreach ($authors as $author) {
                          $contributors[] = array(
                              'name' => $author['to_title'],
-                             'seq' => ''
+                             'seq' => '',
+                             'to_id' => $author['to_id']
                          );
                      }
 
@@ -572,7 +591,8 @@ Content:text/plain; charset="utf-8"
         if (!$contributors) {
             $contributors[] = array(
                 'name' => 'Anonymous',
-                'seq' => ''
+                'seq' => '',
+                'to_id' => ''
             );
         }
         usort($contributors, "seq");

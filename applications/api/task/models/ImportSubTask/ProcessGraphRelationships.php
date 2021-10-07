@@ -16,11 +16,11 @@ class ProcessGraphRelationships extends ImportSubTask
     protected $title = "PROCESSING GRAPH RELATIONSHIPS";
 
     /** @var int time limit in seconds */
-    protected $timeLimit = 3600;
+    //protected $timeLimit = 3600;
 
     public function run_task()
     {
-        $startTime = microtime(true);
+        //$startTime = microtime(true);
         $targetStatus = $this->parent()->getTaskData('targetStatus');
         if (!RegistryObjectsRepository::isPublishedStatus($targetStatus)) {
             $this->log("Target status is ". $targetStatus.' does not process graph network');
@@ -35,11 +35,11 @@ class ProcessGraphRelationships extends ImportSubTask
         $stats = new CombinedStatistics();
         foreach ($importedRecords as $index => $id) {
 
-            $elapsed = microtime(true) - $startTime;
-            if ($elapsed > $this->timeLimit) {
-                $this->addError("Elapsed: {$elapsed}s. Task has run for more than {$this->timeLimit} seconds. Terminating... Processed ($index/$total)");
-                break;
-            }
+//            $elapsed = microtime(true) - $startTime;
+//            if ($elapsed > $this->timeLimit) {
+//                $this->addError("Elapsed: {$elapsed}s. Task has run for more than {$this->timeLimit} seconds. Terminating... Processed ($index/$total)");
+//                break;
+//            }
 
             $record = RegistryObjectsRepository::getRecordByID($id);
             try {

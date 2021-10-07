@@ -8,6 +8,22 @@ class Transforms_Extension extends ExtensionBase
 		parent::__construct($ro_pointer);
 	}
 
+    function transformForQA($xml, $data_source_key = null, $output = "script")
+    {
+        try{
+            $xslt_processor = Transforms::get_qa_transformer();
+            $dom = new DOMDocument();
+            $dom->loadXML(str_replace('&', '&amp;' , $xml), LIBXML_NOENT);
+            $xslt_processor->setParameter('','dataSource', $data_source_key ?: $this->ro->data_source_key );
+            $xslt_processor->setParameter('','relatedObjectClassesStr',$this->ro->getRelatedClassesString());
+            $xslt_processor->setParameter("","output", $output);
+            return $xslt_processor->transformToXML($dom);
+        }catch (Exception $e)
+        {
+            echo "UNABLE TO TRANSFORM" . BR;
+            echo "<pre>" . nl2br($e->getMessage()) . "</pre>" . BR;
+        }
+    }
 
 	function transformForHtml($revision='', $data_source_key = null)
 	{
