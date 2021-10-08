@@ -7,7 +7,7 @@ namespace ANDS\API\Task\ImportSubTask;
 use ANDS\Registry\Group;
 use ANDS\Registry\Providers\RIFCS\CoreMetadataProvider;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
-use ANDS\Registry\Providers\Scholix\ScholixProvider;
+use ANDS\Registry\Providers\RIFCS\SlugProvider;
 use ANDS\Registry\Providers\RIFCS\TitleProvider;
 use ANDS\RegistryObject;
 use ANDS\Util\XMLUtil;
@@ -76,19 +76,14 @@ class ProcessCoreMetadata extends ImportSubTask
 
             $record->save();
 
-            // titles and slug require the ro object
-            $this->parent()->getCI()->load->model(
-                'registry/registry_object/registry_objects', 'ro'
-            );
-            $ro = $this->parent()->getCI()->ro->getByID($roID);
+            // generate and save the slug
+            try {
+                SlugProvider::process($record);
+            } catch (\Exception $e) {
+                $this->addError("Failed to process slug on record $roID: " . get_exception_msg($e));
+            }
 
-            // TODO: SlugProvider::process($record);
-            $ro->generateSlug();
-
-            // TODO: Remove CodeIgniter RO dependency
-            $ro->save();
-
-            $this->updateProgress($index, $total, "Processed ($index/$total) $ro->title($roID)");
+            $this->updateProgress($index, $total, "Processed ($index/$total) $record->title($roID)");
             unset($ro);
         }
     }

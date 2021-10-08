@@ -257,14 +257,14 @@ class Summary extends CI_Model
         $query = $roles_db->get_where('roles', array('role_type_id'=>'ROLE_ORGANISATIONAL'));
         foreach ($query->result_array() as $row) {
             $role = $row;
-            $childs = $this->list_childs($row['role_id']);
+         //   $childs = $this->list_childs($row['role_id']);
 
             //get DOI APP_ID
-            foreach ($childs as $child) {
-                if ($child->role_type_id=='ROLE_DOI_APPID') {
-                    $role['doi_app_id'][] = $child->role_id;
+         /*   foreach ($childs as $child) {
+               if ($child->role_type_id=='ROLE_DOI_APPID') {
+                   $role['doi_app_id'][] = $child->role_id;
                 }
-            }
+            } */
 
             //get Data sources
             if ($datasources = $this->get_datasources($row['role_id'])) {
@@ -275,9 +275,8 @@ class Summary extends CI_Model
                     $role['groups'] = array_merge($role['groups'], $this->getDataSourceGroups($ds['data_source_id']));
                     $role['groups'] = array_values(array_unique($role['groups'], SORT_STRING));
                 }
+                $result[] = $role;
             }
-
-            $result[] = $role;
         }
 
         return $result;
