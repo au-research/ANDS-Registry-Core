@@ -12,10 +12,12 @@ rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
 Install packages
 ```shell
 # install common packages
-sudo yum install git libsemanage-python libselinux-python lsof wget mod_ssl openssl-devel ant vim-enhanced telnet iptables iptables-services net-tools
+sudo yum install git libsemanage-python libselinux-python lsof wget mod_ssl openssl-devel ant vim-enhanced telnet iptables iptables-services net-tools mod_ssl openssh
 
-# install nodejs and yarn
+# install nodejs and yarn, update node js to latest stable
 sudo yum install nodejs
+sudo npm install -g n
+sudo n stable
 sudo npm install -g yarn
 
 # install python packages
@@ -23,8 +25,6 @@ sudo yum install https://repo.ius.io/ius-release-el7.rpm
 sudo yum install yum-utils python-pip
 sudo yum install python36u python36u-pip python36u-devel
 sudo yum group install "Development Tools"
-pip install PyMySQL redis
-pip3 install PyMySQL redis
 
 # install java
 sudo yum install java-1.8.0-openjdk java-1.8.0-openjdk-devel maven
@@ -76,6 +76,8 @@ mkdir -p /opt/apps/registry
 mkdir -p /opt/apps/registry/src
 mkdir -p /var/data/registry
 mkdir -p /var/log/registry
+setfacl -R -d -m apache:rwx /var/data/registry && setfacl -R -m u:apache:rwx /var/data/registry
+setfacl -R -d -m apache:rwx /var/log/registry && setfacl -R -m u:apache:rwx /var/log/registry
 ```
 
 Build from source
@@ -83,7 +85,7 @@ Build from source
 cd /opt/apps/registry/src/
 git clone https://github.com/au-research/ANDS-ResearchData-Registry.git rda-registry
 cd rda-registry
-composer install
+composer install -o
 
 ln -sfn /opt/apps/registry/src/rda-registry /opt/apps/registry/current 
 ```
@@ -138,19 +140,17 @@ mkdir -p /var/log/taskmanager
 
 ### Installation
 Requirements:
-* python 3.5 - 3.7
-* virtualenv 
-```
-/usr/bin/python3 -m venv venv && 
-venv/bin/pip3 install --upgrade pip && 
-venv/bin/pip3 install -r requirements.txt
-```
+* python 3
+* virtualenv
+
 Install from source
 ```shell
 cd /opt/apps/taskmanager/src
 git clone https://github.com/au-research/ANDS-TaskManager.git taskmanager
+ln -sfn /opt/apps/taskmanager/src/taskmanager /opt/apps/taskmanager/current
 
-ln -sfn /opt/apps/taskmanagwer/src/taskmanager /opt/apps/taskmanager/current 
+cd /opt/apps/taskmanager/current
+rm -rf venv && rm -rf __pycache__ && /usr/bin/python3 -m venv venv && venv/bin/pip3 install --upgrade pip && venv/bin/pip3 install -r requirements.txt 
 ```
 ### Running the TaskManager as a Linux service
 
@@ -175,20 +175,17 @@ mkdir -p /var/log/harvester
 ```
 ### Installation
 Requirements:
-* python 3.5 - 3.7
+* python 3
 * virtualenv 
 
-```
-/usr/bin/python3 -m venv venv && 
-venv/bin/pip3 install --upgrade pip && 
-venv/bin/pip3 install -r requirements.txt
-```
 Install from source
 ```shell
 cd /opt/apps/harvester/src
 git clone https://github.com/au-research/ANDS-Harvester.git harvester
-
 ln -sfn /opt/apps/harvester/src/harvester /opt/apps/harvester/current 
+
+cd /opt/apps/harvester/current
+rm -rf venv && rm -rf __pycache__ && /usr/bin/python3 -m venv venv && venv/bin/pip3 install --upgrade pip && venv/bin/pip3 install -r requirements.txt
 ```
 ### Running the Harvester as a Linux service
 
