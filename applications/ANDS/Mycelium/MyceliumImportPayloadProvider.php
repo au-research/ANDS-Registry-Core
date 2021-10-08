@@ -23,6 +23,7 @@ class MyceliumImportPayloadProvider implements RegistryContentProvider
             'type' => $record->type,
             'class' => $record->class,
             'title' => $record->title,
+            'list_title' => $record->getRegistryObjectAttributeValue("list_title"),
             'slug' => $record->slug,
             'portalUrl' => $record->portalUrl,
             'status' => $record->status,

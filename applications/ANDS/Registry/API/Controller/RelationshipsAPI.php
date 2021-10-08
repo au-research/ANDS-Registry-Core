@@ -1,0 +1,33 @@
+<?php
+
+namespace ANDS\Registry\API\Controller;
+
+use ANDS\Mycelium\RelationshipSearchService;
+use ANDS\Registry\API\Request;
+
+class RelationshipsAPI extends HTTPController
+{
+    public static $paginationParameters = ['rows', 'offset', 'sort', 'pp', 'boost_relation_type', 'boost_to_group'];
+
+    public static $searchParameters = [
+        'from_id',
+        'to_identifier',
+        'to_identifier_type',
+        'to_class',
+        'to_type',
+        'not_to_type',
+        'relation_type',
+        'include_reverse',
+        'include_external',
+    ];
+
+    public function index()
+    {
+        $result = RelationshipSearchService::search(
+            Request::only(static::$searchParameters),
+            Request::only(static::$paginationParameters)
+        );
+
+        return $result->toJson();
+    }
+}

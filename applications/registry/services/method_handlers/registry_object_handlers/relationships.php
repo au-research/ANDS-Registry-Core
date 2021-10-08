@@ -1,4 +1,7 @@
-<?php if (!defined('BASEPATH')) {
+<?php use ANDS\Mycelium\RelationshipSearchService;
+use MinhD\SolrClient\SolrClient;
+
+if (!defined('BASEPATH')) {
     exit('No direct script access allowed');
 }
 require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_ro_handler.php');
@@ -22,7 +25,7 @@ class Relationships extends ROHandler
      */
     public function handle($params='')
     {
-        $this->solrClient = new \MinhD\SolrClient\SolrClient(\ANDS\Util\Config::get('app.solr_url'), 8983, 'relationships');
+        $this->solrClient = new SolrClient(\ANDS\Util\Config::get('app.solr_url'), 8983, 'relationships');
 
         return [
             'data' => $this->getRelatedData(),
@@ -42,6 +45,13 @@ class Relationships extends ROHandler
      * @return array
      */
     private function getRelatedData() {
+        $result = RelationshipSearchService::search([
+            "from_id" => $this->ro->id,
+            "to_class" => "collection",
+            "not_to_type" => "software"
+        ], ["rows" => 5]);
+
+
         $result = $this->solrClient->search([
             'q' => '*:*',
             'fl' => '*,[child parentFilter=$parentFilter childFilter=$childFilter limit=100]',
