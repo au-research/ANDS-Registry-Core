@@ -11,6 +11,38 @@ class Transforms {
 	static $clean_ns_transformer = NULL;
 	static $rif_to_iso19115_transformer = NULL;
 
+    static $qa_transformer = NULL;
+    static $qa_level_transformer = NULL;
+
+
+    static function get_qa_transformer()
+    {
+        if (is_null(self::$qa_transformer))
+        {
+            $rmdQualityTest = new DomDocument();
+            $rmdQualityTest->load(REGISTRY_APP_PATH.'registry_object/transforms/quality_report.xsl');
+            $qualityTestproc = new XSLTProcessor();
+            $qualityTestproc->importStyleSheet($rmdQualityTest);
+            self::$qa_transformer =	$qualityTestproc;
+        }
+
+        return self::$qa_transformer;
+    }
+
+    static function get_qa_level_transformer()
+    {
+        if (is_null(self::$qa_level_transformer))
+        {
+            $rmdQualityTest = new DomDocument();
+            $rmdQualityTest->load(REGISTRY_APP_PATH.'registry_object/transforms/level_report.xsl');
+            $qualityTestproc = new XSLTProcessor();
+            $qualityTestproc->importStyleSheet($rmdQualityTest);
+            self::$qa_level_transformer =	$qualityTestproc;
+        }
+
+        return self::$qa_level_transformer;
+    }
+
 
 
 	
