@@ -1,11 +1,13 @@
 <?php
 
 
-namespace ANDS\Registry\Providers;
+namespace ANDS\Registry\Providers\RIFCS;
 
 
+use ANDS\Registry\Providers\RIFCSProvider;
 use ANDS\RegistryObject;
 use ANDS\Util\XMLUtil;
+use function collect;
 
 class TitleProvider implements RIFCSProvider
 {

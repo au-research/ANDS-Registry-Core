@@ -333,10 +333,18 @@ class Registry extends MX_Controller {
 			foreach($matches as $match){
 				array_push($items, array('value'=>$match, 'label'=>$match));
 			}
+            $matches = $this->vocab->anyContains($q, 'anzsrc-for-2020');
+            foreach($matches as $match){
+                array_push($items, array('value'=>$match, 'label'=>$match));
+            }
 			$matches = $this->vocab->anyContains($q, 'anzsrc-seo');
 			foreach($matches as $match){
 				array_push($items, array('value'=>$match, 'label'=>$match));
 			}
+            $matches = $this->vocab->anyContains($q, 'anzsrc-seo-2020');
+            foreach($matches as $match){
+                array_push($items, array('value'=>$match, 'label'=>$match));
+            }
 
 			$this->db->select('name')->like('name', $q);
 			$matches = $this->db->get_where('tags', array('type'=>'public'));

@@ -42,7 +42,6 @@ function format_relationship($from_class, $relationship_type, $origin=false, $to
 		"presents" =>array("Presents", "Presented by"),
 		"isDerivedFrom" =>array("Derived from", "Derives"),
 		"hasDerivedCollection" =>array("Derives", "Derived From"),
-		"supports" =>array("Supports", "Supported by"),	
 		"isAvailableThrough" =>array("Available through", "Makes available"),	
 		"isProducedBy" =>array("Produced by", "Produces"),
 		"produces" =>array("Produces", "Produced by"),
@@ -53,6 +52,8 @@ function format_relationship($from_class, $relationship_type, $origin=false, $to
 		"hasValueAddedBy" =>array("Value added by", "Adds value"),
 		"pointOfContact" =>array("Point of Contact", "Is point of contact for"),
         "isFundedBy" => array("Funded by","Funds"),
+        "isVersionOf" =>array("Is version of", "Has version"),
+        "hasVersion" =>array("Has version", "Is version of")
 	);
 	$typeArray['party'] = array(
 		"hasAssociationWith" => array("Associated with", "Associated with"),
@@ -179,6 +180,8 @@ function getReverseRelationshipString($relation) {
 		case "hasMember" : return "isMemberOf"; break;
 		case "isReviewedBy" : return "reviews"; break;
 		case "reviews" : return "isReviewedBy"; break;
+        case "isVersionOf" : return "hasVersion"; break;
+        case "hasVersion" : return "isVersionOf"; break;
 	}
 	return $relation;
 }
@@ -243,6 +246,8 @@ function getReverseRelationshipStringCI($relation) {
         case strtolower("hasMember") : return "isMemberOf"; break;
         case strtolower("isReviewedBy") : return "reviews"; break;
         case strtolower("reviews") : return "isReviewedBy"; break;
+        case strtolower("isVersionOf") : return "hasVersion"; break;
+        case strtolower("hasVersion") : return "isVersionOf"; break;
     }
     return $relation;
 }

@@ -9,7 +9,7 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
 class Scholix extends ROHandler {
     function handle() {
         $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($this->ro->id);
-        $scholix = \ANDS\Registry\Providers\ScholixProvider::get($record);
+        $scholix = \ANDS\Registry\Providers\Scholix\ScholixProvider::get($record);
 
         $ci =& get_instance();
         $wt = $ci->input->get('wt') ?: 'array';

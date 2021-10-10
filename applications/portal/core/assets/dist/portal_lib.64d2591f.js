@@ -15,9 +15,7 @@ jQuery(document).ready(function( $ ) {
                 setTimeout( function() {
                     var columns = 3;
                     var screenWidth = $(window).width();
-
                     var wideColumns = 2;
-
                     if( screenWidth < 768 ) {
                         columns = $container.attr( 'data-col-xs' );
                         wideColumns = 1;
@@ -741,6 +739,8 @@ app.config(function (uiGmapGoogleMapApiProvider) {
 				case 'subject_vocab_uri': return 'Subject Vocabulary URI'; break;
 				case 'anzsrc-for': return 'Subjects ANZSRC-FOR'; break;
 				case 'anzsrc-seo': return 'Subjects ANZSRC-SEO'; break;
+				case 'anzsrc-for-2020': return 'Subjects ANZSRC-FOR-2020'; break;
+				case 'anzsrc-seo-2020': return 'Subjects ANZSRC-SEO-2020'; break;
 				case 'year_from': return 'Time Period (from)'; break;
 				case 'year_to': return 'Time Period (to)'; break;
 				case 'funding_scheme': return 'Funding Scheme'; break;
@@ -1317,7 +1317,7 @@ queryBuilder.filter('getDisplayFor', function($log){
 
 			scope.hashChange = scope.$parent.hashChange;
 		}
-	}
+	};
 });
 
 app.directive('facetinfo', function($log) {
@@ -1371,11 +1371,9 @@ app.directive('resolve', function($http, $log, vocab_factory){
 				if(newv) {
 					scope.result = [];
 					vocab_factory.resolveSubjects(scope.vocab, scope.subjects).then(function(data){
-						// $log.debug(data);
 						angular.forEach(data, function(label, notation){
 							scope.result.push({notation:notation,label:label});
 						});
-						// $log.debug(scope.result);
 					});
 				}
 			});
@@ -1680,12 +1678,11 @@ app.directive('focusMe', function($timeout, $parse) {
 				url = '?uri='+term;
 			}
 			return $http.post(base_url+'registry_object/vocab/'+vocab+'/'+url, {'filters':filters}).then(function(response){
-				return response.data
+				return response.data;
 			});
 		},
 		isSelected: function(item, filters) {
 			if (filters['subject_vocab_uri']) {
-				// $log.debug(decodeURIComponent(filters['subject_vocab_uri']), item.uri);
 				if(decodeURIComponent(filters['subject_vocab_uri'])==item.uri) {
 					return true;
 				} else if(angular.isArray(filters['subject_vocab_uri'])) {
@@ -1717,6 +1714,20 @@ app.directive('focusMe', function($timeout, $parse) {
 					found = true;
 				}
 				return found;
+			} else if(filters['anzsrc-for-2020']){
+				var found = false;
+				if(filters['anzsrc-for-2020']==item.notation){
+					found = true;
+				} else if (angular.isArray(filters['anzsrc-for-2020'])) {
+					angular.forEach(filters['anzsrc-for-2020'], function(code){
+						if((code==item.notation || item.notation.indexOf(code) == 0) && !found) {
+							found =  true;
+						}
+					});
+				} else if(item.notation.indexOf(filters['anzsrc-for-2020']) == 0) {
+					found = true;
+				}
+				return found;
 			} else if(filters['anzsrc-seo']) {
 				var found = false;
 				if(filters['anzsrc-seo']==item.notation){
@@ -1731,21 +1742,35 @@ app.directive('focusMe', function($timeout, $parse) {
 					found = true;
 				}
 				return found;
+			} else if(filters['anzsrc-seo-2020']) {
+				var found = false;
+				if(filters['anzsrc-seo-2020']==item.notation){
+					found = true;
+				} else if (angular.isArray(filters['anzsrc-seo-2020'])) {
+					angular.forEach(filters['anzsrc-seo-2020'], function(code){
+						if((code==item.notation || item.notation.indexOf(code) == 0) && !found) {
+							found =  true;
+						}
+					});
+				} else if(item.notation.indexOf(filters['anzsrc-seo-2020']) == 0) {
+					found = true;
+				}
+				return found;
 			} else {
 				return false;
 			}
 		},
 		getSubjects: function(){
 			return $http.get(base_url+'registry_object/getSubjects').then(function(response){
-				return response.data
+				return response.data;
 			});
 		},
 		resolveSubjects: function(vocab, subjects){
 			return $http.post(base_url+'registry_object/resolveSubjects/'+vocab, {data:subjects}).then(function(response){
-				return response.data
+				return response.data;
 			});
 		}
-	}
+	};
 });;(function () {
     'use strict';
     angular
@@ -2146,7 +2171,6 @@ app.directive('focusMe', function($timeout, $parse) {
         $scope.toggleFilter = function(type, value, execute) {
 
             $scope.filters['p'] = 1;
-
             if($scope.filters[type]) {
                 if($scope.filters[type]==value) {
                     $scope.clearFilter(type,value);
@@ -2235,7 +2259,6 @@ app.directive('focusMe', function($timeout, $parse) {
                 if (angular.isArray($scope.filters['anzsrc-for'])) {
                     angular.forEach($scope.filters['anzsrc-for'], function(code){
                         if(indexOf(code ,notation) == 0) {
-                            console.log("found it");
                             found = true;
                         }
                     });
@@ -2485,6 +2508,7 @@ app.directive('focusMe', function($timeout, $parse) {
             search_factory.search_no_record($scope.prefilters).then(function(data){
                 $scope.preresult = data;
                 $scope.prefacets = search_factory.construct_facets($scope.preresult, $scope.prefilters['class']);
+                $scope.temporal_range = search_factory.temporal_range(data);
                 $scope.populateCenters($scope.preresult.response.docs);
                 vocab_factory.get(false, $scope.prefilters, $scope.vocab).then(function(data){
                     $scope.vocab_tree_tmp = data;
@@ -2628,7 +2652,7 @@ app.directive('focusMe', function($timeout, $parse) {
         };
 
         $scope.clearSubject = function() {
-            var fields_array = ['anzsrc-for', 'anzsrc-seo', 'anzsrc', 'keywords', 'scot', 'pont', 'psychit', 'apt', 'gcmd', 'lcsh','iso639-3'];
+            var fields_array = ['anzsrc-for', 'anzsrc-for-2020', 'anzsrc-seo', 'anzsrc-seo-2020', 'anzsrc', 'keywords', 'scot', 'pont', 'psychit', 'apt', 'gcmd', 'lcsh','iso639-3'];
             angular.forEach(fields_array, function(ss){
                 delete $scope.prefilters[ss];
             });
@@ -2640,7 +2664,7 @@ app.directive('focusMe', function($timeout, $parse) {
             var ret = 0;
             var fields_array = [];
             if(type=='subject') {
-                fields_array = ['anzsrc-for', 'anzsrc-seo', 'anzsrc', 'keywords', 'scot', 'pont', 'psychit', 'apt', 'gcmd', 'lcsh','iso639-3'];
+                fields_array = ['anzsrc-for', 'anzsrc-for-2020', 'anzsrc-seo','anzsrc-seo-2020', 'anzsrc', 'keywords', 'scot', 'pont', 'psychit', 'apt', 'gcmd', 'lcsh','iso639-3'];
                 angular.forEach(fields_array, function(ss){
                     ret = $scope.prefilters[ss] ? 1 : ret;
                 });
@@ -2738,7 +2762,7 @@ app.directive('focusMe', function($timeout, $parse) {
 
         $scope.getSubTree = function(item) {
             item['showsubtree'] = !item['showsubtree'];
-            if(!item['subtree'] && ($scope.vocab=='anzsrc-for' || $scope.vocab=='anzsrc-seo')) {
+            if(!item['subtree'] && ($scope.vocab=='anzsrc-for' || $scope.vocab=='anzsrc-seo' || $scope.vocab=='anzsrc-for-2020' || $scope.vocab=='anzsrc-seo-2020')) {
                 vocab_factory.get(item.uri, $scope.filters, $scope.vocab).then(function(data){
                     item['subtree'] = data;
                 });
@@ -2746,7 +2770,6 @@ app.directive('focusMe', function($timeout, $parse) {
         };
 
         $scope.isVocabSelected = function(item, filters) {
-            //console.log(item);
             if(!filters) filters = $scope.filters;
             var found = vocab_factory.isSelected(item, filters);
             if (found) {
@@ -2775,6 +2798,16 @@ app.directive('focusMe', function($timeout, $parse) {
                 } else if ($scope.filters['anzsrc-for'].indexOf(item.notation) ==0 && !found && $scope.filters['anzsrc-for']!=item.notation){
                     found = true;
                 }
+            }else if($scope.filters['anzsrc-for-2020']) {
+                if (angular.isArray($scope.filters['anzsrc-for-2020'])) {
+                    angular.forEach($scope.filters['anzsrc-for-2020'], function(code){
+                        if(code.indexOf(item.notation) == 0 && !found && code!=item.notation) {
+                            found =  true;
+                        }
+                    });
+                } else if ($scope.filters['anzsrc-for-2020'].indexOf(item.notation) ==0 && !found && $scope.filters['anzsrc-for-2020']!=item.notation){
+                    found = true;
+                }
             } else if($scope.filters['anzsrc-seo']) {
                 if (angular.isArray($scope.filters['anzsrc-seo'])) {
                     angular.forEach($scope.filters['anzsrc-seo'], function(code){
@@ -2783,6 +2816,16 @@ app.directive('focusMe', function($timeout, $parse) {
                         }
                     });
                 } else if ($scope.filters['anzsrc-seo'].indexOf(item.notation) ==0 && !found && $scope.filters['anzsrc-seo']!=item.notation){
+                    found = true;
+                }
+            } else if($scope.filters['anzsrc-seo-2020']) {
+                if (angular.isArray($scope.filters['anzsrc-seo-2020'])) {
+                    angular.forEach($scope.filters['anzsrc-seo-2020'], function(code){
+                        if(code.indexOf(item.notation) == 0 && !found && code!=item.notation) {
+                            found =  true;
+                        }
+                    });
+                } else if ($scope.filters['anzsrc-seo-2020'].indexOf(item.notation) ==0 && !found && $scope.filters['anzsrc-seo-2020']!=item.notation){
                     found = true;
                 }
             }
@@ -2995,7 +3038,9 @@ app.directive('focusMe', function($timeout, $parse) {
 
             vocab_choices: [
                 {value: 'anzsrc-for', label: 'ANZSRC FOR'},
+                {value: 'anzsrc-for-2020', label: 'ANZSRC FOR 2020'},
                 {value: 'anzsrc-seo', label: 'ANZSRC SEO'},
+                {value: 'anzsrc-seo-2020', label: 'ANZSRC SEO 2020'},
                 {value: 'anzsrc', label: 'ANZSRC'},
                 {value: 'keywords', label: 'Keywords'},
                 {value: 'scot', label: 'School of Online Thesaurus'},

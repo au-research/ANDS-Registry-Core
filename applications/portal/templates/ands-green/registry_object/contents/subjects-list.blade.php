@@ -21,7 +21,7 @@ foreach($ro->subjects as $col){
                 ?>
                 @foreach($subjects as $col)
                     @if(isset($col['resolved']) && $col['subject']!='')
-                        @if($col['type']=='anzsrc-for' || $col['type']=='anzsrc-seo'|| $col['type']=='iso639-3')
+                        @if($col['type']=='anzsrc-for' || $col['type']=='anzsrc-seo'|| $col['type']=='anzsrc-for-2020' || $col['type']=='anzsrc-seo-2020'||$col['type']=='iso639-3')
                             <a href="{{base_url().'search/#!/'.$col['type'].'='.$col['subject'].$classSearchComp}}">
                                 {{ titleCase($col['resolved']) }}
                             </a> |

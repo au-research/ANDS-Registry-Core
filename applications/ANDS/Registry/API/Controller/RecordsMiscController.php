@@ -42,7 +42,7 @@ class RecordsMiscController
     public function scholix($id)
     {
         $record = RegistryObjectsRepository::getRecordByID($id);
-        $scholix = \ANDS\Registry\Providers\ScholixProvider::get($record);
+        $scholix = \ANDS\Registry\Providers\Scholix\ScholixProvider::get($record);
 
         $wt = Request::get('wt', 'xml');
         switch ($wt) {

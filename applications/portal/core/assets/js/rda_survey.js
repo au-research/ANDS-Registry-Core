@@ -439,7 +439,7 @@ function createCookie(name,value,hours){
         date.setTime(date.getTime()+(hours*60*60*1000));
         expires = "; expires="+date.toGMTString();
     }
-    document.cookie = name+"="+value+expires+"; path=/";
+    document.cookie = name+"="+value+expires+"; secure; path=/";
 }
 
 $(document).on('click', '.panel-heading span.clickable', function(e){

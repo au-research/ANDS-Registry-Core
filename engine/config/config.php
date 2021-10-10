@@ -408,7 +408,7 @@ $config['sess_match_useragent'] = FALSE;
 $config['cookie_prefix']	= "ands_";
 $config['cookie_domain']	= \ANDS\Util\config::get('app.cookie_domain') ? \ANDS\Util\config::get('app.cookie_domain') : ".ands.org.au";
 $config['cookie_path']		= "/";
-$config['cookie_secure']	= FALSE;
+$config['cookie_secure']	= TRUE;
 
 /*
 |--------------------------------------------------------------------------
