@@ -1,4 +1,34 @@
+## Release 42
 
+**Research Data Australia**
+
+* Fix the formatting of the author's name in EndNote Citation Export when the names are generated from related entities.
+* Phase 1 of support for ANZSRC 2020 FOR and SEO classification codes in RDA
+  * properly display ANZSRC 2020 classification codes to their equivalent literals in RDA record view page
+  * add ANZSRC 2020 vocabularies to Advanced Search subject vocabulary drop-down
+
+* Fix the issue with the selection or addition of date range in Grants and Projects advanced search
+* Change the label displayed with the icon in the title bar from "Dataset" to "Data" and change the label "Similar Datasets" to "Similar Data".
+* Implementation of a regular automated harvest of grant records from the ARC Data Portal
+
+**Research Data Australia Registry**
+
+* Fix the RDA Registry validation when manually adding records
+* Update the RDA Registry to enable the selection of the ANZSRC 2020 classifications in the manual entry screen
+
+**Research Vocabularies Australia**
+
+* Use gtag.js for Google Analytics, and specify a cookie domain and settings for the SameSite and Secure attributes in its configuration
+* Add the Secure attribute to all cookies issued by the server
+* Support the browse visualization and the subscribe button for viewBySlug Portal URLs
+* Don't offer "view resource as linked data" for manually-entered top concepts in resource search results
+
+**Other Changes**
+
+RIF-CS version 1.6.4 (vocabulary updates only):
+* Add "isVersion" and "hasVersion" relationship types to allow providers to use these relationships between data
+* Add "CC0" licence type
+* 
 ## Release 40
 **Research Data Australia**
 * Add meta tags to head element of collection view pages to support Altmetrics.
