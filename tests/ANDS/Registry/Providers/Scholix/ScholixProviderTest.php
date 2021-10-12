@@ -1,6 +1,6 @@
 <?php
 
-use ANDS\Registry\Providers\ScholixProvider;
+use ANDS\Registry\Providers\Scholix\ScholixProvider;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 

@@ -190,6 +190,11 @@
                 if($cc_uri=='') $cc_uri = "http://creativecommons.org/licenses/by-nc-nd/3.0/au/";
                 ?>
                 <a href="{{$cc_uri}}" tip="Attribution-Non Commercial-Non Derivatives"><img src="{{asset_url('images/icons/CC-BY-NC-ND.png', 'core')}}" class="img-cc" alt="CC-BY-NC-ND"></a> <br/>
+                @elseif($cc=='CC0')
+                    <?php
+                    if($cc_uri=='') $cc_uri = "https://creativecommons.org/publicdomain/zero/1.0/";
+                    ?>
+                    <a href="{{$cc_uri}}" tip="CC0"><img src="http://i.creativecommons.org/p/zero/1.0/88x31.png" style="border-style: none;" alt="CC0" /></a> <br/>
                 @else
                 <span>{{sentenceCase($cc)}}</span>
                 @endif

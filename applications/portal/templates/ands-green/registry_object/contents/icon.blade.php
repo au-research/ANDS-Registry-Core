@@ -1,7 +1,7 @@
 @if($ro->core['class']=='collection' && $ro->core['type']=='software')
     <i class="fa fa-file-code-o icon-portal"></i> <small>Software</small>
 @elseif($ro->core['class']=='collection')
-    <i class="fa fa-folder-open icon-portal"> </i><small>Dataset</small>
+    <i class="fa fa-folder-open icon-portal"> </i><small>Data</small>
 @elseif($ro->core['class']=='activity')
     <i class="fa fa-flask icon-portal"></i> <small>{{$ro->core['type']}}</small>
 @elseif($ro->core['class']=='service')

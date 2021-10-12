@@ -2,7 +2,7 @@
 
 namespace ANDS\Registry\Providers\RIFCS;
 
-use ANDS\Registry\Providers\TitleProvider;
+use ANDS\Registry\Providers\RIFCS\TitleProvider;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 

@@ -8,12 +8,11 @@ app.factory('vocab_factory', function($http, $log){
 				url = '?uri='+term;
 			}
 			return $http.post(base_url+'registry_object/vocab/'+vocab+'/'+url, {'filters':filters}).then(function(response){
-				return response.data
+				return response.data;
 			});
 		},
 		isSelected: function(item, filters) {
 			if (filters['subject_vocab_uri']) {
-				// $log.debug(decodeURIComponent(filters['subject_vocab_uri']), item.uri);
 				if(decodeURIComponent(filters['subject_vocab_uri'])==item.uri) {
 					return true;
 				} else if(angular.isArray(filters['subject_vocab_uri'])) {
@@ -45,6 +44,20 @@ app.factory('vocab_factory', function($http, $log){
 					found = true;
 				}
 				return found;
+			} else if(filters['anzsrc-for-2020']){
+				var found = false;
+				if(filters['anzsrc-for-2020']==item.notation){
+					found = true;
+				} else if (angular.isArray(filters['anzsrc-for-2020'])) {
+					angular.forEach(filters['anzsrc-for-2020'], function(code){
+						if((code==item.notation || item.notation.indexOf(code) == 0) && !found) {
+							found =  true;
+						}
+					});
+				} else if(item.notation.indexOf(filters['anzsrc-for-2020']) == 0) {
+					found = true;
+				}
+				return found;
 			} else if(filters['anzsrc-seo']) {
 				var found = false;
 				if(filters['anzsrc-seo']==item.notation){
@@ -59,19 +72,33 @@ app.factory('vocab_factory', function($http, $log){
 					found = true;
 				}
 				return found;
+			} else if(filters['anzsrc-seo-2020']) {
+				var found = false;
+				if(filters['anzsrc-seo-2020']==item.notation){
+					found = true;
+				} else if (angular.isArray(filters['anzsrc-seo-2020'])) {
+					angular.forEach(filters['anzsrc-seo-2020'], function(code){
+						if((code==item.notation || item.notation.indexOf(code) == 0) && !found) {
+							found =  true;
+						}
+					});
+				} else if(item.notation.indexOf(filters['anzsrc-seo-2020']) == 0) {
+					found = true;
+				}
+				return found;
 			} else {
 				return false;
 			}
 		},
 		getSubjects: function(){
 			return $http.get(base_url+'registry_object/getSubjects').then(function(response){
-				return response.data
+				return response.data;
 			});
 		},
 		resolveSubjects: function(vocab, subjects){
 			return $http.post(base_url+'registry_object/resolveSubjects/'+vocab, {data:subjects}).then(function(response){
-				return response.data
+				return response.data;
 			});
 		}
-	}
+	};
 });

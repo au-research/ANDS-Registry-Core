@@ -40,6 +40,26 @@ class Activity_grants_extension extends ExtensionBase
 
 
     /**
+     * Return the landingPage of the activity
+     * //ro:location/ro:address/ro:electronic[@type="landingPage"]
+     *
+     * @param bool|false $gXPath
+     * @return bool|mixed
+     */
+    function getLandingPage($gXPath = false)
+    {
+        if (!$gXPath) {
+            $gXPath = $this->getGXPath();
+        }
+        $landingPage = false;
+        foreach ($gXPath->query('//ro:location/ro:address/ro:electronic[@target="landingPage"]') as $node) {
+            $landingPage = $node->nodeValue;
+        }
+        return $landingPage;
+    }
+
+
+    /**
      * Return the subjects of the activity
      * description[type=subject]
      *
