@@ -1,6 +1,22 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## Release 42
+RDA Portal
+
+* Fix the formatting of the author's name in EndNote Citation Export when the names are generated from related entities.
+* Phase 1 of support for ANZSRC 2020 FOR and SEO classification codes in RDA
+  * properly display ANZSRC 2020 classification codes to their equivalent literals in RDA record view page
+  * add ANZSRC 2020 vocabularies to Advanced Search subject vocabulary drop-down
+
+* Fix the issue with the selection or addition of date range in Grants and Projects advanced search
+* Change the label displayed with the icon in the title bar from "Dataset" to "Data" and change the label "Similar Datasets" to "Similar Data".
+* Implementation of a regular automated harvest of grant records from the ARC Data Portal
+
+RDA Registry
+
+* Fix the RDA Registry validation when manually adding records
+* Update the RDA Registry to enable the selection of the ANZSRC 2020 classifications in the manual entry screen
 
 ## Release 40
 * Add meta tags to head element of collection view pages to support Altmetrics
