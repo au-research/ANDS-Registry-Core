@@ -98,4 +98,20 @@ class MyceliumServiceClient
             "query" => ["requestId" => $requestId]
         ]);
     }
+
+    /**
+     * Get duplicates for a record via Mycelium
+     *
+     * @param \ANDS\RegistryObject $record
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function getDuplicateRecords(RegistryObject $record)
+    {
+        return $this->client->post("api/services/mycelium/get-duplicate-records", [
+            "headers" => ['Content-Type' => 'application/json'],
+            "query" => [
+                "registryObjectId" => $record->id
+            ]
+        ]);
+    }
 }
