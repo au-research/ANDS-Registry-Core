@@ -59,7 +59,7 @@ class Theme_page extends MX_Controller {
 	 */
 	public function fetch_theme_page_by_slug($slug){
 		$url = registry_url().'services/rda/getThemePage/' . $slug;
-		$contents = @file_get_contents($url);
+		$contents = \ANDS\Util\URLUtil::file_get_contents($url);
 		return $contents;
 	}
 
@@ -69,7 +69,7 @@ class Theme_page extends MX_Controller {
 	 */
 	public function getThemePageIndex(){
 		$url = registry_url().'services/rda/getThemePageIndex/';
-		$contents = @file_get_contents($url);
+		$contents = \ANDS\Util\URLUtil::file_get_contents($url);
 		return $contents;
 	}
 

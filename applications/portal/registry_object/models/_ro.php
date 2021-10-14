@@ -116,32 +116,18 @@ class _ro
             $ci->cache->file->delete($cache_id);
         }
 
-        /**
-         * CC-2839
-         * Disable ssl verify peer due to OpenSSL running into error:14090086 while establishing a connection
-         * with a https web server (in this case it should be local/trusted) with ISRG Root X1
-         * todo consider using guzzle or curl for http requests instead of file_get_contents
-         * @see https://www.php.net/manual/en/migration56.openssl.php
-         * @see https://letsencrypt.org/docs/dst-root-ca-x3-expiration-september-2021/
-         */
-        $httpContext = [
-            "ssl" => [
-                "verify_peer" => false,
-                "verify_peer_name" => false,
-            ],
-        ];
 
         if ($this->useCache) {
             if (!$content = $ci->cache->file->get($cache_id)) {
                 //not in the cache, get it and save it
-                $content = file_get_contents($url, false, stream_context_create($httpContext));
+                $content = \ANDS\Util\URLUtil::file_get_contents($url);
                 $contentArray = json_decode($content, true);
                 if ($contentArray['status'] == 'success') {
                     $ci->cache->file->save($cache_id, $content, 3600);
                 }
             }
         } else {
-            $content = file_get_contents($url, false, stream_context_create($httpContext));
+            $content = \ANDS\Util\URLUtil::file_get_contents($url);
         }
 
         //Fetch the data and populate as per the result
