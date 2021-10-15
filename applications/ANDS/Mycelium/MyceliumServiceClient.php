@@ -98,4 +98,11 @@ class MyceliumServiceClient
             "query" => ["requestId" => $requestId]
         ]);
     }
+
+    public function getRecordGraph($recordId)
+    {
+        return $this->client->get("api/services/mycelium/get-record-graph", [
+            "query" => ["registryObjectId" => $recordId]
+        ]);
+    }
 }
