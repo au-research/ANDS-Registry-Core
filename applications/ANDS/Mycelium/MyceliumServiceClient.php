@@ -99,10 +99,29 @@ class MyceliumServiceClient
         ]);
     }
 
+
     public function getRecordGraph($recordId)
     {
         return $this->client->get("api/services/mycelium/get-record-graph", [
             "query" => ["registryObjectId" => $recordId]
         ]);
+
+    }
+    /**
+     * Get duplicates for a record via Mycelium
+     *
+     * @return \Psr\Http\Message\StreamInterface
+     */
+    public function getDuplicateRecords($registryObjectId)
+    {
+        $response = $this->client->get("api/services/mycelium/get-duplicate-records", [
+            "headers" => [],
+            "query" => [
+                "registryObjectId" => $registryObjectId
+            ]
+        ]);
+
+        return $response->getBody();
+
     }
 }
