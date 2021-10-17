@@ -5,10 +5,12 @@ namespace ANDS\Registry\API\Controller;
 
 
 use ANDS\Cache\Cache;
+use ANDS\Mycelium\MyceliumServiceClient;
 use ANDS\Registry\API\Request;
 use ANDS\Registry\Providers\GraphRelationshipProvider;
 use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 use ANDS\Repository\RegistryObjectsRepository;
+use ANDS\Util\Config;
 use ANDS\Util\StrUtil;
 
 class RecordsGraphController
@@ -20,16 +22,84 @@ class RecordsGraphController
      */
     public function index($id)
     {
-        $disableCache = !! Request::get('cache');
-        if (!$disableCache) {
-            // caches by default
-            // R28: does not accept custom parameters yet
-            return Cache::driver('graph')->rememberForever("graph.$id", function() use ($id){
-                return $this->getGraphForRecord($id);
-            });
+        return $this->getGraphVisualisationForRecord($id);
+
+//        $disableCache = !! Request::get('cache');
+//        if (!$disableCache) {
+//            // caches by default
+//            // R28: does not accept custom parameters yet
+//            return Cache::driver('graph')->rememberForever("graph.$id", function() use ($id){
+//                return $this->getGraphVisualisationForRecord($id);
+//            });
+//        }
+//
+//        return $this->getGraphVisualisationForRecord($id);
+    }
+
+    public function getGraphVisualisationForRecord($id) {
+        $record = RegistryObjectsRepository::getRecordByID($id);
+
+        if (!$record) {
+            return $this->formatForJSLibrary([], []);
         }
 
-        return $this->getGraphForRecord($id);
+        $myceliumClient = new MyceliumServiceClient(Config::get('mycelium.url'));
+        $graphResult = $myceliumClient->getRecordGraph($record->id);
+        if ($graphResult->getStatusCode() != 200) {
+            // todo log errors
+            return $this->formatForJSLibrary([], []);
+        }
+        $graphContent = json_decode($graphResult->getBody()->getContents(), true);
+
+        // format the nodes
+        $nodes = collect($graphContent['vertices'])->map(function ($vertex) {
+            $labels = $vertex['labels'];
+
+            // RegistryObject label have to be the first label for highlighting purpose
+            if (in_array('RegistryObject', $vertex['labels'])) {
+                $labels = ['RegistryObject'];
+            }
+
+            $labels[] = $vertex['objectClass'];
+            $labels[] = $vertex['objectType'];
+            return [
+                'id' => $vertex['id'],
+                'labels' => $labels,
+                'properties' => [
+                    'url' => $vertex['url'],
+                    'title' => $vertex['title'],
+                    'roId' => $vertex['identifier'],
+                    'class' => $vertex['objectClass'],
+                    'type' => $vertex['objectType']
+                ]
+            ];
+        })->toArray();
+
+        // format the edges
+        $edges = collect($graphContent['edges'])->map(function ($edge) {
+
+            $fromIcon = StrUtil::portalIconHTML($edge['from']['objectClass'], $edge['from']['objectType']);
+            $toIcon = StrUtil::portalIconHTML($edge['to']['objectClass'], $edge['to']['objectType']);
+
+            // todo user friendly relationType (possibly coming from mycelium)
+            $relation = $edge['type'];
+
+            return [
+                'id' => $edge['id'],
+                'startNode' => $edge['from']['id'],
+                'endNode' => $edge['to']['id'],
+                'type' => $edge['type'],
+                'properties' => [
+                    'types' => [$edge['type']]
+                ],
+                'html' => "$fromIcon $relation $toIcon"
+            ];
+        })->toArray();
+
+        // todo flip edges (or do that at mycelium side?)
+        // todo clusters
+
+        return $this->formatForJSLibrary($nodes, $edges);
     }
 
     /**
