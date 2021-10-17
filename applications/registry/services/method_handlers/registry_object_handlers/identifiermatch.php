@@ -19,6 +19,8 @@ class Identifiermatch extends ROHandler {
                $identifiermatch[] = $duplicate;
            };
          }
+        // return the duplicate records sort alphabetically on title
+        usort($identifiermatch, function($a, $b) {return strcmp($a->title, $b->title);});
         return  $identifiermatch;
 	}
 }
