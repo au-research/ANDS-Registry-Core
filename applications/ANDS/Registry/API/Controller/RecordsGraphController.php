@@ -16,6 +16,36 @@ use ANDS\Util\StrUtil;
 
 class RecordsGraphController
 {
+
+    /**
+     * normalise the relationships to only display 1 way when any of these relationships are encountered
+     *
+     * @var array
+     * */
+    public static $flippableRelation = [
+        'addsValueTo' => 'hasValueAddedBy',
+        'describes' => 'isDescribedBy',
+        'enriches' => 'isEnrichedBy',
+        'hasCollector' => 'isCollectorOf',
+        'hasDerivedCollection' => 'isDerivedFrom',
+        'hasMember' => 'isMemberOf',
+        'hasOutput' => 'isOutputOf',
+        'hasPart' => 'isPartOf',
+        'hasParticipant' => 'isParticipantIn',
+        'hasPrincipalInvestigator' => 'isPrincipalInvestigatorOf',
+        'isFunderOf' => 'isFundedBy',
+        'makesAvailable' => 'isAvailableThrough',
+        'operatesOn' => 'isOperatedOnBy',
+        'presents' => 'isPresentedBy',
+        'produces' => 'isProducedBy',
+        'supports' => 'isSupportedBy',
+        'isLocationFor' => 'isLocatedIn',
+        'isManagerOf' => 'isManagedBy',
+        'isOwnerOf' => 'isOwnedBy',
+        'funds' => 'isFundedBy',
+        'outputs' => 'isOutputOf',
+    ];
+
     /**
      * api/registry/records/:id/graph
      * @param $id
@@ -96,7 +126,22 @@ class RecordsGraphController
             ];
         })->toArray();
 
-        // todo flip edges
+        // flip edges
+        $flippableRelation = self::$flippableRelation;
+        $edges = collect($edges)
+            ->map(function($edge) use ($flippableRelation) {
+               if (array_key_exists($edge['type'], $flippableRelation)) {
+                   return [
+                       'id' => $edge['id'],
+                       'from' => $edge['to'],
+                       'to' => $edge['from'],
+                       'startNode' => $edge['to']['id'],
+                       'endNode' => $edge['from']['id'],
+                       'type' => $flippableRelation[$edge['type']]
+                   ];
+               }
+               return $edge;
+            });
 
         // deduplicate
         // todo simplify logic
@@ -128,7 +173,7 @@ class RecordsGraphController
                 return $link;
             });
 
-        // todo redo relationType and html
+        // relationType and html
         $edges = collect($edges)->map(function ($edge) use($record){
 
             $fromIcon = StrUtil::portalIconHTML($edge['from']['objectClass'], $edge['from']['objectType']);
@@ -153,15 +198,20 @@ class RecordsGraphController
 
         // unique the relationships by start and end node id
         // all reverse links flipping and merging should be done by this point
-        $edges = collect($edges)->unique(function($link){
-            return $link['startNode'].$link['endNode'];
-        });
+        $edges = collect($edges)
+            ->unique(function($link){
+                return $link['startNode'].$link['endNode'];
+            })->map(function($edge){
+                $edge['id'] = $edge['startNode'].$edge['endNode'];
+                return $edge;
+            });
 
         // unset unneeded properties to make the graph cleaner
         $edges = collect($edges)
             ->map(function($edge) {
                 unset($edge['count']);
-                unset($edge['reverse']);
+                unset($edge['from']);
+                unset($edge['to']);
                 unset($edge['multiple']);
                 return $edge;
             })
