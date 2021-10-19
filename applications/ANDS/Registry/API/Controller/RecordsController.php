@@ -69,10 +69,12 @@ class RecordsController extends HTTPController implements RestfulController
 
     public function show($id = null)
     {
-        $record = RegistryObjectsRepository::getRecordByID($id);
-        return $record;
+        return RegistryObjectsRepository::getRecordByID($id)->toArray();
     }
 
+    /**
+     * @throws \Exception
+     */
     public function sync($id = null)
     {
         $this->middlewares([IPRestrictionMiddleware::class]);
@@ -86,17 +88,27 @@ class RecordsController extends HTTPController implements RestfulController
 
     public function update($id = null)
     {
-        // TODO: Implement update() method.
+        throw new \Exception("PUT not implemented");
     }
 
+    /**
+     * @throws \Exception
+     */
     public function destroy($id = null)
     {
-        // TODO: Implement delete() method.
+        $this->middlewares([IPRestrictionMiddleware::class]);
+
+        $record = RegistryObjectsRepository::getRecordByID($id);
+        $task = Importer::instantDeleteRecords($record->datasource, [
+            'ids' => [$record->id]
+        ]);
+
+        return $task->toArray();
     }
 
     public function add()
     {
-        // TODO: Implement add() method.
+        throw new \Exception("POST not implemented");
     }
 
 
