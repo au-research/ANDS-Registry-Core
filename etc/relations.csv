@@ -1,0 +1,50 @@
+relationType,reverseRelationType,defaultText,collectionText,partyText,serviceText,activityText
+describes,isDescribedBy,Describes,Describes,,,
+isDescribedBy,describes,Described by,Described by,,,
+hasAssociationWith,hasAssociationWith,Associated with,Associated with,Associated with,Associated with,Associated with
+hasCollector,isCollectorOf,Has collector,Aggregated by,,,
+isCollectorOf,hasCollector,Collector of,,Collector of,,
+hasDerivedCollection,isDerivedFrom,Derives,Derives,,,
+isDerivedFrom,hasDerivedCollection,Derived from,Derived from,,,
+hasPart,isPartOf,Is part of,Contains,Has part,Includes,Includes
+isPartOf,hasPart,Has part,Part of,Part of,Part of,Part of
+hasPrincipalInvestigator,isPrincipalInvestigatorOf,Principal investigator,Principal investigator,,Principal investigator,Principal investigator
+isPrincipalInvestigatorOf,hasPrincipalInvestigator,Principal investigator of,,Principal investigator of,,Principal investigator of
+hasValueAddedBy,addsValueTo,Value added by,Value added by,,,
+addsValueTo,hasValueAddedBy,Adds value to,,,Adds value to,
+isAvailableThrough,makesAvailable,Available through,Available through,,,
+makesAvailable,isAvailableThrough,Makes available,,Makes available,Makes available,
+isCitedBy,cites,Cited by,Cited by,,,
+cites,isCitedBy,Cites,Cites,,,
+isDocumentedBy,documents,Documented by,Documented by,,,
+documents,isDocumentedBy,Documents,Documents,,,
+isEnrichedBy,enriches,Enriched by,Enriched by,,,
+enriches,isEnrichedBy,Enriches,,Enriches,,
+isFundedBy,isFunderOf,Funded by,Funded by,Funded by,,Funded by
+isFunderOf,isFundedBy,Funds,,Funds,,
+isLocatedIn,isLocationFor,Located in,Located in,,,
+isLocationFor,isLocatedIn,Location for,Location for,,,
+isManagedBy,isManagerOf,Managed by,Managed by,Managed by,Managed by,Managed by
+isManagerOf,isManagedBy,Manages,,Manages,,
+isOperatedOnBy,operatesOn,Operated on,Operated on,,,
+operatesOn,isOperatedOnBy,Operates on,,,Operates on,
+isOutputOf,hasOutput,Output of,Output of,,,
+hasOutput,isOutputOf,Outputs,,,,Outputs
+isOwnedBy,isOwnerOf,Owned by,Owned by,Owned by,Owned by,Owned by
+isOwnerOf,isOwnedBy,Owner of,,Owner of,,
+isPresentedBy,presents,Presented by,Presented by,,,
+presents,isPresentedBy,Presents,,,Presents,
+isProducedBy,produces,Produced by,Produced by,,,
+produces,isProducedBy,Produces,,,Produces,
+isReferencedBy,references,Referenced by,Referenced by,,,
+references,isReferencedBy,References,References,,,
+isReviewedBy,reviews,Reviewed by,Reviewed by,,,
+reviews,isReviewedBy,Reviews,Reviews,,,
+isSupplementedBy,isSupplementTo,Supplemented by,Supplemented by,,,
+isSupplementTo,isSupplementedBy,Supplements,Supplements,,,
+isSupportedBy,supports,Supported by,Supported by,,Supported by,
+supports,isSupportedBy,Supports,Supports,,,
+hasMember,isMemberOf,Has member,,Has member,,
+isMemberOf,hasMember,Member of,,Member of,,
+isParticipantIn,hasParticipant,Participant in,,Participant in,,
+hasParticipant,isParticipantIn,Undertaken by,,Undertaken by,,

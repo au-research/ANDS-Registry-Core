@@ -11,6 +11,7 @@ use ANDS\Registry\Providers\GraphRelationshipProvider;
 use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\Config;
+use ANDS\Util\RelationUtil;
 use ANDS\Util\StrUtil;
 
 class RecordsGraphController
@@ -42,6 +43,13 @@ class RecordsGraphController
         if (!$record) {
             return $this->formatForJSLibrary([], []);
         }
+
+        // todo clusters
+        /**
+         * Find out how many relationType counts are via a SOLR nested document facet using JSON Facet API
+         * call Mycelium Client and exclude the relationType that is over the limit
+         * create from-[relationType]->(cluster) for all the relationType that is over the limit
+         */
 
         $myceliumClient = new MyceliumServiceClient(Config::get('mycelium.url'));
         $graphResult = $myceliumClient->getRecordGraph($record->id);
@@ -76,28 +84,89 @@ class RecordsGraphController
         })->toArray();
 
         // format the edges
-        $edges = collect($graphContent['edges'])->map(function ($edge) {
+        $edges = collect($graphContent['edges'])->map(function ($edge) use($record){
+
+            return [
+                'id' => $edge['id'],
+                'from' => $edge['from'],
+                'to' => $edge['to'],
+                'startNode' => $edge['from']['id'],
+                'endNode' => $edge['to']['id'],
+                'type' => $edge['type']
+            ];
+        })->toArray();
+
+        // todo flip edges
+
+        // deduplicate
+        // todo simplify logic
+        $edges = collect($edges)
+            ->map(function($link) use ($edges){
+                // count the number of times this link has happened
+                $link['count'] = collect($edges)->filter(function($link2) use ($link){
+                    return $link2['startNode'] === $link['startNode'] && $link2['endNode'] === $link['endNode'];
+                })->count();
+                return $link;
+            })->map(function($link) use ($edges){
+                // stores link types and multiple status (for later use)
+
+                // this is a duplicate link
+                if ($link['count'] > 1) {
+                    $types = collect($edges)
+                        ->filter(function($link2) use ($link){
+                            return $link2['startNode'] === $link['startNode'] && $link2['endNode'] === $link['endNode'];
+                        })->pluck('type')->unique()->toArray();
+                    $link['type'] = 'multiple';
+                    $link['multiple'] = true;
+                    $link['properties']['types'] = $types;
+                    return $link;
+                }
+
+                // not duplicate link
+                $link['multiple'] = false;
+                $link['properties']['types'] = [ $link['type'] ];
+                return $link;
+            });
+
+        // todo redo relationType and html
+        $edges = collect($edges)->map(function ($edge) use($record){
 
             $fromIcon = StrUtil::portalIconHTML($edge['from']['objectClass'], $edge['from']['objectType']);
             $toIcon = StrUtil::portalIconHTML($edge['to']['objectClass'], $edge['to']['objectType']);
 
-            // todo user friendly relationType (possibly coming from mycelium)
             $relation = $edge['type'];
+            $relationType = RelationUtil::contains($relation)
+                ? RelationUtil::getDisplayText($relation, $record->class) : $relation;
 
-            return [
-                'id' => $edge['id'],
-                'startNode' => $edge['from']['id'],
-                'endNode' => $edge['to']['id'],
-                'type' => $edge['type'],
-                'properties' => [
-                    'types' => [$edge['type']]
-                ],
-                'html' => "$fromIcon $relation $toIcon"
-            ];
+            $edge['type'] = $relationType;
+            $edge['html'] = "$fromIcon $relationType $toIcon";
+
+            if (array_key_exists('multiple', $edge)) {
+                $edge['html'] = '';
+                foreach ($edge['properties']['types'] as $type){
+                    $edge['html'] .= "$fromIcon $relationType $toIcon<br/>";
+                }
+            }
+
+            return $edge;
         })->toArray();
 
-        // todo flip edges (or do that at mycelium side?)
-        // todo clusters
+        // unique the relationships by start and end node id
+        // all reverse links flipping and merging should be done by this point
+        $edges = collect($edges)->unique(function($link){
+            return $link['startNode'].$link['endNode'];
+        });
+
+        // unset unneeded properties to make the graph cleaner
+        $edges = collect($edges)
+            ->map(function($edge) {
+                unset($edge['count']);
+                unset($edge['reverse']);
+                unset($edge['multiple']);
+                return $edge;
+            })
+            ->values()->toArray();
+
 
         return $this->formatForJSLibrary($nodes, $edges);
     }
