@@ -189,6 +189,8 @@ class RecordsGraphController
             if (array_key_exists('multiple', $edge)) {
                 $edge['html'] = '';
                 foreach ($edge['properties']['types'] as $type){
+                    $relationType = RelationUtil::contains($type)
+                        ? RelationUtil::getDisplayText($type, $record->class) : $type;
                     $edge['html'] .= "$fromIcon $relationType $toIcon<br/>";
                 }
             }
