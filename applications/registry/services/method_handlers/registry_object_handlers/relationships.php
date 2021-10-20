@@ -27,7 +27,7 @@ class Relationships extends ROHandler
     {
         $this->solrClient = new SolrClient(\ANDS\Util\Config::get('app.solr_url'), 8983, 'relationships');
 
-        return [
+    /*    return [
             'data' => $this->getRelatedData(),
             'software' => $this->getRelatedSoftware(),
             'publications' => $this->getRelatedPublication(),
@@ -37,6 +37,17 @@ class Relationships extends ROHandler
             'websites' => $this->getRelatedWebsites(),
             'researchers' => $this->getRelatedResearchers(),
             'organisations' => $this->getRelatedOrganisations()
+        ]; */
+        return [
+            'data' => [],
+            'software' => [],
+            'publications' => [],
+            'programs' => [],
+            'grants_projects' => [],
+            'services' => [],
+            'websites' => [],
+            'researchers' => [],
+            'organisations' => []
         ];
     }
 
@@ -191,7 +202,7 @@ class Relationships extends ROHandler
             'rows' => 5
         ]);
 
-        return $this->renderBackwardCompatibleArray($result);
+      //  return $this->renderBackwardCompatibleArray($result);
     }
 
     /**
