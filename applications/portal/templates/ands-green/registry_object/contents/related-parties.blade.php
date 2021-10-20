@@ -19,11 +19,14 @@
     have registered the same party maultiple times as separate objects
     */
     $arrayNames = array();
-    foreach($related['organisations']['docs'] as $col){
-        $arrayNames[] = $col['to_title'];
-    }
-    foreach($related['researchers']['docs'] as $col){
-        $arrayNames[] = $col['to_title'];
+    if($related){
+
+        foreach($related['organisations']['docs'] as $col){
+            $arrayNames[] = $col['to_title'];
+        }
+        foreach($related['researchers']['docs'] as $col){
+            $arrayNames[] = $col['to_title'];
+        }
     }
     //count each to_title occurrence
     $multi = array_count_values($arrayNames);
