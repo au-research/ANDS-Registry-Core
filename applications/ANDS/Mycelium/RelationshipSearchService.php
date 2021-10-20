@@ -11,7 +11,6 @@ class RelationshipSearchService
 
     protected static $defaultParameters = [
         'q' => '*:*',
-        'fl' => '*,[child parentFilter=$parentFilter childFilter=$childFilter limit=100]',
         'defType' => 'edismax',
         'parentFilter' => 'type:relationship',
         'childFilter' => 'type:edge',
@@ -72,6 +71,13 @@ class RelationshipSearchService
             }
         }
 
+        // set the SOLR fl fields, this field is modifiable from fl, relations.fl and relations.limit
+        $relationsFieldLists = isset($pagination['relations_fl']) ? $pagination['relations_fl'] : '*';
+        $fieldLists = isset($pagination['fl']) ? $pagination['fl'] : '*';
+        $relationsLimit = isset($pagination['relations_limit']) ? $pagination['relations_limit'] : '100';
+        $fl = "$fieldLists,[child parentFilter=\$parentFilter childFilter=\$childFilter fl=$relationsFieldLists limit=$relationsLimit]";
+        $params['fl'] = $fl;
+
         // construct filter queries based on provided criterias
         $fqs = [ '+type:relationship' ];
         // todo filter the criteras to remove empty value
@@ -79,6 +85,9 @@ class RelationshipSearchService
             switch ($key) {
                 case "from_id":
                 case "to_class":
+                case "to_identifier":
+                case "to_identifier_type":
+                case "to_type":
                     $fqs[] = "+$key:$value";
                     break;
                 case "relation_type":

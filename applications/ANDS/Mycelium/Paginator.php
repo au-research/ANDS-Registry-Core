@@ -35,7 +35,7 @@ class Paginator
         // massage the data a bit
         $contents = $solrResult->getDocs('json');
         $contents = json_decode($contents, true);
-        $contents = collect($contents)->map(function($item) {
+        $contents = collect($contents)->map(function ($item) {
             // convert _childDocuments_ into relations for anonymous child documents
             if (array_key_exists('_childDocuments_', $item)) {
                 $item['relations'] = $item['_childDocuments_'];
@@ -49,8 +49,13 @@ class Paginator
 
             // set relation_internal and relation_reverse to proper boolean value
             $item['relations'] = collect($item['relations'])->map(function ($relation) {
-                $relation['relation_internal'] = boolval($relation['relation_internal']);
-                $relation['relation_reverse'] = boolval($relation['relation_reverse']);
+                if (isset($relation['relation_internal'])) {
+                    $relation['relation_internal'] = boolval($relation['relation_internal']);
+                }
+
+                if (isset($relation['relation_reverse'])) {
+                    $relation['relation_reverse'] = boolval($relation['relation_reverse']);
+                }
 
                 unset($relation['_root_']);
                 unset($relation['_version_']);
