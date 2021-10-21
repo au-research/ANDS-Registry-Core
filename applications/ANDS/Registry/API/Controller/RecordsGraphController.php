@@ -144,36 +144,54 @@ class RecordsGraphController
             });
 
         // deduplicate
-        // todo simplify logic
         $edges = collect($edges)
             ->map(function($link) use ($edges){
-                // count the number of times this link has happened
-                $link['count'] = collect($edges)->filter(function($link2) use ($link){
-                    return $link2['startNode'] === $link['startNode'] && $link2['endNode'] === $link['endNode'];
-                })->count();
-                return $link;
-            })->map(function($link) use ($edges){
-                // stores link types and multiple status (for later use)
-
-                // this is a duplicate link
-                if ($link['count'] > 1) {
-                    $types = collect($edges)
-                        ->filter(function($link2) use ($link){
-                            return $link2['startNode'] === $link['startNode'] && $link2['endNode'] === $link['endNode'];
-                        })->pluck('type')->unique()->toArray();
-                    $link['type'] = 'multiple';
-                    $link['multiple'] = true;
-                    $link['properties']['types'] = $types;
-                    return $link;
-                }
-
-                // not duplicate link
-                $link['multiple'] = false;
-                $link['properties']['types'] = [ $link['type'] ];
+                $types = collect($edges)
+                    ->filter(function($link2) use ($link){
+                        return $link2['startNode'] === $link['startNode'] && $link2['endNode'] === $link['endNode'];
+                    })->pluck('type')->unique()->toArray();
+                $link['type'] = count($types) > 1 ? 'multiple' : $link['type'];
+                $link['multiple'] = count($types) > 1;
+                $link['properties']['types'] = $types;
                 return $link;
             });
 
-        // relationType and html
+
+
+        // unique the relationships by start and end node id
+        // all reverse links flipping and merging should be done by this point
+        $edges = collect($edges)
+            ->unique(function($link){
+                return $link['startNode'].$link['endNode'];
+            })->map(function($edge){
+                $edge['id'] = $edge['startNode'].$edge['endNode'];
+                return $edge;
+            });
+
+        // find edges that can be merged
+        $edgeIDsToRemove = [];
+        $edges = collect($edges)
+            ->map(function($edge) use ($edges, &$edgeIDsToRemove) {
+                $reversedEdges = collect($edges)->filter(function($edge2) use ($edge){
+                    return $edge['multiple'] === false && $edge['startNode'] === $edge2['endNode'] && $edge['endNode'] === $edge2['startNode'];
+                });
+                if (! $reversedEdges->isEmpty()) {
+                    $edgeIDsToRemove = array_merge($edgeIDsToRemove, $reversedEdges->pluck('id')->toArray());
+                    $types = collect($edge['properties']['types'])
+                        ->merge($reversedEdges->pluck('properties.types')->flatten());
+                    $edge['properties']['types'] = $types->unique()->toArray();
+                    $edge['multiple'] = $types->count() > 1;
+                    $edge['type'] = $types->count() > 1 ? 'multiple' : $edge['type'];
+                }
+                return $edge;
+            });
+
+        // remove reversed edges
+        $edges = collect($edges)->filter(function($edge) use ($edgeIDsToRemove) {
+            return !in_array($edge['id'], $edgeIDsToRemove);
+        });
+
+        // relationType text value and html value
         $edges = collect($edges)->map(function ($edge) use($record){
 
             $fromIcon = StrUtil::portalIconHTML($edge['from']['objectClass'], $edge['from']['objectType']);
@@ -196,29 +214,16 @@ class RecordsGraphController
             }
 
             return $edge;
-        })->toArray();
-
-        // unique the relationships by start and end node id
-        // all reverse links flipping and merging should be done by this point
-        $edges = collect($edges)
-            ->unique(function($link){
-                return $link['startNode'].$link['endNode'];
-            })->map(function($edge){
-                $edge['id'] = $edge['startNode'].$edge['endNode'];
-                return $edge;
-            });
+        });
 
         // unset unneeded properties to make the graph cleaner
         $edges = collect($edges)
             ->map(function($edge) {
-                unset($edge['count']);
                 unset($edge['from']);
                 unset($edge['to']);
                 unset($edge['multiple']);
                 return $edge;
-            })
-            ->values()->toArray();
-
+            })->values()->toArray();
 
         return $this->formatForJSLibrary($nodes, $edges);
     }
