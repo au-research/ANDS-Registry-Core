@@ -6,6 +6,7 @@ namespace ANDS\Registry\API\Controller;
 
 use ANDS\Cache\Cache;
 use ANDS\Mycelium\MyceliumServiceClient;
+use ANDS\Mycelium\RelationshipSearchService;
 use ANDS\Registry\API\Request;
 use ANDS\Registry\Providers\GraphRelationshipProvider;
 use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
@@ -93,8 +94,10 @@ class RecordsGraphController
         $nodes = collect($graphContent['vertices'])->map(function ($vertex) {
             $labels = $vertex['labels'];
 
-            // RegistryObject label have to be the first label for highlighting purpose
-            if (in_array('RegistryObject', $vertex['labels'])) {
+            // RegistryObject, cluster label have to be the first label for highlighting purpose
+            if (in_array('Cluster', $vertex['labels'])) {
+                $labels = ['cluster'];
+            }else if (in_array('RegistryObject', $vertex['labels'])) {
                 $labels = ['RegistryObject'];
             }
 
@@ -124,6 +127,38 @@ class RecordsGraphController
                 'type' => $edge['type']
             ];
         })->toArray();
+
+        // format the cluster nodes
+        $nodes = collect($nodes)->map(function($node) use ($record, $edges){
+            if (!in_array('cluster', $node['labels'])){
+                return $node;
+            }
+
+            $node['properties']['clusterClass'] = $node['properties']['class'];
+
+            $edgeToCluster = collect($edges)->filter(function($edge) use ($node){
+               return $edge['endNode'] === $node['id'];
+            })->first();
+
+            $count = 0;
+            if ($edgeToCluster) {
+                // populate count from SOLR
+                $result = RelationshipSearchService::search([
+                    'from_id' => $record->id,
+                    'relation_type' => $edgeToCluster['type'],
+                    'to_class' => $node['properties']['class'],
+                    'to_type' => $node['properties']['type']
+                ], ['rows' => 0]);
+                $count = $result->total;
+            }
+
+            $node['properties']['count'] = $count;
+
+            // todo populate portalSearchUrl
+            $node['properties']['url'] = baseUrl();
+
+            return $node;
+        });
 
         // flip edges
         $edges = $this->flipEdges($edges);
