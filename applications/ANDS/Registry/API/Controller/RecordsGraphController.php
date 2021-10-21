@@ -84,7 +84,7 @@ class RecordsGraphController
         $myceliumClient = new MyceliumServiceClient(Config::get('mycelium.url'));
         $graphResult = $myceliumClient->getRecordGraph($record->id);
         if ($graphResult->getStatusCode() != 200) {
-            // todo log errors
+            // todo log mycelium errors
             return $this->formatForJSLibrary([], []);
         }
         $graphContent = json_decode($graphResult->getBody()->getContents(), true);
@@ -115,7 +115,6 @@ class RecordsGraphController
 
         // format the edges
         $edges = collect($graphContent['edges'])->map(function ($edge) use($record){
-
             return [
                 'id' => $edge['id'],
                 'from' => $edge['from'],
@@ -127,23 +126,16 @@ class RecordsGraphController
         })->toArray();
 
         // flip edges
-        $flippableRelation = self::$flippableRelation;
-        $edges = collect($edges)
-            ->map(function($edge) use ($flippableRelation) {
-               if (array_key_exists($edge['type'], $flippableRelation)) {
-                   return [
-                       'id' => $edge['id'],
-                       'from' => $edge['to'],
-                       'to' => $edge['from'],
-                       'startNode' => $edge['to']['id'],
-                       'endNode' => $edge['from']['id'],
-                       'type' => $flippableRelation[$edge['type']]
-                   ];
-               }
-               return $edge;
-            });
+        $edges = $this->flipEdges($edges);
+        $edges =$this->dedupeDirectEdges($edges);
+        $edges = $this->dedupeReversedEdges($edges);
+        $edges = $this->formatEdges($edges, $record);
+        $edges = $this->cleanEdges($edges);
 
-        // deduplicate
+        return $this->formatForJSLibrary($nodes, $edges);
+    }
+
+    public function dedupeDirectEdges($edges) {
         $edges = collect($edges)
             ->map(function($link) use ($edges){
                 $types = collect($edges)
@@ -156,32 +148,32 @@ class RecordsGraphController
                 return $link;
             });
 
-
-
         // unique the relationships by start and end node id
         // all reverse links flipping and merging should be done by this point
-        $edges = collect($edges)
+        return collect($edges)
             ->unique(function($link){
                 return $link['startNode'].$link['endNode'];
             })->map(function($edge){
                 $edge['id'] = $edge['startNode'].$edge['endNode'];
                 return $edge;
             });
+    }
 
-        // find edges that can be merged
+    public function dedupeReversedEdges($edges) {
         $edgeIDsToRemove = [];
         $edges = collect($edges)
-            ->map(function($edge) use ($edges, &$edgeIDsToRemove) {
+            ->map(function($edge) use (&$edges, &$edgeIDsToRemove) {
                 $reversedEdges = collect($edges)->filter(function($edge2) use ($edge){
-                    return $edge['multiple'] === false && $edge['startNode'] === $edge2['endNode'] && $edge['endNode'] === $edge2['startNode'];
+                    return !isset($edge['checked']) && $edge['multiple'] === false && $edge['startNode'] === $edge2['endNode'] && $edge['endNode'] === $edge2['startNode'];
                 });
                 if (! $reversedEdges->isEmpty()) {
                     $edgeIDsToRemove = array_merge($edgeIDsToRemove, $reversedEdges->pluck('id')->toArray());
                     $types = collect($edge['properties']['types'])
-                        ->merge($reversedEdges->pluck('properties.types')->flatten());
-                    $edge['properties']['types'] = $types->unique()->toArray();
+                        ->merge($reversedEdges->pluck('properties.types')->flatten())->unique();
+                    $edge['properties']['types'] = $types->toArray();
                     $edge['multiple'] = $types->count() > 1;
                     $edge['type'] = $types->count() > 1 ? 'multiple' : $edge['type'];
+                    $edge['checked'] = true;
                 }
                 return $edge;
             });
@@ -191,8 +183,29 @@ class RecordsGraphController
             return !in_array($edge['id'], $edgeIDsToRemove);
         });
 
-        // relationType text value and html value
-        $edges = collect($edges)->map(function ($edge) use($record){
+        return $edges->toArray();
+    }
+
+    public function flipEdges($edges) {
+        $flippableRelation = self::$flippableRelation;
+        return collect($edges)
+            ->map(function($edge) use ($flippableRelation) {
+                if (array_key_exists($edge['type'], $flippableRelation)) {
+                    return [
+                        'id' => $edge['id'],
+                        'from' => $edge['to'],
+                        'to' => $edge['from'],
+                        'startNode' => $edge['to']['id'],
+                        'endNode' => $edge['from']['id'],
+                        'type' => $flippableRelation[$edge['type']]
+                    ];
+                }
+                return $edge;
+            });
+    }
+
+    public function formatEdges($edges, $record) {
+        return collect($edges)->map(function ($edge) use($record){
 
             $fromIcon = StrUtil::portalIconHTML($edge['from']['objectClass'], $edge['from']['objectType']);
             $toIcon = StrUtil::portalIconHTML($edge['to']['objectClass'], $edge['to']['objectType']);
@@ -215,17 +228,16 @@ class RecordsGraphController
 
             return $edge;
         });
+    }
 
-        // unset unneeded properties to make the graph cleaner
-        $edges = collect($edges)
+    public function cleanEdges($edges) {
+        return collect($edges)
             ->map(function($edge) {
                 unset($edge['from']);
                 unset($edge['to']);
                 unset($edge['multiple']);
                 return $edge;
             })->values()->toArray();
-
-        return $this->formatForJSLibrary($nodes, $edges);
     }
 
     /**
