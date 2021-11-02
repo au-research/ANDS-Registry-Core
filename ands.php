@@ -33,7 +33,8 @@ $application->add(new \ANDS\Commands\DataSource\DataSourceProcessCommand());
 $application->add(new \ANDS\Commands\ClearCacheCommand());
 $application->add(new \ANDS\Commands\WarmCacheCommand());
 $application->add(new \ANDS\Commands\Export\ExportRoles());
-$application->add(new \ANDS\Commands\Mycelium\MyceliumImportCommand());
+$application->add(new \ANDS\Commands\Mycelium\MyceliumImportRecordCommand());
 $application->add(new \ANDS\Commands\Mycelium\MyceliumImportDataSourceCommand());
+$application->add(new \ANDS\Commands\Mycelium\MyceliumIndexRecordCommand());
 
 $application->run();

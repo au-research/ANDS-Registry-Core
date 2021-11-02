@@ -5,8 +5,6 @@ namespace ANDS\Commands\Mycelium;
 use ANDS\Commands\ANDSCommand;
 use ANDS\DataSource;
 use ANDS\Mycelium\MyceliumServiceClient;
-use ANDS\Registry\Providers\RIFCS\DatesProvider;
-use ANDS\RegistryObject;
 use ANDS\Util\Config;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
@@ -27,32 +25,32 @@ class MyceliumImportDataSourceCommand extends ANDSCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->setUp($input, $output);
-
         $id = $input->getArgument('id');
-
 
         $myceliumURL = Config::get('mycelium.url');
         $this->logv("Mycelium URL: $myceliumURL");
         $client = new MyceliumServiceClient($myceliumURL);
+
         if (!$id) {
-            $this->importAllDataSources($client);
+            $this->timedActivity("Importing All Data Sources", function () use ($client) {
+                $this->importAllDataSources($client);
+            });
         } else {
-            $this->importDataSource(DataSource::find($id), $client);
+            $this->timedActivity("Importing DataSource $id", function () use ($id, $client) {
+                $this->importDataSource(DataSource::find($id), $client);
+            });
         }
     }
 
     private function importDataSource(DataSource $dataSource, MyceliumServiceClient $client)
     {
-        $this->logv("Importing DataSource ID: $dataSource->id");
         $result = $client->updateDataSource($dataSource);
-        $this->logv($result->getBody());
+        $this->logv("Result: " . $result->getBody());
         $this->logv("Importing DataSource ID: $dataSource->id to Mycelium Completed");
     }
 
     private function importAllDataSources(MyceliumServiceClient $client)
     {
-        $this->logv("Importing All DataSources");
-
         $dataSources = DataSource::all();
         $progressBar = new ProgressBar($this->getOutput(), $dataSources->count());
         $dataSources->each(function ($ds) use ($progressBar, $client) {
