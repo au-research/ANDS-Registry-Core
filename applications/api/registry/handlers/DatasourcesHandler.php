@@ -45,6 +45,10 @@ class DatasourcesHandler extends Handler
         // GET ds/:id/harvest
         $router->get('datasources/(\w+)/harvest', 'DataSourcesHarvestController@index');
 
+        // GET|POST ds/:id/mycelium
+        $router->get('datasources/(\w+)/mycelium', 'DataSourcesMiscController@getMyceliumPayload');
+        $router->post('datasources/(\w+)/mycelium', 'DataSourcesMiscController@postMyceliumPayload');
+
         // PUT|POST ds/:id/harvest
         $router->route(['put', 'post'], 'datasources/(\w+)/harvest', 'DataSourcesHarvestController@triggerHarvest');
 

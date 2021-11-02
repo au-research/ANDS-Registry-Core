@@ -32,7 +32,7 @@ class Router
 
     public function post($pattern, $callback)
     {
-        $this->route(['get'], $pattern, $callback);
+        $this->route(['post'], $pattern, $callback);
     }
 
     public function resource($resources, $controller) {

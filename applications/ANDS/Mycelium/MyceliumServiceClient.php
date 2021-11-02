@@ -3,6 +3,7 @@
 namespace ANDS\Mycelium;
 
 
+use ANDS\DataSource;
 use ANDS\RegistryObject;
 use GuzzleHttp\Client;
 
@@ -122,6 +123,43 @@ class MyceliumServiceClient
         ]);
 
         return $response->getBody();
+    }
 
+    /**
+     * Create a new dataSource in Mycelium
+     *
+     * @param \ANDS\DataSource $dataSource
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function createDataSource(DataSource $dataSource) {
+        return $this->client->post("api/resources/mycelium-datasources/", [
+            "headers" => ['Content-Type' => 'application/json'],
+            "body" => json_encode(MyceliumDataSourcePayloadProvider::get($dataSource))
+        ]);
+    }
+
+    /**
+     * Update existing DataSource in Mycelium
+     *
+     * @param \ANDS\DataSource $dataSource
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function updateDataSource(DataSource $dataSource) {
+        return $this->client->put("api/resources/mycelium-datasources/$dataSource->id", [
+            "headers" => ['Content-Type' => 'application/json'],
+            "body" => json_encode(MyceliumDataSourcePayloadProvider::get($dataSource))
+        ]);
+    }
+
+    /**
+     * Delete existing DataSource in Mycelium
+     *
+     * @param \ANDS\DataSource $dataSource
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function deleteDataSource(DataSource $dataSource) {
+        return $this->client->delete("api/resources/mycelium-datasources/$dataSource->id", [
+            "headers" => ['Content-Type' => 'application/json']
+        ]);
     }
 }
