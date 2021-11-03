@@ -2,6 +2,7 @@
 namespace ANDS\Registry\API\Controller;
 
 
+use ANDS\Mycelium\MyceliumImportPayloadProvider;
 use ANDS\Registry\API\Request;
 use ANDS\Registry\Providers\DCI\DataCitationIndexProvider;
 use ANDS\Registry\Providers\DublinCore\DublinCoreProvider;
@@ -90,6 +91,12 @@ class RecordsMiscController
     {
         $record = RegistryObjectsRepository::getRecordByID($id);
         return ORCIDProvider::getORCID($record, new ORCIDRecord())->validate();
+    }
+
+    public function mycelium($id)
+    {
+        $record = RegistryObjectsRepository::getRecordByID($id);
+        return MyceliumImportPayloadProvider::get($record);
     }
 
     private function printXML($xml)
