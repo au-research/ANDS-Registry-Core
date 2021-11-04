@@ -59,11 +59,19 @@ class Paginator
 
                 unset($relation['_root_']);
                 unset($relation['_version_']);
+
+                // sort the keys alphabetically
+                ksort($relation);
+
                 return $relation;
             })->toArray();
 
             unset($item['_root_']);
             unset($item['_version_']);
+
+            // sort the keys alphabetically
+            ksort($item);
+
             return $item;
         });
 
