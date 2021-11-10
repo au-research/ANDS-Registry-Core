@@ -13,12 +13,12 @@ app.controller('viewController', function($scope, $log, $modal, profile_factory,
 	});
 
     $scope.access = function(event) {
+        if (typeof gtag === 'function') {
+            gtag('event', 'data_access', {'link_url':event.target.href, 'link_text':'Go to Data Provider'});
+        }
         record_factory.add_stat($scope.ro.id, 'accessed', 1, event.target.href).then(function(data){
             location.href = event.target.href;
         });
-        if (typeof urchin_id !== 'undefined' && typeof ga !== 'undefined' && urchin_id!='') {
-            ga('send', 'event', 'Access', 'Go to Data Provider', 'GoToData', 1);
-        }
     };
 
 
