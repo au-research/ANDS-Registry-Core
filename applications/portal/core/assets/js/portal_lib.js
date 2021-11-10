@@ -1985,7 +1985,8 @@ app.directive('focusMe', function($timeout, $parse) {
             if (typeof gtag === 'function'
                 && $scope.filters.hasOwnProperty('q')
                 && $scope.filters['q'] !== '') {
-                gtag('event', 'search', {'search_term': $scope.filters['q']});
+                gtag('event', 'search', {'page_location': base_url + 'search?q=' + $scope.filters['q'],
+                    'search_term': $scope.filters['q']});
             }
 
             if ($scope.onBrowsePage() || $scope.onSearchPage()) {
