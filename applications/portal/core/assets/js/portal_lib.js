@@ -1982,8 +1982,11 @@ app.directive('focusMe', function($timeout, $parse) {
         $scope.search = function(){
             $scope.loading = true;
 
-            if (typeof urchin_id !== 'undefined' && typeof ga !== 'undefined' && urchin_id!='' && $scope.filters['q'] && $scope.filters['q']!='' && $scope.filters['q']!==undefined) {
-                ga('send', 'pageview', '/search_results.php?q='+$scope.filters['q']);
+            if (typeof gtag === 'function'
+                && $scope.filters.hasOwnProperty('q')
+                && $scope.filters['q'] !== '') {
+                gtag('event', 'search', {'page_location': base_url + 'search?q=' + $scope.filters['q'],
+                    'search_term': $scope.filters['q']});
             }
 
             if ($scope.onBrowsePage() || $scope.onSearchPage()) {

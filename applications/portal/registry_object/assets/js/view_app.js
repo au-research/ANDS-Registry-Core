@@ -7,18 +7,28 @@ app.controller('viewController', function($scope, $log, $modal, profile_factory,
         'group': $('#ro_group').val()
 	};
 
+	// Add a record_view event to Google Analytics GA4, with more details than previous page_view could capture
+    if (typeof gtag === 'function') {
+        gtag('event', 'record_view', {'page_location':location.href,
+            'record_id':$scope.ro.id,
+            'record_title':$scope.ro.title,
+            'slug':$scope.ro.slug,
+            'group':$scope.ro.group,
+        });
+    }
+
 	//get stat
 	record_factory.stat($scope.ro.id).then(function(data){
 	    if(data[0].id); $scope.ro.stat = data[0];
 	});
 
     $scope.access = function(event) {
+        if (typeof gtag === 'function') {
+            gtag('event', 'data_access', {'link_url':event.target.href, 'link_text':'Go to Data Provider'});
+        }
         record_factory.add_stat($scope.ro.id, 'accessed', 1, event.target.href).then(function(data){
             location.href = event.target.href;
         });
-        if (typeof urchin_id !== 'undefined' && typeof ga !== 'undefined' && urchin_id!='') {
-            ga('send', 'event', 'Access', 'Go to Data Provider', 'GoToData', 1);
-        }
     };
 
 
