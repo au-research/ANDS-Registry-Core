@@ -19,16 +19,18 @@
     have registered the same party maultiple times as separate objects
     */
     $arrayNames = array();
-    if($related){
-//var_dump($related);
-     //   foreach($related['organisations']['docs'] as $col){
-     //       $arrayNames[] = $col['to_title'];
-      //  }
+
+    if(isset($related['researchers'])){
         foreach($related['researchers']['docs'] as $col){
-           // var_dump($col['to_title']);
             $arrayNames[] = $col['to_title'];
         }
     }
+    if(isset($related['organisations'])){
+        foreach($related['organisations']['docs'] as $col){
+            $arrayNames[] = $col['to_title'];
+        }
+    }
+
     //count each to_title occurrence
     $multi = array_count_values($arrayNames);
     ?>
@@ -41,7 +43,7 @@
             <?php $contributorString = trim($contributorString, "; ") ;?>
             {{$contributorString}}
 
-    @elseif (is_array($related['researchers']) && sizeof($related['researchers']['docs']) > 0)
+    @elseif (isset($related['researchers']) && sizeof($related['researchers']['docs']) > 0)
         @foreach($related['researchers']['docs'] as $col)
             <?php
                     $col_json = urlencode(json_encode($col));
