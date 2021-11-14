@@ -247,17 +247,18 @@ class Registry_object extends MX_Controller
 
 
         // Determine resolved party identifiers
-        $resolvedPartyIdentifiers = array();
-        if (isset($ro->relationships['researchers'])) {
-            foreach ($ro->relationships['researchers']['docs'] as $rel) {
-                if(is_array($rel)) {
-                    $rels = is_array($rel['relation_origin']) ? $rel['relation_origin'] : array($rel['relation_origin']);
-                    if ((in_array('IDENTIFIER', $rels) || in_array('IDENTIFIER REVERSE', $rels)) && $rel['from_id'] != '' && array_key_exists('relation_identifier_identifier', $rel)) {
-                        $resolvedPartyIdentifiers[] = $rel['relation_identifier_identifier'];
-                    }
-                }
-            }
-        }
+       $resolvedPartyIdentifiers = array();
+        //to do - use mycelium to find these??
+     //   if (isset($ro->relationships['researchers'])) {
+     //       foreach ($ro->relationships['researchers']['docs'] as $rel) {
+     //           if(is_array($rel)) {
+     //               $rels = is_array($rel['relation_origin']) ? $rel['relation_origin'] : array($rel['relation_origin']);
+     //               if ((in_array('IDENTIFIER', $rels) || in_array('IDENTIFIER REVERSE', $rels)) && $rel['from_id'] != '' && array_key_exists('relation_identifier_identifier', $rel)) {
+     //                   $resolvedPartyIdentifiers[] = $rel['relation_identifier_identifier'];
+     //               }
+     //           }
+     //       }
+     //   }
 
         // Theme Page
 
@@ -378,7 +379,7 @@ class Registry_object extends MX_Controller
     {
         //initialisation to prevent logic error
         $related = $ro->relationships;
-
+        return $related;
         if (!$related) $related = [];
 
         foreach ($related as &$rel) {
@@ -493,28 +494,41 @@ class Registry_object extends MX_Controller
                 ->render('registry_object/preview');
         } elseif ($this->input->get('identifier_relation_id')) {
 
-            //hack into the registry network and grab things
-            //@todo: figure things out for yourself
+            $input = $this->input->get('identifier_relation_id');
+            $input = urldecode($input);
+            $input_array = json_decode($input);
+            $input_array->connections_preview_div="";
+            $identifiers_div = "";
+            $identifier_count = 0;
+            $connections_preview_div = "";
+            foreach ($input_array->_childDocuments_ as $i) {
+                // todo - implement resolvable links for the identifier if possible
+               $identifiers_div .= $i->to_identifier;
+               $identifier_count++;
+            }
+            $identifiers_div = "<h5>Identifier" . ($identifier_count > 1 ? 's' : '') . ": </h5>" . $identifiers_div;
 
+          //  if ($related_info->notes) {
+          //      $connections_preview_div .= '<p>Notes: ' . (string)$related_info->notes . '</p>';
+         //   }
+            $imgUrl = asset_url('img/' . $input_array->to_type . '.png', 'base');
+            $classImg = '<img class="icon-heading" src="' . $imgUrl . '" alt="' . $input_array->to_type . '" style="width:24px; float:right;">';
+            $connections_preview_div = '<div class="previewItemHeader">' . $input_array->_childDocuments_[0]->relation_type_text . '</div>' . $classImg . '<h4>' . $input_array->to_title . '</h4><div class="post">' . $identifiers_div . "<br/>" . $connections_preview_div . '</div>';
+            $input_array->connections_preview_div = $connections_preview_div;
 
+            $fr= $input_array;
+           // if ($result->num_rows() > 0) {
+          //      $fr = $result->first_row();
 
-            $rdb = $this->load->database('registry', true);
-            $result = $rdb->get_where('registry_object_identifier_relationships',
-                array('id' => $this->input->get('identifier_relation_id')));
-
-
-            if ($result->num_rows() > 0) {
-                $fr = $result->first_row();
-
-                $ro = $this->ro->getByID($fr->registry_object_id);
-                monolog(
-                    array(
-                        'event' => 'portal_preview_identifier',
-                        'record' => $this->getRecordFields($ro),
-                        'identifier_relation_id' => $this->input->get('identifier_relation_id')
-                    ),
-                    'portal', 'info'
-                );
+          //      $ro = $this->ro->getByID($fr->registry_object_id);
+             //   monolog(
+            //        array(
+            //            'event' => 'portal_preview_identifier',
+            //            'record' => $this->getRecordFields($ro),
+             //           'identifier_relation_id' => $this->input->get('identifier_relation_id')
+             //       ),
+             //       'portal', 'info'
+             //   );
 
 
                 $ro = false;
@@ -522,10 +536,10 @@ class Registry_object extends MX_Controller
                 $pullback = false;
 
                 //ORCID "Pull back"
-                if ($fr->related_info_type == 'party' && $fr->related_object_identifier_type == 'orcid' && isset($fr->related_object_identifier)) {
+                if ($fr->to_type == 'party' && $fr->to_identifier_type == 'orcid' && isset($fr->to_identifier)) {
 
-                    $orcid = ORCIDRecordsRepository::obtain($fr->related_object_identifier);
-                    if($orcid != null){
+                   $orcid = ORCIDRecordsRepository::obtain($fr->to_identifier);
+                   if($orcid != null){
                         $bio = json_decode($orcid->record_data, true);
                         $pullback = [
                             'name' => $orcid->full_name,
@@ -534,16 +548,16 @@ class Registry_object extends MX_Controller
                             'orcidRecord' => $orcid,
                             'orcid' => $orcid->orcid_id
                         ];
-                    }
-                    $filters = array('identifier_value' => $fr->related_object_identifier);
+                   }
+                    $filters = array('identifier_value' => $fr->to_identifier);
                     $ro = $this->ro->findRecord($filters);
                 }
                 $this->blade
-                    ->set('record', $fr)
+                    ->set('record', $input_array )
                     ->set('ro', $ro)
                     ->set('pullback', $pullback)
                     ->render('registry_object/preview-identifier-relation');
-            }
+
         } else {
             if ($this->input->get('identifier_doi')) {
                 $identifier = $this->input->get('identifier_doi');

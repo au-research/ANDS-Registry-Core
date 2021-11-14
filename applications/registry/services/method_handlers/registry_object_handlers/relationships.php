@@ -46,7 +46,7 @@ class Relationships extends ROHandler
             'grants_projects' => [],
             'services' => [],
             'websites' => [],
-            'researchers' => [],
+            'researchers' => $this->getRelatedResearchers(),
             'organisations' => []
         ];
     }
@@ -201,6 +201,11 @@ class Relationships extends ROHandler
             'sort' => 'score desc, to_title asc',
             'rows' => 5
         ]);
+
+        return [
+            'count' => $result->getNumFound(),
+            'docs' => json_decode($result->getDocs('json'), true)
+        ];
 
       //  return $this->renderBackwardCompatibleArray($result);
     }
