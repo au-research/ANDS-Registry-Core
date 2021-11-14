@@ -54,8 +54,15 @@ class RelationUtil
         }
     }
 
-    public function getReverse($relationType) {
+    public static function getReverse($relationType) {
+        self::load();
 
+        if (self::contains($relationType)) {
+            $relation = self::resolve($relationType);
+            return $relation['reverseRelationType'];
+        }
+
+        return $relationType;
     }
 }
 

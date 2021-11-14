@@ -23,7 +23,7 @@ $application->add(new \ANDS\Commands\RegistryObject\RegistryObjectGetCommand());
 $application->add(new \ANDS\Commands\DOISyncCommand());
 $application->add(new \ANDS\Commands\RegistryObject\RegistryObjectSyncCommand());
 $application->add(new \ANDS\Commands\RegistryObject\RegistryObjectProcessCommand());
-$application->add(new \ANDS\Commands\RegistryObject\RegistryObjectUpdateStatsCommand());
+//$application->add(new \ANDS\Commands\RegistryObject\RegistryObjectUpdateStatsCommand());
 $application->add(new \ANDS\Commands\SyncRecordWorkerRedisCommand());
 $application->add(new \ANDS\Commands\RunScriptCommand());
 $application->add(new \ANDS\Commands\ExportCommand());
@@ -33,6 +33,8 @@ $application->add(new \ANDS\Commands\DataSource\DataSourceProcessCommand());
 $application->add(new \ANDS\Commands\ClearCacheCommand());
 $application->add(new \ANDS\Commands\WarmCacheCommand());
 $application->add(new \ANDS\Commands\Export\ExportRoles());
-$application->add(new \ANDS\Commands\Mycelium\MyceliumImportCommand());
+$application->add(new \ANDS\Commands\Mycelium\MyceliumImportRecordCommand());
+$application->add(new \ANDS\Commands\Mycelium\MyceliumImportDataSourceCommand());
+$application->add(new \ANDS\Commands\Mycelium\MyceliumIndexRecordCommand());
 
 $application->run();

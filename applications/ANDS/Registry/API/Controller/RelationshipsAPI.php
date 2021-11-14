@@ -7,7 +7,17 @@ use ANDS\Registry\API\Request;
 
 class RelationshipsAPI extends HTTPController
 {
-    public static $paginationParameters = ['rows', 'offset', 'sort', 'pp', 'boost_relation_type', 'boost_to_group'];
+    public static $paginationParameters = [
+        'rows',
+        'offset',
+        'sort',
+        'pp',
+        'boost_relation_type',
+        'boost_to_group',
+        'fl',
+        'relations_fl',
+        'relations_limit'
+    ];
 
     public static $searchParameters = [
         'from_id',

@@ -1,4 +1,7 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php use ANDS\Mycelium\MyceliumServiceClient;
+use ANDS\Util\Config;
+
+if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 
 /**
@@ -315,7 +318,6 @@ class Data_source extends MX_Controller {
 		$ds = $this->ds->getByID($id);
 		if(!$ds) throw new Exception('Data source not found with the ID: '. $id);
 		$resetHarvest = false;
-		$resetPrimaryRelationships = false;
 
 		//construct a list of possible attributes, attributes that are not in this list will not get updated
 		$valid_attributes = array_merge(array_keys($ds->attributes()), array_keys($ds->harvesterParams));
@@ -399,22 +401,10 @@ class Data_source extends MX_Controller {
 			   $resetHarvest = true;
 			}
 
-			if($new_value != $ds->{$attrib} && in_array($attrib, $ds->primaryRelationship)){
-			   $resetPrimaryRelationships = true;
-			}
-
 			//detect manual_publish flag changed to false
 			if($attrib=='manual_publish' && ($new_value=='f' || !$new_value || $new_value==DB_FALSE) && $new_value!=$ds->{$attrib}){
 				//publish all approved record
                 $this->updateAllRecordsStatusMatching($ds->id, APPROVED, PUBLISHED);
-            }
-
-            if ($attrib == "allow_reverse_internal_links" && $new_value != $ds->{$attrib}) {
-                $resetPrimaryRelationships = true;
-            }
-
-            if ($attrib == "allow_reverse_external_links" && $new_value != $ds->{$attrib}) {
-                $resetPrimaryRelationships = true;
             }
 
             // handle dci
@@ -445,10 +435,6 @@ class Data_source extends MX_Controller {
 			if($resetHarvest && $data['uri'] != '' && $data['uri'] != 'http://') {
 				$this->trigger_harvest($ds->id, true);
 			}
-
-			if($resetPrimaryRelationships) {
-                $this->updateDataSourceRelationship($ds->id);
-			}
 		} catch (Exception $e) {
 			$ds->append_log($e, 'error');
 			throw new Exception($e);
@@ -467,6 +453,12 @@ class Data_source extends MX_Controller {
 			throw new Exception($e);
 		}
 
+        // sync data source with mycelium
+        initEloquent();
+        $dataSource = \ANDS\Repository\DataSourceRepository::getByID($ds->id);
+        $client = new MyceliumServiceClient(Config::get('mycelium.url'));
+        $client->updateDataSource($dataSource);
+
 		//if all goes well
 		echo json_encode(
 			array(
@@ -474,55 +466,6 @@ class Data_source extends MX_Controller {
 				'message' => 'Saved Success'
 			)
 		);
-	}
-
-    /**
-     * updating all PUBLISHED records relationship metadata
-     *
-     * @param $dataSourceID
-     */
-    public function updateDataSourceRelationship($dataSourceID)
-    {
-        initEloquent();
-        $dataSource = \ANDS\Repository\DataSourceRepository::getByID($dataSourceID);
-
-        // all published records
-        $records = \ANDS\RegistryObject::where('data_source_id', $dataSourceID)->where('status', PUBLISHED);
-
-        // getting the count
-        $total = $records->count();
-        if ($total === 0) {
-            return;
-        }
-
-        $ids = $records->get()->pluck('registry_object_id')->toArray();
-
-        // task initialisation
-        $importTask = new \ANDS\API\Task\ImportTask();
-        $importTask->init([
-            'name' => "Background Task for $dataSource->title($dataSourceID) Updating $total records relationship metadata",
-            'params' => http_build_query([
-                'ds_id' => $dataSourceID,
-                'targetStatus' => 'PUBLISHED',
-                'pipeline' => 'UpdateRelationshipWorkflow'
-            ])
-        ]);
-        $importTask->setDb($this->db)->setCI($this);
-        $importTask
-            ->skipLoadingPayload()
-            ->enableRunAllSubTask()
-            ->setTaskData("importedRecords", $ids);
-        $importTask->initialiseTask();
-
-        // sending the task to the background
-        $importTask->sendToBackground();
-
-        // returning the ID and log that
-        $id = $importTask->getId();
-        $message =
-            "Updating $total records relationship metadata as per data source settings changes". NL.
-            "TaskID: $id";
-        $dataSource->appendDataSourceLog($message, 'info', 'IMPORTER');
 	}
 
 	/**
@@ -1343,6 +1286,12 @@ class Data_source extends MX_Controller {
 			throw new Exception ($e);
 		}
 		if($ds && $ds->id) {
+
+            // create in mycelium
+            $dataSource = \ANDS\Repository\DataSourceRepository::getByID($ds->id);
+            $client = new MyceliumServiceClient(Config::get('mycelium.url'));
+            $client->createDataSource($dataSource);
+
 			$result = array(
 				'status'=>'OK',
 				'data_source_id' => $ds->id
@@ -2369,6 +2318,11 @@ class Data_source extends MX_Controller {
 		}
 
 		$dataSource = $this->ds->getByID($ds_id);
+
+        // wipe from mycelium
+        $ds = \ANDS\Repository\DataSourceRepository::getByID($dataSource->id);
+        $client = new MyceliumServiceClient(Config::get('mycelium.url'));
+        $client->deleteDataSource($ds);
 
 		if($dataSource) {
 			$response['log'] .= $dataSource->eraseFromDB();

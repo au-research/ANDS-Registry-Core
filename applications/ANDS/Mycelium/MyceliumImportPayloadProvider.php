@@ -60,7 +60,7 @@ class MyceliumImportPayloadProvider implements RegistryContentProvider
         $primaryKey = $dataSource->attr('primary_key_1');
         $primaryRecord = RegistryObjectsRepository::getPublishedByKey($primaryKey);
         $relationType = $dataSource->attr("${recordClass}_rel_1");
-        if ($primaryKey && $primaryRecord && $relationType) {
+        if ($primaryKey && $primaryRecord && $relationType && $primaryKey != $record->key) {
             $relations[] = [
                 'origin' => $origin,
                 'toKey' => $primaryRecord->key,
@@ -72,7 +72,7 @@ class MyceliumImportPayloadProvider implements RegistryContentProvider
         $primaryKey = $dataSource->attr('primary_key_2');
         $primaryRecord = RegistryObjectsRepository::getPublishedByKey($primaryKey);
         $relationType = $dataSource->attr("${recordClass}_rel_2");
-        if ($primaryKey && $primaryRecord && $relationType) {
+        if ($primaryKey && $primaryRecord && $relationType && $primaryKey != $record->key) {
             $relations[] = [
                 'origin' => $origin,
                 'toKey' => $primaryRecord->key,
