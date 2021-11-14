@@ -1,4 +1,5 @@
 @if(true)
+    <div class="clearfix"></div>
     <div class="panel panel-primary element-no-top element-short-bottom panel-content">
 
         <div class="swatch-white" style="position:relative;">
