@@ -4,12 +4,11 @@
         @foreach($related['organisations']['docs'] as $col)
             <li>
                 <i class="fa fa-group icon-portal"></i>
-                <small>{{ $col['display_relationship'] }}</small>
-                <a href="{{ base_url() }}{{$col['to_slug']}}/{{$col['to_id']}}"
+                <small>{{ $col['_childDocuments_'][0]['relation_type_text'] }}</small>
+                <a href="{{$col['to_url']}}"
                    title="{{ $col['to_title'] }}"
                    class="ro_preview"
-                   tip="{{ $col['display_description'] }}"
-                   ro_id="{{ $col['to_id'] }}">
+                   ro_id="{{ $col['to_identifier'] }}">
                     {{$col['to_title']}}</a>
                 {{ isset($col['to_funder']) ? "(funded by ". $col['to_funder'] .")" : '' }}
             </li>
