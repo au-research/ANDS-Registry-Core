@@ -5,21 +5,22 @@
             <li>
 
                 <i class="fa fa-globe icon-portal"></i>
-                <small>{{ $col['display_relationship'] }} </small>
-
-                {{--Display the identifiers--}}
-                {{ $col['to_title'] }}
-                    <br/>
-                @if(isset($col['relation_identifier_url']))
-                    <a href="{{ $col['relation_identifier_url'] }}"
-                       tip="{{ $col['display_description'] }}">
-                        {{ $col['relation_identifier_identifier'] }}
-                    </a>
-                @else
-                    {{ $col['relation_identifier_identifier'] }}
+                <small>{{ $col['_childDocuments_'][0]['relation_type_text'] }}</small>
+                @if($col["to_identifier_type"]=="ro:id")
+                    <a href="{{$col['to_url']}}"
+                       title="{{ $col['to_title'] }}"
+                       class="ro_preview"
+                       ro_id="{{$col['to_identifier']}}">
+                        {{$col['to_title']}}</a>
+                @elseif($col["to_identifier_type"]!="ro:id")
+                    <?php $col_json = urlencode(json_encode($col));?>
+                    <a href="{{$col['to_identifier']}}"
+                       title="{{ $col['to_title'] }}"
+                       class="ro_preview"
+                       identifier_relation_id="{{$col_json}}">
+                        {{$col['to_title']}}</a>
                 @endif
-
-            </li>
-        @endforeach
-    </ul>
+           </li>
+       @endforeach
+   </ul>
 </div>

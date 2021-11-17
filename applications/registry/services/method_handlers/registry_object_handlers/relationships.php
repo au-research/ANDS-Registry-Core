@@ -39,15 +39,15 @@ class Relationships extends ROHandler
             'organisations' => $this->getRelatedOrganisations()
         ]; */
         return [
-            'data' => [],
-            'software' => [],
-            'publications' => [],
-            'programs' => [],
+            'data' => $this->getRelatedData(),
+            'software' => $this->getRelatedSoftware(),
+            'publications' => $this->getRelatedPublication(),
+            'programs' => $this->getRelatedPrograms(),
             'grants_projects' => [],
-            'services' => [],
-            'websites' => [],
+            'services' => $this->getRelatedService(),
+            'websites' => $this->getRelatedWebsites(),
             'researchers' => $this->getRelatedResearchers(),
-            'organisations' => []
+            'organisations' => $this->getRelatedOrganisations()
         ];
     }
 
@@ -56,12 +56,6 @@ class Relationships extends ROHandler
      * @return array
      */
     private function getRelatedData() {
-        $result = RelationshipSearchService::search([
-            "from_id" => $this->ro->id,
-            "to_class" => "collection",
-            "not_to_type" => "software"
-        ], ["rows" => 5]);
-
 
         $result = $this->solrClient->search([
             'q' => '*:*',
@@ -73,7 +67,12 @@ class Relationships extends ROHandler
             'rows' => 5
         ]);
 
-        return $this->renderBackwardCompatibleArray($result);
+        return [
+            'count' => $result->getNumFound(),
+            'docs' => json_decode($result->getDocs('json'), true)
+        ];
+
+        //  return $this->renderBackwardCompatibleArray($result);
     }
 
     /**
@@ -91,7 +90,12 @@ class Relationships extends ROHandler
             'rows' => 5
         ]);
 
-        return $this->renderBackwardCompatibleArray($result);
+        return [
+            'count' => $result->getNumFound(),
+            'docs' => json_decode($result->getDocs('json'), true)
+        ];
+
+        //  return $this->renderBackwardCompatibleArray($result);
     }
 
     /**
@@ -109,7 +113,12 @@ class Relationships extends ROHandler
             'rows' => 5
         ]);
 
-        return $this->renderBackwardCompatibleArray($result);
+        return [
+            'count' => $result->getNumFound(),
+            'docs' => json_decode($result->getDocs('json'), true)
+        ];
+
+        //  return $this->renderBackwardCompatibleArray($result);
     }
 
     /**
@@ -141,11 +150,15 @@ class Relationships extends ROHandler
             'defType' => 'edismax',
             'parentFilter' => 'type:relationship',
             'childFilter' => 'type:edge',
-            'fq' => "+from_id:{$this->ro->id} +to_type:publication",
+            'fq' => "+from_id:{$this->ro->id} +to_class:publication",
             'rows' => 5
         ]);
 
-        return $this->renderBackwardCompatibleArray($result);
+        //return $this->renderBackwardCompatibleArray($result);
+        return [
+            'count' => $result->getNumFound(),
+            'docs' => json_decode($result->getDocs('json'), true)
+        ];
     }
 
     /**
@@ -162,8 +175,11 @@ class Relationships extends ROHandler
             'fq' => "+from_id:{$this->ro->id} +to_class:service",
             'rows' => 5
         ]);
-
-        return $this->renderBackwardCompatibleArray($result);
+//return $this->renderBackwardCompatibleArray($result);
+        return [
+            'count' => $result->getNumFound(),
+            'docs' => json_decode($result->getDocs('json'), true)
+        ];
     }
 
     /**
@@ -181,7 +197,11 @@ class Relationships extends ROHandler
             'rows' => 5
         ]);
 
-        return $this->renderBackwardCompatibleArray($result);
+        //return $this->renderBackwardCompatibleArray($result);
+        return [
+            'count' => $result->getNumFound(),
+            'docs' => json_decode($result->getDocs('json'), true)
+        ];
     }
 
     /**
@@ -225,7 +245,12 @@ class Relationships extends ROHandler
             'rows' => 5
         ]);
 
-        return $this->renderBackwardCompatibleArray($result);
+        return [
+            'count' => $result->getNumFound(),
+            'docs' => json_decode($result->getDocs('json'), true)
+        ];
+
+        //  return $this->renderBackwardCompatibleArray($result);
     }
 
 

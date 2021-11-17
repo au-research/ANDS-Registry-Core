@@ -379,10 +379,11 @@ class Registry_object extends MX_Controller
     {
         //initialisation to prevent logic error
         $related = $ro->relationships;
-        return $related;
+        //var_dump($ro->relationships);
+      //  return $related;
         if (!$related) $related = [];
 
-        foreach ($related as &$rel) {
+     /*   foreach ($related as &$rel) {
             foreach ($rel['docs'] as &$doc) {
                 $doc['display_relationship'] = [];
                 if (array_key_exists('relation', $doc)) {
@@ -399,7 +400,7 @@ class Registry_object extends MX_Controller
                 $doc['display_description'] = '';
             }
 
-        }
+        } */
 
         // search class for constructing search queries
         $searchClass = $ro->core['class'];
@@ -441,7 +442,7 @@ class Registry_object extends MX_Controller
             $related[$rr]['searchUrl'] = constructPortalSearchQuery($query);
 
             // fix count in case not all records are synced correctly
-            if (array_key_exists('count', $related[$rr]) && $related[$rr]['count'] > 5) {
+       /*     if (array_key_exists('count', $related[$rr]) && $related[$rr]['count'] > 5) {
                 $related[$rr]['count'] = $this->getSolrCountForQuery($query);
             } elseif (!array_key_exists('count', $related[$rr])) {
                 $related[$rr]['count'] = 0;
@@ -453,7 +454,7 @@ class Registry_object extends MX_Controller
 
             if ($rr == "researchers" || $rr == "organisations") {
                 $related[$rr]['docs'] = $this->researcherSort($related[$rr]['docs']);
-            }
+            } */
         }
 
         // Fix duplicate researchers display value TODO: investigate why
