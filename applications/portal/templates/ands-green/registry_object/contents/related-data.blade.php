@@ -4,19 +4,21 @@
         @foreach($related['data']['docs'] as $col)
                 <li>
                     <i class="fa fa-folder-open icon-portal"></i>
-                    <small>{{ $col['display_relationship'] }}</small>
-                    <a href="<?php echo base_url()?>{{$col['to_id']}}/{{$col['to_id']}}"
-                       title="{{$col['to_title']}}"
-                       class="ro_preview"
-                       tip="{{ $col['display_description'] }}"
-                       @if(isset($col['to_id']) && $col['to_id']!='false')
-                        ro_id="{{ $col['to_id'] }}"
-                       @elseif(isset($col["relation_identifier_id"]))
-                        identifier_relation_id="{{ $col['relation_identifier_id'] }}"
-                       @endif
-                       >
-                        {{$col['to_title']}}
-                    </a>
+
+                    <small>{{ $col['_childDocuments_'][0]['relation_type_text'] }}</small>
+                    @if($col["to_identifier_type"]=="ro:id")
+                        <a href="{{$col['to_url']}}"
+                           title="{{ $col['to_title'] }}"
+                           class="ro_preview"
+                           ro_id="{{$col['to_identifier']}}">
+                            {{$col['to_title']}}</a>
+                    @elseif($col["to_identifier_type"]!="ro:id")
+                        <a href="{{$col['to_identifier']}}"
+                           title="{{ $col['to_title'] }}"
+                           class="ro_preview"
+                           identifier_relation_id="{{$col['_childDocuments_'][0]["id"]}}">
+                            {{$col['to_title']}}</a>
+                    @endif
                 </li>
         @endforeach
         @if($related['data']['count']> 5)
