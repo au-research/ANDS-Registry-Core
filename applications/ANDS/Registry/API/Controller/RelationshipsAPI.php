@@ -11,7 +11,6 @@ class RelationshipsAPI extends HTTPController
         'rows',
         'offset',
         'sort',
-        'pp',
         'boost_relation_type',
         'boost_to_group',
         'fl',
