@@ -1,10 +1,10 @@
 <div class="related-organisations">
     <h4>Related Organisations</h4>
     <ul class="list-unstyled">
-        @foreach($related['organisations']['docs'] as $col)
+        @foreach($related['organisations']['contents'] as $col)
             <li>
                 <i class="fa fa-group icon-portal"></i>
-                <small>{{ $col['_childDocuments_'][0]['relation_type_text'] }}</small>
+                <small>{{ $col['relations'][0]['relation_type_text'] }}</small>
                 <a href="{{$col['to_url']}}"
                    title="{{ $col['to_title'] }}"
                    class="ro_preview"
@@ -13,8 +13,8 @@
                 {{ isset($col['to_funder']) ? "(funded by ". $col['to_funder'] .")" : '' }}
             </li>
         @endforeach
-        @if($related['organisations']['count'] > 5)
-            <li><a href="{{ $related['organisations']['searchUrl'] }}">View all {{ $related['organisations']['count'] }} related organisations</a></li>
+        @if($related['organisations']['total'] > 5)
+            <li><a href="{{ $related['organisations']['searchUrl'] }}">View all {{ $related['organisations']['total'] }} related organisations</a></li>
         @endif
     </ul>
 </div>

@@ -2,10 +2,10 @@
     <div class="related-software">
         <h4>Related Software</h4>
         <ul class="list-unstyled">
-            @foreach($related['software']['docs'] as $col)
+            @foreach($related['software']['contents'] as $col)
                     <li>
                         <i class="fa fa-file-code-o icon-portal"></i>
-                        <small>{{ $col['_childDocuments_'][0]['relation_type_text'] }}</small>
+                        <small>{{ $col['relations'][0]['relation_type_text'] }}</small>
                         @if($col["to_identifier_type"]=="ro:id")
                             <a href="{{$col['to_url']}}"
                                title="{{ $col['to_title'] }}"
@@ -23,8 +23,8 @@
 
                     </li>
             @endforeach
-            @if($related['software']['count'] > 5)
-                <li><a href="{{ $related['software']['searchUrl'] }}">View all {{ $related['software']['count'] }} related software</a></li>
+            @if($related['software']['total'] > 5)
+                <li><a href="{{ $related['software']['searchUrl'] }}">View all {{ $related['software']['total'] }} related software</a></li>
             @endif
         </ul>
     </div>

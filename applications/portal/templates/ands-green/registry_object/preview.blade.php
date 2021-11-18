@@ -9,10 +9,10 @@
 		}
 	}
     $showMore = false;
-    if(isset($related['data']) && sizeof($related['data']['docs']) > 0) {
+    if(isset($related['data']) && sizeof($related['data']['contents']) > 0) {
         $showMore = true;
-        if(count($related['data']['docs']) == 1) {
-            foreach($related['data']['docs'] as $col) {
+        if(count($related['data']['contents']) == 1) {
+            foreach($related['data']['contents'] as $col) {
                 if($col && $col['to_identifier'] == $omit) {
                     $showMore = false;
                 }
@@ -40,13 +40,13 @@
         <h4>More data related to {{$ro->core['title']}}</h4>
         <ul>
             <?php // var_dump($related['data']['docs']) ?>
-            @foreach($related['data']['docs'] as $col)
+            @foreach($related['data']['contents'] as $col)
                 @if($col && $col['to_identifier'] != $omit)
                     <li><a href="{{$col['to_url']}}" title="{{$col['to_title']}}"  ro_id="{{$col['to_identifier']}}">{{$col['to_title']}}</a></li>
                 @endif
             @endforeach
-            @if($related['data']['count'] > 5)
-                <li><a href="{{ $related['data']['searchUrl'] }}">View all {{ $related['data']['count'] }} related data</a></li>
+            @if($related['data']['total'] > 5)
+                <li><a href="{{ $related['data']['searchUrl'] }}">View all {{ $related['data']['total'] }} related data</a></li>
             @endif
         </ul>
 	@endif

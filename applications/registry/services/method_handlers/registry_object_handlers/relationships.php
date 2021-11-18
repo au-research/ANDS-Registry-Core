@@ -1,4 +1,5 @@
-<?php use ANDS\Mycelium\RelationshipSearchService;
+<?php
+use ANDS\Mycelium\RelationshipSearchService;
 use MinhD\SolrClient\SolrClient;
 
 if (!defined('BASEPATH')) {
@@ -27,17 +28,6 @@ class Relationships extends ROHandler
     {
         $this->solrClient = new SolrClient(\ANDS\Util\Config::get('app.solr_url'), 8983, 'relationships');
 
-    /*    return [
-            'data' => $this->getRelatedData(),
-            'software' => $this->getRelatedSoftware(),
-            'publications' => $this->getRelatedPublication(),
-            'programs' => $this->getRelatedPrograms(),
-            'grants_projects' => $this->getRelatedGrantsProjects(),
-            'services' => $this->getRelatedService(),
-            'websites' => $this->getRelatedWebsites(),
-            'researchers' => $this->getRelatedResearchers(),
-            'organisations' => $this->getRelatedOrganisations()
-        ]; */
         return [
             'data' => $this->getRelatedData(),
             'software' => $this->getRelatedSoftware(),
@@ -57,22 +47,13 @@ class Relationships extends ROHandler
      */
     private function getRelatedData() {
 
-        $result = $this->solrClient->search([
-            'q' => '*:*',
-            'fl' => '*,[child parentFilter=$parentFilter childFilter=$childFilter limit=100]',
-            'defType' => 'edismax',
-            'parentFilter' => 'type:relationship',
-            'childFilter' => 'type:edge',
-            'fq' => "+from_id:{$this->ro->id} +to_class:collection -to_type:software",
-            'rows' => 5
+        $result = RelationshipSearchService::search([
+            'from_id' => $this->ro->id,
+            'to_class' => 'collection',
+            'not_to_type' => 'software'
         ]);
 
-        return [
-            'count' => $result->getNumFound(),
-            'docs' => json_decode($result->getDocs('json'), true)
-        ];
-
-        //  return $this->renderBackwardCompatibleArray($result);
+        return $result->toArray();
     }
 
     /**
@@ -80,22 +61,14 @@ class Relationships extends ROHandler
      * @return array
      */
     private function getRelatedSoftware() {
-        $result = $this->solrClient->search([
-            'q' => '*:*',
-            'fl' => '*,[child parentFilter=$parentFilter childFilter=$childFilter limit=100]',
-            'defType' => 'edismax',
-            'parentFilter' => 'type:relationship',
-            'childFilter' => 'type:edge',
-            'fq' => "+from_id:{$this->ro->id} +to_class:collection +to_type:software",
-            'rows' => 5
+
+        $result = RelationshipSearchService::search([
+            'from_id' => $this->ro->id,
+            'to_class' => 'collection',
+            'to_type' => 'software'
         ]);
 
-        return [
-            'count' => $result->getNumFound(),
-            'docs' => json_decode($result->getDocs('json'), true)
-        ];
-
-        //  return $this->renderBackwardCompatibleArray($result);
+        return $result->toArray();
     }
 
     /**
@@ -144,21 +117,13 @@ class Relationships extends ROHandler
      * @return array
      */
     private function getRelatedPublication() {
-        $result = $this->solrClient->search([
-            'q' => '*:*',
-            'fl' => '*,[child parentFilter=$parentFilter childFilter=$childFilter limit=100]',
-            'defType' => 'edismax',
-            'parentFilter' => 'type:relationship',
-            'childFilter' => 'type:edge',
-            'fq' => "+from_id:{$this->ro->id} +to_class:publication",
-            'rows' => 5
+
+        $result = RelationshipSearchService::search([
+            'from_id' => $this->ro->id,
+            'to_class' => 'publication'
         ]);
 
-        //return $this->renderBackwardCompatibleArray($result);
-        return [
-            'count' => $result->getNumFound(),
-            'docs' => json_decode($result->getDocs('json'), true)
-        ];
+        return $result->toArray();
     }
 
     /**
@@ -166,20 +131,13 @@ class Relationships extends ROHandler
      * @return array
      */
     private function getRelatedService() {
-        $result = $this->solrClient->search([
-            'q' => '*:*',
-            'fl' => '*,[child parentFilter=$parentFilter childFilter=$childFilter limit=100]',
-            'defType' => 'edismax',
-            'parentFilter' => 'type:relationship',
-            'childFilter' => 'type:edge',
-            'fq' => "+from_id:{$this->ro->id} +to_class:service",
-            'rows' => 5
+
+        $result = RelationshipSearchService::search([
+            'from_id' => $this->ro->id,
+            'to_class' => 'service'
         ]);
-//return $this->renderBackwardCompatibleArray($result);
-        return [
-            'count' => $result->getNumFound(),
-            'docs' => json_decode($result->getDocs('json'), true)
-        ];
+
+        return $result->toArray();
     }
 
     /**
@@ -187,21 +145,13 @@ class Relationships extends ROHandler
      * @return array
      */
     private function getRelatedWebsites() {
-        $result = $this->solrClient->search([
-            'q' => '*:*',
-            'fl' => '*,[child parentFilter=$parentFilter childFilter=$childFilter limit=100]',
-            'defType' => 'edismax',
-            'parentFilter' => 'type:relationship',
-            'childFilter' => 'type:edge',
-            'fq' => "+from_id:{$this->ro->id} +to_type:website",
-            'rows' => 5
+
+        $result = RelationshipSearchService::search([
+            'from_id' => $this->ro->id,
+            'to_class' => 'website'
         ]);
 
-        //return $this->renderBackwardCompatibleArray($result);
-        return [
-            'count' => $result->getNumFound(),
-            'docs' => json_decode($result->getDocs('json'), true)
-        ];
+        return $result->toArray();
     }
 
     /**
@@ -210,24 +160,16 @@ class Relationships extends ROHandler
      * @return array
      */
     private function getRelatedResearchers() {
-        $result = $this->solrClient->search([
-            'q' => '*:*',
-            'fl' => '*,[child parentFilter=$parentFilter childFilter=$childFilter limit=100]',
-            'defType' => 'edismax',
-            'parentFilter' => 'type:relationship',
-            'childFilter' => 'type:edge',
-            'fq' => "+from_id:{$this->ro->id} +to_class:party -to_type:group",
-            'bq' => '{!parent which=$parentFilter score=total}relation_type:hasPrincipalInvestigator',
-            'sort' => 'score desc, to_title asc',
-            'rows' => 5
+
+        $result = RelationshipSearchService::search([
+            'from_id' => $this->ro->id,
+            'to_class' => 'party',
+            'to_type' => 'group',
+            'boost_relation_type' => 'hasPrincipalInvestigator'
         ]);
 
-        return [
-            'count' => $result->getNumFound(),
-            'docs' => json_decode($result->getDocs('json'), true)
-        ];
+        return $result->toArray();
 
-      //  return $this->renderBackwardCompatibleArray($result);
     }
 
     /**
@@ -235,22 +177,14 @@ class Relationships extends ROHandler
      * @return array
      */
     private function getRelatedOrganisations() {
-        $result = $this->solrClient->search([
-            'q' => '*:*',
-            'fl' => '*,[child parentFilter=$parentFilter childFilter=$childFilter limit=100]',
-            'defType' => 'edismax',
-            'parentFilter' => 'type:relationship',
-            'childFilter' => 'type:edge',
-            'fq' => "+from_id:{$this->ro->id} +to_class:party +to_type:group",
-            'rows' => 5
+
+        $result = RelationshipSearchService::search([
+            'from_id' => $this->ro->id,
+            'to_class' => 'party',
+            'to_type' => 'group',
         ]);
 
-        return [
-            'count' => $result->getNumFound(),
-            'docs' => json_decode($result->getDocs('json'), true)
-        ];
-
-        //  return $this->renderBackwardCompatibleArray($result);
+        return $result->toArray();
     }
 
 

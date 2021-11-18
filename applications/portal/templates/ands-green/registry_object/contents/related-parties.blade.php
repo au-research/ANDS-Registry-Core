@@ -21,12 +21,12 @@
     $arrayNames = array();
 
     if(isset($related['researchers'])){
-        foreach($related['researchers']['docs'] as $col){
+        foreach($related['researchers']['contents'] as $col){
             $arrayNames[] = $col['to_title'];
         }
     }
     if(isset($related['organisations'])){
-        foreach($related['organisations']['docs'] as $col){
+        foreach($related['organisations']['contents'] as $col){
             $arrayNames[] = $col['to_title'];
         }
     }
@@ -43,8 +43,8 @@
             <?php $contributorString = trim($contributorString, "; ") ;?>
             {{$contributorString}}
 
-    @elseif (isset($related['researchers']) && sizeof($related['researchers']['docs']) > 0)
-        @foreach($related['researchers']['docs'] as $col)
+    @elseif (isset($related['researchers']) && sizeof($related['researchers']['contents']) > 0)
+        @foreach($related['researchers']['contents'] as $col)
             <?php
                     $col_json = urlencode(json_encode($col));
              // we need to detect if the related party occurs more than once,
@@ -56,7 +56,7 @@
                 $same_group_found = false;
                 //now loop through all the organisations to get the one from the same group
                 // if it exists, else just out put the first one
-                foreach($related['researchers']['docs'] as $col2){
+                foreach($related['researchers']['contents'] as $col2){
                 if($col2['to_title'] == $col['to_title'] && isset($col2['to_group']) && $col2['to_group'] == $col['from_group']){
                 $same_group_found = true;
                 ?>
@@ -110,15 +110,15 @@
                        identifier_relation_id="{{$col_json}}">
                         {{$col['to_title']}}
                   @endif
-                <small>({{ $col['_childDocuments_'][0]['relation_type_text'] }})</small>
+                <small>({{ $col['relations'][0]['relation_type_text'] }})</small>
             </a>
             @endif
         @endforeach
-        @if($related['researchers']['count'] > 5)
-            <a href="{{ $related['researchers']['searchUrl'] }}">View all {{ $related['researchers']['count'] }} related researchers</a>
+        @if($related['researchers']['total'] > 5)
+            <a href="{{ $related['researchers']['searchUrl'] }}">View all {{ $related['researchers']['total'] }} related researchers</a>
         @endif
-    @elseif(is_array($related['organisations']) && sizeof($related['organisations']['docs']) > 0)
-        @foreach($related['organisations']['docs'] as $col)
+    @elseif(is_array($related['organisations']) && sizeof($related['organisations']['contents']) > 0)
+        @foreach($related['organisations']['contents'] as $col)
             <?php
             // we need to detect if the related party occurs more than once,
             // and if so let's check if one of those occurrences has the same group as the current object's
@@ -128,7 +128,7 @@
                 $same_group_found = false;
                 //now loop through all the organisations to get the one from the same group
                 // if it exists, else just out put the first one
-                foreach($related['organisations']['docs'] as $col2){
+                foreach($related['organisations']['contents'] as $col2){
                     if($col2['to_title'] == $col['to_title'] && $col2['to_group'] == $col['from_group']){
                         $same_group_found = true;
                         ?>
@@ -149,7 +149,7 @@
                        ro_id="{{$col['to_identifier']}}"
                        style="margin-right:5px;">
                          {{ $col['to_title'] }}
-                             <small>({{ $col2['_childDocuments_'][0]['relation_type_text'] }})</small>
+                             <small>({{ $col2['relations'][0]['relation_type_text'] }})</small>
                         </a>
                        <?php
                 }
@@ -161,12 +161,12 @@
                ro_id="{{$col['to_identifier']}}"
                style="margin-right:5px;">
                  {{ $col['to_title'] }}
-                <small>({{ $col['_childDocuments_'][0]['relation_type_text'] }})</small>
+                <small>({{ $col['relations'][0]['relation_type_text'] }})</small>
             </a>
             @endif
         @endforeach
-        @if(isset($related['organisations']['count']) && $related['organisations']['count'] > 5)
-            <a href="{{ $related['organisations']['searchUrl'] }}">View all {{ $related['organisations']['count'] }} related organisations</a>
+        @if(isset($related['organisations']['total']) && $related['organisations']['total'] > 5)
+            <a href="{{ $related['organisations']['searchUrl'] }}">View all {{ $related['organisations']['total'] }} related organisations</a>
         @endif
     @endif
 @endif
