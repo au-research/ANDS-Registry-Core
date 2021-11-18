@@ -1,11 +1,11 @@
 <div class="related-websites">
     <h4>Related Websites</h4>
     <ul class="list-unstyled">
-        @foreach($related['websites']['docs'] as $col)
+        @foreach($related['websites']['contents'] as $col)
             <li>
 
                 <i class="fa fa-globe icon-portal"></i>
-                <small>{{ $col['_childDocuments_'][0]['relation_type_text'] }}</small>
+                <small>{{ $col['relations'][0]['relation_type_text'] }}</small>
                 @if($col["to_identifier_type"]=="ro:id")
                     <a href="{{$col['to_url']}}"
                        title="{{ $col['to_title'] }}"

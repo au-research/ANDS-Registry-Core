@@ -458,7 +458,7 @@ class Registry_object extends MX_Controller
         }
 
         // Fix duplicate researchers display value TODO: investigate why
-        $related['researchers']['docs'] = collect($related['researchers']['docs'])
+        $related['researchers']['contents'] = collect($related['researchers']['contents'])
             ->unique()->toArray();
 
         return $related;

@@ -21,23 +21,23 @@
         <div class="panel-body swatch-white" style="padding-top:0;">
 
             {{--Related Publications--}}
-            @if (isset($related['publications']['docs']) && sizeof($related['publications']['docs']) > 0)
+            @if (isset($related['publications']['contents']) && sizeof($related['publications']['contents']) > 0)
                 @include('registry_object/contents/related-publications')
             @endif
 
-            @if (isset($related['data']['docs']) && sizeof($related['data']['docs']) > 0)
+            @if (isset($related['data']['contents']) && sizeof($related['data']['contents']) > 0)
                 @include('registry_object/contents/related-data')
             @endif
 
-            @if (isset($related['software']['docs']) && sizeof($related['software']['docs']) > 0)
+            @if (isset($related['software']['contents']) && sizeof($related['software']['contents']) > 0)
                 @include('registry_object/contents/related-software')
             @endif
 
-            @if (isset($related['organisations']['docs']) && sizeof($related['organisations']['docs']) > 0)
+            @if (isset($related['organisations']['contents']) && sizeof($related['organisations']['contents']) > 0)
                 @include('registry_object/contents/related-organisation')
             @endif
 
-            @if (isset($related['researchers']['docs']) && sizeof($related['researchers']['docs']) > 0)
+            @if (isset($related['researchers']['contents']) && sizeof($related['researchers']['contents']) > 0)
                 @include('registry_object/contents/related-researchers')
             @endif
 
@@ -49,11 +49,11 @@
                 @include('registry_object/contents/related-grants_projects')
             @endif
 
-            @if (isset($related['services']['docs']) && sizeof($related['services']['docs']) > 0)
+            @if (isset($related['services']['contents']) && sizeof($related['services']['contents']) > 0)
                 @include('registry_object/contents/related-service')
             @endif
 
-            @if (isset($related['websites']['docs']) && sizeof($related['websites']['docs']) > 0)
+            @if (isset($related['websites']['contents']) && sizeof($related['websites']['contents']) > 0)
                 @include('registry_object/contents/related-website')
             @endif
 

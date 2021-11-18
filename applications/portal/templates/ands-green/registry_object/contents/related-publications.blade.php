@@ -2,11 +2,11 @@
     <h4>Related Publications</h4>
     <ul class="list-unstyled">
         <?php //dd($related['publications']['docs']); ?>
-        @foreach($related['publications']['docs'] as $col)
+        @foreach($related['publications']['contents'] as $col)
             <?php //var_dump($col['_childDocuments_'][0]['relation_type_text'])?>
                 <li>
                 <i class="fa fa-book icon-portal"></i>
-                <small>{{ $col['_childDocuments_'][0]['relation_type_text'] }}</small>
+                <small>{{ $col['relations'][0]['relation_type_text'] }}</small>
 
                 {{--DOI relatedInfo identifier is resolvable--}}
                     @if($col['to_identifier_type'] == 'doi')
