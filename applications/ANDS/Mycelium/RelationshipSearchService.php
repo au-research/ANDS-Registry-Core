@@ -15,7 +15,6 @@ class RelationshipSearchService
         'parentFilter' => 'type:relationship',
         'childFilter' => 'type:edge',
         'rows' => 15,
-        'pp' => 15,
         'offset' => 0,
         'sort' => 'score desc, to_title asc'
     ];
@@ -58,7 +57,6 @@ class RelationshipSearchService
             switch ($key) {
                 case "rows":
                 case "offset":
-                case "pp":
                 case "sort":
                     $params[$key] = $value;
                     break;

@@ -26,10 +26,10 @@ class Paginator
 
         $paginator = new Paginator();
 
-        $paginator->perPage = intval($solrResult->getParam('pp'));
+        $paginator->perPage = intval($solrResult->getParam('rows'));
         $paginator->offset = intval($solrResult->getParam('offset'));
         $paginator->sort = $solrResult->getParam('sort');
-        $paginator->count = intval($solrResult->getParam('rows'));
+        $paginator->count = count(json_decode($solrResult->getDocs('json')));
         $paginator->total = intval($solrResult->getNumFound());
 
         // massage the data a bit

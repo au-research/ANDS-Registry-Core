@@ -211,6 +211,13 @@ class RecordsGraphController
         $edgeIDsToRemove = [];
         $edges = collect($edges)
             ->map(function ($edge) use (&$edges, &$edgeIDsToRemove) {
+
+                // skip checking if this edge is already marked for removal
+                if (in_array($edge['id'], $edgeIDsToRemove)){
+                    return $edge;
+                }
+
+                // find the reversed edge
                 $reversedEdges = collect($edges)->filter(function ($edge2) use ($edge) {
                     return !isset($edge['checked'])
                         && $edge['multiple'] === false
