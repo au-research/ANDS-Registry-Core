@@ -29,7 +29,7 @@ class Paginator
         $paginator->perPage = intval($solrResult->getParam('rows'));
         $paginator->offset = intval($solrResult->getParam('offset'));
         $paginator->sort = $solrResult->getParam('sort');
-        $paginator->count = count($solrResult->getDocs('json'));
+        $paginator->count = count(json_decode($solrResult->getDocs('json')));
         $paginator->total = intval($solrResult->getNumFound());
 
         // massage the data a bit
