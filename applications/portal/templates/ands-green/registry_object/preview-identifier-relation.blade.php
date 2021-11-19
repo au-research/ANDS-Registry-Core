@@ -1,13 +1,12 @@
 <div class="panel panel-primary panel-content swatch-white">
 	<div class="panel-heading">
-	{{$record->_childDocuments_[0]->relation_type}}
-	@if($record->to_title)
-		{{$record->to_title}}
-	@endif
+       <?php $related = $record->relations[0]; ?>
+		{{$related->relation_type}}
+		@if($record->to_title)
+			{{$record->to_title}}
+		@endif
 	</div>
-
 	<div class="panel-body">
-
 		@if(!$pullback && $record->connections_preview_div)
 			{{$record->connections_preview_div}}
 			@if($ro)
