@@ -3,7 +3,6 @@
     <ul class="list-unstyled">
         <?php //dd($related['publications']['docs']); ?>
         @foreach($related['publications']['contents'] as $col)
-            <?php //var_dump($col['_childDocuments_'][0]['relation_type_text'])?>
                 <li>
                 <i class="fa fa-book icon-portal"></i>
                 <small>{{ $col['relations'][0]['relation_type_text'] }}</small>

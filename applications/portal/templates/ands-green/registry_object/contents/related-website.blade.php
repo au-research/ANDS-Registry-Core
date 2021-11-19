@@ -13,7 +13,10 @@
                        ro_id="{{$col['to_identifier']}}">
                         {{$col['to_title']}}</a>
                 @elseif($col["to_identifier_type"]!="ro:id")
-                    <?php $col_json = urlencode(json_encode($col));?>
+                    <?php
+                        $col_json = urlencode(json_encode($col));
+                        if(!isset($col['to_title'])) $col['to_title'] = $col['to_identifier'];
+                    ?>
                     <a href="{{$col['to_identifier']}}"
                        title="{{ $col['to_title'] }}"
                        class="ro_preview"

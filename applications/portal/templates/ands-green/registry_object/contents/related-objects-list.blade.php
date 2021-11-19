@@ -41,11 +41,11 @@
                 @include('registry_object/contents/related-researchers')
             @endif
 
-            @if (isset($related['programs']['docs']) && sizeof($related['programs']['docs']) > 0)
+            @if (isset($related['programs']['contents']) && sizeof($related['programs']['contents']) > 0)
                 @include('registry_object/contents/related-program')
             @endif
 
-            @if (isset($related['grants_projects']['docs']) && sizeof($related['grants_projects']['docs']) > 0)
+            @if (isset($related['grants_projects']['contents']) && sizeof($related['grants_projects']['contents']) > 0)
                 @include('registry_object/contents/related-grants_projects')
             @endif
 

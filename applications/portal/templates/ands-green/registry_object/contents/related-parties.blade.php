@@ -137,7 +137,7 @@
                            ro_id="{{$col2['to_identifier']}}"
                            style="margin-right:5px;">
                             {{ $col2['to_title'] }}
-                            <small>({{ $col2['_childDocuments_'][0]['relation_type_text'] }})</small>
+                            <small>({{ $col2['relations][0]['relation_type_text'] }})</small>
                         </a>
                         <?php
                     }

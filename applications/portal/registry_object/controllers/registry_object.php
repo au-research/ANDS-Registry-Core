@@ -502,7 +502,7 @@ class Registry_object extends MX_Controller
             $identifiers_div = "";
             $identifier_count = 0;
             $connections_preview_div = "";
-            foreach ($input_array->_childDocuments_ as $i) {
+            foreach ($input_array->relations as $i) {
                 // todo - implement resolvable links for the identifier if possible
                $identifiers_div .= $i->to_identifier;
                $identifier_count++;
@@ -514,7 +514,7 @@ class Registry_object extends MX_Controller
          //   }
             $imgUrl = asset_url('img/' . $input_array->to_type . '.png', 'base');
             $classImg = '<img class="icon-heading" src="' . $imgUrl . '" alt="' . $input_array->to_type . '" style="width:24px; float:right;">';
-            $connections_preview_div = '<div class="previewItemHeader">' . $input_array->_childDocuments_[0]->relation_type_text . '</div>' . $classImg . '<h4>' . $input_array->to_title . '</h4><div class="post">' . $identifiers_div . "<br/>" . $connections_preview_div . '</div>';
+            $connections_preview_div = '<div class="previewItemHeader">' . $input_array->relations[0]->relation_type_text . '</div>' . $classImg . '<h4>' . $input_array->to_title . '</h4><div class="post">' . $identifiers_div . "<br/>" . $connections_preview_div . '</div>';
             $input_array->connections_preview_div = $connections_preview_div;
 
             $fr= $input_array;

@@ -26,14 +26,14 @@ class Relationships extends ROHandler
      */
     public function handle($params='')
     {
-        $this->solrClient = new SolrClient(\ANDS\Util\Config::get('app.solr_url'), 8983, 'relationships');
+        //$this->solrClient = new SolrClient(\ANDS\Util\Config::get('app.solr_url'), 8983, 'relationships');
 
         return [
             'data' => $this->getRelatedData(),
             'software' => $this->getRelatedSoftware(),
             'publications' => $this->getRelatedPublication(),
             'programs' => $this->getRelatedPrograms(),
-            'grants_projects' => [],
+            'grants_projects' =>$this->getRelatedGrantsProjects(),
             'services' => $this->getRelatedService(),
             'websites' => $this->getRelatedWebsites(),
             'researchers' => $this->getRelatedResearchers(),
@@ -50,7 +50,8 @@ class Relationships extends ROHandler
         $result = RelationshipSearchService::search([
             'from_id' => $this->ro->id,
             'to_class' => 'collection',
-            'not_to_type' => 'software'
+            'not_to_type' => 'software',
+            'rows' => 5
         ]);
 
         return $result->toArray();
@@ -65,7 +66,8 @@ class Relationships extends ROHandler
         $result = RelationshipSearchService::search([
             'from_id' => $this->ro->id,
             'to_class' => 'collection',
-            'to_type' => 'software'
+            'to_type' => 'software',
+            'rows' => 5
         ]);
 
         return $result->toArray();
@@ -76,22 +78,15 @@ class Relationships extends ROHandler
      * @return array
      */
     private function getRelatedPrograms() {
-        $result = $this->solrClient->search([
-            'q' => '*:*',
-            'fl' => '*,[child parentFilter=$parentFilter childFilter=$childFilter limit=100]',
-            'defType' => 'edismax',
-            'parentFilter' => 'type:relationship',
-            'childFilter' => 'type:edge',
-            'fq' => "+from_id:{$this->ro->id} +to_class:activity +to_type:program",
+
+        $result = RelationshipSearchService::search([
+            'from_id' => $this->ro->id,
+            'to_class' => 'activity',
+            'to_type' => 'program',
             'rows' => 5
         ]);
 
-        return [
-            'count' => $result->getNumFound(),
-            'docs' => json_decode($result->getDocs('json'), true)
-        ];
-
-        //  return $this->renderBackwardCompatibleArray($result);
+        return $result->toArray();
     }
 
     /**
@@ -99,17 +94,15 @@ class Relationships extends ROHandler
      * @return array
      */
     private function getRelatedGrantsProjects() {
-        $result = $this->solrClient->search([
-            'q' => '*:*',
-            'fl' => '*,[child parentFilter=$parentFilter childFilter=$childFilter limit=100]',
-            'defType' => 'edismax',
-            'parentFilter' => 'type:relationship',
-            'childFilter' => 'type:edge',
-            'fq' => "+from_id:{$this->ro->id} +to_class:activity -to_type:program",
+
+        $result = RelationshipSearchService::search([
+            'from_id' => $this->ro->id,
+            'to_class' => 'activity',
+            'not_to_type' => 'program',
             'rows' => 5
         ]);
 
-        return $this->renderBackwardCompatibleArray($result);
+        return $result->toArray();
     }
 
     /**
@@ -120,7 +113,8 @@ class Relationships extends ROHandler
 
         $result = RelationshipSearchService::search([
             'from_id' => $this->ro->id,
-            'to_class' => 'publication'
+            'to_class' => 'publication',
+            'rows' => 5
         ]);
 
         return $result->toArray();
@@ -134,7 +128,8 @@ class Relationships extends ROHandler
 
         $result = RelationshipSearchService::search([
             'from_id' => $this->ro->id,
-            'to_class' => 'service'
+            'to_class' => 'service',
+            'rows' => 5
         ]);
 
         return $result->toArray();
@@ -148,7 +143,8 @@ class Relationships extends ROHandler
 
         $result = RelationshipSearchService::search([
             'from_id' => $this->ro->id,
-            'to_class' => 'website'
+            'to_class' => 'website',
+            'rows' => 5
         ]);
 
         return $result->toArray();
@@ -164,8 +160,9 @@ class Relationships extends ROHandler
         $result = RelationshipSearchService::search([
             'from_id' => $this->ro->id,
             'to_class' => 'party',
-            'to_type' => 'group',
-            'boost_relation_type' => 'hasPrincipalInvestigator'
+            'to_type' => 'party',
+            'boost_relation_type' => 'hasPrincipalInvestigator',
+            'rows' => 5
         ]);
 
         return $result->toArray();
@@ -182,6 +179,7 @@ class Relationships extends ROHandler
             'from_id' => $this->ro->id,
             'to_class' => 'party',
             'to_type' => 'group',
+            'rows' => 5
         ]);
 
         return $result->toArray();
@@ -212,7 +210,7 @@ class Relationships extends ROHandler
                 'from_title' => $this->ro->title,
                 'from_type' => $this->ro->type,
                 'id' => $doc['id'],
-                'relation' => collect($doc['_childDocuments_'])->map(function ($relation) {
+                'relation' => collect($doc['relations'])->map(function ($relation) {
                     return array_key_exists('relation_type', $relation) ? $relation['relation_type'] : '';
                 }),
                 'relation_identifier_id' => $toRecord ? null : $doc['to_identifier'],

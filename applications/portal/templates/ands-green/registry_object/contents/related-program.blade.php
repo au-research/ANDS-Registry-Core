@@ -1,10 +1,10 @@
 <div class="related-programs">
     <h4>Related Program</h4>
     <ul class="list-unstyled">
-        @foreach($related['programs']['docs'] as $col)
+        @foreach($related['programs']['contents'] as $col)
             <li>
                 <i class="fa fa-flask icon-portal"></i>
-                <small>{{ $col['_childDocuments_'][0]['relation_type_text'] }}</small>
+                <small>{{ $col['relations'][0]['relation_type_text'] }}</small>
                 @if($col["to_identifier_type"]=="ro:id")
                     <a href="{{$col['to_url']}}"
                        title="{{ $col['to_title'] }}"
