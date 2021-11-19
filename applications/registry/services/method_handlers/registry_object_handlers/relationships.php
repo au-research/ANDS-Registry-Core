@@ -160,7 +160,7 @@ class Relationships extends ROHandler
         $result = RelationshipSearchService::search([
             'from_id' => $this->ro->id,
             'to_class' => 'party',
-            'to_type' => 'party',
+            'not_to_type' => 'group',
             'boost_relation_type' => 'hasPrincipalInvestigator',
             'rows' => 5
         ]);

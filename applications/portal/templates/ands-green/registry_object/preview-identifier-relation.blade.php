@@ -1,7 +1,7 @@
 <div class="panel panel-primary panel-content swatch-white">
 	<div class="panel-heading">
        <?php $related = $record->relations[0]; ?>
-		{{$related->relation_type}}
+		{{$related['relation_type']}}
 		@if($record->to_title)
 			{{$record->to_title}}
 		@endif
