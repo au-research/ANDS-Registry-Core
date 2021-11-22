@@ -85,6 +85,7 @@ class RelationshipSearchService
                 case "to_class":
                 case "to_identifier":
                 case "to_identifier_type":
+                case "to_title":
                 case "to_type":
                     $fqs[] = "+$key:$value";
                     break;

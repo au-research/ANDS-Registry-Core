@@ -51,6 +51,7 @@ class Relationships extends ROHandler
             'from_id' => $this->ro->id,
             'to_class' => 'collection',
             'not_to_type' => 'software',
+            'to_title' => '*',
             'rows' => 5
         ]);
 
@@ -67,6 +68,7 @@ class Relationships extends ROHandler
             'from_id' => $this->ro->id,
             'to_class' => 'collection',
             'to_type' => 'software',
+            'to_title' => '*',
             'rows' => 5
         ]);
 
@@ -83,6 +85,7 @@ class Relationships extends ROHandler
             'from_id' => $this->ro->id,
             'to_class' => 'activity',
             'to_type' => 'program',
+            'to_title' => '*',
             'rows' => 5
         ]);
 
@@ -98,6 +101,7 @@ class Relationships extends ROHandler
         $result = RelationshipSearchService::search([
             'from_id' => $this->ro->id,
             'to_class' => 'activity',
+            'to_title' => '*',
             'not_to_type' => 'program',
             'rows' => 5
         ]);
@@ -114,6 +118,7 @@ class Relationships extends ROHandler
         $result = RelationshipSearchService::search([
             'from_id' => $this->ro->id,
             'to_class' => 'publication',
+            'to_title' => '*',
             'rows' => 5
         ]);
 
@@ -129,6 +134,7 @@ class Relationships extends ROHandler
         $result = RelationshipSearchService::search([
             'from_id' => $this->ro->id,
             'to_class' => 'service',
+            'to_title' => '*',
             'rows' => 5
         ]);
 
@@ -144,6 +150,7 @@ class Relationships extends ROHandler
         $result = RelationshipSearchService::search([
             'from_id' => $this->ro->id,
             'to_class' => 'website',
+            'to_title' => '*',
             'rows' => 5
         ]);
 
@@ -161,6 +168,7 @@ class Relationships extends ROHandler
             'from_id' => $this->ro->id,
             'to_class' => 'party',
             'not_to_type' => 'group',
+            'to_title' => '*',
             'boost_relation_type' => 'hasPrincipalInvestigator',
             'rows' => 5
         ]);
@@ -179,6 +187,7 @@ class Relationships extends ROHandler
             'from_id' => $this->ro->id,
             'to_class' => 'party',
             'to_type' => 'group',
+            'to_title' => '*',
             'rows' => 5
         ]);
 
