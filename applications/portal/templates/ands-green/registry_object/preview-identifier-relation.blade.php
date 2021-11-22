@@ -1,7 +1,7 @@
 <div class="panel panel-primary panel-content swatch-white">
 	<div class="panel-heading">
        <?php $related = $record->relations[0]; ?>
-		{{$related['relation_type']}}
+		{{$related->relation_type}}
 		@if($record->to_title)
 			{{$record->to_title}}
 		@endif
@@ -14,8 +14,8 @@
 			@endif
 		@elseif($pullback)
 			<h4>
-				@if($record->related_title)
-					{{$record->related_title}}
+				@if($record->to_title)
+					{{$record->to_title}}
 					@if($pullback['orcidRecord'])
 						<br/>
 						<a href="{{ $pullback['orcidRecord']->url }}">
