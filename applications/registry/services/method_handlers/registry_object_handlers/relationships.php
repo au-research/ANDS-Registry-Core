@@ -162,7 +162,7 @@ class Relationships extends ROHandler
             'to_class' => 'party',
             'not_to_type' => 'group',
             'to_title' => '*'
-        ], ['boost_relation_type' => 'hasPrincipalInvestigator', 'rows' => 5, 'sort' => 'to_title asc']);
+        ], ['boost_relation_type' => 'hasPrincipalInvestigator' , 'rows' => 5, 'sort' => 'score desc, to_title asc']);
 
         return $result->toArray();
 
