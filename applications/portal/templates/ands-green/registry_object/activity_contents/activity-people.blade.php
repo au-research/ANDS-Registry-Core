@@ -41,7 +41,7 @@
             @if($displayNum<$related['researchers']['total'])
                 ,&nbsp;
             @endif
-                    <?php echo " we are here"; ?>
+
         @endforeach
 
     @endforeach
