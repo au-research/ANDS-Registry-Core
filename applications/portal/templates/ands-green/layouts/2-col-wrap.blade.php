@@ -38,7 +38,7 @@
                                                     @endif
                                                     @if(is_array($ro->identifiermatch) && sizeof($ro->identifiermatch) > 0)
                                                         @if($show_dup_identifier_qtip)
-                                                        <a href="" qtip="#identifiermatch" tip_popup="{{sizeof($ro->identifiermatch)}} linked Records"><i class="fa fa-caret-down"></i></a>
+                                                        <a href="" qtip="#identifiermatch" qtip_popup="{{sizeof($ro->identifiermatch)}} linked Records"><i class="fa fa-caret-down"></i></a>
                                                         @else
                                                         <a href="" qtip="#identifiermatch"><i class="fa fa-caret-down"></i></a>
                                                         @endif
