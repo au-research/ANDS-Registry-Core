@@ -227,7 +227,11 @@ class RecordsGraphController
                 if (!$reversedEdges->isEmpty()) {
                     $edgeIDsToRemove = array_merge($edgeIDsToRemove, $reversedEdges->pluck('id')->toArray());
                     $types = collect($edge['properties']['types'])
-                        ->merge($reversedEdges->pluck('properties.types')->flatten())->unique();
+                        ->merge($reversedEdges->pluck('properties.types')->flatten())
+                        ->unique()
+                        ->map(function($type) {
+                            return RelationUtil::getReverse($type);
+                        });
                     $edge['properties']['types'] = $types->toArray();
                     $edge['multiple'] = $types->count() > 1;
                     $edge['type'] = $types->count() > 1 ? 'multiple' : $edge['type'];
