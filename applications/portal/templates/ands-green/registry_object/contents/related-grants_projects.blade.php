@@ -23,8 +23,8 @@
                 {{ isset($col['to_funder']) ? "(funded by ". $col['to_funder'] .")" : '' }}
             </li>
         @endforeach
-        @if($related['grants_projects']['count'] > 5)
-            <li><a href="{{ $related['grants_projects']['searchUrl'] }}">View all {{ $related['grants_projects']['count'] }} related grants and projects</a></li>
+        @if($related['grants_projects']['total'] > 5)
+            <li><a href="{{ $related['grants_projects']['searchUrl'] }}">View all {{ $related['grants_projects']['total'] }} related grants and projects</a></li>
         @endif
     </ul>
 </div>
