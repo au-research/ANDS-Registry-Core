@@ -4,18 +4,20 @@
         @foreach($related['organisations']['contents'] as $col)
             <?php
             $result = array();
+            $relation_type_text = "";
             foreach ($col['relations'] as $element) {
-                $relation_type_text = $element['relation_type_text'];
-                $to_identifier = $element['to_identifier'];
-                $result[$relation_type_text][$to_identifier] = $element;
+                $relation_type_text .= $element['relation_type_text'].", ";
+              //  $to_identifier = $element['to_identifier'];
+               // $result[$relation_type_text][$to_identifier] = $element;
             }
+            $relation_type_text =  trim($relation_type_text,", ")
             ?>
 
-              @foreach ($result as $rel=>$to_id)
+
 
             <li>
                 <i class="fa fa-group icon-portal"></i>
-                <small>{{ $to_id[$to_identifier]['relation_type_text'] }}</small>
+                <small>{{ $relation_type_text }}</small>
                 <a href="{{$col['to_url']}}"
                    title="{{ $col['to_title'] }}"
                    class="ro_preview"
@@ -23,7 +25,7 @@
                     {{$col['to_title']}}</a>
                 {{ isset($col['to_funder']) ? "(funded by ". $col['to_funder'] .")" : '' }}
             </li>
-                  @endforeach
+
 
 
         @endforeach

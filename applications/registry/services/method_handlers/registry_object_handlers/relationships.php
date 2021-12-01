@@ -178,9 +178,8 @@ class Relationships extends ROHandler
             'from_id' => $this->ro->id,
             'to_class' => 'party',
             'to_type' => 'group',
-            'to_title' => '*',
-            'rows' => 5
-        ]);
+            'to_title' => '*'
+        ], ['rows' => 5]);
 
         return $result->toArray();
     }
