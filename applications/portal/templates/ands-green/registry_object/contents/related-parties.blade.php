@@ -20,12 +20,12 @@
     */
     $arrayNames = array();
 
-    if(isset($related['researchers'])){
+    if(isset($related['researchers']['contents'])){
         foreach($related['researchers']['contents'] as $col){
             $arrayNames[] = $col['to_title'];
         }
     }
-    if(isset($related['organisations'])){
+    if(isset($related['organisations']['contents'])){
         foreach($related['organisations']['contents'] as $col){
             $arrayNames[] = $col['to_title'];
         }
@@ -43,7 +43,7 @@
             <?php $contributorString = trim($contributorString, "; ") ;?>
             {{$contributorString}}
 
-    @elseif (isset($related['researchers']) && sizeof($related['researchers']['contents']) > 0)
+    @elseif (isset($related['researchers']['contents']) && sizeof($related['researchers']['contents']) > 0)
         @foreach($related['researchers']['contents'] as $col)
             <?php
                     $col_json = urlencode(json_encode($col));
@@ -117,7 +117,7 @@
         @if($related['researchers']['total'] > 5)
             <a href="{{ $related['researchers']['searchUrl'] }}">View all {{ $related['researchers']['total'] }} related researchers</a>
         @endif
-    @elseif(is_array($related['organisations']) && sizeof($related['organisations']['contents']) > 0)
+    @elseif(is_array($related['organisations']['contents']) && sizeof($related['organisations']['contents']) > 0)
         @foreach($related['organisations']['contents'] as $col)
             <?php
             // we need to detect if the related party occurs more than once,

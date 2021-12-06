@@ -86,7 +86,18 @@ class Relationships extends ROHandler
             'to_title' => '*'
         ], ['rows' => 5]);
 
-        return $result->toArray();
+        $programs = $result->toArray();
+
+        foreach($programs['contents'] as $grant){
+            $result2 = RelationshipSearchService::search([
+                'from_id' => $grant["to_identifier"],
+                'to_class' => 'party',
+                'relation_type' =>  ['isFunderOf', 'isFundedBy']
+            ], ['rows' => 1]);
+            $funded_by = $result2->toArray();
+            if(isset($funded_by['contents']) && count($funded_by['contents'])>0) $grant["to_funder"] = $funded_by['contents'][0]["from_title"];
+        }
+        return $programs ;
     }
 
     /**
@@ -102,7 +113,18 @@ class Relationships extends ROHandler
             'not_to_type' => 'program'
         ], ['rows' => 5]);
 
-        return $result->toArray();
+        $grants_projects = $result->toArray();
+
+        foreach($grants_projects['contents'] as $grant){
+            $result2 = RelationshipSearchService::search([
+               'from_id' => $grant["to_identifier"],
+                'to_class' => 'party',
+                'relation_type' =>  ['isFunderOf', 'isFundedBy']
+            ], ['rows' => 1]);
+            $funded_by = $result2->toArray();
+            if(isset($funded_by['contents']) && count($funded_by['contents'])>0) $grant["to_funder"] = $funded_by['contents'][0]["from_title"];
+        }
+        return $grants_projects ;
     }
 
     /**

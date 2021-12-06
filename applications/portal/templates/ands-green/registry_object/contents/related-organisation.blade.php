@@ -4,13 +4,12 @@
         @foreach($related['organisations']['contents'] as $col)
             <?php
             $result = array();
-            $relation_type_text = "";
+            $relation_types = [];
             foreach ($col['relations'] as $element) {
-                $relation_type_text .= $element['relation_type_text'].", ";
-              //  $to_identifier = $element['to_identifier'];
-               // $result[$relation_type_text][$to_identifier] = $element;
+                $relation_types[] = $element['relation_type_text'];
             }
-            $relation_type_text =  trim($relation_type_text,", ")
+            $relation_types = array_unique($relation_types);
+            $relation_type_text =  implode($relation_types,", ");
             ?>
 
 
