@@ -38,6 +38,11 @@ class MyceliumServiceClient
         return $response->getStatusCode() === 200;
     }
 
+    public function info()
+    {
+        return $this->client->get("api/info");
+    }
+
     /**
      * Import the record into Mycelium
      *
