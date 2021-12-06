@@ -17,13 +17,24 @@ class ProcessAffectedRelationships extends ImportSubTask
     public function run_task()
     {
         $sideEffectRequestId = $this->parent()->getTaskData("SideEffectRequestId");
+
+        // requires sideEffectRequestId to continue
         if (!$sideEffectRequestId) {
             $this->log("Side Effect Request ID required for this task");
             return;
         }
+
         $this->log("Processing Side Effect QueueID: $sideEffectRequestId");
 
-        $myceliumClient = new MyceliumServiceClient(Config::get('mycelium.url'));
+        $myceliumUrl = Config::get('mycelium.url');
+        $myceliumClient = new MyceliumServiceClient($myceliumUrl);
+
+        // requires Mycelium service being online to continue
+        if (!$myceliumClient->ping()) {
+            $this->addError("Failed to contact Mycelium at $myceliumUrl. ProcessAffectedRelationships is skipped");
+            return;
+        }
+
         $myceliumClient->startProcessingSideEffectQueue($sideEffectRequestId);
 
         $requestStatus = null;

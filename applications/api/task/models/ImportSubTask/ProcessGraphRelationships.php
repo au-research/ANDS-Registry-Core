@@ -23,7 +23,14 @@ class ProcessGraphRelationships extends ImportSubTask
     public function run_task()
     {
 
-        $myceliumClient = new MyceliumServiceClient(Config::get('mycelium.url'));
+        $myceliumUrl = Config::get('mycelium.url');
+        $myceliumClient = new MyceliumServiceClient($myceliumUrl);
+
+        if (!$myceliumClient->ping()) {
+            $this->addError("Failed to contact Mycelium at $myceliumUrl. ProcessGraphRelationship is skipped");
+            return;
+        }
+
         $import_count = 0;
         $error_count = 0;
         $startTime = microtime(true);
