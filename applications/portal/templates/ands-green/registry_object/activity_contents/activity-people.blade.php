@@ -1,20 +1,20 @@
 @if (isset($related['researchers']) && sizeof($related['researchers']['contents']) > 0)
     <?php
         // preparation
-        $researchers_array = array();
-        foreach ($related['researchers']['contents'] as $col) {
-            $col['relations'][0]['relation_type_text'] = str_replace("Participant, ","", $col['relations'][0]['relation_type_text']);
-            $col['relations'][0]['relation_type_text'] = str_replace(", Participant","", $col['relations'][0]['relation_type_text']);
-            $researchers_array[$col['relations'][0]['relation_type_text']][] = $col;
-        }
+      //  $researchers_array = array();
+      //  foreach ($related['researchers']['contents'] as $col) {
+      //      $col['relations'][0]['relation_type_text'] = str_replace("Participant, ","", $col['relations'][0]['relation_type_text']);
+       //     $col['relations'][0]['relation_type_text'] = str_replace(", Participant","", $col['relations'][0]['relation_type_text']);
+       //     $researchers_array[$col['relations'][0]['relation_type_text']][] = $col;
+      // }
        // var_dump($researchers_array );
         $displayNum = 0;
     ?>
 <p>
     <strong>Researchers: </strong>
-    @foreach($researchers_array as $relation=>$researchers)
 
-        @foreach($researchers as $key=>$col)
+
+        @foreach($related['researchers']['contents'] as $col)
 
             <?php $displayNum++; ?>
             @if($col["to_identifier_type"]=="ro:id")
@@ -35,16 +35,16 @@
                 </a>
             @endif
 
-            @if($relation!="Participant")
-                ({{ $relation }})
+            @if($col['relations'][0]['relation_type_text']!="Participant" && $col['relations'][0]['relation_type_text']!="")
+                ({{ $col['relations'][0]['relation_type_text']}})
             @endif
-            @if($displayNum<$related['researchers']['total'])
+            @if($displayNum<$related['researchers']['total'] && $displayNum < 5)
                 ,&nbsp;
             @endif
 
         @endforeach
 
-    @endforeach
+
     @if($related['researchers']['total'] > 5)
         <br>
         <a href="{{ $related['researchers']['searchUrl'] }}">View all {{ $related['researchers']['total'] }} related researchers</a>

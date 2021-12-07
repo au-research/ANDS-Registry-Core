@@ -20,6 +20,7 @@
                 <a href="{{$col['to_url']}}"
                    title="{{ $col['to_title'] }}"
                    class="ro_preview"
+                   tip="{{ $col['to_title'] }}"
                    ro_id="{{ $col['to_identifier'] }}">
                     {{$col['to_title']}}</a>
                 {{ isset($col['to_funder']) ? "(funded by ". $col['to_funder'] .")" : '' }}
