@@ -20,12 +20,12 @@
     */
     $arrayNames = array();
 
-    if(isset($related['researchers']['contents'])){
+    if(isset($related['researchers'])){
         foreach($related['researchers']['contents'] as $col){
             $arrayNames[] = $col['to_title'];
         }
     }
-    if(isset($related['organisations']['contents'])){
+    if(isset($related['organisations'])){
         foreach($related['organisations']['contents'] as $col){
             $arrayNames[] = $col['to_title'];
         }
@@ -46,7 +46,15 @@
     @elseif (isset($related['researchers']['contents']) && sizeof($related['researchers']['contents']) > 0)
         @foreach($related['researchers']['contents'] as $col)
             <?php
-                    $col_json = urlencode(json_encode($col));
+            $col_json = urlencode(json_encode($col));
+            $result = array();
+            $relation_types = [];
+            $relation_url = [];
+            foreach ($col['relations'] as $element) {
+                $relation_types[] = $element['relation_type_text'];
+            }
+            $relation_types = array_unique($relation_types);
+            $relation_type_text =  implode($relation_types,", ");
              // we need to detect if the related party occurs more than once,
             // and if so let's check if one of those occurrences has the same group as the current object's
             ?>
@@ -110,7 +118,7 @@
                        identifier_relation_id="{{$col_json}}">
                         {{$col['to_title']}}
                   @endif
-                <small>({{ $col['relations'][0]['relation_type_text'] }})</small>
+                <small>({{  $relation_type_text }})</small>
             </a>
             @endif
         @endforeach
@@ -120,6 +128,14 @@
     @elseif(is_array($related['organisations']['contents']) && sizeof($related['organisations']['contents']) > 0)
         @foreach($related['organisations']['contents'] as $col)
             <?php
+            $result = array();
+            $relation_types = [];
+            $relation_url = [];
+            foreach ($col['relations'] as $element) {
+                $relation_types[] = $element['relation_type_text'];
+            }
+            $relation_types = array_unique($relation_types);
+            $relation_type_text =  implode($relation_types,", ");
             // we need to detect if the related party occurs more than once,
             // and if so let's check if one of those occurrences has the same group as the current object's
             ?>
@@ -137,7 +153,7 @@
                            ro_id="{{$col2['to_identifier']}}"
                            style="margin-right:5px;">
                             {{ $col2['to_title'] }}
-                            <small>({{ $col2['relations'][0]['relation_type_text'] }})</small>
+                            <small>({{ $relation_type_text  }})</small>
                         </a>
                         <?php
                     }
@@ -161,7 +177,7 @@
                ro_id="{{$col['to_identifier']}}"
                style="margin-right:5px;">
                  {{ $col['to_title'] }}
-                <small>({{ $col['relations'][0]['relation_type_text'] }})</small>
+                <small>({{ $relation_type_text  }})</small>
             </a>
             @endif
         @endforeach

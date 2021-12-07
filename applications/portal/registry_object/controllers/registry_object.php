@@ -502,9 +502,27 @@ class Registry_object extends MX_Controller
             $identifiers_div = "";
             $identifier_count = 0;
             $connections_preview_div = "";
+            $description = "";
+            $notes ="";
+
+            if(isset($input_array->notes)){
+                $notes = "<p>Notes: ".$input_array->notes."</p>";
+                }
             foreach ($input_array->relations as $i) {
+                $identifier=$i->to_identifier;
                 // todo - implement resolvable links for the identifier if possible
-               $identifiers_div .= $i->to_identifier;
+                if($input_array->to_url){
+                    $identifier = '<a href="'.$input_array->to_url.'">'.$i->to_identifier."</a></br>";
+                }
+
+                if($i->relation_description){
+                    $description = "<p>".$i->relation_description."</p>";
+                }
+                $relation_url ="";
+                if($i->relation_url){
+                    $relation_url = '<a href="'.$i->relation_url.'">'.$i->relation_url."</a>";
+                }
+               $identifiers_div .= $input_array->to_identifier_type.": ". $identifier.$description.$notes.$relation_url;
                $identifier_count++;
             }
             $identifiers_div = "<h5>Identifier" . ($identifier_count > 1 ? 's' : '') . ": </h5>" . $identifiers_div;
@@ -514,7 +532,10 @@ class Registry_object extends MX_Controller
          //   }
             $imgUrl = asset_url('img/' . $input_array->to_type . '.png', 'base');
             $classImg = '<img class="icon-heading" src="' . $imgUrl . '" alt="' . $input_array->to_type . '" style="width:24px; float:right;">';
-            $connections_preview_div = '<div class="previewItemHeader">' . $input_array->relations[0]->relation_type_text . '</div>' . $classImg . '<h4>' . $input_array->to_title . '</h4><div class="post">' . $identifiers_div . "<br/>" . $connections_preview_div . '</div>';
+            $connections_preview_div = '<div class="previewItemHeader">' .
+                $input_array->relations[0]->relation_type_text . '</div>' . $classImg . '<h4>' .
+                $input_array->to_title . '</h4><div class="post">' .
+                $identifiers_div . "<br/>" . $connections_preview_div . '</div>';
             $input_array->connections_preview_div = $connections_preview_div;
 
             $fr= $input_array;

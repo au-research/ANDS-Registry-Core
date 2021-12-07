@@ -3,9 +3,18 @@
     <ul class="list-unstyled">
         <?php //dd($related['publications']['docs']); ?>
         @foreach($related['publications']['contents'] as $col)
+                <?php
+                $result = array();
+                $relation_types = [];
+                foreach ($col['relations'] as $element) {
+                    $relation_types[] = $element['relation_type_text'];
+                }
+                $relation_types = array_unique($relation_types);
+                $relation_type_text =  implode($relation_types,", ");
+                ?>
                 <li>
                 <i class="fa fa-book icon-portal"></i>
-                <small>{{ $col['relations'][0]['relation_type_text'] }}</small>
+                <small>{{ $relation_type_text  }}</small>
 
                 {{--DOI relatedInfo identifier is resolvable--}}
                     @if($col['to_identifier_type'] == 'doi')
@@ -33,10 +42,10 @@
 
 
                 {{--Notes display for this relation--}}
-                @if(isset($col['relation_notes']))
-                @foreach ($col['relation_notes'] as $note)
-                   <p> {{ $note }} </p>
-                @endforeach
+                @if(isset($col['to_notes']))
+
+                   <p> {{ $col['to_notes']}} </p>
+
                 @endif
 
             </li>
