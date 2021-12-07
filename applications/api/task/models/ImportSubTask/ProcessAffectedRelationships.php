@@ -16,15 +16,15 @@ class ProcessAffectedRelationships extends ImportSubTask
 
     public function run_task()
     {
-        $sideEffectRequestId = $this->parent()->getTaskData("SideEffectRequestId");
+        $myceliumRequestId = $this->parent()->getTaskData("myceliumRequestId");
 
         // requires sideEffectRequestId to continue
-        if (!$sideEffectRequestId) {
-            $this->log("Side Effect Request ID required for this task");
+        if (!$myceliumRequestId) {
+            $this->log("myceliumRequestId required for this task");
             return;
         }
 
-        $this->log("Processing Side Effect QueueID: $sideEffectRequestId");
+        $this->log("Processing RequestID: $myceliumRequestId");
 
         $myceliumUrl = Config::get('mycelium.url');
         $myceliumClient = new MyceliumServiceClient($myceliumUrl);
@@ -35,7 +35,7 @@ class ProcessAffectedRelationships extends ImportSubTask
             return;
         }
 
-        $myceliumClient->startProcessingSideEffectQueue($sideEffectRequestId);
+        $myceliumClient->startProcessingSideEffectQueue($myceliumRequestId);
 
         $requestStatus = null;
         $startTime = microtime(true);
@@ -46,13 +46,13 @@ class ProcessAffectedRelationships extends ImportSubTask
         while ($requestStatus != "COMPLETED" && $elapsed < 300) {
             $now = microtime(true);
             $elapsed = $now - $startTime;
-            $result = $myceliumClient->getRequestById($sideEffectRequestId);
+            $result = $myceliumClient->getRequestById($myceliumRequestId);
             $request = json_decode($result->getBody()->getContents(), true);
             $requestStatus = $request['status'];
             $this->log("Request Status is now $requestStatus, elapsed $elapsed");
             sleep(1);
         }
 
-        $this->log("Processing Side Effect Queue Finished");
+        $this->log("Processing Affected Relationships Finished");
     }
 }
