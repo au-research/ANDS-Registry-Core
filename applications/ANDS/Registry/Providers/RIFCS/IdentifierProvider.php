@@ -297,6 +297,7 @@ class IdentifierProvider implements RIFCSProvider
                 break;
             case 'url':
             case 'uri':
+                // url and uri should have been stripped off ther http protocol, but some legacy Identifier may still have them
                 $identifiers['href'] = "https://" . preg_replace("(^https?://)", "", $identifier );
                 $identifiers['display_text'] = strtoupper($type);
                 $identifiers['hover_text'] = 'Resolve this URI';
@@ -409,9 +410,12 @@ class IdentifierProvider implements RIFCSProvider
             case 'uri':
             case 'url':
                 // RDA-141  remove http or https protocol for all other identifiers
+                // changed at 08/12/2021
+                // RDA-584 remove them only for uri and url instead
                 return preg_replace("(^https?://)", "", $identifier );
                 break;
             default:
+                // leave all other Identifier intact
                 return $identifier;
         }
 
