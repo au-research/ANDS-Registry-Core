@@ -124,14 +124,13 @@ class IdentifierProviderTest extends \RegistryTestClass
     }
 
     /** @test * */
-    public function it_should_remove_protocol_from_all_other()
+    public function it_should_remove_protocol_from_uri_and_url()
     {
         $tests = [
             ['value' => 'http://geoserver-123.aodn.org.au/geoserver/ncwms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities', 'type' => 'url', 'expectedValue' => 'geoserver-123.aodn.org.au/geoserver/ncwms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities', 'expectedType' => 'url'],
             ['value' => 'https://geoserver.imas.utas.edu.au/geoserver/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities', 'type' => 'uri', 'expectedValue' => 'geoserver.imas.utas.edu.au/geoserver/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities', 'expectedType' => 'uri'],
-            ['value' => 'http://google.com', 'type' => 'local', 'expectedValue' => 'google.com', 'expectedType' => 'local'],
-            ['value' => 'fish.org', 'type' => 'global', 'expectedValue' => 'fish.org', 'expectedType' => 'global'],
-            ['value' => 'https://fish.org?url=http://google.com', 'type' => 'noidea', 'expectedValue' => 'fish.org?url=http://google.com', 'expectedType' => 'noidea'],
+            ['value' => 'http://google.com', 'type' => 'uri', 'expectedValue' => 'google.com', 'expectedType' => 'uri'],
+            ['value' => 'http://fish.org', 'type' => 'url', 'expectedValue' => 'fish.org', 'expectedType' => 'url'],
             ['value' => 'fish.org?url="http://google.com', 'type' => 'uri', 'expectedValue' => 'fish.org?url="http://google.com', 'expectedType' => 'uri']
         ];
         foreach($tests as $test){
@@ -141,5 +140,36 @@ class IdentifierProviderTest extends \RegistryTestClass
         }
     }
 
-
+    /** @test * */
+    public function it_should_leave_all_other()
+    {
+        $tests = [
+            ['value' => 'http://google.com', 'type' => 'local', 'expectedValue' => 'http://google.com', 'expectedType' => 'local'],
+            ['value' => 'https://fish.org', 'type' => 'global', 'expectedValue' => 'https://fish.org', 'expectedType' => 'global'],
+            ['value' => 'https://fish.org?url=http://google.com', 'type' => 'noidea', 'expectedValue' => 'https://fish.org?url=http://google.com', 'expectedType' => 'noidea'],
+        ];
+        foreach($tests as $test){
+            $identifier = IdentifierProvider::getNormalisedIdentifier($test["value"], $test["type"]);
+            $this->assertEquals($test["expectedValue"], $identifier["value"]);
+            $this->assertEquals($test["expectedType"], $identifier["type"]);
+        }
     }
+
+
+    /** @test **/
+    public function it_should_provide_a_resolvable_url_for_uris()
+    {
+        $tests = [
+            ['value' => 'fish.org', 'type' => 'url'],
+            ['value' => 'https://fish.org', 'type' => 'url'],
+            ['value' => 'http://fish.org', 'type' => 'uri'],
+        ];
+        foreach($tests as $test){
+            $normalised = IdentifierProvider::getNormalisedIdentifier($test["value"], $test["type"]);
+            $identifier = IdentifierProvider::format($normalised["value"], $normalised["type"]);
+            //var_dump($identifier);
+            $this->assertEquals("https://fish.org", $identifier["href"]);
+        }
+    }
+
+}

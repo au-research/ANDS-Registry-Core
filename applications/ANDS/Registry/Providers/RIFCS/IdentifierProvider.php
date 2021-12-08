@@ -295,8 +295,9 @@ class IdentifierProvider implements RIFCSProvider
                 $identifiers['display_text'] = 'Scopus';
                 return $identifiers;
                 break;
+            case 'url':
             case 'uri':
-                $identifiers['href'] = $identifier;
+                $identifiers['href'] = "https://" . preg_replace("(^https?://)", "", $identifier );
                 $identifiers['display_text'] = strtoupper($type);
                 $identifiers['hover_text'] = 'Resolve this URI';
                 $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/external_link.png alt="External Link"/>';
@@ -405,9 +406,13 @@ class IdentifierProvider implements RIFCSProvider
                 }
                 return $identifier;
                 break;
-            default:
+            case 'uri':
+            case 'url':
                 // RDA-141  remove http or https protocol for all other identifiers
                 return preg_replace("(^https?://)", "", $identifier );
+                break;
+            default:
+                return $identifier;
         }
 
     }
