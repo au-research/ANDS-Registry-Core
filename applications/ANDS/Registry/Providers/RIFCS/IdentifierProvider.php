@@ -213,8 +213,8 @@ class IdentifierProvider implements RIFCSProvider
                 $identifiers['hover_text'] = 'Resolve this ORCID';
                 return  $identifiers;
                 break;
-            case 'NLA':
-            case 'AU-ANL:PEAU':
+            case 'nla':
+            case 'au-anl:peau':
                 if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
                 elseif(!strpos($identifier,"nla.gov.au/")) $identifier_href ="http://nla.gov.au/".$identifier;
                 else $identifier_href = "http://nla.gov.au/".substr($identifier,strpos($identifier,"nla.gov.au/")+11);
@@ -286,7 +286,8 @@ class IdentifierProvider implements RIFCSProvider
                 $identifiers['display_text'] = 'GRID';
                 return $identifiers;
                 break;
-            case 'scopusID':
+            case 'scopus':
+            case 'scopusid':
                 if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
                 if(isset($identifier_href)) {
                     $identifiers['href'] = $identifier_href;

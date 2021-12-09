@@ -389,6 +389,12 @@ jQuery(document).ready(function( $ ) {
             $('.morewebsites').toggle();
             $('.showLessWebsites').toggle();
         });
+        $('.showPublications').click(function (event) {
+            event.stopPropagation();
+            $('.showMorePublications').toggle();
+            $('.morepublications').toggle();
+            $('.showLessPublications').toggle();
+        });
     });
   // Requires jQuery!
   jQuery.ajax({
