@@ -578,16 +578,20 @@ function getIdentifierURL($type, $identifier) {
             if (strpos($identifier, 'http://') === false && strpos($identifier, 'https://') === false) {
                 $url = 'https://www.isni.org/' . $identifier;
             }
+            elseif(strpos($identifier, 'http://') === 0 || strpos($identifier, 'https://') === 0){
+                $url = $identifier;
+            }
             break;
         case 'scopusID':
+        case 'scopus':
         case 'grid':
-            if (!(strpos($identifier, 'http://') === false) && !(strpos($identifier, 'https://') === false)) {
+            if (strpos($identifier, 'http://') === 0 || strpos($identifier, 'https://') === 0) {
                 $url = $identifier;
             }
             break;
         case 'igsn':
-            if (str_replace('http://', '', str_replace('https://', '', $identifier)) != $identifier) {
-                $url= $identifier;
+            if (strpos($identifier, 'http://') === 0 || strpos($identifier, 'https://') === 0) {
+                $url = $identifier;
             }
             elseif(strpos($identifier,"igsn.org/")<1) {
                 $url = "http://igsn.org/" . $identifier;
