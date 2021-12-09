@@ -308,6 +308,7 @@ function getResolvedLinkForIdentifier($type, $value)
 			return 'DOI: <a class="identifier" href="' . $urlValue . '" title="Resolve this DOI">' . $value . '<img class="identifier_logo" src="' . asset_url('assets/core/images/icons/doi_icon.png',
 				'base_path') . '" alt="DOI icon"></a><br/>';
 			break;
+        case 'url':
 		case 'uri':
 			if (strpos($value, 'http://') === false && strpos($value, 'https://') === false) {
 				$urlValue = 'http://' . $value;

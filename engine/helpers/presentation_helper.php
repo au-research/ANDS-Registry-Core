@@ -551,7 +551,12 @@ function getIdentifierURL($type, $identifier) {
         case 'ark':
         case "uri":
         case "url":
-            $url = $identifier;
+            if (strpos($identifier, 'http://') === false && strpos($identifier, 'https://') === false) {
+                $url = 'http://' . $identifier;
+            }
+            else{
+                $url = $identifier;
+            }
             break;
         case 'purl':
             if(strpos($identifier,"url.org/")<1) {
