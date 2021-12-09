@@ -1,6 +1,8 @@
 <div class="related-organisations">
     <h4>Related Organisations</h4>
     <ul class="list-unstyled">
+        <? $relation_to_title = [];
+        $dupes = 0;?>
         @foreach($related['organisations']['contents'] as $col)
             <?php
             $result = array();
@@ -10,10 +12,13 @@
             }
             $relation_types = array_unique($relation_types);
             $relation_type_text =  implode($relation_types,", ");
+            if(!isset($col['to_url'])){
+                $col['to_url']="";
+            }
+            $relation_to_title[$col['to_title']][] = $col['to_title'];
+            $dupes = count($relation_to_title[$col['to_title']]);
             ?>
-
-
-
+            @if($dupes<2)
             <li>
                 <i class="fa fa-group icon-portal"></i>
                 <small>{{ $relation_type_text }}</small>
@@ -25,7 +30,7 @@
                     {{$col['to_title']}}</a>
                 {{ isset($col['to_funder']) ? "(funded by ". $col['to_funder'] .")" : '' }}
             </li>
-
+            @endif
 
 
         @endforeach

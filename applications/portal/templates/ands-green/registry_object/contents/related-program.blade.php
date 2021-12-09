@@ -1,6 +1,8 @@
 <div class="related-programs">
     <h4>Related Program</h4>
     <ul class="list-unstyled">
+        <? $relation_to_title = [];
+        $dupes = 0;?>
         @foreach($related['programs']['contents'] as $col)
 
             <?php
@@ -11,7 +13,13 @@
             }
             $relation_types = array_unique($relation_types);
             $relation_type_text =  implode($relation_types,", ");
+            if(!isset($col['to_url'])){
+                $col['to_url']="";
+            }
+            $relation_to_title[$col['to_title'].$relation_type_text][] = $col['to_title'];
+            $dupes = count($relation_to_title[$col['to_title'].$relation_type_text]);
             ?>
+            @if($dupes<2)
             <li>
                 <i class="fa fa-flask icon-portal"></i>
                 <small>{{ $relation_type_text }}</small>
@@ -35,6 +43,7 @@
 
                 {{ isset($col['to_funder']) ? "(funded by ". $col['to_funder'] .")" : '' }}
             </li>
+            @endif
         @endforeach
         @if($related['programs']['total'] > 5)
             <li><a href="{{ $related['programs']['searchUrl'] }}">View all {{ $related['programs']['total'] }} related programs</a></li>
