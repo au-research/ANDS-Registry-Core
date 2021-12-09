@@ -58,53 +58,62 @@
              // we need to detect if the related party occurs more than once,
             // and if so let's check if one of those occurrences has the same group as the current object's
             ?>
-            <a  style="margin-right:5px;"
+
             @if ($multi[$col['to_title']]>1 AND $multi[$col['to_title']] != 'found')
                 <?php
                 $same_group_found = false;
+
                 //now loop through all the organisations to get the one from the same group
                 // if it exists, else just out put the first one
                 foreach($related['researchers']['contents'] as $col2){
-                if($col2['to_title'] == $col['to_title'] && isset($col2['to_group']) && $col2['to_group'] == $col['from_group']){
-                $same_group_found = true;
-                ?>
+                    if($col2['to_title'] == $col['to_title'] && isset($col2['to_group']) && $col2['to_group'] == $col['from_group']){
+                        $same_group_found = true;?>
+                <a  style="margin-right:5px;"
+                        @if($col["to_identifier_type"]=="ro:id")
+                             href="{{$col['to_url']}}"
+                               title="{{ $col['to_title'] }}"
+                               class="ro_preview"
+                               ro_id="{{$col['to_identifier']}}">
+                                {{$col['to_title']}}
+                        @elseif($col["to_identifier_type"]!="ro:id")
+                            href="false"
+                            title="{{ $col['to_title'] }}"
+                            class="ro_preview"
+                            identifier_relation_id="{{$col_json}}">
+                            {{$col['to_title']}}
+                        @endif
+                <small>({{  $relation_type_text }})</small>
+            </a>
+            <?php
 
-                @if($col["to_identifier_type"]=="ro:id")
-                     href="{{$col['to_url']}}"
-                       title="{{ $col['to_title'] }}"
-                       class="ro_preview"
-                       ro_id="{{$col['to_identifier']}}">
+                    $multi[$col['to_title']] = 'found';
+                    }
+                }
+                    //if we have relationships to duplicate party but we can't find one from the same group, then just output the first one
+                    if(!$same_group_found){ ?>
+                <a  style="margin-right:5px;"
+                    @if($col["to_identifier_type"]=="ro:id")
+                         href="{{$col['to_url']}}"
+                           title="{{ $col['to_title'] }}"
+                           class="ro_preview"
+                           ro_id="{{$col['to_identifier']}}">
+                            {{$col['to_title']}}
+                    @elseif($col["to_identifier_type"]!="ro:id")
+                        href="false"
+                        title="{{ $col['to_title'] }}"
+                        class="ro_preview"
+                        identifier_relation_id="{{$col_json}}">
                         {{$col['to_title']}}
-                @elseif($col["to_identifier_type"]!="ro:id")
-                    href="false"
-                    title="{{ $col['to_title'] }}"
-                    class="ro_preview"
-                    identifier_relation_id="{{$col_json}}">
-                    {{$col['to_title']}}
-                @endif
-                <?php
-                }
-                }
-                //if we have relationships to duplicate party but we can't find one from the same group, then just output the first one
-                if(!$same_group_found){ ?>
-                @if($col["to_identifier_type"]=="ro:id")
-                     href="{{$col['to_url']}}"
-                       title="{{ $col['to_title'] }}"
-                       class="ro_preview"
-                       ro_id="{{$col['to_identifier']}}">
-                        {{$col['to_title']}}
-                @elseif($col["to_identifier_type"]!="ro:id")
-                    href="false"
-                    title="{{ $col['to_title'] }}"
-                    class="ro_preview"
-                    identifier_relation_id="{{$col_json}}">
-                    {{$col['to_title']}}
-                @endif
-                <?php
-                }
+                    @endif
+
+                <small>({{  $relation_type_text }})</small>
+            </a>
+            <?php
+                    }
                 $multi[$col['to_title']] = 'found';
                 ?>
             @elseif($multi[$col['to_title']] != 'found')
+                <a  style="margin-right:5px;"
                 @if($col["to_identifier_type"]=="ro:id")
                      href="{{$col['to_url']}}"
                        title="{{ $col['to_title'] }}"
@@ -117,8 +126,9 @@
                        class="ro_preview"
                        identifier_relation_id="{{$col_json}}">
                         {{$col['to_title']}}
-                  @endif
-                <small>({{  $relation_type_text }})</small>
+                    @endif
+
+                    <small>({{  $relation_type_text }})</small>
             </a>
             @endif
         @endforeach
