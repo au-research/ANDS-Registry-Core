@@ -552,7 +552,7 @@ function getIdentifierURL($type, $identifier) {
         case "uri":
         case "url":
             if (strpos($identifier, 'http://') === false && strpos($identifier, 'https://') === false) {
-                $url = 'http://' . $identifier;
+                $url = 'https://' . $identifier;
             }
             else{
                 $url = $identifier;
