@@ -531,21 +531,24 @@ function getIdentifierURL($type, $identifier) {
     $url = '';
     switch ($type) {
         case 'doi':
-            if(!strpos($identifier,"doi.org/")) {
-                $url ="https://doi.org/".$identifier;
+            if (!strpos($identifier, "doi.org/")) {
+                $url = "https://doi.org/" . $identifier;
             } else {
-                $url = "https://doi.org/".substr($identifier,strpos($identifier,"doi.org/")+8);
+                $url = "https://doi.org/" . substr($identifier, strpos($identifier, "doi.org/") + 8);
             }
             break;
         case 'orcid':
-            if(!strpos($identifier,"orcid.org/")) $url ="http://orcid.org/".$identifier;
-            else $url = "http://orcid.org/".substr($identifier,strpos($identifier,"orcid.org/")+10);
+            if (!strpos($identifier, "orcid.org/")) $url = "http://orcid.org/" . $identifier;
+            else $url = "http://orcid.org/" . substr($identifier, strpos($identifier, "orcid.org/") + 10);
             break;
+        case 'raid':
         case 'handle':
-            if(strpos($identifier,"dl:")>0) {
-                $url ="http://hdl.handle.net/".substr($identifier,strpos($identifier,"hdl:")+4);
-            } else if(strpos($identifier,"dl.handle.net/")>0) {
-                $url ="http://hdl.handle.net/".substr($identifier,strpos($identifier,"hdl.handle.net/")+15);
+            if (strpos($identifier, "dl:") > 0) {
+                $url = "https://hdl.handle.net/" . substr($identifier, strpos($identifier, "hdl:") + 4);
+            } else if (strpos($identifier, "dl.handle.net/") > 0) {
+                $url = "https://hdl.handle.net/" . substr($identifier, strpos($identifier, "hdl.handle.net/") + 15);
+            } else {
+                $url = 'https://hdl.handle.net/' . $identifier;
             }
             break;
         case 'ark':
@@ -553,23 +556,44 @@ function getIdentifierURL($type, $identifier) {
         case "url":
             if (strpos($identifier, 'http://') === false && strpos($identifier, 'https://') === false) {
                 $url = 'https://' . $identifier;
-            }
-            else{
+            } else {
                 $url = $identifier;
             }
             break;
         case 'purl':
-            if(strpos($identifier,"url.org/")<1) {
-                $url ="http://purl.org/".$identifier;
+            if (strpos($identifier, "url.org/") < 1) {
+                $url = "http://purl.org/" . $identifier;
             } else {
-                $url = "http://purl.org/".substr($identifier,strpos($identifier,"purl.org/")+9);
+                $url = "http://purl.org/" . substr($identifier, strpos($identifier, "purl.org/") + 9);
             }
             break;
         case 'AU-ANL:PEAU':
-            if(!strpos($identifier,"nla.gov.au/")) {
-                $url ="http://nla.gov.au/".$identifier;
+            if (!strpos($identifier, "nla.gov.au/")) {
+                $url = "http://nla.gov.au/" . $identifier;
             } else {
-                $url = "http://nla.gov.au/".substr($identifier,strpos($identifier,"nla.gov.au/")+11);
+                $url = "http://nla.gov.au/" . substr($identifier, strpos($identifier, "nla.gov.au/") + 11);
+            }
+            break;
+        case 'isni':
+            if (strpos($identifier, 'http://') === false && strpos($identifier, 'https://') === false) {
+                $url = 'https://www.isni.org/' . $identifier;
+            }
+            break;
+        case 'scopusID':
+        case 'grid':
+            if (!(strpos($identifier, 'http://') === false) && !(strpos($identifier, 'https://') === false)) {
+                $url = $identifier;
+            }
+            break;
+        case 'igsn':
+            if (str_replace('http://', '', str_replace('https://', '', $identifier)) != $identifier) {
+                $url= $identifier;
+            }
+            elseif(strpos($identifier,"igsn.org/")<1) {
+                $url = "http://igsn.org/" . $identifier;
+            }
+            else {
+                $url = "http://igsn.org/".substr($identifier,strpos($identifier,"igsn.org/")+9);
             }
             break;
     }
