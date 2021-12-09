@@ -176,7 +176,7 @@ class IdentifierProvider implements RIFCSProvider
      */
     public static function format($identifier, $type)
     {
-        switch($type)
+        switch(strtolower($type))
         {
             case 'doi':
                 //if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier."mystuff";
@@ -213,6 +213,7 @@ class IdentifierProvider implements RIFCSProvider
                 $identifiers['hover_text'] = 'Resolve this ORCID';
                 return  $identifiers;
                 break;
+            case 'NLA':
             case 'AU-ANL:PEAU':
                 if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
                 elseif(!strpos($identifier,"nla.gov.au/")) $identifier_href ="http://nla.gov.au/".$identifier;
