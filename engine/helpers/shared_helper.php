@@ -265,6 +265,10 @@ function getResolvedLinkForIdentifier($type, $value)
 {
 
 	$urlValue = $value;
+    if(strpos($value, 'http://') === 0 || strpos($value, 'https://') === 0){
+        $urlValue = $value;
+    }
+
 	switch ($type) {
 		case 'handle':
 			if (strpos($value, 'http://hdl.handle.net/') === false) {
@@ -295,7 +299,7 @@ function getResolvedLinkForIdentifier($type, $value)
                 'base_path') . '" alt="IGSN icon"></a><br/>';
             break;
         case 'isni':
-            if (strpos($value, 'http://') === false && strpos($value, 'https://') === false) {
+            if (strpos($value, 'http://www.isni.org/') === false && strpos($value, 'https://www.isni.org/') === false) {
                 $urlValue = 'https://www.isni.org/' . $value;
             }
             return 'ISNI : <a class="identifier" href="' . $urlValue . '" title="Resolve this purl identifier">' . $value . '<img class="identifier_logo" src="' . asset_url('assets/core/images/icons/external_link.png',
@@ -327,6 +331,7 @@ function getResolvedLinkForIdentifier($type, $value)
                     'base_path') . '" alt="URI icon"></a><br/>';
             }
             break;
+        case 'scopus':
         case 'scopusID':
             if (!(strpos($value, 'http://') === false) && !(strpos($value, 'https://') === false)) {
                 $urlValue = $value;

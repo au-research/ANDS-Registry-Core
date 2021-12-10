@@ -390,7 +390,14 @@ class IdentifierProvider implements RIFCSProvider
             case "AU-ANL:PEAU":
                 if(str_contains($identifierValue, "nla.party-")){
                     $identifier["value"] = substr($identifierValue, strpos($identifierValue, "nla.party-"));
-                }else{
+                }
+                if(str_contains($identifierValue, "party-")){
+                    $identifier["value"] = "nla.party-" . substr($identifierValue, strpos($identifierValue, "party-") + 6);
+                }
+                elseif(strpos($identifierValue, 'http://') === 0 || strpos($identifierValue, 'https://') === 0){
+                    $identifier["value"] = $identifierValue;
+                }
+                else{
                     $identifier["value"] = "nla.party-".$identifierValue;
                 }
                 return $identifier;

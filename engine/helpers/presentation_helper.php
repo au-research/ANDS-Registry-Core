@@ -529,6 +529,9 @@ function mb_ucwords($str)
 
 function getIdentifierURL($type, $identifier) {
     $url = '';
+    if(strpos($identifier, 'http://') === 0 || strpos($identifier, 'https://') === 0){
+        return $identifier;
+    }
     switch ($type) {
         case 'doi':
             if (!strpos($identifier, "doi.org/")) {
@@ -554,11 +557,7 @@ function getIdentifierURL($type, $identifier) {
         case 'ark':
         case "uri":
         case "url":
-            if (strpos($identifier, 'http://') === false && strpos($identifier, 'https://') === false) {
-                $url = 'https://' . $identifier;
-            } else {
-                $url = $identifier;
-            }
+            $url = 'https://' . $identifier;
             break;
         case 'purl':
             if (strpos($identifier, "url.org/") < 1) {
@@ -575,25 +574,12 @@ function getIdentifierURL($type, $identifier) {
             }
             break;
         case 'isni':
-            if (strpos($identifier, 'http://') === false && strpos($identifier, 'https://') === false) {
+            if (strpos($identifier, 'http://www.isni.org/') === false && strpos($identifier, 'https://www.isni.org/') === false) {
                 $url = 'https://www.isni.org/' . $identifier;
-            }
-            elseif(strpos($identifier, 'http://') === 0 || strpos($identifier, 'https://') === 0){
-                $url = $identifier;
-            }
-            break;
-        case 'scopusID':
-        case 'scopus':
-        case 'grid':
-            if (strpos($identifier, 'http://') === 0 || strpos($identifier, 'https://') === 0) {
-                $url = $identifier;
             }
             break;
         case 'igsn':
-            if (strpos($identifier, 'http://') === 0 || strpos($identifier, 'https://') === 0) {
-                $url = $identifier;
-            }
-            elseif(strpos($identifier,"igsn.org/")<1) {
+            if(strpos($identifier,"igsn.org/")<1) {
                 $url = "http://igsn.org/" . $identifier;
             }
             else {

@@ -95,7 +95,8 @@ class IdentifierProviderTest extends \RegistryTestClass
             ['value' => 'http://nla.gov.au/nla.party-1692395', 'type' => 'nla.party', 'expectedValue' => 'nla.party-1692395', 'expectedType' => 'AU-ANL:PEAU'],
             ['value' => 'nla.party-1692395', 'type' => 'AU-ANL:PEAU', 'expectedValue' => 'nla.party-1692395', 'expectedType' => 'AU-ANL:PEAU'],
             ['value' => 'nla.party-1692395', 'type' => 'AU-QGU', 'expectedValue' => 'nla.party-1692395', 'expectedType' => 'AU-ANL:PEAU'],
-            ['value' => '1692395', 'type' => 'NLA.PARTY', 'expectedValue' => 'nla.party-1692395', 'expectedType' => 'AU-ANL:PEAU']
+            ['value' => '1692395', 'type' => 'NLA.PARTY', 'expectedValue' => 'nla.party-1692395', 'expectedType' => 'AU-ANL:PEAU'],
+            ['value' => 'AU-ANL:PEAU.party-1904955ac1', 'type' => 'AU-ANL:PEAU', 'expectedValue' => 'nla.party-1904955ac1', 'expectedType' => 'AU-ANL:PEAU'],
         ];
         foreach($tests as $test){
             $identifier = IdentifierProvider::getNormalisedIdentifier($test["value"], $test["type"]);
@@ -171,5 +172,25 @@ class IdentifierProviderTest extends \RegistryTestClass
             $this->assertEquals("https://fish.org", $identifier["href"]);
         }
     }
+
+    /** @test * */
+    public function it_should_handle_special_cases()
+    {
+        /**
+         * RDA-584 some special case Identifiers found during testing
+         */
+        $tests = [
+            ['value' => 'http://www.MyorcidResolver.com.au77ac1', 'type' => 'orcid', 'expectedValue' => 'http://www.MyorcidResolver.com.au77ac1', 'expectedType' => 'orcid'],
+            ['value' => 'http://MyAU-ANL:PEAUResolver.com.au88ac1', 'type' => 'AU-ANL:PEAU', 'expectedValue' => 'http://MyAU-ANL:PEAUResolver.com.au88ac1', 'expectedType' => 'AU-ANL:PEAU'],
+            ['value' => 'http://www.MypurlResolver.com.aua7896c1', 'type' => 'purl', 'expectedValue' => 'http://www.MypurlResolver.com.aua7896c1', 'expectedType' => 'purl'],
+        ];
+        foreach($tests as $test){
+            $identifier = IdentifierProvider::getNormalisedIdentifier($test["value"], $test["type"]);
+            $this->assertEquals($test["expectedValue"], $identifier["value"]);
+            $this->assertEquals($test["expectedType"], $identifier["type"]);
+        }
+    }
+
+
 
 }
