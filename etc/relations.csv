@@ -13,7 +13,7 @@ isPrincipalInvestigatorOf,hasPrincipalInvestigator,Principal investigator of,,Pr
 isPrincipalInvestigator,hasPrincipalInvestigator,Principal investigator of,,Principal investigator of,,Principal investigator of
 hasValueAddedBy,addsValueTo,Value added by,Value added by,,,
 addsValueTo,hasValueAddedBy,Adds value to,,,Adds value to,
-isAvailableThrough,makesAvailable,Available through,Available through,,,
+isAvailableThrough,makesAvailable,Available through,Available through,Available through,Available through,
 makesAvailable,isAvailableThrough,Makes available,,Makes available,Makes available,
 isCitedBy,cites,Cited by,Cited by,,,
 cites,isCitedBy,Cites,Cites,,,
@@ -48,6 +48,6 @@ supports,isSupportedBy,Supports,Supports,,,
 hasMember,isMemberOf,Has member,,Has member,,
 isMemberOf,hasMember,Member of,,Member of,,
 isParticipantIn,hasParticipant,Participant in,,Participant in,,Participant in
-hasParticipant,isParticipantIn,Undertaken by,,Undertaken by,,Undertaken by
+hasParticipant,isParticipantIn,Undertaken by,Undertaken by,Undertaken by,Undertaken by,Undertaken by
 hasVersion,isVersionOf,Has version,Has version,,,
 isVersionOf,hasVersion,Is version of,Is version of,,,
