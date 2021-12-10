@@ -3,6 +3,8 @@
 
     <ul class="list-unstyled">
         @if(is_array($related['researchers']) && $related['researchers']['total'] >0)
+            <? $relation_to_title = [];
+                $dupes = 0;?>
             @foreach($related['researchers']['contents'] as $col)
                 <?php
                 $result = array();
@@ -13,7 +15,10 @@
                 }
                 $relation_types = array_unique($relation_types);
                 $relation_type_text =  implode($relation_types,", ");
-                ?>
+                $relation_to_title[$col['to_title'].$relation_type_text][] = $col['to_title'];
+                $dupes = count($relation_to_title[$col['to_title'].$relation_type_text]);
+                 ?>
+                @if($dupes<2)
                 <li>
                     <i class="fa fa-user icon-portal"></i>
                     <small>{{ $relation_type_text }}</small>
@@ -32,8 +37,9 @@
                             <?php $col_json = urlencode(json_encode($col)); ?>
                             identifier_relation_id = "{{ $col_json }}"
                         @endif>
-                        {{$col['to_title']}}</a>
+                         {{$col['to_title']}}</a>
                 </li>
+                @endif
             @endforeach
             @if($related['researchers']['total'] > 5)
                 <li><a href="{{ $related['researchers']['searchUrl'] }}">View all {{ $related['researchers']['total'] }} related people</a></li>

@@ -1,6 +1,8 @@
 <div class="related-data">
     <h4>Related Data</h4>
     <ul class="list-unstyled">
+        <? $relation_to_title = [];
+        $dupes = 0;?>
         @foreach($related['data']['contents'] as $col)
             <?php
                 $result = array();
@@ -13,7 +15,10 @@
                 if(!isset($col['to_url'])){
                     $col['to_url']="";
                 }
+                $relation_to_title[$col['to_title'].$relation_type_text][] = $col['to_title'];
+                $dupes = count($relation_to_title[$col['to_title'].$relation_type_text]);
             ?>
+                @if($dupes<2)
                 <li>
                     <i class="fa fa-folder-open icon-portal"></i>
                     <small>{{ $relation_type_text }}</small>
@@ -30,6 +35,7 @@
                         {{$col['to_title']}}</a>
 
                 </li>
+                @endif
         @endforeach
         @if($related['data']['total']> 5)
             <li><a href="{{ $related['data']['searchUrl'] }}">View all {{ $related['data']['total'] }} related data</a></li>

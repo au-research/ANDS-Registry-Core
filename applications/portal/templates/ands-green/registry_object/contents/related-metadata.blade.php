@@ -32,8 +32,8 @@
 		<div class="panel-heading">Other Information</div>
 		<div class="panel-body swatch-white">
 			@foreach($ro->relatedInfo as $relatedInfo)
-				@if($relatedInfo['type']=='metadata' && isset($relatedInfo['identifier']['identifier_href']))
-                    @if(array_key_exists('href', $relatedInfo['identifier']['identifier_href']))
+				@if($relatedInfo['type']=='metadata' && $relatedInfo['identifier']['identifier_href'])
+                           @if(array_key_exists('href', $relatedInfo['identifier']['identifier_href']))
 				    <h5><a href="" class="ro_preview" identifier_doi="{{$relatedInfo['identifier']['identifier_value']}}"><img src="<?php echo base_url()?>assets/core/images/icons/publications.png" style="margin-top: -2px; height: 24px; width: 24px;"> {{$relatedInfo['title']}}</a></h5>
 				    <p>
 				        <b>{{$relatedInfo['identifier']['identifier_type']}}</b> :

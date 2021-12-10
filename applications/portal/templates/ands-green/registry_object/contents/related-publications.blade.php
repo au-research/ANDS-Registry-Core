@@ -1,7 +1,8 @@
 <div class="related-publications">
     <h4>Related Publications</h4>
+    <?php     $disp_count = 0 ; ?>
     <ul class="list-unstyled">
-        <?php //dd($related['publications']['docs']); ?>
+
         @foreach($related['publications']['contents'] as $col)
                 <?php
                 $result = array();
@@ -11,8 +12,13 @@
                 }
                 $relation_types = array_unique($relation_types);
                 $relation_type_text =  implode($relation_types,", ");
+                $disp_count++;
                 ?>
-                <li>
+                    @if($disp_count<6)
+                        <li>
+                    @else
+                        <li class="morepublications" style="display:none">
+                     @endif
                 <i class="fa fa-book icon-portal"></i>
                 <small>{{ $relation_type_text  }}</small>
 
@@ -28,6 +34,7 @@
                      @endif
                      <br/>
 
+
                      {{--Display the identifiers--}}
             <b>{{ $col['to_identifier_type'] }}</b> :
                 @if(isset($col['to_url']))
@@ -40,7 +47,6 @@
                 @endif
                 <br/>
 
-
                 {{--Notes display for this relation--}}
                 @if(isset($col['to_notes']))
 
@@ -49,6 +55,11 @@
                 @endif
 
             </li>
+            @if($disp_count==5 AND $related['publications']['total']>5)
+                <a href="" class="showMorePublications showPublications" >Show all {{$related['publications']['total']}} related publications</a>
+            @elseif(($disp_count==$related['publications']['total']))
+                <a href="" class="showLessPublications showPublications" style="display:none">Show less related publications</a>
+            @endif
         @endforeach
     </ul>
 </div>
