@@ -119,6 +119,14 @@ class MyceliumServiceClient
         return $this->client->get("api/resources/mycelium-requests/$uuid");
     }
 
+    public function getRequestLogById($uuid) {
+        return $this->client->get("api/resources/mycelium-requests/$uuid/logs");
+    }
+
+    public function getRequestQueueById($uuid) {
+        return $this->client->get("api/resources/mycelium-requests/$uuid/queue");
+    }
+
     public function startProcessingSideEffectQueue($requestId) {
         return $this->client->post("api/services/mycelium/start-queue-processing", [
             "query" => ["requestId" => $requestId]
