@@ -12,6 +12,7 @@
                 }
                 $relation_types = array_unique($relation_types);
                 $relation_type_text =  implode($relation_types,", ");
+                $disp_count++;
                 ?>
                     @if($disp_count<6)
                         <li>
@@ -55,8 +56,8 @@
 
             </li>
             @if($disp_count==5 AND $related['publications']['total']>5)
-                <a href="" class="showMorePublications showPublications" >Show all {{$related['websites']['total']}} related publications</a>
-            @elseif(($disp_count==$related['websites']['total']))
+                <a href="" class="showMorePublications showPublications" >Show all {{$related['publications']['total']}} related publications</a>
+            @elseif(($disp_count==$related['publications']['total']))
                 <a href="" class="showLessPublications showPublications" style="display:none">Show less related publications</a>
             @endif
         @endforeach
