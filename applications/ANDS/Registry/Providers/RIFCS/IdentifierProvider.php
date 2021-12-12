@@ -295,8 +295,10 @@ class IdentifierProvider implements RIFCSProvider
                 $identifiers['display_text'] = 'Scopus';
                 return $identifiers;
                 break;
+            case 'url':
             case 'uri':
-                $identifiers['href'] = $identifier;
+                // url and uri should have been stripped off ther http protocol, but some legacy Identifier may still have them
+                $identifiers['href'] = "https://" . preg_replace("(^https?://)", "", $identifier );
                 $identifiers['display_text'] = strtoupper($type);
                 $identifiers['hover_text'] = 'Resolve this URI';
                 $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/external_link.png alt="External Link"/>';
@@ -369,13 +371,8 @@ class IdentifierProvider implements RIFCSProvider
                 if(str_contains($identifierValue, "hdl:")){
                     $identifier["value"] = substr($identifierValue, strpos($identifierValue, "hdl:") + 4);
                 }
-                else if(str_contains($identifierValue, "http")){
-                    $parsedUrl = parse_url($identifierValue);
-                    $identifier["value"] = substr($parsedUrl["path"],1);
-                }
-                else if(str_contains($identifierValue, "handle.")){
-                    $parsedUrl = parse_url("http://".$identifierValue);
-                    $identifier["value"] = substr($parsedUrl["path"],1);
+                else if(str_contains($identifierValue, "handle.net/")){
+                    $identifier["value"] = substr($identifierValue, strpos($identifierValue, "handle.net/") + 11);
                 }
                 return $identifier;
                 break;
@@ -388,7 +385,14 @@ class IdentifierProvider implements RIFCSProvider
             case "AU-ANL:PEAU":
                 if(str_contains($identifierValue, "nla.party-")){
                     $identifier["value"] = substr($identifierValue, strpos($identifierValue, "nla.party-"));
-                }else{
+                }
+                if(str_contains($identifierValue, "party-")){
+                    $identifier["value"] = "nla.party-" . substr($identifierValue, strpos($identifierValue, "party-") + 6);
+                }
+                elseif(strpos($identifierValue, 'http://') === 0 || strpos($identifierValue, 'https://') === 0){
+                    $identifier["value"] = $identifierValue;
+                }
+                else{
                     $identifier["value"] = "nla.party-".$identifierValue;
                 }
                 return $identifier;
@@ -405,9 +409,16 @@ class IdentifierProvider implements RIFCSProvider
                 }
                 return $identifier;
                 break;
-            default:
+            case 'uri':
+            case 'url':
                 // RDA-141  remove http or https protocol for all other identifiers
+                // changed at 08/12/2021
+                // RDA-584 remove them only for uri and url instead
                 return preg_replace("(^https?://)", "", $identifier );
+                break;
+            default:
+                // leave all other Identifier intact
+                return $identifier;
         }
 
     }
