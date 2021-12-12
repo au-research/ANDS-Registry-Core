@@ -50,12 +50,11 @@ class IdentifierProviderTest extends \RegistryTestClass
     public function it_should_process_handles()
     {
         $tests = [
-            ['value' => 'http://handle.westernsydney.edu.au:8081/1959.7/512474', 'type' => 'uri', 'expectedValue' => '1959.7/512474', 'expectedType' => 'handle'],
             ['value' => 'hdl:1959.7/512474', 'type' => 'handle', 'expectedValue' => '1959.7/512474', 'expectedType' => 'handle'],
             ['value' => 'hdl:1959.7/512474', 'type' => 'global', 'expectedValue' => '1959.7/512474', 'expectedType' => 'handle'],
             ['value' => 'hdl.handle.net/1959.7/512474', 'type' => 'url', 'expectedValue' => '1959.7/512474', 'expectedType' => 'handle'],
-            ['value' => 'https://hdl.handle.net/1959.7/512474', 'type' => 'uri', 'expectedValue' => '1959.7/512474', 'expectedType' => 'handle'],
-            ['value' => 'http://hdl.handle.net/1959.7/512474', 'type' => 'handle', 'expectedValue' => '1959.7/512474', 'expectedType' => 'handle'],
+            ['value' => 'https://hdl.handle.net/1959.7/512475', 'type' => 'uri', 'expectedValue' => '1959.7/512475', 'expectedType' => 'handle'],
+            ['value' => 'http://hdl.handle.net/1959.7/512476', 'type' => 'handle', 'expectedValue' => '1959.7/512476', 'expectedType' => 'handle'],
             ['value' => '1959.7/512474', 'type' => 'handle', 'expectedValue' => '1959.7/512474', 'expectedType' => 'handle'],
             ['value' => 'http://researchdata.ands.org.au/view/?key=http://hdl.handle.net/1959.14/201435', 'type' => 'uri', 'expectedValue' => 'researchdata.ands.org.au/view/?key=http://hdl.handle.net/1959.14/201435', 'expectedType' => 'uri']
 
@@ -180,6 +179,7 @@ class IdentifierProviderTest extends \RegistryTestClass
          * RDA-584 some special case Identifiers found during testing
          */
         $tests = [
+            ['value' => 'http://handle.westernsydney.edu.au:8771/2009.7/hiev_104ac1', 'type' => 'handle', 'expectedValue' => 'http://handle.westernsydney.edu.au:8771/2009.7/hiev_104ac1', 'expectedType' => 'handle'],
             ['value' => 'http://www.MyorcidResolver.com.au77ac1', 'type' => 'orcid', 'expectedValue' => 'http://www.MyorcidResolver.com.au77ac1', 'expectedType' => 'orcid'],
             ['value' => 'http://MyAU-ANL:PEAUResolver.com.au88ac1', 'type' => 'AU-ANL:PEAU', 'expectedValue' => 'http://MyAU-ANL:PEAUResolver.com.au88ac1', 'expectedType' => 'AU-ANL:PEAU'],
             ['value' => 'http://www.MypurlResolver.com.aua7896c1', 'type' => 'purl', 'expectedValue' => 'http://www.MypurlResolver.com.aua7896c1', 'expectedType' => 'purl'],

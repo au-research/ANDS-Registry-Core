@@ -371,13 +371,8 @@ class IdentifierProvider implements RIFCSProvider
                 if(str_contains($identifierValue, "hdl:")){
                     $identifier["value"] = substr($identifierValue, strpos($identifierValue, "hdl:") + 4);
                 }
-                else if(str_contains($identifierValue, "http")){
-                    $parsedUrl = parse_url($identifierValue);
-                    $identifier["value"] = substr($parsedUrl["path"],1);
-                }
-                else if(str_contains($identifierValue, "handle.")){
-                    $parsedUrl = parse_url("http://".$identifierValue);
-                    $identifier["value"] = substr($parsedUrl["path"],1);
+                else if(str_contains($identifierValue, "handle.net/")){
+                    $identifier["value"] = substr($identifierValue, strpos($identifierValue, "handle.net/") + 11);
                 }
                 return $identifier;
                 break;
