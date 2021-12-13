@@ -1,3 +1,14 @@
+## Release 43
+**Research Data Australia**
+* Fix bug causing http/https to be stripped from RelatedInfo urls.
+
+**Research Vocabularies Australia**
+* When fetching vocabulary data from PoolParty, get connection parameters from the right place, rather than from a legacy configuration file.
+* When using My Vocabs to add a vocabulary from PoolParty, disable the "Use this PoolParty Project" button until a project has been selected.
+* When doing backups of vocabulary data from PoolParty, set connect and read timeouts for the connection to PoolParty in case the connection hangs.
+* Restore correct behaviour for the canonical URL path to the search page (/vocabs/search).
+* Configure the Portal's analytics log files to be created and named per-day.
+
 ## Release 42
 
 **Research Data Australia**
