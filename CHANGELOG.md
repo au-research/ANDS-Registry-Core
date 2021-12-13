@@ -1,6 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## Release 43
+RDA Portal
+* Fix bug causing http/https to be stripped from RelatedInfo urls.
+
 ## Release 42
 RDA Portal
 
