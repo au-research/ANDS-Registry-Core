@@ -16,7 +16,24 @@
 
         @foreach($related['researchers']['contents'] as $col)
 
-            <?php $displayNum++; ?>
+            <?php
+
+
+                $result = array();
+                $relation_types = [];
+                $relation_url = [];
+                foreach ($col['relations'] as $element) {
+                    if($element['relation_type_text']!="" && $element['relation_type_text']!="Undertaken by"
+                        && $element['relation_type_text']!="Participant")
+                    $relation_types[] = $element['relation_type_text'];
+
+                }
+                $relation_types = array_unique($relation_types);
+                $relation_type_text =  implode($relation_types,", ");
+                $relation_to_title[$col['to_title'].$relation_type_text][] = $col['to_title'];
+                $dupes = count($relation_to_title[$col['to_title'].$relation_type_text]);
+
+                $displayNum++; ?>
             @if($col["to_identifier_type"]=="ro:id")
                 <a href="{{$col['to_url']}}"
                 title="{{ $col['to_title'] }}"
@@ -35,8 +52,8 @@
                 </a>
             @endif
 
-            @if($col['relations'][0]['relation_type_text']!="Participant" && $col['relations'][0]['relation_type_text']!="")
-                ({{ $col['relations'][0]['relation_type_text']}})
+            @if($relation_type_text !="")
+                ({{$relation_type_text }})
             @endif
             @if($displayNum<$related['researchers']['total'] && $displayNum < 5)
                 ,&nbsp;
