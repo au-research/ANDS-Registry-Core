@@ -38,30 +38,35 @@ class MyceliumServiceClient
         return $response->getStatusCode() === 200;
     }
 
+    public function info()
+    {
+        return $this->client->get("api/info");
+    }
+
     /**
      * Import the record into Mycelium
      *
      * @param \ANDS\RegistryObject $record
-     * @param $sideEffectRequestId
+     * @param $requestId
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function importRecord(RegistryObject $record, $sideEffectRequestId)
+    public function importRecord(RegistryObject $record, $requestId)
     {
         return $this->client->post("api/services/mycelium/import-record", [
             "headers" => ['Content-Type' => 'application/json'],
             "body" => json_encode(MyceliumImportPayloadProvider::get($record)),
             "query" => [
-                "sideEffectRequestID" => $sideEffectRequestId
+                "requestId" => $requestId
             ]
         ]);
     }
 
-    public function deleteRecord($registryObjectId, $sideEffectRequestId) {
+    public function deleteRecord($registryObjectId, $requestId) {
         return $this->client->post("api/services/mycelium/delete-record", [
-            "headers" => [],
+            "headers" => ['Content-Type' => 'application/json'],
             "query" => [
                 "registryObjectId" => $registryObjectId,
-                "sideEffectRequestID" => $sideEffectRequestId
+                "requestId" => $requestId
             ]
         ]);
     }
@@ -90,8 +95,36 @@ class MyceliumServiceClient
         ]);
     }
 
+    public function createNewDeleteRecordRequest()
+    {
+        return $this->client->post("api/resources/mycelium-requests/", [
+            "headers" => ['Content-Type' => 'application/json'],
+            "body" => json_encode(["type" => "mycelium-delete"])
+        ]);
+    }
+
+    public function createNewImportRecordRequest($batchID) {
+        return $this->client->post("api/resources/mycelium-requests/", [
+            "headers" => ['Content-Type' => 'application/json'],
+            "query" => [
+                "batchID" => $batchID
+            ],
+            "body" => json_encode([
+                "type" => "mycelium-import"
+            ])
+        ]);
+    }
+
     public function getRequestById($uuid) {
         return $this->client->get("api/resources/mycelium-requests/$uuid");
+    }
+
+    public function getRequestLogById($uuid) {
+        return $this->client->get("api/resources/mycelium-requests/$uuid/logs");
+    }
+
+    public function getRequestQueueById($uuid) {
+        return $this->client->get("api/resources/mycelium-requests/$uuid/queue");
     }
 
     public function startProcessingSideEffectQueue($requestId) {

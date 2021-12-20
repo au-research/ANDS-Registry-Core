@@ -664,6 +664,7 @@ class ImportTask extends Task
     {
         $targetStatus = $this->getTaskData("targetStatus");
         $selectedKeys = [
+            "myceliumRequestId" => "ID of the Mycelium Request",
             "dataSourceDefaultStatus" => "Default Import Status for Data Source",
             "targetStatus" => "Target Status for Import",
             "recordsInFeedCount" => "Valid Records Received in Harvest",

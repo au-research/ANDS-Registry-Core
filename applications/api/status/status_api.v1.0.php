@@ -5,6 +5,7 @@
  */
 
 namespace ANDS\API;
+use ANDS\Mycelium\MyceliumServiceClient;
 use ANDS\Util\Config;
 use GraphAware\Neo4j\Client\ClientBuilder;
 use Guzzle\Http\Client;
@@ -31,7 +32,7 @@ class Status_api
             'harvester' => $this->getHarvesterStatus(),
             'taskmanager' => $this->getTaskManagerStatus(),
             'solr' => $this->getSOLRStatus(),
-            'neo4j' => $this->getNeo4jStatus(),
+            'mycelium' => $this->getMyceliumStatus(),
             'elasticsearch' => $this->getElasticSearchStatus()
         ];
     }
@@ -103,31 +104,17 @@ class Status_api
     /**
      * @return array
      */
-    private function getNeo4jStatus()
+    private function getMyceliumStatus()
     {
-        $config = Config::get('neo4j');
+        $myceliumURL = Config::get('mycelium.url');
+        $client = new MyceliumServiceClient($myceliumURL);
 
-        $client = ClientBuilder::create()
-            ->addConnection('default', "http://{$config['username']}:{$config['password']}@{$config['hostname']}:7474")
-            ->setDefaultTimeout(5)
-            ->build();
-
-        try {
-            $client->getLabels();
-        } catch (\Exception $e) {
-            return [
-                'running' => false,
-                'reason' => $e->getMessage()
-            ];
-        }
+        $info = $client->info();
 
         return [
-            'running' => true,
-            'counts' => [
-                'relationships' => $client->run('MATCH (n)-[r]->() RETURN COUNT(r) as count')->firstRecord()->get('count'),
-                'nodes' => $client->run('MATCH (n) RETURN COUNT(n) as count')->firstRecord()->get('count'),
-                'nodes_orphan' => $client->run('MATCH (n) WHERE NOT (n)--() RETURN COUNT(n) as count')->firstRecord()->get('count'),
-            ]
+            'url' => $myceliumURL,
+            'running' => $info->getStatusCode() === 200,
+            'status' => json_decode($info->getBody()->getContents(), true)
         ];
     }
 

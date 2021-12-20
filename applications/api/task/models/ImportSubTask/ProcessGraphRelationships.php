@@ -23,7 +23,14 @@ class ProcessGraphRelationships extends ImportSubTask
     public function run_task()
     {
 
-        $myceliumClient = new MyceliumServiceClient(Config::get('mycelium.url'));
+        $myceliumUrl = Config::get('mycelium.url');
+        $myceliumClient = new MyceliumServiceClient($myceliumUrl);
+
+        if (!$myceliumClient->ping()) {
+            $this->addError("Failed to contact Mycelium at $myceliumUrl. ProcessGraphRelationship is skipped");
+            return;
+        }
+
         $import_count = 0;
         $error_count = 0;
         $startTime = microtime(true);
@@ -36,18 +43,18 @@ class ProcessGraphRelationships extends ImportSubTask
         $total = count($importedRecords);
         
         // create a new Mycelium Request
-        $sideEffectRequestId = $this->parent()->getTaskData("SideEffectRequestId");
-        if ($sideEffectRequestId == null) {
-            $result = $myceliumClient->createNewAffectedRelationshipRequest();
+        $myceliumRequestId = $this->parent()->getTaskData("myceliumRequestId");
+        if ($myceliumRequestId == null) {
+            $result = $myceliumClient->createNewImportRecordRequest($this->parent()->getBatchID());
             $request = json_decode($result->getBody()->getContents(), true);
-            $this->log("Affected Relationship Request created with id: ".$request['id']);
-            $sideEffectRequestId = $request['id'];
-            $this->parent()->setTaskData("SideEffectRequestId", $sideEffectRequestId);
+            $myceliumRequestId = $request['id'];
+            $this->log("Mycelium Request created ID: $myceliumRequestId");
+            $this->parent()->setTaskData("myceliumRequestId", $myceliumRequestId);
         }
 
         foreach ($importedRecords as $index => $id) {
             $record = RegistryObjectsRepository::getRecordByID($id);
-            $result = $myceliumClient->importRecord($record, $sideEffectRequestId);
+            $result = $myceliumClient->importRecord($record, $myceliumRequestId);
 
             if ($result->getStatusCode() === 200) {
                 $import_count++;

@@ -138,15 +138,15 @@ class ProcessDelete extends ImportSubTask
         $myceliumClient = new MyceliumServiceClient(Config::get('mycelium.url'));
 
         // affectedRelationships setup
-        $result = $myceliumClient->createNewAffectedRelationshipRequest();
+        $result = $myceliumClient->createNewDeleteRecordRequest();
         $request = json_decode($result->getBody()->getContents(), true);
-        $this->log("Affected Relationship Request created with id: " . $request['id']);
-        $sideEffectRequestId = $request['id'];
-        $this->parent()->setTaskData("SideEffectRequestId", $sideEffectRequestId);
+        $myceliumRequestId = $request['id'];
+        $this->log("Mycelium Request created ID: $myceliumRequestId");
+        $this->parent()->setTaskData("myceliumRequestId", $myceliumRequestId);
 
         // perform the deletion per record
         foreach ($ids as $id) {
-            $result = $myceliumClient->deleteRecord($id, $sideEffectRequestId);
+            $result = $myceliumClient->deleteRecord($id, $myceliumRequestId);
             if ($result->getStatusCode() === 200) {
                 $this->log("Deleted RegistryObject[id={$id}] from mycelium");
             } else {
