@@ -510,15 +510,15 @@ class Registry_object extends MX_Controller
             foreach ($input_array->relations as $i) {
                 $identifier=$i->to_identifier;
                 // todo - implement resolvable links for the identifier if possible
-                if($input_array->to_url){
+                if(isset($input_array->to_url)){
                     $identifier = '<a href="'.$input_array->to_url.'">'.$i->to_identifier."</a></br>";
                 }
 
-                if($i->relation_description){
+                if(isset($i->relation_description)){
                     $description = "<p>".$i->relation_description."</p>";
                 }
                 $relation_url ="";
-                if($i->relation_url){
+                if(isset($i->relation_url)){
                     $relation_url = '<a href="'.$i->relation_url.'">'.$i->relation_url."</a>";
                 }
                $identifiers_div .= $input_array->to_identifier_type.": ". $identifier.$description.$notes.$relation_url;
