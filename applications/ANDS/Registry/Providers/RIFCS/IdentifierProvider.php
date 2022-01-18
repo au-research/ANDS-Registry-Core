@@ -454,4 +454,28 @@ class IdentifierProvider implements RIFCSProvider
         }
         return $type;
     }
+
+    /**
+     * Obtain an associative array for the indexable fields
+     *
+     * @param RegistryObject $record
+     * @return array
+     */
+    public static function getIndexableArray(RegistryObject $record)
+    {
+        $identifiers = static::get($record);
+
+        $types = [];
+        $values = [];
+
+        foreach ($identifiers as $identifier) {
+            $types[] = $identifier['type'];;
+            $values[] = $identifier['value'];
+        }
+
+        return [
+            'identifier_type' => $types,
+            'identifier_value' => $values
+        ];
+    }
 }

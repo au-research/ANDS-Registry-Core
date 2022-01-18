@@ -58,4 +58,38 @@ class DescriptionProvider implements RIFCSProvider
             'descriptions' => $descriptions
         ];
     }
+
+    /**
+     * Obtain an associative array for the indexable fields
+     *
+     * @param RegistryObject $record
+     * @return array
+     */
+    public static function getIndexableArray(RegistryObject $record)
+    {
+        $types = [];
+        $values = [];
+
+        $descriptions = self::get($record);
+        foreach ($descriptions['descriptions'] as $description) {
+            $types[] = $description['type'];
+            $values[] = $description['value'];
+        }
+
+        $theDescription = $descriptions['primary_description'];
+
+        // list description is the trimmed form of the description
+        $listDescription = trim(strip_tags(html_entity_decode(html_entity_decode($theDescription)), ENT_QUOTES));
+
+        //add <br/> for NL if doesn't already have <p> or <br/>
+        $theDescription = !(strpos($theDescription, "&lt;br") !== FALSE || strpos($theDescription, "&lt;p") !== FALSE || strpos($theDescription, "&amp;#60;p") !== FALSE) ? nl2br($theDescription) : $theDescription;
+
+        return [
+            'description_type' => $types,
+            'description_value' => $values,
+            'list_description' => $listDescription,
+            'description' => $theDescription
+        ];
+
+    }
 }

@@ -301,5 +301,34 @@ class SubjectProvider implements RIFCSProvider
 
         return $string;
     }
+
+    /**
+     * Obtain an associative array for the indexable fields
+     *
+     * @param RegistryObject $record
+     * @return array
+     */
+    public static function getIndexableArray(RegistryObject $record)
+    {
+        $subjects = static::processSubjects($record);
+
+        $unresolved = [];
+        $resolved = [];
+        $types = [];
+        $uris = [];
+
+        foreach ($subjects as $key => $subject) {
+            $unresolved[] = (string) $key;
+            $resolved[] = (string) $subject['resolved'];
+            $types[] = (string) $subject['type'];
+            $uris[] = (string) $subject['uri'];
+        }
+
+        return [
+            'subject_value_unresolved' => $unresolved,
+            'subject_value_resolved' => $resolved,
+            'subject_type' => $types,
+            'subject_vocab_uri' => $uris,
+        ];
+    }
 }
-?>

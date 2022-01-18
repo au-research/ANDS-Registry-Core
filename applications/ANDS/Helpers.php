@@ -10,7 +10,8 @@ if (!function_exists('env')) {
 if (!function_exists('baseUrl')) {
     function baseUrl($suffix = "")
     {
-        return env('PROTOCOL') . env("BASE_URL", $_SERVER['SERVER_NAME']) . '/'. $suffix;
+        $serverName = array_key_exists('SERVER_NAME', $_SERVER) ? $_SERVER['SERVER_NAME'] : 'localhost';
+        return env('PROTOCOL') . env("BASE_URL", $serverName) . '/'. $suffix;
     }
 }
 

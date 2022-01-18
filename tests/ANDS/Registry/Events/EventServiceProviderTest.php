@@ -1,10 +1,9 @@
 <?php
 
-namespace Registry\Events;
+namespace ANDS\Registry\Events;
 
 use ANDS\DataSource;
 use ANDS\Registry\Events\Event\DataSourceUpdatedEvent;
-use ANDS\Registry\Events\EventServiceProvider;
 use RegistryTestClass;
 
 class EventServiceProviderTest extends RegistryTestClass
