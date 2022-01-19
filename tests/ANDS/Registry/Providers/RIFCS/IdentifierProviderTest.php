@@ -1,7 +1,11 @@
 <?php
 
+use ANDS\File\Storage;
+use ANDS\RecordData;
 use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 
+use ANDS\Registry\Providers\RIFCS\RIFCSIndexProvider;
+use ANDS\RegistryObject;
 use Illuminate\Database\Capsule\Manager as Capsule;
 
 class IdentifierProviderTest extends \RegistryTestClass
@@ -12,14 +16,14 @@ class IdentifierProviderTest extends \RegistryTestClass
         $tests = [
             ['value' => 'DOI:10.234/455', 'type' => 'doi', 'expectedValue' => '10.234/455', 'expectedType' => 'doi'],
             ['value' => 'http://doi.org/10.234/455', 'type' => 'url', 'expectedValue' => '10.234/455', 'expectedType' => 'doi'],
-            ['value' => 'https://doi.org/10.234/455','type' => 'uri', 'expectedValue' => '10.234/455', 'expectedType' => 'doi'],
-            ['value' => 'https://doi.org/10.234/455','type' => 'doi', 'expectedValue' => '10.234/455', 'expectedType' => 'doi'],
-            ['value' => '10.234/455','type' => 'doi', 'expectedValue' => '10.234/455', 'expectedType' => 'doi'],
+            ['value' => 'https://doi.org/10.234/455', 'type' => 'uri', 'expectedValue' => '10.234/455', 'expectedType' => 'doi'],
+            ['value' => 'https://doi.org/10.234/455', 'type' => 'doi', 'expectedValue' => '10.234/455', 'expectedType' => 'doi'],
+            ['value' => '10.234/455', 'type' => 'doi', 'expectedValue' => '10.234/455', 'expectedType' => 'doi'],
             // NOT DOIs
-            ['value' => '1.234/455', 'type' => 'fish','expectedValue' => '1.234/455', 'expectedType' => 'fish'],
-            ['value' => 'http://doi.org/1.234/455','type' => 'url', 'expectedValue' => 'doi.org/1.234/455', 'expectedType' => 'url']
+            ['value' => '1.234/455', 'type' => 'fish', 'expectedValue' => '1.234/455', 'expectedType' => 'fish'],
+            ['value' => 'http://doi.org/1.234/455', 'type' => 'url', 'expectedValue' => 'doi.org/1.234/455', 'expectedType' => 'url']
         ];
-        foreach($tests as $test){
+        foreach ($tests as $test) {
             $identifier = IdentifierProvider::getNormalisedIdentifier($test["value"], $test["type"]);
             $this->assertEquals($test["expectedValue"], $identifier["value"]);
             $this->assertEquals($test["expectedType"], $identifier["type"]);
@@ -39,7 +43,7 @@ class IdentifierProviderTest extends \RegistryTestClass
             ['value' => 'http://orcid.org/index.php', 'type' => 'url', 'expectedValue' => 'orcid.org/index.php', 'expectedType' => 'url'],
             ['value' => 'http://forcid.org/9539-5716', 'type' => 'url', 'expectedValue' => 'forcid.org/9539-5716', 'expectedType' => 'url']
         ];
-        foreach($tests as $test){
+        foreach ($tests as $test) {
             $identifier = IdentifierProvider::getNormalisedIdentifier($test["value"], $test["type"]);
             $this->assertEquals($test["expectedValue"], $identifier["value"]);
             $this->assertEquals($test["expectedType"], $identifier["type"]);
@@ -60,7 +64,7 @@ class IdentifierProviderTest extends \RegistryTestClass
             ['value' => 'http://researchdata.ands.org.au/view/?key=http://hdl.handle.net/1959.14/201435', 'type' => 'uri', 'expectedValue' => 'researchdata.ands.org.au/view/?key=http://hdl.handle.net/1959.14/201435', 'expectedType' => 'uri']
 
         ];
-        foreach($tests as $test){
+        foreach ($tests as $test) {
             $identifier = IdentifierProvider::getNormalisedIdentifier($test["value"], $test["type"]);
             $this->assertEquals($test["expectedValue"], $identifier["value"]);
             $this->assertEquals($test["expectedType"], $identifier["type"]);
@@ -76,7 +80,7 @@ class IdentifierProviderTest extends \RegistryTestClass
             ['value' => 'https://purl.org/au-research/grants/nhmrc/GNT1002592', 'type' => 'global', 'expectedValue' => 'https://purl.org/au-research/grants/nhmrc/GNT1002592', 'expectedType' => 'purl'],
             ['value' => 'https://purl.org/au-research/grants/nhmrc/GNT1002592', 'type' => 'url', 'expectedValue' => 'https://purl.org/au-research/grants/nhmrc/GNT1002592', 'expectedType' => 'purl'],
         ];
-        foreach($tests as $test){
+        foreach ($tests as $test) {
             $identifier = IdentifierProvider::getNormalisedIdentifier($test["value"], $test["type"]);
             $this->assertEquals($test["expectedValue"], $identifier["value"]);
             $this->assertEquals($test["expectedType"], $identifier["type"]);
@@ -97,7 +101,7 @@ class IdentifierProviderTest extends \RegistryTestClass
             ['value' => 'nla.party-1692395', 'type' => 'AU-QGU', 'expectedValue' => 'nla.party-1692395', 'expectedType' => 'AU-ANL:PEAU'],
             ['value' => '1692395', 'type' => 'NLA.PARTY', 'expectedValue' => 'nla.party-1692395', 'expectedType' => 'AU-ANL:PEAU']
         ];
-        foreach($tests as $test){
+        foreach ($tests as $test) {
             $identifier = IdentifierProvider::getNormalisedIdentifier($test["value"], $test["type"]);
             $this->assertEquals($test["expectedValue"], $identifier["value"]);
             $this->assertEquals($test["expectedType"], $identifier["type"]);
@@ -105,6 +109,7 @@ class IdentifierProviderTest extends \RegistryTestClass
     }
 
     // IGSN : 10273/  http://igsn.org/
+
     /** @test * */
     public function it_should_process_igsns()
     {
@@ -116,7 +121,7 @@ class IdentifierProviderTest extends \RegistryTestClass
             ['value' => 'au1243', 'type' => 'igsn', 'expectedValue' => 'AU1243', 'expectedType' => 'igsn'],
             ['value' => 'https://igsn.org/AU1243', 'type' => 'uri', 'expectedValue' => 'igsn.org/AU1243', 'expectedType' => 'uri']
         ];
-        foreach($tests as $test){
+        foreach ($tests as $test) {
             $identifier = IdentifierProvider::getNormalisedIdentifier($test["value"], $test["type"]);
             $this->assertEquals($test["expectedValue"], $identifier["value"]);
             $this->assertEquals($test["expectedType"], $identifier["type"]);
@@ -134,12 +139,27 @@ class IdentifierProviderTest extends \RegistryTestClass
             ['value' => 'https://fish.org?url=http://google.com', 'type' => 'noidea', 'expectedValue' => 'fish.org?url=http://google.com', 'expectedType' => 'noidea'],
             ['value' => 'fish.org?url="http://google.com', 'type' => 'uri', 'expectedValue' => 'fish.org?url="http://google.com', 'expectedType' => 'uri']
         ];
-        foreach($tests as $test){
+        foreach ($tests as $test) {
             $identifier = IdentifierProvider::getNormalisedIdentifier($test["value"], $test["type"]);
             $this->assertEquals($test["expectedValue"], $identifier["value"]);
             $this->assertEquals($test["expectedType"], $identifier["type"]);
         }
     }
 
-
+    public function testGetIndexableArray()
+    {
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_all_elements.xml')
+        ]);
+        $index = IdentifierProvider::getIndexableArray($record);
+        $this->assertNotEmpty($index);
+        $this->assertNotEmpty($index);
+        $this->assertArrayHasKey('identifier_type', $index);
+        $this->assertArrayHasKey('identifier_value', $index);
+        $this->assertGreaterThan(1, $index['identifier_type']);
+        $this->assertSameSize($index['identifier_type'], $index['identifier_value']);
     }
+
+}
