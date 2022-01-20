@@ -83,7 +83,7 @@
             @elseif($dupes<2)
             <li>
                 <i class="fa fa-user icon-portal"></i>
-                <small>{{ $relation_type_text }}</small>
+                <small>{{ $dupe_type_text[$col['to_title'].'dupe_type_text'] }}</small>
                <?php
                 if (!isset($col['to_url'])){
                     $col['to_url']="";
