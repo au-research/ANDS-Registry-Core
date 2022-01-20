@@ -47,6 +47,11 @@ class RecordsGraphController
         'outputs' => 'isOutputOf',
     ];
 
+    // only the following vertices labels are included in the visualisation
+    public static $visualisableLabels = [
+        "collection", "activity", "party", "service", "publication", "website"
+    ];
+
     /**
      * Serves /api/registry/records/:id/graph
      *
@@ -88,8 +93,10 @@ class RecordsGraphController
         }
         $graphContent = json_decode($graphResult->getBody()->getContents(), true);
 
+
         // format the nodes
-        $nodes = collect($graphContent['vertices'])->map(function ($vertex) {
+        $nodes = collect($graphContent['vertices'])
+            ->map(function ($vertex) {
             $labels = $vertex['labels'];
 
             // RegistryObject, cluster label have to be the first label for highlighting purpose
@@ -114,7 +121,13 @@ class RecordsGraphController
                     'type' => $vertex['objectType']
                 ]
             ];
-        })->toArray();
+            })->filter(function ($vertex) {
+                // exclude the vertices that are not visualise-able
+                return count(array_intersect($vertex['labels'], static::$visualisableLabels)) >= 1;
+            })->toArray();
+
+        // collect a list of visualise-able vertices ID for easier comparison
+        $validNodeIDs = collect($nodes)->pluck('id')->toArray();
 
         // format the edges
         $edges = collect($graphContent['edges'])->map(function ($edge) use ($record) {
@@ -126,6 +139,9 @@ class RecordsGraphController
                 'endNode' => $edge['to']['id'],
                 'type' => $edge['type']
             ];
+        })->filter(function($edge) use ($validNodeIDs){
+            // only include the edges that connect to or from the visualise-able vertices
+            return in_array($edge['from']['id'], $validNodeIDs) && in_array($edge['to']['id'], $validNodeIDs);
         })->toArray();
 
         // format the cluster nodes
