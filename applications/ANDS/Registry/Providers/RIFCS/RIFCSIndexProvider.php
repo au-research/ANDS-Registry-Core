@@ -30,6 +30,7 @@ class RIFCSIndexProvider
             ->merge(DescriptionProvider::getIndexableArray($record))
             ->merge(IdentifierProvider::getIndexableArray($record))
             ->merge(SubjectProvider::getIndexableArray($record))
+            ->merge(MatchingIdentifierProvider::getIndexableArray($record))
             ->toArray();
 
         // todo tags <- TagsProvider

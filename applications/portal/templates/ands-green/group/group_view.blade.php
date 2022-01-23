@@ -1,5 +1,6 @@
 @extends('layouts/right-sidebar')
 @section('header')
+<?php  if(!isset($group['facet']['types']['software'])) $group['facet']['types']['software'] = 0; ?>
 <div class="row element element-short-top">
     <div class="col-md-12">
         <div class="panel swatch-white">
@@ -12,7 +13,6 @@
                         if (isset($group['logo'])) {
                             $logo = $group['logo'];
                         }
-
                         if ($group['has_custom_data']) {
                             if (isset($group['custom_data']['hide_logo'])) {
                                 if ($group['custom_data']['hide_logo']) {
@@ -134,7 +134,8 @@
             @if($group['facet']['class']['collection']!=0)
                 <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=collection/collection_type=-type:software/">{{class_name('collection_data')}} <small>({{$group['facet']['class']['collection']-$group['facet']['types']['software']}})</small></a></li>
             @endif
-            @if($group['facet']['types']['software']!=0)
+
+            @if(isset($group['facet']['types']['software']) && $group['facet']['types']['software']!=0)
                 <li><a href="{{base_url()}}search#!/group={{$group['title']}}/class=collection/collection_type=type:software/">{{class_name('collection_software')}} <small>({{$group['facet']['types']['software']}})</small></a></li>
             @endif
             @if($group['facet']['class']['party']!=0)
