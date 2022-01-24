@@ -4,8 +4,9 @@
     <ul class="list-unstyled">
         @if(is_array($related['researchers']) && $related['researchers']['total'] >0)
             <?  $relation_to_title = [];
-                $relation_dupe_title = []
-;               $dupes = 0;?>
+                $relation_dupe_title = [];
+                $dupes = 0;
+            ?>
             @foreach($related['researchers']['contents'] as $col)
                 <?php
                 $result = array();
@@ -20,12 +21,13 @@
                 $relation_dupe_title[$col['to_title']][] = $col;
                 $relation_dupe_title[$col['to_title'].'same_group_found'] = 'false';
                 $dupe_type_text[$col['to_title'].'dupe_type_text'] = $relation_type_text;
+                $dupe_type_text[$col['to_title'].$col['to_identifier']] = $relation_type_text;
                  ?>
             @endforeach
 
             @foreach($related['researchers']['contents'] as $col)
 
-             <?php $dupes = count($relation_dupe_title[$col['to_title']]);
+             <?php $dupes = count($relation_to_title[$col['to_title'].$dupe_type_text[$col['to_title'].'dupe_type_text']]);
             //if we have duplicates - check for a record from the same group
             ?>
              @if($dupes>1 && $relation_dupe_title[$col['to_title'].'same_group_found'] == 'false')
@@ -83,7 +85,7 @@
             @elseif($dupes<2)
             <li>
                 <i class="fa fa-user icon-portal"></i>
-                <small>{{ $dupe_type_text[$col['to_title'].'dupe_type_text'] }}</small>
+                <small>{{ $dupe_type_text[$col['to_title'].$col['to_identifier']] }}</small>
                <?php
                 if (!isset($col['to_url'])){
                     $col['to_url']="";
