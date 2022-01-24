@@ -355,8 +355,8 @@ class RecordsGraphController
                     'data' => [
                         [
                             'graph' => [
-                                'nodes' => array_values($nodes),
-                                'relationships' => array_values($relationships)
+                                'nodes' => collect($nodes)->values()->toArray(),
+                                'relationships' => collect($relationships)->values()->toArray()
                             ]
                         ]
                     ]
