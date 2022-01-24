@@ -1,6 +1,4 @@
 <?php
-
-
 use ANDS\DataSource;
 use ANDS\RegistryObject;
 use ANDS\Repository\DataSourceRepository;
@@ -21,6 +19,7 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
         'slug' => 'auto-test'
     ];
 
+    /* Test */
     public function setUp()
     {
         parent::setUp();
@@ -40,6 +39,8 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
         if (!$this->dataSource) {
             $this->dataSource = DataSource::create($this->dsAttributes);
         }
+        $myceliumServiceClient = new \ANDS\Mycelium\MyceliumServiceClient(\ANDS\Util\Config::get('mycelium.url'));
+        $myceliumServiceClient->createDataSource($this->dataSource,null);
     }
 
     public function tearDown()
@@ -88,8 +89,25 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
 
         // delete data source
         $this->dataSource->delete();
+        $myceliumServiceClient = new \ANDS\Mycelium\MyceliumServiceClient(\ANDS\Util\Config::get('mycelium.url'));
+        $myceliumServiceClient->deleteDataSource($this->dataSource);
     }
 
+    public function myceliumInsert(RegistryObject $record){
+        //we need to insert the record into mycelium
+        $myceliumServiceClient = new \ANDS\Mycelium\MyceliumServiceClient(\ANDS\Util\Config::get('mycelium.url'));
+        $result = $myceliumServiceClient->createNewImportRecordRequest("testingup");
+        $request = json_decode($result->getBody()->getContents(), true);
+        $myceliumServiceClient->importRecord($record,$request['id']);
+    }
+
+    public function myceliumDelete(RegistryObject $record){
+        //we need to delete the record from mycelium
+        $myceliumServiceClient = new \ANDS\Mycelium\MyceliumServiceClient(\ANDS\Util\Config::get('mycelium.url'));
+        $result = $myceliumServiceClient->createNewDeleteRecordRequest();
+        $request = json_decode($result->getBody()->getContents(), true);
+        $myceliumServiceClient->deleteRecord($record->id,$request['id']);
+    }
     /**
      * TODO Refactor to Test Factory class
      *

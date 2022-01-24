@@ -1,10 +1,12 @@
 <?php
 
 
-namespace ANDS\Providers\RIFCS;
+namespace ANDS\Registry\Providers\RIFCS;
 
 
-use ANDS\Registry\Providers\RIFCS\SubjectProvider;
+use ANDS\File\Storage;
+use ANDS\RecordData;
+use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 
 class SubjectsProviderTest extends \RegistryTestClass
@@ -263,6 +265,21 @@ class SubjectsProviderTest extends \RegistryTestClass
 
         // not resolvable
         $this->assertArrayHasKey('Oceans | Salty', $subjects);
+    }
+
+    public function testGetIndexableArray()
+    {
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_all_elements.xml')
+        ]);
+        $index = SubjectProvider::getIndexableArray($record);
+        $this->assertNotEmpty($index);
+        $this->assertArrayHasKey("subject_value_unresolved", $index);
+        $this->assertArrayHasKey("subject_value_resolved", $index);
+        $this->assertArrayHasKey("subject_type", $index);
+        $this->assertArrayHasKey("subject_vocab_uri", $index);
     }
 
 }
