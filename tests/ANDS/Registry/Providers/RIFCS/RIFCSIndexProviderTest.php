@@ -11,11 +11,12 @@ class RIFCSIndexProviderTest extends \RegistryTestClass
 
     public function test_getIndexCollection()
     {
-        $record = $this->stub(RegistryObject::class, ['class' => 'collection']);
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection','key' => 'AUTESTING_ALL_ELEMENTS_TEST']);
         $this->stub(RecordData::class, [
             'registry_object_id' => $record->id,
             'data' => Storage::disk('test')->get('rifcs/collection_all_elements.xml')
         ]);
+        $this->myceliumInsert($record);
 
         // processing that should happen prior
         DatesProvider::process($record);
@@ -33,6 +34,9 @@ class RIFCSIndexProviderTest extends \RegistryTestClass
         $this->assertArrayHasKey('description', $index);
         $this->assertArrayHasKey('identifier_type', $index);
         $this->assertArrayHasKey('identifier_value', $index);
+        $this->assertArrayHasKey('identical_record_ids', $index);
+
+        $this->myceliumDelete($record);
     }
 
     public function test_isIndexable()
