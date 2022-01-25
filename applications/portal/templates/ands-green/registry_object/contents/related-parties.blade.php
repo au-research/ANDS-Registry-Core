@@ -71,9 +71,10 @@
             ?>
             @if($dupes>1 && $relation_dupe_title[$col['to_title'].'same_group_found'] == 'false')
                 @foreach($relation_dupe_title[$col['to_title']] as $col2)
-                    @if($col['from_group'] == $col2['to_group'] && $col['to_title'] == $col2['to_title'])
+                    @if(isset($col2['to_group']) && $col['from_group'] == $col2['to_group'] && $col['to_title'] == $col2['to_title'])
                         <?php //if record from the same group is found set found to true display the record
-                        $relation_dupe_title[$col['to_title'].'same_group_found'] = 'true';?>
+                        $relation_dupe_title[$col['to_title'].'same_group_found'] = 'true';
+                        ?>
 
                         <a  style="margin-right:5px;"
                             @if($col2["to_identifier_type"]=="ro:id")
@@ -94,11 +95,13 @@
                         </a>
                     @endif
                 @endforeach
-                @if(  $relation_dupe_title[$col['to_title'].'same_group_found'] == 'false')
+                @if( $relation_dupe_title[$col['to_title'].'same_group_found'] == 'false')
                     <?php
                     //if no record from the same group is found display 1st record
+
+                    $relation_dupe_title[$col['to_title'].'same_group_found'] = 'true';
                     $col2 = $relation_dupe_title[$col['to_title']][0] ?>
-                    <a  style="margin-right:5px;"
+                        <a  style="margin-right:5px;"
                         @if($col2["to_identifier_type"]=="ro:id")
                         href="{{$col2['to_url']}}"
                         title="{{ $col2['to_title'] }}"
@@ -115,6 +118,7 @@
                         @endif
                         <small>({{ $dupe_type_text[$col['to_title'].'dupe_type_text'] }})</small>
                     </a>
+
                 @endif
 
             @elseif($dupes<2)
@@ -166,13 +170,13 @@
             ?>
         @endforeach
 
-        @foreach($related['researchers']['contents'] as $col)
+        @foreach($related['organisations']['contents'] as $col)
             <?php $dupes = count($relation_to_title[$col['to_title'].$dupe_type_text[$col['to_title'].'dupe_type_text']]);
             //if we have duplicates - check for a record from the same group
             ?>
             @if($dupes>1 && $relation_dupe_title[$col['to_title'].'same_group_found'] == 'false')
                 @foreach($relation_dupe_title[$col['to_title']] as $col2)
-                    @if($col['from_group'] == $col2['to_group'] && $col['to_title'] == $col2['to_title'])
+                    @if(isset($col2['to_group']) && $col['from_group'] == $col2['to_group'] && $col['to_title'] == $col2['to_title'])
                         <?php //if record from the same group is found set found to true display the record
                         $relation_dupe_title[$col['to_title'].'same_group_found'] = 'true';?>
 
@@ -195,10 +199,12 @@
                         </a>
                     @endif
                 @endforeach
-                @if(  $relation_dupe_title[$col['to_title'].'same_group_found'] == 'false')
+                @if( $relation_dupe_title[$col['to_title'].'same_group_found'] == 'false')
                     <?php
                     //if no record from the same group is found display 1st record
-                    $col2 = $relation_dupe_title[$col['to_title']][0] ?>
+                    $col2 = $relation_dupe_title[$col['to_title']][0];
+                    $relation_dupe_title[$col['to_title'].'same_group_found'] = 'true';
+                    ?>
                     <a  style="margin-right:5px;"
                         @if($col2["to_identifier_type"]=="ro:id")
                         href="{{$col2['to_url']}}"
@@ -216,6 +222,7 @@
                         @endif
                         <small>({{ $dupe_type_text[$col['to_title'].'dupe_type_text'] }})</small>
                     </a>
+                    <?php   $relation_dupe_title[$col['to_title'].'same_group_found'] = true ?>
                 @endif
 
             @elseif($dupes<2)
