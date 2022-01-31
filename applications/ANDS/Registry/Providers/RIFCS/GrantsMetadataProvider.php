@@ -43,6 +43,9 @@ class GrantsMetadataProvider implements RIFCSProvider
 
     }
 
+    /*
+     *  Will return a string value of the derived 'activity status' based on rifcs existenceDates elements
+     */
     public static function getActivityStatus($record){
         $activityStatus = 'other';
         $recordData = $record->getCurrentData();
@@ -80,6 +83,9 @@ class GrantsMetadataProvider implements RIFCSProvider
         return $activityStatus;
     }
 
+    /*
+     *  Will return the value of a rifcs description element of type 'fundingAmount'
+     */
     public static function getFundingAmount($record)
     {
         $recordData = $record->getCurrentData();
@@ -93,6 +99,9 @@ class GrantsMetadataProvider implements RIFCSProvider
         return $fundingAmount;
     }
 
+    /*
+     *  Will return the value of a rifcs description element of type 'fundingScheme'
+     */
     public static function getFundingScheme($record)
     {
         $recordData = $record->getCurrentData();
@@ -106,8 +115,13 @@ class GrantsMetadataProvider implements RIFCSProvider
         return $fundingScheme;
     }
 
+    /*
+     * Will return a list of  titles of any related party (not a person) with relation_type of 'isManagedBy'
+     * - both related objects and related info are returned
+     */
     public static function getAdministeringInstitutions($record)
     {
+
         $administeringInstitution = [];
         $search_params = ['from_id'=>$record->id,'relation_type' => 'isManagedBy', 'to_class' => 'party', 'not_to_type' => 'person'];
         $result = RelationshipSearchService::search($search_params);
@@ -120,6 +134,10 @@ class GrantsMetadataProvider implements RIFCSProvider
         return $administeringInstitution;
     }
 
+    /*
+     * Will return a list of  titles of any related party (not a person) who has a relationship that is not a funder
+     * - only related objects returned (related info will never have a type of group)
+     */
     public static function getInstitutions($record)
     {
         $institutions = [];
@@ -144,7 +162,10 @@ class GrantsMetadataProvider implements RIFCSProvider
         return array_unique($institutions);
     }
 
-
+    /*
+      * Will return a list of  titles of any related party  who has a relationship that is  a funder
+      * - both related objects and related info are returned
+      */
     public static function getFunders($record)
     {
         $funders = [];
@@ -159,6 +180,13 @@ class GrantsMetadataProvider implements RIFCSProvider
         }
         return array_unique($funders);
     }
+
+    /*
+     * Will return a list of  titles of any related party  who has a rifcs description element
+     *  of type 'researchers', or is a related object or related info of type party with a relation_type of
+     * 'hasPrincipalInvestigator','hasParticipant' or 'isAssociatedWith'
+     * -  values form related objects, relatedInfo and description[@type="researchers"] are returned
+     */
     public static function getResearchers($record)
     {
         $researchers = [];
@@ -180,6 +208,11 @@ class GrantsMetadataProvider implements RIFCSProvider
         return array_unique($researchers);
     }
 
+    /*
+     * Will return a list of  titles of any related party  or related info of class party and of type 'party' or 'person'
+     * with a relation_type of 'hasPrincipalInvestigator'
+     * -  related objects and related info  are returned
+     */
     public static function getPrincipalInvestigator($record)
     {
         $principalInvestigator = [];
