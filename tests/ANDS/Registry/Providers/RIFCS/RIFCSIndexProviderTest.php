@@ -39,6 +39,45 @@ class RIFCSIndexProviderTest extends \RegistryTestClass
         $this->myceliumDelete($record);
     }
 
+    public function test_getIndexActivity()
+    {
+        $record = $this->stub(RegistryObject::class, ['class' => 'activity', 'type' => 'project','key' => 'ACTIVITY_GRANT_NETWORK']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/activity_grant_network.xml')
+        ]);
+        $this->myceliumInsert($record);
+
+        // processing that should happen prior
+        DatesProvider::process($record);
+        TitleProvider::process($record);
+
+        $index = RIFCSIndexProvider::get($record);
+
+        $this->assertNotNull($index);
+        $this->assertNotEmpty($index);
+        $this->assertArrayHasKey('id', $index);
+        $this->assertArrayHasKey('slug', $index);
+        $this->assertArrayHasKey('key', $index);
+        $this->assertArrayHasKey('title', $index);
+        $this->assertArrayHasKey('display_title', $index);
+        $this->assertArrayHasKey('description', $index);
+        $this->assertArrayHasKey('identifier_type', $index);
+        $this->assertArrayHasKey('identifier_value', $index);
+        $this->assertArrayHasKey('identical_record_ids', $index);
+        $this->assertArrayHasKey('activity_status', $index);
+        $this->assertArrayHasKey('funding_amount', $index);
+        $this->assertArrayHasKey('funding_scheme', $index);
+        $this->assertArrayHasKey('funding_scheme_search', $index);
+        $this->assertArrayHasKey('administering_institution', $index);
+        $this->assertArrayHasKey('institutions', $index);
+        $this->assertArrayHasKey('funders', $index);
+        $this->assertArrayHasKey('researchers', $index);
+        $this->assertArrayHasKey('principal_investigator', $index);
+
+        $this->myceliumDelete($record);
+    }
+
     public function test_isIndexable()
     {
         // PUBLISHED record is indexable
