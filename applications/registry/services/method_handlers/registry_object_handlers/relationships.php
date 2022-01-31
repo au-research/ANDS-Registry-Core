@@ -186,7 +186,7 @@ class Relationships extends ROHandler
             'not_to_type' => 'group',
             'to_title' => '*',
         ], ['boost_to_group' => $this->ro->group ,'boost_relation_type' =>
-            ['Principal Investigator','Chief Investigator','hasPrincipalInvestigator'] ,
+            ['Principal Investigator','hasPrincipalInvestigator','Chief Investigator'] ,
             'rows' => 5, 'sort' => 'score desc, to_title asc']);
         return $result->toArray();
 

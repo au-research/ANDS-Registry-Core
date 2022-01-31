@@ -4,6 +4,7 @@ namespace ANDS\Registry\Events;
 
 use ANDS\DataSource;
 use ANDS\Registry\Events\Event\DataSourceUpdatedEvent;
+use ANDS\Registry\Events\Event\PortalIndexUpdateEvent;
 use RegistryTestClass;
 
 class EventServiceProviderTest extends RegistryTestClass
@@ -24,5 +25,17 @@ class EventServiceProviderTest extends RegistryTestClass
     {
         $shortNames = EventServiceProvider::getShortNames();
         $this->assertContains("DataSourceUpdatedEvent", $shortNames);
+        $this->assertContains("PortalIndexUpdateEvent", $shortNames);
     }
+
+    public function testDispatchPortalIndexUpdateEvent()
+    {
+        EventServiceProvider::dispatch(PortalIndexUpdateEvent::from([
+            'registry_object_id' => "9",
+            'indexed_field' => "title",
+            'new_value' => "LEO WAS HERE AGAIN"
+        ]));
+        // TODO: add a solr doc in setup and test for value change
+    }
+
 }
