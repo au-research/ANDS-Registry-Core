@@ -32,7 +32,7 @@
             ?>
              @if($dupes>1 && $relation_dupe_title[$col['to_title'].'same_group_found'] == 'false')
                     @foreach($relation_dupe_title[$col['to_title']] as $col2)
-                        @if($col['from_group'] == $col2['to_group'] && $col['to_title'] == $col2['to_title'])
+                        @if(isset($col2['to_group']) && $col['from_group'] == $col2['to_group'] && $col['to_title'] == $col2['to_title'])
                          <?php //if record from the same group is found set found to true display the record
                              $relation_dupe_title[$col['to_title'].'same_group_found'] = 'true';?>
                              <li>
@@ -59,7 +59,8 @@
                     @if(  $relation_dupe_title[$col['to_title'].'same_group_found'] == 'false')
                          <?php
                             //if no record from the same group is found display 1st record
-                            $col2 = $relation_dupe_title[$col['to_title']][0] ?>
+                            $col2 = $relation_dupe_title[$col['to_title']][0];
+                            $relation_dupe_title[$col['to_title'].'same_group_found'] = 'true';?>
                          <li>
                              <i class="fa fa-user icon-portal"></i>
                              <small>{{$dupe_type_text[$col['to_title'].'dupe_type_text'] }}</small>

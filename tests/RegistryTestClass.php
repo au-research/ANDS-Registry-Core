@@ -22,7 +22,7 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
     /* Test */
     public function setUp()
     {
-        parent::setUp();
+
         initEloquent();
 
         restore_error_handler();
@@ -45,6 +45,7 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+
         parent::tearDown();
 
         if (!$this->dataSource) {
@@ -99,6 +100,7 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
         $result = $myceliumServiceClient->createNewImportRecordRequest("testingup");
         $request = json_decode($result->getBody()->getContents(), true);
         $myceliumServiceClient->importRecord($record,$request['id']);
+        $myceliumServiceClient->indexRecord($record);
     }
 
     public function myceliumDelete(RegistryObject $record){

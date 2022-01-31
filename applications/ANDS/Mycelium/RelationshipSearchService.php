@@ -86,8 +86,17 @@ class RelationshipSearchService
                 case "to_identifier":
                 case "to_identifier_type":
                 case "to_title":
+                    break;
                 case "to_type":
-                    $fqs[] = "+$key:$value";
+                    // supports comma separated value, and PHP array (when using PHP API)
+                    // party -> +(to_type:party)
+                    // party,person -> +(to_type:party OR to_type:person)
+                    $value = is_array($value) ? $value : explode(',', $value);
+                    $value = collect($value)->map(function ($val) {
+                        return 'to_type:' . $val;
+                    })->toArray();
+                    $value = implode(' OR ', $value);
+                    $fqs[] = "+($value)";
                     break;
                 case "relation_type":
                     // supports comma separated value, and PHP array (when using PHP API)
