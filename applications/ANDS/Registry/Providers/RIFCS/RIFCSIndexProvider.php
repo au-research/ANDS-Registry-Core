@@ -43,10 +43,11 @@ class RIFCSIndexProvider
         // todo license_class <- LicenseProvider
         // todo access_methods_ss
 
-        // todo grants <- GrantsMetadataProvider
-//        if ($record->class === "activity") {
-//            $index = collect($index)->merge(GrantsMetadataProvider::getIndexableArray($record));
-//        }
+
+        /* activity records should have grants metadata indexed */
+        if ($record->class === "activity") {
+            $index = collect($index)->merge(GrantsMetadataProvider::getIndexableArray($record));
+        }
 
         return $index;
     }

@@ -112,7 +112,7 @@
                             href="false"
                             title="{{ $col2['to_title'] }}"
                             class="ro_preview"
-                            <?php $col_json = urlencode(json_encode($col2)); ?>
+                            <?php $col_json = urlencode(json_encode($col)); ?>
                             identifier_relation_id="{{$col_json}}">
                             {{$col['to_title']}}
                         @endif

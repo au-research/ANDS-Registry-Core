@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
     <registryObject group="AUTestingRecords">
-        <key>AODN/Aalbersberg,BillAUT3bb</key>
+        <key>AODN</key>
         <originatingSource>http://catalogue.aodn.org.au</originatingSource>
-        <party type="person">
+        <party type="group">
             <name type="primary">
-                <namePart>Aalbersberg, Billbb</namePart>
+                <namePart>Australian Ocean Data Network</namePart>
             </name>
             <identifier type="purl">http://purl.org/au-research/grants/nhmrc/640318AUT</identifier>
             <relatedObject>
                 <key>AODdN/InstituteofAppliedScience(IAS),TheUniversityoftheSouthPacific(USP)</key>
                 <relation type="isMemberOf"/>
+            </relatedObject>
+            <relatedObject>
+                <key>COLLECTION_GRANT_NETWORK</key>
+                <relation type="isManagerOf"/>
             </relatedObject>
             <location>
                 <address>
