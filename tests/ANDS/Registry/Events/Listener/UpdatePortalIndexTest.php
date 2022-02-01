@@ -53,7 +53,7 @@ class UpdatePortalIndexTest extends RegistryTestClass
 
     function testGetRecordIdsToUpdate(){
         $event = new PortalIndexUpdateEvent;
-        $event->registry_object_id = null;
+        $event->registry_object_id = 9;
         $event->indexed_field = "related_party_title";
         $event->search_value = "New Fish";
         $event->new_value= "Old Fish";

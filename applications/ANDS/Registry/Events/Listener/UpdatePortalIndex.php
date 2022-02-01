@@ -64,7 +64,8 @@ class UpdatePortalIndex
         $jsonPackets[] = $json;
         $solrClient = new SolrClient(Config::get('app.solr_url'));
         $solrClient->setCore("portal");
-        $solrClient->request("POST", "portal/update/json", ['commit' => 'true'], json_encode($jsonPackets));
+        $solrClient->request("POST", "portal/update/json", ['commit' => 'true'],
+            json_encode($jsonPackets), "body");
     }
 
 
@@ -115,7 +116,8 @@ class UpdatePortalIndex
         }
         $solrClient = new SolrClient(Config::get('app.solr_url'));
         $solrClient->setCore("portal");
-        $solrClient->request("POST", "portal/update/json", ['commit' => 'true'], json_encode($jsonPackets));
+        $solrClient->request("POST", "portal/update/json", ['commit' => 'true'],
+            json_encode($jsonPackets), "body");
     }
 
 
