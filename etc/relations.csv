@@ -8,7 +8,7 @@ hasAssociationWith,hasAssociationWith,Associated with,Associated with,Associated
 hasCollector,isCollectorOf,Has collector,Aggregated by,,,
 hasDerivedCollection,isDerivedFrom,Derives,Derives,,,
 hasMember,isMemberOf,Has member,,Has member,,
-hasOutput,isOutputOf,Has output,,,,Outputs
+hasOutput,isOutputOf,Has output,,,,Has output
 hasPart,isPartOf,Is part of,Contains,Has part,Includes,Includes
 hasParticipant,isParticipantIn,Undertaken by,Undertaken by,Undertaken by,Undertaken by,Undertaken by
 hasPrincipalInvestigator,isPrincipalInvestigatorOf,Principal investigator,Principal investigator,,Principal investigator,Principal investigator
