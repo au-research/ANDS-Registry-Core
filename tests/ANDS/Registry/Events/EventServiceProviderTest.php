@@ -31,9 +31,10 @@ class EventServiceProviderTest extends RegistryTestClass
     public function testDispatchPortalIndexUpdateEvent()
     {
         EventServiceProvider::dispatch(PortalIndexUpdateEvent::from([
-            'registry_object_id' => "9",
-            'indexed_field' => "title",
-            'new_value' => "LEO WAS HERE AGAIN"
+            'registry_object_id' => "1",
+            'indexed_field' => "related_party_title",
+            'search_value' => "Old Fish",
+            'new_value' => "New Fish"
         ]));
         // TODO: add a solr doc in setup and test for value change
     }

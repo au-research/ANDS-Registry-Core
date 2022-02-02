@@ -50,4 +50,23 @@ class UpdatePortalIndexTest extends RegistryTestClass
         // TODO: add a solr doc in setup and test for value change
     }
 
+
+    function testGetRecordIdsToUpdate(){
+        $event = new PortalIndexUpdateEvent;
+        $event->registry_object_id = 1;
+        $event->indexed_field = "related_party_multi_title";
+        $event->search_value = null;
+        $event->new_value = null;
+
+        $listeners = EventServiceProvider::getListeners($event);
+        foreach ($listeners as $listener) {
+            try {
+                $listenerObj = new $listener;
+                $listenerObj->handle($event);
+            } catch (Exception $e) {
+                throw new Exception($e->getMessage());
+            }
+        }
+
+    }
 }
