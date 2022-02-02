@@ -84,13 +84,18 @@ class UpdatePortalIndex
         $query["rows"] = $batchSize;
         $query["start"] = 0;
         $query["q"] = $event->indexed_field.':"'.$event->search_value.'"';
-
+        // keep all records processed in case we end up looping back to them
+        $processedRecordIds = array();
         // finally a case for a do while loop !!!
         do {
             $result = $solrClient->request("GET", "portal/select", $query);
             $targetRecordIds = array();
             foreach($result["response"]["docs"] as $record){
-                $targetRecordIds[] = $record["id"];
+                if(!in_array($record["id"], $processedRecordIds)){
+                    $targetRecordIds[] = $record["id"];
+                    $processedRecordIds[] = $record["id"];
+                }
+
             }
             $this->updatePortalIndexes($targetRecordIds, $event->indexed_field, $event->search_value, $event->new_value);
         } while (sizeof($result["response"]["docs"]) > 0);
