@@ -29,8 +29,6 @@
                        title="{{ $col['to_title'] }}"
                        tip="{{ $col['to_title'] }}"
                        class="ro_preview"
-                       tip="{{ $col['relation_description'] }}"
-
                        @if($col["to_identifier_type"]=="ro:id")
                             ro_id="{{$col['to_identifier']}}"
                        @else

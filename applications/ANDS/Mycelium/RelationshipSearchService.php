@@ -35,6 +35,7 @@ class RelationshipSearchService
 
         // convert criterias and pagination to Solr parameters and perform the search
         $parameters = static::getSolrParameters($criterias, $pagination);
+
         $result = $solrClient->search($parameters);
 
         return Paginator::fromSolrResult($result);
@@ -61,7 +62,20 @@ class RelationshipSearchService
                     $params[$key] = $value;
                     break;
                 case "boost_relation_type":
-                    $params['bq'] = '{!parent which=$parentFilter score=total}relation_type:' . $value;
+                    // RDA-627 support weighted boost relation_type
+                    // using an array and boost decreasing by order in the array
+                    if(is_array($value)){
+                        $boost = sizeof($value);
+                        $queryStr = '{!parent which=$parentFilter score=total}';
+                        foreach($value as $val){
+                           $queryStr  .= 'relation_type:"' . $val . '"^'.$boost;
+                           $boost -= 1;
+                        }
+                    $params['bq'] = $queryStr;
+                    }
+                    else {
+                        $params['bq'] = '{!parent which=$parentFilter score=total}relation_type:"' . $value . '"';
+                    }
                     break;
                 case "boost_to_group":
                     $params['bq'] = "to_group:${value}";
@@ -118,7 +132,6 @@ class RelationshipSearchService
         // joins all fqs into a single long (space separated) fq parameter to POST to SOLR
         $fq = implode(" ", $fqs);
         $params['fq'] = $fq;
-
         return $params;
     }
 }

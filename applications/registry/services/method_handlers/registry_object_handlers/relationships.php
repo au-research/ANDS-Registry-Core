@@ -177,15 +177,17 @@ class Relationships extends ROHandler
      * relationships where there's a hasPrincipalInvestigator edge is ranked higher via boosted query
      * @return array
      */
+    // RDA-627 make boost relation_type an array and boost decrease by the order in the array
     private function getRelatedResearchers() {
 
         $result = RelationshipSearchService::search([
             'from_id' => $this->ro->id,
             'to_class' => 'party',
             'not_to_type' => 'group',
-            'to_title' => '*'
-        ], ['boost_to_group' => $this->ro->group ,'boost_relation_type' => 'hasPrincipalInvestigator' , 'rows' => 5, 'sort' => 'score desc, to_title asc']);
-
+            'to_title' => '*',
+        ], ['boost_to_group' => $this->ro->group ,'boost_relation_type' =>
+            ['Principal Investigator','hasPrincipalInvestigator','Chief Investigator'] ,
+            'rows' => 5, 'sort' => 'score desc, to_title asc']);
         return $result->toArray();
 
     }
