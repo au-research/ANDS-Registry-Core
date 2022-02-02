@@ -19,7 +19,8 @@ class PortalIndexUpdateEvent implements Event
         $event->indexed_field = array_get($data, 'indexed_field');
         // if no search_value we just set the field to the new_value
         $event->search_value = array_get($data, 'search_value', null);
-        $event->new_value= array_get($data, 'new_value');
+        // if no new_value it is a delete only
+        $event->new_value= array_get($data, 'new_value', null);
         return $event;
     }
 }

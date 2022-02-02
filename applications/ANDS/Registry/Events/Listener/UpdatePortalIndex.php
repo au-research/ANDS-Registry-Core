@@ -23,6 +23,7 @@ class UpdatePortalIndex
         if($event->registry_object_id == null && $event->search_value == null ){
             throw new Exception("registry_object_id and search_value should not be null together");
         }
+        debug("PortalIndexUpdateEvent f:".$event->indexed_field ." s:". $event->search_value." n:".$event->new_value . " i:" . $event->registry_object_id);
         $this->processEvent($event);
     }
 
@@ -54,13 +55,18 @@ class UpdatePortalIndex
     public function updatePortalIndex($event){
         $jsonPackets = array();
         $json["id"] = $event->registry_object_id;
-
+        $actions = array();
         if($event->search_value == null){
-            $json[$event->indexed_field] = ["set" => $event->new_value];
+            $actions["set"] = $event->new_value;
         }
         else{
-            $json[$event->indexed_field] = ["remove" => $event->search_value, "add-distinct" => $event->new_value];
+            $actions["remove"] = $event->search_value;
+            if($event->new_value != null){
+                $actions["add-distinct"] = $event->new_value;
+            }
         }
+        $json[$event->indexed_field] = $actions;
+        debug("updatePortalIndex Action:".json_encode($actions));
         $jsonPackets[] = $json;
         $solrClient = new SolrClient(Config::get('app.solr_url'));
         $solrClient->setCore("portal");
@@ -98,7 +104,7 @@ class UpdatePortalIndex
 
             }
             $this->updatePortalIndexes($targetRecordIds, $event->indexed_field, $event->search_value, $event->new_value);
-        } while (sizeof($result["response"]["docs"]) > 0);
+        } while (sizeof($result["response"]["docs"]) > 0 && sizeof($targetRecordIds) > 0);
 
     }
 
@@ -113,12 +119,21 @@ class UpdatePortalIndex
     public function updatePortalIndexes($idList, $indexed_field, $search_value, $new_value ){
 
         $jsonPackets = array();
+
         foreach($idList as $id){
             $json = array();
+            $actions = array();
             $json["id"] = $id;
-            $json[$indexed_field] = ["remove" => $search_value, "add-distinct" => $new_value];
+            $actions["remove"] = $search_value;
+
+            if($new_value != null){
+                $actions["add-distinct"] = $new_value;
+            }
+            $json[$indexed_field] = $actions;
             $jsonPackets[] = $json;
         }
+        debug("updatePortalIndexes Action:".json_encode($actions));
+
         $solrClient = new SolrClient(Config::get('app.solr_url'));
         $solrClient->setCore("portal");
         $solrClient->request("POST", "portal/update/json", ['commit' => 'true'],
