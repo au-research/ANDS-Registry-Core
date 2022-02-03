@@ -36,14 +36,6 @@ class Solr_indexer extends _GenericIndexer {
 		//macthing identifier count
 		$json['matching_identifier_count'] = sizeof($this->ro->findMatchingRecords());
 
-		//contributor
-		$is_contributor = false;
-		$contributor = $this->ro->getContributorExists($this->ro->id);
-		if($contributor) {
-			$json['contributor_page'] = $contributor[0];
-			if($contributor[0]==$this->ro->slug) $is_contributor = true;
-		}
-
 		//descriptions
 		$this->load->library('purifier');
 		$fields = array('description_type', 'description_value');

@@ -246,50 +246,6 @@ class Data_source extends MX_Controller {
 		echo json_encode($jsonData);
 	}
 
-	/**
-	 * Get a list of contributor of a data source
-	 * @param  data_source_id $id
-	 * @return json
-	 */
-	public function get_contributor($id=false){
-		//prepare
-		header('Cache-Control: no-cache, must-revalidate');
-		header('Content-type: application/json');
-		set_exception_handler('json_exception_handler');
-
-		if (!$id) throw new Exception('ID must be specified');
-
-		$jsonData = array();
-		$this->load->model("data_sources","ds");
-		$ds = $this->ds->getByID($id);
-		$dataSourceGroups = $ds->get_groups();
-		$items = array();
-		if (sizeof($dataSourceGroups) > 0) {
-			foreach($dataSourceGroups as $group) {
-				$group_contributor = $ds->get_group_contributor($group);
-				$item = array();
-				$item['group'] = $group;
-				if(isset($group_contributor['key'])) {
-					$item['contributor_page_key'] = $group_contributor['key'];
-					$item['contributor_page_id'] = $group_contributor['registry_object_id'];
-					$item['contributor_page_link'] = base_url('registry_object/view/'.$group_contributor["registry_object_id"]);
-					$item['authorative_data_source_id'] = $group_contributor['authorative_data_source_id'];
-					//check if it's the authorative data source, if not then present the authorative one
-					if ((int) $item['authorative_data_source_id'] != $ds->id) {
-						$auth_ds = $this->ds->getByID((int) $item['authorative_data_source_id']);
-						$item['authorative_data_source_title'] = $auth_ds->title;
-						$item['has_authorative'] = true;
-					} else $item['authorative_data_source_title'] = $ds->title;
-				} else {
-					$item['contributor_page_key'] = '';
-				}
-				array_push($items, $item);
-			}
-
-			$jsonData['items'] = $items;
-			echo json_encode($jsonData);
-		}
-	}
 
 	/**
 	 * Save a data source
@@ -2140,22 +2096,6 @@ class Data_source extends MX_Controller {
 		}
 
 	}
-
-
-
-	function getContributorPages()
-	{
-		$POST = $this->input->post();
-		print_r($POST);
-		print('<?xml version="1.0" encoding="UTF-8"?>'."\n");
-		print('<response type="">'."\n");
-		print('<timestamp>'.date("Y-m-d H:i:s").'</timestamp>'."\n");
-		print("<message> we need to get the contibutor groups and the pages if required</message>\n");
-		print("</response>");
-		return " we need to get the contibutor groups and the pages if required";
-
-	}
-
 
 	function exportDataSource($id)
 	{

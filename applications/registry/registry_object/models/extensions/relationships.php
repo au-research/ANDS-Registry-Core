@@ -701,15 +701,6 @@ class Relationships_Extension extends ExtensionBase
             $classes[$class['class']] = ucfirst($class['class']);
         }
 
-        // If we haven't found a party record yet, lets check for institutional pages (which we assume to always be parties)
-        if (!isset($classes['party'])) {
-            $institutional_pages_query = 'SELECT "party" AS `class` FROM institutional_pages WHERE `group` = "' . $this->db->escape($this->ro->group) . '"';
-            $result = $this->db->query($institutional_pages_query);
-            if ($result->num_rows() > 0) {
-                $classes['party'] = 'Party';
-            }
-        }
-
         // That should be it!
         return $classes;
     }

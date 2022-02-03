@@ -152,14 +152,6 @@ class Sync_extension extends ExtensionBase{
             $json['originating_source'] = htmlspecialchars(trim($node->nodeValue));
         }
 
-		//contributor
-		$is_contributor = false;
-		$contributor = $this->ro->getContributorExists($this->ro->id);
-		if($contributor) {
-			$json['contributor_page'] = $contributor[0];
-			if($contributor[0]==$this->ro->slug) $is_contributor = true;
-		}
-
 		//descriptions
 		$this->_CI->load->library('purifier');
 		$fields = array('description_type', 'description_value');

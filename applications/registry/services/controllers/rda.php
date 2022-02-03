@@ -78,19 +78,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 			$this->load->model('data_source/data_sources', 'ds');
 			//we have a reord, get the object to get the object's group
 			$theObject = $this->ro->getByID($record[0]['registry_object_id']);
-			//see if this group has a contributor page
-			$contributor = $this->db->get_where('institutional_pages',array('group' => $theObject->getAttribute('group')));
-			if ($contributor->num_rows() >0)
-			{
-				//if there is a contributor page see if the key of the page is this one (to cater for when a draft and published contibutor page exists)
-				$contributorRecord = array_pop($contributor->result_array());
-				$theContributor = $this->ro->getByID($contributorRecord['registry_object_id']);
-				if($theContributor && $theContributor->getAttribute('key')==$record[0]['key'])
-				{
-					$record[0]['template'] = CONTRIBUTOR_PAGE_TEMPLATE;
-				}
 
-			}
 
 			$result = json_encode($record[0]);
 			$result_decoded = json_decode($result,true);
@@ -121,14 +109,6 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 
 			$result = array();
 			$this->load->model('data_source/data_sources', 'ds');
-			$contributor = $this->db->get_where('institutional_pages',array('group' => $ro->getAttribute('group')));
-			if ($contributor->num_rows() >0) {
-				$contributorRecord = array_pop($contributor->result_array());
-				$theContributor = $this->ro->getByID($contributorRecord['registry_object_id']);
-				if($theContributor && $theContributor->getAttribute('key')==$ro->key){
-					$result['template'] = CONTRIBUTOR_PAGE_TEMPLATE;
-				}
-			}
 			$result['data'] = $ro->getExtRif();
 			$result['registry_object_id'] = $ro->id;
 			$result['key'] = $ro->key;
@@ -436,33 +416,6 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		$contents = $registry_object->getContributorData();
 
 		echo json_encode(array("contents"=>$contents));
-	}
-
-	public function getInstitutionals(){
-		$result_inst = $this->db->select('group, registry_object_id')->from('institutional_pages')->get();
-		$inst = array();
-		foreach($result_inst->result() as $r){
-			array_push($inst, $r->registry_object_id);
-		}
-		$result_things = $this->db->select('title, slug, registry_object_id')->from('registry_objects')->where('status', 'PUBLISHED')->where_in('registry_object_id', $inst)->get();
-
-		$things = array();
-		foreach($result_things->result() as $vv) {
-			$things[$vv->registry_object_id] = array('slug'=>$vv->slug);
-		}
-
-		$fresult = array();
-		foreach($result_inst->result() as $r) {
-			if(isset($things[$r->registry_object_id])){
-				array_push($fresult, array(
-					'registry_object_id' => $r->registry_object_id,
-					'title' => $r->group,
-					'slug' => $things[$r->registry_object_id]['slug']
-				));
-			}
-		}
-
-		echo json_encode(array("contents"=>$fresult));
 	}
 
     public function getCollectionCreators(){

@@ -184,10 +184,6 @@ class Connections_Extension extends ExtensionBase
 					$chosen = false;
 					foreach($ulist as $conn){
 						$ro = $this->_CI->ro->getByID($conn['registry_object_id']);
-						//chosen are selected based on being a contributor page and/or having the same group as the primary related object
-						if(!$chosen && $ro && $ro->isContributor()) {
-							$chosen = $conn['registry_object_id'];
-						}
 						unset($ro);
 					}
 
@@ -224,13 +220,6 @@ class Connections_Extension extends ExtensionBase
 			}
 		}
 		return array($ordered_connections);
-	}
-
-	function isContributor(){
-		$query = $this->db->get_where('institutional_pages', array('registry_object_id'=>$this->ro->id));
-		if($query->num_rows()>0){
-			return true;
-		} else return false;
 	}
 
 	function removeDuplicateRelationships($list) {
@@ -710,31 +699,6 @@ class Connections_Extension extends ExtensionBase
         return $connections;
 
     }
-
-	function _getContributorLinks($allow_unmatched_records = false)
-	{
-		/* Step 4 - Contributor */
-		$my_connections = array();
-
-		$this->db->select('r.registry_object_id, r.class, r.title, r.slug, r.status, r.key, r.type')
-						 ->from('institutional_pages i')
-						 ->join('registry_objects r','i.registry_object_id = r.registry_object_id')
-						 ->where('i.group',$this->ro->group);
-		$query = $this->db->get();
-
-		foreach ($query->result_array() AS $row)
-		{
-			if ($row['registry_object_id'] != $this->ro->id)
-			{
-				$row['origin'] = "CONTRIBUTOR";
-				$row['class'] = "contributor";
-				$row['relation_type'] = "(Automatically generated contributor page link)";
-				$my_connections[] = $row;
-			}
-		}
-
-		return $my_connections;
-	}
 
 	function _getDuplicateConnections()
 	{

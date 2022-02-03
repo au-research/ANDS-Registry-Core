@@ -20,9 +20,6 @@ angular.module('ds_app', ['slugifier', 'ui.sortable', 'ui.tinymce', 'ngSanitize'
 			get_harvester_status: function(id) {
 				return $http.get(base_url+'data_source/harvester_status/'+id).then(function(response){return response.data});
 			},
-			contributor: function(id) {
-				return $http.get(base_url+'data_source/get_contributor/'+id).then(function(response){return response.data});
-			},
 			save: function(data) {
 				return $http.post(base_url+'data_source/save/', {data:data}).then(function(response){return response.data});
 			},
@@ -102,11 +99,7 @@ angular.module('ds_app', ['slugifier', 'ui.sortable', 'ui.tinymce', 'ngSanitize'
 				$scope.$watch('dsid', function(nv){
 					if(nv){
 						$ele.val($scope.$parent.$eval($attrs.ngModel));
-						if($ele.attr('name') && $ele.attr('name').match(/contributor/)) {
-							$ele.ro_search_widget({ endpoint: apps_url + "registry_object_search/", 'class': "party", datasource: $scope.dsid });
-						} else {
-							$ele.ro_search_widget({ endpoint: apps_url + "registry_object_search/", datasource: $scope.dsid, lock_presets: true });
-						}
+						$ele.ro_search_widget({ endpoint: apps_url + "registry_object_search/", datasource: $scope.dsid, lock_presets: true });
 						$ele.bind('blur keyup change', function(){
 							return $scope.$apply(ngModel.$setViewValue($ele.val()));
 						});
@@ -174,7 +167,6 @@ function SettingsCtrl($scope, $routeParams, ds_factory) {
 	ds_factory.get($routeParams.id).then(function(data){
 		if(data.status=='OK'){
 			$scope.ds = data.items[0];
-			$scope.load_contributor();
 			document.title = $scope.ds.title + ' - Settings';
 			// console.log($scope.ds.manual_publish);
 			$scope.process_values();
@@ -192,13 +184,8 @@ function SettingsCtrl($scope, $routeParams, ds_factory) {
 				} else $scope.ds[i] = false;
 			}
 		});
-	}
+	};
 
-	// $scope.load_contributor = function() {
-	// 	ds_factory.contributor($scope.ds.id).then(function(data){
-	// 		$scope.ds.contributor = data;
-	// 	});
-	// }
 }
 
 function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
@@ -241,7 +228,7 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 		if(data.status=='OK'){
 			$scope.ds = data.items[0];
 
-			//$scope.load_contributor();
+
 			$scope.process_values();
 			bind_plugins($scope);
 			document.title = $scope.ds.title + ' - Edit Settings';
@@ -258,12 +245,6 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 			$location.path('/');
 		}
 	});
-
-	$scope.load_contributor = function() {
-		ds_factory.contributor($scope.ds.id).then(function(data){
-			$scope.ds.contributor = data;
-		});
-	}
 
 	$scope.process_values = function() {
 		var flags = ['manual_publish', 'allow_reverse_internal_links', 'allow_reverse_external_links', 'create_primary_relationships', 'qa_flag', 'export_dci', 'service_discovery_enabled'];
@@ -334,11 +315,6 @@ function EditCtrl($scope, $routeParams, ds_factory, $location, $http) {
 			'msg':'Saving...'
 		};
 
-		$('input[name=contributor_pages]').each(function(index){
-			if($scope.ds.contributor && $scope.ds.contributor.items[index]) {
-				$scope.ds.contributor.items[index].contributor_page_key = $(this).val();
-			}
-		});
 		ds_factory.save($scope.ds).then(function(data){
 			if (data.status=='OK') {
 				$scope.msg = {
@@ -880,14 +856,6 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 
 function bind_plugins($scope) {
 	$('.datepicker').ands_datetimepicker();
-
-	// $('.rosearch').each(function(){
-	// 	if($(this).attr('name') && $(this).attr('name').match(/contributor/)) {
-	// 		$(this).ro_search_widget({ endpoint: apps_url + "registry_object_search/", 'class': "party", datasource: $scope.ds.id });
-	// 	} else {
-	// 		$(this).ro_search_widget({ endpoint: apps_url + "registry_object_search/", datasource: $scope.ds.id, lock_presets: true });
-	// 	}
-	// });
 
 	function _getVocab(vocab){
 		vocab = vocab.replace("collection", "Collection");

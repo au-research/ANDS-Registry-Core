@@ -40,7 +40,7 @@ class Extrif_Extension extends ExtensionBase
 			if (count($xml->key) == 1)
 			{
 				/* EXTENDED METADATA CONTAINER */
-				$contributor = $this->getContributorExists($this->ro->id);
+				$contributor = false;
 				$extendedMetadata = $xml->addChild("extRif:extendedMetadata", NULL, EXTRIF_NAMESPACE);
 				$extendedMetadata->addChild("extRif:slug", $this->ro->slug, EXTRIF_NAMESPACE);
 				$extendedMetadata->addChild("extRif:dataSourceKey", $ds->key, EXTRIF_NAMESPACE);
@@ -316,37 +316,6 @@ class Extrif_Extension extends ExtensionBase
 			$reverseLinks = 'EXT';
 		}
 		return $reverseLinks;
-	}
-
-	function getContributorExists($ro_id)
-	{
-
-		// Get the RO instance for this registry object so we can fetch its contributor datat
-        $this->_CI->load->model('registry/registry_object/registry_objects', 'ro');
-
-		$registry_object = $this->_CI->ro->getByID($ro_id);
-	
-		$contributor_details = array();
-
-		if (!$registry_object)
-		{
-			throw new Exception("Unable to fetch contributor data registry object.");
-		}
-		
-		$contributor = $this->_CI->db->get_where('institutional_pages',array('group' => $registry_object->getAttribute('group')));
-
-		if ($contributor->num_rows() >0)
-		{
-				$row = $contributor->row_array();
-				$contributor_object = $this->_CI->ro->getByID($row['registry_object_id']);
-				if($contributor_object && $contributor_object->getAttribute('status')==PUBLISHED)
-				{
-					$contributor_details[0] = $contributor_object->getAttribute('slug');
-					$contributor_details[1] = $registry_object->getAttribute('group');
-					return $contributor_details;
-				}
-		}
-		return false;
 	}
 
 	function isHtml($string)
