@@ -79,8 +79,8 @@
                 </relation>
             </relatedInfo>
             <existenceDates>
-                <startDate dateFormat="W3CDTF">2009</startDate>
-                <endDate dateFormat="W3CDTF">2009</endDate>
+                <startDate dateFormat="W3CDTF">2004-05-01</startDate>
+                <endDate dateFormat="W3CDTF">2009-09-01</endDate>
             </existenceDates>
         </activity>
     </registryObject>

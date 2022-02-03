@@ -46,6 +46,8 @@ class GrantsMetadataProviderTest extends \RegistryTestClass
         $this->assertArrayHasKey('funders', $grants_metadata);
         $this->assertArrayHasKey('researchers', $grants_metadata);
         $this->assertArrayHasKey('principal_investigator', $grants_metadata);
+        $this->assertArrayHasKey('earliest_year', $grants_metadata);
+        $this->assertArrayHasKey('latest_year', $grants_metadata);
 
         $this->myceliumDelete($record);
         $this->myceliumDelete($record2);
