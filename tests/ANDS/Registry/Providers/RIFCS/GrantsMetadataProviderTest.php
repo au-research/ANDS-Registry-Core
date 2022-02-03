@@ -6,7 +6,6 @@ namespace ANDS\Registry\Providers\RIFCS;
 use ANDS\File\Storage;
 use ANDS\RecordData;
 use ANDS\RegistryObject;
-use ANDS\Registry\Providers\RIFCS\GrantsMetadataProvider;
 
 class GrantsMetadataProviderTest extends \RegistryTestClass
 {
@@ -40,7 +39,6 @@ class GrantsMetadataProviderTest extends \RegistryTestClass
         $this->assertArrayHasKey('activity_status', $grants_metadata);
         $this->assertArrayHasKey('funding_amount', $grants_metadata);
         $this->assertArrayHasKey('funding_scheme', $grants_metadata);
-        $this->assertArrayHasKey('funding_scheme_search', $grants_metadata);
         $this->assertArrayHasKey('administering_institution', $grants_metadata);
         $this->assertArrayHasKey('institutions', $grants_metadata);
         $this->assertArrayHasKey('funders', $grants_metadata);

@@ -78,6 +78,11 @@
                     <description>A related info service</description>
                 </relation>
             </relatedInfo>
+            <relatedInfo type="party">
+                <title>Prof James Cull</title>
+                <identifier type="local">prof_james_cull</identifier>
+                <relation type="Chief Investigator"/>
+            </relatedInfo>
             <existenceDates>
                 <startDate dateFormat="W3CDTF">2004-05-01</startDate>
                 <endDate dateFormat="W3CDTF">2009-09-01</endDate>

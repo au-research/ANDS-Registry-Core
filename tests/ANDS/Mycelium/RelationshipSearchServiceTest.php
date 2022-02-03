@@ -26,7 +26,7 @@ class RelationshipSearchServiceTest extends \RegistryTestClass
         $this->myceliumInsert($record3);
 
         $principalInvestigator = [];
-        $search_params = ['from_id' => $record3->id, 'to_class' => 'party', 'relation_type' => ['hasPrincipalInvestigator'], 'to_type' => ['party', 'group']];
+        $search_params = ['from_id' => $record3->id, 'to_class' => 'party', 'relation_type' => ['Chief*Investigator'], 'to_type' => ['party', 'group']];
         $result = RelationshipSearchService::search($search_params);
 
         $investigatorResult = $result->toArray();
