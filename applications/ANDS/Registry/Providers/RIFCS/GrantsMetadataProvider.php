@@ -217,13 +217,13 @@ class GrantsMetadataProvider implements RIFCSProvider
     public static function getPrincipalInvestigator($record)
     {
         $principalInvestigator = [];
-        $search_params = ['from_id'=>$record->id, 'to_class' => 'party', 'relation_type'=>['hasPrincipalInvestigator','Chief Investigator'], 'to_type' => ['party','person']];
+        $search_params = ['from_id'=>$record->id, 'to_class' => 'party', 'relation_type'=>['hasPrincipalInvestigator','Chief*Investigator'], 'to_type' => ['party','person']];
         $result = RelationshipSearchService::search($search_params);
 
         $investigatorResult = $result->toArray();
         if(isset($investigatorResult['contents']) && count($investigatorResult['contents']) > 0 ){
             foreach($investigatorResult['contents'] as $investigator){
-                $principalInvestigator[] = $investigator['to_title'] ." || ".$investigator['to_type'] ;
+                $principalInvestigator[] = $investigator['to_title'];
             }
         }
         return array_unique($principalInvestigator);
