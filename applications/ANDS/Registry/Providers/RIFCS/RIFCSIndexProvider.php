@@ -31,9 +31,9 @@ class RIFCSIndexProvider
             ->merge(IdentifierProvider::getIndexableArray($record))
             ->merge(SubjectProvider::getIndexableArray($record))
             ->merge(MatchingIdentifierProvider::getIndexableArray($record))
+            ->merge(TagProvider::getIndexableArray($record))
             ->toArray();
 
-        // todo tags <- TagsProvider
         // todo access_rights <- AccessRightsProvider?
         // todo related_info_search
         // todo spatial <- SpatialProvider
