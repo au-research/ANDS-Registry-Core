@@ -33,7 +33,6 @@ class GrantsMetadataProvider implements RIFCSProvider
             "activity_status" => GrantsMetadataProvider::getActivityStatus($record),
             "funding_amount" => GrantsMetadataProvider::getFundingAmount($record),
             "funding_scheme" => GrantsMetadataProvider::getFundingScheme($record),
-            "funding_scheme_search" => GrantsMetadataProvider::getFundingScheme($record),
             "administering_institution" => GrantsMetadataProvider::getAdministeringInstitutions($record),
             "institutions" => GrantsMetadataProvider::getInstitutions($record),
             "funders" => GrantsMetadataProvider::getFunders($record),
@@ -218,7 +217,7 @@ class GrantsMetadataProvider implements RIFCSProvider
     public static function getPrincipalInvestigator($record)
     {
         $principalInvestigator = [];
-        $search_params = ['from_id'=>$record->id, 'to_class' => 'party', 'relation_type'=>'hasPrincipalInvestigator', 'to_type' => ['party','person']];
+        $search_params = ['from_id'=>$record->id, 'to_class' => 'party', 'relation_type'=>['hasPrincipalInvestigator','Chief Investigator'], 'to_type' => ['party','person']];
         $result = RelationshipSearchService::search($search_params);
 
         $investigatorResult = $result->toArray();
