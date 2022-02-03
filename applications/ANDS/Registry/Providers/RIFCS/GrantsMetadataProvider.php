@@ -38,8 +38,10 @@ class GrantsMetadataProvider implements RIFCSProvider
             "institutions" => GrantsMetadataProvider::getInstitutions($record),
             "funders" => GrantsMetadataProvider::getFunders($record),
             "researchers" => GrantsMetadataProvider::getResearchers($record),
-            "principal_investigator" => GrantsMetadataProvider::getPrincipalInvestigator($record)
-        ];
+            "principal_investigator" => GrantsMetadataProvider::getPrincipalInvestigator($record),
+            "earliest_year" => GrantsMetadataProvider::getEarliestyear($record),
+            "latest_year" => GrantsMetadataProvider::getLatestYear($record)
+         ];
 
     }
 
@@ -226,5 +228,49 @@ class GrantsMetadataProvider implements RIFCSProvider
             }
         }
         return array_unique($principalInvestigator);
+    }
+
+    /**
+     * Returns the earliest year in existenceDates
+     * @param RegistryObject $record
+     * @return bool|string
+     */
+    public static function getEarliestYear($record)
+    {
+        $earliestYear = false;
+        $recordData = $record->getCurrentData();
+        $registryObjectsElement = XMLUtil::getSimpleXMLFromString($recordData->data);
+
+        foreach ($registryObjectsElement->xpath('//ro:existenceDates') AS $date) {
+            if ($date->startDate) {
+                if (strlen(trim($date->startDate)) == 4)
+                    $date->startDate = "Jan 1, " . $date->startDate;
+                $start = strtotime($date->startDate);
+                $earliestYear = date("Y", $start);
+            }
+        }
+        return $earliestYear;
+    }
+
+    /**
+     * Returns the latest year in existenceDates
+     * @param RegistryObject $record
+     * @return bool|string
+     */
+    function getLatestYear($record)
+    {
+        $latestYear = false;
+        $recordData = $record->getCurrentData();
+        $registryObjectsElement = XMLUtil::getSimpleXMLFromString($recordData->data);
+
+        foreach ($registryObjectsElement->xpath('//ro:existenceDates') AS $date) {
+            if ($date->endDate) {
+                if (strlen(trim($date->endDate)) == 4)
+                    $date->endDate = "Dec 31, " . $date->endDate;
+                $end = strtotime($date->endDate);
+                $latestYear = date("Y", $end);
+            }
+        }
+        return $latestYear;
     }
 }
