@@ -100,6 +100,7 @@ class RelationshipSearchService
                 case "to_identifier":
                 case "to_identifier_type":
                 case "to_title":
+                    $fqs[] = "+$key:$value";
                     break;
                 case "to_type":
                     // supports comma separated value, and PHP array (when using PHP API)
