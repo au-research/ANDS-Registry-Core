@@ -324,11 +324,29 @@ class SubjectProvider implements RIFCSProvider
             $uris[] = (string) $subject['uri'];
         }
 
-        return [
+        // adding tsubject_$type for portal/registry_object/vocab usage
+        $typeValuePairs = [];
+        foreach ($subjects as $key => $subject) {
+            $type = (string) $subject['type'];
+            $value = (string) $subject['resolved'];
+            $typeValuePairs["tsubject_$type"][] = $key;
+
+            if ($type === "anzsrc-for") {
+                $typeValuePairs["subject_anzsrcfor"][] = $value;
+            }else if ($type === "anzsrc-seo") {
+                $typeValuePairs["subject_anzsrcseo"][] = $value;
+            } else if ($type === "gcmd") {
+                $typeValuePairs["subject_gcmd"][] = $value;
+            } else if ($type === "iso639-3") {
+                $typeValuePairs["subject_iso639-3"][] = $value;
+            }
+        }
+
+        return array_merge([
             'subject_value_unresolved' => $unresolved,
             'subject_value_resolved' => $resolved,
             'subject_type' => $types,
             'subject_vocab_uri' => $uris,
-        ];
+        ], $typeValuePairs);
     }
 }
