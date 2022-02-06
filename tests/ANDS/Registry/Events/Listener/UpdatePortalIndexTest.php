@@ -33,10 +33,10 @@ class UpdatePortalIndexTest extends RegistryTestClass
 
     public function testSolrUpdateReverse(){
         $event = new PortalIndexUpdateEvent;
-        $event->registry_object_id = "2";
-        $event->indexed_field = "description_type";
-        $event->search_value = "case";
-        $event->new_value= "brief";
+        $event->registry_object_id = "1";
+        $event->indexed_field = "related_party_multi_title";
+        $event->search_value = "";
+        $event->new_value= "P1 Example related CCC Barty party";
 
         $listeners = EventServiceProvider::getListeners($event);
         foreach ($listeners as $listener) {

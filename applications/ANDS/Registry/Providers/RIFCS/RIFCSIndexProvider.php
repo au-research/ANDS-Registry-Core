@@ -2,6 +2,7 @@
 
 
 namespace ANDS\Registry\Providers\RIFCS;
+use ANDS\Registry\Providers\RelatedTitlesProvider;
 use ANDS\RegistryObject;
 
 class RIFCSIndexProvider
@@ -32,6 +33,7 @@ class RIFCSIndexProvider
             ->merge(SubjectProvider::getIndexableArray($record))
             ->merge(MatchingIdentifierProvider::getIndexableArray($record))
             ->merge(TagProvider::getIndexableArray($record))
+            ->merge(RelatedTitlesProvider::getIndexableArray($record))
             ->toArray();
 
         // todo access_rights <- AccessRightsProvider?

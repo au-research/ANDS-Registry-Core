@@ -78,8 +78,8 @@ class CoreMetadataProvider implements RIFCSProvider
             'class' => $record->class,
             'data_source_id' => $record->dataSource->id,
             'data_source_key' => $record->dataSource->key,
-            'record_created_timestamp' => $record->created_at->format('Y-m-d\TH:i:s\Z'),
-            'record_modified_timestamp' => $record->modified_at->format('Y-m-d\TH:i:s\Z')
+            'record_modified_at' => $record->modified_at,
+            'record_created_at' => $record->created_at
         ];
     }
 }

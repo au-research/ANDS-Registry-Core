@@ -103,7 +103,9 @@ class UpdatePortalIndex
                 }
 
             }
-            $this->updatePortalIndexes($targetRecordIds, $event->indexed_field, $event->search_value, $event->new_value);
+            if(sizeof($targetRecordIds) > 0){
+                $this->updatePortalIndexes($targetRecordIds, $event->indexed_field, $event->search_value, $event->new_value);
+            }
         } while (sizeof($result["response"]["docs"]) > 0 && sizeof($targetRecordIds) > 0);
 
     }
@@ -133,7 +135,6 @@ class UpdatePortalIndex
             $jsonPackets[] = $json;
         }
         debug("updatePortalIndexes Action:".json_encode($actions));
-
         $solrClient = new SolrClient(Config::get('app.solr_url'));
         $solrClient->setCore("portal");
         $solrClient->request("POST", "portal/update/json", ['commit' => 'true'],
