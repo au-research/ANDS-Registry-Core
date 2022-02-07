@@ -304,7 +304,6 @@ class TitleProviderTest extends \RegistryTestClass
         $index = TitleProvider::getIndexableArray($record);
         $this->assertEquals("Collection with all RIF v1.6 elements (primaryName)", $index['display_title']);
         $this->assertEquals("Collection with all RIF v1.6 elements (primaryName)", $index['list_title']);
-        $this->assertContains("alternativeName", $index['alt_list_title']);
         $this->assertContains("alternativeName", $index['alt_display_title']);
     }
 

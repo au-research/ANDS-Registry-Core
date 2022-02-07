@@ -362,10 +362,8 @@ class TitleProvider implements RIFCSProvider
             : null;
 
         return [
-            // 'title' => $titles['display_title'],
             'display_title' => $titles['display_title'],
             'list_title' => $titles['list_title'],
-            'alt_list_title' => $titles['alt_titles'],
             'alt_display_title' => $titles['alt_titles'],
             'simplified_title' => $simplifiedTitle
         ];
