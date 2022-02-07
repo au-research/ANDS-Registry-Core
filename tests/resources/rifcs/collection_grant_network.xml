@@ -52,12 +52,6 @@
                     <physical type="postalAddress">
                         <addressPart type="addressLine">&amp;lt;p&amp;gt; 123 Example St&amp;lt;/p&amp;gt; &amp;lt;p&amp;gt; Canberra ACT 2131&amp;lt;/p&amp;gt;</addressPart>
                     </physical>
-                    <electronic type="url" target="directDownload">
-                        <value>https://dl.dropboxusercontent.com/u/49073372/RIF16WithError.xml</value>
-                        <title>My Direct Download link</title>
-                        <mediaType>XML</mediaType>
-                        <byteSize>3KB</byteSize>
-                    </electronic>
                 </address>
                 <spatial type="kmlPolyCoords">119.707031,-20.468189 152.753906,-32.101190 119.707031,-20.468189</spatial>
             </location>
