@@ -21,7 +21,7 @@ class TagProvider implements RIFCSProvider
                 'tag' => $tag->tag,
                 'type' => $tag->type
             ];
-        });
+        })->toArray();
     }
 
     /**

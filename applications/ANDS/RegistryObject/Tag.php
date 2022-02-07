@@ -11,6 +11,9 @@ class Tag extends Model
     public static $SECRET_TAG_ACCESS_RESTRICTED = "accessRightsType_restricted";
     public static $SECRET_TAG_ACCESS_CONDITIONAL = "accessRightsType_conditional";
 
+    public static $TAG_TYPE_PUBLIC = "public";
+    public static $TAG_TYPE_SECRET = "secret";
+
     protected $table = "registry_object_tags";
     protected $primaryKey = "id";
     public $timestamps = false;

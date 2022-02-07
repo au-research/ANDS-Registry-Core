@@ -181,6 +181,13 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
                 'user_from' => 'phpunit'
             ], $attributes);
             return RegistryObject\Tag::create($attrs);
+        } elseif ($class == RegistryObject\ThemePage::class) {
+            $title = uniqid();
+            $attrs = array_merge([
+                'title' => $title,
+                'slug' => str_slug($title)
+            ], $attributes);
+            return RegistryObject\ThemePage::create($attrs);
         }
 
         return null;
