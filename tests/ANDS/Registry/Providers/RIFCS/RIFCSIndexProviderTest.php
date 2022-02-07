@@ -29,12 +29,14 @@ class RIFCSIndexProviderTest extends \RegistryTestClass
         $this->assertArrayHasKey('id', $index);
         $this->assertArrayHasKey('slug', $index);
         $this->assertArrayHasKey('key', $index);
-        $this->assertArrayHasKey('title', $index);
         $this->assertArrayHasKey('display_title', $index);
         $this->assertArrayHasKey('description', $index);
         $this->assertArrayHasKey('identifier_type', $index);
         $this->assertArrayHasKey('identifier_value', $index);
         $this->assertArrayHasKey('identical_record_ids', $index);
+        $this->assertArrayHasKey('access_methods_ss', $index);
+        $this->assertArrayHasKey('access_rights', $index);
+        $this->assertArrayHasKey('license_class', $index);
 
         $this->myceliumDelete($record);
     }
@@ -59,7 +61,6 @@ class RIFCSIndexProviderTest extends \RegistryTestClass
         $this->assertArrayHasKey('id', $index);
         $this->assertArrayHasKey('slug', $index);
         $this->assertArrayHasKey('key', $index);
-        $this->assertArrayHasKey('title', $index);
         $this->assertArrayHasKey('display_title', $index);
         $this->assertArrayHasKey('description', $index);
         $this->assertArrayHasKey('identifier_type', $index);

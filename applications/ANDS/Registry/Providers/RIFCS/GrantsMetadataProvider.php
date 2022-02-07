@@ -33,6 +33,7 @@ class GrantsMetadataProvider implements RIFCSProvider
             "activity_status" => GrantsMetadataProvider::getActivityStatus($record),
             "funding_amount" => GrantsMetadataProvider::getFundingAmount($record),
             "funding_scheme" => GrantsMetadataProvider::getFundingScheme($record),
+            "funding_scheme_search" => GrantsMetadataProvider::getFundingScheme($record),
             "administering_institution" => GrantsMetadataProvider::getAdministeringInstitutions($record),
             "institutions" => GrantsMetadataProvider::getInstitutions($record),
             "funders" => GrantsMetadataProvider::getFunders($record),
