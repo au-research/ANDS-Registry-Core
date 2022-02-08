@@ -41,6 +41,7 @@ class RIFCSIndexProviderTest extends \RegistryTestClass
         $this->assertArrayHasKey('date_to', $index);
         $this->assertArrayHasKey('earliest_year', $index);
         $this->assertArrayHasKey('latest_year', $index);
+        $this->assertArrayHasKey('spatial_coverage_extents_wkt', $index);
 
         $this->myceliumDelete($record);
     }
