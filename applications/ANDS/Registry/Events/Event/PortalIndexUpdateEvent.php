@@ -10,6 +10,7 @@ class PortalIndexUpdateEvent implements Event
     public $indexed_field;
     public $search_value;
     public $new_value;
+    public $relationship_types;
 
     public static function from($data)
     {
@@ -21,6 +22,8 @@ class PortalIndexUpdateEvent implements Event
         $event->search_value = array_get($data, 'search_value', null);
         // if no new_value it is a delete only
         $event->new_value= array_get($data, 'new_value', null);
+        // the relationship_types is the given record is related to the "title" holder
+        $event->relationship_types = array_get($data, "relationship_type", null);
         return $event;
     }
 }

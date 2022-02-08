@@ -29,7 +29,7 @@ class CoreMetadataProviderTest extends RegistryTestClass
         $this->assertEquals($index['data_source_key'], $record->dataSource->key);
 
         // date fields
-        foreach (['record_modified_timestamp', 'record_created_timestamp'] as $field) {
+        foreach (['record_modified_at', 'record_created_at'] as $field) {
             $this->assertContains($field, array_keys($index));
             $this->assertNotNull($index[$field]);
         }

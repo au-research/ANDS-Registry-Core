@@ -6,6 +6,7 @@ use ANDS\Registry\Events\Event;
 use ANDS\Util\Config;
 use Exception;
 use MinhD\SolrClient\SolrClient;
+use ANDS\Repository\RegistryObjectsRepository;
 
 /**
  * Class UpdatePortalIndex
@@ -23,7 +24,8 @@ class UpdatePortalIndex
         if($event->registry_object_id == null && $event->search_value == null ){
             throw new Exception("registry_object_id and search_value should not be null together");
         }
-        debug("PortalIndexUpdateEvent f:".$event->indexed_field ." s:". $event->search_value." n:".$event->new_value . " i:" . $event->registry_object_id);
+        debug("PortalIndexUpdateEvent f:".$event->indexed_field ." s:". $event->search_value
+            ." n:".$event->new_value . " i:" . $event->registry_object_id ." t". $event->relationship_types);
         $this->processEvent($event);
     }
 
@@ -41,10 +43,17 @@ class UpdatePortalIndex
         if($event->registry_object_id != null){
             // single record update
             $this->updatePortalIndex($event);
+            if($event->indexed_field == "related_party_one_title" || $event->indexed_field == "related_party_multi_title"){
+                $this->updateGrantsNetworkPortalIndex($event);
+            }
         }else{
             // this is a batch update we need to find all instances of the old value in every documents
             //and update them in a bacth of say 400
             $this->updateAllMatchingPortalIndex($event);
+            if($event->indexed_field == "related_party_one_title" || $event->indexed_field == "related_party_multi_title"){
+                $this->updateMatchingGrantsNetworkPortalIndexes($event);
+            }
+
         }
     }
 
@@ -66,13 +75,123 @@ class UpdatePortalIndex
             }
         }
         $json[$event->indexed_field] = $actions;
-        debug("updatePortalIndex Action:".json_encode($actions));
         $jsonPackets[] = $json;
-        $solrClient = new SolrClient(Config::get('app.solr_url'));
-        $solrClient->setCore("portal");
-        $solrClient->request("POST", "portal/update/json", ['commit' => 'true'],
-            json_encode($jsonPackets), "body");
+        $this->updateSolr(json_encode($jsonPackets));
     }
+
+
+    /**
+     * updateGrantsNetworkPortalIndex
+     * If the record is an activity and it's related to a party
+     * with a specific relationship type
+     * other fields may contain the related party's title
+     * for more info read GrantsmetadataProvider
+     * the Event handler if the event contains a registry_object_id
+     * @param $event
+     */
+    public function updateGrantsNetworkPortalIndex($event){
+        $jsonPackets = array();
+        $record = RegistryObjectsRepository::getRecordByID($event->registry_object_id);
+        print("updateGrantsNetworkPortalIndex".$event->relationship_types);
+        if($record->class == "activity" && $event->relationship_types != null){
+            $aRelationshipTypes = explode (",", $event->relationship_types );
+
+            foreach($aRelationshipTypes as $relationshiType)
+            {
+                $indexed_fields = [];
+                // multi aka groups can be funders or administering institutions
+                if($event->indexed_field == "related_party_multi_title"){
+                    switch (trim($relationshiType)){
+                        case "isFundedBy":
+                            $indexed_fields = ["funders"];
+                            break;
+                        case "isManagedBy":
+                            $indexed_fields = ["administering_institution"];
+                            break;
+                        default:
+                            $indexed_fields = ["institutions"];
+                            break;
+                    }
+                }else{
+                    // people can be researchers or principal Investigators
+                    switch (trim($relationshiType)){
+                        case "hasPrincipalInvestigator":
+                        case "Chief Investigator":
+                        case "Principal Investigator":
+                            $indexed_fields = ["principal_investigator","researchers"];
+                            break;
+                        case "Partner Investigator":
+                        case "hasParticipant":
+                        case "isAssociatedWith":
+                            $indexed_fields = ["researchers"];
+                            break;
+                    }
+                }
+
+                // if the relationship type resulted in a grantsnetwork relationship update the corresponding field
+                if(sizeof($indexed_fields) > 0) {
+                    foreach($indexed_fields as $indexed_field){
+                        $json["id"] = $event->registry_object_id;
+                        $actions = array();
+                        if ($event->search_value == null) {
+                            $actions["set"] = $event->new_value;
+                        } else {
+                            $actions["remove"] = $event->search_value;
+                            if ($event->new_value != null) {
+                                $actions["add-distinct"] = $event->new_value;
+                            }
+                        }
+                        $json[$indexed_field] = $actions;
+                        $jsonPackets[] = $json;
+                        $this->updateSolr(json_encode($jsonPackets));
+                    }
+                }
+            }
+        }
+
+    }
+
+   private function updateMatchingGrantsNetworkPortalIndexes($event){
+        // this is a bit trickier since we don't know the relationship types
+       // so we find ALL activities based on specific fields that may contain the title we seek to update
+
+
+       // find all activities that have the given party record as any of the grant network index
+       if($event->indexed_field == "related_party_multi_title"){
+           $indexed_fields = ["funders", "administering_institution", "institutions"];
+       }else{
+            $indexed_fields = ["principal_investigator","researchers"];
+       }
+       $solrClient = new SolrClient(Config::get('app.solr_url'));
+       $solrClient->setCore("portal");
+
+       foreach($indexed_fields as $indexed_field){
+           $query = array();
+           $batchSize = 400;
+           $query["fl"] = "id";
+           $query["rows"] = $batchSize;
+           $query["start"] = 0;
+           $query["q"] = $indexed_field.':"'.$event->search_value.'"';
+           $query["fq"] = 'class:activity';
+           // keep all records processed in case we end up looping back to them
+           $processedRecordIds = array();
+           // finally a case for a do while loop !!!
+           do {
+               $result = $solrClient->request("GET", "portal/select", $query);
+               $targetRecordIds = array();
+               foreach($result["response"]["docs"] as $record){
+                   if(!in_array($record["id"], $processedRecordIds)){
+                       $targetRecordIds[] = $record["id"];
+                       $processedRecordIds[] = $record["id"];
+                   }
+
+               }
+               if(sizeof($targetRecordIds) > 0){
+                   $this->updatePortalIndexes($targetRecordIds, $indexed_field, $event->search_value, $event->new_value);
+               }
+           } while (sizeof($result["response"]["docs"]) > 0 && sizeof($targetRecordIds) > 0);
+       }
+   }
 
 
     /**
@@ -85,7 +204,7 @@ class UpdatePortalIndex
         $solrClient = new SolrClient(Config::get('app.solr_url'));
         $solrClient->setCore("portal");
         $query = array();
-        $batchSize = 1;
+        $batchSize = 400;
         $query["fl"] = "id";
         $query["rows"] = $batchSize;
         $query["start"] = 0;
@@ -134,12 +253,14 @@ class UpdatePortalIndex
             $json[$indexed_field] = $actions;
             $jsonPackets[] = $json;
         }
-        debug("updatePortalIndexes Action:".json_encode($actions));
-        $solrClient = new SolrClient(Config::get('app.solr_url'));
-        $solrClient->setCore("portal");
-        $solrClient->request("POST", "portal/update/json", ['commit' => 'true'],
-            json_encode($jsonPackets), "body");
+        $this->updateSolr(json_encode($jsonPackets));
     }
 
+    private function updateSolr($jsonBody){
+        debug("updatePortalIndexe(s) q:".$jsonBody);
+        $solrClient = new SolrClient(Config::get('app.solr_url'));
+        $solrClient->setCore("portal");
+        $solrClient->request("POST", "portal/update/json", ['commit' => 'true'], $jsonBody, "body");
+    }
 
 }

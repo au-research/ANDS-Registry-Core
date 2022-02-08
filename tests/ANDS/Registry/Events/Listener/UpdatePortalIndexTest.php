@@ -51,6 +51,24 @@ class UpdatePortalIndexTest extends RegistryTestClass
     }
 
 
+    function testGrantsNetworkUpdate(){
+        $event = new PortalIndexUpdateEvent;
+        $event->registry_object_id = 9;
+        $event->indexed_field = "related_party_one_title";
+        $event->search_value = "Leo was here";
+        $event->new_value = "Leo is gone";
+        $event->relationship_types = "Principal Investigator";
+        $listeners = EventServiceProvider::getListeners($event);
+        foreach ($listeners as $listener) {
+            try {
+                $listenerObj = new $listener;
+                $listenerObj->handle($event);
+            } catch (Exception $e) {
+                throw new Exception($e->getMessage());
+            }
+        }
+    }
+
     function testGetRecordIdsToUpdate(){
         $event = new PortalIndexUpdateEvent;
         $event->registry_object_id = 1;
@@ -67,6 +85,6 @@ class UpdatePortalIndexTest extends RegistryTestClass
                 throw new Exception($e->getMessage());
             }
         }
-
     }
+
 }
