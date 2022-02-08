@@ -95,7 +95,8 @@ class GrantsMetadataProvider implements RIFCSProvider
         $fundingAmount = false;
 
         foreach ($registryObjectsElement->xpath('//ro:description[@type="fundingAmount"]') AS $funding) {
-            $fundingAmount = (string) $funding;
+            $res = preg_replace("/[^0-9.]/", "", (string) ($funding));
+            $fundingAmount = $res;
         }
 
         return $fundingAmount;
