@@ -198,7 +198,15 @@ class GrantsMetadataProvider implements RIFCSProvider
         foreach ($registryObjectsElement->xpath('//ro:description[@type="researchers"]') AS $researcher) {
             $researchers[] = (string) $researcher;
         }
-        $search_params = ['from_id'=>$record->id, 'to_class' => 'party', 'relation_type'=>['hasPrincipalInvestigator','hasParticipant','isAssociatedWith'],'not_to_type' => 'person'];
+        $search_params = ['from_id'=>$record->id, 'to_class' => 'party',
+            'relation_type'=>[
+                'hasPrincipalInvestigator',
+                'hasParticipant',
+                'isAssociatedWith',
+                'Partner*Investigator',
+                'Chie*Investigator',
+                'Principal*Investigator'
+            ],'not_to_type' => 'group'];
         $result = RelationshipSearchService::search($search_params);
         $researcherResult = $result->toArray();
 
@@ -218,7 +226,13 @@ class GrantsMetadataProvider implements RIFCSProvider
     public static function getPrincipalInvestigator($record)
     {
         $principalInvestigator = [];
-        $search_params = ['from_id'=>$record->id, 'to_class' => 'party', 'relation_type'=>['hasPrincipalInvestigator','Chief*Investigator'], 'to_type' => ['party','person']];
+        $search_params = ['from_id'=>$record->id, 'to_class' => 'party',
+            'relation_type'=>[
+                'hasPrincipalInvestigator',
+                'Chief*Investigator',
+                'Principal*Investigator',
+                'Partner*Investigator'
+            ], 'to_type' => ['party','person']];
         $result = RelationshipSearchService::search($search_params);
 
         $investigatorResult = $result->toArray();
