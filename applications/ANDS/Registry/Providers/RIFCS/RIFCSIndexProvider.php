@@ -37,6 +37,7 @@ class RIFCSIndexProvider
             ->merge(ThemePageProvider::getIndexableArray($record))
             ->merge(AccessRightsProvider::getIndexableArray($record))
             ->merge(LicenceProvider::getIndexableArray($record))
+            ->merge(TemporalProvider::getIndexableArray($record))
             ->toArray();
 
         // todo access_rights <- AccessRightsProvider?

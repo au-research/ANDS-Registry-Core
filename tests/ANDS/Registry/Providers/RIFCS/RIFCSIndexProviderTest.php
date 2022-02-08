@@ -37,6 +37,10 @@ class RIFCSIndexProviderTest extends \RegistryTestClass
         $this->assertArrayHasKey('access_methods_ss', $index);
         $this->assertArrayHasKey('access_rights', $index);
         $this->assertArrayHasKey('license_class', $index);
+        $this->assertArrayHasKey('date_from', $index);
+        $this->assertArrayHasKey('date_to', $index);
+        $this->assertArrayHasKey('earliest_year', $index);
+        $this->assertArrayHasKey('latest_year', $index);
 
         $this->myceliumDelete($record);
     }
