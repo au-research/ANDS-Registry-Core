@@ -5,6 +5,7 @@ namespace ANDS\Commands;
 
 
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -51,6 +52,7 @@ class ANDSCommand extends Command
         $this->output = $output;
         initEloquent();
         date_default_timezone_set('UTC');
+        ProgressBar::setFormatDefinition('ands-command', '%current%/%max% [%bar%] %percent:3s%% %elapsed:6s%/%estimated:-6s% %memory:6s% -- %message%');
     }
 
     /**

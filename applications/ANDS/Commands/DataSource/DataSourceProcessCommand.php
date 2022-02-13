@@ -73,7 +73,7 @@ class DataSourceProcessCommand extends ANDSCommand
                 ->orderBy('registry_object_id');
         }
 
-        return $this->timedActivity("Process {$process} on data source: {$id}",
+        $this->timedActivity("Process {$process} on data source: {$id}",
             function () use ($id, $records, $process) {
                 $progressBar = new ProgressBar($this->getOutput(), $records->count());
                 $records->chunk(1000, function ($records) use ($progressBar, $process) {
