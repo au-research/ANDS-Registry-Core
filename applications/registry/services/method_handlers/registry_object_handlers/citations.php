@@ -126,18 +126,20 @@ Content:text/plain; charset="utf-8"
         $contributors = $this->getContributors();
         if($contributors!=''){
             foreach($contributors as $contributor){
-                if(isset($contributor['to_id'])){
+                if(isset($contributor['to_id'])) {
                     $record = RegistryObject::find($contributor['to_id']);
-                    $names = TitleProvider::get($record);
-                    $nameParts = '';
-                    foreach($names["raw"][0]["value"] as $namePart=>$nameParts_raw){
-                        if((string)$nameParts_raw['@attributes']['type']!='title')
-                        $nameParts[] = array(
-                            'namePart_type' => (string)$nameParts_raw['@attributes']['type'],
-                            'name' => (string)$nameParts_raw['value']
-                        );
+                    if ($record != null) {
+                        $names = TitleProvider::get($record);
+                        $nameParts = '';
+                        foreach ($names["raw"][0]["value"] as $namePart => $nameParts_raw) {
+                            if ((string)$nameParts_raw['@attributes']['type'] != 'title')
+                                $nameParts[] = array(
+                                    'namePart_type' => (string)$nameParts_raw['@attributes']['type'],
+                                    'name' => (string)$nameParts_raw['value']
+                                );
+                        }
+                        $contributor["name"] = formatName($nameParts);
                     }
-                    $contributor["name"] = formatName($nameParts);
                 }
                 $endNote .= "AU  - ".$contributor['name']."
 ";
