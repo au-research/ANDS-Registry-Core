@@ -24,4 +24,16 @@ class XMLUtilTest extends RegistryTestClass
 
     }
 
+    /**@Test**/
+    public function test_string_content_from_xml()
+    {
+        $rif_service = file_get_contents("tests/resources/rifcs/collection_all_elements.xml");
+
+        $text_content = XMLUtil::getTextContent($rif_service, "relatedInfo");
+
+        $this->assertGreaterThan(7, sizeof($text_content));
+
+    }
+
+
 }

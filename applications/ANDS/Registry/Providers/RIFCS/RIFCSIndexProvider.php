@@ -39,6 +39,8 @@ class RIFCSIndexProvider
             ->merge(LicenceProvider::getIndexableArray($record))
             ->merge(TemporalProvider::getIndexableArray($record))
             ->merge(SpatialProvider::getIndexableArray($record))
+            ->merge(RelatedInfoProvider::getIndexableArray($record))
+            ->merge(CitationProvider::getIndexableArray($record))
             ->toArray();
 
         // todo access_rights <- AccessRightsProvider?

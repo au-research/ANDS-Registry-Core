@@ -100,7 +100,7 @@ class RelatedTitlesProvider implements RIFCSProvider
         $related_titles = [];
         if(isset($result['contents']) && count($result['contents']) > 0 ){
             foreach($result['contents'] as $item){
-                if(!in_array($item['to_title'], $related_titles)){
+                if(isset($item['to_title']) && !in_array($item['to_title'], $related_titles)){
                     $related_titles[] = $item['to_title'];
                 }
             }

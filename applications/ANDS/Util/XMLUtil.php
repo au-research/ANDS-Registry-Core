@@ -385,4 +385,23 @@ class XMLUtil
         }
     }
 
+    /**
+     * @param $xml
+     * @param $elementName
+     * @return array of each element's text content
+     * @throws Exception
+     */
+    public static function getTextContent($xml, $elementName){
+        $elements = self::getElementsByName($xml, $elementName);
+        $text_content = [];
+        foreach($elements as $element){
+            $str = preg_replace('/(\v|\s)+/', ' ', strip_tags($element->asXML()));
+            if(trim($str) != "")
+            $text_content[] = trim($str);
+        }
+        return $text_content;
+    }
+
+
+
 }
