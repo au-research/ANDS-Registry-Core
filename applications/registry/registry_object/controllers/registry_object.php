@@ -1454,14 +1454,22 @@ class Registry_object extends MX_Controller {
             "info", "IMPORTER"
         );
 
-        $importTask->run();
+        // send the task to background to obtain a task ID
+        $importTask->sendToBackground();
+        $message = "Deleting $count Registry Objects in the background. Please refer to the Data Source Dashboard for updates.";
 
-        // update the stats of the records
-        $ds = $this->ds->getByID($dataSourceID);
-        $ds->updateStats();
+        // if we're deleting a small amount of records, do it immediately
+        $threshold = 5;
+        if ($count < $threshold) {
+            $ds = $this->ds->getByID($dataSourceID);
+            $ds->updateStats();
+            $importTask->run();
+            $message = "Deleted $count Registry Objects";
+        }
 
         echo json_encode([
-            "status" => "success"
+            'status' => 'success',
+            'message' => $message
         ]);
     }
 
