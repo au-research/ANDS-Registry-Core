@@ -264,7 +264,8 @@ class Relationships extends ROHandler
     private function getRelatedFromIndex($type)
     {
         $relationships = $this->searchById($type, $this->ro->id);
-
+        return $relationships;
+        /**
         // get my duplicates and search for their relationships too
         $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($this->ro->id);
         $duplicates = $record
@@ -301,6 +302,7 @@ class Relationships extends ROHandler
         }
 
         return $relationships;
+         **/
     }
 
     private function searchById($type, $idQuery)

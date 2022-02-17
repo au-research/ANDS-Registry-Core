@@ -189,6 +189,7 @@ class UpdatePortalIndex
                if(sizeof($targetRecordIds) > 0){
                    $this->updatePortalIndexes($targetRecordIds, $indexed_field, $event->search_value, $event->new_value);
                }
+               $query["start"] += $batchSize;
            } while (sizeof($result["response"]["docs"]) > 0 && sizeof($targetRecordIds) > 0);
        }
    }
@@ -225,6 +226,7 @@ class UpdatePortalIndex
             if(sizeof($targetRecordIds) > 0){
                 $this->updatePortalIndexes($targetRecordIds, $event->indexed_field, $event->search_value, $event->new_value);
             }
+            $query["start"] += $batchSize;
         } while (sizeof($result["response"]["docs"]) > 0 && sizeof($targetRecordIds) > 0);
 
     }

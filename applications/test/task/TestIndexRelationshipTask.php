@@ -14,7 +14,7 @@ use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\RegistryObject;
 use ANDS\Repository\DataSourceRepository;
 use ANDS\Repository\RegistryObjectsRepository;
-use ANDS\Registry\Connections;
+use ANDS\Registry\PreMyceliumConnections;
 
 /**
  * Class TestIndexRelationshipTask

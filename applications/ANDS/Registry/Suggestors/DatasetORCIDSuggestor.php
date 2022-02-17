@@ -2,7 +2,7 @@
 namespace ANDS\Registry\Suggestors;
 
 
-use ANDS\Registry\Connections;
+use ANDS\Registry\PreMyceliumConnections;
 use ANDS\Registry\IdentifierRelationshipView;
 use ANDS\Registry\Providers\ORCID\ORCIDRecord;
 use ANDS\RegistryObject;

@@ -3,7 +3,7 @@
 
 namespace ANDS\Test;
 
-use ANDS\Registry\Connections;
+use ANDS\Registry\PreMyceliumConnections;
 use ANDS\Registry\Providers\NestedConnectionsProvider;
 use ANDS\Registry\Relation;
 //use ANDS\Repository\CIActiveRecordConnectionsRepository as Repository;

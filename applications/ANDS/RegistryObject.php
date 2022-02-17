@@ -79,29 +79,11 @@ class RegistryObject extends Model
         return $this->belongsTo(DataSource::class, 'data_source_id', 'data_source_id');
     }
 
-    public function relationships()
-    {
-        return $this->hasMany(Relationship::class, 'registry_object_id', 'registry_object_id');
-    }
 
-    public function relationshipViews()
-    {
-        return $this->hasMany(RelationshipView::class, 'from_id', 'registry_object_id');
-    }
-
-    public function identifierRelationships()
-    {
-        return $this->hasMany(IdentifierRelationship::class, 'registry_object_id', 'registry_object_id');
-    }
 
     public function registryObjectAttributes()
     {
         return $this->hasMany(RegistryObjectAttribute::class, 'registry_object_id', 'registry_object_id');
-    }
-
-    public function registryObjectIdentifiers()
-    {
-        return $this->hasMany(Identifier::class, 'registry_object_id', 'registry_object_id');
     }
 
     /**
@@ -294,15 +276,17 @@ class RegistryObject extends Model
 
     public function getDuplicateRecords()
     {
-        $this->findAllDuplicates();
+       /**
+        * $this->findAllDuplicates();
 
         return RegistryObject::whereIn('registry_object_id', $this->duplicateRecordIds)
             ->where('status', 'PUBLISHED')
             ->get();
+        **/
     }
 
     public function findAllDuplicates(){
-
+    /**
         if(is_array($this->duplicateRecordIds)){
             return $this->duplicateRecordIds;
         }
@@ -333,8 +317,8 @@ class RegistryObject extends Model
             }
 
         }
-        
-        return $this->duplicateRecordIds;
+        **/
+        return [] ;//$this->duplicateRecordIds;
         
     }
 

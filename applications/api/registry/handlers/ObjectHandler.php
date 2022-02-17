@@ -252,6 +252,9 @@ class ObjectHandler extends Handler{
      */
     private function relationships_handler($resource = false)
     {
+        // TODO: Refactor Use new applications/ANDS/Mycelium/RelationshipSearchService.php
+        return [];
+        /**
         if (!$resource) throw new Exception("No resource constructed for relationship handler");
 
         $this->ci->load->model('registry_object/registry_objects', 'ro');
@@ -343,6 +346,7 @@ class ObjectHandler extends Handler{
         }
 
         return $relationships;
+         * **/
     }
 
 

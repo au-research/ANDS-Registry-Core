@@ -5,7 +5,7 @@ namespace ANDS\Registry;
 use ANDS\Registry\Relation as Relation;
 use ANDS\Repository\EloquentConnectionsRepository;
 
-class Connections {
+class PreMyceliumConnections {
 
     private $filters = [];
     private $flags = [];
