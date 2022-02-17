@@ -232,6 +232,7 @@ if (!defined('BASE')) {
     define("BASE", "./");
 }
 initEloquent();
+\ANDS\Log\Log::init();
 require_once APPPATH.'libraries/RegistryPlugin.php';
 require_once BASEPATH.'core/CodeIgniter.php';
 
