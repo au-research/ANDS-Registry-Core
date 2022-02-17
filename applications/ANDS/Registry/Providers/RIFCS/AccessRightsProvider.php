@@ -2,7 +2,6 @@
 
 namespace ANDS\Registry\Providers\RIFCS;
 
-use ANDS\Registry\Providers\MetadataProvider;
 use ANDS\Registry\Providers\RIFCSProvider;
 use ANDS\RegistryObject;
 
@@ -81,7 +80,7 @@ class AccessRightsProvider implements RIFCSProvider
         }
 
         /* determine access rights as open if there is a direct download */
-        if(AccessProvider::getDirectDownload($record,MetadataProvider::get($record))) $access_rights = 'open';
+        if(AccessProvider::getDirectDownload($record,$record->getCurrentData()->data)) $access_rights = 'open';
 
         return $access_rights;
     }
