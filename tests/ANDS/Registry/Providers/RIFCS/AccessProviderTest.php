@@ -2,176 +2,212 @@
 namespace ANDS\Registry\Providers\RIFCS;
 
 
-use ANDS\Registry\Providers\MetadataProvider;
+use ANDS\File\Storage;
+use ANDS\RecordData;
+use ANDS\RegistryObject;
 
 class AccessProviderTest extends \RegistryTestClass
 {
-
     /** @test */
     public function it_should_know_about_landing_page()
     {
-        $record = $this->ensureKeyExist("AUTCollection1az");
-        $actual = AccessProvider::getLandingPage($record, MetadataProvider::get($record));
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'AUTESTING_ALL_ELEMENTS_TEST']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_all_elements.xml')
+        ]);
+        $this->myceliumInsert($record);
+        $actual = AccessProvider::getLandingPage($record, $record->getCurrentData()->data);
         $this->assertNotEmpty($actual);
+        $this->myceliumDelete($record);
     }
 
     /** @test */
     public function test_directDownload()
     {
-        $record = $this->ensureKeyExist("AUTCollection1azDD");
-        $actual = AccessProvider::getDirectDownload($record, MetadataProvider::get($record));
+        //obtain the directDownload from electronic address with type url and target directDownload
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'AUTESTING_ALL_ELEMENTS_TEST']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_all_elements.xml')
+        ]);
+        $this->myceliumInsert($record);
+        $actual = AccessProvider::getDirectDownload($record, $record->getCurrentData()->data);
         $this->assertNotEmpty($actual);
+        $this->myceliumDelete($record);
 
-        $record = $this->ensureKeyExist("IMOS/1f46d763-7635-43b5-8491-b76c840b5f42sdf");
-        $actual = AccessProvider::getDirectDownload($record, MetadataProvider::get($record));
+        //obtain the directDownload from electronic address with type url and value contains thredds and fileServer
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'COLLECTION_GRANT_NETWORK']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_grant_network.xml')
+        ]);
+        $this->myceliumInsert($record);
+        $actual = AccessProvider::getDirectDownload($record, $record->getCurrentData()->data);
         $this->assertNotEmpty($actual);
+        $this->myceliumDelete($record);
 
-        $record = $this->ensureKeyExist("AUTNCI/f3617_1034_0143_5106df");
-        $actual = AccessProvider::getDirectDownload($record, MetadataProvider::get($record));
-        $this->assertNotEmpty($actual);
+        //obtain the directDownload from service relationships of type that url contains 'thredds' and 'fileServer'
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'COLLECTION_GRANT_NETWORK']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_grant_network.xml')
+        ]);
+        $this->myceliumInsert($record);
 
-        $record = $this->ensureKeyExist("AUTNCI/f3617_1034_0143_5106asdfd");
-        $actual = AccessProvider::getDirectDownload($record, MetadataProvider::get($record));
-        $this->assertNotEmpty($actual);
+        $record2 = $this->stub(RegistryObject::class, ['class' => 'service','type' => 'report','key' => 'AUTestingRecords4BemV5oyqsNe2loXTafq114J1C0oaXZ4p4']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record2->id,
+            'data' => Storage::disk('test')->get('rifcs/service_quality.xml')
+        ]);
+        $this->myceliumInsert($record2);
 
-        $record = $this->ensureKeyExist("AUTNCI/f3617_1034_0143_5106asdadsffd");
-        $actual = AccessProvider::getDirectDownload($record, MetadataProvider::get($record));
+        $actual = AccessProvider::getDirectDownload($record, $record->getCurrentData()->data);
         $this->assertNotEmpty($actual);
+        $this->myceliumDelete($record);
+        $this->myceliumDelete($record2);
     }
 
     /** @test */
     public function test_ogc_wms()
     {
-        // electronic url
-        $record = $this->ensureKeyExist("AuTb931b8b1ba754fd666df3b7512a2cab293f4eaa3");
-        $actual = AccessProvider::getOGCWMS($record, MetadataProvider::get($record));
+        // electronic url and relatedInfo
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'COLLECTION_GRANT_NETWORK']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_grant_network.xml')
+        ]);
+        $this->myceliumInsert($record);
+        $actual = AccessProvider::getOGCWMS($record, $record->getCurrentData()->data);
         $this->assertNotEmpty($actual);
-
-        // relatedInfo test, supports
-        $record = $this->ensureKeyExist("AAUTIMOS/77c095e5-7f76-4f83-a5f1-0b3967955904");
-        $actual = AccessProvider::getOGCWMS($record, MetadataProvider::get($record));
-        $this->assertNotEmpty($actual);
-
-        // relatedObject test
-        $record = $this->ensureKeyExist("AAUTIMOS/77c095e5-7f76-4f83-a5f1-0b3967955904aff");
-        $actual = AccessProvider::getOGCWMS($record, MetadataProvider::get($record));
-        $this->assertNotEmpty($actual);
+        $this->myceliumDelete($record);
     }
-
-
 
     /** @test */
     public function test_ogc_wcs()
     {
-        // electronic url
-        $record = $this->ensureKeyExist("AuTb931b8b1ba754fd666df3b7512a2cab293f4eaa3ab");
-        $actual = AccessProvider::getOGCWCS($record, MetadataProvider::get($record));
+        // electronic url and relatedInfo
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'COLLECTION_GRANT_NETWORK']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_grant_network.xml')
+        ]);
+        $this->myceliumInsert($record);
+        $actual = AccessProvider::getOGCWCS($record, $record->getCurrentData()->data);
         $this->assertNotEmpty($actual);
-
-        // relatedInfo test, isPresentedBy
-        $record = $this->ensureKeyExist("AAUTIMOS/77c095e5-7f76-4f83-a5f1-0b3967955904C");
-        $actual = AccessProvider::getOGCWCS($record, MetadataProvider::get($record));
-        $this->assertNotEmpty($actual);
-
-        // relatedObject test
-        $record = $this->ensureKeyExist("AAUTIMOS/77c095e5-7f76-4f83-a5f1-0b3967955904affC");
-        $actual = AccessProvider::getOGCWCS($record, MetadataProvider::get($record));
-        $this->assertNotEmpty($actual);
+        $this->myceliumDelete($record);
     }
 
     /** @test */
     public function test_ogc_wfs()
     {
-        // electronic url
-        $record = $this->ensureKeyExist("AuTb931b8b1ba754fd666df3b7512a2cab293f4eaa3a");
-        $actual = AccessProvider::getOGCWFS($record, MetadataProvider::get($record));
-        $this->assertNotEmpty($actual);
+        // electronic url, relatedInfo and relatedObject
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'COLLECTION_GRANT_NETWORK']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_grant_network.xml')
+        ]);
+        $this->myceliumInsert($record);
 
-        // relatedInfo test, isPresentedBy
-        $record = $this->ensureKeyExist("AAUTIMOS/77c095e5-7f76-4f83-a5f1-0b3967955904f");
-        $actual = AccessProvider::getOGCWFS($record, MetadataProvider::get($record));
-        $this->assertNotEmpty($actual);
+        $record2 = $this->stub(RegistryObject::class, ['class' => 'service','type' => 'report','key' => 'AUTestingRecords4BemV5oyqsNe2loXTafq114J1C0oaXZ4p4']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record2->id,
+            'data' => Storage::disk('test')->get('rifcs/service_quality.xml')
+        ]);
+        $this->myceliumInsert($record2);
 
-        // relatedObject test
-        $record = $this->ensureKeyExist("AAUTIMOS/77c095e5-7f76-4f83-a5f1-0b396sdfdf");
-        $actual = AccessProvider::getOGCWFS($record, MetadataProvider::get($record));
+        $actual = AccessProvider::getOGCWFS($record, $record->getCurrentData()->data);
         $this->assertNotEmpty($actual);
+        $this->myceliumDelete($record);
+        $this->myceliumDelete($record2);
     }
 
     /** @test */
     public function test_thredds()
     {
-        $keys = [
-            "NCI/f3617_1034_0143_5106",
-            "AuTb9sdfdfdfs333fsdfddd",
-            "AuTb9sdfdfdfs333fsdf",
-            "AUTsIMOS/42f34079-73e0-4532-9364-ea7af9958c1c",
-            "IMOS/bc6e10a6-4dda-41c0-8639-5c96411efc5aAUTabcr",
-            "IMOS/bc6e10a6-4dda-41c0-8639-5c96411efc5aAUT",
-//            "AUTNCI/f3617_1034_0143_5106asdsfds3"
-        ];
+        // electronic url
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'COLLECTION_GRANT_NETWORK']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_grant_network.xml')
+        ]);
+        $this->myceliumInsert($record);
 
-        foreach ($keys as $key) {
-            $record = $this->ensureKeyExist($key);
-            $actual = AccessProvider::getTHREDDS($record, MetadataProvider::get($record));
-            $this->assertNotEmpty($actual);
-        }
+        $actual = AccessProvider::getTHREDDS($record,$record->getCurrentData()->data);
+        $this->assertNotEmpty($actual);
+        $this->myceliumDelete($record);
     }
 
     /** @test */
     public function test_thredds_wms() {
-        $keys = [
-            //"IMOS/bc6e10a6-4dda-41c0-8639-5c96411efc5aAUT",
-            "AUTsIMOS/42f34079-73e0-4532-9364-ea7af9958c1cr",
-            "IMOS/bc6e10a6-4dda-41c0-8639-5c96411efc5aAUTabcr"
-        ];
 
-        foreach ($keys as $key) {
-            $record = $this->ensureKeyExist($key);
-            $actual = AccessProvider::getTHREDDSWMS($record, MetadataProvider::get($record));
-            $this->assertNotEmpty($actual);
-        }
+        // electronic url
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'COLLECTION_GRANT_NETWORK']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_grant_network.xml')
+        ]);
+        $this->myceliumInsert($record);
+
+        $actual = AccessProvider::getTHREDDSWMS($record, $record->getCurrentData()->data);
+        $this->assertNotEmpty($actual);
+        $this->myceliumDelete($record);
     }
 
 
     /** @test */
     public function test_get_overall()
     {
-        $record = $this->ensureKeyExist("NCI/f3617_1034_0143_5106");
+        //  relatedObject
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'COLLECTION_GRANT_NETWORK']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_grant_network.xml')
+        ]);
+        $this->myceliumInsert($record);
+
+        $record2 = $this->stub(RegistryObject::class, ['class' => 'service','type' => 'report','key' => 'AUTestingRecords4BemV5oyqsNe2loXTafq114J1C0oaXZ4p4']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record2->id,
+            'data' => Storage::disk('test')->get('rifcs/service_quality.xml')
+        ]);
+        $this->myceliumInsert($record2);
+
         $actual = AccessProvider::get($record);
+        $this->assertNotEmpty($actual);
         $this->assertArrayHasKey("THREDDS", $actual);
+        $this->myceliumDelete($record);
+        $this->myceliumDelete($record2);
     }
 
     /** @test */
     public function test_geoserver()
     {
-        // eletronic url
-        $record = $this->ensureKeyExist("AuTb931b8b1ba754fd666df3b7512a2cab293f4eaa3ge");
-        $actual = AccessProvider::getGeoServer($record, MetadataProvider::get($record));
-        $this->assertNotEmpty($actual);
+        // electronic url
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'COLLECTION_GRANT_NETWORK']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_grant_network.xml')
+        ]);
+        $this->myceliumInsert($record);
 
-        // relatedObject supports
-        $record = $this->ensureKeyExist("AAUTIMOS/77c095e5-7f76-4f83-a5f1-0b3967955904affgE");
-        $actual = AccessProvider::getGeoServer($record, MetadataProvider::get($record));
+        $actual = AccessProvider::getGeoServer($record, $record->getCurrentData()->data);
         $this->assertNotEmpty($actual);
-
-        // reverse related
-        $record = $this->ensureKeyExist("AUTestingRecordsReverseRelationshipsCollection1");
-        $actual = AccessProvider::getGeoServer($record, MetadataProvider::get($record));
-        $this->assertNotEmpty($actual);
-
-        // relatedInfo supports
-        $record = $this->ensureKeyExist("AAUTIMOS/77c095e5-7f76-4f83-a5f1-0b3967955904age");
-        $actual = AccessProvider::getGeoServer($record, MetadataProvider::get($record));
-        $this->assertNotEmpty($actual);
+        $this->myceliumDelete($record);
     }
 
     /** @test */
     public function test_landingpage_geoserver_and_wfs()
     {
-        $record = $this->ensureKeyExist("AIMS/0419a746-ddc1-44d2-86e7-e5c402473956");
-        $actual = AccessProvider::get($record);
+        // electronic url
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'COLLECTION_GRANT_NETWORK']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_grant_network.xml')
+        ]);
+        $this->myceliumInsert($record);
 
+        $actual = AccessProvider::get($record);
         $this->assertArrayHasKey("landingPage", $actual);
         $this->assertArrayHasKey("GeoServer", $actual);
         $this->assertArrayHasKey("OGC:WFS", $actual);
@@ -179,57 +215,70 @@ class AccessProviderTest extends \RegistryTestClass
 
     public function test_thredds_opendap()
     {
-        $keys = [
-            "IMOS/bc6e10a6-4dda-41c0-8639-5c96411efc5aAUTabdr"
-        ];
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'COLLECTION_GRANT_NETWORK']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_grant_network.xml')
+        ]);
+        $this->myceliumInsert($record);
 
-        foreach ($keys as $key) {
-            $record = $this->ensureKeyExist($key);
-            $actual = AccessProvider::getTHREDDSOPeNDAP($record, MetadataProvider::get($record));
-            $this->assertNotEmpty($actual);
-        }
+
+        $record2 = $this->stub(RegistryObject::class, ['class' => 'service','type' => 'report','key' => 'AUTestingRecords4BemV5oyqsNe2loXTafq114J1C0oaXZ4p4']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record2->id,
+            'data' => Storage::disk('test')->get('rifcs/service_quality.xml')
+        ]);
+        $this->myceliumInsert($record2);
+
+        $actual = AccessProvider::getTHREDDSOPeNDAP($record, $record->getCurrentData()->data);
+        $this->assertNotEmpty($actual);
+        $this->myceliumDelete($record);
+        $this->myceliumDelete($record2);
+
     }
 
     public function test_contact_custodian()
     {
-        $keys = [
-            "AUTPROV VPRS 7742d2",
-            "AUTPROV VPRS 7742",
-            "AUTala.org.au/dr6006",
-        ];
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection', 'type' => 'dataset', 'key' => 'AUTala.org.au/dr6006']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_contact_custodian.xml')
+        ]);
+        $this->myceliumInsert($record);
 
-        foreach ($keys as $key) {
-            $record = $this->ensureKeyExist($key);
-            $actual = AccessProvider::getContactCustodian($record, MetadataProvider::get($record));
-            $this->assertNotEmpty($actual);
-        }
+        $actual = AccessProvider::getContactCustodian($record, $record->getCurrentData()->data);
+        $this->assertNotEmpty($actual);
+        $this->myceliumDelete($record);
+
     }
 
     public function test_other()
     {
-        $keys = [
-            "NEII/a927dd64-8998-47b1-ab5b-6f97bf626fc0"
-        ];
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection', 'type' => 'dataset', 'key' => 'COLLECTION_GRANT_NETWORK']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_access_provider_other.xml')
+        ]);
+        $this->myceliumInsert($record);
 
-        foreach ($keys as $key) {
-            $record = $this->ensureKeyExist($key);
-            $actual = AccessProvider::getOther($record, MetadataProvider::get($record));
-            $this->assertNotEmpty($actual);
-        }
+        $actual = AccessProvider::getOther($record, $record->getCurrentData()->data);
+        $this->assertNotEmpty($actual);
+        $this->myceliumDelete($record);
     }
 
     public function test_ogcwps()
     {
-        $keys = [
-            "AuTb931b8b1ba754fd666df3b7512a2cab293f4eaa3abc"
-        ];
+        // electronic url
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'COLLECTION_GRANT_NETWORK']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_grant_network.xml')
+        ]);
+        $this->myceliumInsert($record);
 
-        foreach ($keys as $key) {
-            $record = $this->ensureKeyExist($key);
-            $actual = AccessProvider::getOGCWPS($record, MetadataProvider::get($record));
-            $this->assertNotEmpty($actual);
-        }
+        $actual = AccessProvider::get($record);
+        $this->assertArrayHasKey("OGC:WPS", $actual);
+        $this->assertNotEmpty("OGC:WPS", $actual);
+        $this->myceliumDelete($record);
     }
-
-
 }

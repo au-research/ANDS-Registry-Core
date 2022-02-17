@@ -43,15 +43,67 @@
             <dates type="dc.issued">
                 <date type="dateFrom" dateFormat="W3CDTF">2022-03-03T00:00:00Z</date>
             </dates>
+            <location>
+                <address>
+                    <electronic type="url" target="landingPage">
+                        <value>http://data.aims.gov.au/metadataviewer/faces/view.xhtml?uuid=0419a746-ddc1-44d2-86e7-e5c402473956</value>
+                    </electronic>
+                </address>
+            </location>
+            <location>
+                <address>
+                    <electronic type="url">
+                        <value>http://portal.auscope.org/geonetwork/srv/geoserver?b931b8b1ba754fd666df3b7512a2cab293f4eaa3</value>
+                    </electronic>
+                </address>
+            </location>
+            <location dateFrom="2013-02-14T00:00:00Z" dateTo="2013-03-02T00:00:00Z">
+                <address>
+                    <electronic type="url">
+                        <value>http://thredds.aodn.org.au/thredds/catalog/Department_of_Defence/RAN/CTD/catalog.html</value>
+                    </electronic>
+                </address>
+            </location>
+            <location dateFrom="2013-02-14T00:00:00Z" dateTo="2013-03-02T00:00:00Z">
+                <address>
+                    <electronic type="url">
+                        <value>http://dap-wms.nci.org.au/thredds/wx7/aster/vnir/Aus_Mainland/catalog.html</value>
+                    </electronic>
+                </address>
+            </location>
             <location dateFrom="2013-02-14T00:00:00Z" dateTo="2013-03-02T00:00:00Z">
                 <address>
                     <electronic type="url" target="landingPage">
-                        <value>https://demo.ands.org.au</value>
+                        <value>https://demo.ands.org.au/thredds/fileServer</value>
                         <title>My Landing Page for the data</title>
                     </electronic>
                     <physical type="postalAddress">
                         <addressPart type="addressLine">&amp;lt;p&amp;gt; 123 Example St&amp;lt;/p&amp;gt; &amp;lt;p&amp;gt; Canberra ACT 2131&amp;lt;/p&amp;gt;</addressPart>
                     </physical>
+                    <electronic type="url" target="directDownload">
+                        <value>https://dl.dropboxusercontent.com/u/49073372/RIF16WithError.xml</value>
+                        <title>My Direct Download link</title>
+                        <mediaType>XML</mediaType>
+                        <byteSize>3KB</byteSize>
+                    </electronic>
+                    <electronic type="url">
+                        <value>https://dl.wms.com/u/49073372/RIF16WithError.xml</value>
+                        <title>My WMS link</title>
+                        <mediaType>XML</mediaType>
+                        <byteSize>3KB</byteSize>
+                    </electronic>
+                    <electronic type="url">
+                        <value>https://dl.wps.com/u/49073372/RIF16WithError.xml</value>
+                        <title>My WPS link</title>
+                        <mediaType>XML</mediaType>
+                        <byteSize>3KB</byteSize>
+                    </electronic>
+                    <electronic type="url">
+                        <value>https://dl.wcs.com/u/49073372/RIF16WithError.xml</value>
+                        <title>My WCS link</title>
+                        <mediaType>XML</mediaType>
+                        <byteSize>3KB</byteSize>
+                    </electronic>
                 </address>
                 <spatial type="kmlPolyCoords">119.707031,-20.468189 152.753906,-32.101190 119.707031,-20.468189</spatial>
             </location>
@@ -72,7 +124,7 @@
                     <description>relationshipdescription</description>
                 </relation>
             </relatedObject>
-            <relatedObject>
+             <relatedObject>
                 <key>AUTParty1</key>
                 <relation type="isManagedBy">
                     <description>relationshipdescription</description>
@@ -109,9 +161,14 @@
                 </relation>
             </relatedObject>
             <relatedObject>
-                <key>Activity1</key>
-                <relation type="hasValueAddedBy">
-                    <description>Very casual</description>
+                <key>AUTestingRecords4BemV5oyqsNe2loXTafq114J1C0oaXZ4p4</key>
+                <relation type="supports">
+                    <description>This relationship should result in a wfs</description>
+                    <url>http://wfs.test/catalogue.html</url>
+                </relation>
+                <relation type="supports">
+                    <description>This relationship should result in a dodsC</description>
+                    <url>http://thredds.aodn.org.au/thredds/dodsC/Department_of_Defence/RAN/CTD/HI582PAL_M/20160304T194150Z_M_HI582PAL_M.nc.html</url>
                 </relation>
             </relatedObject>
             <relatedObject>
@@ -169,6 +226,49 @@
             <relatedInfo type="service">
                 <title>Related Service</title>
                 <identifier type="issn">789879.3.34.ISSN</identifier>
+                <relation type="isPresentedBy">
+                    <url>http://thredds.fileserver.relatedInfo/file1</url>
+                </relation>
+            </relatedInfo>
+            <relatedInfo type="relatedInformation">
+                <identifier type="uri">http://dap-wms.nci.org.au/thredds/wx7/aster/vnir/Aus_Mainland/catalog.html</identifier>
+                <relation type="isAssociatedWith"/>
+                <title>Link to access CTD data in netCDF format</title>
+            </relatedInfo>
+            <relatedInfo type="service">
+                <relation type="supports">
+                    <url>http://thredds.aodn.org.au/thredds/fileServer/Department_of_Defence/RAN/CTD/HI582PAL_M/20160305T051621Z_M_HI582PAL_M.nc</url>
+                </relation>
+                <identifier type="uri">http://dapds00.nci.org.au/thredds/catalogs/rr4/catalog.html</identifier>
+                <title>(OPeNDAP URL)</title>
+            </relatedInfo>
+            <relatedInfo type="service">
+                <title>Related Service</title>
+                <identifier type="issn">789879.3.34.ISSN</identifier>
+                <relation type="isPresentedBy">
+                    <url>http://wps.thredds.fileserver.relatedInfo/file1</url>
+                </relation>
+            </relatedInfo>
+            <relatedInfo type="service">
+                <title>Related Service</title>
+                <identifier type="issn">789879.3.34.ISSN</identifier>
+                <relation type="isPresentedBy">
+                    <url>http://wms.fileserver.relatedInfo/file1</url>
+                </relation>
+            </relatedInfo>
+            <relatedInfo type="service">
+                <title>Related Service</title>
+                <identifier type="issn">789879.3.34.ISSNbb</identifier>
+                <relation type="isPresentedBy">
+                    <url>http://wcs.relatedInfo/file1</url>
+                </relation>
+            </relatedInfo>
+            <relatedInfo type="service">
+                <title>Related Service</title>
+                <identifier type="issn">789879.3.34.ISSNbb</identifier>
+                <relation type="isPresentedBy">
+                    <url>http://wfs.relatedInfo/file1</url>
+                </relation>
             </relatedInfo>
             <citationInfo>
                 <citationMetadata>
