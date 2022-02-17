@@ -2,7 +2,7 @@
 
 namespace ANDS\Registry\Providers;
 
-use ANDS\Registry\Connections;
+use ANDS\Registry\PreMyceliumConnections;
 use ANDS\Registry\Relation;
 use ANDS\Repository\RegistryObjectsRepository;
 
@@ -10,7 +10,7 @@ use ANDS\Repository\RegistryObjectsRepository;
  * Class NestedConnectionsProvider
  * @package ANDS\Registry\Connections
  */
-class NestedConnectionsProvider extends Connections
+class NestedConnectionsProvider extends PreMyceliumConnections
 {
     /**
      * return a list of nested collections with children

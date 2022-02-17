@@ -3,7 +3,7 @@
 
 namespace ANDS\Test;
 
-use ANDS\Registry\Connections;
+use ANDS\Registry\PreMyceliumConnections;
 
 //use ANDS\Repository\CIActiveRecordConnectionsRepository as Repository;
 use ANDS\Repository\EloquentConnectionsRepository as Repository;
@@ -20,7 +20,7 @@ class TestConnections extends UnitTest
      */
     public function test_basic_get()
     {
-        $conn = new Connections(new Repository);
+        $conn = new PreMyceliumConnections(new Repository);
         $explicitLinks = $conn->get();
         $this->assertTrue(sizeof($explicitLinks) > 0);
     }
@@ -31,7 +31,7 @@ class TestConnections extends UnitTest
     public function test_basic_get_with_limit_and_offset()
     {
         $repository = new Repository;
-        $conn = new Connections($repository);
+        $conn = new PreMyceliumConnections($repository);
         $explicitLinks = $conn
             ->setLimit(30)
             ->setOffset(0)
@@ -44,7 +44,7 @@ class TestConnections extends UnitTest
      */
     public function test_getExplicitRelationByKey()
     {
-        $conn = new Connections(new Repository);
+        $conn = new PreMyceliumConnections(new Repository);
         $links = $conn->getExplicitRelationByKey('http://AUT.org/au-research/grants/arc/DP0987282');
         $this->assertGreaterThanOrEqual(sizeof($links), 2);
     }
@@ -54,7 +54,7 @@ class TestConnections extends UnitTest
      */
     public function test_getReverseRelationByKey()
     {
-        $conn = new Connections(new Repository);
+        $conn = new PreMyceliumConnections(new Repository);
         $links = $conn->getReverseRelationByKey('http://anu.edu.au/anudc:3316');
         $this->assertTrue(sizeof($links) >= 1);
     }
@@ -65,7 +65,7 @@ class TestConnections extends UnitTest
     public function test_get_with_some_filter()
     {
         $repository = new Repository;
-        $conn = new Connections($repository);
+        $conn = new PreMyceliumConnections($repository);
         $explicitLinks = $conn
             ->setFlag(['from_key', 'from_group', 'to_key'])
             ->setFilter('from_key', 'http://AUT.org/au-research/grants/arc/DP0987282')
@@ -82,7 +82,7 @@ class TestConnections extends UnitTest
     public function test_get_relation_type()
     {
         $repository = new Repository;
-        $conn = new Connections($repository);
+        $conn = new PreMyceliumConnections($repository);
         $explicitLinks = $conn
             ->setFlag(['from_key', 'from_group', 'to_key'])
             ->setFilter('relation_type', 'isPartof')
@@ -94,7 +94,7 @@ class TestConnections extends UnitTest
 
     public function test_getAODN()
     {
-        $conn = new Connections(new Repository);
+        $conn = new PreMyceliumConnections(new Repository);
 
         $links = $conn
             ->setFilter('to_key', 'AODN:metadata@aad.gov.au')
@@ -112,7 +112,7 @@ class TestConnections extends UnitTest
 
     public function test_stringFilterWithLimit()
     {
-        $conn = new Connections(new Repository);
+        $conn = new PreMyceliumConnections(new Repository);
         $conn
             ->setLimit(10)
             ->setFilter('from_data_source_id != to_data_source_id');
@@ -130,7 +130,7 @@ class TestConnections extends UnitTest
     public function test_get_relation_type_multi()
     {
         $repository = new Repository;
-        $conn = new Connections($repository);
+        $conn = new PreMyceliumConnections($repository);
         $explicitLinks = $conn
             ->setFlag(['from_key', 'from_group', 'to_key'])
             ->setFilter('relation_type', ['isPartof', 'isManagedBy'])

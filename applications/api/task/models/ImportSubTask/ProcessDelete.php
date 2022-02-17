@@ -8,10 +8,7 @@ use ANDS\Registry\Providers\DCI\DCI;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\Providers\Scholix\Scholix;
 use ANDS\RegistryObject;
-use ANDS\RegistryObject\IdentifierRelationship;
 use ANDS\Repository\RegistryObjectsRepository;
-use ANDS\RegistryObject\ImplicitRelationship;
-use ANDS\RegistryObject\Relationship;
 use ANDS\RegistryObject\Links;
 use ANDS\Util\Config;
 
@@ -116,10 +113,6 @@ class ProcessDelete extends ImportSubTask
 
     public function removeRegistryObjectFromDatabaseTables($ids)
     {
-        RegistryObject\Identifier::whereIn('registry_object_id', $ids)->delete();
-        IdentifierRelationship::whereIn('registry_object_id', $ids)->delete();
-        Relationship::whereIn('registry_object_id', $ids)->delete();
-        ImplicitRelationship::whereIn('from_id', $ids)->delete();
         Links::whereIn('registry_object_id', $ids)->delete();
         Scholix::whereIn('registry_object_id', $ids)->delete();
         DCI::whereIn('registry_object_id', $ids)->delete();

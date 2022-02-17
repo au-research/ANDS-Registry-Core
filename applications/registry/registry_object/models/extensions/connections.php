@@ -48,11 +48,13 @@ class Connections_Extension extends ExtensionBase
 	 */
 	function getConnections($published_only = true, $specific_type = null, $limit = 100, $offset = 0, $include_dupe_connections = false)
 	{
-
+        // TODO Refactor and use applications/ANDS/Mycelium/RelationshipSearchService.php
+        return [];
+        /**
 		$unordered_connections = $this->getAllRelatedObjects(!$published_only, $include_dupe_connections, true);
 		$ordered_connections = array();
 
-		/* Now sort according to "type" (collection / party_one / party_multi / activity...etc.) */
+		/ Now sort according to "type" (collection / party_one / party_multi / activity...etc.) /
 		foreach($unordered_connections AS &$connection)
 		{
 
@@ -89,7 +91,7 @@ class Connections_Extension extends ExtensionBase
 			// $connection['description'] = $this->_getDescription($connection['registry_object_id']);
 
 			// Continue on for all types:
-			/* - Check the constraints */
+			/ - Check the constraints /
 			if (!is_null($specific_type))
 			{
 				if ($specific_type == "nested_collection")
@@ -120,7 +122,7 @@ class Connections_Extension extends ExtensionBase
 			if ($class_valid && $status_valid)
 			{
 
-				/* - Now classify the counts  */
+				/ - Now classify the counts  /
 				if (!isset($ordered_connections[$connection['class']]))
 				{
 					$ordered_connections[$connection['class']] = array();
@@ -147,7 +149,7 @@ class Connections_Extension extends ExtensionBase
 
 			}
 		}
-		/* - Handle the offsetting/limits */
+		/ - Handle the offsetting/limits /
 		if ($limit || $offset)
 		{
 			foreach($ordered_connections AS $name => $list)
@@ -220,6 +222,7 @@ class Connections_Extension extends ExtensionBase
 			}
 		}
 		return array($ordered_connections);
+         **/
 	}
 
 	function removeDuplicateRelationships($list) {
@@ -244,6 +247,8 @@ class Connections_Extension extends ExtensionBase
      */
     public function getAllRelatedObjects($allow_drafts = false, $include_dupe_connections = false, $allow_all_links = false, $limit=99999)
 	{
+        return [];
+        /**
         //since this operation can take a lot of memory, allow PHP to go for a bit, bad practice
         if ((int) ini_get("memory_limit") < 384000000) {
             ini_set('memory_limit', 384000000);
@@ -267,13 +272,13 @@ class Connections_Extension extends ExtensionBase
 		$allow_reverse_external_links = ($ds->allow_reverse_external_links == "t" || $ds->allow_reverse_external_links == 1);
         $create_primary_relationships = ($ds->create_primary_relationships == "t" || $ds->create_primary_relationships == 1);
 
-		/* Step 1 - Straightforward link relationships */
-        /* Contributor */
+		/* Step 1 - Straightforward link relationships /
+        /* Contributor /
 //        $unordered_connections = array_merge($unordered_connections, $this->_getContributorLinks($allow_drafts));
 		$unordered_connections = array_merge($unordered_connections, $this->_getExplicitLinks($allow_drafts, $limit));
 		$unordered_connections= array_merge($unordered_connections, $this->_getIdentifierLinks($limit));
 		$unordered_connections= array_merge($unordered_connections, $this->_getReverseIdentifierLinks($allow_reverse_internal_links, $allow_reverse_external_links, $limit));
-		/* Step 2 - Internal reverse links */
+		/* Step 2 - Internal reverse links /
 		if (($allow_reverse_internal_links || $allow_all_links) && count($unordered_connections) < $limit)
 		{
 			$unordered_connections = array_merge($unordered_connections, $this->_getInternalReverseLinks($allow_drafts, $limit));
@@ -283,13 +288,13 @@ class Connections_Extension extends ExtensionBase
         {
             $unordered_connections = array_merge($unordered_connections, $this->_getPrimaryLinks($allow_drafts, $limit));
         }
-		/* Step 3 - External reverse links */
+		/* Step 3 - External reverse links /
 		if (($allow_reverse_external_links || $allow_all_links ) && count($unordered_connections) < $limit)
 		{
 			$unordered_connections = array_merge($unordered_connections, $this->_getExternalReverseLinks($allow_drafts, $limit));
 		}
 
-		/* Step 5 - Duplicate Record connections */
+		/* Step 5 - Duplicate Record connections /
 		if ( ($include_dupe_connections || $allow_all_links ) && count($unordered_connections) < $limit)
 		{
 			$unordered_connections = array_merge($unordered_connections, $this->_getDuplicateConnections());
@@ -335,6 +340,7 @@ class Connections_Extension extends ExtensionBase
 		}
 
 		return $unordered_connections;
+         **/
 	}
 
 	function _getDescription($id){
@@ -611,6 +617,10 @@ class Connections_Extension extends ExtensionBase
 
     function getRelatedObjectsByClassAndRelationshipType($classArray = array(), $relationshipTypeArray = array(), $forDCI = false)
     {
+
+        return [];
+        // TODO use applications/ANDS/Mycelium/RelationshipSearchService.php
+        /**
         $unordered_connections = array();
 
         $this->_CI->load->model('data_source/data_sources','ds');
@@ -697,7 +707,7 @@ class Connections_Extension extends ExtensionBase
             }
         }
         return $connections;
-
+        **/
     }
 
 	function _getDuplicateConnections()

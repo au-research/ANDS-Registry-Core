@@ -4,7 +4,7 @@
 namespace ANDS\Registry\Providers;
 
 
-use ANDS\Registry\Connections;
+use ANDS\Registry\PreMyceliumConnections;
 use ANDS\Registry\RelationshipView;
 use ANDS\RegistryObject;
 use ANDS\Util\XMLUtil;
@@ -40,10 +40,6 @@ class MetadataProvider implements RegistryContentProvider
     ) {
         $data = [];
         if (in_array('relationships', $only)) {
-            $data['relationships'] = RelationshipProvider::getMergedRelationships($record, $includeDuplicate = false);
-        }
-
-        if (in_array('duplicates_relationships', $only)) {
             $data['relationships'] = RelationshipProvider::getMergedRelationships($record);
         }
 

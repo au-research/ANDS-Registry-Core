@@ -132,6 +132,8 @@ class AccessProvider implements RIFCSProvider
         }
 
         // relationship
+        // broken until Mycelium retrofitting is done
+        $data["relationships"] = [];
         /* @var $relation Relation */
         foreach ($data["relationships"] as $relation) {
 
@@ -208,6 +210,8 @@ class AccessProvider implements RIFCSProvider
         }
 
         // relationships
+        // broken until Mycelium retrofitting is done
+        $data["relationships"] = [];
         /* @var $relation Relation */
         foreach ($data["relationships"] as $relation) {
             if (
@@ -245,6 +249,8 @@ class AccessProvider implements RIFCSProvider
         }
 
         // relationships
+        // broken until Mycelium retrofitting is done
+        $data["relationships"] = [];
         /* @var $relation Relation */
         foreach ($data["relationships"] as $relation) {
             if (
@@ -289,6 +295,8 @@ class AccessProvider implements RIFCSProvider
         }
 
         // relationships
+        // broken until Mycelium retrofitting is done
+        $data["relationships"] = [];
         /* @var $relation Relation */
         foreach ($data["relationships"] as $relation) {
             if (
@@ -334,6 +342,8 @@ class AccessProvider implements RIFCSProvider
         }
 
         // relationship
+        // broken until Mycelium retrofitting is done
+        $data["relationships"] = [];
         /* @var $relation Relation */
         foreach ($data["relationships"] as $relation) {
 
@@ -385,6 +395,8 @@ class AccessProvider implements RIFCSProvider
         }
 
         // relationships
+        // broken until Mycelium retrofitting is done
+        $data["relationships"] = [];
         /* @var $relation Relation */
         foreach ($data["relationships"] as $relation) {
 
@@ -437,6 +449,8 @@ class AccessProvider implements RIFCSProvider
 
         // relationship
         /* @var $relation Relation */
+        // broken until Mycelium retrofitting is done
+        $data["relationships"] = [];
         foreach ($data["relationships"] as $relation) {
             $relationURL = $relation->prop("relation_url");
             if (!$relationURL) continue;
@@ -488,6 +502,8 @@ class AccessProvider implements RIFCSProvider
         }
 
         // relationship
+        // broken until Mycelium retrofitting is done
+        $data["relationships"] = [];
         /* @var $relation Relation */
         foreach ($data["relationships"] as $relation) {
             $relationURL = $relation->prop("relation_url");
@@ -545,6 +561,8 @@ class AccessProvider implements RIFCSProvider
         }
 
         // relationship
+        // broken until Mycelium retrofitting is done
+        $data["relationships"] = [];
         /* @var $relation Relation */
         foreach ($data["relationships"] as $relation) {
             $relationURL = $relation->prop("relation_url");
@@ -607,6 +625,8 @@ class AccessProvider implements RIFCSProvider
         }
 
         // relationship
+        // broken until Mycelium retrofitting is done
+        $data["relationships"] = [];
         /* @var $relation Relation */
         foreach ($data["relationships"] as $relation) {
             $relationURL = $relation->prop("relation_url");
@@ -671,6 +691,8 @@ class AccessProvider implements RIFCSProvider
         }
 
         // check for no service
+        // broken until Mycelium retrofitting is done
+        $data["relationships"] = [];
         /* @var $relation Relation */
         $services = [];
         foreach ($data['relationships'] as $relation) {
@@ -721,7 +743,8 @@ class AccessProvider implements RIFCSProvider
                 $result[] = (new Access($value))->setNotes("Contact Custodian");
             }
         }
-
+        // broken until Mycelium retrofitting is done
+        $data["relationships"] = [];
         /* @var $relation Relation */
         foreach ($data["relationships"] as $relation) {
             $relationURL = $relation->prop("relation_url");
