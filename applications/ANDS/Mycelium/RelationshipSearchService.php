@@ -35,7 +35,6 @@ class RelationshipSearchService
 
         // convert criterias and pagination to Solr parameters and perform the search
         $parameters = static::getSolrParameters($criterias, $pagination);
-
         $result = $solrClient->search($parameters);
 
         return Paginator::fromSolrResult($result);
@@ -122,6 +121,18 @@ class RelationshipSearchService
                         return '{!parent which=$parentFilter}relation_type:' . $val;
                     })->toArray();
                     $value = implode(' OR ', $value);
+                    $fqs[] = "+($value)";
+                    break;
+                case "relation_url_search":
+                    // supports comma separated value, and PHP array (when using PHP API)
+                    // thredds -> +({!parent which=$parentFilter}relation_url_search:thredds)
+                    // thredds,catalog.html -> +({!parent which=$parentFilter}relation_url_search:thredds
+                    // AND {!parent which=$parentFilter}relation_url_search:catalog.html)
+                    $value = is_array($value) ? $value : explode(',', $value);
+                    $value = collect($value)->map(function ($val) {
+                        return '{!parent which=$parentFilter}relation_url_search:' . $val;
+                    })->toArray();
+                    $value = implode(' AND ', $value);
                     $fqs[] = "+($value)";
                     break;
                 case "not_to_type":

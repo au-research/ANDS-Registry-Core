@@ -236,8 +236,13 @@
                 <title>Link to access CTD data in netCDF format</title>
             </relatedInfo>
             <relatedInfo type="service">
+                <identifier type="uri">http://dap-wms.nci.org.au/thredds/wx7/aster/vnir/Aus_Mainland/catalog.xml</identifier>
+                <relation type="supports"/>
+                <title>Link to access CTD data in netCDF format</title>
+            </relatedInfo>
+            <relatedInfo type="service">
                 <relation type="supports">
-                    <url>http://thredds.aodn.org.au/thredds/fileServer/Department_of_Defence/RAN/CTD/HI582PAL_M/20160305T051621Z_M_HI582PAL_M.nc</url>
+                    <url>http://thredds.aodn.org.au/thredds/fileserver/Department_of_Defence/RAN/CTD/HI582PAL_M/20160305T051621Z_M_HI582PAL_M.nc/catalog.html</url>
                 </relation>
                 <identifier type="uri">http://dapds00.nci.org.au/thredds/catalogs/rr4/catalog.html</identifier>
                 <title>(OPeNDAP URL)</title>
@@ -251,7 +256,7 @@
             </relatedInfo>
             <relatedInfo type="service">
                 <title>Related Service</title>
-                <identifier type="issn">789879.3.34.ISSN</identifier>
+                <identifier type="issn">789879.3.34.ISSN6</identifier>
                 <relation type="isPresentedBy">
                     <url>http://wms.fileserver.relatedInfo/file1</url>
                 </relation>

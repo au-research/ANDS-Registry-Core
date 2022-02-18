@@ -132,28 +132,26 @@ class AccessProvider implements RIFCSProvider
 
         /* relatedObject/relatedInfo of class service with relation_types of
         * 'supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'
-        * and relation_url contains 'thredds' and 'fileserver'
+        * and relation_url contains 'thredds' and 'fileServer'
         */
         $service_result = RelationshipSearchService::search([
                 'from_id' => $record->id,
                 'to_class' => 'service',
                 'relation_type' =>  ['supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'],
-                'to_title' => '*'
+                'to_title' => '*',
+                'relation_url_search' => ['thredds','fileServer']
             ], ['rows' => 50]);
         $relationships =   $service_result->toArray();
 
+
         if(isset($relationships['contents']) && count($relationships['contents'])>0 ) {
-                 foreach($relationships['contents'] as $relatedService){
-                     foreach($relatedService['relations'] as $relation) {
-                         if( isset($relation['relation_url'])
-                             && str_contains(strtolower($relation['relation_url']),'thredds')
-                             && str_contains(strtolower($relation['relation_url']),'fileserver')
-                         ) {
-                             $result[] = new Access($relation['relation_url']);
-                             continue;
-                         }
-                     }
+             foreach($relationships['contents'] as $relatedService){
+                 foreach($relatedService['relations'] as $relation) {
+                     if(isset($relation['relation_url']))
+                     $result[] = new Access($relation['relation_url']);
+                     continue;
                  }
+             }
         }
         return $result;
     }
@@ -217,19 +215,18 @@ class AccessProvider implements RIFCSProvider
             'from_id' => $record->id,
             'to_class' => 'service',
             'relation_type' =>  ['supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'],
-            'to_title' => '*'
+            'to_title' => '*',
+            'relation_url_search' => ['wms']
         ], ['rows' => 50]);
         $relationships =   $service_result->toArray();
 
         if(isset($relationships['contents']) && count($relationships['contents'])>0 ) {
             foreach($relationships['contents'] as $relatedService){
                 foreach($relatedService['relations'] as $relation) {
-                    if( isset($relation['relation_url'])
-                        && str_contains(strtolower($relation['relation_url']), "wms")
-                    ) {
+                    if(isset($relation['relation_url']))
                         $result[] = new Access($relation['relation_url']);
-                        continue;
-                    }
+                    continue;
+
                 }
             }
         }
@@ -258,19 +255,17 @@ class AccessProvider implements RIFCSProvider
             'from_id' => $record->id,
             'to_class' => 'service',
             'relation_type' =>  ['supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'],
-            'to_title' => '*'
+            'to_title' => '*',
+            'relation_url_search' => ['wps']
         ], ['rows' => 50]);
         $relationships =   $service_result->toArray();
 
         if(isset($relationships['contents']) && count($relationships['contents'])>0 ) {
             foreach($relationships['contents'] as $relatedService){
                 foreach($relatedService['relations'] as $relation) {
-                    if( isset($relation['relation_url'])
-                        && str_contains(strtolower($relation['relation_url']), "wps")
-                    ) {
+                    if(isset($relation['relation_url']))
                         $result[] = new Access($relation['relation_url']);
-                        continue;
-                    }
+                    continue;
                 }
             }
         }
@@ -305,19 +300,17 @@ class AccessProvider implements RIFCSProvider
             'from_id' => $record->id,
             'to_class' => 'service',
             'relation_type' =>  ['supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'],
-            'to_title' => '*'
+            'to_title' => '*',
+            'relation_url_search' => ['wcs']
         ], ['rows' => 50]);
         $relationships =   $service_result->toArray();
 
         if(isset($relationships['contents']) && count($relationships['contents'])>0 ) {
             foreach($relationships['contents'] as $relatedService){
                 foreach($relatedService['relations'] as $relation) {
-                    if( isset($relation['relation_url'])
-                        && str_contains(strtolower($relation['relation_url']), "wcs")
-                    ) {
+                    if(isset($relation['relation_url']))
                         $result[] = new Access($relation['relation_url']);
-                        continue;
-                    }
+                    continue;
                 }
             }
         }
@@ -353,19 +346,17 @@ class AccessProvider implements RIFCSProvider
             'from_id' => $record->id,
             'to_class' => 'service',
             'relation_type' =>  ['supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'],
-            'to_title' => '*'
+            'to_title' => '*',
+            'relation_url_search' => ['wfs']
         ], ['rows' => 50]);
         $relationships =   $service_result->toArray();
 
         if(isset($relationships['contents']) && count($relationships['contents'])>0 ) {
             foreach($relationships['contents'] as $relatedService){
                 foreach($relatedService['relations'] as $relation) {
-                    if(isset($relation['relation_url'])
-                        && str_contains(strtolower($relation['relation_url']), "wfs")
-                    ) {
+                    if(isset($relation['relation_url']))
                         $result[] = new Access($relation['relation_url']);
-                        continue;
-                    }
+                    continue;
                 }
             }
         }
@@ -402,19 +393,17 @@ class AccessProvider implements RIFCSProvider
             'from_id' => $record->id,
             'to_class' => 'service',
             'relation_type' =>  ['supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'],
-            'to_title' => '*'
+            'to_title' => '*',
+            'relation_url_search' => ['geoserver']
         ], ['rows' => 50]);
         $relationships =   $service_result->toArray();
 
         if(isset($relationships['contents']) && count($relationships['contents'])>0 ) {
             foreach($relationships['contents'] as $relatedService){
                 foreach($relatedService['relations'] as $relation) {
-                    if( isset($relation['relation_url'])
-                        && str_contains(strtolower($relation['relation_url']), "geoserver")
-                    ) {
+                    if(isset($relation['relation_url']))
                         $result[] = new Access($relation['relation_url']);
-                        continue;
-                    }
+                    continue;
                 }
             }
         }
@@ -451,20 +440,35 @@ class AccessProvider implements RIFCSProvider
             'from_id' => $record->id,
             'to_class' => 'service',
             'relation_type' =>  ['supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'],
-            'to_title' => '*'
+            'to_title' => '*',
+            'relation_url_search' => ['thredds', 'catalog.html']
         ], ['rows' => 50]);
-        $relationships =   $service_result->toArray();
 
+        $service_result2 = RelationshipSearchService::search([
+            'from_id' => $record->id,
+            'to_class' => 'service',
+            'relation_type' =>  ['supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'],
+            'to_title' => '*',
+            'relation_url_search' => ['thredds', 'catalog.xml']
+        ], ['rows' => 50]);
+
+        $relationships =   $service_result->toArray();
+        $relationships2 =  $service_result2->toArray();
         if(isset($relationships['contents']) && count($relationships['contents'])>0 ) {
             foreach($relationships['contents'] as $relatedService){
                 foreach($relatedService['relations'] as $relation) {
-                    if( isset($relation['relation_url'])
-                        && str_contains(strtolower($relation['relation_url']), "thredds")
-                        && (str_contains(strtolower($relation['relation_url']), "catalog.html") || str_contains(strtolower($relation['relation_url']), "catalog.xml"))
-                    ) {
+                    if(isset($relation['relation_url']))
                         $result[] = new Access($relation['relation_url']);
                         continue;
-                    }
+                }
+            }
+        }
+        if(isset($relationships2['contents']) && count($relationships2['contents'])>0 ) {
+            foreach($relationships2['contents'] as $relatedService){
+                foreach($relatedService['relations'] as $relation) {
+                    if(isset($relation['relation_url']))
+                        $result[] = new Access($relation['relation_url']);
+                    continue;
                 }
             }
         }
@@ -499,20 +503,17 @@ class AccessProvider implements RIFCSProvider
             'from_id' => $record->id,
             'to_class' => 'service',
             'relation_type' =>  ['supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'],
-            'to_title' => '*'
+            'to_title' => '*',
+            'relation_url_search' => ['thredds','wcs']
         ], ['rows' => 50]);
         $relationships =   $service_result->toArray();
 
         if(isset($relationships['contents']) && count($relationships['contents'])>0 ) {
             foreach($relationships['contents'] as $relatedService){
                 foreach($relatedService['relations'] as $relation) {
-                    if( isset($relation['relation_url'])
-                        && str_contains(strtolower($relation['relation_url']), "thredds")
-                        && str_contains(strtolower($relation['relation_url']), "wcs")
-                    ) {
+                    if(isset($relation['relation_url']))
                         $result[] = new Access($relation['relation_url']);
-                        continue;
-                    }
+                    continue;
                 }
             }
         }
@@ -555,20 +556,17 @@ class AccessProvider implements RIFCSProvider
             'from_id' => $record->id,
             'to_class' => 'service',
             'relation_type' =>  ['supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'],
-            'to_title' => '*'
+            'to_title' => '*',
+            'relation_url_search' => ['thredds','wms']
         ], ['rows' => 50]);
         $relationships =   $service_result->toArray();
 
         if(isset($relationships['contents']) && count($relationships['contents'])>0 ) {
             foreach($relationships['contents'] as $relatedService){
                 foreach($relatedService['relations'] as $relation) {
-                    if( isset($relation['relation_url'])
-                        && str_contains(strtolower($relation['relation_url']), "thredds")
-                        && str_contains(strtolower($relation['relation_url']), "wms")
-                    ) {
+                    if( isset($relation['relation_url']))
                         $result[] = new Access($relation['relation_url']);
                         continue;
-                    }
                 }
             }
         }
@@ -612,7 +610,8 @@ class AccessProvider implements RIFCSProvider
             'from_id' => $record->id,
             'to_class' => 'service',
             'relation_type' =>  ['supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'],
-            'to_title' => '*'
+            'to_title' => '*',
+            'realation_url_search' => ['thredds','dodsC']
         ], ['rows' => 50]);
         $relationships =   $service_result->toArray();
 
@@ -620,13 +619,9 @@ class AccessProvider implements RIFCSProvider
         if(isset($relationships['contents']) && count($relationships['contents'])>0 ) {
             foreach($relationships['contents'] as $relatedService){
                 foreach($relatedService['relations'] as $relation) {
-                    if( isset($relation['relation_url'])
-                        && str_contains(strtolower($relation['relation_url']), "thredds")
-                        && str_contains($relation['relation_url'], "dodsC")
-                    ) {
-                        $result[] = new Access($relation['relation_url']);
+                    if( isset($relation['relation_url']))
+                           $result[] = new Access($relation['relation_url']);
                         continue;
-                    }
                 }
             }
         }
