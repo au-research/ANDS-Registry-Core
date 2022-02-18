@@ -11,6 +11,7 @@ use ANDS\API\Task\ImportSubTask\ImportSubTask;
 use ANDS\API\Task\ImportSubTask\NonFatalException;
 use ANDS\DataSource;
 use ANDS\DataSource\Harvest as Harvest;
+use ANDS\Log\Log;
 use ANDS\Util\NotifyUtil;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use \Exception as Exception;
@@ -45,6 +46,11 @@ class ImportTask extends Task
         $this->log('Import Task started');
 
         $this->initialiseTask();
+
+        Log::debug("Running Task", [
+            'id' => $this->getId(),
+            'runAll' => $this->runAll
+        ]);
 
         if ($this->runAll) {
             foreach ($this->getSubtasks() as $task){
