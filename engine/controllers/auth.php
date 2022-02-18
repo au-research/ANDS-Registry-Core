@@ -352,6 +352,12 @@ class Auth extends CI_Controller {
             $data['changelog'] = "No Change Log found";
         }
 
+        \ANDS\Log\Log::info(__METHOD__. ". User logged in to Dashboard", [
+            'user' => $this->user->name(),
+            'ip' => \ANDS\Registry\API\Request::ip(),
+            'user_agent' => \ANDS\Registry\API\Request::user_agent()
+        ]);
+
         $this->load->view('dashboard', $data);
 	}
 

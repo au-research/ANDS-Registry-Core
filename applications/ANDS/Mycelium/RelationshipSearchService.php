@@ -2,6 +2,7 @@
 
 namespace ANDS\Mycelium;
 
+use ANDS\Log\Log;
 use ANDS\Util\Config;
 use MinhD\SolrClient\SolrClient;
 
@@ -29,12 +30,17 @@ class RelationshipSearchService
      */
     public static function search($criterias, $pagination = [])
     {
+        Log::debug(__METHOD__ . "Search started", array_merge($criterias, $pagination));
+
         // construct the solrClient based on the solr_url provided by the application's configuration
         $solrClient = new SolrClient(Config::get('app.solr_url'));
         $solrClient->setCore(static::$collection);
 
         // convert criterias and pagination to Solr parameters and perform the search
         $parameters = static::getSolrParameters($criterias, $pagination);
+
+        Log::debug(__METHOD__ . "SOLR parameters", $parameters);
+
         $result = $solrClient->search($parameters);
 
         return Paginator::fromSolrResult($result);

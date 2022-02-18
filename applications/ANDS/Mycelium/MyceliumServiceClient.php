@@ -4,6 +4,7 @@ namespace ANDS\Mycelium;
 
 
 use ANDS\DataSource;
+use ANDS\Log\Log;
 use ANDS\RegistryObject;
 use GuzzleHttp\Client;
 
@@ -52,6 +53,8 @@ class MyceliumServiceClient
      */
     public function importRecord(RegistryObject $record, $requestId)
     {
+        Log::debug(__METHOD__ . " Importing Record to Mycelium", ["id" => $record->id, 'requestId' => $requestId]);
+
         return $this->client->post("api/services/mycelium/import-record", [
             "headers" => ['Content-Type' => 'application/json'],
             "body" => json_encode(MyceliumImportPayloadProvider::get($record)),
@@ -62,6 +65,9 @@ class MyceliumServiceClient
     }
 
     public function deleteRecord($registryObjectId, $requestId) {
+
+        Log::debug(__METHOD__ . " Deleting Record in Mycelium", ["id" => $registryObjectId, 'requestId' => $requestId]);
+
         return $this->client->post("api/services/mycelium/delete-record", [
             "headers" => ['Content-Type' => 'application/json'],
             "query" => [
@@ -79,6 +85,8 @@ class MyceliumServiceClient
      */
     public function indexRecord(RegistryObject $record)
     {
+        Log::debug(__METHOD__ . " Indexing Record in Mycelium", ["id" => $record->id]);
+
         return $this->client->post("api/services/mycelium/index-record", [
             "headers" => [],
             "query" => [
@@ -104,6 +112,8 @@ class MyceliumServiceClient
     }
 
     public function createNewImportRecordRequest($batchID) {
+        Log::debug(__METHOD__ . " Creating ImportRequest in Mycelium", ["batchId" => $batchID]);
+
         return $this->client->post("api/resources/mycelium-requests/", [
             "headers" => ['Content-Type' => 'application/json'],
             "query" => [
@@ -136,6 +146,8 @@ class MyceliumServiceClient
 
     public function getRecordGraph($recordId)
     {
+        Log::debug(__METHOD__ . " Obtaining Record Graph", ["id" => $recordId]);
+
         return $this->client->get("api/services/mycelium/get-record-graph", [
             "query" => ["registryObjectId" => $recordId]
         ]);
@@ -148,6 +160,8 @@ class MyceliumServiceClient
      */
     public function getDuplicateRecords($registryObjectId)
     {
+        Log::debug(__METHOD__ . " Get Duplicate Records", ["id" => $registryObjectId]);
+
         $response = $this->client->get("api/services/mycelium/get-duplicate-records", [
             "headers" => [],
             "query" => [
@@ -165,6 +179,8 @@ class MyceliumServiceClient
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function createDataSource(DataSource $dataSource) {
+        Log::debug(__METHOD__ . " Creating new DataSource", ["id" => $dataSource->id]);
+
         return $this->client->post("api/resources/mycelium-datasources/", [
             "headers" => ['Content-Type' => 'application/json'],
             "body" => json_encode(MyceliumDataSourcePayloadProvider::get($dataSource))
@@ -178,6 +194,8 @@ class MyceliumServiceClient
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function updateDataSource(DataSource $dataSource) {
+        Log::debug(__METHOD__ . " Updating DataSource", ["id" => $dataSource->id]);
+
         return $this->client->put("api/resources/mycelium-datasources/$dataSource->id", [
             "headers" => ['Content-Type' => 'application/json'],
             "body" => json_encode(MyceliumDataSourcePayloadProvider::get($dataSource))
@@ -191,6 +209,8 @@ class MyceliumServiceClient
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function deleteDataSource(DataSource $dataSource) {
+        Log::debug(__METHOD__ . " Deleting DataSource", ["id" => $dataSource->id]);
+
         return $this->client->delete("api/resources/mycelium-datasources/$dataSource->id", [
             "headers" => ['Content-Type' => 'application/json']
         ]);
