@@ -556,7 +556,7 @@
         $scope.showFacet = function(facet) {
             var allowed = [];
             if ($scope.filters['class']=='collection') {
-                allowed = ['subjects', 'group', 'access_rights', 'license_class', 'temporal', 'spatial', 'access_methods_ss','collection_type'];
+                allowed = ['subjects', 'group', 'access_rights', 'license_class', 'temporal', 'spatial', 'access_methods','collection_type'];
             } else if($scope.filters['class']=='activity') {
                 allowed = ['type', 'activity_status', 'subjects', 'administering_institution', 'funders', 'funding_scheme', 'commencement_to', 'commencement_from', 'completion_to', 'completion_from', 'funding_amount'];
             } else if ($scope.filters['class'] == 'service') {

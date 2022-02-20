@@ -34,7 +34,7 @@ class RIFCSIndexProviderTest extends \RegistryTestClass
         $this->assertArrayHasKey('identifier_type', $index);
         $this->assertArrayHasKey('identifier_value', $index);
         $this->assertArrayHasKey('identical_record_ids', $index);
-        $this->assertArrayHasKey('access_methods_ss', $index);
+        $this->assertArrayHasKey('access_methods', $index);
         $this->assertArrayHasKey('access_rights', $index);
         $this->assertArrayHasKey('license_class', $index);
         $this->assertArrayHasKey('date_from', $index);

@@ -782,7 +782,7 @@ app.config(function (uiGmapGoogleMapApiProvider) {
 				case 'completion_to': return 'Completion To'; break;
 				case 'completion_from': return 'Completion From'; break;
 				case 'spatial': return 'Location'; break;
-				case 'access_methods_ss': return 'Access Method'; break;
+				case 'access_methods': return 'Access Method'; break;
 				default: return text;
 			}
 		}
@@ -2342,7 +2342,7 @@ app.directive('focusMe', function($timeout, $parse) {
         $scope.showFacet = function(facet) {
             var allowed = [];
             if ($scope.filters['class']=='collection') {
-                allowed = ['subjects', 'group', 'access_rights', 'license_class', 'temporal', 'spatial', 'access_methods_ss','collection_type'];
+                allowed = ['subjects', 'group', 'access_rights', 'license_class', 'temporal', 'spatial', 'access_methods','collection_type'];
             } else if($scope.filters['class']=='activity') {
                 allowed = ['type', 'activity_status', 'subjects', 'administering_institution', 'funders', 'funding_scheme', 'commencement_to', 'commencement_from', 'completion_to', 'completion_from', 'funding_amount'];
             } else if ($scope.filters['class'] == 'service') {
@@ -3116,7 +3116,7 @@ app.directive('focusMe', function($timeout, $parse) {
                 {'name': 'subject', 'display': 'Subject'},
                 {'name': 'group', 'display': 'Data Provider'},
                 {'name': 'access_rights', 'display': 'Access'},
-                {'name': 'access_methods_ss', 'display': 'Access Method'},
+                {'name': 'access_methods', 'display': 'Access Method'},
                 {'name': 'license_class', 'display': 'Licence'},
                 {'name': 'temporal', 'display': 'Time Period'},
                 {'name': 'spatial', 'display': 'Location'},
@@ -3157,7 +3157,7 @@ app.directive('focusMe', function($timeout, $parse) {
                 {'name': 'help', 'display': '<i class="fa fa-question-circle"></i> Help'}
             ],
 
-            collection_facet_order: ['collection_type','group', 'access_rights', 'access_methods_ss','license_class','type'],
+            collection_facet_order: ['collection_type','group', 'access_rights', 'access_methods','license_class','type'],
             activity_facet_order: ['type', 'activity_status', 'funding_scheme', 'administering_institution', 'funders'],
 
             ingest: function (hash) {

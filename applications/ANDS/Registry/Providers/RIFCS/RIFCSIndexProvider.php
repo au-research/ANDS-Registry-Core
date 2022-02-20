@@ -43,16 +43,6 @@ class RIFCSIndexProvider
             ->merge(CitationProvider::getIndexableArray($record))
             ->toArray();
 
-        // todo access_rights <- AccessRightsProvider?
-        // todo related_info_search
-        // todo spatial <- SpatialProvider
-        // todo temporal <- DatesProvider
-        // todo theme_page <- TagsProvider
-        // todo grants <- GrantsMetadataProvider
-        // todo license_class <- LicenseProvider
-        // todo access_methods_ss
-
-
         /* activity records should have grants metadata indexed */
         if ($record->class === "activity") {
             $index = collect($index)->merge(GrantsMetadataProvider::getIndexableArray($record));

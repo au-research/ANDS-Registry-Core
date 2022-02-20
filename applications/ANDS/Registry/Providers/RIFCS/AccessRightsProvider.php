@@ -34,15 +34,15 @@ class AccessRightsProvider implements RIFCSProvider
     public static function getIndexableArray(RegistryObject $record) {
         return [
             'access_rights' => static::getAccessRights($record),
-            'access_methods_ss' => static::getAccessMethods($record)
+            'access_methods' => static::getAccessMethods($record)
         ];
     }
 
     public static function getAccessMethods(RegistryObject $record){
 
         $accessMethods = AccessProvider::get($record);
-        $access_methods_ss = array_keys($accessMethods);
-        return $access_methods_ss;
+        $access_methods = array_keys($accessMethods);
+        return $access_methods;
     }
 
     public static function getAccessRights(RegistryObject $record){

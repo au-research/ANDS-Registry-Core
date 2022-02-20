@@ -48,7 +48,7 @@ angular.module('portal-filters', [])
 				case 'completion_to': return 'Completion To'; break;
 				case 'completion_from': return 'Completion From'; break;
 				case 'spatial': return 'Location'; break;
-				case 'access_methods_ss': return 'Access Method'; break;
+				case 'access_methods': return 'Access Method'; break;
 				default: return text;
 			}
 		}

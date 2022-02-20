@@ -98,7 +98,7 @@
         "mineral exploration",
         "AU"],
     "tsubject_anzsrc-for":["04"],
-    "access_methods_ss":["landingPage"],
+    "access_methods":["landingPage"],
     "related_party_one_id":["36396",
         "35451",
         "37940"],

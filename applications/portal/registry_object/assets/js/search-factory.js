@@ -97,7 +97,7 @@
                 {'name': 'subject', 'display': 'Subject'},
                 {'name': 'group', 'display': 'Data Provider'},
                 {'name': 'access_rights', 'display': 'Access'},
-                {'name': 'access_methods_ss', 'display': 'Access Method'},
+                {'name': 'access_methods', 'display': 'Access Method'},
                 {'name': 'license_class', 'display': 'Licence'},
                 {'name': 'temporal', 'display': 'Time Period'},
                 {'name': 'spatial', 'display': 'Location'},
@@ -138,7 +138,7 @@
                 {'name': 'help', 'display': '<i class="fa fa-question-circle"></i> Help'}
             ],
 
-            collection_facet_order: ['collection_type','group', 'access_rights', 'access_methods_ss','license_class','type'],
+            collection_facet_order: ['collection_type','group', 'access_rights', 'access_methods','license_class','type'],
             activity_facet_order: ['type', 'activity_status', 'funding_scheme', 'administering_institution', 'funders'],
 
             ingest: function (hash) {

@@ -131,7 +131,7 @@ class AccessRightsProviderTest extends \RegistryTestClass
         $access_rights_metadata = AccessRightsProvider::getIndexableArray($record);
         $this->assertNotNull($access_rights_metadata);
         $expected = ["directDownload","landingPage"];
-        $this->assertSame($access_rights_metadata['access_methods_ss'], $expected);
+        $this->assertSame($access_rights_metadata['access_methods'], $expected);
 
     }
 }

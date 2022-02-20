@@ -1309,7 +1309,7 @@ class Registry_object extends MX_Controller
             ),
             'aside' => array('rights-info', 'contact-info'),
             'view_headers' => array('title', 'related-parties'),
-            'facet' => array('spatial', 'group', 'license_class', 'access_methods_ss','type', 'temporal', 'access_rights'),
+            'facet' => array('spatial', 'group', 'license_class', 'access_methods','type', 'temporal', 'access_rights'),
             'activity_facet' => array(
                 'type',
                 'activity_status',

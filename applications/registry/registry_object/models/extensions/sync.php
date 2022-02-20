@@ -545,7 +545,7 @@ class Sync_extension extends ExtensionBase{
         // access methods
         $accessMethods = \ANDS\Registry\Providers\RIFCS\AccessProvider::get($record);
         $methods = array_keys($accessMethods);
-        $json['access_methods_ss'] = $methods;
+        $json['access_methods'] = $methods;
 
         //lowercase all facet-able values
         $lowercase = array('type', 'license_class', 'access_rights', 'activity_status');
