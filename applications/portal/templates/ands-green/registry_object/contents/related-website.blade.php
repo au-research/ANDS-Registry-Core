@@ -22,7 +22,7 @@
                     <li class="morewebsites" style="display:none">
              @endif
                     <i class="fa fa-globe icon-portal"></i>
-                    <small>{{ $relation_type_text  }} {{$disp_count}}</small>
+                    <small>{{ $relation_type_text }}</small>
 
                     {{--Display the identifiers--}}
                     {{ $col['to_title'] }}
