@@ -158,19 +158,6 @@ class _data_source {
         return $this;
     }
 
-    function eraseFromDB()
-    {
-        $log = $this->deleteAllRecords();
-        $this->db->delete('data_source_attributes', array('data_source_id'=>$this->id));
-        $this->db->delete('data_source_logs', array('data_source_id'=>$this->id));
-        $this->db->delete('deleted_registry_objects', array('data_source_id'=>$this->id));
-        $this->db->delete('harvest_requests', array('data_source_id'=>$this->id));
-        $this->db->delete('data_sources', array('data_source_id'=>$this->id));
-        $this->db->delete('harvests', array('data_source_id'=>$this->id));
-        return $log;
-    }
-
-
     function save()
     {
         // Mark this record as recently updated
@@ -352,32 +339,6 @@ class _data_source {
         $this->_CI->importer->_reindexRecords($targetRecords);
     }
 
-
-    function deleteAllRecords()
-    {
-        $this->_CI->load->library('importer');
-        $this->_CI->load->model("registry_object/registry_objects", "ro");
-        $targetRecords = array();
-
-        $this->db->select('registry_object_id');
-        $this->db->from('registry_objects');
-        $this->db->where(array('data_source_id'=>$this->id));
-
-        $query = $this->db->get();
-        if ($query->num_rows())
-        {
-            foreach($query->result_array() AS $i)
-            {
-                $targetRecords[] =  $i['registry_object_id'];
-            }
-        }
-        $deleted_and_affected_record_keys = $this->_CI->ro->deleteRegistryObjects($targetRecords, false);
-        $this->_CI->importer->addToDeletedList($deleted_and_affected_record_keys['deleted_record_keys']);
-        $this->_CI->importer->addToAffectedList($deleted_and_affected_record_keys['affected_record_keys']);
-        $taskLog =  $this->_CI->importer->finishImportTasks();
-        return $taskLog;
-    }
-    
     /*
      * LOGS
      */
@@ -608,28 +569,6 @@ class _data_source {
     }
 
 
-
-    function deleteOldRecords($harvest_id)
-    {
-        $this->_CI->load->model("registry_object/registry_objects", "ro");
-        $oldRegistryObjectIDs = $this->_CI->ro->getRecordsInDataSourceFromOldHarvest($this->id, $harvest_id);
-        $deleted_and_affected_record_keys = null;
-        if($oldRegistryObjectIDs)
-        {
-            try{
-                $deleted_and_affected_record_keys = $this->_CI->ro->deleteRegistryObjects($oldRegistryObjectIDs, false);
-            }
-            catch(Exception $e)
-            {
-                $this->append_log("ERROR REMOVING RECORD FROM PREVIOUS HARVEST: ".NL.$e, HARVEST_INFO, "harvester", "HARVESTER_INFO");
-            }
-        }
-        if(is_array($deleted_and_affected_record_keys) && array_key_exists('deleted_record_keys', $deleted_and_affected_record_keys))
-        {
-            $this->append_log("REMOVING RECORDS FROM PREVIOUS HARVEST: " .sizeof($deleted_and_affected_record_keys['deleted_record_keys'])." DELETED", HARVEST_INFO, "harvester","HARVESTER_INFO");
-        }
-        return $deleted_and_affected_record_keys; //array('deleted_record_keys'=>$deleted_record_keys, 'affected_record_keys'=>$affected_record_keys);
-    }
     /*
      * 	STATS
      */

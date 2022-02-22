@@ -86,7 +86,6 @@ class Registry_objectsMethod extends MethodHandler {
 
                         case 'get':
                         case 'registry':           $result[$m1] = $this->ro_handle('core'); break;
-                        case 'relationships'    :  $result[$m1] = $this->relationships_handler(); break;
 
                         default :
                             try {
@@ -101,12 +100,6 @@ class Registry_objectsMethod extends MethodHandler {
 
                             break;
 
-                    }
-                } else {
-                    //special case
-                    if ($m1 == 'solr_index') {
-                        $this->ro->sync();
-                        $result[$m1] = $this->ro->indexable_json();
                     }
                 }
             }
@@ -232,67 +225,6 @@ class Registry_objectsMethod extends MethodHandler {
         //get results
         $result = $ci->solr->executeSearch(true);
         return $result;
-    }
-
-    /**
-    * Relationships handler
-    * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
-    * @return array
-    */
-    private function relationships_handler() {
-        $relationships = array();
-
-
-        $ci =& get_instance();
-        $ci->load->model('registry_object/registry_objects', 'ro');
-
-        $limit = isset($_GET['related_object_limit']) ? $_GET['related_object_limit'] : 5;
-
-        $types = array('collection','party_one', 'party_multi', 'activity', 'service');
-
-
-
-        $relationships = $this->ro->getConnections(true,null,$limit,0,true);
-        $relationships = $relationships[0];
-
-
-        if(isset($relationships['activity'])){
-            for($i=0;$i<count($relationships['activity']);$i++){
-                $funder = $this->getFunders($relationships['activity'][$i]['registry_object_id']);
-                if($funder!='') $relationships['activity'][$i]['funder']= "(funded by ".$funder.")";
-            }
-        }
-
-        //get the correct count in SOLR
-        $ci->load->library('solr');
-        $search_class = $this->ro->class;
-        if($this->ro->class=='party') {
-            if (strtolower($this->ro->type)=='person'){
-                $search_class = 'party_one';
-            } elseif(strtolower($this->ro->type)=='group') {
-                $search_class = 'party_multi';
-            }
-        }
-
-        foreach ($types as $type) {
-            if(isset($relationships[$type.'_count'])) {
-                $ci->solr->init();
-                $ci->solr
-                    ->setOpt('fq', '+related_'.$search_class.'_id:'.$this->ro->id)
-                    ->setOpt('rows', '0');
-                if ($type=='party_one') {
-                    $ci->solr->setOpt('fq', '+class:party')->setOpt('fq', '+type:person');
-                } elseif ($type=='party_multi') {
-                    $ci->solr->setOpt('fq', '+class:party')->setOpt('fq', '+type:group');
-                } else {
-                    $ci->solr->setOpt('fq', '+class:'.$type);
-                }
-                $result = $ci->solr->executeSearch(true);
-                $relationships[$type.'_count_solr'] = $result['response']['numFound'];
-            }
-        }
-
-        return $relationships;
     }
 
     private function getFunders($ro_id)

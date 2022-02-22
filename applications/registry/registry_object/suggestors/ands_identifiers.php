@@ -48,8 +48,8 @@ class Suggestor_ands_identifiers implements GenericSuggestor
 		}
 
 		// But exclude already related objects
-		$my_relationships = array_map(function($elt){ return $elt; }, $registry_object->getRelatedKeys());
-		$my_relationships[] = $registry_object->key;
+        // todo my_relationships should come from RelationshipSearchService;
+		$my_relationships = [];
 
 		$relationship_search_query = '';
 		if(sizeof($my_relationships) > 0) {

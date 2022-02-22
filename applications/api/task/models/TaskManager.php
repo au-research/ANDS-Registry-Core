@@ -264,65 +264,6 @@ class TaskManager
     }
 
     /**
-     * Random maintenance task
-     * @return bool
-     * @throws Exception
-     */
-    public function findRandomTask()
-    {
-        /**
-         * Find any missing records and sync them
-         * Find random 50 records and sync them (maintain synchronisity)
-         * Fix bad records (records that are in the index but not in database)
-         */
-        $limit = 10;
-
-        $this->ci->load->library('solr');
-
-        //find records in the index that is not PUBLISHED (bad workflow?)
-        $type = 'Records not PUBLISHED getting indexed';
-        $records = $this->findNonPublishedIndexedRecords($limit);
-
-        //find random records that are not indexed yet
-        if (!$records || sizeof($records) == 0) {
-            $type = 'UnIndexed Records and/or bad indices';
-            $records = $this->findUnIndexedRecords($limit);
-        }
-
-        //find random records as last resort
-        if (!$records || sizeof($records) == 0) {
-            $type = 'Syncing ' .$limit. ' Random PUBLISHED Records';
-            $records = $this->findRandomRecords($limit);
-        }
-
-        // sync records
-        if ($records && sizeof($records) > 0) {
-            $params = [
-                'type' => 'ro',
-                'id' => implode(',', $records),
-                'class' => 'sync'
-            ];
-            $message = [
-                'log' => [
-                    'Random Maintenance Task',
-                    $type
-                ]
-            ];
-
-            $taskId = $this->addTask([
-                'name' => 'Maintenance SyncTask',
-                'type' => 'POKE',
-                'frequency' => 'ONCE',
-                'priority' => 1,
-                'params' => http_build_query($params),
-                'message' => json_encode($message, true)
-            ]);
-            return $taskId;
-        }
-        return false;
-    }
-
-    /**
      * Find records that are not PUBLISHED in the index
      * @param $limit
      * @return array|bool

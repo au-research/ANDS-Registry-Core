@@ -310,12 +310,6 @@ class ImportTask extends Task
                     "IndexPortal",
                 ];
                 break;
-            case "IndexWorkflow":
-                $tasks = [
-                    "IndexPortal",
-                    "IndexRelationship", // should switch to using Mycelium to Index Relationship
-                ];
-                break;
             case "IndexPortalWorkflow":
                 $tasks = [
                     "IndexPortal",

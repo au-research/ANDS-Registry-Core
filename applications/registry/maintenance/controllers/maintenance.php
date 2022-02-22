@@ -362,61 +362,6 @@ class Maintenance extends MX_Controller
         $this->load->view("harvester_app", $data);
     }
 
-    public function init()
-    {
-        acl_enforce('REGISTRY_STAFF');
-        $this->load->library('importer');
-        $slogTitle = 'Import from URL completed successfully' . NL;
-        $elogTitle = 'An error occurred whilst importing from the specified URL' . NL;
-        $log = 'IMPORT LOG' . NL;
-        //$log .= 'URI: ' . $this->input->post('url') . NL;
-        $log .= 'Harvest Method: Direct import from URL' . NL;
-        $this->load->model('data_source/data_sources', 'ds');
-
-        $data_source = $this->ds->getByKey($this->config->item('example_ds_key'));
-
-        if (!$this->config->item('example_ds_key')) {
-            echo "Example DataSource Key is required to complete the task" . NL;
-            return;
-        }
-
-        if (!$data_source) {
-            $data_source = $this->ds->create($this->config->item('example_ds_key'), url_title($this->config->item('example_ds_title')));
-            $data_source->setAttribute('title', $this->config->item('example_ds_title'));
-            $data_source->setAttribute('record_owner', 'superuser');
-            $data_source->save();
-            $data_source->updateStats();
-            $data_source = $this->ds->getByKey($this->config->item('example_ds_key'));
-        }
-
-        $sampleRecordUrls = array('http://services.ands.org.au/documentation/rifcs/1.6.1/examples/eg-collection-1.xml',
-            'http://services.ands.org.au/documentation/rifcs/1.6.1/examples/eg-party-1.xml',
-            'http://services.ands.org.au/documentation/rifcs/1.6.1/examples/eg-service-1.xml',
-            'http://services.ands.org.au/documentation/rifcs/1.6.1/examples/eg-activity-1.xml');
-
-        $xml = '';
-        foreach ($sampleRecordUrls as $recUrl) {
-            $xml .= unWrapRegistryObjects(file_get_contents($recUrl));
-        }
-
-        $this->importer->setXML(wrapRegistryObjects($xml));
-        $this->importer->setDatasource($data_source);
-        $this->importer->commit(false);
-        $this->importer->finishImportTasks();
-        $data_source->updateStats();
-
-        if ($error_log = $this->importer->getErrors()) {
-            $log .= $elogTitle . $log . $error_log;
-            $data_source->append_log($log, HARVEST_ERROR, "HARVEST_ERROR");
-        }
-        //else{
-        $log .= $slogTitle . $log . $this->importer->getMessages();
-        $data_source->append_log($log, HARVEST_INFO, "HARVEST_INFO");
-
-        header('Location: ' . registry_url('data_source/manage_records/' . $data_source->id));
-        exit();
-    }
-
     function status()
     {
         set_exception_handler('json_exception_handler');
@@ -533,44 +478,6 @@ class Maintenance extends MX_Controller
         }
         $this->benchmark->mark('end');
         var_dump($this->benchmark->elapsed_time('start', 'end'));
-    }
-
-    function indexSolr($roID) {
-        set_exception_handler('json_exception_handler');
-        header('Cache-Control: no-cache, must-revalidate');
-        header('Content-type: application/json');
-        $this->load->model('registry_object/registry_objects', 'ro');
-        $this->load->library('solr');
-        $ro = $this->ro->getByID($roID);
-        try {
-            $result = $ro->index_solr();
-            var_dump($result);
-            $result = $ro->indexRelationship();
-            var_dump($result);
-        } catch (Exception $e) {
-            dd($e->getMessage());
-        }
-    }
-
-    function fixRelationships($id)
-    {
-        set_exception_handler('json_exception_handler');
-        $this->load->model('registry_object/registry_objects', 'ro');
-        $ro = $this->ro->getByID($id);
-        $ro->sync();
-        $relationships = $ro->getAllRelatedObjects();
-        $relationships = array_merge($relationships, $ro->_getGrantsNetworkConnections($relationships));
-        $already_sync = array();
-        foreach ($relationships as $r) {
-            if (!in_array($r['registry_object_id'], $already_sync)) {
-                $rr = $this->ro->getByID($r['registry_object_id']);
-                echo $rr->id . ' > ' . $rr->class . ' > ' . $rr->title . "\n";
-                $rr->sync();
-                $already_sync[] = $rr->id;
-                unset($rr);
-            }
-        }
-        echo 'done';
     }
 
     function flush_buffers()

@@ -4,7 +4,6 @@
 namespace ANDS\Commands\RegistryObject;
 
 
-use ANDS\API\Task\ImportSubTask\IndexRelationship;
 use ANDS\Mycelium\MyceliumImportPayloadProvider;
 use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 use ANDS\Registry\Providers\RelationshipProvider;
@@ -79,13 +78,6 @@ class RegistryObjectGetCommand extends Command
                 $output->writeln("Merged: $count");
                 $output->writeln("Explicit: $explicitCount");
                 $output->writeln("Reverse Explicit: $reverseCount");
-                break;
-            case "relations-index-generated":
-                $indexTask = new IndexRelationship();
-                $relationships = RelationshipProvider::getMergedRelationships($record);
-                $index = $indexTask->getRelationshipIndex($relationships);
-                var_dump($index);
-                $output->writeln(count($index));
                 break;
             case "mycelium-import-payload":
                 $payload = MyceliumImportPayloadProvider::get($record);

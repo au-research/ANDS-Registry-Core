@@ -1,3 +1,3 @@
 <?php
-$autoload['libraries'] = array('importer','solr');
+$autoload['libraries'] = array('solr');
 $autoload['helper'] = array('crosswalks','xml','registry','engine');

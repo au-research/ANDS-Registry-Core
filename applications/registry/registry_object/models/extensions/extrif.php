@@ -17,7 +17,6 @@ class Extrif_Extension extends ExtensionBase
 		// Save ourselves some computation by avoiding creating the whole $ds object for 
 		$ds = $this->_CI->ds->getByID($this->ro->data_source_id);
 
-		//same as in relationships.php
 		$xml = $this->ro->getSimpleXML();
 
 		// Reset our namespace object (And go down one level from the wrapper if needed)
@@ -276,7 +275,10 @@ class Extrif_Extension extends ExtensionBase
 		}
 
 		if ($options['relationships']) {
-			$allRelatedObjects = $this->ro->getAllRelatedObjects(false, true, true);
+
+            // todo refactor to use RelationshipSearchService
+			$allRelatedObjects = [];
+
 			unset($ext->extendedMetadata->related_object);
 			foreach ($allRelatedObjects AS $relatedObject) {
 				$relatedObj = $ext->extendedMetadata->addChild("extRif:related_object", NULL, EXTRIF_NAMESPACE);

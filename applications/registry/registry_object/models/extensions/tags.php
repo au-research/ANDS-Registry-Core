@@ -146,7 +146,9 @@ class Tags_Extension extends ExtensionBase{
 			$this->markTag(0);
 		}
 		$this->removeTagDB($tag);
-        $this->ro->update_field_index('tag');
+
+        // todo update this call to use TagsProvider::updateTags($record)
+        //$this->ro->update_field_index('tag');
 		return true;
 	}
 }

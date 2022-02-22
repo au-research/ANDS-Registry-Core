@@ -449,86 +449,6 @@ class Registry_object extends MX_Controller {
         echo json_encode($result);
     }
 
-    // TODO: Remove after pipeline implementation
-	public function save_deprecated($registry_object_id){
-		set_exception_handler('json_exception_handler');
-
-		$xml = $this->input->post('xml');
-		$this->load->library('importer');
-
-		$this->load->model('registry_objects', 'ro');
-		$this->load->model('data_source/data_sources', 'ds');
-		$ro = $this->ro->getByID($registry_object_id);
-
-		if (!$ro){
-			throw new Exception("No registry object exists with that ID!");
-		}
-
-		acl_enforce('REGISTRY_USER');
-		ds_acl_enforce($ro->data_source_id);
-
-		$ds = $this->ds->getByID($ro->data_source_id);
-
-
-
-		$this->importer->forceDraft();
-
-		$error_log = '';
-		$status = 'success';
-		//echo wrapRegistryObjects($xml);
-		//exit();
-		try{
-			$xml = $ro->cleanRIFCSofEmptyTags($xml, 'true', true);
-            $xml = wrapRegistryObjects($xml);
-            $this->importer->validateRIFCS($xml);
-            $this->importer->setXML($xml);
-			$this->importer->setDatasource($ds);
-			$this->importer->commit();
-		}
-		catch(Exception $e)
-		{
-			$status = 'error';
-			$error_log = $e->getMessage();
-		}
-		//if ($error_log){
-		//	throw new Exception("Errors during saving this registry object! " . BR . implode($error_log, BR));
-		//}
-		//else{
-		// Fetch updated registry object!
-		// $ro = $this->ro->getByID($registry_object_id);
-		$ro = $this->ro->getByID($registry_object_id);
-
-		//if the key has changed
-		if($ro->key != $this->input->post('key')){
-			$ro = $this->ro->getAllByKey($this->input->post('key'));
-			$ro = $ro[0];
-		}
-
-		$qa = $ds->qa_flag==DB_TRUE ? true : false;
-		$manual_publish = $ds->manual_publish==DB_TRUE ? true: false;
-
-		$result =
-			array(
-				"status"=>$status,
-				"ro_status"=>"DRAFT",
-				"title"=>$ro->title,
-				"qa_required"=>$qa,
-				"data_source_id" => $ro->data_source_id,
-				"approve_required"=>$manual_publish,
-				"error_count"=> (int) $ro->error_count,
-				"ro_id"=>$ro->id,
-				"ro_quality_level"=>$ro->quality_level,
-				"ro_quality_class"=>($ro->quality_level >= 2 ? "success" : "important"),
-				"qa_$ro->quality_level"=>true,
-				"message"=>$error_log,
-				"qa"=>$ro->get_quality_text()
-				);
-			//if($qa) $result['qa'] = true;
-			echo json_encode($result);
-		//}
-	}
-
-
 	public function add_new(){
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
@@ -895,7 +815,11 @@ class Registry_object extends MX_Controller {
 		$data['xml'] = html_entity_decode($ro->getRif());
 		$data['extrif'] = html_entity_decode($ro->getExtRif());
         initEloquent();
-		$data['solr'] = json_encode($ro->indexable_json());
+
+        // todo check if solr is not used anywhere
+        // if it's used, use RIFCSIndexProvider::get instead
+		$data['solr'] = "";
+
 		$data['view'] = $ro->transformForHtml();
 		$data['id'] = $ro->id;
 		$data['title'] = $ro->getAttribute('list_title');
@@ -1473,140 +1397,7 @@ class Registry_object extends MX_Controller {
         ]);
     }
 
-    // TODO: Remove after Pipeline Integration
-	function delete_deprecated(){
-		set_exception_handler('json_exception_handler');
-		header('Cache-Control: no-cache, must-revalidate');
-		header('Content-type: application/json');
-
-		$affected_ids = $this->input->post('affected_ids');
-		// $select_all is the status, not a boolean?
-		//$select_all = $this->input->post('select_all')=='true' ? true : false;
-
-		$select_all = $this->input->post('select_all');
-		$data_source_id = $this->input->post('data_source_id');
-		$excluded_records = $this->input->post('excluded_records') ?: array();
-		$this->load->model('registry_objects', 'ro');
-		$this->load->model('data_source/data_sources', 'ds');
-
-
-		if($select_all && $select_all != "false"){
-			$filters = $this->input->post('filters');
-
-
-			$args = array();
-
-			$args['sort'] = isset($filters['sort']) ? $filters['sort'] : array('updated'=>'desc');
-			$args['search'] = isset($filters['search']) ? $filters['search'] : false;
-			$args['or_filter'] = isset($filters['or_filter']) ? $filters['or_filter'] : false;
-			$args['filter'] = isset($filters['filter']) ? array_merge($filters['filter'], array('status'=>$this->input->post('select_all'))) : array('status'=>$this->input->post('select_all'));
-			$args['data_source_id'] = $data_source_id;
-			$affected_ros = $this->ro->filter_by($args, 0, 0, true);
-
-			$affected_ids = array();
-			if(is_array($affected_ros))
-			{
-				foreach($affected_ros as $r){
-					if(!in_array($r->registry_object_id, $excluded_records)) {
-						array_push($affected_ids, $r->registry_object_id);
-					}
-				}
-			}
-		}
-		$ds = $this->ds->getByID($data_source_id);
-
-		if (is_array($affected_ids) && sizeof($affected_ids)>0){
-			$this->load->library('importer');
-			$deleted_and_affected_record_keys = $this->ro->deleteRegistryObjects($affected_ids, false);
-			$this->importer->addToDeletedList($deleted_and_affected_record_keys['deleted_record_keys']);
-			$this->importer->addToAffectedList($deleted_and_affected_record_keys['affected_record_keys']);
-			$taskLog = $this->importer->finishImportTasks();
-			if($this->importer->runBenchMark){
-				$ds->append_log('delete Log '.NL.$taskLog, "IMPORTER_INFO", "harvester", "IMPORTER_INFO");
-			}
-		}
-
-
-		// set a background task to fix the relationship of the deleted records by removing them
-		if (sizeof($affected_ids) > 0) {
-			require_once BASE . 'vendor/autoload.php';
-			$params = [
-				'class' => 'fixRelationship',
-				'type' => 'ro',
-				'id' => join(',', $affected_ids)
-			];
-			$task = [
-				'name' => "fixRelationship of " . sizeof($affected_ids). " records",
-				'type' => 'POKE',
-				'frequency' => 'ONCE',
-				'priority' => 5,
-				'params' => http_build_query($params)
-			];
-			$taskManager = new \ANDS\API\Task\TaskManager($this->db, $this);
-			$taskManager->addTask($task);
-		}
-
-		$ds->updateStats();
-
-		echo json_encode(array("status"=>"success"));
-	}
-
-
-
-	function get_solr_doc($id, $limit=null){
-        set_exception_handler('json_exception_handler');
-        header('Cache-Control: no-cache, must-revalidate');
-        header('Content-type: application/json');
-		$this->load->model('registry_objects', 'ro');
-		$ro = $this->ro->getByID($id);
-		$solrDoc = $ro->indexable_json();
-        echo json_encode($solrDoc);
-	}
-
 	//-----------DEPRECATED AFTER THIS LINE -----------------------//
-
-	/**
-	 * Get the edit form of a Record
-	 *
-	 *
-	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
-	 * @package ands/registryobject
-	 * @param registry object ID
-	 * @return [HTML] transformed form from extrif
-	 *
-	 */
-
-//	public function get_edit_form($id){
-//		// ro is the alias for the registry object model
-//		$this->load->model('registry_objects', 'ro');
-//		$ro = $this->ro->getByID($id);
-//		//$data['extrif'] = $ro->getExtRif();
-//
-//		$data['preview_link'] = 'http://demo.ands.org.au/'.$ro->slug;
-//		$data['transform'] = $ro->transformForFORM();
-//		echo $data['transform'];
-//		//$this->load->view('registry_object_edit', $data);
-//	}
-
-
-	/**
-	 * Get the edit form of a Record
-	 *
-	 *
-	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
-	 * @package ands/registryobject
-	 * @param registry object ID, [POST] custom RIFCS
-	 * @return [HTML] transformed form from extrif
-	 *
-	 */
-//	public function get_edit_form_custom($id){
-//		$this->load->model('registry_objects', 'ro');
-//		$ro = $this->ro->getByID($id);
-//		$rifcs = $this->input->post('rifcs');
-//
-//		$data['transform'] = $ro->transformCustomForFORM($rifcs);
-//		echo $data['transform'];
-//	}
 
 	/**
 	 * Get a list of records based on the filters
@@ -1741,11 +1532,11 @@ class Registry_object extends MX_Controller {
 		$this->load->model('registry_object/registry_objects', 'ro');
 		$ro = $this->ro->getByID($ro_id);
 		if($ro){
-            //$connections = $ro->getConnections();
+            // todo use RelationshipSearchService instead
             if($ro->class == 'party')
-			    $connections = $ro->getAllRelatedObjects(true, false, false, $party_conn_limit); // allow drafts
+			    $connections = []; // allow drafts
             else
-                $connections = $ro->getAllRelatedObjects(true);
+                $connections = [];
 			foreach($connections AS &$link)
 			{
 				// Reverse the relationship description (note: this reverses to the "readable" version (i.e. not camelcase))

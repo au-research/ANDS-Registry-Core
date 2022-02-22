@@ -88,7 +88,6 @@ class TestEndToEndImport extends UnitTest
             )->count()
         );
 
-        // ProcessRelationships
         $importTask->run_task();
 
 

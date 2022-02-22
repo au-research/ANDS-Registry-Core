@@ -586,8 +586,6 @@ Content:text/plain; charset="utf-8"
             ], ['boost_relation_type'=> $relationshipTypeArray,'rows' => 5]);
 
             $authors = $result->toArray();
-               //  foreach ($relationshipTypeArray as $relationType) {
-               //  $authors = $this->ro->getRelatedObjectsIndex($classArray, [$relationType]);
                  if (isset($authors['contents']) && sizeof($authors['contents']) > 0) {
                      foreach ($authors['contents'] as $author) {
                          var_dump($author);
@@ -638,7 +636,9 @@ Content:text/plain; charset="utf-8"
                             $grant_id = $grant_sxml->xpath("//ro:identifier[@type='arc'] | //ro:identifier[@type='nhmrc'] | //ro:identifier[@type='purl']");
 
                             $related_party = array();
-                            $relationships = $grant_object->getAllRelatedObjects();
+                            // todo get relationships from RelationshipSearchService
+                            $relationships = [];
+
                             foreach ($relationships as $rr) {
                                 if (in_array($rr['class'], ['party']) && in_array($rr['relation_type'], ['isFunderOf','isFundedBy'])) {
                                     array_push($related_party, $rr);

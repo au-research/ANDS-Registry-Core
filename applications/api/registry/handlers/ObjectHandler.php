@@ -1,6 +1,5 @@
 <?php
 namespace ANDS\API\Registry\Handler;
-use ANDS\API\Task\FixRelationshipTask;
 use ANDS\API\Task\ImportTask;
 use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\Repository\RegistryObjectsRepository;
@@ -145,9 +144,6 @@ class ObjectHandler extends Handler{
                     case 'registry':
                         $result[$m1] = $this->ro_handle('core', $resource);
                         break;
-                    case 'relationships-old':
-                        $result[$m1] = $this->relationships_handler($resource);
-                        break;
                     default:
                         try {
                             $r = $this->ro_handle($m1, $resource);
@@ -184,9 +180,6 @@ class ObjectHandler extends Handler{
                         $result[$m1] = $r;
                     }
                     return $result;
-                } elseif ($m1 == "index") {
-                    $ro = $resource['ro'];
-                    return $this->indexRecordById($ro->id);
                 }
 
             }
@@ -238,115 +231,6 @@ class ObjectHandler extends Handler{
         $result = $handler->handle();
         unset($handler);
         return $result;
-    }
-
-    /**
-     * Relationships handler
-     *
-     * @todo   migrate to own handler at registry_object_handlers
-     * @todo   migrate along with getFunders()
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
-     * @param bool $resource
-     * @return array
-     * @throws Exception
-     */
-    private function relationships_handler($resource = false)
-    {
-        // TODO: Refactor Use new applications/ANDS/Mycelium/RelationshipSearchService.php
-        return [];
-        /**
-        if (!$resource) throw new Exception("No resource constructed for relationship handler");
-
-        $this->ci->load->model('registry_object/registry_objects', 'ro');
-
-        $limit = isset($_GET['related_object_limit']) ? $_GET['related_object_limit'] : 5;
-        $types = array('collection', 'party_one', 'party_multi', 'activity', 'service');
-
-        $record = $resource['ro'];
-        $relationships = $record->getConnections(true, null, $limit, 0, false);
-        $relationships = $relationships[0];
-
-        if (isset($relationships['activity'])) {
-            //fix array key values
-            $relationships['activity'] = array_values($relationships['activity']);
-            for ($i = 0; $i < count($relationships['activity']); $i++) {
-                $funder = $this->getFunders($relationships['activity'][$i]['registry_object_id']);
-                if ($funder != '') {
-                    $relationships['activity'][$i]['funder'] = "(funded by " . $funder . ")";
-                }
-            }
-        }
-
-        //get the correct count in SOLR
-        $this->ci->load->library('solr');
-        $search_class = $record->class;
-        if ($record->class == 'party') {
-            if (strtolower($record->type) == 'person') {
-                $search_class = 'party_one';
-            } elseif (strtolower($record->type) == 'group') {
-                $search_class = 'party_multi';
-            }
-        }
-
-        foreach ($types as $type) {
-            if (isset($relationships[$type . '_count'])) {
-                $this->ci->solr->init();
-                $this->ci->solr
-                    ->setOpt('fq', '+related_' . $search_class . '_id:' . $record->id)
-                    ->setOpt('rows', '0');
-                if ($type == 'party_one') {
-                    $this->ci->solr->setOpt('fq', '+class:party')->setOpt('fq', '+type:person');
-                } elseif ($type == 'party_multi') {
-                    $this->ci->solr->setOpt('fq', '+class:party')->setOpt('fq', '+type:group');
-                } else {
-                    $this->ci->solr->setOpt('fq', '+class:' . $type);
-                }
-                $result = $this->ci->solr->executeSearch(true);
-                $relationships[$type . '_count_solr'] = $result['response']['numFound'];
-            }
-        }
-
-        $includes = explode(',', $this->ci->input->get('includes'));
-
-
-        if (in_array('grants', $includes)) {
-            $relatedObjects = $record->getAllRelatedObjects();
-            $childActivities = $record->getChildActivities($relatedObjects);
-
-            $grants = [];
-            $programs = [];
-            if ($childActivities && sizeof($childActivities) > 0) {
-                foreach ($childActivities as $childActivity) {
-                    if (isset($childActivity['type'])) {
-                        if (trim(strtolower($childActivity['type'])) == 'program') {
-                            $programs[] = $childActivity;
-                        } elseif (trim(strtolower($childActivity['type'])) == 'grant') {
-                            $grants[] = $childActivity;
-                        }
-                    }
-                }
-            }
-
-            $relationships['grants'] = [
-                'programs' => $programs,
-                'grants' => $grants,
-                'data_output' => $record->getDataOutput($childActivities, $relatedObjects),
-                'funders' => $record->getFunders(),
-//                'structure' => $record->getStructuredGrantsAtNode($relatedObjects)
-            ];
-
-            if ($record->class == 'activity') {
-                $relationships['grants']['publications'] = $record->getDirectPublication();
-            }
-
-            //useful for debugging
-            if ($only = $this->ci->input->get('only')) {
-                $relationships = $relationships['grants'][$only];
-            }
-        }
-
-        return $relationships;
-         * **/
     }
 
 
@@ -448,42 +332,6 @@ class ObjectHandler extends Handler{
         $importTask->run();
 
         return $importTask->toArray();
-    }
-
-    private function indexRecordById($id)
-    {
-        $record = RegistryObjectsRepository::getRecordByID($id);
-
-        if (!RegistryObjectsRepository::isPublishedStatus($record->status)) {
-            return "Record $record->title($record->id) is NOT PUBLISHED";
-        }
-
-        $importTask = new ImportTask;
-        $importTask->init([
-            'name' => 'ImportTask',
-            'params' => http_build_query([
-                'ds_id' => $record->datasource->data_source_id
-            ])
-        ]);
-
-        $importTask
-            ->setCI($this->ci)
-            ->initialiseTask()
-            ->skipLoadingPayload()
-            ->enableRunAllSubTask()
-            ->setTaskData('importedRecords', [$record->id])
-            ->setTaskData('targetStatus','PUBLISHED');
-
-        $subtask = $importTask->getTaskByName("IndexPortal");
-        $subtask->run();
-
-        $ro = $this->ci->ro->getByID($id);
-        $portalIndex = $ro->indexable_json(null, []);
-
-        return [
-            'index' => $portalIndex,
-            'task' => $subtask->getMessage()
-        ];
     }
 
 }

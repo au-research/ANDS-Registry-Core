@@ -268,7 +268,9 @@ class Registry extends MX_Controller {
 				unset($ro);
 			}
 			if($action=='add') $this->tags->batchIndexAddTag($keys, $tag, $tag_type);
-			if($action=='remove') $this->ro->batchIndexKeys($keys);
+			if($action=='remove') {
+                // TODO batch index all affected keys
+            }
 			echo json_encode($keys);
 		}
 	}

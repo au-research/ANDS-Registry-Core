@@ -115,60 +115,6 @@ class Administration extends MX_Controller {
 		$this->load->view('api_keys', $data);
 	}
 
-	public function triggerORCIDHarvest()
-	{
-		echo "Executing pullback script...<i>this may take several minutes (depending on server load)</i>" .BR.BR; ob_flush();flush();
-		$ctx=stream_context_create(array('http'=>
-    		array(
-        	'timeout' => 1200 // 20 minutes
-    		)
-		));
-		echo nl2br(file_get_contents(registry_url('maintenance/orcidPullback'),false,$ctx)); ob_flush(); flush();
-	}
-
-	public function orcid_pullback()
-	{
-		$data['js_lib'] = array('core');
-		$data['scripts'] = array();
-		$data['title'] = 'Registry Administration - ORCID Party Pullback';
-
-		$this->load->config('orcid_pullback');
-		$this->load->model('data_source/data_sources', 'ds');
-
-		$ds = $this->ds->getByKey($this->config->item('orcidPartyDataSourceKey'));
-
-		if (!$this->config->item('orcidPartyDataSourceKey'))
-		{
-			echo "Not configured for ORCID pullback - check your config options (registry/core/config/orcid_pullback.php). Aborting..." .NL;
-			return;
-		}
-
-		if (!$ds)
-		{
-			$ds = $this->ds->create($this->config->item('orcidPartyDataSourceKey'), url_title($this->config->item('orcidPartyDataSourceDefaultTitle')));
-			$ds->setAttribute('title', $this->config->item('orcidPartyDataSourceDefaultTitle'));
-			$ds->setAttribute('record_owner', 'SYSTEM');
-			$ds->save();
-			$ds->updateStats();
-		}
-
-		$data['data_source_url'] = base_url('data_source/manage#!/view/' . $ds->id);
-
-
-		$data['pullback_entries'] = array();
-		$this->db->distinct('registry_object_id')->select('roa.registry_object_id, key, title, roa.value AS "created"')
-				->join('registry_object_attributes roa', 'roa.registry_object_id = ro.registry_object_id')
-				->from('registry_objects ro')
-				->where('data_source_id', $ds->id)
-				->where('roa.attribute = "updated"')
-				->order_by('roa.value', 'DESC')
-				->limit(100);
-		$query = $this->db->get();
-		if ($query->num_rows()) { foreach($query->result_array() AS $result) $data['pullback_entries'][] = $result; }
-
-		$this->load->view('orcid_pullback', $data);
-	}
-
 	public function clean_rif()
 	{
 		$data['js_lib'] = array('core');

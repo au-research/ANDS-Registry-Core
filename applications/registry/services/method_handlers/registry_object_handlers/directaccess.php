@@ -19,7 +19,8 @@ class Directaccess extends ROHandler
         $classArray = [];
 
         // @todo don't get viaService if the record is a service
-        $services = $this->ro->getRelatedObjectsIndex($classArray, $relationshipTypeArray);
+        // TODO refactor to use RelationshipServiceSearch
+        $services = [];
 
         foreach ($services as &$service) {
             if (isset($service['relation_url'])
