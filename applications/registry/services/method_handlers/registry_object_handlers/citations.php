@@ -9,10 +9,12 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
  * @return array
  */
 use ANDS\Registry\Providers\RIFCS\TitleProvider;
+use ANDS\Mycelium\RelationshipSearchService;
 use ANDS\RegistryObject;
 class Citations extends ROHandler {
 
     public $ro;
+
 
 	function handle() {
 
@@ -126,17 +128,19 @@ Content:text/plain; charset="utf-8"
         $contributors = $this->getContributors();
         if($contributors!=''){
             foreach($contributors as $contributor){
-                if(isset($contributor['to_id'])) {
+                if(isset($contributor['to_id']) && $contributor['to_id'] != null) {
                     $record = RegistryObject::find($contributor['to_id']);
                     if ($record != null) {
                         $names = TitleProvider::get($record);
-                        $nameParts = '';
-                        foreach ($names["raw"][0]["value"] as $namePart => $nameParts_raw) {
-                            if ((string)$nameParts_raw['@attributes']['type'] != 'title')
-                                $nameParts[] = array(
-                                    'namePart_type' => (string)$nameParts_raw['@attributes']['type'],
-                                    'name' => (string)$nameParts_raw['value']
-                                );
+                        $nameParts = [];
+                        if(isset($names["raw"][0]["value"]) && is_array($names["raw"][0]["value"])) {
+                            foreach ($names["raw"][0]["value"] as $namePart => $nameParts_raw) {
+                                if ((string)$nameParts_raw['@attributes']['type'] != 'title')
+                                   $nameParts[] = array(
+                                        'namePart_type' => (string)$nameParts_raw['@attributes']['type'],
+                                       'name' => (string)$nameParts_raw['value']
+                                    );
+                            }
                         }
                         $contributor["name"] = formatName($nameParts);
                     }
@@ -341,7 +345,7 @@ Content:text/plain; charset="utf-8"
             foreach($identifiers as $identifiervalue) {
                 $identifier = $identifiervalue->nodeValue;
             }
-                    }
+        }
         return $identifier;
 
     }
@@ -558,6 +562,7 @@ Content:text/plain; charset="utf-8"
              * We do index reverse relationships BUT without the mirrored (reversed) relationship type
              * adding the reversed types to the query ensures that the party is found in either ways in the index
              */
+            // update 21/02/2022 to use RelationshipSearchService
                 $relationshipTypeArray = array(
                      'hasPrincipalInvestigator',
                      'isPrincipalInvestigatorOf',
@@ -568,19 +573,30 @@ Content:text/plain; charset="utf-8"
                      'hasCollector',
                      'isCollectorOf'
                  );
-                 $classArray = array('party');
+                 //$classArray = array('party');
 
                  /* Ensure the search loops through the pre determined order of relationships
                     and return as soon as a particular type is found */
+            /* Call the relationships service and pass in the order to prioritise the search */
 
-                 foreach ($relationshipTypeArray as $relationType) {
-                 $authors = $this->ro->getRelatedObjectsIndex($classArray, [$relationType]);
-                 if (sizeof($authors) > 0) {
-                     foreach ($authors as $author) {
+            $result = RelationshipSearchService::search([
+                'from_id' => $this->ro->id,
+                'to_class' => 'party',
+                'to_title' => '*'
+            ], ['boost_relation_type'=> $relationshipTypeArray,'rows' => 5]);
+
+            $authors = $result->toArray();
+               //  foreach ($relationshipTypeArray as $relationType) {
+               //  $authors = $this->ro->getRelatedObjectsIndex($classArray, [$relationType]);
+                 if (isset($authors['contents']) && sizeof($authors['contents']) > 0) {
+                     foreach ($authors['contents'] as $author) {
+                         var_dump($author);
+                         if($author['to_identifier_type'] != "ro:id") {$to_id = '';}
+                         if($author['to_identifier_type'] == "ro:id") {$to_id = $author['to_identifier'];}
                          $contributors[] = array(
                              'name' => $author['to_title'],
                              'seq' => '',
-                             'to_id' => $author['to_id']
+                             'to_id' => $to_id
                          );
                      }
 
@@ -588,7 +604,7 @@ Content:text/plain; charset="utf-8"
                      usort($contributors, "cmpTitle");
                      return $contributors;
                  }
-             }
+            // }
         }
 
         if (!$contributors) {

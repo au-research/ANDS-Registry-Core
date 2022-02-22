@@ -359,6 +359,7 @@ class Registry_object extends MX_Controller
         // Redirection switchboard
         switch ($type) {
             case "endnote":
+                var_dump($exportUrl);
                 redirect($exportUrl);
                 break;
             case "endnote_web":
