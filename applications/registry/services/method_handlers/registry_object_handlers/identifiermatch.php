@@ -13,6 +13,15 @@ class Identifiermatch extends ROHandler {
 	    $identifiermatch = array();
         $myceliumServiceClient = new ANDS\Mycelium\MyceliumServiceClient(ANDS\Util\Config::get('mycelium.url'));
         $duplicates =   json_decode($myceliumServiceClient->getDuplicateRecords($this->ro->id));
+
+        $result = $myceliumServiceClient->getDuplicateRecords($this->ro->id);
+        if ($result->getStatusCode() != 200) {
+            // todo warning
+            return [];
+        }
+
+        $duplicates = json_decode($result->getBody());
+
         // the MyceliumService will also return the original record in the list so remove it
         foreach ($duplicates as $duplicate){
            if($duplicate->identifier!=$this->ro->id){

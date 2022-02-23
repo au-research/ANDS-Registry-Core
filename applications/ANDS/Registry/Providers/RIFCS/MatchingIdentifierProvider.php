@@ -3,6 +3,7 @@
 
 namespace ANDS\Registry\Providers\RIFCS;
 
+use ANDS\Log\Log;
 use ANDS\Registry\Providers\RIFCSProvider;
 use ANDS\RegistryObject;
 
@@ -18,13 +19,19 @@ class MatchingIdentifierProvider implements RIFCSProvider
     {
         $identifiermatch = [];
         $myceliumServiceClient = new \ANDS\Mycelium\MyceliumServiceClient(\ANDS\Util\Config::get('mycelium.url'));
-        $duplicates =   json_decode($myceliumServiceClient->getDuplicateRecords($record->id));
-            // the MyceliumService will also return the original record in the list so remove it
-            foreach ($duplicates as $duplicate) {
-                if ($duplicate->identifier != $record->id) {
-                    $identifiermatch[] = $duplicate->identifier;
-                };
-            }
+        $result = $myceliumServiceClient->getDuplicateRecords($record->id);
+        if ($result->getStatusCode() != 200) {
+            // todo warning
+            return [];
+        }
+        $duplicates = json_decode($result->getBody());
+
+        // the MyceliumService will also return the original record in the list so remove it
+        foreach ($duplicates as $duplicate) {
+            if ($duplicate->identifier != $record->id) {
+                $identifiermatch[] = $duplicate->identifier;
+            };
+        }
         return  $identifiermatch;
     }
 
