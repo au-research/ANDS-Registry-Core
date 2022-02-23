@@ -6,6 +6,7 @@ namespace ANDS\Registry\Providers\RIFCS;
 use ANDS\Log\Log;
 use ANDS\Registry\Providers\RIFCSProvider;
 use ANDS\RegistryObject;
+use GuzzleHttp\Exception\ClientException;
 
 class MatchingIdentifierProvider implements RIFCSProvider
 {
@@ -19,20 +20,31 @@ class MatchingIdentifierProvider implements RIFCSProvider
     {
         $identifiermatch = [];
         $myceliumServiceClient = new \ANDS\Mycelium\MyceliumServiceClient(\ANDS\Util\Config::get('mycelium.url'));
-        $result = $myceliumServiceClient->getDuplicateRecords($record->id);
-        if ($result->getStatusCode() != 200) {
-            // todo warning
+        try {
+            $result = $myceliumServiceClient->getDuplicateRecords($record->id);
+            $duplicates = json_decode($result->getBody());
+
+            // the MyceliumService will also return the original record in the list so remove it
+            foreach ($duplicates as $duplicate) {
+                if ($duplicate->identifier != $record->id) {
+                    $identifiermatch[] = $duplicate->identifier;
+                };
+            }
+
+            return  $identifiermatch;
+        } catch (ClientException $e) {
+            Log::warning(__FUNCTION__. "Failed to obtain duplicate records", [
+                'id' => $record->id,
+                'exception' => [
+                    'code' => $e->getCode(),
+                    'message' => $e->getMessage()
+                ]
+            ]);
             return [];
         }
-        $duplicates = json_decode($result->getBody());
 
-        // the MyceliumService will also return the original record in the list so remove it
-        foreach ($duplicates as $duplicate) {
-            if ($duplicate->identifier != $record->id) {
-                $identifiermatch[] = $duplicate->identifier;
-            };
-        }
-        return  $identifiermatch;
+
+
     }
 
     /**
