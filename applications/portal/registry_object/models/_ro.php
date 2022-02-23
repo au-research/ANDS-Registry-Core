@@ -12,7 +12,6 @@ class _ro
 
     //object properties are all located in the same array
     public $prop;
-    private $useCache;
 
     /**
      * _ro constructor.
@@ -24,7 +23,6 @@ class _ro
      */
     function __construct($id, $populate = array('core'))
     {
-        $this->useCache = false;
         //populate the property as soon as the object is constructed
         $this->init($id, $populate);
     }
@@ -101,7 +99,7 @@ class _ro
         $this->prop['fromCache'] = $this->useCache;
         $this->prop['status'] = false;
         //try and get it from cache
-        $cache_id = 'ro-portal-' . $this->id;
+
         $ci =& get_instance();
         $ci->load->driver('cache');
 
@@ -111,28 +109,12 @@ class _ro
             $url.='core';
         }
 
-        //refresh the cache when required
-        if ($ci->input->get('refresh')) {
-            $ci->cache->file->delete($cache_id);
-        }
-
-
-        if ($this->useCache) {
-            if (!$content = $ci->cache->file->get($cache_id)) {
-                //not in the cache, get it and save it
-                $content = \ANDS\Util\URLUtil::file_get_contents($url);
-                $contentArray = json_decode($content, true);
-                if ($contentArray['status'] == 'success') {
-                    $ci->cache->file->save($cache_id, $content, 3600);
-                }
-            }
-        } else {
-            $content = \ANDS\Util\URLUtil::file_get_contents($url);
-        }
-
         //Fetch the data and populate as per the result
+        $content = \ANDS\Util\URLUtil::file_get_contents($url);
         $content = json_decode($content, true);
+
         $this->prop['status'] = $content['status'];
+
         if (isset($content['data']) && is_array($content['data']) && sizeof($content['data'] == 1)) {
             $content['data'] = $content['data'][0];
         }
@@ -224,13 +206,4 @@ class _ro
             $db->update('record_stats');
         }
     }
-
-    /**
-     * @param mixed $useCache
-     */
-    public function setUseCache($useCache)
-    {
-        $this->useCache = $useCache;
-    }
-
 }

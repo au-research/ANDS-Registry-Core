@@ -28,20 +28,4 @@ class Sync_extension extends ExtensionBase{
         }
         return true;
 	}
-
-    // todo revisit cache in CI
-    function _dropCache()
-    {
-        $api_id = 'ro-api-'.$this->ro->id.'-portal';
-        $portal_id = 'ro-portal-'.$this->ro->id;
-        $ci =& get_instance();
-        $ci->load->driver('cache');
-        try{
-	        if ($ci->cache->file->get($api_id)) $ci->cache->file->delete($api_id);
-	        if ($ci->cache->file->get($portal_id)) $ci->cache->file->delete($portal_id);
-        }
-        catch(Exception $e){
-
-        }
-    }
 }

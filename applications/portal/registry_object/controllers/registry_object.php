@@ -901,7 +901,6 @@ class Registry_object extends MX_Controller
 
         $content = curl_post(base_url() . 'registry/services/rda/addTag', $fields,
             array('header' => 'multipart/form-data'));
-        $this->_dropCache($data['id']);
 
         monolog([
             'event' => 'portal_tag_add',
@@ -1319,25 +1318,5 @@ class Registry_object extends MX_Controller
                 'funders'
             )
         );
-    }
-
-    /**
-     * Dropping the cache of this registry object ID
-     * todo determine the nessessity of this function
-     *
-     * @param $ro_id
-     */
-    function _dropCache($ro_id)
-    {
-        $api_id = 'ro-api-' . $ro_id . '-portal';
-        $portal_id = 'ro-portal-' . $ro_id;
-        $ci =& get_instance();
-        $ci->load->driver('cache');
-        try {
-            $ci->cache->file->delete($api_id);
-            $ci->cache->file->delete($portal_id);
-        } catch (Exception $e) {
-
-        }
     }
 }
