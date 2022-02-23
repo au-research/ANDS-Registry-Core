@@ -75,6 +75,11 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
 
             // delete all records
             $records->delete();
+
+            // remove from SOLR
+            $solrClient = \ANDS\Util\SolrIndex::getClient('portal');
+            $solrClient->remove($ids);
+            $solrClient->commit();
         }
 
         // delete data source attributes

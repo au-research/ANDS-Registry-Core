@@ -2,8 +2,13 @@
 
 
 namespace ANDS\Registry\Providers\RIFCS;
+use ANDS\Log\Log;
 use ANDS\Registry\Providers\RelatedTitlesProvider;
 use ANDS\RegistryObject;
+use ANDS\Util\Config;
+use ANDS\Util\SolrIndex;
+use MinhD\SolrClient\SolrClient;
+use MinhD\SolrClient\SolrDocument;
 
 class RIFCSIndexProvider
 {
@@ -70,5 +75,57 @@ class RIFCSIndexProvider
         }
 
         return true;
+    }
+
+    public static function indexRecord(RegistryObject $record, $index = [], SolrClient $solrClient = null)
+    {
+        Log::debug(__FUNCTION__ . " Indexing RegistryObject", ['id' => $record->id]);
+        $solrClient = $solrClient !== null ? $solrClient : SolrIndex::getClient("portal");
+        $index = is_array_empty($index) ? self::get($record) : $index;
+
+        $result = $solrClient->add(new SolrDocument($index));
+
+        Log::debug("Indexing Result", $result);
+    }
+
+    public static function removeIndexRecord(RegistryObject $record, SolrClient $solrClient = null)
+    {
+        Log::debug(__FUNCTION__ . " Removing SOLR Index for RegistryObject", ['id' => $record->id]);
+        $solrClient = $solrClient !== null ? $solrClient : SolrIndex::getClient("portal");
+
+        $result = $solrClient->remove([$record->id]);
+        Log::debug("Indexing Result", $result);
+    }
+
+    public static function updateField(RegistryObject $record, $field, SolrClient $solrClient = null)
+    {
+        Log::debug(__FUNCTION__. " Updating SOLR indexed field for RegistryObject", [
+            'id' => $record->id,
+            'field' => $field
+        ]);
+
+        $index = [];
+
+        switch ($field) {
+            case "tags":
+                $index = collect($index)->merge(TagProvider::getIndexableArray($record));
+                break;
+            default:
+                Log::warning(__FUNCTION__ ." Unknown field", ["field" => $field]);
+                return;
+        }
+
+        if (collect($index)->isEmpty()) {
+            Log::warning(__FUNCTION__ ." Index is empty, nothing to update");
+            return;
+        }
+
+        // add id to identify the record
+        $index = collect($index)->merge([
+            'id' => $record
+        ])->toArray();
+
+        $solrClient = $solrClient !== null ? $solrClient : self::getSOLRClient();
+        // todo atomic update
     }
 }

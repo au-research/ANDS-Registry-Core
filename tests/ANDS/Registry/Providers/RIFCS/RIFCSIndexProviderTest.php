@@ -3,8 +3,11 @@
 namespace ANDS\Registry\Providers\RIFCS;
 
 use ANDS\File\Storage;
+use ANDS\Log\Log;
 use ANDS\RecordData;
 use ANDS\RegistryObject;
+use ANDS\Util\SolrIndex;
+use MinhD\SolrClient\SolrClient;
 
 class RIFCSIndexProviderTest extends \RegistryTestClass
 {
@@ -115,4 +118,27 @@ class RIFCSIndexProviderTest extends \RegistryTestClass
             ]))
         );
     }
+
+    public function testIndexRecord()
+    {
+        $solrClient = SolrIndex::getClient("portal");
+
+        // given a record
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection','key' => 'AUTESTING_ALL_ELEMENTS_TEST']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_all_elements.xml')
+        ]);
+
+        // when index and commit
+        RIFCSIndexProvider::indexRecord($record);
+        $solrClient->commit();
+
+        // the document exists in SOLR
+        $doc = $solrClient->get($record->id)->toArray();
+        $this->assertNotNull($doc);
+        $this->assertEquals($record->key, $doc['key']);
+    }
+
+
 }
