@@ -140,5 +140,47 @@ class RIFCSIndexProviderTest extends \RegistryTestClass
         $this->assertEquals($record->key, $doc['key']);
     }
 
+    public function testUpdateFieldTags()
+    {
+        $solrClient = SolrIndex::getClient("portal");
+
+        // given a record
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection','key' => 'AUTESTING_ALL_ELEMENTS_TEST']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_all_elements.xml')
+        ]);
+        $this->stub(RegistryObject\Tag::class, [
+            'key' => $record->key,
+            'tag' => 'AutomatedTestTag'
+        ]);
+
+        // when index and commit
+        RIFCSIndexProvider::indexRecord($record);
+        $solrClient->commit();
+
+        // the document exists in SOLR and have the right tag, not the new one
+        $doc = $solrClient->get($record->id)->toArray();
+        $this->assertNotNull($doc);
+        $this->assertContains("AutomatedTestTag", $doc['tag']);
+        $this->assertNotContains("AutomatedTestTagNew", $doc['tag']);
+
+        // when add a new tag and regenerateField
+        $this->stub(RegistryObject\Tag::class, [
+            'key' => $record->key,
+            'tag' => 'AutomatedTestTagNew'
+        ]);
+        RIFCSIndexProvider::regenerateField($record, 'tags');
+        $solrClient->commit();
+
+        // doc should now have the new tag too
+        $doc = $solrClient->get($record->id)->toArray();
+        $this->assertNotNull($doc);
+        $this->assertArrayHasKey('id', $doc);
+        $this->assertArrayHasKey('key', $doc);
+        $this->assertContains("AutomatedTestTag", $doc['tag']);
+        $this->assertContains("AutomatedTestTagNew", $doc['tag']);
+    }
+
 
 }

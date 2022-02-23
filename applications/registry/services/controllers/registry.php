@@ -269,7 +269,13 @@ class Registry extends MX_Controller {
 			}
 			if($action=='add') $this->tags->batchIndexAddTag($keys, $tag, $tag_type);
 			if($action=='remove') {
-                // TODO batch index all affected keys
+                // batch regenerate tags all affected keys
+                foreach ($keys as $key) {
+                    if ($record = \ANDS\Repository\RegistryObjectsRepository::getPublishedByKey($key)) {
+                        \ANDS\Registry\Providers\RIFCS\RIFCSIndexProvider::regenerateField($record, 'tags');
+                    }
+                }
+                \ANDS\Util\SolrIndex::getClient('portal')->commit();
             }
 			echo json_encode($keys);
 		}

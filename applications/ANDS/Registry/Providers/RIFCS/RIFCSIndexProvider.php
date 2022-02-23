@@ -77,6 +77,14 @@ class RIFCSIndexProvider
         return true;
     }
 
+    /**
+     * Index a RegistryObject
+     *
+     * @param \ANDS\RegistryObject $record
+     * @param $index
+     * @param \MinhD\SolrClient\SolrClient|null $solrClient
+     * @return void
+     */
     public static function indexRecord(RegistryObject $record, $index = [], SolrClient $solrClient = null)
     {
         Log::debug(__FUNCTION__ . " Indexing RegistryObject", ['id' => $record->id]);
@@ -88,6 +96,13 @@ class RIFCSIndexProvider
         Log::debug("Indexing Result", $result);
     }
 
+    /**
+     * Remove a RegistryObject from the Index
+     *
+     * @param \ANDS\RegistryObject $record
+     * @param \MinhD\SolrClient\SolrClient|null $solrClient
+     * @return void
+     */
     public static function removeIndexRecord(RegistryObject $record, SolrClient $solrClient = null)
     {
         Log::debug(__FUNCTION__ . " Removing SOLR Index for RegistryObject", ['id' => $record->id]);
@@ -97,35 +112,45 @@ class RIFCSIndexProvider
         Log::debug("Indexing Result", $result);
     }
 
-    public static function updateField(RegistryObject $record, $field, SolrClient $solrClient = null)
+    /**
+     * Update a single field
+     *
+     * @param \ANDS\RegistryObject $record
+     * @param $field
+     * @param \MinhD\SolrClient\SolrClient|null $solrClient
+     * @return void
+     */
+    public static function regenerateField(RegistryObject $record, $field, SolrClient $solrClient = null)
     {
         Log::debug(__FUNCTION__. " Updating SOLR indexed field for RegistryObject", [
             'id' => $record->id,
             'field' => $field
         ]);
 
-        $index = [];
+        $update = [
+            'id' => $record->id
+        ];
 
         switch ($field) {
             case "tags":
-                $index = collect($index)->merge(TagProvider::getIndexableArray($record));
+                $index = TagProvider::getIndexableArray($record);
+                $update['tag'] = [
+                    'set' => $index['tag']
+                ];
                 break;
             default:
                 Log::warning(__FUNCTION__ ." Unknown field", ["field" => $field]);
                 return;
         }
 
-        if (collect($index)->isEmpty()) {
-            Log::warning(__FUNCTION__ ." Index is empty, nothing to update");
-            return;
-        }
+        // todo check if the set value is not empty
+//        if (collect($update)->isEmpty()) {
+//            Log::warning(__FUNCTION__ ." Index is empty, nothing to update");
+//            return;
+//        }
 
-        // add id to identify the record
-        $index = collect($index)->merge([
-            'id' => $record
-        ])->toArray();
-
-        $solrClient = $solrClient !== null ? $solrClient : self::getSOLRClient();
-        // todo atomic update
+        $solrClient = $solrClient !== null ? $solrClient : SolrIndex::getClient();
+        $solrClient->request('POST', 'portal/update/json', [], json_encode([$update]), 'body');
+        // todo check the response
     }
 }
