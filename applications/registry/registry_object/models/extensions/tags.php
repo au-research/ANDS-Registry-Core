@@ -147,8 +147,11 @@ class Tags_Extension extends ExtensionBase{
 		}
 		$this->removeTagDB($tag);
 
-        // todo update this call to use TagsProvider::updateTags($record)
-        //$this->ro->update_field_index('tag');
+        // regenerate the tags in portal index
+        if ($record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($this->ro->id)) {
+            \ANDS\Registry\Providers\RIFCS\RIFCSIndexProvider::regenerateField($record, 'tags');
+            \ANDS\Util\SolrIndex::getClient('portal')->commit();
+        }
 		return true;
 	}
 }
