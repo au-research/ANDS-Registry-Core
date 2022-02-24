@@ -861,7 +861,9 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		$this->load->model('registry_object/registry_objects','ro');
 		$ro = $this->ro->getPublishedByKey($key);
 		if($ro){
-			$ro->sync();
+            if ($record = \ANDS\Repository\RegistryObjectsRepository::getPublishedByKey($key)) {
+                \ANDS\Registry\Importer::instantSyncRecord($record);
+            }
 			$this->output->set_output(json_encode(array('status'=>'OK')));
 		}else {
 			throw new Exception("Unable to find registry object");

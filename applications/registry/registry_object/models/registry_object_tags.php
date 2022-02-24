@@ -45,7 +45,9 @@ class Registry_object_tags extends CI_Model {
 			$ro = $this->ro->getPublishedByKey($key);
 			if($ro){
 				$ro->addTag($tag, $tag_type);
-				$ro->sync();
+                if ($record = \ANDS\Repository\RegistryObjectsRepository::getPublishedByKey($key)) {
+                    \ANDS\Registry\Importer::instantSyncRecord($record);
+                }
 			}
 			unset($ro);
 		}
