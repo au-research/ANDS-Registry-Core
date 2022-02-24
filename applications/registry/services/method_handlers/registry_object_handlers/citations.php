@@ -128,21 +128,26 @@ Content:text/plain; charset="utf-8"
         $contributors = $this->getContributors();
         if($contributors!=''){
             foreach($contributors as $contributor){
-                if(isset($contributor['to_id']) && $contributor['to_id'] != null) {
+                if(isset($contributor['to_id']) && $contributor['to_id'] != '') {
                     $record = RegistryObject::find($contributor['to_id']);
                     if ($record != null) {
                         $names = TitleProvider::get($record);
                         $nameParts = [];
-                        if(isset($names["raw"][0]["value"]) && is_array($names["raw"][0]["value"])) {
-                            foreach ($names["raw"][0]["value"] as $namePart => $nameParts_raw) {
-                                if ((string)$nameParts_raw['@attributes']['type'] != 'title')
+                        //need to take into account that a name part might not have a type
+                        //and if here is only one it will be flattened by the TitleProvider get
+                        if(is_array($names["raw"][0]['value'])) {
+                            foreach ($names["raw"][0]['value'] as $namePart => $nameParts_raw) {
+                                if (isset($nameParts_raw['@attributes']['type']) && (string)$nameParts_raw['@attributes']['type'] != 'title')
                                    $nameParts[] = array(
                                         'namePart_type' => (string)$nameParts_raw['@attributes']['type'],
                                        'name' => (string)$nameParts_raw['value']
                                     );
                             }
+                            $contributor["name"] = formatName($nameParts);
+                        }else{
+                            $contributor["name"] = $names["raw"][0]['value'];
                         }
-                        $contributor["name"] = formatName($nameParts);
+
                     }
                 }
                 $endNote .= "AU  - ".$contributor['name']."
@@ -573,36 +578,32 @@ Content:text/plain; charset="utf-8"
                      'hasCollector',
                      'isCollectorOf'
                  );
-                 //$classArray = array('party');
 
                  /* Ensure the search loops through the pre determined order of relationships
                     and return as soon as a particular type is found */
-            /* Call the relationships service and pass in the order to prioritise the search */
+                /* Call the relationships service and pass in the order to prioritise the search */
 
             $result = RelationshipSearchService::search([
                 'from_id' => $this->ro->id,
                 'to_class' => 'party',
                 'to_title' => '*'
-            ], ['boost_relation_type'=> $relationshipTypeArray,'rows' => 5]);
+            ], ['boost_relation_type'=> $relationshipTypeArray,'rows' => 50]);
 
             $authors = $result->toArray();
-                 if (isset($authors['contents']) && sizeof($authors['contents']) > 0) {
-                     foreach ($authors['contents'] as $author) {
-                         var_dump($author);
-                         if($author['to_identifier_type'] != "ro:id") {$to_id = '';}
-                         if($author['to_identifier_type'] == "ro:id") {$to_id = $author['to_identifier'];}
-                         $contributors[] = array(
-                             'name' => $author['to_title'],
-                             'seq' => '',
-                             'to_id' => $to_id
-                         );
-                     }
 
-                    /* sort the  array by name */
-                     usort($contributors, "cmpTitle");
-                     return $contributors;
+             if (isset($authors['contents']) && sizeof($authors['contents']) > 0) {
+                 foreach ($authors['contents'] as $author) {
+                     $to_id = ($author['to_identifier_type'] == "ro:id") ? $author['to_identifier'] : '';
+                     $contributors[] = array(
+                         'name' => $author['to_title'],
+                         'seq' => '',
+                         'to_id' => $to_id
+                     );
                  }
-            // }
+                /* sort the  array by name */
+                 usort($contributors, "cmpTitle");
+                 return $contributors;
+             }
         }
 
         if (!$contributors) {

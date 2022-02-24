@@ -212,13 +212,34 @@ class AltmetricsProvider implements RIFCSProvider
             return $creators;
         }
 
+        /*
+ * We do query the "relations" core for related parties.
+ * We do index reverse relationships BUT without the mirrored (reversed) relationship type
+ * adding the reversed types to the query ensures that the party is found in either ways in the index
+ */
+        // update 21/02/2022 to use RelationshipSearchService
+        $relationshipTypeArray = array(
+            'hasPrincipalInvestigator',
+            'isPrincipalInvestigatorOf',
+            'author',
+            'coInvestigator',
+            'isOwnedBy',
+            'isOwnerOf',
+            'hasCollector',
+            'isCollectorOf'
+        );
+
         $validRelationTypes[] = ['IsPrincipalInvestigatorOf', 'hasPrincipalInvestigator'];
         $validRelationTypes[] = ['author'];
         $validRelationTypes[] = ['coInvestigator'];
         $validRelationTypes[] = ['isOwnedBy','IsOwnerOf'];
         $validRelationTypes[] = ['hasCollector','IsCollectorOf'];
         foreach ($validRelationTypes as $relationTypes) {
-            $creators = array_merge($creators, RelationshipProvider::getRelationByType($record, $relationTypes));
+            $authors = RelationshipProvider::getRelationByType($record, $relationTypes);
+                foreach ($authors as $author) {
+                    $creators[] = array('name' => $author['to_title']
+                    );
+                }
             if (count($creators)) {
                 return $creators;
             }

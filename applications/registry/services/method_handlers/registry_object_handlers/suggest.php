@@ -9,7 +9,8 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
 class Suggest extends ROHandler {
     function handle() {
         $result = array();
-
+        // TO DO - figure out why this is taking so long to return
+        return $result;
         if ($this->ro->class != 'collection') return $result;
 
         $result['message'] = 'No Suggested Collection was found';

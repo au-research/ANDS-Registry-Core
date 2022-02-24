@@ -10,6 +10,7 @@ class Directaccess extends ROHandler
 {
     function handle()
     {
+        return [];
         $download = array();
         if ($this->ro->class != 'collection' && $this->ro->class != 'service') {
             return array();

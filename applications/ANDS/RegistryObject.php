@@ -5,7 +5,6 @@ namespace ANDS;
 
 
 use ANDS\Registry\IdentifierRelationshipView;
-use ANDS\Registry\RelationshipView;
 use ANDS\RegistryObject\AltSchemaVersion;
 use ANDS\RegistryObject\ExportToCSVTrait;
 use ANDS\RegistryObject\HasVersions;

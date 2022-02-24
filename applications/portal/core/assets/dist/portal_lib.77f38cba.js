@@ -3087,21 +3087,21 @@ app.directive('focusMe', function($timeout, $parse) {
 
             default_filters: {
                 'rows': 15,
-                'sort': 'list_title_sort asc',
+                'sort': 'list_title asc',
                 'class': 'collection'
             },
 
             sort: [
                 {value: 'score desc', label: 'Relevance'},
-                {value: 'list_title_sort asc', label: 'Title A-Z'},
-                {value: 'list_title_sort desc', label: 'Title Z-A'},
+                {value: 'list_title asc', label: 'Title A-Z'},
+                {value: 'list_title desc', label: 'Title Z-A'},
                 {value: 'record_created_timestamp desc', label: 'Date Added  <i class="fa fa-sort-amount-desc"></i>'}
             ],
 
             activity_sort: [
                 {value: 'score desc', label: 'Relevance'},
-                {value: 'list_title_sort asc', label: 'Title A-Z'},
-                {value: 'list_title_sort desc', label: 'Title Z-A'},
+                {value: 'list_title asc', label: 'Title A-Z'},
+                {value: 'list_title desc', label: 'Title Z-A'},
                 {value: 'earliest_year asc', label: 'Commencement <i class="fa fa-sort-amount-asc"></i>'},
                 {value: 'earliest_year desc', label: 'Commencement <i class="fa fa-sort-amount-desc"></i>'},
                 {value: 'latest_year asc', label: 'Completion <i class="fa fa-sort-amount-asc"></i>'},

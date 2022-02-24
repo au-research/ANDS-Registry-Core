@@ -293,7 +293,7 @@ class Solr
 
     function setBrowsingFilter()
     {
-        $this->setOpt('sort', 'list_title_sort asc');
+        $this->setOpt('sort', 'list_title asc');
     }
 
     // Takes an array of user-defined filters and crunches them into
@@ -323,7 +323,7 @@ class Solr
             $this->setOpt('sort', "score desc");
         } else {
             $filters['q'] = "";
-            $this->setOpt('sort', "list_title_sort asc");
+            $this->setOpt('sort', "list_title asc");
         }
 
 
