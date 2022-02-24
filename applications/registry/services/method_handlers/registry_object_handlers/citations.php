@@ -9,8 +9,10 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
  * @return array
  */
 use ANDS\Registry\Providers\RIFCS\TitleProvider;
+use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\Mycelium\RelationshipSearchService;
 use ANDS\RegistryObject;
+
 class Citations extends ROHandler {
 
     public $ro;
@@ -568,22 +570,43 @@ Content:text/plain; charset="utf-8"
              * adding the reversed types to the query ensures that the party is found in either ways in the index
              */
             // update 21/02/2022 to use RelationshipSearchService
-                $relationshipTypeArray = array(
-                     'hasPrincipalInvestigator',
-                     'isPrincipalInvestigatorOf',
-                     'author',
-                     'coInvestigator',
-                     'isOwnedBy',
-                     'isOwnerOf',
-                     'hasCollector',
-                     'isCollectorOf'
-                 );
-
+            $record = RegistryObject::find($this->ro->id);
+            $relationshipTypeArray = array(
+                 'hasPrincipalInvestigator',
+                 'isPrincipalInvestigatorOf',
+                 'author',
+                 'coInvestigator',
+                 'isOwnedBy',
+                 'isOwnerOf',
+                 'hasCollector',
+                 'isCollectorOf'
+             );
+            $validRelationTypes[] = ['isPrincipalInvestigatorOf', 'hasPrincipalInvestigator'];
+            $validRelationTypes[] = ['author'];
+            $validRelationTypes[] = ['coInvestigator'];
+            $validRelationTypes[] = ['isOwnedBy','IsOwnerOf'];
+            $validRelationTypes[] = ['hasCollector','IsCollectorOf'];
                  /* Ensure the search loops through the pre determined order of relationships
                     and return as soon as a particular type is found */
-                /* Call the relationships service and pass in the order to prioritise the search */
+                /* Call the RelationshipProvider  and pass in the order to prioritise the search */
+            foreach( $validRelationTypes as $relationshipType){
+                $authors = RelationshipProvider::getRelationByClassAndType($record, "party", $relationshipType);
+                foreach($authors as $author){
+                    $to_id = ($author['to_identifier_type'] == "ro:id") ? $author['to_identifier'] : '';
+                    $contributors[] = array(
+                        'name' => $author['to_title'],
+                        'seq' => '',
+                        'to_id' => $to_id
+                    );
+                }
+                if(count($contributors)>0){
+                    usort($contributors, "cmpTitle");
+                    return $contributors;
+                }
 
-            $result = RelationshipSearchService::search([
+            }
+
+         /*   $result = RelationshipSearchService::search([
                 'from_id' => $this->ro->id,
                 'to_class' => 'party',
                 'to_title' => '*'
@@ -601,9 +624,8 @@ Content:text/plain; charset="utf-8"
                      );
                  }
                 /* sort the  array by name */
-                 usort($contributors, "cmpTitle");
-                 return $contributors;
-             }
+
+            // } */
         }
 
         if (!$contributors) {
