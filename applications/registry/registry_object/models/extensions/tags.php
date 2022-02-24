@@ -116,7 +116,9 @@ class Tags_Extension extends ExtensionBase{
 				}else $data['type'] = $type;
 				$this->db->insert('registry_object_tags', $data);
 				$this->markTag(1);
-                $this->ro->sync();
+                if ($record = \ANDS\Repository\RegistryObjectsRepository::getPublishedByKey($this->ro->key)) {
+                    \ANDS\Registry\Importer::instantSyncRecord($record);
+                }
 				return true;
 			}else return false;
 	

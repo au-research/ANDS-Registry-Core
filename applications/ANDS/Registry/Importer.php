@@ -5,6 +5,7 @@ namespace ANDS\Registry;
 
 
 use ANDS\DataSource;
+use ANDS\Log\Log;
 use ANDS\Payload;
 use ANDS\API\Task\ImportTask;
 use ANDS\RegistryObject;
@@ -169,6 +170,9 @@ class Importer
 
     public static function instantSyncRecord(RegistryObject $record, $workflow = 'SyncWorkflow')
     {
+        Log::debug(__FUNCTION__ . " Syncing RegistryObject upon request", [
+            'id' => $record->id, 'workflow' => $workflow,
+        ]);
         return static::syncRecord($record, false, $workflow);
     }
 

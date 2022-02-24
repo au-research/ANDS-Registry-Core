@@ -91,7 +91,9 @@ class Theme_pages extends CI_Model {
 				foreach ($keys as $key) {
 					$CI->load->model('registry/registry_object/registry_objects', 'ro');
 					$ro = $CI->ro->getPublishedByKey($key);
-					$ro->sync(false);
+                    if ($record = \ANDS\Repository\RegistryObjectsRepository::getPublishedByKey($key)) {
+                        \ANDS\Registry\Importer::instantSyncRecord($record);
+                    }
 					unset($ro);
 				}
 			}
