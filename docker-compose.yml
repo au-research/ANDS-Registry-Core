@@ -17,7 +17,7 @@ services:
   mysql:
     platform: linux/amd64
     image: mysql:5.7
-    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --sql_mode=NO_ENGINE_SUBSTITUTION
     volumes:
       - ./docker/mysql/init:/docker-entrypoint-initdb.d
     environment:
@@ -38,8 +38,8 @@ services:
     depends_on:
       - zookeeper
     volumes:
-      - ./docker/solr/solr/confs:/confs:rw
-      - ./docker/conf/solr/jts-core-1.15.0.jar:/opt/solr/server/solr-webapp/webapp/WEB-INF/lib/jts-core-1.15.0.jar
+      - ./docker/solr/confs/:/confs:rw
+      - ./docker/solr/jts-core-1.15.0.jar:/opt/solr/server/solr-webapp/webapp/WEB-INF/lib/jts-core-1.15.0.jar
       - ./docker/solr/bin/create-collections.sh:/bin/create-collections.sh
     environment:
       - ZK_HOST=zookeeper:2181
@@ -57,6 +57,10 @@ services:
     image: redis:3.2
 
   mycelium:
-     image: minhd/mycelium
-     volumes:
-       - ./docker/mycelium/application.properties:/application.properties
+    image: minhd/mycelium:dev
+    volumes:
+      - ./docker/mycelium/application.properties:/application.properties
+    depends_on:
+      - mysql
+      - neo4j
+      - solr
