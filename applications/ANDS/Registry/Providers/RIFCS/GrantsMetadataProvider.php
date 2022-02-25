@@ -4,6 +4,7 @@
 namespace ANDS\Registry\Providers\RIFCS;
 
 use ANDS\Registry\Providers\RIFCSProvider;
+use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\RegistryObject;
 use ANDS\Util\XMLUtil;
 use ANDS\Mycelium\RelationshipSearchService;
@@ -36,7 +37,7 @@ class GrantsMetadataProvider implements RIFCSProvider
             "funding_scheme_search" => GrantsMetadataProvider::getFundingScheme($record),
             "administering_institution" => GrantsMetadataProvider::getAdministeringInstitutions($record),
             "institutions" => GrantsMetadataProvider::getInstitutions($record),
-            "funders" => GrantsMetadataProvider::getFunders($record),
+            "funders" => RelationshipProvider::getFunders($record),
             "researchers" => GrantsMetadataProvider::getResearchers($record),
             "principal_investigator" => GrantsMetadataProvider::getPrincipalInvestigator($record),
             "earliest_year" => GrantsMetadataProvider::getEarliestyear($record),
@@ -165,26 +166,7 @@ class GrantsMetadataProvider implements RIFCSProvider
         return array_unique($institutions);
     }
 
-    /*
-      * Will return a list of  titles of any related party  who has a relationship that is  a funder
-      * - both related objects and related info are returned
-      */
-    public static function getFunders($record)
-    {
-        $funders = [];
-        $search_params = ['from_id'=>$record->id, 'to_class' => 'party', 'relation_type'=>'isFundedBy'];
-        $result = RelationshipSearchService::search($search_params);
-        $funderResult = $result->toArray();
-
-        if(isset($funderResult['contents']) && count($funderResult['contents']) > 0 ){
-            foreach($funderResult['contents'] as $party){
-                 $funders[] = $party['to_title'];
-            }
-        }
-        return array_unique($funders);
-    }
-
-    /*
+      /*
      * Will return a list of  titles of any related party  who has a rifcs description element
      *  of type 'researchers', or is a related object or related info of type party with a relation_type of
      * 'hasPrincipalInvestigator','hasParticipant' or 'isAssociatedWith'
