@@ -1,0 +1,62 @@
+version: '3'
+
+services:
+
+  rda-registry:
+    platform: linux/amd64
+    image: minhd/rda-registry
+    volumes:
+      - ./:/opt/apps/registry/current
+      - ./docker/rda-registry/bin/fix-permissions.sh:/bin/fix-permissions.sh
+      - ./docker/rda-registry/bin/populate-concepts-collection.sh:/bin/populate-concepts-collection.sh
+      - ./docker/rda-registry/concepts.json:/tmp/concepts.json
+      - ./docker/rda-registry/.htaccess:/opt/apps/registry/current/.htaccess
+      - ./docker/rda-registry/.env:/opt/apps/registry/current/.env
+      - /etc/localtime:/etc/localtime
+
+  mysql:
+    platform: linux/amd64
+    image: mysql:5.7
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: dbs_registry
+      MYSQL_USER: webuser
+      MYSQL_PASSWORD: webuser
+
+  zookeeper:
+    image: arm64v8/zookeeper:3.4.10
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=zookeeper:2888:3888
+      ZOO_4LW_COMMANDS_WHITELIST: mntr, conf, ruok
+
+  solr:
+    image: solr:8.11.1
+    depends_on:
+      - zookeeper
+    volumes:
+      - ./docker/solr/solr/confs:/confs:rw
+      - ./docker/conf/solr/jts-core-1.15.0.jar:/opt/solr/server/solr-webapp/webapp/WEB-INF/lib/jts-core-1.15.0.jar
+      - ./docker/solr/bin/create-collections.sh:/bin/create-collections.sh
+    environment:
+      - ZK_HOST=zookeeper:2181
+
+  neo4j:
+    image: neo4j:4.4.3
+    environment:
+      - NEO4J_AUTH=neo4j/ands2010
+      - NEO4JLABS_PLUGINS=["apoc"]
+      - NEO4J_apoc_export_file_enabled=true
+      - NEO4J_apoc_import_file_enabled=true
+      - NEO4J_apoc_import_file_use__neo4j__config=true
+
+  redis:
+    image: redis:3.2
+
+  mycelium:
+     image: minhd/mycelium
+     volumes:
+       - ./docker/mycelium/application.properties:/application.properties
