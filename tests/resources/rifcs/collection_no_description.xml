@@ -20,6 +20,12 @@
                 <licence type="CC-BY">CC-BY</licence>
                 <accessRights type="open">My Access Rights details are listed here and my data is open</accessRights>
             </rights>
+            <relatedObject>
+                <key>Praty_Location</key>
+                <relation type="author">
+                    <description>This is an Author</description>
+                </relation>
+            </relatedObject>
         </collection>
     </registryObject>
 </registryObjects>

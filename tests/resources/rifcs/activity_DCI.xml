@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+    <registryObject group="AUTestingRecords">
+        <key>AUT_DCI_ACTIVITY</key>
+        <originatingSource>arc.gov.au/general/searchable_data.htm</originatingSource>
+        <activity type="grant">
+            <name type="primary">
+                <namePart>(AUTestingRecords3) AUTestingRecords3:Funder/Program12/Hub1/GrantLP0211170</namePart>
+            </name>
+            <identifier type="purl">AUTestingRecords3:Funder/Program12/Hub1/GrantLP0211170AUTx.GrantDCI</identifier>
+            <identifier type="arc">LP0211170AUTx.GrantDCI</identifier>
+            <relatedObject>
+                <key>AUT_DCI_PARTY</key>
+                <relation type="isFundedBy"/>
+            </relatedObject>isFundedBy
+            <relatedObject>
+                <key>AUTestingRecords3:Funder/Program12/Hub1</key>
+                <relation type="isPartOf"/>
+            </relatedObject>
+            <relatedObject>
+                <key>http://nla.gov.au/nla.party-AUT3</key>
+                <relation type="isManagedBy"/>
+            </relatedObject>
+            <subject type="anzsrc-for">1701</subject>
+            <subject type="local">alternative harvesting systems</subject>
+            <subject type="local">environmental attitudes</subject>
+            <subject type="local">environmental perception</subject>
+            <subject type="local">forestry</subject>
+            <subject type="local">social acceptability</subject>
+            <subject type="local">virtual environments</subject>
+            <description type="brief">Fierce public debate over forest management has prompted forest agencies to
+                develop and test alternative harvesting systems. This project will examine community response to these
+                harvesting and regeneration options. It will avoid the biases of existing research by developing an
+                interactive simulation of the forest environment that will allow participants to view visual, ecological
+                and economic outcomes of harvest options, as well as changes over time as forest regenerates. Public
+                judgements of the acceptability of harvesting options will be integrated with the outcomes of related
+                biophysical studies to identify socially and ecologically sustainable management options for Australian
+                native forests.
+            </description>
+            <description type="fundingAmount">$110,000</description>
+            <description type="fundingScheme">Linkage Projects</description>
+            <description type="researchers">Dr KJ Williams A/Prof ID Bishop A/Prof JW Cary Dr TJ Webb Dr MJ Brown Mr JE
+                Hickey
+            </description>
+            <existenceDates>
+                <startDate dateFormat="W3CDTF">2002</startDate>
+                <endDate dateFormat="W3CDTF">2004</endDate>
+            </existenceDates>
+            <relatedInfo type="collection">
+                <title>(AUTestingRecords2) DCI Source Collection</title>
+                <identifier type="uri">http://researchodfesolver/1959.17/53983AUTba1</identifier>
+                <relation type="hasOutput"/>
+            </relatedInfo>
+        </activity>
+    </registryObject>
+</registryObjects>

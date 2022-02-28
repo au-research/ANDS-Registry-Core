@@ -1,10 +1,12 @@
 relationType,reverseRelationType,defaultText,collectionText,partyText,serviceText,activityText
 addsValueTo,hasValueAddedBy,Adds value to,,,Adds value to,
+author,author,Author,Author,,,
 cites,isCitedBy,Cites,Cites,,,
 describes,isDescribedBy,Describes,Describes,,,
 documents,isDocumentedBy,Documents,Documents,,,
 enriches,isEnrichedBy,Enriches,,Enriches,,
 hasAssociationWith,hasAssociationWith,Associated with,Associated with,Associated with,Associated with,Associated with
+hasAuthor,author,Has author,,,,
 hasCollector,isCollectorOf,Has collector,Aggregated by,,,
 hasDerivedCollection,isDerivedFrom,Derives,Derives,,,
 hasMember,isMemberOf,Has member,,Has member,,
