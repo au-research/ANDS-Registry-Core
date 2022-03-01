@@ -3,18 +3,11 @@
 
 namespace ANDS;
 
-
-use ANDS\Registry\IdentifierRelationshipView;
 use ANDS\RegistryObject\AltSchemaVersion;
 use ANDS\RegistryObject\ExportToCSVTrait;
 use ANDS\RegistryObject\HasVersions;
-use ANDS\RegistryObject\Identifier;
-use ANDS\RegistryObject\IdentifierRelationship;
 use ANDS\RegistryObject\Metadata;
-use ANDS\RegistryObject\RegistryObjectVersion;
-use ANDS\RegistryObject\Relationship;
 use ANDS\Repository\RegistryObjectsRepository;
-use ANDS\Util\XMLUtil;
 use Illuminate\Database\Eloquent\Model;
 
 class RegistryObject extends Model
@@ -272,56 +265,7 @@ class RegistryObject extends Model
         }
         return true;
     }
-
-    public function getDuplicateRecords()
-    {
-       /**
-        * $this->findAllDuplicates();
-
-        return RegistryObject::whereIn('registry_object_id', $this->duplicateRecordIds)
-            ->where('status', 'PUBLISHED')
-            ->get();
-        **/
-    }
-
-    public function findAllDuplicates(){
-    /**
-        if(is_array($this->duplicateRecordIds)){
-            return $this->duplicateRecordIds;
-        }
-        
-        $this->identifiers = Identifier::where('registry_object_id', $this->registry_object_id)->get()->pluck('identifier')->toArray();
-
-        $recordIDs = Identifier::whereIn('identifier', $this->identifiers)->get()->pluck('registry_object_id')->unique()->filter(function($item){
-            return $item != $this->registry_object_id;
-        })->toArray();
-
-
-
-        $this->duplicateRecordIds = $recordIDs;
-
-        while(count($recordIDs) > 0)
-        {
-            $moreIdentifiers = Identifier::whereIn('registry_object_id', $this->duplicateRecordIds)->get()->pluck('identifier')->unique()->filter(function($item){
-                return !in_array($item, $this->identifiers);
-            })->toArray();
-
-            if($moreIdentifiers){
-                $recordIDs = Identifier::whereIn('identifier', $moreIdentifiers)->get()->pluck('registry_object_id')->unique()->filter(function($item){
-                    return !in_array($item ,$this->duplicateRecordIds);
-                })->toArray();
-                $this->duplicateRecordIds = array_merge($this->duplicateRecordIds, $recordIDs);
-            }else{
-                $recordIDs = [];
-            }
-
-        }
-        **/
-        return [] ;//$this->duplicateRecordIds;
-        
-    }
-
-
+    
     /**
      * $this->portalUrl
      * $this->portal_url

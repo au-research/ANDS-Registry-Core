@@ -4,10 +4,7 @@
 namespace ANDS\Test;
 
 use ANDS\API\Task\ImportTask;
-use ANDS\RegistryObject\Identifier;
 use ANDS\RegistryObject;
-use ANDS\Registry\RelationshipView;
-use ANDS\RegistryObject\Relationship;
 use ANDS\Repository\RegistryObjectsRepository;
 
 
@@ -81,30 +78,6 @@ class TestEndToEndImport extends UnitTest
         // ProcessIdentifiers
         $importTask->run_task();
 
-        $this->assertEquals(
-            2,
-            Identifier::where(
-                'registry_object_id', $record->registry_object_id
-            )->count()
-        );
-
-        $importTask->run_task();
-
-
-        $this->assertEquals(
-            10,
-            Relationship::where(
-                'registry_object_id', $record->registry_object_id
-            )->count()
-        );
-
-        $this->assertEquals(
-            4,
-            RelationshipView::where(
-                'registry_object_id', $record->registry_object_id
-            )->count()
-        );
-
         // ProcessQualityMetadata
         $importTask->run_task();
 
@@ -135,26 +108,6 @@ class TestEndToEndImport extends UnitTest
 
         $record = RegistryObject::where('key', 'minh-test-record-pipeline')->first();
 
-        $this->assertEquals(
-            2,
-            Identifier::where(
-                'registry_object_id', $record->registry_object_id
-            )->count()
-        );
-
-        $this->assertEquals(
-            10,
-            Relationship::where(
-                'registry_object_id', $record->registry_object_id
-            )->count()
-        );
-
-        $this->assertEquals(
-            4,
-            RelationshipView::where(
-                'registry_object_id', $record->registry_object_id
-            )->count()
-        );
 
         $this->assertEquals(0, $record->getRegistryObjectAttributeValue('warning_count'));
         $this->assertEquals(0, $record->getRegistryObjectAttributeValue('error_count'));
