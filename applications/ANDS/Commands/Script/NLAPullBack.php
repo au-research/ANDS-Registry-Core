@@ -4,10 +4,6 @@ namespace ANDS\Commands\Script;
 
 use ANDS\DataSource;
 use ANDS\Payload;
-use ANDS\Registry\Importer;
-use ANDS\RegistryObject\Identifier;
-use ANDS\RegistryObject\IdentifierRelationship;
-use ANDS\RegistryObject\Relationship;
 use ANDS\Repository\DataSourceRepository;
 use ANDS\Util\Config;
 use ANDS\Util\XMLUtil;
@@ -152,25 +148,8 @@ class NLAPullBack extends GenericScript implements GenericScriptRunnable
 
         $this->nlaIdentifiers = [];
 
-        // has nla identifier
-        $identifiers = Identifier::where('identifier', 'like', "%{$prefix}%")->pluck('identifier')->unique()->values()->toArray();
-        $this->nlaIdentifiers = array_merge($this->nlaIdentifiers, $identifiers);
-        $count = count($identifiers);
-        $this->log("NLA identifier(s): {$count}");
-
-        // directly relates to nla identifier
-        $identifiers = Relationship::where('related_object_key', 'like', "%{$prefix}%")->pluck('related_object_key')->unique()->values()->toArray();
-        $this->nlaIdentifiers = array_merge($this->nlaIdentifiers, $identifiers);
-        $count = count($identifiers);
-        $this->log("Related Object NLA Identifier(s): {$count}");
-
-        // has related info parties
-        $identifiers = IdentifierRelationship::where('related_object_identifier', 'like', "%{$prefix}%")->pluck('related_object_identifier')->unique()->values()->toArray();
-        $this->nlaIdentifiers = array_merge($this->nlaIdentifiers, $identifiers);
-        $count = count($identifiers);
-        $this->log("Related Info NLA Identifier(s): {$count}");
-
-        $this->nlaIdentifiers = array_values(array_unique($this->nlaIdentifiers));
+        // TODO get them out of Neo4J
+        // "MATCH (n:Identifier{identifierType:{$prefix}}}) RETURN n.identifier LIMIT 25"
     }
 
     public function getRIFCSFromNLAIdentifier($identifier)
