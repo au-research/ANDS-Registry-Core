@@ -6,43 +6,43 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
  * @author Liz Woods <liz.woods@ands.org.au>
  * @return array
  */
+use ANDS\RegistryObject;
+use ANDS\Registry\Providers\RelationshipProvider;
 class Directaccess extends ROHandler
 {
     function handle()
     {
-        return [];
         $download = array();
         if ($this->ro->class != 'collection' && $this->ro->class != 'service') {
             return array();
         }
         $query = '';
         $relationshipTypeArray = ['isPresentedBy', 'supports'];
-        $classArray = [];
+        $record = RegistryObject::find($this->ro->id);
+        $services = RelationshipProvider::getRelationByType($record, $relationshipTypeArray);
 
-        // @todo don't get viaService if the record is a service
-        // TODO refactor to use RelationshipServiceSearch
-        $services = [];
-
-        foreach ($services as &$service) {
-            if (isset($service['relation_url'])
-                && sizeof($service['relation_url']) > 0
-            ) {
-                $relationUrl = $service['relation_url'][0];
-                $relationDescription = $service['to_title'];
-                if (isset($service['relation_description'])
-                    && sizeof($service['relation_description']) > 0
-                    && $service['relation_description'][0] != '') {
-                    $relationDescription = $service['relation_description'][0];
+        if ($this->ro->class == 'collection') {
+            foreach ($services as &$service) {
+                foreach($service['relations'] as $relation)
+                if (isset($relation['relation_url'])
+                    && sizeof($relation['relation_url']) > 0
+                ) {
+                    $relationUrl = $relation['relation_url'];
+                    $relationDescription = $service['to_title'];
+                    if (isset($service['relation_description'])
+                        && $service['relation_description'] != '') {
+                        $relationDescription = $service['relation_description'];
+                    }
+                    $download[] = array(
+                        'access_type' => 'viaService',
+                        'contact_type' => 'url',
+                        'access_value' => $relationUrl,
+                        'title' => $relationDescription,
+                        'mediaType' => '',
+                        'byteSize' => '',
+                        'notes' => 'Visit Service'
+                    );
                 }
-                $download[] = Array(
-                    'access_type' => 'viaService',
-                    'contact_type' => 'url',
-                    'access_value' => $relationUrl,
-                    'title' => $relationDescription,
-                    'mediaType' => '',
-                    'byteSize' => '',
-                    'notes' => 'Visit Service'
-                );
             }
         }
 
@@ -90,19 +90,9 @@ class Directaccess extends ROHandler
                         'byteSize' => trim($byteSizeStr, ","),
                         'notes' => $notes
                     );
-
                 }
             }
         }
-
-        //if the record is a service, remove all access_type viaService
-        // @todo don't get it to begin with
-        if ($this->ro->class == "service") {
-            $download = array_values(array_filter($download, function($d) {
-                return $d['access_type'] != 'viaService';
-            }));
-        }
-        
         return $download;
     }
 }

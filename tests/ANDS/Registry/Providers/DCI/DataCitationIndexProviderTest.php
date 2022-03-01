@@ -45,7 +45,6 @@ class DataCitationIndexProviderTest extends \RegistryTestClass
         // when get dci
         $dci = DataCitationIndexProvider::get($record);
         $sml = new \SimpleXMLElement($dci);
-       // var_dump($sml);
 
         // it has a Header element
         $this->assertNotEmpty($sml->xpath('//Header'));
@@ -178,6 +177,10 @@ class DataCitationIndexProviderTest extends \RegistryTestClass
             $names[] = (string) $name;
         }
         $this->assertContains($funder->title, $names);
+
+        $this->myceliumDelete($record);
+        $this->myceliumDelete($funder);
+        $this->myceliumDelete($activity);
     }
 
     /** @test */
@@ -205,6 +208,8 @@ class DataCitationIndexProviderTest extends \RegistryTestClass
         // it has a parent
         $this->assertNotEmpty($sml->xpath('//ParentDataRef'));
         $this->assertEquals($record2->key, (string) array_first($sml->xpath('//ParentDataRef')));
+        $this->myceliumDelete($record);
+        $this->myceliumDelete($record2);
     }
 
     /** @test */
