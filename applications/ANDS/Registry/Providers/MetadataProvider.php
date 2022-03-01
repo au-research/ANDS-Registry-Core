@@ -1,11 +1,7 @@
 <?php
 
-
 namespace ANDS\Registry\Providers;
 
-
-use ANDS\Registry\PreMyceliumConnections;
-use ANDS\Registry\RelationshipView;
 use ANDS\RegistryObject;
 use ANDS\Util\XMLUtil;
 

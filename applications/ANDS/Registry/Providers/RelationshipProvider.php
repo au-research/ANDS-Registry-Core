@@ -112,12 +112,22 @@ class RelationshipProvider
         return $allRelationships;
     }
 
+    /**
+     * @param RegistryObject $record
+     * @param $class
+     * @param $relations
+     * @return array
+     * @throws \Exception
+     *
+     */
     public static function getRelationByClassAndType(RegistryObject $record, $class, $relations)
     {
         $search_params =[];
         $search_params['from_id'] = $record->id;
         $search_params['to_class'] = $class;
-        $search_params['relation_type'] = $relations;
+        if($relations != null){
+            $search_params['relation_type'] = $relations;
+        }
         $batchSize = 400;
         $search_params["rows"] = $batchSize;
         $search_params["start"] = 0;
@@ -137,22 +147,45 @@ class RelationshipProvider
         return $allRelationships;
     }
 
-    /*
-         * Will return a list of  titles of any related party  who has a relationship that is  a funder
-         * - both related objects and related info are returned
-         */
-    public static function getFunders($record)
+    /**
+     * especially useful for finding publications, they are collections type="publication"
+     * @param RegistryObject $record
+     * @param $class
+     * @param $relations
+     * @return array
+     * @throws \Exception
+     *
+     */
+    public static function getRelationByClassTypeRelationType(RegistryObject $record, $class, $type, $relations)
     {
-        $funders = [];
-        $search_params = ['from_id'=>$record->id, 'to_class' => 'party', 'relation_type'=>'isFundedBy'];
-        $result = RelationshipSearchService::search($search_params);
-        $funderResult = $result->toArray();
-
-        if(isset($funderResult['contents']) && count($funderResult['contents']) > 0 ){
-            foreach($funderResult['contents'] as $party){
-                $funders[] = $party['to_title'];
-            }
+        $search_params =[];
+        $search_params['from_id'] = $record->id;
+        if($class != null){
+            $search_params['to_class'] = $class;
         }
-        return array_unique($funders);
+        if($type != null){
+            $search_params['to_type'] = $type;
+        }
+        if($relations != null){
+            $search_params['relation_type'] = $relations;
+        }
+        $batchSize = 400;
+        $search_params["rows"] = $batchSize;
+        $search_params["start"] = 0;
+
+        $allRelationships = [];
+
+        do {
+            $result = RelationshipSearchService::search($search_params);
+            $result = $result->toArray();
+            $result_count = $result['count'];
+            $result_total = $result['total'];
+            foreach($result['contents'] as $item){
+                $allRelationships[] = $item;
+            }
+            $search_params["start"] += $batchSize;
+        } while ($result_count > 0 && $search_params["start"] <= $result_total);
+        return $allRelationships;
     }
+
 }

@@ -27,8 +27,6 @@ $application->add(new \ANDS\Commands\RegistryObject\RegistryObjectProcessCommand
 $application->add(new \ANDS\Commands\SyncRecordWorkerRedisCommand());
 $application->add(new \ANDS\Commands\RunScriptCommand());
 $application->add(new \ANDS\Commands\ExportCommand());
-$application->add(new \ANDS\Commands\Graph\GraphGenerate());
-$application->add(new \ANDS\Commands\Export\ExportCSV());
 $application->add(new \ANDS\Commands\DataSource\DataSourceProcessCommand());
 $application->add(new \ANDS\Commands\ClearCacheCommand());
 $application->add(new \ANDS\Commands\WarmCacheCommand());

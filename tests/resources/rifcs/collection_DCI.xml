@@ -59,6 +59,10 @@
                 <key>AUTestingRecordsNestedwww.ballarat.edu.au/staff/hethompson</key>
                 <relation type="hasAssociationWith"/>
             </relatedObject>
+            <relatedObject>
+                <key>AUT_DCI_PARTY</key>
+                <relation type="isFundedBy"/>
+            </relatedObject>
             <subject type="anzsrc-for">0805</subject>
             <subject type="local">Mobile Phone Coverage</subject>
             <subject type="anzsrc-for">0806</subject>

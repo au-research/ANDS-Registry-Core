@@ -3,7 +3,6 @@
 
 namespace ANDS\Test;
 
-use ANDS\API\Task\ImportSubTask\ProcessIdentifiers;
 use ANDS\API\Task\ImportTask;
 use ANDS\API\Task\TaskManager;
 use ANDS\RegistryObject;

@@ -12,6 +12,8 @@ use ANDS\RegistryObject;
 use ANDS\Util\XMLUtil;
 use DOMDocument;
 
+define('DB_TRUE',1);
+
 class DublinCoreProviderTest extends \RegistryTestClass
 {
     /** @test
@@ -84,11 +86,11 @@ class DublinCoreProviderTest extends \RegistryTestClass
         // has the url as an identifier
         $this->assertContains($record->portal_url, $identifiers);
 
-        // has a local identifier
+        // has the first local identifier
         $this->assertContains("nla.AUTCollection1", $identifiers);
 
-        // has a relatedInfo identifier
-        $this->assertContains("10.1234567882484", $identifiers);
+        // has the second local identifier
+        $this->assertContains("nla.part.12345", $identifiers);
     }
 
     /** @test
@@ -210,29 +212,35 @@ class DublinCoreProviderTest extends \RegistryTestClass
      */
     function it_should_have_contributor_as_related_parties()
     {
-        // given a record
-        $record = $this->stub(RegistryObject::class);
+        // given a record with an author (party)
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'AUT_DCI_COLLECTION']);
         $this->stub(RecordData::class, [
             'registry_object_id' => $record->id,
-            'data' => Storage::disk('test')->get('rifcs/collection_all_elements.xml')
+            'data' => Storage::disk('test')->get('rifcs/collection_DCI.xml')
+        ]);
+        $this->myceliumInsert($record);
+
+        // with an author (party)
+        $party = $this->stub(RegistryObject::class, ['class' => 'party','type' => 'person','key' => 'AUT_DCI_PARTY']);
+
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $party->id,
+            'data' => Storage::disk('test')->get('rifcs/party_DCI.xml')
         ]);
 
-        // relates to another party
-        $party = $this->stub(RegistryObject::class, ['class' => 'party']);
-        $this->stub(RegistryObject\Relationship::class, [
-            'registry_object_id' => $record->id,
-            'related_object_key' => $party->key,
-            'relation_type' => 'hasOwner'
-        ]);
+        $this->myceliumInsert($party);
+
+        // author address with lines are present
+        CoreMetadataProvider::process($record);
+        CoreMetadataProvider::process($party);
 
         // when get dc
         $dc = DublinCoreProvider::get($record);
-
         // has a contributor in the form of title (relation)
         $sml = new \SimpleXMLElement($dc);
         $sml->registerXPathNamespace("dc", DublinCoreDocument::$DCNamespace);
         $actual = (string) array_first($sml->xpath('//dc:contributor'));
-        $this->assertEquals("$party->title (hasOwner)", $actual);
+        $this->assertContains("(isFundedBy)", $actual);
     }
 
     /** @test

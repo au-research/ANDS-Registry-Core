@@ -3,7 +3,6 @@
 
 namespace ANDS\Test;
 
-use ANDS\Registry\PreMyceliumConnections;
 use ANDS\Registry\Relation;
 
 /**

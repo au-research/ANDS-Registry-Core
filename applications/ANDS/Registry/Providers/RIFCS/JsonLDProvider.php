@@ -5,6 +5,7 @@ namespace ANDS\Registry\Providers\RIFCS;
 
 
 use ANDS\Registry\IdentifierRelationshipView;
+use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\Registry\Versions;
 use ANDS\RegistryObject;
 use ANDS\Registry\Providers\MetadataProvider;
@@ -131,10 +132,7 @@ class JsonLDProvider implements RIFCSProvider
         return static::process($record);
     }
 
-    public static function getIdentifier(
-        RegistryObject $record,
-        $data = null
-    ){
+    public static function getIdentifier(RegistryObject $record, $data = null){
         $identifiers = [];
 
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
@@ -235,10 +233,7 @@ class JsonLDProvider implements RIFCSProvider
     }
 
 
-    public static function getPublisher(
-        RegistryObject $record,
-        $data = null
-    ){
+    public static function getPublisher(RegistryObject $record, $data = null){
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class . '/ro:citationInfo/ro:citationMetadata/ro:publisher') AS $publisher) {
 
@@ -251,10 +246,7 @@ class JsonLDProvider implements RIFCSProvider
         return $publishers;
     }
 
-    public static function getLicense(
-        RegistryObject $record,
-        $data = null
-    ){
+    public static function getLicense(RegistryObject $record, $data = null){
         $licenses = [];
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class . '/ro:rights/ro:licence') AS $license) {
@@ -268,10 +260,7 @@ class JsonLDProvider implements RIFCSProvider
         return $licenses;
     }
 
-    public static function getTermsOfService(
-        RegistryObject $record,
-        $data = null
-    ){
+    public static function getTermsOfService(RegistryObject $record, $data = null){
         $termsOfService = [];
 
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
@@ -289,9 +278,7 @@ class JsonLDProvider implements RIFCSProvider
         return $termsOfService;
     }
 
-    public static function getKeywords(
-        RegistryObject $record
-    ){
+    public static function getKeywords(RegistryObject $record){
         $keywords = "";
 
         $subjects = SubjectProvider::processSubjects($record);
@@ -306,7 +293,7 @@ class JsonLDProvider implements RIFCSProvider
     {
         $citation = [];
 
-        $relationships = self::getRelatedPublications($record);
+        $relationships = RelationshipProvider::getRelationByClassTypeRelationType($record, null, 'publication', null);
         foreach ($relationships as $relation) {
             if($relation['slug'] != ""){
                 $citation[] = array("@type"=>"CreativeWork","name"=>$relation['name'],"url"=>self::base_url().$relation["slug"]."/".$relation["id"]);
@@ -451,21 +438,21 @@ class JsonLDProvider implements RIFCSProvider
     public static function getFunder(RegistryObject $record)
     {
         $funders = [];
-        $provider = GrantsConnectionsProvider::create();
-        $unprocessed = $provider->getFunder($record);
-        if($unprocessed) {
-            $type = ($unprocessed->type=="group") ? "Organization" : "Person";
-            $funders[] = array("@type" => $type, "name"=>$unprocessed->title, "url"=>self::base_url() .$unprocessed->slug."/".$unprocessed->id);
+        $relationships = RelationshipProvider::getRelationByClassAndType($record, 'party', ['isFundedBy']);
+        foreach($relationships as $relationship) {
+            foreach ($relationship['relations'] as $relations) {
+                $type = ($relations['type'] == "group") ? "Organization" : "Person";
+                $funders[] = array("@type" => $type, "name" => $relations['title'], "url" => self::base_url() . $relations['slug'] . "/" . $relations['id']);
+            }
         }
         return $funders;
-
     }
 
     public static function getRelated(RegistryObject $record, $relation_type = array())
     {
         $related = [];
 
-        $relationships = self::getRelationByType($record, $relation_type);
+        $relationships = RelationshipProvider::getRelationByType($record, $relation_type);
 
         foreach ($relationships as $relation) {
             if($relation["slug"] != ""){
@@ -488,7 +475,7 @@ class JsonLDProvider implements RIFCSProvider
         $related = [];
         $provider_relationships = array("isOwnedBy", "isManagedBy");
 
-        $relationships = self::getRelationByType($record, $provider_relationships);
+        $relationships = RelationshipProvider::getRelationByType($record, $provider_relationships);
 
         foreach ($relationships as $relation) {
             if ($relation["type"] == 'group') {
@@ -616,7 +603,7 @@ class JsonLDProvider implements RIFCSProvider
 
         $relations_types = array("hasPrincipalInvestigator","author","coInvestigator", "hasCollector");
         foreach ($relations_types as $idx=>$relation_type) {
-            $relationships = self::getRelationByType($record, array($relation_type));
+            $relationships = RelationshipProvider::getRelationByType($record, array($relation_type));
             foreach ($relationships as $relation) {
                 if ($relation["class"] != 'party') // shouldn't happen with these relationship types but to be sure
                 {
@@ -651,7 +638,7 @@ class JsonLDProvider implements RIFCSProvider
         $processedIds = [];
         $accountablePerson = [];
         foreach ($relations_types as $idx=>$relation_type) {
-            $relationships = self::getRelationByType($record, array($relation_type));
+            $relationships = RelationshipProvider::getRelationByType($record, array($relation_type));
             foreach ($relationships as $relation) {
                 // check for class == party in case shouldn't happen with these relationship types but to be sure
                 if ($relation["class"] != 'party' || $relation["type"] == 'group' || in_array_r($relation["id"] , $processedIds)) {
@@ -730,163 +717,5 @@ class JsonLDProvider implements RIFCSProvider
         return $alternateNames;
     }
 
-    public static function getRelationByType(RegistryObject $record, array $relations)
-    {
-        $results = [];
-        $reverseRelationTypes = collect($relations)->map(function($item){
-            return getReverseRelationshipString($item);
-        })->toArray();
-
-        // direct
-        $direct = RelationshipView::where('from_id', $record->id)
-            ->whereIn('relation_type', $relations)
-            ->take(50)->get();
-        foreach ($direct as $relation) {
-            $results[] = [
-                'relation' => $relation['relation_type'],
-                'name' => (string) $relation['to_title'],
-                'id' => $relation['to_id'],
-                'slug' => $relation['to_slug'],
-                'key' => $relation['to_key'],
-                'type' => $relation['to_type'],
-                'class' => $relation['to_class'],
-                "identifier_type" => null,
-                "identifier_value"=> null
-            ];
-        }
-
-        // reverse
-        $reverse = RelationshipView::where('to_key', $record->key)
-            ->whereIn('relation_type', $reverseRelationTypes)
-            ->take(50)->get();
-        foreach ($reverse as $relation) {
-            $results[] = [
-                'relation' => getReverseRelationshipString($relation['relation_type']),
-                'name' => (string) $relation['from_title'],
-                'id' => $relation['from_id'],
-                'slug' => $relation['from_slug'],
-                'key' => $relation['from_key'],
-                'type' => $relation['from_type'],
-                'class' => $relation['from_class'],
-                "identifier_type" => null,
-                "identifier_value"=> null
-            ];
-        }
-
-        // direct
-        $direct = IdentifierRelationshipView::where('from_id', $record->id)
-            ->whereIn('relation_type', $relations)
-            ->take(50)->get();
-        foreach ($direct as $relation) {
-            $results[] = [
-                'relation' => $relation['relation_type'],
-                'name' => $relation['to_title'] != null ? (string) $relation['to_title'] : (string) $relation['relation_to_title'],
-                'id' => $relation['to_id'],
-                'slug' => $relation['to_slug'],
-                'key' => $relation['to_key'],
-                'type' => $relation['to_type'] != null ? (string) $relation['to_type'] : (string) $relation['to_related_info_type'],
-                'class' => $relation['to_class']!= null ? (string) $relation['to_class'] : (string) $relation['to_related_info_type'],
-                "identifier_type" => $relation["to_identifier_type"],
-                "identifier_value"=> $relation["to_identifier"]
-            ];
-        }
-
-        // reverse
-        $reverse = IdentifierRelationshipView::where('to_key', $record->key)
-            ->whereIn('relation_type', $reverseRelationTypes)
-            ->take(50)->get();
-        foreach ($reverse as $relation) {
-            $results[] = [
-                'relation' => getReverseRelationshipString($relation['relation_type']),
-                'name' => (string) $relation['from_title'],
-                'id' => $relation['from_id'],
-                'slug' => $relation['from_slug'],
-                'key' => $relation['from_key'],
-                'type' => $relation['from_type'],
-                'class' => $relation['from_class'],
-                "identifier_type" => null,
-                "identifier_value"=> null
-            ];
-        }
-
-        return $results;
-    }
-
-
-    public static function getRelatedPublications(RegistryObject $record)
-    {
-        $results = [];
-
-        $direct = RelationshipView::where('from_id', $record->id)
-            ->where('to_type', 'publication')
-            ->take(50)->get();
-        foreach ($direct as $relation) {
-            $results[] = [
-                'relation' => $relation['relation_type'],
-                'name' => (string) $relation['to_title'],
-                'id' => $relation['to_id'],
-                'slug' => $relation['to_slug'],
-                'key' => $relation['to_key'],
-                'type' => $relation['to_type'],
-                "identifier_type" => null,
-                "identifier_value"=> null
-            ];
-        }
-
-        // reverse
-        $reverse = RelationshipView::where('to_key', $record->key)
-            ->where('from_type', 'publication')
-            ->take(50)->get();
-        foreach ($reverse as $relation) {
-            $results[] = [
-                'relation' => getReverseRelationshipString($relation['relation_type']),
-                'name' => (string) $relation['from_title'],
-                'id' => $relation['from_id'],
-                'slug' => $relation['from_slug'],
-                'key' => $relation['from_key'],
-                'type' => $relation['from_type'],
-                "identifier_type" => null,
-                "identifier_value"=> null
-            ];
-        }
-
-        // direct
-        $direct = IdentifierRelationshipView::where('from_id', $record->id)
-            ->where('to_related_info_type', 'publication')
-            ->take(50)->get();
-        foreach ($direct as $relation) {
-            $results[] = [
-                'relation' => $relation['relation_type'],
-                'name' => (string) $relation['relation_to_title'],
-                'id' => null,
-                'slug' => null,
-                'key' => null,
-                'type' => $relation['to_related_info_type'],
-                "identifier_type" => $relation["to_identifier_type"],
-                "identifier_value"=> $relation["to_identifier"]
-            ];
-        }
-
-
-        // reverse
-        $reverse = IdentifierRelationshipView::where('to_key', $record->key)
-            ->where('from_type', 'publication')
-            ->take(50)->get();
-        foreach ($reverse as $relation) {
-            $results[] = [
-                'relation' => getReverseRelationshipString($relation['relation_type']),
-                'name' => (string) $relation['from_title'],
-                'id' => $relation['from_id'],
-                'slug' => $relation['from_slug'],
-                'key' => $relation['from_key'],
-                'type' => $relation['from_type'],
-                'class' => $relation['from_class'],
-                "identifier_type" => null,
-                "identifier_value"=> null
-            ];
-        }
-
-        return $results;
-    }
 }
 ?>

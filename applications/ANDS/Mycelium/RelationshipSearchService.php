@@ -152,4 +152,5 @@ class RelationshipSearchService
         $params['fq'] = $fq;
         return $params;
     }
+
 }

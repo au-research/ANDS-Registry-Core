@@ -6,10 +6,10 @@ namespace ANDS\Registry\Providers\DublinCore;
 
 use ANDS\Registry\Providers\MetadataProvider;
 use ANDS\Registry\Providers\RegistryContentProvider;
+use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 use ANDS\Registry\Providers\RIFCS\SubjectProvider;
-use ANDS\Registry\RelationshipView;
 use ANDS\RegistryObject;
 
 class DublinCoreProvider implements RegistryContentProvider
@@ -59,11 +59,6 @@ class DublinCoreProvider implements RegistryContentProvider
             ->unique()
             ->toArray();
 
-        $identifiers = IdentifierProvider::getRelatedInfoIdentifiers($record, $xml);
-        $data['identifiers'] = collect($data['identifiers'])
-            ->merge(collect($identifiers)->pluck('value'))
-            ->unique()
-            ->toArray();
 
         $allDescriptions = MetadataProvider::getDescriptions($record, $xml);
 
@@ -105,11 +100,14 @@ class DublinCoreProvider implements RegistryContentProvider
 
         // contributors are all parties and come in the form of
         // title (relation)
-        $relatedParties = RelationshipView::where('from_id', $record->id)
-            ->where('to_class', 'party');
-        $contributors = $relatedParties->get()->map(function($relation){
-            return "{$relation->to_title} ({$relation->relation_type})";
-        })->toArray();
+
+        $contributors = [];
+        $relationships = RelationshipProvider::getRelationByClassAndType($record, 'party', null);
+        foreach($relationships as $relation){
+            foreach($relation['relations'] as $rel) {
+                $contributors[] = "{$relation['to_title']} ({$rel['relation_type']})";
+            }
+        }
         $data['contributors'] = collect($data['contributors'])
             ->merge($contributors)->unique()->toArray();
 

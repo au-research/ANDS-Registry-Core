@@ -20,57 +20,12 @@ class IdentifierProvider implements RIFCSProvider
      * Add all Identifiers from rifcs
      *
      * @param RegistryObject $record
-     * @return array
      */
     public static function process(RegistryObject $record)
     {
-        static::deleteAllIdentifiers($record);
-        $identifiers = static::processIdentifiers($record);
-        return $identifiers;
+        // Identifier Processing is done by Mycelium
     }
 
-    /**
-     * Delete Identifiers
-     * Clean up before a processing
-     *
-     * @param RegistryObject $record
-     */
-    public static function deleteAllIdentifiers(RegistryObject $record)
-    {
-        Identifier::where('registry_object_id',
-            $record->registry_object_id)->delete();
-    }
-
-
-    /**
-     * Create Identifiers from current RIFCS
-     * TODO: Refactor to use self::get()
-     * @param RegistryObject $record
-     * @return array
-     */
-    public static function processIdentifiers(RegistryObject $record)
-    {
-        $identifiers = [];
-        $xml = $record->getCurrentData()->data;
-        foreach (XMLUtil::getElementsByXPath($xml,
-            'ro:registryObject/ro:' . $record->class . '/ro:identifier') AS $identifier) {
-            if (trim((string)$identifier) == "") {
-                continue;
-            }
-            $normalisedIdentifier = IdentifierProvider::getNormalisedIdentifier(trim((string)$identifier), trim((string)$identifier['type']));
-
-            $identifiers[] = $normalisedIdentifier["value"];
-            Identifier::create(
-                [
-                    'registry_object_id' => $record->registry_object_id,
-                    'identifier' => $normalisedIdentifier["value"],
-                    'identifier_type' => $normalisedIdentifier["type"]
-                ]
-            );
-
-        }
-        return $identifiers;
-    }
 
     /**
      * Get all identifiers from RIFCS
