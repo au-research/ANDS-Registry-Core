@@ -15,6 +15,9 @@ use ANDS\RegistryObject;
  */
 class RelationshipProvider
 {
+
+    private static $max_count = 50;
+    private static $batch_size = 400;
     /**
      * Add all relationship from
      * explicit in rifcs
@@ -34,12 +37,11 @@ class RelationshipProvider
      * @param RegistryObject $record
      * @return array
      */
-    public static function get(RegistryObject $record)
+    public static function get(RegistryObject $record, $limit=50)
     {
         $search_params =[];
         $search_params['from_id'] = $record->id;
-        $batchSize = 400;
-        $search_params["rows"] = $batchSize;
+        $search_params["rows"] = self::$batch_size;
         $search_params["start"] = 0;
 
         $allRelationships = [];
@@ -51,8 +53,11 @@ class RelationshipProvider
             $result_total = $result['total'];
             foreach($result['contents'] as $item){
                 $allRelationships[] = $item;
+                if(sizeof($allRelationships) >= $limit){
+                    return $allRelationships;
+                }
             }
-            $search_params["start"] += $batchSize;
+            $search_params["start"] += self::$batch_size;
         } while ($result_count > 0 && $search_params["start"] <= $result_total);
         return $allRelationships;
     }
@@ -93,8 +98,7 @@ class RelationshipProvider
         $search_params =[];
         $search_params['from_id'] = $record->id;
         $search_params['relation_type'] = $relations;
-        $batchSize = 400;
-        $search_params["rows"] = $batchSize;
+        $search_params["rows"] = self::$batch_size;
         $search_params["start"] = 0;
 
         $allRelationships = [];
@@ -107,7 +111,7 @@ class RelationshipProvider
             foreach($result['contents'] as $item){
                 $allRelationships[] = $item;
             }
-            $search_params["start"] += $batchSize;
+            $search_params["start"] += self::$batch_size;
         } while ($result_count > 0 && $search_params["start"] <= $result_total);
         return $allRelationships;
     }
@@ -128,8 +132,7 @@ class RelationshipProvider
         if($relations != null){
             $search_params['relation_type'] = $relations;
         }
-        $batchSize = 400;
-        $search_params["rows"] = $batchSize;
+        $search_params["rows"] = self::$batch_size;
         $search_params["start"] = 0;
 
         $allRelationships = [];
@@ -142,7 +145,7 @@ class RelationshipProvider
             foreach($result['contents'] as $item){
                 $allRelationships[] = $item;
             }
-            $search_params["start"] += $batchSize;
+            $search_params["start"] += self::$batch_size;
         } while ($result_count > 0 && $search_params["start"] <= $result_total);
         return $allRelationships;
     }
@@ -169,8 +172,7 @@ class RelationshipProvider
         if($relations != null){
             $search_params['relation_type'] = $relations;
         }
-        $batchSize = 400;
-        $search_params["rows"] = $batchSize;
+        $search_params["rows"] = self::$batch_size;
         $search_params["start"] = 0;
 
         $allRelationships = [];
@@ -183,7 +185,7 @@ class RelationshipProvider
             foreach($result['contents'] as $item){
                 $allRelationships[] = $item;
             }
-            $search_params["start"] += $batchSize;
+            $search_params["start"] += self::$batch_size;
         } while ($result_count > 0 && $search_params["start"] <= $result_total);
         return $allRelationships;
     }
