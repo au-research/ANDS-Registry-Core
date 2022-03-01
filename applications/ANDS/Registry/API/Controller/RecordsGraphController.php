@@ -3,13 +3,8 @@
 
 namespace ANDS\Registry\API\Controller;
 
-
-use ANDS\Cache\Cache;
 use ANDS\Mycelium\MyceliumServiceClient;
 use ANDS\Mycelium\RelationshipSearchService;
-use ANDS\Registry\API\Request;
-use ANDS\Registry\Providers\GraphRelationshipProvider;
-use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\Config;
 use ANDS\Util\RelationUtil;

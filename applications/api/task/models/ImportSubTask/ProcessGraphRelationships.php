@@ -4,13 +4,9 @@
 namespace ANDS\API\Task\ImportSubTask;
 
 
-use ANDS\Cache\Cache;
 use ANDS\Mycelium\MyceliumServiceClient;
-use ANDS\Registry\Providers\GraphRelationshipProvider;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\Config;
-use GraphAware\Common\Result\CombinedStatistics;
-use GraphAware\Common\Result\ResultCollection;
 
 class ProcessGraphRelationships extends ImportSubTask
 {
