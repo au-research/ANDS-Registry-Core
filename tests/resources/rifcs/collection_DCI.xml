@@ -40,7 +40,7 @@
                 <spatial type="kmlPolyCoords">144.201806,-37.642361</spatial>
             </coverage>
             <relatedObject>
-                <key>AUTestingRecordsNestedwww.ballarat.edu.au/coll/15</key>
+                <key>AUTESTING_ALL_ELEMENTS_TEST</key>
                 <relation type="isPartOf"/>
             </relatedObject>
             <relatedObject>

@@ -184,30 +184,27 @@ class DataCitationIndexProviderTest extends \RegistryTestClass
     function parent_data_ref()
     {
         // given a record
-        $record = $this->stub(RegistryObject::class);
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'AUT_DCI_COLLECTION']);
         $this->stub(RecordData::class, [
             'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_DCI.xml')
+        ]);
+        $this->myceliumInsert($record);
+
+        $record2 = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'AUTESTING_ALL_ELEMENTS_TEST']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record2->id,
             'data' => Storage::disk('test')->get('rifcs/collection_all_elements.xml')
         ]);
+        $this->myceliumInsert($record2);
 
-        // has a parent
-        $parent = $this->stub(RegistryObject::class);
-        $this->stub(RegistryObject\Relationship::class,
-            [
-                'registry_object_id' => $record->id,
-                'related_object_key' => $parent->key,
-                'relation_type' => 'isPartOf'
-            ]
-        );
-
-        // when get dci on the record
         CoreMetadataProvider::process($record);
         $dci = DataCitationIndexProvider::get($record);
         $sml = new \SimpleXMLElement($dci);
 
         // it has a parent
         $this->assertNotEmpty($sml->xpath('//ParentDataRef'));
-        $this->assertEquals($parent->key, (string) array_first($sml->xpath('//ParentDataRef')));
+        $this->assertEquals($record2->key, (string) array_first($sml->xpath('//ParentDataRef')));
     }
 
     /** @test */
