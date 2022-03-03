@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+    <registryObject group="AUTestingRecords">
+        <key>AUT_SCHOLIX_COLLECTION</key>
+        <originatingSource>https://research.jcu.edu.au/researchdata/default</originatingSource>
+        <collection type="dataset" dateAccessioned="2013-05-07T00:00:00Z">
+            <identifier type="local">jcu.edu.au/collection/enmasse/1248</identifier>
+            <name type="primary" xml:lang="en">
+                <namePart>(AUTestingRecords) Collection to test Related Object popout 'More Data' section for non registry objects (e.g Publications)</namePart>
+            </name>
+            <location>
+                <address>
+                    <electronic type="url">
+                        <value>
+                            https://research.jcu.edu.au/researchdata/default/detail/38ff8824ca8bb4352f93c3505c673290
+                        </value>
+                    </electronic>
+                </address>
+                <address>
+                    <electronic type="url">
+                        <value>https://research.jcu.edu.au/enmasse/1248/data</value>
+                    </electronic>
+                </address>
+                <address>
+                    <physical>
+                        <addressPart type="text">CC-DAM, James Cook University, Townsville Campus</addressPart>
+                    </physical>
+                </address>
+            </location>
+            <coverage>
+                <temporal>
+                    <date type="dateFrom" dateFormat="W3CDTF">1997-12-12T00:00:00Z</date>
+                    <text>1997 - ongoing</text>
+                </temporal>
+            </coverage>
+            <coverage>
+                <spatial type="kmlPolyCoords" xml:lang="en">
+                    145.08,-17.70 145.52,-17.70 145.52,-16.28 145.08,-16.28 145.08,-17.70
+                </spatial>
+            </coverage>
+            <relatedObject>
+                <key>AUTestingRecordsMONc76724b0-abe2-11df-ae20-58b035f469d3</key>
+                <relation type="isOutputOf"/>
+            </relatedObject>
+            <subject type="local" xml:lang="en">Australian Wet Tropics</subject>
+            <subject type="local" xml:lang="en">environmental data</subject>
+            <subject type="local" xml:lang="en">microclimate</subject>
+            <subject type="anzsrc-for" xml:lang="en">050101</subject>
+            <subject type="anzsrc-for" xml:lang="en">060208</subject>
+            <subject type="anzsrc-seo" xml:lang="en">960305</subject>
+            <subject type="anzsrc-seo" xml:lang="en">960805</subject>
+            <subject type="anzsrc-toa">Strategic basic research</subject>
+            <description type="full" xml:lang="en">
+                Rainforest vertebrates have been monitored at permanent monitoring sites across the Australian Wet Tropics rainforest since 1997. Such surveys have been conducted on an ongoing basis across the Spec, Atherton, Windsor, Carbine and Bellenden Ker Uplands from various start dates after 1997 as the scale of sampling expanded to encompass the Wet Tropics region. The Wet Tropics rainforest of North Queensland has the highest biodiversity of any region in Australia. While world heritage listing of the area has prevented ongoing impacts from land clearing, our research suggests that the fauna of the region is highly vulnerable to global climate change. Almost half of the unique rainforest fauna could be lost with an increase in temperature of 3-4 degrees Celsius. This is significant as the IPCC fourth assessment report and regional climate models suggest that we will see between 1.0-4.2 degrees Celsius of warming by the year 2070: potentially causing a catastrophic impact on the world heritage values of the region. Ongoing monitoring of the region seeks to understand patterns of biodiversity and to detect shifts in phenology of the vertebrates of the Wet Tropics rainforest. Vertebrate taxa systematically surveyed include birds, reptiles, microhylid frogs, and mammals (spotlighting). When possible, surveys were conducted during each season (specific survey dates available in data).
+            </description>
+            <description type="brief" xml:lang="en">
+                Rainforest vertebrates have been monitored at permanent monitoring sites across the Australian Wet Tropics rainforest since 1997. Such surveys have been conducted on an ongoing basis across the Spec, Atherton, Windsor, Carbine and Bellenden Ker Uplands from various start dates after 1997 as the scale of sampling expanded to encompass the Wet Tropics region. Vertebrate taxa systematically surveyed include birds, reptiles, microhylid frogs, and mammals (spotlighting).
+            </description>
+            <description type="note" xml:lang="en">
+                This research has been funded in full or part by the below funding agencies: - Skyrail Rainforest Foundation - Birds Australia - Earthwatch Institute - Marine and Tropical Sciences Research Facility (MTSRF) - National Environmental Research Program (NERP) - Rainforest CRC - Australian Research Council - James Cook University Research Advancement Program (RAP) - Wet Tropics Management Authority (WTMA) - National Geographic - National Science Foundation - Queensland Smart State Program
+            </description>
+            <description type="note" xml:lang="en">
+                Microhylid surveys consisted of a nocturnal, slow-paced walk (10 min duration) along a 50m transect through rain forest. All calls were identified to species, and counts were made of number of individuals calling within 10 m on either side of the transect. Because detection probability was dependent on calling males, surveys were timed to coincide with known months of breeding. In all, 25 of the 27 dated breeding records compiled for microhylid species in the region are from the late dry to the early wet seasons). Surveys for microhylid species were thus exclusively confined to this time period. Surveys were also conducted only on wet, humid nights (&gt;80% relative humidity). These conditions are known to be conducive to calling activity.
+            </description>
+            <rights>
+                <accessRights>
+                    Restricted access. Login authentication is required to access the data - please contact the data manager or nominated primary contact to negotiate access. If you have difficulty, please contact researchdata@jcu.edu.au for assistance.
+                </accessRights>
+                <licence rightsUri="http://creativecommons.org/licenses/by-nc/3.0/au">CC BY-NC: Attribution-Noncommercial 3.0 AU</licence>
+            </rights>
+            <relatedInfo type="publication">
+                <identifier type="uri">http://dx.doi.org/10.1890/09-1069.1AUT234.3.ods</identifier>
+                <title>
+                    Distributions, life history specialisation and phylogeny of the rainforest vertebrates in the Australian Wet Tropics.
+                </title>
+            </relatedInfo>
+            <relatedInfo type="party">
+                <identifier type="orcid">0000-0001-9650-1472</identifier>
+                <relation type="hasAssociationWith"/>
+                <title>Stephanie</title>
+            </relatedInfo>
+            <relatedInfo type="website">
+                <identifier type="uri">http://research.jcu.edu.au/research/ctbccAUT234.3.ods</identifier>
+                <title>
+                    Centre for Tropical Biodiversity and Climate Change
+                </title>
+            </relatedInfo>
+            <citationInfo>
+                <fullCitation style="Datacite">
+                    Williams, Stephen; Williams, Stephen (2013). Vertebrate monitoring in the Australian Wet Tropics rainforest at CU6A5 (145.31118446, -16.57739393, 600.0m above MSL) collected by Microhylid survey. James Cook University. [Data Files] jcu.edu.au/collection/enmasse/1248
+                </fullCitation>
+            </citationInfo>
+        </collection>
+    </registryObject>
+</registryObjects>

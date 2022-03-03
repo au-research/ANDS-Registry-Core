@@ -1,47 +1,57 @@
 <?php
 
+use ANDS\File\Storage;
+use ANDS\RecordData;
 use ANDS\Registry\Providers\Scholix\ScholixProvider;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 
 class ScholixProviderTest extends RegistryTestClass
 {
-
-    public function setUp()
-    {
-        $this->markTestSkipped("Requires refactor to keep the data separate. This tests are too risky to run when the database data changes");
-    }
-
     /** @test **/
     public function it_should_return_true_for_scholixable_record()
     {
         // should pass
-        $record = $this->ensureKeyExist("AUTestingRecordsu/collection/enmasse/1248");
-        $result = ScholixProvider::isScholixable($record);
-        $this->assertTrue($result);
+        // given a record with a related publication (via relatedInfo)
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'AUT_SCHOLIX_COLLECTION']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_scholix.xml')
+        ]);
+        $this->myceliumInsert($record);
 
-        // should pass, provided relationships
-        $record = $this->ensureKeyExist("AUTCollectionToTestSearchFields37");
-        $relationships = \ANDS\Registry\Providers\RelationshipProvider::getMergedRelationships($record);
-        $result = ScholixProvider::isScholixable($record, $relationships);
+        $result = ScholixProvider::isScholixable($record);
         $this->assertTrue($result);
     }
 
     /** @test **/
     public function it_should_fail_for_nonscholixable_records()
     {
-        // should fail, is a collection, not related to a publication
-        $record = $this->ensureKeyExist("AUTestingRecordsQualityLevelsCollection8_demo");
+
+
+        // should fail, no related publication
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'AUTESTING_MINIMAL_COLLECTION']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_minimal.xml')
+        ]);
+        $this->myceliumInsert($record);
         $result = ScholixProvider::isScholixable($record);
         $this->assertFalse($result);
 
         // should fail, is a party
-        $record = $this->ensureKeyExist("AUTestingRecordsQualityLevelsParty7_demo");
+        $record = $this->stub(RegistryObject::class, ['class' => 'party','type' => 'person','key' => 'AODN/Aalbersberg,BillAUT3bb']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/party_quality.xml')
+        ]);
+        $this->myceliumInsert($record);
         $result = ScholixProvider::isScholixable($record);
         $this->assertFalse($result);
+
     }
 
-    /** @test **/
+    /** test **/
     public function it_should_get_the_right_identifier()
     {
         $partyRecord = $this->ensureKeyExist("AUTestingRecords2ScholixGroupRecord1");
@@ -65,7 +75,7 @@ class ScholixProviderTest extends RegistryTestClass
 
     }
 
-    /** @test **/
+    /** test **/
     public function it_should_get_the_right_publication_format()
     {
         $record = $this->ensureKeyExist("AUTCollectionToTestSearchFields37");
@@ -100,7 +110,7 @@ class ScholixProviderTest extends RegistryTestClass
         }
     }
 
-    /** @test **/
+    /** test **/
     public function it_should_has_all_identifiers_as_source()
     {
         $record = $this->ensureKeyExist("AUTCollectionToTestSearchFields37");
@@ -129,7 +139,7 @@ class ScholixProviderTest extends RegistryTestClass
     }
 
     /** (AUTestingRecords2) Simple Scholix Source Collection With No supported identifiers, 1 relatedObject principalInvestigator creator, 1 relatedInfo hasCollector creator and 5 x RelatedInfo Publication with no supported identifiers. 1x relatedObject collection type pub with no identifier. Source is related to party via relatedObject which has the same name as group attribute. Publisher id should be that of the related party.
-     * @test
+     * test
      **/
     public function it_should_AUTestingRecords2ScholixRecords60()
     {
@@ -138,7 +148,7 @@ class ScholixProviderTest extends RegistryTestClass
         $this->assertNotEmpty($scholix->getLinks());
     }
 
-    /** @test **/
+    /** test **/
     public function it_should_AUTestingRecords2ScholixRecords55()
     {
         $record = $this->ensureKeyExist("AUTestingRecords2ScholixRecords55");
@@ -157,7 +167,7 @@ class ScholixProviderTest extends RegistryTestClass
 
     }
 
-    /** @test **/
+    /** test **/
     public function it_should_have_the_right_identifier_type()
     {
         $keys = [
@@ -191,7 +201,8 @@ class ScholixProviderTest extends RegistryTestClass
         }
     }
 
-    public function test1()
+    /** test **/
+  /*  public function test1()
     {
         $record = $this->ensureKeyExist("AUTestingRecords2ScholixRecords59");
         $scholix = ScholixProvider::get($record);
@@ -204,7 +215,7 @@ class ScholixProviderTest extends RegistryTestClass
         }
 
         $this->assertEquals($linkIdentifiers, array_unique($linkIdentifiers));
-    }
+    } */
 
 
 }

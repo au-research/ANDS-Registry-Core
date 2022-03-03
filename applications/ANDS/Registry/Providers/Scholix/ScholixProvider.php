@@ -50,10 +50,9 @@ class ScholixProvider implements RegistryContentProvider
      * and is related to a type of publication
      *
      * @param RegistryObject $record
-     * @param null $relationships
      * @return bool
      */
-    public static function isScholixable(RegistryObject $record, $relationships = null)
+    public static function isScholixable(RegistryObject $record)
     {
         // early return if it's not a collection
         if ($record->class != "collection") {
@@ -65,20 +64,8 @@ class ScholixProvider implements RegistryContentProvider
             return false;
         }
 
-        // search through combined relationships to see if there's a related publication
-        if (!$relationships) {
-            $relationships = RelationshipProvider::getMergedRelationships($record);
-        }
-
-        $types = collect($relationships)->map(function($item) {
-            return $item->prop('to_type') ?: $item->prop('to_related_info_type');
-        })->toArray();
-
-        if (!in_array('publication', $types)) {
-            return false;
-        }
-
-        return true;
+        // record needs to be related to a publication
+        return (RelationshipProvider::hasRelatedClass($record,'publication'));
     }
 
     /**
