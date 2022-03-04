@@ -816,10 +816,6 @@ class Registry_object extends MX_Controller {
 		$data['extrif'] = html_entity_decode($ro->getExtRif());
         initEloquent();
 
-        // todo check if solr is not used anywhere
-        // if it's used, use RIFCSIndexProvider::get instead
-		$data['solr'] = "";
-
 		$data['view'] = $ro->transformForHtml();
 		$data['id'] = $ro->id;
 		$data['title'] = $ro->getAttribute('list_title');
@@ -1519,36 +1515,6 @@ class Registry_object extends MX_Controller {
 		$jsonData = json_encode($jsonData);
 		echo $jsonData;
 
-	}
-
-	public function getConnections($ro_id, $limit=null)
-	{
-		$connections = array();
-		$status = array();
-        if($limit && (int)$limit > 0)
-            $party_conn_limit = $limit;
-        else
-            $party_conn_limit = 20;
-		$this->load->model('registry_object/registry_objects', 'ro');
-		$ro = $this->ro->getByID($ro_id);
-		if($ro){
-            // todo use RelationshipSearchService instead
-            if($ro->class == 'party')
-			    $connections = []; // allow drafts
-            else
-                $connections = [];
-			foreach($connections AS &$link)
-			{
-				// Reverse the relationship description (note: this reverses to the "readable" version (i.e. not camelcase))
-				if ($link['registry_object_id'] && in_array($link['origin'], array('REVERSE_EXT','REVERSE_INT')))
-				{
-					$link['relation_type'] = format_relationship($link['class'], $link['relation_type'], $link['origin'], $ro->class);
-				}
-				if($link['status']) $link['readable_status'] = readable($link['status']);
-			}
-		}
-		$status['count'] = sizeof($connections);
-		echo json_encode(array("status"=>$status,"connections"=>$connections));
 	}
 
 
