@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects>
+    <registryObject group="AUTestingRecords2">
+        <key>AUTestingRecords2ScholixRecords54</key>
+        <originatingSource>http://test.ands.org.au/registry/orca/register_my_data</originatingSource>
+        <collection type="publication" dateModified="2016-04-10T23:51:40Z">
+            <identifier type="doi">10.1234/00/Scholix5654</identifier>
+            <identifier type="uri">http://ands.scholix.org.au/5654</identifier>
+            <name type="primary">
+                <namePart>(AUTestingRecords2) Scholix Source Collection type publication With a 2x Identifier, CitationMetadata with multiple contributors.</namePart>
+            </name>
+            <description type="full">Some example description
+            </description>
+            <citationInfo>
+                <citationMetadata>
+                    <identifier type="doi">10.1234/00/Scholix5654</identifier>
+                    <title>
+                        (citation/title) Scholix Source Collection With a Single Identifier, CitationMetadata with multiple contributors and Single RelatedInfo Publication.
+                    </title>
+                    <date type="publicationDate">2001</date>
+                    <contributor>
+                        <namePart>Example contributor single string</namePart>
+                    </contributor>
+                    <contributor>
+                        <namePart>2nd Example contributor single string</namePart>
+                    </contributor>
+                    <publisher>AUTestingRecords2 Citation Publisher</publisher>
+                </citationMetadata>
+            </citationInfo>
+            <relatedObject>
+                <key>AUTestingRecords2ScholixRecords45</key>
+                <relation type="supplements"/>
+            </relatedObject>
+            <relatedInfo type="collection">
+                <title>(AUTestingRecords2) Scholix Source Collection</title>
+                <identifier type="doi">10.1234/00/Scholix5633</identifier>
+                <relation type="references"/>
+            </relatedInfo>
+        </collection>
+    </registryObject>
+</registryObjects>

@@ -189,7 +189,7 @@ class ScholixProvider implements RegistryContentProvider
          * Produces a link to each of the related publication
          */
 
-        $relatedPublications = self::getRelatedPublications($record, $data);
+        $relatedPublications = self::getRelatedPublications($record);
 
         // construct targets
         $targets = [];
@@ -358,43 +358,21 @@ class ScholixProvider implements RegistryContentProvider
      * Returns possible related publications
      *
      * @param RegistryObject $record
-     * @param null $data
      * @return Relation[]
      */
-    public static function getRelatedPublications(RegistryObject $record, $data = null)
+    public static function getRelatedPublications(RegistryObject $record)
     {
-        if (!$data) {
-            $data = MetadataProvider::get($record);
+        $publications = [];
+        $relatedPublications = RelationshipProvider::getRelationByClassAndType($record,'publication',[]);
+        foreach( $relatedPublications as $publication){
+            if ($publication['to_identifier_type'] && in_array($publication['to_identifier_type'], array_keys(self::$validTargetIdentifierTypes))) {
+                $publications[] = $publication;
+             }
+            elseif($publication['to_identifier_type']=='ro:id'){
+            //TODO - need to determine how we discover related collections of type publication
+            }
         }
-
-        $relationships = collect($data['relationships'])->filter(function($item) {
-            $type = $item->prop('to_related_info_type');
-            if (!$type) {
-                $type = $item->prop('to_type');
-            }
-
-            if ($type == 'publication') {
-                return true;
-            }
-
-            // check if the actual object exists, and then check the type
-            if ($to = $item->to()) {
-                if ($to->type == "publication") {
-                    return true;
-                }
-            }
-
-            return false;
-        })->filter(function($item){
-            // remove item with non valid identifier types
-            $identiferType = $item->prop('to_identifier_type');
-            if ($identiferType && !in_array($identiferType, array_keys(self::$validTargetIdentifierTypes))) {
-                return false;
-            }
-            return true;
-        })->toArray();
-
-        return $relationships;
+        return $publications;
     }
 
     /**

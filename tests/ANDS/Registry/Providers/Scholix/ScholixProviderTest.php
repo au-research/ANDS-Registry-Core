@@ -108,12 +108,51 @@ class ScholixProviderTest extends RegistryTestClass
 
     }
 
-    /** test **/
+    /** @test **/
     public function it_should_get_the_right_publication_format()
     {
-        $record = $this->ensureKeyExist("AUTCollectionToTestSearchFields37");
-        $scholix = ScholixProvider::get($record);
+        $party = $this->stub(RegistryObject::class, [
+            'class' => 'party',
+            'type' => 'group',
+            'key' => 'AUTestingRecords2ScholixGroupRecord1'
+        ]);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $party->id,
+            'data' => Storage::disk('test')->get('rifcs/party_scholix_group.xml')
+        ]);
+        $this->myceliumInsert($party);
 
+        /* related party by relatedInfo*/
+        $record18 = $this->stub(RegistryObject::class, [
+            'class' => 'collection',
+            'type' => 'dataset',
+            'key' => 'AUTestingRecords2ScholixRecords18',
+            'group' => $party->title
+        ]);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record18->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_scholix_18.xml')
+        ]);
+        $this->myceliumInsert($record18);
+
+        /* record 18 has related object 54 which is a collection of type publication */
+        $record54 = $this->stub(RegistryObject::class, [
+            'class' => 'collection',
+            'type' => 'dataset',
+            'key' => 'AUTestingRecords2ScholixRecords54',
+            'group' => $party->title
+        ]);
+
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record54->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_scholix_54.xml')
+        ]);
+        $this->myceliumInsert($record54);
+
+        $scholixRelatedPublications = ScholixProvider::getRelatedPublications($record18);
+
+
+/*
         $links = $scholix->toArray();
 
         $this->assertGreaterThan(0, count($links));
@@ -140,7 +179,8 @@ class ScholixProviderTest extends RegistryTestClass
             $this->assertArrayHasKey('objectType', $linkProvider);
             $this->assertArrayHasKey('title', $linkProvider);
             $this->assertArrayHasKey('identifier', $linkProvider);
-        }
+
+        }*/
     }
 
     /** test **/
@@ -171,7 +211,13 @@ class ScholixProviderTest extends RegistryTestClass
         }
     }
 
-    /** (AUTestingRecords2) Simple Scholix Source Collection With No supported identifiers, 1 relatedObject principalInvestigator creator, 1 relatedInfo hasCollector creator and 5 x RelatedInfo Publication with no supported identifiers. 1x relatedObject collection type pub with no identifier. Source is related to party via relatedObject which has the same name as group attribute. Publisher id should be that of the related party.
+    /** (AUTestingRecords2) Simple Scholix Source Collection With No supported identifiers,
+     * 1 relatedObject principalInvestigator creator,
+     * 1 relatedInfo hasCollector creator and
+     * 5 x RelatedInfo Publication with no supported identifiers.
+     * 1x relatedObject collection type pub with no identifier.
+     * Source is related to party via relatedObject which has the same name as group attribute.
+     * Publisher id should be that of the related party.
      * test
      **/
     public function it_should_AUTestingRecords2ScholixRecords60()
