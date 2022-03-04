@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects>
+    <registryObject group="AUTestingRecords2">
+        <key>AUTestingRecords2ScholixRecords16</key>
+        <originatingSource>http://test.ands.org.au/registry/orca/register_my_data</originatingSource>
+        <collection type="collection" dateModified="2016-04-10T23:51:40Z">
+            <name type="primary">
+                <namePart>(AUTestingRecords2) Simple Scholix Source Collection With No identifier, 1 relatedObject principalInvestigator creator, 1 relatedInfo hasCollector creator and Single RelatedInfo Publication. Source is related to party via relatedObject which has the same name as group attribute. Publisher id should be that of the related party.</namePart>
+            </name>
+            <relatedObject>
+                <key>AUTestingRecords3ScholixPartyRecords1</key>
+                <relation type="hasPrincipalInvestigator"/>
+            </relatedObject>
+            <relatedObject>
+                <key>AUTestingRecords2ScholixGroupRecord1</key>
+                <relation type="isManagedBy"/>
+            </relatedObject>
+            <description type="full">Expected Result:
+                A single Link Info Package with a link from the collection key to the publication uri identifier. 2 creators.Publisher id should be that of the related party with the same name as the group attribute.</description>
+            <relatedInfo type="publication">
+                <title>Related Info Title</title>
+                <identifier type="uri">http://www.someExamplePublication.org/Scholix1</identifier>
+                <relation type="hasAssociationWith"/>
+            </relatedInfo>
+            <relatedInfo type="party">
+                <title>Related Info Party Author</title>
+                <identifier type="uri">http://scholixParties.com/ScholixPartyRecords5</identifier>
+                <relation type="isOwnedBy"/>
+            </relatedInfo>
+        </collection>
+    </registryObject>
+</registryObjects>

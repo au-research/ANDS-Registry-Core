@@ -2,6 +2,7 @@
 
 use ANDS\File\Storage;
 use ANDS\RecordData;
+use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 use ANDS\Registry\Providers\Scholix\ScholixProvider;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
@@ -27,8 +28,6 @@ class ScholixProviderTest extends RegistryTestClass
     /** @test **/
     public function it_should_fail_for_nonscholixable_records()
     {
-
-
         // should fail, no related publication
         $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'AUTESTING_MINIMAL_COLLECTION']);
         $this->stub(RecordData::class, [
@@ -51,26 +50,60 @@ class ScholixProviderTest extends RegistryTestClass
 
     }
 
-    /** test **/
+    /** @test **/
     public function it_should_get_the_right_identifier()
     {
-        $partyRecord = $this->ensureKeyExist("AUTestingRecords2ScholixGroupRecord1");
-        $partyRecordIdentifiers = \ANDS\Registry\Providers\RIFCS\IdentifierProvider::get($partyRecord);
+        $party = $this->stub(RegistryObject::class, [
+            'class' => 'party',
+            'type' => 'group',
+            'key' => 'AUTestingRecords2ScholixGroupRecord1'
+        ]);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $party->id,
+            'data' => Storage::disk('test')->get('rifcs/party_scholix_group.xml')
+        ]);
+        $this->myceliumInsert($party);
 
-        $shouldHave = [
-            "AUTestingRecords2ScholixRecords16",
-            "AUTestingRecords2ScholixRecords14",
-            "AUTestingRecords2ScholixRecords18"
-        ];
+        $partyRecordIdentifiers = IdentifierProvider::get($party);
 
         $partyRecordIdentifiers = collect($partyRecordIdentifiers)->pluck('value')->toArray();
 
-        foreach ($shouldHave as $key) {
-            $record = $this->ensureKeyExist($key);
-            $identifiers = ScholixProvider::getIdentifiers($record);
-            foreach ($identifiers as $id) {
-                $this->assertContains($id['identifier'], $partyRecordIdentifiers);
-            }
+        /* related party by reverse relationship */
+        $record14 = $this->stub(RegistryObject::class, [
+            'class' => 'collection',
+            'type' => 'dataset',
+            'key' => 'AUTestingRecords2ScholixRecords14',
+            'group' => $party->title
+        ]);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record14->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_scholix_14.xml')
+        ]);
+        $this->myceliumInsert($record14);
+
+        $identifiers = ScholixProvider::getIdentifiers($record14);
+        $this->assertNotEmpty($identifiers);
+        foreach ($identifiers as $id) {
+            $this->assertContains($id['identifier'], $partyRecordIdentifiers);
+        }
+
+        /* related party by related Object*/
+        $record16 = $this->stub(RegistryObject::class, [
+            'class' => 'collection',
+            'type' => 'dataset',
+            'key' => 'AUTestingRecords2ScholixRecords16',
+            'group' => $party->title
+        ]);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record16->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_scholix_16.xml')
+        ]);
+        $this->myceliumInsert($record16);
+
+        $identifiers = ScholixProvider::getIdentifiers($record16);
+        $this->assertNotEmpty($identifiers);
+        foreach ($identifiers as $id) {
+            $this->assertContains($id['identifier'], $partyRecordIdentifiers);
         }
 
     }

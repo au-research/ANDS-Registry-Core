@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+    <registryObject group="AUTestingRecords2">
+        <key>AUTestingRecords2ScholixGroupRecord1</key>
+        <originatingSource>AUTestingRecords3</originatingSource>
+        <party type="group">
+            <name type="primary">
+                <namePart>AUTestingRecords2</namePart>
+            </name>
+            <identifier type="uri">http://scholixParties.com/AUTestingRecords2GroupIdentifier</identifier>
+            <identifier type="AU-ANL:PEAU">nla.party_AUTestingRecords2GroupIdentifier</identifier>
+            <relatedObject>
+                <key>AUTestingRecords2ScholixRecords14</key>
+                <relation type="isManagerOf"/>
+            </relatedObject>
+        </party>
+    </registryObject>
+</registryObjects>

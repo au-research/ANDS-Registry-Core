@@ -178,7 +178,7 @@ class ScholixProvider implements RegistryContentProvider
         ];
 
         // identifiers
-        $identifiers = self::getIdentifiers($record, $data['relationships']);
+        $identifiers = self::getIdentifiers($record);
         if (count($identifiers) > 0) {
             $commonLinkMetadata['publisher']['identifier'] = $identifiers;
         }
@@ -442,37 +442,25 @@ class ScholixProvider implements RegistryContentProvider
      * @param null $relationships
      * @return array
      */
-    public static function getIdentifiers(RegistryObject $record, $relationships = null)
+    public static function getIdentifiers(RegistryObject $record)
     {
-        if (!$relationships) {
-            $data = MetadataProvider::getSelective($record, ['relationships']);
-            $relationships = $data['relationships'];
-        }
+        $partyRelationships = RelationshipProvider::getRelationByClassAndType($record,'party',[]);
 
-        $party = collect($relationships)->filter(
-            function($relation) use ($record){
-                return $relation->prop('to_class') == 'party'
-                    && $relation->prop('to_title') == $record->group;
+        foreach($partyRelationships as $party){
+            if($party['to_identifier_type'] == 'ro:id' && $party['to_title'] == $party['from_group']) {
+                $party = RegistryObjectsRepository::getRecordByID($party['to_identifier']);
+                $identifiers = collect(IdentifierProvider::get($party))
+                    ->map(function($item){
+                        return [
+                            'identifier' => $item['value'],
+                            'schema' => $item['type']
+                        ];
+                    }
+                    )->toArray();
+                return $identifiers;
             }
-        );
-
-        if ($party->count() == 0) {
-            return [];
         }
-
-        // get 1
-        $party = $party->pop();
-        $party = RegistryObjectsRepository::getRecordByID($party->prop('to_id'));
-        $identifiers = collect(IdentifierProvider::get($party))
-            ->map(function($item){
-                return [
-                    'identifier' => $item['value'],
-                    'schema' => $item['type']
-                ];
-            }
-        )->toArray();
-
-        return $identifiers;
+        return [];
     }
 
     /**

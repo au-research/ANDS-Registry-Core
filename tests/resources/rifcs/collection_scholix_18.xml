@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects>
+<registryObject group="AUTestingRecords2">
+    <key>AUTestingRecords2ScholixRecords18</key>
+    <originatingSource>http://test.ands.org.au/registry/orca/register_my_data</originatingSource>
+    <collection type="collection" dateModified="2016-04-10T23:51:40Z">
+        <identifier type="doi">10.1234/00/Scholix5618</identifier>
+        <name type="primary">
+            <namePart>(AUTestingRecords2) Scholix Source Collection With a Single Identifier, CitationMetadata with startPublicationDate, contributor with multiple nameParts, relatedInfo isOwnedBy creator, reverse relatedInfo hasCollector creator and Single RelatedInfo Publication. Source is related to party via relatedInfo which has the same name as group attribute. Publisher id should be that of the related party.</namePart>
+        </name>
+        <description type="full">Expected Result:
+            1 Link Info Package with a link from the collection doi identifier to the publication uri identifier.
+            &#xD; Source publication date, creator and identifier shall be taken from citationMetadata.
+            &#xD; CitationMetadata Creator name is display name for contributor (all nameParts Firstname, Surname)
+            &#xD; 2nd creator taken from relatedInfo isOwnedBy party.
+            &#xD; 3rd creator taken from reverse relatedInfo isCollectorOf party.
+            &#xD; Publisher id should be that of the related party with the same name as the group attribute.
+        </description>
+        <relatedInfo type="publication">
+            <title>Related Info Title</title>
+            <identifier type="uri">http://www.someExamplePublication.org/Scholix1</identifier>
+            <relation type="hasPart"/>
+        </relatedInfo>
+        <relatedInfo type="party">
+            <title>Related Info Party Author</title>
+            <identifier type="uri">http://scholixParties.com/ScholixPartyRecords2</identifier>
+            <relation type="isOwnedBy"/>
+        </relatedInfo>
+        <relatedInfo type="party">
+            <title>Place holder title for party</title>
+            <identifier type="uri">http://scholixParties.com/AUTestingRecords2GroupIdentifier2</identifier>
+            <relation type="isManagedBy"/>
+        </relatedInfo>
+        <citationInfo>
+            <citationMetadata>
+                <identifier type="doi">10.1234/00/Scholix5618</identifier>
+                <title>
+                    (citation/title) Scholix Source Collection With a Single Identifier, CitationMetadata with contributor with multiple nameParts and Single RelatedInfo Publication.
+                </title>
+                <date type="startPublicationDate">2001-03-05</date>
+                <contributor>
+                    <namePart type="title">Mr</namePart>
+                    <namePart type="family">Scholix</namePart>
+                    <namePart type="given">Contributor</namePart>
+                </contributor>
+                <publisher>AUTestingRecords2 Citation Publisher</publisher>
+            </citationMetadata>
+        </citationInfo>
+    </collection>
+</registryObject>
+</registryObjects>
