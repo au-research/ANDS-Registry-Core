@@ -5,8 +5,7 @@ use ANDS\File\Storage;
 use ANDS\RecordData;
 use ANDS\RegistryObject;
 
-
-class RelationshipSearchServiceTest extends \RegistryTestClass
+class RelationshipSearchServiceTest extends \MyceliumTestClass
 {
     /** @test */
     public function test_search_multiple_to_type()

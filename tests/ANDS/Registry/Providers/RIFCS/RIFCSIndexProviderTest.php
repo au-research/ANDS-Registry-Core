@@ -9,7 +9,7 @@ use ANDS\RegistryObject;
 use ANDS\Util\SolrIndex;
 use MinhD\SolrClient\SolrClient;
 
-class RIFCSIndexProviderTest extends \RegistryTestClass
+class RIFCSIndexProviderTest extends \MyceliumTestClass
 {
 
     public function test_getIndexCollection()

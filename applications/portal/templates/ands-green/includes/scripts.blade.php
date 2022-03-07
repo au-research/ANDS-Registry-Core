@@ -44,8 +44,6 @@
 	@foreach($lib as $l)
 		@if($l=='jquery-ui')
 			<script type="text/javascript" src="{{asset_url('vendor/jquery-ui/jquery-ui.js', 'core')}}"></script>
-		@elseif($l=='dynatree')
-			<script type="text/javascript" src="{{asset_url('vendor/dynatree/dist/jquery.dynatree.js', 'core')}}"></script>
         @elseif($l=='textAngular')
         	<link rel='stylesheet' href="{{asset_url('vendor/textAngular/src/textAngular.css', 'core')}}">
             <script src="{{asset_url('vendor/textAngular/dist/textAngular-rangy.min.js', 'core')}}"></script>

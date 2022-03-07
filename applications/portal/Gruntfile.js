@@ -5,9 +5,8 @@ module.exports = function (grunt) {
     assets: 'core/assets',
     templates: 'templates',
     profile: 'profile',
-
-
-  }
+    node_modules: 'node_modules'
+  };
 
   grunt.initConfig({
     yeoman: yeomanConfig,
@@ -31,7 +30,7 @@ module.exports = function (grunt) {
           '<%= yeoman.templates %>/ands-green/assets/css/swatch-ands-green.css',
           '<%= yeoman.templates %>/ands-green/assets/css/fonts.min.css',
 
-          '<%= yeoman.assets %>/vendor/dynatree/src/skin/ui.dynatree.css',
+          '<%=yeoman.node_modules %>/jquery.fancytree/dist/skin-xp/ui.fancytree.min.css',
           '<%= yeoman.assets %>/vendor/qtip2/jquery.qtip.css',
 
           '<%= yeoman.assets %>/lib/angular-loading-bar/build/loading-bar.min.css',
@@ -69,6 +68,7 @@ module.exports = function (grunt) {
       portal_lib: {
         options: {separator: ';'},
         src: [
+          '<%=yeoman.node_modules %>/jquery.fancytree/dist/jquery.fancytree-all-deps.js',
           '<%=yeoman.assets %>/js/scripts.js',
           'registry_object/assets/js/record_components.js',
           'profile/assets/js/profile_components.js',
@@ -142,6 +142,13 @@ module.exports = function (grunt) {
             cwd: '<%=yeoman.assets %>/css/',
             src: '*.gif',
             dest: '<%=yeoman.assets %>/dist/',
+            filter: 'isFile'
+          },
+          {
+            expand:true,
+            cwd: '<%=yeoman.node_modules %>/jquery.fancytree/dist/skin-xp/',
+            src: '*.gif',
+            dest: '<%=yeoman.assets %>/dist/skin-xp/',
             filter: 'isFile'
           }
         ]

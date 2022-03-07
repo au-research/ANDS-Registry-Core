@@ -7,7 +7,7 @@ use ANDS\Registry\Providers\Scholix\ScholixProvider;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 
-class ScholixProviderTest extends RegistryTestClass
+class ScholixProviderTest extends MyceliumTestClass
 {
     /** @test **/
     public function it_should_return_true_for_scholixable_record()

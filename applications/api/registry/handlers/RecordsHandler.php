@@ -35,6 +35,9 @@ class RecordsHandler extends Handler {
 
         $router->get('records/(\w+)/graph', 'RecordsGraphController@index');
 
+        $router->get('records/(\w+)/nested-collection', 'RecordsNestedCollectionController@index');
+        $router->get('records/(\w+)/nested-collection-children', 'RecordsNestedCollectionController@children');
+
         $router->route(['GET', 'PUT', 'POST'], 'records/(\w+)/sync', 'RecordsController@sync');
 //        dd($router->getMatch());
         return $this->format($router->execute());

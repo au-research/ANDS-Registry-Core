@@ -10,7 +10,7 @@ use ANDS\Registry\Providers\RIFCS\CoreMetadataProvider;
 use ANDS\RegistryObject;
 use ANDS\Util\XMLUtil;
 
-class DataCitationIndexProviderTest extends \RegistryTestClass
+class DataCitationIndexProviderTest extends \MyceliumTestClass
 {
     /** @test
      * @throws \Exception

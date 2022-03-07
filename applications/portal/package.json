@@ -50,7 +50,8 @@
     "@bower_components/jquery-ui": "components/jqueryui#~1.11.2",
     "@bower_components/lodash": "lodash/lodash#4.2.0",
     "@bower_components/mustache": "janl/mustache.js#~1.0.0",
-    "@bower_components/rangy": "timdown/rangy-release#^1.2.0"
+    "@bower_components/rangy": "timdown/rangy-release#^1.2.0",
+    "jquery.fancytree": "^2.38.1"
   },
   "engines": {
     "yarn": ">= 1.0.0"

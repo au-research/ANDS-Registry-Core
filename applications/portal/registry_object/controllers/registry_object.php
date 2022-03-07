@@ -287,7 +287,7 @@ class Registry_object extends MX_Controller
         //Do the rendering
         $this->blade
             ->set('scripts', array('view', 'view_app', 'tag_controller'))
-            ->set('lib', array('jquery-ui', 'dynatree', 'qtip', 'map'))
+            ->set('lib', array('jquery-ui', 'qtip', 'map'))
             ->set('relatedLimit', 5)
             ->set('ro', $ro)
             ->set('resolvedPartyIdentifiers', $resolvedPartyIdentifiers)
@@ -1300,7 +1300,6 @@ class Registry_object extends MX_Controller
                 'reuse-list',
                 'quality-list',
                 'dates-list',
-                'connectiontree',
                 'related-objects-list',
                 'spatial-info',
                 'subjects-list',

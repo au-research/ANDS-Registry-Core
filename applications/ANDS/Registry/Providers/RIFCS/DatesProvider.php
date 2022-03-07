@@ -73,8 +73,6 @@ class DatesProvider implements RIFCSProvider
         }
 
         return $from . $to;
-        dd($from);
-
     }
 
     /**

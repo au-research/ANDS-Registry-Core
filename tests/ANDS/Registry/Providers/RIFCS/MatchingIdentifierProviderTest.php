@@ -7,7 +7,7 @@ use ANDS\File\Storage;
 use ANDS\RecordData;
 use ANDS\RegistryObject;
 
-class MatchingIdentifierProviderTest extends \RegistryTestClass
+class MatchingIdentifierProviderTest extends \MyceliumTestClass
 {
     /** @test */
     function it_gets_the_matching_identifier_record_ids()

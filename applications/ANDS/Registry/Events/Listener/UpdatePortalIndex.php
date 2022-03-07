@@ -92,7 +92,7 @@ class UpdatePortalIndex
     public function updateGrantsNetworkPortalIndex($event){
         $jsonPackets = array();
         $record = RegistryObjectsRepository::getRecordByID($event->registry_object_id);
-        print("updateGrantsNetworkPortalIndex".$event->relationship_types);
+
         if($record->class == "activity" && $event->relationship_types != null){
             $aRelationshipTypes = explode (",", $event->relationship_types );
 

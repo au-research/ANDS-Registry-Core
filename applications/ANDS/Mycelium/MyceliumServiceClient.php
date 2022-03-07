@@ -213,4 +213,31 @@ class MyceliumServiceClient
             "headers" => ['Content-Type' => 'application/json']
         ]);
     }
+
+    public function getNestedCollectionParents($registryObjectId)
+    {
+        Log::debug(__METHOD__, ["id" => $registryObjectId]);
+
+        return $this->client->get("api/services/mycelium/get-nested-collection-parents", [
+            "headers" => [],
+            "query" => [
+                "registryObjectId" => $registryObjectId
+            ]
+        ]);
+    }
+
+    public function getNestedCollectionChildren($registryObjectId, $offset, $limit, $excludeIdentifiers)
+    {
+        Log::debug(__METHOD__ , ["id" => $registryObjectId]);
+
+        return $this->client->get("api/services/mycelium/get-nested-collection-children", [
+            "headers" => [],
+            "query" => [
+                "registryObjectId" => $registryObjectId,
+                "offset" => $offset,
+                "limit" => $limit,
+                "excludeIdentifiers" => $excludeIdentifiers
+            ]
+        ]);
+    }
 }

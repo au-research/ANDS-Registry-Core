@@ -35,6 +35,7 @@
             "engine/helpers/presentation_helper.php",
             "engine/helpers/shared_helper.php",
             "tests/RegistryTestClass.php",
+            "tests/MyceliumTestClass.php",
             "tests/CommandsTestClass.php"
         ]
     },

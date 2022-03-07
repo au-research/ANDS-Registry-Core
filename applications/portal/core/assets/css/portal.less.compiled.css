@@ -782,4 +782,35 @@ a[class*="btn"] {
 [class*="btn"] .panel-body .btn-danger:hover {
   text-decoration: none !important;
 }
+#nested-collection-tree {
+  overflow-y: scroll;
+}
+#nested-collection-tree > ul {
+  border: none;
+}
+.fancytree-selected .fancytree-title {
+  font-weight: bold !important;
+  font-style: italic !important;
+  color: #00819D !important;
+}
+ul.fancytree-container li {
+  background-image: url("./skin-xp/vline.gif") !important;
+}
+.fancytree-exp-n span.fancytree-expander,
+.fancytree-exp-nl span.fancytree-expander {
+  background-image: url("./skin-xp/icons.gif") !important;
+}
+#fancytree-drop-marker,
+span.fancytree-checkbox,
+span.fancytree-drag-helper-img,
+span.fancytree-empty,
+span.fancytree-expander,
+span.fancytree-icon,
+span.fancytree-vline {
+  background-image: url("./skin-xp/icons.gif") !important;
+}
+.fancytree-connectors .fancytree-exp-n span.fancytree-expander,
+.fancytree-connectors .fancytree-exp-nl span.fancytree-expander {
+  background-image: url("./skin-xp/icons.gif") !important;
+}
 /*OVERWRITE*/

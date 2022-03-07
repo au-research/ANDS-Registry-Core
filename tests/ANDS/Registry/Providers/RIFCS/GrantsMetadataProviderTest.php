@@ -7,7 +7,7 @@ use ANDS\File\Storage;
 use ANDS\RecordData;
 use ANDS\RegistryObject;
 
-class GrantsMetadataProviderTest extends \RegistryTestClass
+class GrantsMetadataProviderTest extends \MyceliumTestClass
 {
     /** @test */
     function it_gets_the_grant_metadata()

@@ -6,7 +6,7 @@ use ANDS\File\Storage;
 use ANDS\RecordData;
 use ANDS\RegistryObject;
 
-class AccessProviderTest extends \RegistryTestClass
+class AccessProviderTest extends \MyceliumTestClass
 {
     /** @test */
     public function it_should_know_about_landing_page()

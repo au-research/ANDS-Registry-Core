@@ -12,9 +12,7 @@ use ANDS\RegistryObject;
 use ANDS\Util\XMLUtil;
 use DOMDocument;
 
-define('DB_TRUE',1);
-
-class DublinCoreProviderTest extends \RegistryTestClass
+class DublinCoreProviderTest extends \MyceliumTestClass
 {
     /** @test
      * @throws \Exception
