@@ -144,12 +144,8 @@ $(function(){
 
 	formatTip($('#qa_level_results'));
     processRelatedObjects();
-    if($('#related_objects_table').children().length > 0){
-        $('#related_objects_table').parent().parent().show();
-    }
 
 });
-
 function formatTip(tt){
     var tooltip = tt;
     
@@ -219,14 +215,14 @@ function processRelatedObjects(offset)
              var showRelated = 0;
              var moreToShow = '';
              maxRelated = data.total;
-
+            $('#rorow').show();
 
             $.each(data.contents, function(){
        
                 var id = this.to_identifier;
                 var title = this.to_title;
                 // TODO need to add ro_key to relationships to find exist records in the list
-                var key = "NEED TO ADD THE KEY TO INDEX"//this.key;
+                var key = this.to_key;
                 var ro_class = this.to_class;
                 var status = "PUBLISHED";// we don't index drafts yet!! we should though this.status;
                 if(id)
@@ -251,7 +247,7 @@ function processRelatedObjects(offset)
 
                     if(reverse === false && origin === 'RelatedObject')
                     {
-                        display = true;
+                        $('.resolvedRelated[key_value="'+key+'"]').html(title );
                     }
                     else if(reverse === true && origin === 'RelatedObject')
                     {

@@ -102,7 +102,7 @@
 	<xsl:template match="ro:key">
 		<xsl:value-of select="."/>
 	</xsl:template>
-	
+
 	<!-- xsl:template match="relatedObject/key">
 		<tr>
 			<td class="attribute">
@@ -116,7 +116,7 @@
 	
 	<xsl:template match="ro:relatedObject/ro:key">
 		<tr>
-			<td></td><td class="resolvedRelated" key_value="{.}"></td>
+			<td>Title:</td><td class="resolvedRelated" key_value="{.}"></td>
 		</tr>	
 		<tr>
 			<td class="attribute">

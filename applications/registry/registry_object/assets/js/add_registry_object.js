@@ -1119,20 +1119,64 @@ function initRelatedObjects(){
 	//reverse links and contributors page
 	$('.automated_links').remove();
 	$.ajax({
-		url:base_url+'registry_object/getConnections/'+$('#ro_id').val(), 
-		type: 'POST',
+		url: api_url +'registry/relationships?to_id='+$('#ro_id').val() + '&rows=400',
+		type: 'GET',
+		dataType: 'json',
 		success: function(data){
-			if(data.connections){
-				$.each(data.connections, function(){
-					if(this.origin!='EXPLICIT'){
-						if($('#relatedObjects .automated_links ').length==0){
-							$('#relatedObjects').append('<fieldset class="automated_links"><legend>Other Connections</legend></fieldset>');
+			if(data.contents){
+				var showRelated = 0;
+				var moreToShow = '';
+				maxRelated = data.total;
+				console.log(data);
+				if(data.total > 0){
+					$('#relatedObjects').append('<fieldset class="automated_links"><legend>Other Connections</legend></fieldset>');
+				}
+				$.each(data.contents, function(){
+
+					var id = this.to_identifier;
+					var title = this.to_title;
+					// TODO need to add ro_key to relationships to find exist records in the list
+					var key = this.to_key;
+					var ro_class = this.to_class;
+					var status = "PUBLISHED";// we don't index drafts yet!! we should though this.status;
+					if(id)
+					{
+						title = '<a href="' + base_url + 'registry_object/view/'+id+'">'+title+'</a> <span class="muted">(' + ro_class + ')</span>';
+					}
+					var newRow = '<div class="well">' +
+						'<img class="class_icon" tip="'+this.class+'" style="width:20px;padding-right:10px;" src="'+base_url+'../assets/img/'+ro_class+'.png"/> ' +
+						'<span class="tag status_'+status+'">'+status+'</span> ' +
+						'<a href="'+base_url+'registry_object/view/'+id+'" target="_blank">'+title+'</a>';
+					var display = false;
+					$.each(this.relations, function(){
+						var origin = this.relation_origin;
+						var reverse = this.relation_reverse;
+						var relationship = this.relation_type
+
+						var revStr = '';
+
+						if(reverse === true && origin === 'RelatedObject')
+						{
+							revStr = "<em> (Automatically generated reverse link) </em>";
+							newRow += '<span class="muted">(' + relationship+revStr +')</span>';
+							display = true;
 						}
-
-						if(this.class=='contributor') this.class='party';
-						if(this.relation_type=='(Automatically generated contributor page link)') this.relation_type='Automatically generated contributor page link';
-
-						$('#relatedObjects .automated_links').append('<div class="well"><img class="class_icon" tip="'+this.class+'" style="width:20px;padding-right:10px;" src="'+base_url+'../assets/img/'+this.class+'.png"/> <span class="tag status_'+this.status+'">'+this.readable_status+'</span> <a href="'+base_url+'registry_object/view/'+this.registry_object_id+'" target="_blank">'+this.title+'</a> <span class="muted">('+this.relation_type+')</span></div>');
+						else if(origin === 'PrimaryLink')
+						{
+							revStr = "<em> (Automatically generated primary link) </em>";
+							newRow += '<span class="muted">(' + relationship+revStr +')</span>';
+							display = true;
+						}
+						else if(reverse === true && (origin === 'RelatedInfo' || origin === 'Identifier'))
+						{
+							revStr = "<em> (Automatically generated reverse link by Identifier) </em>";
+							newRow += '<span class="muted">(' + relationship+revStr +')</span>';
+							display = true;
+						}
+					});
+					if(display === true){
+						newRow  += '</span></div>';
+						$('#relatedObjects .automated_links').append(newRow);
 					}
 				});
 			}
