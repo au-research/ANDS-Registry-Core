@@ -190,4 +190,23 @@ class RelationshipProvider
         return $allRelationships;
     }
 
+    /*
+     * Will return a list of  titles of any related party  who has a relationship that is  a funder
+     * - both related objects and related info are returned
+     */
+    public static function getFunders($record)
+    {
+        $funders = [];
+        $search_params = ['from_id'=>$record->id, 'to_class' => 'party', 'relation_type'=>'isFundedBy'];
+        $result = RelationshipSearchService::search($search_params);
+        $funderResult = $result->toArray();
+
+        if(isset($funderResult['contents']) && count($funderResult['contents']) > 0 ){
+            foreach($funderResult['contents'] as $party){
+                $funders[] = $party['to_title'];
+            }
+        }
+        return array_unique($funders);
+    }
+
 }
