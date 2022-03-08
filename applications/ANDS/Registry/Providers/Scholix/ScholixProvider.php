@@ -160,10 +160,10 @@ class ScholixProvider implements RegistryContentProvider
                 'name' => $record->group
             ],
             'linkProvider' => [
-                'name' => 'Australian National Data Service',
+                'name' => 'Australian Research Data Commons',
                 'identifier' => [
                     [
-                        'identifier' =>  'http://nla.gov.au/nla.party-1508909',
+                        'identifier' =>  'https://ror.org/038sjwq14',
                         'schema' => 'url'
                     ]
                 ],
@@ -466,7 +466,7 @@ class ScholixProvider implements RegistryContentProvider
          * relatedObject/party
          * relatedInfo/relation/party
          */
-
+        $creators = [];
         $validRelations = ['hasPrincipalInvestigator', 'hasAuthor', 'coInvestigator', 'isOwnedBy', 'hasCollector', "author"];
         $authors = RelationshipProvider::getRelationByClassAndType($record,'party',$validRelations);
 

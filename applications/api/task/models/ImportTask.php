@@ -259,7 +259,7 @@ class ImportTask extends Task
                     "IndexGraphRelationships",
                     "ProcessAffectedRelationships",
                     "ProcessLinks",
-//                    "ProcessScholix", // TODO: reinstate once Mycelium is integrated correctly
+                    "ProcessScholix",
                     "ProcessQualityMetadata",
                     "IndexPortal",
                     "FinishImport",
@@ -279,7 +279,7 @@ class ImportTask extends Task
                     "IndexGraphRelationships",
                     "ProcessAffectedRelationships",
                     "ProcessLinks", // needed by Link checker
-//                    "ProcessScholix", // TODO: reinstate once Mycelium is integrated correctly
+                    "ProcessScholix",
                     "ProcessQualityMetadata",
                     "IndexPortal",
                     "GenerateISOServiceRecord",
@@ -288,7 +288,7 @@ class ImportTask extends Task
                 break;
             case "MetadataGenerationWorkflow":
                 $tasks = [
-//                    "ProcessScholix", // TODO: reinstate once Mycelium is integrated correctly
+                    "ProcessScholix",
                 ];
                 break;
             case "UpdateRelationshipWorkflow":
@@ -305,7 +305,7 @@ class ImportTask extends Task
                     "ProcessGraphRelationships",
                     "IndexGraphRelationships",
                     "ProcessAffectedRelationships",
-//                    "ProcessScholix", // TODO: reinstate once Mycelium is integrated correctly
+                    "ProcessScholix",
                     "ProcessQualityMetadata",
                     "IndexPortal",
                 ];
@@ -320,7 +320,7 @@ class ImportTask extends Task
                     "ProcessCoreMetadata",
                     "ProcessLinks",
                     "MyceliumImport",
-//                    "ProcessScholix", // TODO: reinstate once Mycelium is integrated correctly
+                    "ProcessScholix",
                     "ProcessQualityMetadata",
                     "IndexPortal",
                 ];
@@ -352,7 +352,7 @@ class ImportTask extends Task
                     "ProcessLinks",
                     "ProcessQualityMetadata",
                     "IndexPortal",
-//                    "ProcessScholix", // TODO: reinstate once Mycelium is integrated correctly
+                    "ProcessScholix",
                     "FinishImport",
                     "ScheduleHarvest"
                 ];
@@ -374,7 +374,7 @@ class ImportTask extends Task
                     "ProcessLinks",
                     "ProcessQualityMetadata",
                     "IndexPortal",
-//                    "ProcessScholix", // TODO: reinstate once Mycelium is integrated correctly
+                    "ProcessScholix",
                     "FinishImport",
                     "WriteImportSummary",
                     "ScheduleHarvest"
