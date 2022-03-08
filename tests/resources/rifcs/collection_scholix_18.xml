@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<registryObjects>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
 <registryObject group="AUTestingRecords2">
     <key>AUTestingRecords2ScholixRecords18</key>
     <originatingSource>http://test.ands.org.au/registry/orca/register_my_data</originatingSource>
@@ -16,10 +18,10 @@
             &#xD; 3rd creator taken from reverse relatedInfo isCollectorOf party.
             &#xD; Publisher id should be that of the related party with the same name as the group attribute.
         </description>
-            <relatedObject>
-                <key>AUTestingRecords2ScholixRecords54</key>
-                <relation type="isSupplementTo"/>
-            </relatedObject>
+        <relatedObject>
+            <key>AUTestingRecords2ScholixRecords54</key>
+            <relation type="isSupplementTo"/>
+        </relatedObject>
         <relatedInfo type="publication">
             <title>Related Info Title</title>
             <identifier type="uri">http://www.someExamplePublication.org/Scholix1</identifier>

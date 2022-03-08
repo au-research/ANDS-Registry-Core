@@ -23,6 +23,8 @@ class ScholixProviderTest extends MyceliumTestClass
 
         $result = ScholixProvider::isScholixable($record);
         $this->assertTrue($result);
+
+        $this->myceliumDelete($record);
     }
 
     /** @test **/
@@ -37,16 +39,18 @@ class ScholixProviderTest extends MyceliumTestClass
         $this->myceliumInsert($record);
         $result = ScholixProvider::isScholixable($record);
         $this->assertFalse($result);
+        $this->myceliumDelete($record);
 
         // should fail, is a party
-        $record = $this->stub(RegistryObject::class, ['class' => 'party','type' => 'person','key' => 'AODN/Aalbersberg,BillAUT3bb']);
+        $record2 = $this->stub(RegistryObject::class, ['class' => 'party','type' => 'person','key' => 'AODN/Aalbersberg,BillAUT3bb']);
         $this->stub(RecordData::class, [
-            'registry_object_id' => $record->id,
+            'registry_object_id' => $record2->id,
             'data' => Storage::disk('test')->get('rifcs/party_quality.xml')
         ]);
-        $this->myceliumInsert($record);
-        $result = ScholixProvider::isScholixable($record);
+        $this->myceliumInsert($record2);
+        $result = ScholixProvider::isScholixable($record2);
         $this->assertFalse($result);
+        $this->myceliumDelete($record2);
 
     }
 
@@ -106,6 +110,10 @@ class ScholixProviderTest extends MyceliumTestClass
             $this->assertContains($id['identifier'], $partyRecordIdentifiers);
         }
 
+        $this->myceliumDelete($party);
+        $this->myceliumDelete($record14);
+        $this->myceliumDelete($record16);
+
     }
 
     /** @test **/
@@ -138,7 +146,7 @@ class ScholixProviderTest extends MyceliumTestClass
         /* record 18 has related object 54 which is a collection of type publication */
         $record54 = $this->stub(RegistryObject::class, [
             'class' => 'collection',
-            'type' => 'dataset',
+            'type' => 'publication',
             'key' => 'AUTestingRecords2ScholixRecords54',
             'group' => $party->title
         ]);
@@ -151,8 +159,14 @@ class ScholixProviderTest extends MyceliumTestClass
 
         $scholixRelatedPublications = ScholixProvider::getRelatedPublications($record18);
 
+        $this->assertNotEmpty($scholixRelatedPublications);
+        foreach ($scholixRelatedPublications as $publication) {
+            $this->assertEquals($publication['to_type'], 'publication');
+        }
 
-/*
+        $scholix = ScholixProvider::get($record18);
+
+
         $links = $scholix->toArray();
 
         $this->assertGreaterThan(0, count($links));
@@ -169,9 +183,8 @@ class ScholixProviderTest extends MyceliumTestClass
             // each publisher has a name
             $publisher = $link['link']['publisher'];
             $this->assertArrayHasKey('name', $publisher);
-
             // name is group
-            $this->assertEquals($record->group, $publisher['name']);
+            $this->assertEquals($record18->group, $publisher['name']);
 
             // linkProvider
             $linkProvider = $link['link']['linkProvider'];
@@ -179,8 +192,25 @@ class ScholixProviderTest extends MyceliumTestClass
             $this->assertArrayHasKey('objectType', $linkProvider);
             $this->assertArrayHasKey('title', $linkProvider);
             $this->assertArrayHasKey('identifier', $linkProvider);
+        }
 
-        }*/
+        // test source identifier
+        $sourceIdentiferTypes = collect($scholix->getLinks())
+            ->pluck('link')->pluck('source')->pluck('identifier')->flatten(1)->pluck('schema');
+        foreach ($sourceIdentiferTypes as $type) {
+            $this->assertContains($type, array_values(ScholixProvider::$validSourceIdentifierTypes));
+        }
+
+        // test target identifier
+        $targetIdentifierTypes = collect($scholix->getLinks())
+            ->pluck('link')->pluck('target')->pluck('identifier')->flatten(1)->pluck('schema');
+        foreach ($targetIdentifierTypes as $type) {
+            $this->assertContains($type, array_values(ScholixProvider::$validTargetIdentifierTypes));
+        }
+
+        $this->myceliumDelete($party);
+        $this->myceliumDelete($record18);
+        $this->myceliumDelete($record54);
     }
 
     /** test **/
@@ -195,7 +225,7 @@ class ScholixProviderTest extends MyceliumTestClass
         $sourcesIdentifiers = collect($links)->pluck('link.source.identifier')->flatten();
 
         // each identifier has a source
-        $identifiers = collect(\ANDS\Registry\Providers\RIFCS\IdentifierProvider::get($record))->filter(function($identifier) {
+        $identifiers = collect(IdentifierProvider::get($record))->filter(function($identifier) {
             return in_array($identifier['type'], ScholixProvider::$validSourceIdentifierTypes);
         })->flatten();
 
