@@ -160,7 +160,7 @@ class ScholixProvider implements RegistryContentProvider
                 'name' => $record->group
             ],
             'linkProvider' => [
-                'name' => 'Australian Research Data Commons',
+                'name' => 'ARDC',
                 'identifier' => [
                     [
                         'identifier' =>  'https://ror.org/038sjwq14',
