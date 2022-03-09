@@ -8,9 +8,10 @@ use ANDS\File\Storage;
 use ANDS\RecordData;
 use ANDS\Registry\Providers\Quality\QualityMetadataProvider;
 use ANDS\Registry\Providers\Quality\Types;
+use ANDS\Registry\Providers\RIFCS\CoreMetadataProvider;
 use ANDS\RegistryObject;
 
-class QualityMetadataReportTest extends \RegistryTestClass
+class QualityMetadataReportTest extends \MyceliumTestClass
 {
     /** @test
      * @throws \Exception
@@ -49,17 +50,26 @@ class QualityMetadataReportTest extends \RegistryTestClass
      */
     function it_passes_related_object_party_for_collection()
     {
-        // given a record
-        $record = $this->stub(RegistryObject::class, ['class' => 'collection']);
+        // given a record with an author (party)
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'AUT_QUALITY_COLLECTION']);
         $this->stub(RecordData::class, [
             'registry_object_id' => $record->id,
-            'data' => Storage::disk('test')->get('rifcs/collection_minimal.xml')
+            'data' => Storage::disk('test')->get('rifcs/collection_for_related_quality_md.xml')
+        ]);
+        $this->myceliumInsert($record);
+
+        // with an author (party)
+        $party = $this->stub(RegistryObject::class, ['class' => 'party','type' => 'group','key' => 'AUT_QUALITY_PARTY']);
+
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $party->id,
+            'data' => Storage::disk('test')->get('rifcs/party_for_related_quality_md.xml')
         ]);
 
-        // relates to a party
-        $party = $this->stub(RegistryObject::class, ['class' => 'party']);
-        $this->stub(RegistryObject\Relationship::class, ['registry_object_id' => $record->id, 'related_object_key' => $party->key]);
-
+        $this->myceliumInsert($party);
+        // author address with lines are present
+        CoreMetadataProvider::process($record);
+        CoreMetadataProvider::process($party);
         // when get reports
         $report = QualityMetadataProvider::getMetadataReport($record);
 
@@ -74,15 +84,27 @@ class QualityMetadataReportTest extends \RegistryTestClass
     function it_passes_reverse_related_party_for_collection()
     {
         // given a record
-        $record = $this->stub(RegistryObject::class, ['class' => 'collection']);
+        // given a record with an author (party)
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'AUT_QUALITY_COLLECTION_2']);
         $this->stub(RecordData::class, [
             'registry_object_id' => $record->id,
-            'data' => Storage::disk('test')->get('rifcs/collection_minimal.xml')
+            'data' => Storage::disk('test')->get('rifcs/collection_for_reverse_related_party_quality_md.xml')
+        ]);
+        $this->myceliumInsert($record);
+
+        // with an author (party)
+        $party = $this->stub(RegistryObject::class, ['class' => 'party','type' => 'group','key' => 'AUT_QUALITY_PARTY']);
+
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $party->id,
+            'data' => Storage::disk('test')->get('rifcs/party_for_related_quality_md.xml')
         ]);
 
-        // reverse relates to a party
-        $party = $this->stub(RegistryObject::class, ['class' => 'party']);
-        $this->stub(RegistryObject\Relationship::class, ['registry_object_id' => $party->id, 'related_object_key' => $record->key]);
+        $this->myceliumInsert($party);
+
+        // author address with lines are present
+        CoreMetadataProvider::process($record);
+        CoreMetadataProvider::process($party);
 
         // when get reports
         $report = QualityMetadataProvider::getMetadataReport($record);
@@ -97,16 +119,26 @@ class QualityMetadataReportTest extends \RegistryTestClass
      */
     function it_passes_related_object_activity_for_collection()
     {
-        // given a record
-        $record = $this->stub(RegistryObject::class, ['class' => 'collection']);
+        // given a record with an author (party)
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'AUT_QUALITY_COLLECTION']);
         $this->stub(RecordData::class, [
             'registry_object_id' => $record->id,
-            'data' => Storage::disk('test')->get('rifcs/collection_minimal.xml')
+            'data' => Storage::disk('test')->get('rifcs/collection_for_related_quality_md.xml')
+        ]);
+        $this->myceliumInsert($record);
+
+        // with an author (party)
+        $activity = $this->stub(RegistryObject::class, ['class' => 'activity','type' => 'grant','key' => 'AUT_QUALITY_ACTIVITY']);
+
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $activity->id,
+            'data' => Storage::disk('test')->get('rifcs/activity_for_related_quality_md.xml')
         ]);
 
-        // relates to an activity
-        $party = $this->stub(RegistryObject::class, ['class' => 'activity']);
-        $this->stub(RegistryObject\Relationship::class, ['registry_object_id' => $record->id, 'related_object_key' => $party->key]);
+        $this->myceliumInsert($activity);
+        // author address with lines are present
+        CoreMetadataProvider::process($record);
+        CoreMetadataProvider::process($activity);
 
         // when get reports
         $report = QualityMetadataProvider::getMetadataReport($record);
@@ -121,16 +153,25 @@ class QualityMetadataReportTest extends \RegistryTestClass
      */
     function it_passes_related_object_service_for_collection()
     {
-        // given a record
-        $record = $this->stub(RegistryObject::class, ['class' => 'collection']);
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'AUT_QUALITY_COLLECTION']);
         $this->stub(RecordData::class, [
             'registry_object_id' => $record->id,
-            'data' => Storage::disk('test')->get('rifcs/collection_minimal.xml')
+            'data' => Storage::disk('test')->get('rifcs/collection_for_related_quality_md.xml')
+        ]);
+        $this->myceliumInsert($record);
+
+        // with an author (party)
+        $service = $this->stub(RegistryObject::class, ['class' => 'service','type' => 'OGC:WMF','key' => 'AUT_QUALITY_SERVICE']);
+
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $service->id,
+            'data' => Storage::disk('test')->get('rifcs/service_for_related_quality_md.xml')
         ]);
 
-        // relates to an activity
-        $party = $this->stub(RegistryObject::class, ['class' => 'service']);
-        $this->stub(RegistryObject\Relationship::class, ['registry_object_id' => $record->id, 'related_object_key' => $party->key]);
+        $this->myceliumInsert($service);
+        // author address with lines are present
+        CoreMetadataProvider::process($record);
+        CoreMetadataProvider::process($service);
 
         // when get reports
         $report = QualityMetadataProvider::getMetadataReport($record);

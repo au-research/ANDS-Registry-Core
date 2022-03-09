@@ -14,7 +14,7 @@
             <relatedObject>
                 <key>AUT_DCI_PARTY</key>
                 <relation type="isFundedBy"/>
-            </relatedObject>isFundedBy
+            </relatedObject>
             <relatedObject>
                 <key>AUTestingRecords3:Funder/Program12/Hub1</key>
                 <relation type="isPartOf"/>
