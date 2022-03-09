@@ -25,7 +25,7 @@ class Citations extends ROHandler {
         $record = RegistryObject::find($this->ro->id);
 
         if ($this->xml) {
-            $coins = $this->getCoinsSpan();
+            $coins = $this->getCoinsSpan($record);
             foreach($this->xml->{$this->ro->class}->citationInfo as $citation){
                 foreach($citation->citationMetadata as $citationMetadata){
                     $contributors = Array();
