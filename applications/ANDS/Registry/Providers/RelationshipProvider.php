@@ -203,6 +203,7 @@ class RelationshipProvider
 
         if(isset($funderResult['contents']) && count($funderResult['contents']) > 0 ){
             foreach($funderResult['contents'] as $party){
+                if(array_key_exists('to_title', $party))
                 $funders[] = $party['to_title'];
             }
         }

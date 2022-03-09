@@ -30,20 +30,21 @@ class GrantsMetadataProvider implements RIFCSProvider
      */
     public static function getIndexableArray(RegistryObject $record)
     {
-       return [
-            "activity_status" => GrantsMetadataProvider::getActivityStatus($record),
-            "funding_amount" => GrantsMetadataProvider::getFundingAmount($record),
-            "funding_scheme" => GrantsMetadataProvider::getFundingScheme($record),
-            "funding_scheme_search" => GrantsMetadataProvider::getFundingScheme($record),
-            "administering_institution" => GrantsMetadataProvider::getAdministeringInstitutions($record),
-            "institutions" => GrantsMetadataProvider::getInstitutions($record),
-            "funders" => RelationshipProvider::getFunders($record),
-            "researchers" => GrantsMetadataProvider::getResearchers($record),
-            "principal_investigator" => GrantsMetadataProvider::getPrincipalInvestigator($record),
-            "earliest_year" => GrantsMetadataProvider::getEarliestyear($record),
-            "latest_year" => GrantsMetadataProvider::getLatestYear($record)
-         ];
+       $indexableArray = [];
 
+       $indexableArray["activity_status"] = GrantsMetadataProvider::getActivityStatus($record);
+       $indexableArray["funding_amount"] = GrantsMetadataProvider::getFundingAmount($record);
+       $indexableArray["funding_scheme"] = GrantsMetadataProvider::getFundingScheme($record);
+       $indexableArray["funding_scheme_search"] = GrantsMetadataProvider::getFundingScheme($record);
+       $indexableArray["administering_institution"] = GrantsMetadataProvider::getAdministeringInstitutions($record);
+       $indexableArray["institutions"] = GrantsMetadataProvider::getInstitutions($record);
+       $indexableArray["funders"] = RelationshipProvider::getFunders($record);
+       $indexableArray["researchers"] = GrantsMetadataProvider::getResearchers($record);
+       $indexableArray["principal_investigator"] = GrantsMetadataProvider::getPrincipalInvestigator($record);
+       $indexableArray["earliest_year"] = GrantsMetadataProvider::getEarliestyear($record);
+       $indexableArray["latest_year"] = GrantsMetadataProvider::getLatestYear($record);
+
+        return $indexableArray;
     }
 
     /*
@@ -132,6 +133,7 @@ class GrantsMetadataProvider implements RIFCSProvider
         $administeringInstitutions = $result->toArray();
         if(isset($administeringInstitutions['contents']) && count($administeringInstitutions['contents']) > 0 ){
             foreach($administeringInstitutions['contents'] as $party){
+                if(array_key_exists('to_title', $party))
                 $administeringInstitution[] = $party['to_title'];
             }
         }
@@ -158,9 +160,9 @@ class GrantsMetadataProvider implements RIFCSProvider
                         $include = false;
                     }
                     //to do - determine if we include the institution if only one of multilple relationships are funding
-                    if($include === true) $institutions[] = $party['to_title'];
+                    if($include === true && array_key_exists('to_title', $party))
+                        $institutions[] = $party['to_title'];
                 }
-                //if($include === true) $institutions = $party['to_title'];
             }
         }
         return array_unique($institutions);
@@ -195,6 +197,7 @@ class GrantsMetadataProvider implements RIFCSProvider
 
         if(isset($researcherResult['contents']) && count($researcherResult['contents']) > 0 ){
            foreach($researcherResult['contents'] as $researcher){
+               if(array_key_exists('to_title', $researchers))
                 $researchers[] = $researcher['to_title'];
            }
         }
@@ -221,6 +224,7 @@ class GrantsMetadataProvider implements RIFCSProvider
         $investigatorResult = $result->toArray();
         if(isset($investigatorResult['contents']) && count($investigatorResult['contents']) > 0 ){
             foreach($investigatorResult['contents'] as $investigator){
+                if(array_key_exists('to_title', $investigator))
                 $principalInvestigator[] = $investigator['to_title'];
             }
         }
