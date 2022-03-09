@@ -15,17 +15,16 @@ class MyceliumTestClass extends RegistryTestClass
 
     public function tearDown()
     {
-        parent::tearDown();
-
         if (!$this->dataSource) {
             return;
         }
 
         $myceliumServiceClient = new \ANDS\Mycelium\MyceliumServiceClient(\ANDS\Util\Config::get('mycelium.url'));
 
-        // find records that belongs to test data source
+        // find records that belong to the test data source
         $records = RegistryObject::where('data_source_id', $this->dataSource->id);
 
+        // delete records in mycelium
         if ($records->count() > 0) {
             foreach ($records as $record) {
                 $this->myceliumDelete($record);
@@ -34,6 +33,9 @@ class MyceliumTestClass extends RegistryTestClass
 
         // delete the datasource in Mycelium
         $myceliumServiceClient->deleteDataSource($this->dataSource);
+
+        // run parent::tearDown after to remove test artefacts
+        parent::tearDown();
     }
 
     public function myceliumInsert(RegistryObject $record){
