@@ -454,7 +454,6 @@ class Registry_object extends MX_Controller {
 		header('Content-type: application/json');
 		set_exception_handler('json_exception_handler');
 
-		$this->load->library('importer');
 		$data = $this->input->post('data');
 
 		acl_enforce('REGISTRY_USER');

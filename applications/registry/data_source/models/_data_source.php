@@ -318,7 +318,6 @@ class _data_source {
     }
 
     function reindexAllRecords() {
-        $this->_CI->load->library('importer');
 
         $targetRecords = array();
 
