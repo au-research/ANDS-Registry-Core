@@ -356,7 +356,9 @@ function initConnectionGraph() {
 			data.tree.visit(function(node) {
 				visitNode(node);
 			});
-			if (data.tree.count() > 0) {
+
+			// only display the tree if there are more than 1 nodes
+			if (data.tree.count() > 1) {
 				$("#nested-collection-tree-container").show();
 			}
 		},
