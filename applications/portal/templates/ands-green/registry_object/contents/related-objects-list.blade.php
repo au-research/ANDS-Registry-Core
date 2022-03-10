@@ -1,4 +1,5 @@
 @if(true)
+    @if($ro->core['class']=='collection')
     <div id="nested-collection-tree-container" class="panel panel-primary element-no-top element-short-bottom panel-content">
         <div class="panel panel-primary panel-content swatch-white">
             <!-- <div class="panel-heading">Connection Tree</div> -->
@@ -12,6 +13,7 @@
             </div>
         </div>
     </div>
+    @endif
 
     <div class="clearfix"></div>
     <div class="panel panel-primary element-no-top element-short-bottom panel-content">
