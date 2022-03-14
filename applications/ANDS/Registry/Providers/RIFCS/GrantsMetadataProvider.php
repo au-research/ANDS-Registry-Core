@@ -33,16 +33,28 @@ class GrantsMetadataProvider implements RIFCSProvider
        $indexableArray = [];
 
        $indexableArray["activity_status"] = GrantsMetadataProvider::getActivityStatus($record);
-       $indexableArray["funding_amount"] = GrantsMetadataProvider::getFundingAmount($record);
-       $indexableArray["funding_scheme"] = GrantsMetadataProvider::getFundingScheme($record);
-       $indexableArray["funding_scheme_search"] = GrantsMetadataProvider::getFundingScheme($record);
+
+
        $indexableArray["administering_institution"] = GrantsMetadataProvider::getAdministeringInstitutions($record);
        $indexableArray["institutions"] = GrantsMetadataProvider::getInstitutions($record);
        $indexableArray["funders"] = RelationshipProvider::getFunders($record);
        $indexableArray["researchers"] = GrantsMetadataProvider::getResearchers($record);
        $indexableArray["principal_investigator"] = GrantsMetadataProvider::getPrincipalInvestigator($record);
-       $indexableArray["earliest_year"] = GrantsMetadataProvider::getEarliestyear($record);
-       $indexableArray["latest_year"] = GrantsMetadataProvider::getLatestYear($record);
+
+       // if the following fields do not exist - do not set the array fields
+        if(GrantsMetadataProvider::getFundingAmount($record))
+            $indexableArray["funding_amount"] = GrantsMetadataProvider::getFundingAmount($record);
+
+        if(GrantsMetadataProvider::getFundingScheme($record)) {
+            $indexableArray["funding_scheme"] = GrantsMetadataProvider::getFundingScheme($record);
+            $indexableArray["funding_scheme_search"] = GrantsMetadataProvider::getFundingScheme($record);
+        }
+
+        if(GrantsMetadataProvider::getEarliestyear($record))
+            $indexableArray["earliest_year"] = GrantsMetadataProvider::getEarliestyear($record);
+
+        if(GrantsMetadataProvider::getLatestYear($record))
+            $indexableArray["latest_year"] = GrantsMetadataProvider::getLatestYear($record);
 
         return $indexableArray;
     }
@@ -258,7 +270,7 @@ class GrantsMetadataProvider implements RIFCSProvider
      * @param RegistryObject $record
      * @return bool|string
      */
-    function getLatestYear($record)
+    public static function getLatestYear($record)
     {
         $latestYear = false;
         $recordData = $record->getCurrentData();

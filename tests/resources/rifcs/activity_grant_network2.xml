@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
     <registryObject group="National Health and Medical Research Council">
-        <key>http://purl.org/au-research/grants/nhmrc/910167</key>
+        <key>ACTIVITY_GRANT_NETWORK</key>
         <originatingSource>www.nhmrc.gov.au/grants/research-funding-statistics-and-data</originatingSource>
         <activity type="grant">
             <identifier type="purl">http://purl.org/au-research/grants/nhmrc/910167</identifier>
@@ -26,14 +26,7 @@
             <subject type="local">keratoprosthesis</subject>
             <subject type="local">cornea</subject>
             <subject type="local">Basic Science</subject>
-            <subject type="anzsrc-for">Vision & Ophthalmology</subject>
-            <existenceDates>
-                <startDate dateFormat="W3CDTF">1991</startDate>
-                <endDate dateFormat="W3CDTF">1994</endDate>
-            </existenceDates>
-            <description type="researchers">Prof Ian Jeffrey Constable</description>
-            <description type="fundingAmount">$AUD 349,959.63</description>
-            <description type="fundingScheme">NHMRC Project Grants</description>
+            <subject type="anzsrc-for">Vision Ophthalmology</subject>
             <description type="notes">Standard Project Grant</description>
         </activity>
     </registryObject>
