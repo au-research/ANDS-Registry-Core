@@ -296,14 +296,20 @@ function initConnectionGraph() {
 				// only add paging node if it doesn't already have one
 				if (!hasPagingNode) {
 
-					let offset = n.children.length + 1;
-					let excludeIDs = "";
+					let offset = n.children.length - 1;
+					let excludeIDs = [];
 
 					// special case, if there's exactly 1 children (initial load)
 					if (n.children.length === 1) {
-						excludeIDs = "" + n.children[0].data.identifier;
-						offset -= 1;
+						excludeIDs.push(n.children[0].data.identifier);
+						offset = offset > 0 ? offset - 1 : offset;
 					}
+
+					// exclude the current record (because it should already loaded)
+					excludeIDs.push($("#ro_id").val());
+
+					// comma separated
+					excludeIDs = excludeIDs.join();
 
 					n.addPagingNode({
 						title: "Load More...",
@@ -320,10 +326,12 @@ function initConnectionGraph() {
 	// initialise the fancytree for nested collection
 	$("#nested-collection-tree").fancytree({
 		activeVisible: true,
+
 		source: {
 			url: api_url + 'registry/records/'+$('#ro_id').val()+'/nested-collection',
 			cache: false
 		},
+
 		icon: function(event, data) {
 			if (data.node.icon !== false) {
 				return "fa fa-folder-open icon-portal";
@@ -381,9 +389,11 @@ function initConnectionGraph() {
 			data.node.replaceWith({
 				url: data.node.data.url
 			}).done(function(data){
-				$("#nested-collection-tree").fancytree("getTree").visit(function(n) {
-					visitNode(n);
-				});
+				if (data && data.length > 0) {
+					$("#nested-collection-tree").fancytree("getTree").visit(function(n) {
+						visitNode(n);
+					});
+				}
 			});
 		},
 
