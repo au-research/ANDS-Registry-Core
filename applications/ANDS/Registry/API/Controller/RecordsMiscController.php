@@ -8,6 +8,7 @@ use ANDS\Registry\Providers\DCI\DataCitationIndexProvider;
 use ANDS\Registry\Providers\DublinCore\DublinCoreProvider;
 use ANDS\Registry\Providers\ORCID\ORCIDProvider;
 use ANDS\Registry\Providers\ORCID\ORCIDRecord;
+use ANDS\Registry\Providers\Quality\QualityMetadataProvider;
 use ANDS\Registry\Providers\RIFCS\JsonLDProvider;
 use ANDS\Repository\RegistryObjectsRepository;
 
@@ -97,6 +98,12 @@ class RecordsMiscController
     {
         $record = RegistryObjectsRepository::getRecordByID($id);
         return MyceliumImportPayloadProvider::get($record);
+    }
+
+    public function quality($id)
+    {
+        $record = RegistryObjectsRepository::getRecordByID($id);
+        return QualityMetadataProvider::getMetadataReport($record);
     }
 
     private function printXML($xml)
