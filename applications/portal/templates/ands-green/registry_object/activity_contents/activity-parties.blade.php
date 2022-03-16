@@ -1,27 +1,26 @@
 <?php
     $order = Array('isFundedBy','isManagedBy','isAdministeredBy');
+    $processed = array();
 ?>
+{{--
+use the order to find organisations to display in the header
+if an organisation exists with that given relationship
+display it but only once
+store the relationship and title of the organisation in an array to stop them being displayed multiple times
+
+--}}
 @if($related['organisations'] && $related['organisations']['total'] > 0)
 
-    @foreach ($related['organisations']['contents'] as $col)
-        <?php
-        $result = array();
-        foreach ($col['relations'] as $element) {
-            $relation_type_text = $element['relation_type_text'];
-            $to_identifier = $element['to_identifier'];
-            $result[$relation_type_text][$to_identifier] = $element;
-        }
-        ?>
-        @foreach($order as $o)
-            @foreach ($result as $rel=>$to_id)
-                @if($to_id[$col['to_identifier']]['relation_type'] == $o)
+    @foreach($order as $o)
+        @foreach ($related['organisations']['contents'] as $col)
+            @foreach ($col['relations'] as $element)
+                @if($element['relation_type'] == $o && !in_array($element['relation_type'].$col['to_title'], $processed))
                     <br/>
-                    <strong>{{$to_id[$to_identifier]['relation_type_text']}}</strong>
-                    <a href="{{ $col['to_url'] }}"
-                       class="ro_preview"
-                       ro_id="{{ $col['to_identifier'] }}">
+                    <strong>{{ $element['relation_type_text']}}</strong>
+                    <a href="{{ $col['to_url'] }}" class="ro_preview" ro_id="{{ $col['to_identifier'] }}">
                         {{ trim($col['to_title']) }}
                     </a>
+                   <?php $processed[] = $element['relation_type'].$col['to_title'];?>
                 @endif
             @endforeach
         @endforeach

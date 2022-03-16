@@ -49,6 +49,9 @@ class Paginator
 
             // set relation_internal and relation_reverse to proper boolean value
             $item['relations'] = collect($item['relations'])->map(function ($relation) {
+                if(!isset($relation['relation_type_text'])){
+                    return null;
+                }
                 if (isset($relation['relation_internal'])) {
                     $relation['relation_internal'] = boolval($relation['relation_internal']);
                 }
@@ -65,7 +68,7 @@ class Paginator
 
                 return $relation;
             })->toArray();
-
+            $item['relations'] = array_filter($item['relations']);
             unset($item['_root_']);
             unset($item['_version_']);
 
