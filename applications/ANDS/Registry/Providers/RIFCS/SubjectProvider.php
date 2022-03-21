@@ -319,7 +319,7 @@ class SubjectProvider implements RIFCSProvider
 
         foreach ($subjects as $key => $subject) {
             $unresolved[] = (string) $key;
-            $resolved[] = (string) $subject['resolved'];
+            $resolved[] =  html_entity_decode((string) $subject['resolved'], ENT_QUOTES);
             $types[] = (string) $subject['type'];
             $uris[] = (string) $subject['uri'];
         }
