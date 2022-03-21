@@ -583,6 +583,7 @@ Content:text/plain; charset="utf-8"
                 $authors = RelationshipProvider::getRelationByClassAndType($record, "party", $relationshipType);
                 foreach($authors as $author){
                     $to_id = ($author['to_identifier_type'] == "ro:id") ? $author['to_identifier'] : '';
+                    if(array_key_exists('to_title', $author))
                     $contributors[] = array(
                         'name' => $author['to_title'],
                         'seq' => '',

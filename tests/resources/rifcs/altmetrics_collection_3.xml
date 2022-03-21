@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+    <registryObject group="AUTestingRecords">
+        <key>AUTestingRecords2AltmetricsRecords12b</key>
+        <originatingSource type="">http://researchdata.ands.org.au/registry/orca/register_my_data</originatingSource>
+        <collection type="collection" dateModified="2013-02-04T01:52:49Z" dateAccessioned="2013-01-17T00:00:00Z">
+            <name type="primary">
+                <namePart>(AUTestingRecords)Almetric Collection(collection) with NO citation and relatedObject parties (isOwnedBy &amp; hasPrincipalInvestigator)</namePart>
+            </name>
+            <name type="alternative">
+                <namePart>(AUTestingRecords)Yarra Range Information Communication Technology survey, 2011</namePart>
+            </name>
+            <description type="brief">&amp;lt;p&amp;gt;Lateral Plains and the University of Ballarat’s Centre for eCommerce and Communications were commissioned by Yarra Ranges Council to undertake research to extend understanding of how better information communication technology (ICT) infrastructure and its use can lead to greater levels of innovation across the municipality.&amp;lt;/p&amp;gt; &amp;lt;p&amp;gt;The online survey was completed between the period- March, 2011- April, 2011. 275 valid responses were received.&amp;lt;/p&amp;gt; &amp;lt;p&amp;gt;An ICT survey in online and hardcopy formats was used to gather an evidence base to support ICT. This dataset is spatially representing the results of the survey.&amp;lt;/p&amp;gt;</description>
+            <rights>
+                <rightsStatement>Except as set out otherwise in these terms and conditions, you are provided with accessto this application only for your personal use and you may not without our written permissionon-sell or rebadge information obtained from this web site, or in any way represent that theinformation is from any source other than Federation University Australia.</rightsStatement>
+                <accessRights>Summary available online. Qualitatitve data may be available by contacting CeCC</accessRights>
+            </rights>
+            <identifier type="uri">http://researchonline.federation.edu.au:8080/vital/accesasdfsdfCI06AUTba1</identifier>
+            <dates type="dc.created">
+                <date type="dateFrom" dateFormat="W3CDTF">2011-04-22T00:00:00Z</date>
+            </dates>
+            <location>
+                <address>
+          <electronic type="url">
+            <value>http://yarraranges.cecc.com.au/yarra_map.php</value>
+          </electronic>
+          <electronic type="email">
+            <value>h.thompson@federation.edu.au</value>
+          </electronic>
+        </address>
+            </location>
+            <coverage>
+                <temporal>
+                    <date type="dateFrom" dateFormat="W3CDTF">2011-03-18T00:00:00Z</date>
+                    <date type="dateTo" dateFormat="W3CDTF">2011-08-18T00:00:00Z</date>
+                </temporal>
+                <spatial type="kmlPolyCoords">145.690417,-37.735972</spatial>
+            </coverage>
+            <subject type="local">Mobile Phone Coverage</subject>
+            <subject type="local">Internet access</subject>
+            <subject type="local">Telecommunications</subject>
+            <subject type="local">Information Technology</subject>
+            <subject type="anzsrc-for">0805</subject>
+            <subject type="anzsrc-for">0806</subject>
+            <relatedInfo type="publication">
+                <title>Broadband economy Report, 2011</title>
+                <identifier type="uri">http://www.yarraranges.vic.gov.au/files/84ebcaa3-7783-4ee6-a848-a0380124be7a/YRC_Broadband_report_311011_Final.pdfAUTba1</identifier>
+            </relatedInfo>
+        </collection>
+    </registryObject>
+</registryObjects>
