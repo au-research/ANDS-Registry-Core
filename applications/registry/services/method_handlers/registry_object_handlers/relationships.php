@@ -81,14 +81,24 @@ class Relationships extends ROHandler
 
         $programs = $result->toArray();
 
+        //obtaining to_funder for each of the program
         foreach($programs['contents'] as $grant){
+
+            // if the grant is not a related Object, then it shouldn't have to_funder
+            if ($grant['to_identifier_type'] != "ro:id") {
+                continue;
+            }
+
             $result2 = RelationshipSearchService::search([
                 'from_id' => $grant["to_identifier"],
                 'to_class' => 'party',
                 'relation_type' =>  ['isFunderOf', 'isFundedBy']
             ], ['rows' => 1]);
             $funded_by = $result2->toArray();
-            if(isset($funded_by['contents']) && count($funded_by['contents'])>0) $grant["to_funder"] = $funded_by['contents'][0]["from_title"];
+
+            if (array_key_exists('contents', $funded_by) && count($funded_by['contents']) > 0) {
+                $grant["to_funder"] = $funded_by['contents'][0]["from_title"];
+            }
         }
         return $programs ;
     }
