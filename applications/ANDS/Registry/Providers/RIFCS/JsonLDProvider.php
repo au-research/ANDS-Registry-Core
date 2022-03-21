@@ -4,18 +4,15 @@
 namespace ANDS\Registry\Providers\RIFCS;
 
 
-use ANDS\Registry\IdentifierRelationshipView;
 use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\Registry\Versions;
 use ANDS\RegistryObject;
 use ANDS\Registry\Providers\MetadataProvider;
 use ANDS\Registry\Providers\RIFCSProvider;
-use ANDS\Registry\Providers\GrantsConnectionsProvider;
 use ANDS\Registry\Providers\LinkProvider;
 use ANDS\RegistryObject\RegistryObjectVersion;
 use ANDS\Util\Config;
 use ANDS\Util\XMLUtil;
-use ANDS\Registry\RelationshipView;
 use \ANDS\Registry\Schema;
 
 

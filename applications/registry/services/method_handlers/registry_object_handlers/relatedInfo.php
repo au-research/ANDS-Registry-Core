@@ -31,8 +31,9 @@ class relatedInfo extends ROHandler {
                     $title = (string) $relatedInfo->title;
                     $isOrcidIdentifier = array_key_exists('identifier_type', $identifier) && $identifier['identifier_type'] == 'orcid';
                     if ($title == "" && $type == "party" && $isOrcidIdentifier) {
-                        $orcid = ORCIDRecordsRepository::obtain($identifier['identifier_value']);
-                        $title = $orcid->full_name;
+                        if ($orcid = ORCIDRecordsRepository::obtain($identifier['identifier_value'])) {
+                            $title = $orcid->full_name;
+                        }
                     }
 
                     $result[] = array(

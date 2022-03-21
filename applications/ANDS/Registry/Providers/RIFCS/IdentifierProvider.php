@@ -126,7 +126,7 @@ class IdentifierProvider implements RIFCSProvider
      *
      * @param $identifier
      * @param $type
-     * @return bool
+     * @return array|false
      * @throws \Exception
      */
     public static function format($identifier, $type)
@@ -142,7 +142,6 @@ class IdentifierProvider implements RIFCSProvider
                 $identifiers['hover_text'] = 'Resolve this DOI';
                 $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/doi_icon.png alt="DOI Link"/>';
                 return  $identifiers;
-                break;
             case 'ark':
                 $identifiers['href'] = '';
                 $identifiers['display_icon'] = '';
@@ -157,7 +156,6 @@ class IdentifierProvider implements RIFCSProvider
                 $identifiers['display_text'] = 'ARK';
                 $identifiers['hover_text'] = 'Resolve this ARK identifier';
                 return $identifiers;
-                break;
             case 'orcid':
                 if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
                 elseif(!strpos($identifier,"orcid.org/")) $identifier_href ="http://orcid.org/".$identifier;
@@ -167,7 +165,6 @@ class IdentifierProvider implements RIFCSProvider
                 $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/orcid_icon.png alt="ORCID Link"/>';
                 $identifiers['hover_text'] = 'Resolve this ORCID';
                 return  $identifiers;
-                break;
             case 'nla':
             case 'au-anl:peau':
                 if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
@@ -178,7 +175,6 @@ class IdentifierProvider implements RIFCSProvider
                 $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/nla_icon.png alt="NLA Link"/>';
                 $identifiers['hover_text'] = 'View the record for this party in Trove';
                 return  $identifiers;
-                break;
             case 'handle':
                 if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
                 elseif(strpos($identifier,"dl:")>0) $identifier_href ="http://hdl.handle.net/".substr($identifier,strpos($identifier,"hdl:")+4);
@@ -189,7 +185,6 @@ class IdentifierProvider implements RIFCSProvider
                 $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/handle_icon.png alt="Handle Link"/>';
                 $identifiers['hover_text'] = 'Resolve this handle';
                 return  $identifiers;
-                break;
             case 'raid':
                 if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
                 elseif(strpos($identifier,"dl:")>0) $identifier_href ="http://hdl.handle.net/".substr($identifier,strpos($identifier,"hdl:")+4);
@@ -200,7 +195,6 @@ class IdentifierProvider implements RIFCSProvider
                 $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/handle_icon.png alt="Handle Link"/>';
                 $identifiers['hover_text'] = 'Resolve this handle';
                 return  $identifiers;
-                break;
             case 'purl':
                 if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
                 elseif(strpos($identifier,"url.org/")<1) $identifier_href ="http://purl.org/".$identifier;
@@ -210,7 +204,6 @@ class IdentifierProvider implements RIFCSProvider
                 $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/external_link.png alt="External Link"/>';
                 $identifiers['hover_text'] = 'Resolve this PURL';
                 return  $identifiers;
-                break;
             case 'isni':
                 if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
                 elseif(strpos($identifier,"isni.org/")<1) $identifier_href ="http://isni.org/".$identifier;
@@ -220,7 +213,6 @@ class IdentifierProvider implements RIFCSProvider
                 $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/external_link.png alt="External Link"/>';
                 $identifiers['hover_text'] = 'Resolve this ISNI';
                 return  $identifiers;
-                break;
             case 'igsn':
                 if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
                 elseif(strpos($identifier,"igsn.org/")<1) $identifier_href ="http://igsn.org/".$identifier;
@@ -230,7 +222,6 @@ class IdentifierProvider implements RIFCSProvider
                 $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/external_link.png alt="External Link"/>';
                 $identifiers['hover_text'] = 'Resolve this IGSN';
                 return  $identifiers;
-                break;
             case 'grid':
                 if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
                 if(isset($identifier_href)) {
@@ -240,7 +231,6 @@ class IdentifierProvider implements RIFCSProvider
                 }
                 $identifiers['display_text'] = 'GRID';
                 return $identifiers;
-                break;
             case 'scopus':
             case 'scopusid':
                 if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
@@ -251,37 +241,28 @@ class IdentifierProvider implements RIFCSProvider
                 }
                 $identifiers['display_text'] = 'Scopus';
                 return $identifiers;
-                break;
             case 'uri':
+            case 'url':
                 $identifiers['href'] = $identifier;
                 $identifiers['display_text'] = strtoupper($type);
                 $identifiers['hover_text'] = 'Resolve this URI';
                 $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/external_link.png alt="External Link"/>';
                 return $identifiers;
-                break;
-            case 'urn':
-                break;
             case 'local':
                 $identifiers['display_text'] = 'Local';
                 return $identifiers;
-                break;
             case 'isil':
                 $identifiers['display_text'] = 'ISIL';
                 return $identifiers;
-                break;
             case 'abn':
                 $identifiers['display_text'] = 'ABN';
                 return $identifiers;
-                break;
             case 'arc':
                 $identifiers['display_text'] = 'ARC';
                 return $identifiers;
-                break;
             default:
                 return false;
-                break;
         }
-
 
         throw new \Exception("$type not supported for formatting");
     }
