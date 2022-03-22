@@ -18,7 +18,6 @@ class RelationshipsHandler extends Handler
         $this->getParentAPI()->outputFormat = "application/json";
 
         $router = new Router('/api/registry/');
-
         // GET /api/registry/relationships
         $router->get('relationships', 'RelationshipsAPI@index');
 

@@ -57,7 +57,6 @@ class RelationshipSearchService
     {
         // starts with default parameters
         $params = static::$defaultParameters;
-
         // construct rows, offset, boosts based on pagination
         foreach ($pagination as $key => $value) {
             switch ($key) {
@@ -85,6 +84,23 @@ class RelationshipSearchService
                 case "boost_to_group":
                     $params['bq'] = "to_group:${value}";
                     break;
+                case "boost_to_origin":
+                    if(isset($params['bq'])){
+                        $params['bq'] .= " OR relation_origin:${value}";
+                    }
+                    else{
+                        $params['bq'] = "relation_origin:${value}";
+                    }
+                    break;
+                case "boost_to_reverse":
+                    if(isset($params['bq'])){
+                        $params['bq'] .= " OR relation_reverse:${value}";
+                    }
+                    else{
+                        $params['bq'] = "relation_reverse:${value}";
+                    }
+
+                    break;
             }
         }
 
@@ -101,6 +117,7 @@ class RelationshipSearchService
         foreach ($criterias as $key => $value) {
             switch ($key) {
                 case "from_id":
+                case "from_key":
                 case "to_class":
                 case "to_identifier":
                 case "to_identifier_type":

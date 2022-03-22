@@ -15,11 +15,15 @@ class RelationshipsAPI extends HTTPController
         'boost_to_group',
         'fl',
         'relations_fl',
-        'relations_limit'
+        'relations_limit',
+        'boost_to_origin',
+        'boost_to_reverse'
+
     ];
 
     public static $searchParameters = [
         'from_id',
+        'from_key',
         'to_identifier',
         'to_identifier_type',
         'to_class',

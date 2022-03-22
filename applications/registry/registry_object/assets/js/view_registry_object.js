@@ -195,7 +195,7 @@ function formatTip(tt){
 
 function processRelatedObjects(offset)
 {
-    var rows = 10;
+    var rows = 400;
     if(typeof offset !== 'undefined')
     {
 	// This occurs when the "Show More" button is clicked
@@ -209,13 +209,14 @@ function processRelatedObjects(offset)
 
     $.ajax({
         type: 'GET',
-        url: api_url +'registry/relationships?from_id='+$('#registry_object_id').val() + "&rows=" + rows +"&offset="+offset,
+        url: api_url +'registry/relationships?from_id='+$('#registry_object_id').val() + "&boost_to_origin=RelatedObject&boost_to_reverse=false&rows=" + rows + "&offset="+offset,
         dataType: 'json',
         success: function(data){
              var showRelated = 0;
              var moreToShow = '';
              maxRelated = data.total;
-            $('#rorow').show();
+
+
 
             $.each(data.contents, function(){
        
@@ -231,19 +232,21 @@ function processRelatedObjects(offset)
                 }
                 var newRow = "";
                 var display = false;
+
+                newRow = '<table class="subtable">' +
+                    '<tr><td><table class="subtable1">'+
+                    '<tr><td>Title:</td><td class="resolvedRelated" >'+title+'</td></tr>'+
+                    '<tr><td class="attribute">Key</td>' +
+                    '<td class="valueAttribute resolvable_key" key_value="'+ key +'">'+key+'</td>' +
+                    '</tr>';
+
+
                 $.each(this.relations, function(){
                     var origin = this.relation_origin;
                     var reverse = this.relation_reverse;
                     var relationship = this.relation_type
-
+                    var add = false;
                     var revStr = '';
-
-                    newRow = '<table class="subtable">' +
-                        '<tr><td><table class="subtable1">'+
-                        '<tr><td>Title:</td><td class="resolvedRelated" >'+title+'</td></tr>'+
-                        '<tr><td class="attribute">Key</td>' +
-                        '<td class="valueAttribute resolvable_key" key_value="'+ key +'">'+key+'</td>' +
-                        '</tr>';
 
                     if(reverse === false && origin === 'RelatedObject')
                     {
@@ -253,23 +256,34 @@ function processRelatedObjects(offset)
                     {
                         revStr = "<em> (Automatically generated reverse link) </em>";
                         display = true;
+                        add = true;
+
                     }
                     else if(origin === 'PrimaryLink')
                     {
                         revStr = "<em> (Automatically generated primary link) </em>";
                         display = true;
+                        add = true;
                     }
                     else if(reverse === true && (origin === 'RelatedInfo' || origin === 'Identifier'))
                     {
                         revStr = "<em> (Automatically generated reverse link by Identifier) </em>";
                         display = true;
+                        add = true;
+                    }
+                    else if(reverse === true && origin === 'GrantsNetwork')
+                    {
+                        revStr = "<em> (Automatically generated reverse link by GrantsNetwork) </em>";
+                        display = true;
+                        add = true;
                     }
                     else if (origin === 'RelatedInfo' || origin === 'isSameAs') {
                         showRelated++;
                         // probably shouldn't do much with them... they all visible via relatedInfo
                     }
 
-                    if(display === true){
+                    if(add === true){
+                        console.log(reverse,origin,revStr);
                         showRelated++;
                         newRow += '<tr><td class="attribute">Relation:</td>' +
                             '<td class="valueAttribute"><table class="subtable1"><tr><td>type:</td><td>'+
@@ -280,6 +294,7 @@ function processRelatedObjects(offset)
                 if(display === true){
                     newRow  += '</table></tr></td></table>';
                     $('#related_objects_table').last().append(newRow);
+                    $('#rorow').show();
                 }
 
             });

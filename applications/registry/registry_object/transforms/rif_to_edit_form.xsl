@@ -360,7 +360,7 @@
 						<sup><a class="muted" href="https://documentation.ardc.edu.au/display/DOC/Key" target="_blank" title="View Content Providers' Guide">?</a></sup>
 					</label>
 					<div class="controls">
-						<input type="text" class="input-xlarge" required="" name="key" value="{ro:key}"/>
+						<input type="text" class="input-xlarge" required="" id="ro_key" name="key" value="{ro:key}"/>
 						<button class="btn btn" id="generate_random_key">
 							<i class="icon-refresh"/> Generate Random Key </button>
 						<p class="help-inline">
