@@ -128,63 +128,11 @@ class Registry_objects extends CI_Model {
 			);
 		} elseif ($type=='doi') {
 
-			//prepare identifier, strip out http
-			$identifier = str_replace("http://dx.doi.org/", "", $identifier);
+            //prepare identifier, strip out http
+            $identifier = str_replace("http://dx.doi.org/", "", $identifier);
             $identifier = str_replace("https://doi.org/", "", $identifier);
 
-			//Crossref
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, "http://api.crossref.org/works/".$identifier);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1 );
-			$result = curl_exec( $ch );
-			curl_close($ch);
-
-			$result = json_decode($result, true);
-
-
-			$title = isset($result['message']['title'][0]) ? $result['message']['title'][0] : false;
-			if (!$title) $title = isset($result['message']['container-title'][0]) ? $result['message']['container-title'][0] : 'No Title';
-
-			if($result) {
-				return array(
-					'title' => $title,
-					'publisher' => isset($result['message']['publisher']) ? $result['message']['publisher'] : '',
-					'source' => isset($result['message']['source']) ? $result['message']['source'] : '',
-					'DOI' => isset($result['message']['DOI']) ? $result['message']['DOI'] : '',
-					'type' => isset($result['message']['type']) ? $result['message']['type'] : '',
-					'url' => isset($result['message']['URL']) ? $result['message']['URL'] : '',
-					'description' => ''
-				);
-			} else {
-				//try get it from Datacite
-				$ch = curl_init();
-				curl_setopt($ch, CURLOPT_URL, "http://search.datacite.org/api?wt=json&fl=doi,creator,resourceTypeGeneral,description,publisher,title&q=doi:".$identifier);
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1 );
-				$result = curl_exec( $ch );
-				curl_close($ch);
-
-				$result = json_decode($result, true);
-				if ($result) {
-					if($result['response']['numFound'] > 0) {
-						$record = $result['response']['docs'][0];
-						return array(
-							'title' => isset($record['title']) ? $record['title'][0] : 'No Title',
-							'publisher' => isset($record['publisher']) ? $record['publisher'] : '',
-							'doi' => isset($record['doi']) ? $record['doi'] : '',
-							'type' => isset($record['resourceTypeGeneral']) ? $record['resourceTypeGeneral'] : '',
-							'url' => 'https://doi.org/'.$identifier,
-							'source' => '',
-							'description' => isset($record['description']) ? $record['description'][0] : ''
-						);
-					} else {
-						//No result from Datacite
-						return false;
-					}
-				} else {
-					//No result from Crossref nor Datacite
-					return false;
-				}
-			}
+            return \ANDS\Util\DOIAPI::resolve($identifier);
 		}
 	}
 
