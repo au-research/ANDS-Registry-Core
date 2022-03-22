@@ -1,7 +1,7 @@
 <?php
 
 namespace ANDS\Registry\Providers\ORCID;
-
+use \ANDS\Registry\Providers\ORCID\ORCIDRecord;
 
 class ORCIDProviderTest extends \RegistryTestClass
 {
@@ -20,4 +20,12 @@ class ORCIDProviderTest extends \RegistryTestClass
         $orcid->orcid_id = "0000-0003-0670-6058";
         return $orcid;
     }
+
+    public function test_obtain_orcid()
+    {
+        $record = ORCIDRecordsRepository::obtain("0000-0003-0670-6058");
+        $this->assertInstanceOf( ORCIDRecord::class, $record);
+        $this->assertEquals("Sarah Graham", $record->full_name);
+    }
+
 }

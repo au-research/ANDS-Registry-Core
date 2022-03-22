@@ -1,4 +1,6 @@
-<?php 
+<?php
+
+use ANDS\Registry\Providers\ORCID\ORCIDRecord;
 use ANDS\Registry\Providers\ORCID\ORCIDRecordsRepository;
  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_ro_handler.php');
@@ -31,7 +33,8 @@ class relatedInfo extends ROHandler {
                     $title = (string) $relatedInfo->title;
                     $isOrcidIdentifier = array_key_exists('identifier_type', $identifier) && $identifier['identifier_type'] == 'orcid';
                     if ($title == "" && $type == "party" && $isOrcidIdentifier) {
-                        if ($orcid = ORCIDRecordsRepository::obtain($identifier['identifier_value'])) {
+                        $orcid = ORCIDRecordsRepository::obtain($identifier['identifier_value']);
+                        if ($orcid instanceof ORCIDRecord){
                             $title = $orcid->full_name;
                         }
                     }
