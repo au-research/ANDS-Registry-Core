@@ -98,6 +98,19 @@ class RegistryObject extends Model
         return $currentData;
     }
 
+    /**
+     * Eloquent
+     * Returns the revision (recordData)
+     *
+     * @return RecordData
+     */
+    public function getRecordData($revision_id)
+    {
+        return RecordData::where('registry_object_id', $this->registry_object_id)->where('id', $revision_id)->first();
+    }
+
+
+
     public function recordData()
     {
         return $this->hasMany(RecordData::class, 'registry_object_id', 'registry_object_id');

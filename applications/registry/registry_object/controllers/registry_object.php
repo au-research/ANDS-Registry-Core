@@ -832,10 +832,16 @@ class Registry_object extends MX_Controller {
 		echo $jsonData;
 	}
 
-    public function get_record_data($id){
+    public function get_record_data($id, $revision=null)
+    {
         initEloquent();
+
         $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($id);
-        $data['xml'] = html_entity_decode($record->getCurrentData()->data);
+        if ($revision) {
+            $data['xml'] = html_entity_decode($record->getRecordData($revision)->data);
+        }else{
+            $data['xml'] = html_entity_decode($record->getCurrentData()->data);
+        }
         $jsonData = array();
         $jsonData['status'] = 'OK';
         $jsonData['ro'] = $data;

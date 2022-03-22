@@ -20,6 +20,7 @@ date_default_timezone_set('Australia/Melbourne');
 		<input class="hide" type="hidden" value="<?php echo $ro->id;?>" id="ro_id"/>
 		<input class="hide" type="hidden" value="<?=$ds->id;?>" id="data_source_id"/>
 		<input type="hidden" id="registry_object_id" value="<?php echo $ro_id;?>"/>
+        <input type="hidden" id="revision_id" value="<?php echo $revision;?>"/>
 		<?php 
 		if ($this->user->hasFunction('REGISTRY_USER') && $this->user->hasAffiliation($ds->record_owner)):
 		?>
