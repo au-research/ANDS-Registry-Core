@@ -292,15 +292,15 @@ class JsonLDProvider implements RIFCSProvider
 
         $relationships = RelationshipProvider::getRelationByClassTypeRelationType($record, null, 'publication', null);
         foreach ($relationships as $relation) {
-            if($relation['slug'] != ""){
-                $citation[] = array("@type"=>"CreativeWork","name"=>$relation['name'],"url"=>self::base_url().$relation["slug"]."/".$relation["id"]);
+            if($relation['to_url'] != ""){
+                $citation[] = array("@type"=>"CreativeWork","name"=>$relation['to_title'],"url"=> $relation["to_url"]);
             }else{
                 $identifier =array(
                     "@type"=> "PropertyValue",
-                    "propertyID"=> $relation["identifier_type"],
-                    "value"=> $relation["identifier_value"]
+                    "propertyID"=> $relation["to_identifier_type"],
+                    "value"=> $relation["to_identifier"]
                 );
-                $citation[] = array("@type"=>"CreativeWork","name"=>$relation['name'],"identifier"=>[$identifier]);
+                $citation[] = array("@type"=>"CreativeWork","name"=>$relation['to_title'],"identifier"=>[$identifier]);
             }
         }
         return $citation;
@@ -436,11 +436,11 @@ class JsonLDProvider implements RIFCSProvider
     {
         $funders = [];
         $relationships = RelationshipProvider::getRelationByClassAndType($record, 'party', ['isFundedBy']);
+        var_dump($relationships);
         foreach($relationships as $relationship) {
-            foreach ($relationship['relations'] as $relations) {
-                $type = ($relations['type'] == "group") ? "Organization" : "Person";
-                $funders[] = array("@type" => $type, "name" => $relations['title'], "url" => self::base_url() . $relations['slug'] . "/" . $relations['id']);
-            }
+                $type = ($relationship['to_type'] == "group") ? "Organization" : "Person";
+                $funders[] = array("@type" => $type, "name" => $relationship['to_title'], "url" =>  $relationship['to_url']);
+
         }
         return $funders;
     }
@@ -452,15 +452,15 @@ class JsonLDProvider implements RIFCSProvider
         $relationships = RelationshipProvider::getRelationByType($record, $relation_type);
 
         foreach ($relationships as $relation) {
-            if($relation["slug"] != ""){
-                $related[] = array("@type"=>"CreativeWork","name"=>$relation["name"],"url"=>self::base_url().$relation["slug"]."/".$relation["id"]);
+            if($relation["to_url"] != ""){
+                $related[] = array("@type"=>"CreativeWork","name"=>$relation["to_title"], "url"=> $relation["to_url"]);
             }else{
                 $identifier =array(
                     "@type"=> "PropertyValue",
-                    "propertyID"=> $relation["identifier_type"],
-                    "value"=> $relation["identifier_value"]
+                    "propertyID"=> $relation["to_identifier_type"],
+                    "value"=> $relation["to_identifier"]
                 );
-                $related[] = array("@type"=>"CreativeWork","name"=>$relation["name"],"identifier"=>[$identifier]);
+                $related[] = array("@type"=>"CreativeWork","name"=>$relation["to_title"], "identifier"=>[$identifier]);
             }
         }
         return $related;
@@ -473,23 +473,23 @@ class JsonLDProvider implements RIFCSProvider
         $provider_relationships = array("isOwnedBy", "isManagedBy");
 
         $relationships = RelationshipProvider::getRelationByType($record, $provider_relationships);
-
+        var_dump($relationships);
         foreach ($relationships as $relation) {
-            if ($relation["type"] == 'group') {
+            if ($relation["to_type"] == 'group') {
                 $type = "Organization";
             } else {
                 $type = "Person";
             }
-            if ($relation["slug"] != "") {
-                $related[] = array("@type" => $type, "name" => $relation["name"], "url" => self::base_url().$relation["slug"]."/".$relation["id"]);
+            if ($relation["to_url"] != "") {
+                $related[] = array("@type" => $type, "name" => $relation["to_title"], "url" => $relation["to_url"]);
 
             } else {
                 $identifier =array(
                     "@type"=> "PropertyValue",
-                    "propertyID"=> $relation["identifier_type"],
-                    "value"=> $relation["identifier_value"]
+                    "propertyID"=> $relation["to_identifier_type"],
+                    "value"=> $relation["to_identifier"]
                 );
-                $related[] = array("@type" => $type, "name" => $relation["name"], "identifier" => $identifier);
+                $related[] = array("@type" => $type, "name" => $relation["to_title"], "identifier" => $identifier);
             }
         }
 
@@ -606,20 +606,20 @@ class JsonLDProvider implements RIFCSProvider
                 {
                     continue;
                 }
-                if ($relation["type"] == 'group') {
+                if ($relation["to_type"] == 'group') {
                     $type = "Organization";
                 } else {
                     $type = "Person";
                 }
-                if ($relation["slug"] != '') {
-                    $creator[] = array("@type" => $type, "name" => $relation["name"], "url" => self::base_url() . $relation["slug"] . "/" . $relation["id"]);
+                if ($relation["to_url"] != '') {
+                    $creator[] = array("@type" => $type, "name" => $relation["to_title"], "url" => $relation["to_url"]);
                 } else {
                     $identifier =array(
                         "@type"=> "PropertyValue",
-                        "propertyID"=> $relation["identifier_type"],
-                        "value"=> $relation["identifier_value"]
+                        "propertyID"=> $relation["to_identifier_type"],
+                        "value"=> $relation["to_identifier"]
                     );
-                    $creator[] = array("@type" => $type, "name" => $relation["name"], "identifier" =>  $identifier);
+                    $creator[] = array("@type" => $type, "name" => $relation["to_title"], "identifier" =>  $identifier);
                 }
             }
             if(sizeof($creator) > 0)
@@ -638,19 +638,19 @@ class JsonLDProvider implements RIFCSProvider
             $relationships = RelationshipProvider::getRelationByType($record, array($relation_type));
             foreach ($relationships as $relation) {
                 // check for class == party in case shouldn't happen with these relationship types but to be sure
-                if ($relation["class"] != 'party' || $relation["type"] == 'group' || in_array_r($relation["id"] , $processedIds)) {
+                if ($relation["to_class"] != 'party' || $relation["type"] == 'group' || in_array_r($relation["id"] , $processedIds)) {
                     continue;
                 }
                 $processedIds[] = $relation["id"];
-                if ($relation["slug"] != "") {
-                    $accountablePerson[] = array("@type" => "Person", "name" => $relation["name"], "url" => self::base_url().$relation["slug"]."/".$relation["id"]);
+                if ($relation["to_url"] != "") {
+                    $accountablePerson[] = array("@type" => "Person", "name" => $relation["to_title"], "url" => $relation["to_url"]);
                 } else {
                     $identifier =array(
                         "@type"=> "PropertyValue",
-                        "propertyID"=> $relation["identifier_type"],
-                        "value"=> $relation["identifier_value"]
+                        "propertyID"=> $relation["to_identifier_type"],
+                        "value"=> $relation["to_identifier"]
                     );
-                    $accountablePerson[] = array("@type" => "Person", "name" => $relation["name"], "identifier" => $identifier);
+                    $accountablePerson[] = array("@type" => "Person", "name" => $relation["to_title"], "identifier" => $identifier);
                 }
             }
             if(sizeof($accountablePerson) > 0)
