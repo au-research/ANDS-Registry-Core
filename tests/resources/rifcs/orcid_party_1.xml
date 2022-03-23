@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+    <registryObject group="Integrated Marine Observing System">
+        <key>PartyOrcid1</key>
+        <originatingSource>https://catalogue-imos.aodn.org.au</originatingSource>
+        <party type="person">
+            <name type="primary">
+                <namePart>Thompson, Peter</namePart>
+            </name>
+            <identifier type="orcid">0000-0003-0670-6059</identifier>
+            <relatedObject>
+                <key>IMOS/CSIROOceansandAtmosphere-Hobart</key>
+                <relation type="isMemberOf"/>
+            </relatedObject>
+            <relatedObject>
+                <key>AUTestingRecords2AltRecords5</key>
+                <relation type="isPrincipalInvestigatorOf"/>
+            </relatedObject>
+            <relatedObject>
+                <key>AUTestingRecords2AltRecords5c</key>
+                <relation type="isCollectorOf"/>
+            </relatedObject>
+                        <relatedObject>
+                <key>AUTestingRecords2AltRecords5a</key>
+                <relation type="isCollectorOf"/>
+            </relatedObject>
+        </party>
+    </registryObject>
+</registryObjects>
