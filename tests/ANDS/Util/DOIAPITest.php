@@ -32,4 +32,14 @@ class DOIAPITest extends TestCase
         $result = DOIAPI::resolveDOIContentNegotiation($crossrefDOI);
         $this->assertNotNull($result, "CrossRef DOI is resolvable via Content Negotiation");
     }
+
+    public function testunresolvable()
+    {
+        $dataciteDOI = "10.22004/unresolvable";
+
+        $result = DOIAPI::resolveDOIContentNegotiation($dataciteDOI);
+        $this->assertNull($result);
+    }
+
+
 }

@@ -3,6 +3,7 @@
 namespace ANDS\Util;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 
 class DOIAPI
 {
@@ -51,15 +52,16 @@ class DOIAPI
                 'Accept' => $format
             ],
         ]);
-        $data = $client->get($doi);
+        try {
+            $data = $client->get($doi);
 
-        if ($data->getStatusCode() != 200) {
-            // todo log errors
+            // todo check matching Content-Type, some DOI resolution returns text/html
+
+            return $data->getBody()->getContents();
+        } catch (ClientException $e) {
+            // todo log error
             return null;
         }
 
-        // todo check matching Content-Type, some DOI resolution returns text/html
-
-        return $data->getBody()->getContents();
     }
 }
