@@ -6,8 +6,6 @@
             elementFormDefault="qualified"
             attributeFormDefault="unqualified">
 
-    <xsd:import namespace="http://ands.org.au/standards/rif-cs/extendedRegistryObjects" schemaLocation="extRif.xsd"/>
-
     <xsd:annotation>
         <xsd:documentation xml:lang="en">
             An early draft of an ISO2146 schema to promote discussion. This is intended as an alternative to that currently published on the draft ISO2146 web site. It is based on experience from the pilot collection and services registry developed under the APSR ORCA project (see http://www.apsr.edu.au/orca/index.htm).
@@ -29,6 +27,8 @@
     <xsd:annotation>
         <xsd:documentation xml:lang="en">
             Change history
+            v1.6- 23 March 2022
+                 * Removed the extRif:annotations element
             v1.6- 21 November 2014
                  * add optional attribute: target and elements: title, note, mediaType, byteSize to electronicAddressType
             v1.5- 15 October 2013
