@@ -36,10 +36,7 @@ define('FOPEN_WRITE_CREATE',					'ab');
 define('FOPEN_READ_WRITE_CREATE',				'a+b');
 define('FOPEN_WRITE_CREATE_STRICT',				'xb');
 define('FOPEN_READ_WRITE_CREATE_STRICT',		'x+b');
-
-define('EXTRIF_NAMESPACE', "http://ands.org.au/standards/rif-cs/extendedRegistryObjects");
 define('RIFCS_NAMESPACE', "http://ands.org.au/standards/rif-cs/registryObjects");
-define('EXTRIF_SCHEME', 'extrif');
 define('OAI_NAMESPACE', "http://www.openarchives.org/OAI/2.0/");
 define('RIFCS_SCHEME','rif');
 
@@ -138,8 +135,6 @@ define('HARVEST_TEST_MODE','TEST');
 define('HARVEST_COMPLETE','TRUE');
 
 define('IMPORT_INFO','info');
-
-// define('EXTRIF_SCHEME','extRif');
 
 define('DRAFT_RECORD_SLUG','draft_record_');
 

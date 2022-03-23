@@ -13,14 +13,14 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 {
 	// Some internal defaults
 	const response_format = "application/json";
-	const default_retrieval_scheme = "extrif";
+	const default_retrieval_scheme = "rif";
 	const default_retrieval_status = PUBLISHED;
 
 
 	/**
 	 * Fetch a registry object from the registry by "SLUG"
 	 *
-	 * Responds with a JSON array containing the data of the record's extrif
+	 * Responds with a JSON array containing the data of the record's rif
 	 * (or a JSON-formatted error response, if no matching data is available)
 	 *
 	 * @param $_GET[slug] "SLUG" of the registry object to retrieve
@@ -35,7 +35,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 			throw new Exception("No valid URL SLUG or registry_object_id specified.");
 		}
 
-		// Lightweight registry object get (get the latest version of the extRif for this record)
+		// Lightweight registry object get (get the latest version of the rif-cs for this record)
 		// See registry_object/models/registry_objects for description of this method syntax
 		$record = $this->ro->_get(array(
 									array('args' => array(	'slug'=>$this->input->get('slug'),
@@ -85,7 +85,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 			if(!$result_decoded['data']) {
 				$result = array();
 				$theObject->enrich();
-				$result['data'] = $theObject->getExtRif();
+				$result['data'] = $theObject->getRif();
 				$result['registry_object_id'] = $theObject->id;
 				$result['key'] = $theObject->key;
 				echo json_encode($result);
@@ -93,26 +93,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 
 			return;
 		} else if(count($record)==0){
-			//NO EXTRIF, attempt to create one
-			if($this->input->get('slug')){
-				$ro = $this->ro->getBySlug($this->input->get('slug'));
-			}elseif($this->input->get('registry_object_id')){
-				$ro = $this->ro->getByID($this->input->get('registry_object_id'));
-			}
-			if (!$ro) throw new Exception('Registry Object not found');
-
-			try{
-				$ro->enrich();
-			} catch (Exception $e){
-				throw new Exception('ERROR: Registry Object cannot be enriched: '. $e->getMessage());
-			}
-
-			$result = array();
-			$this->load->model('data_source/data_sources', 'ds');
-			$result['data'] = $ro->getExtRif();
-			$result['registry_object_id'] = $ro->id;
-			$result['key'] = $ro->key;
-			echo json_encode($result);
+				throw new Exception('ERROR: Registry Object does not exist ');
 		}
 		else
 		{
@@ -128,7 +109,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 					$orphan_slug = array_pop($query->result_array());
 					if ($orphan_slug['slug'] == $this->input->get('slug'))
 					{
-						throw new Exception("Error: Unable to fetch extRif, despite active SLUG mapping.");
+						throw new Exception("Error: Unable to fetch Rif, despite active SLUG mapping.");
 					}
 
 					$contents = array('redirect_registry_object_slug' => $orphan_slug['slug']);

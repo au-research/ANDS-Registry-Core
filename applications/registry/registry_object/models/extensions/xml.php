@@ -12,27 +12,6 @@ class XML_Extension extends ExtensionBase
 		parent::__construct($ro_pointer);
 	}		
 	
-	
-	/**
-	 *  Clean up all previous versions (set = FALSE, "prune" extRif)
-	 */
-	function cleanupPreviousVersions()
-	{
-		$this->db->where(array('registry_object_id'=>$this->ro->id));
-		$this->db->update('record_data', array('current'=>DB_FALSE));
-
-		$this->pruneExtrif();
-	}
-
-
-	/**
-	 *  Clean up all previous versions (set = FALSE, "prune" extRif)
-	 */
-	function pruneExtrif()
-	{
-		$this->db->where(array('registry_object_id'=>$this->ro->id, 'scheme'=>EXTRIF_SCHEME));
-		$this->db->delete('record_data');
-	}
 
 	/*
 	 * Record data methods
@@ -51,7 +30,7 @@ class XML_Extension extends ExtensionBase
 		}
 	}
 	
-	function getSimpleXML($record_data_id = NULL, $extRif = false)
+	function getSimpleXML($record_data_id = NULL)
 	{
 		if (!is_null($this->_simplexml) && (is_null($record_data_id) || (!is_null($this->_xml) && ($this->_xml->record_data_id == $record_data_id))))
 		{
@@ -60,14 +39,7 @@ class XML_Extension extends ExtensionBase
 		else
 		{
 
-			if ($extRif)
-			{
-				$xml = $this->getExtRif($record_data_id);
-			}
-			else
-			{
-				$xml = $this->getRif($record_data_id);
-			}
+            $xml = $this->getRif($record_data_id);
 
 			if (!$xml) {
                 throw new Exception("No XML found for record: ". $this->ro->id);
@@ -82,8 +54,6 @@ class XML_Extension extends ExtensionBase
 			}
 
 			$this->_simplexml->registerXPathNamespace("ro", RIFCS_NAMESPACE);
-			$this->_simplexml->registerXPathNamespace("extRif", EXTRIF_NAMESPACE);
-            $this->_simplexml->registerXPathNamespace("extrif", EXTRIF_NAMESPACE);
 			return $this->_simplexml;
 		}
 	}
@@ -103,7 +73,6 @@ class XML_Extension extends ExtensionBase
 
 			$this->_simplexml = simplexml_load_string($_xml->xml);
 			$this->_simplexml->registerXPathNamespace("ro", RIFCS_NAMESPACE);
-			$this->_simplexml->registerXPathNamespace("extRif", EXTRIF_NAMESPACE);
 		}
         return $changed;
 	}
@@ -124,64 +93,6 @@ class XML_Extension extends ExtensionBase
 		return $versions;
 	}
 
-	function getExtRif()
-	{
-		$data = false;
-		$result = $this->db->select('*')->order_by('timestamp','desc')->limit(1)->get_where('record_data', array('registry_object_id'=>$this->ro->id, 'scheme'=>EXTRIF_SCHEME));
-		$rif_timestamp = $this->db->select('timestamp')->order_by('timestamp','desc')->limit(1)->get_where('record_data', array('registry_object_id'=>$this->ro->id, 'scheme'=>RIFCS_SCHEME));
-
-		$latest_rif_timestamp = 0;
-		if ($rif_timestamp->num_rows() > 0) {
-			foreach($rif_timestamp->result_array() AS $row) {
-				$latest_rif_timestamp = $row['timestamp'];
-			}
-		}
-
-		if ($result->num_rows() > 0) {
-			foreach($result->result_array() AS $row) {
-				$data = $row['data'];
-				if($row['timestamp'] < $latest_rif_timestamp) {
-					$data = $this->ro->enrichAndGetExtrif();
-				}
-			}
-		} else {
-            $data = $this->ro->enrichAndGetExtrif();
-        }
-		$result->free_result();
-		return $data;
-	}
-
-    function enrichAndGetExtRif()
-    {
-        $this->ro->enrich();
-        $data = false;
-        $result = $this->db->select('data')->order_by('timestamp','desc')->limit(1)->get_where('record_data', array('registry_object_id'=>$this->ro->id, 'scheme'=>EXTRIF_SCHEME));
-        if ($result->num_rows() > 0)
-        {
-            foreach($result->result_array() AS $row)
-            {
-                $data = $row['data'];
-            }
-        }
-        $result->free_result();
-        return $data;
-    }
-
-
-
-	function getExtRifDataRecord($id){
-		$data = false;
-		$result = $this->db->select('data')->limit(1)->get_where('record_data', array('id'=>$id, 'scheme'=>EXTRIF_SCHEME));
-		if ($result->num_rows() > 0)
-		{
-			foreach($result->result_array() AS $row)
-			{
-				$data = $row['data'];
-			}
-		}
-		$result->free_result();
-		return $data;
-	}
 
 	function getRif($revision_id = null){
 
@@ -233,7 +144,7 @@ class XML_Extension extends ExtensionBase
 	function getNativeFormat($record_data_id = NULL)
 	{
 		$data = null;
-		$result = $this->db->select('scheme')->order_by('timestamp','desc')->limit(1)->get_where('record_data','registry_object_id = ' . $this->ro->id . ' AND scheme !="'. RIFCS_SCHEME . ' "AND scheme !="' . EXTRIF_SCHEME . '"');
+		$result = $this->db->select('scheme')->order_by('timestamp','desc')->limit(1)->get_where('record_data','registry_object_id = ' . $this->ro->id . ' AND scheme !="'. RIFCS_SCHEME .'"');
 		if ($result->num_rows() > 0)
 		{
 			foreach($result->result_array() AS $row)
@@ -252,7 +163,7 @@ class XML_Extension extends ExtensionBase
 	function getNativeFormatData($record_data_id = NULL)
 	{
 		$data = null;
-		$result = $this->db->select('data')->order_by('timestamp','desc')->limit(1)->get_where('record_data', 'registry_object_id = ' . $this->ro->id . ' AND scheme !="'. RIFCS_SCHEME . ' "AND scheme !="' . EXTRIF_SCHEME . '"');
+		$result = $this->db->select('data')->order_by('timestamp','desc')->limit(1)->get_where('record_data', 'registry_object_id = ' . $this->ro->id . ' AND scheme !="'. RIFCS_SCHEME .'"');
 		if ($result->num_rows() > 0)
 		{
 			foreach($result->result_array() AS $row)

@@ -9,7 +9,6 @@ use \DOMDocument as DOMDocument;
 use \Exception as Exception;
 
 if (!defined("RIFCS_NAMESPACE")) {
-    define('EXTRIF_NAMESPACE', "http://ands.org.au/standards/rif-cs/extendedRegistryObjects");
     define('RIFCS_NAMESPACE', "http://ands.org.au/standards/rif-cs/registryObjects");
 }
 
@@ -223,14 +222,6 @@ class XMLUtil
         }
     }
 
-    /**
-     * TODO: Refactor
-     * @return null|\XSLTProcessor
-     */
-    public static function getORCIDTransformer()
-    {
-        return Transforms::get_extrif_to_orcid_transformer();
-    }
 
     /**
      * validates datacite xml against required schema version

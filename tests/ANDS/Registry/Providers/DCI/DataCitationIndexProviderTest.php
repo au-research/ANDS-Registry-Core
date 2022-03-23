@@ -148,7 +148,7 @@ class DataCitationIndexProviderTest extends \MyceliumTestClass
         ]);
         $this->myceliumInsert($record);
 
-        $funder = $this->stub(RegistryObject::class, ['class' => 'party', 'type' => 'group', 'key' => 'AUT_DCI_PARTY']);
+        $funder = $this->stub(RegistryObject::class, ['class' => 'party', 'title'=> 'The Funder Party', 'type' => 'group', 'key' => 'AUT_DCI_PARTY']);
         $this->stub(RecordData::class, [
             'registry_object_id' => $funder->id,
             'data' => Storage::disk('test')->get('rifcs/party_DCI.xml')

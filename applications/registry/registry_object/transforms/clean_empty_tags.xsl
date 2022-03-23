@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<xsl:stylesheet xmlns:ro="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" exclude-result-prefixes="ro extRif">
+<xsl:stylesheet xmlns:ro="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" exclude-result-prefixes="ro">
 
     <xsl:output indent="yes" omit-xml-declaration="yes"/>
     <xsl:param name="removeFormAttributes" select="'true'"/>
@@ -34,10 +34,6 @@
         <xsl:attribute name="xml:lang">
           <xsl:value-of select="."/>
         </xsl:attribute>
-    </xsl:template>
-
-    <xsl:template match="extRif:annotations">
-        <xsl:copy-of select="."/>
     </xsl:template>
 
     <xsl:template match="@schemaLocation | @field_id | @tab_id | @roclass">

@@ -436,7 +436,6 @@ class JsonLDProvider implements RIFCSProvider
     {
         $funders = [];
         $relationships = RelationshipProvider::getRelationByClassAndType($record, 'party', ['isFundedBy']);
-        var_dump($relationships);
         foreach($relationships as $relationship) {
                 $type = ($relationship['to_type'] == "group") ? "Organization" : "Person";
                 $funders[] = array("@type" => $type, "name" => $relationship['to_title'], "url" =>  $relationship['to_url']);
@@ -473,7 +472,6 @@ class JsonLDProvider implements RIFCSProvider
         $provider_relationships = array("isOwnedBy", "isManagedBy");
 
         $relationships = RelationshipProvider::getRelationByType($record, $provider_relationships);
-        var_dump($relationships);
         foreach ($relationships as $relation) {
             if ($relation["to_type"] == 'group') {
                 $type = "Organization";
