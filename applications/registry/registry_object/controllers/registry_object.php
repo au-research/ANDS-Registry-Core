@@ -209,10 +209,10 @@ class Registry_object extends MX_Controller {
             return;
         }
 
-        $extRif = $draftRecord->getCurrentData()->data;
+        $rifcs = $draftRecord->getCurrentData()->data;
 
         $data = [
-            'content' => ANDS\Util\XMLUtil::getHTMLForm($extRif, [
+            'content' => ANDS\Util\XMLUtil::getHTMLForm($rifcs, [
                 "base_url" => base_url(),
                 "registry_object_id" => $registry_object_id,
                 "data_source_id" => $draftRecord->data_source_id,
@@ -220,7 +220,6 @@ class Registry_object extends MX_Controller {
                 "ro_title" => $draftRecord->title,
                 "ro_class" => $draftRecord->class
             ]),
-            'extrif' => $extRif,
             'ds' => $data_source,
             'title' => 'Edit: ' . $draftRecord->title,
             'scripts' => ['add_registry_object'],
@@ -810,9 +809,7 @@ class Registry_object extends MX_Controller {
 	public function get_record($id){
 		$this->load->model('registry_objects', 'ro');
 		$ro = $this->ro->getByID($id);
-		$ro->enrich();
 		$data['xml'] = html_entity_decode($ro->getRif());
-		$data['extrif'] = html_entity_decode($ro->getExtRif());
         initEloquent();
 
 		$data['view'] = $ro->transformForHtml();

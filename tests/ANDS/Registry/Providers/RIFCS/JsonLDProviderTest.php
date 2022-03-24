@@ -148,8 +148,7 @@ class JsonLDProviderTest extends \MyceliumTestClass
         CoreMetadataProvider::process($record);
         CoreMetadataProvider::process($party);
         $output = JsonLDProvider::getFunder($record);
-        self::assertEquals("The Funder Party", $output[0]['name']);
-        var_dump($output);
+        self::assertEquals($party->title, $output[0]['name']);
         $output = JsonLDProvider::getProvider($record);
         self::assertEquals("AUTestingRecords", $output[0]['name']);
 

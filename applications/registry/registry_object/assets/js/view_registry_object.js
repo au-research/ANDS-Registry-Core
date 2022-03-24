@@ -252,13 +252,13 @@ function processRelatedObjects(offset)
                     if(reverse === false && origin === 'RelatedObject')
                     {
                         $('.resolvedRelated[key_value="'+key+'"]').html(title );
+                        $('#rorow').show();
                     }
                     else if(reverse === true && origin === 'RelatedObject')
                     {
                         revStr = "<em> (Automatically generated reverse link) </em>";
                         display = true;
                         add = true;
-
                     }
                     else if(origin === 'PrimaryLink')
                     {
@@ -284,7 +284,6 @@ function processRelatedObjects(offset)
                     }
 
                     if(add === true){
-                        console.log(reverse,origin,revStr);
                         showRelated++;
                         newRow += '<tr><td class="attribute">Relation:</td>' +
                             '<td class="valueAttribute"><table class="subtable1"><tr><td>type:</td><td>'+

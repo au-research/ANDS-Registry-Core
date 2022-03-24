@@ -667,18 +667,8 @@ class Registry_objects extends CI_Model {
 		$CI =& get_instance();
 
 		$result = $CI->db->select('r.registry_object_id')->from('registry_objects r')
-		->join('record_data d', "d.registry_object_id = r.registry_object_id AND scheme='extrif'", 'left')->where('data IS NULL');
+		->join('record_data d', "d.registry_object_id = r.registry_object_id AND scheme='rif'", 'left')->where('data IS NULL');
 		return $result->get();
-		/* use LEFT JOIN to palm off this overhead to the DB instead of two queries and a massive WHERE_NOT_IN call!!
-
-		$enrichedResult = $CI->db->select('registry_object_id')->from('record_data')->where('scheme', 'extrif')->get();
-		$enriched = array();
-		foreach($enrichedResult->result() as $e){
-			array_push($enriched, $e->registry_object_id);
-		}
-		$result = $CI->db->select('registry_object_id')->from('record_data')->where_not_in('registry_object_id', $enriched);
-		return $result->get();
-		*/
 	}
 
 	function getGroupSuggestor($data_source_ids){
@@ -862,15 +852,6 @@ class Registry_objects extends CI_Model {
 			));
 			$this->db->insert('deleted_registry_objects');
 		}
-
-		// Also treat identifier matches as affected records which need to be enriched
-		// (to increment their extRif:matching_identifier_count)
-//		$related_ids_by_identifier_matches = $target_ro->findMatchingRecords(); // from ro/extensions/identifiers.php
-//		$related_keys = array();
-//		foreach($related_ids_by_identifier_matches AS $matching_record_id) {
-//			$matched_ro = $this->ro->getByID($matching_record_id);
-//			$reenrich_queue[] = $matched_ro->key;
-//		}
 
 		// Delete the actual registry object
 		$this->load->model('data_source/data_sources', 'ds');
