@@ -24,7 +24,14 @@ class UserDataSuggestor implements RegistryObjectSuggestor
 
         $url = rtrim($url, '/');
 
+        // check if headers are available with the timeout of 2s
+        // this occurs when ElasticSearch is not reachable, and caused a stall in a lot of operation
+        $opts['http']['timeout'] = 2;
+        $defaultOptions = stream_context_get_options(stream_context_get_default());
+        stream_context_set_default($opts);
         $headers = @get_headers($url);
+        stream_context_set_default($defaultOptions);
+
         if(!$headers || $headers[0] == 'HTTP/1.1 404 Not Found') {
             $this->client = null;
         } else {

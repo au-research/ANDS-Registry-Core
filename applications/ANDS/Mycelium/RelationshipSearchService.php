@@ -20,6 +20,8 @@ class RelationshipSearchService
         'sort' => 'score desc, to_title asc'
     ];
 
+    protected static $defaultFieldLists = "*, score";
+
     /**
      * Search for relationships
      *
@@ -106,7 +108,7 @@ class RelationshipSearchService
 
         // set the SOLR fl fields, this field is modifiable from fl, relations.fl and relations.limit
         $relationsFieldLists = isset($pagination['relations_fl']) ? $pagination['relations_fl'] : '*';
-        $fieldLists = isset($pagination['fl']) ? $pagination['fl'] : '*';
+        $fieldLists = isset($pagination['fl']) ? $pagination['fl'] : static::$defaultFieldLists;
         $relationsLimit = isset($pagination['relations_limit']) ? $pagination['relations_limit'] : '100';
         $fl = "$fieldLists,[child parentFilter=\$parentFilter childFilter=\$childFilter fl=$relationsFieldLists limit=$relationsLimit]";
         $params['fl'] = $fl;
