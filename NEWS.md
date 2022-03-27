@@ -1,3 +1,11 @@
+## Release 43.1
+**Research Data Australia**
+* Update to the DataCite API used to resolve DOIs in RDA.
+* Fix loading issue with HTML editor in the RDA Registry Theme Page CMS.
+
+**Research Vocabularies Australia**
+* Simplification of the link text shown in the vocabulary browse visualisation that is used to access the Linked Data API view of resources.
+ 
 ## Release 43
 **Research Data Australia**
 * Fix bug causing http/https to be stripped from RelatedInfo urls.
