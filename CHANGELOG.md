@@ -1,6 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## Release 43.1
+RDA Portal
+* Update to the DataCite API used to resolve DOIs in RDA.
+
+RDA Registry
+* Fix loading issue with HTML editor in the RDA Registry Theme Page CMS.
+
+
 ## Release 43
 RDA Portal
 * Fix bug causing http/https to be stripped from RelatedInfo urls.
