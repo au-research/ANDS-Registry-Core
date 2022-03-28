@@ -196,7 +196,7 @@ function formatTip(tt){
 
 function processRelatedObjects(offset)
 {
-    var rows = 400;
+    var rows = 10;
     if(typeof offset !== 'undefined')
     {
 	// This occurs when the "Show More" button is clicked
@@ -251,8 +251,9 @@ function processRelatedObjects(offset)
 
                     if(reverse === false && origin === 'RelatedObject')
                     {
-                        $('.resolvedRelated[key_value="'+key+'"]').html(title );
-                        $('#rorow').show();
+                        revStr = "";
+                        display = true;
+                        add = true;
                     }
                     else if(reverse === true && origin === 'RelatedObject')
                     {
@@ -298,8 +299,6 @@ function processRelatedObjects(offset)
                 }
 
             });
-
-
             if(data.total > (offset + rows))
             {
                 numToShow = data.total - (offset + rows);

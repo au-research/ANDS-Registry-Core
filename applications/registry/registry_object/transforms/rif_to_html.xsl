@@ -206,9 +206,12 @@
 				<td>Related Objects:</td>
 				<td>
 					<table class="subtable" id="related_objects_table">
-					 <xsl:if test="ro:relatedObject">
+					<!-- all related Objects are resolved using mycelium search service, and paginated using
+					applications/registry/registry_object/assets/js/view_registry_object.js
+					-->
+					 <!--xsl:if test="ro:relatedObject">
 						<xsl:apply-templates select="ro:relatedObject"/>
-					</xsl:if>
+					</xsl:if-->
 					</table>
 				</td>
 			</tr>

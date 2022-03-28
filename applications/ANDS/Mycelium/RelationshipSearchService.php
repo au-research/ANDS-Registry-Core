@@ -63,8 +63,12 @@ class RelationshipSearchService
         foreach ($pagination as $key => $value) {
             switch ($key) {
                 case "rows":
-                case "offset":
                 case "sort":
+                    $params[$key] = $value;
+                    break;
+                case "offset":
+                    // solr calls it 'start'
+                    $params['start'] = $value;
                     $params[$key] = $value;
                     break;
                 case "boost_relation_type":
