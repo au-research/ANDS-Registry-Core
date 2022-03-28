@@ -65,13 +65,15 @@ class UpdatePortalIndex
         $jsonPackets = array();
         $json["id"] = $event->registry_object_id;
         $actions = array();
-        if($event->search_value == null){
+        if($event->search_value === null){
             $actions["set"] = $event->new_value;
         }
         else{
-            $actions["remove"] = $event->search_value;
-            if($event->new_value != null){
+            if($event->new_value !== null){
                 $actions["add-distinct"] = $event->new_value;
+            }
+            if($event->search_value !== ""){
+                $actions["remove"] = $event->search_value;
             }
         }
         $json[$event->indexed_field] = $actions;

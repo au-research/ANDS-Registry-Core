@@ -3,12 +3,20 @@
 
 namespace ANDS\Registry\Events\Listener;
 
+use ANDS\File\Storage;
+use ANDS\RecordData;
 use ANDS\Registry\Events\EventServiceProvider;
 use ANDS\Registry\Events\Listener\UpdatePortalIndex;
 use ANDS\Registry\Events\Event\PortalIndexUpdateEvent;
+use ANDS\Registry\Providers\Quality\QualityMetadataProvider;
+use ANDS\Registry\Providers\RIFCS\CoreMetadataProvider;
+use ANDS\Registry\Providers\RIFCS\RIFCSIndexProvider;
+use ANDS\RegistryObject;
+use ANDS\Util\Config;
+use MinhD\SolrClient\SolrClient;
 use RegistryTestClass;
 
-class UpdatePortalIndexTest extends RegistryTestClass
+class UpdatePortalIndexTest extends \MyceliumTestClass
 {
 
 
@@ -84,6 +92,100 @@ class UpdatePortalIndexTest extends RegistryTestClass
             } catch (Exception $e) {
                 throw new Exception($e->getMessage());
             }
+        }
+    }
+
+    function testPortalIndexRelatedpartyMultyUpdated(){
+        {
+            // RDA-492 with lots of new tests to see what caused the issues
+            $solrClient = new SolrClient(Config::get('app.solr_url'));
+            $solrClient->setCore("portal");
+            // given a record with an author (party)
+            $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'AUT_QUALITY_COLLECTION']);
+            $this->stub(RecordData::class, [
+                'registry_object_id' => $record->id,
+                'data' => Storage::disk('test')->get('rifcs/collection_for_related_quality_md.xml')
+            ]);
+            CoreMetadataProvider::process($record);
+            $this->myceliumInsert($record);
+
+
+            // with an author (party)
+            $party = $this->stub(RegistryObject::class, ['class' => 'party','title'=> "Related,Party,One", 'type' => 'group','key' => 'AUT_QUALITY_PARTY']);
+
+            $this->stub(RecordData::class, [
+                'registry_object_id' => $party->id,
+                'data' => Storage::disk('test')->get('rifcs/party_for_related_quality_md.xml')
+            ]);
+            CoreMetadataProvider::process($party);
+            $this->myceliumInsert($party);
+
+
+            RIFCSIndexProvider::indexRecord($record);
+
+            RIFCSIndexProvider::indexRecord($party);
+
+            $solrClient->commit();
+            $doc = $solrClient->get($record->id)->toArray();
+            $this->assertNotNull($doc);
+            // the party should have been added by the portal indexing
+            $this->assertEquals($party->title, $doc['related_party_multi_title'][0]);
+            // change its title (what mycelium would trigger)
+            EventServiceProvider::dispatch(PortalIndexUpdateEvent::from([
+                'registry_object_id' => $record->id,
+                'indexed_field' => "related_party_multi_title",
+                'search_value' => $party->title,
+                'new_value' => $party->title."UPDATED"
+            ]));
+            $solrClient->commit();
+
+            $doc = $solrClient->get($record->id)->toArray();
+            $this->assertNotNull($doc);
+
+            $this->assertEquals($party->title."UPDATED", $doc['related_party_multi_title'][0]);
+            $solrClient->commit();
+            $doc = $solrClient->get($record->id)->toArray();
+            $this->assertNotNull($doc);
+            // add a new related_party_multi_title
+            EventServiceProvider::dispatch(PortalIndexUpdateEvent::from([
+                'registry_object_id' => $record->id,
+                'indexed_field' => "related_party_multi_title",
+                'new_value' => "FISH PARTY",
+                'search_value' => ""
+            ]));
+            $doc = $solrClient->get($record->id)->toArray();
+            $this->assertNotNull($doc);
+            // we should have 2 related party_multi_titles
+            $this->assertEquals($party->title."UPDATED", $doc['related_party_multi_title'][0]);
+            $this->assertEquals("FISH PARTY", $doc['related_party_multi_title'][1]);
+
+
+            $solrClient->commit();
+            // no new_value means remove
+            // remove the 1st (updated) related_party_multi_title
+            EventServiceProvider::dispatch(PortalIndexUpdateEvent::from([
+                'registry_object_id' => $record->id,
+                'indexed_field' => "related_party_multi_title",
+                'search_value' => $party->title."UPDATED"
+            ]));
+            $solrClient->commit();
+            $doc = $solrClient->get($record->id)->toArray();
+            $this->assertNotNull($doc);
+            $this->assertEquals(1, sizeof($doc['related_party_multi_title']));
+            $this->assertEquals("FISH PARTY", $doc['related_party_multi_title'][0]);
+
+
+            // remove the newly added party title
+            EventServiceProvider::dispatch(PortalIndexUpdateEvent::from([
+                'registry_object_id' => $record->id,
+                'indexed_field' => "related_party_multi_title",
+                'search_value' => "FISH PARTY"
+            ]));
+
+            $doc = $solrClient->get($record->id)->toArray();
+            $this->assertNotNull($doc);
+            // no related party multy should exist
+            $this->assertFalse(array_key_exists('related_party_multi_title', $doc));
         }
     }
 
