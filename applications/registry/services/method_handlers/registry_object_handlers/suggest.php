@@ -1,4 +1,6 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php use ANDS\Repository\RegistryObjectsRepository;
+
+if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_ro_handler.php');
 /**
  * Suggested Datasets handler
@@ -98,13 +100,12 @@ class Suggest extends ROHandler {
             $limit = 5;
 
         // CC-1156. Removed related dataset in the fullSet
-//        $relatedDatasets = $this->getRelatedDatasets($this->ro->id);
-//        if (count($relatedDatasets) > 0) {
-//            foreach ($relatedDatasets as $related) {
-//                unset($fullSet[$related]);
-//            }
-//        }
-
+        $relatedDatasets = $this->getRelatedDatasets($this->ro->id);
+        if (count($relatedDatasets) > 0) {
+            foreach ($relatedDatasets as $related) {
+                unset($fullSet[$related]);
+            }
+        }
 
         //if Limit is set to -1, return all
         if ($limit == -1) {
@@ -112,7 +113,6 @@ class Suggest extends ROHandler {
         } else {
             $subSet = array_slice($fullSet, 0, $limit, true);
         }
-
 
         // We have only the ID and score, so now get the records
         $result['final'] = array();
@@ -138,23 +138,12 @@ class Suggest extends ROHandler {
 
     private function getRelatedDatasets($id)
     {
-        $ci =& get_instance();
-        $ci->load->library('solr');
-        $ci->solr
-            ->init()
-            ->setCore('relations')
-            ->setOpt('rows', 100)
-            ->setOpt('fq', '+from_id:'.$id)
-            ->setOpt('fl', 'to_id')
-            ->setOpt('fq', '+to_class:collection');
+        $solrResult = \ANDS\Mycelium\RelationshipSearchService::search([
+            'from_id' => $id,
+            'to_class' => 'collection',
+            'to_identifier_type' => '"ro:id"',
+        ], ['rows' => 100]);
 
-        $solrResult = $ci->solr->executeSearch(true);
-        $result = [];
-        if ($solrResult && array_key_exists('response', $solrResult) && $solrResult['response']['numFound'] > 0) {
-            foreach ($solrResult['response']['docs'] as $doc) {
-                $result[] = $doc['to_id'];
-            }
-        }
-        return $result;
+        return collect($solrResult['contents'])->pluck('to_identifier')->toArray();
     }
 }
