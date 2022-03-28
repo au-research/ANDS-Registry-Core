@@ -142,7 +142,7 @@ class Suggest extends ROHandler {
             'from_id' => $id,
             'to_class' => 'collection',
             'to_identifier_type' => '"ro:id"',
-        ], ['rows' => 100]);
+        ], ['rows' => 100])->toArray();
 
         return collect($solrResult['contents'])->pluck('to_identifier')->toArray();
     }
