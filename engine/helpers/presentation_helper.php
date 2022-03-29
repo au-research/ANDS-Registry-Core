@@ -329,6 +329,10 @@ function printAlternativeLoginForms($authenticators, $default_authenticator, $re
  */
 function escapeSolrValue($string){
     //$string = urldecode($string);
+    // RDA-700 don't escape a single '*' character
+    if($string === "*"){
+        return $string;
+    }
     $match = array('\\','&', '|', '!', '(', ')', '{', '}', '[', ']', '^', '~', '*', '?', ':', ';', '/');
     $replace = array('\\\\','&', '\\|', '\\!', '\\(', '\\)', '\\{', '\\}', '\\[', '\\]', '\\^', '\\~', '\\*', '\\?', '\\:', '\\;', '\\/');
     $string = str_replace($match, $replace, $string);
