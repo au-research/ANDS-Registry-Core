@@ -93,6 +93,37 @@ class RelationshipProvider
         return $result_total > 0;
     }
 
+    /**
+     * Returns  a record relationships by a specific relatedObject class
+     *
+     * @param RegistryObject $record
+     * @param $class
+     * @return array
+     * @throws \Exception
+     */
+    public static function getRelatedObjectsByClassType(RegistryObject $record, $class, $type)
+    {
+        $search_params =[];
+        $search_params['from_id'] = $record->id;
+        if($type != null) $search_params['to_type'] = $type;
+        if($class != null) $search_params['to_class'] = $class;
+        $search_params["rows"] = self::$batch_size;
+        $search_params["start"] = 0;
+        $allRelationships = [];
+
+        do {
+            $result = RelationshipSearchService::search($search_params);
+            $result = $result->toArray();
+            $result_count = $result['count'];
+            $result_total = $result['total'];
+            foreach($result['contents'] as $item){
+                $allRelationships[] = $item;
+            }
+            $search_params["start"] += self::$batch_size;
+        } while ($result_count > 0 && $search_params["start"] <= $result_total);
+        return $allRelationships;
+    }
+
     public static function getRelationByType(RegistryObject $record, array $relations)
     {
         $search_params =[];
