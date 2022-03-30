@@ -213,12 +213,9 @@ function processRelatedObjects(offset)
         url: api_url +'registry/relationships?from_id='+$('#registry_object_id').val() + "&boost_to_origin=RelatedObject&boost_to_reverse=false&rows=" + rows + "&offset="+offset,
         dataType: 'json',
         success: function(data){
-             var showRelated = 0;
              var moreToShow = '';
              maxRelated = data.total;
-
-
-
+             
             $.each(data.contents, function(){
        
                 var id = this.to_identifier;
@@ -273,19 +270,8 @@ function processRelatedObjects(offset)
                         display = true;
                         add = true;
                     }
-                    else if(reverse === true && origin === 'GrantsNetwork')
-                    {
-                        revStr = "<em> (Automatically generated reverse link by GrantsNetwork) </em>";
-                        display = true;
-                        add = true;
-                    }
-                    else if (origin === 'RelatedInfo' || origin === 'isSameAs') {
-                        showRelated++;
-                        // probably shouldn't do much with them... they all visible via relatedInfo
-                    }
 
                     if(add === true){
-                        showRelated++;
                         newRow += '<tr><td class="attribute">Relation:</td>' +
                             '<td class="valueAttribute"><table class="subtable1"><tr><td>type:</td><td>'+
                             relationship+revStr+'</td></tr></table></td></tr>';
