@@ -64,8 +64,8 @@ angular.module('portal_theme',[]).
 					return response.data;
 				});
 			},
-			getConnections: function(key){
-				return $http.get(rda_service_url+'getConnections/?registry_object_key='+encodeURIComponent(key)).then(function(response){
+			getConnections: function(key,type){
+				return $http.get(rda_service_url+'getConnections/?registry_object_key='+encodeURIComponent(key)+'&type_filter='+encodeURIComponent(type)).then(function(response){
 					return response.data;
 				});
 			}
@@ -240,27 +240,13 @@ angular.module('portal_theme',[]).
 
 			},
 			compile: function(element, attrs, transclude){
-
-				// $log.debug('every instance ', element);
 				return function(scope,iElement,iAttrs){
 					scope.base_url = base_url;
-					// $log.debug('this instance', iAttrs);
 					scope.key = iAttrs.key;
-					// $log.debug(scope.type);
+					scope.type = iAttrs.type;
 					scope.conn = [];
-					searches.getConnections(scope.key).then(function(data){
-						// $log.debug('connections for ', scope.key, data);
-						// $log.debug(data.connections);
-						angular.forEach(data.connections, function(i,k){
-							
-							if(i[iAttrs.type]){
-								// $log.debug('found ', i[iAttrs.type]);
-								angular.forEach(i[iAttrs.type], function(obj){
-									scope.conn.push(obj);
-								});
-							}
-						});
-						// $log.debug(scope.conn);
+					searches.getConnections(scope.key,scope.type).then(function(data){
+						scope.conn = data.connections;
 					});
 				}
 			}
