@@ -125,6 +125,7 @@ class RelationshipSearchService
                 case "from_id":
                 case "from_key":
                 case "to_class":
+                case "from_class":
                 case "to_identifier":
                 case "to_identifier_type":
                 case "to_title":

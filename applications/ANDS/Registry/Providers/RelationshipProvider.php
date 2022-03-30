@@ -241,4 +241,23 @@ class RelationshipProvider
         return array_unique($funders);
     }
 
+    /**
+     * Returns the Related Data (relationship) to a given Identifier and Identifier Type
+     *
+     * @param $ro
+     * @return array
+     */
+    public static function getRelatedDataToIdentifiers($identifier_value, $identifier_type) {
+
+        $result = RelationshipSearchService::search([
+            'to_identifier' => $identifier_value,
+            'from_class' => 'collection',
+            'to_identifier_type' => $identifier_type,
+            'not_to_type' => 'software',
+            'to_title' => '*'
+        ], ['rows' => 5]);
+
+        return $result->toArray();
+    }
+
 }

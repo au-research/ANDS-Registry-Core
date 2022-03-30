@@ -1,11 +1,4 @@
 <div class="panel panel-primary panel-content swatch-white">
-	<div class="panel-heading">
-       <?php $related = $record->relations[0]; ?>
-		{{$related->relation_type}}
-		@if($record->to_title)
-			{{$record->to_title}}
-		@endif
-	</div>
 	<div class="panel-body">
 		@if(!$pullback && $record->connections_preview_div)
 			{{$record->connections_preview_div}}
@@ -68,6 +61,18 @@
 			</p>
 			
 
+		@endif
+
+<!-- RDA-703 show the first 5 related data to the given identifier (that we don't have an RO for
+		TODO: find a portal search end to search for more data (if more than 5 related data exists)
+-->
+		@if($related_data)
+			<h4>More data related to {{$record->to_title}}</h4>
+			<ul>
+				@foreach($related_data['contents'] as $col)
+						<li><a href="{{$col['from_url']}}" title="{{$col['from_title']}}"  ro_id="{{$col['from_id']}}">{{$col['from_title']}}</a></li>
+				@endforeach
+			</ul>
 		@endif
 	</div>
 </div>

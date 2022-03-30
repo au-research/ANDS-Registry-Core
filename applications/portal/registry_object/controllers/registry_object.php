@@ -3,7 +3,9 @@
 use ANDS\Cache\Cache;
 use ANDS\Cache\CacheManager;
 use ANDS\Registry\Providers\ORCID\ORCIDRecordsRepository;
-use GraphAware\Neo4j\Client\ClientBuilder;
+use ANDS\Registry\Providers\RelationshipProvider;
+use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
+
 
 /**
  * Class Registry_object
@@ -499,86 +501,75 @@ class Registry_object extends MX_Controller
             $input = urldecode($input);
             $input_array = json_decode($input);
             $input_array->connections_preview_div="";
-            $identifiers_div = "";
-            $identifier_count = 0;
+            $title = $input_array->to_title;
             $connections_preview_div = "";
-            $description = "";
-            $notes ="";
-
-            if(isset($input_array->notes)){
-                $notes = "<p>Notes: ".$input_array->notes."</p>";
-                }
-            foreach ($input_array->relations as $i) {
-                $identifier=$i->to_identifier;
-                // todo - implement resolvable links for the identifier if possible
-                if(isset($input_array->to_url)){
-                    $identifier = '<a href="'.$input_array->to_url.'">'.$i->to_identifier."</a></br>";
-                }
-
-                if(isset($i->relation_description)){
-                    $description = "<p>".$i->relation_description."</p>";
-                }
-                $relation_url ="";
-                if(isset($i->relation_url)){
-                    $relation_url = '<a href="'.$i->relation_url.'">'.$i->relation_url."</a>";
-                }
-               $identifiers_div .= $input_array->to_identifier_type.": ". $identifier.$description.$notes.$relation_url;
-               $identifier_count++;
+            $relation_url ="";
+            $resolved_identifier = IdentifierProvider::format($input_array->to_identifier, $input_array->to_identifier_type);
+            $identifier_type = "";
+            $identifier_icon = "";
+            if(isset($resolved_identifier['display_text'])){
+                $identifier_type =  $resolved_identifier['display_text'];
             }
-            $identifiers_div = "<h5>Identifier" . ($identifier_count > 1 ? 's' : '') . ": </h5>" . $identifiers_div;
+            if(isset($resolved_identifier['display_icon'])){
+                $identifier_icon =  $resolved_identifier['display_icon'];
+            }
+            if(isset($resolved_identifier['href'])){
+                $relation_url =  $resolved_identifier['href'];
+            }
+            elseif(isset($input_array->to_url)){
+                $relation_url = $input_array->to_url;
+            }
+            else{
+                foreach ($input_array->relations as $i) {
+                    if(isset($i->relation_url)){
+                        $relation_url = $i->relation_url;
+                    }
+                }
+            }
+            if($relation_url !== ""){
+                $title = '<a href="'.$relation_url.'">'.$title."</a></br>";
+                $identifier = '<a href="'.$relation_url.'">'.$input_array->to_identifier.$identifier_icon."</a></br>";
+            }else{
+                $identifier =$input_array->to_identifier.$identifier_icon."</br>";
+            }
+            $identifiers_div = "<h5>Identifier:</h5>".$identifier_type .": ". $identifier;
 
-          //  if ($related_info->notes) {
-          //      $connections_preview_div .= '<p>Notes: ' . (string)$related_info->notes . '</p>';
-         //   }
             $imgUrl = asset_url('img/' . $input_array->to_type . '.png', 'base');
-            $classImg = '<img class="icon-heading" src="' . $imgUrl . '" alt="' . $input_array->to_type . '" style="width:24px; float:right;">';
-            $connections_preview_div = '<div class="previewItemHeader">' .
-                $input_array->relations[0]->relation_type_text . '</div>' . $classImg . '<h4>' .
-                $input_array->to_title . '</h4><div class="post">' .
-                $identifiers_div . "<br/>" . $connections_preview_div . '</div>';
+            $classImg = '<img class="icon-heading" src="' . $imgUrl . '" alt="' . $input_array->to_type . '" style="width:24px; float:left;">';
+            $connections_preview_div = '<h2 class="bordered bold">'.$classImg.$title . '</h2><div class="post">' .
+                $identifiers_div . '</div>';
             $input_array->connections_preview_div = $connections_preview_div;
 
             $fr= $input_array;
-           // if ($result->num_rows() > 0) {
-          //      $fr = $result->first_row();
 
-          //      $ro = $this->ro->getByID($fr->registry_object_id);
-             //   monolog(
-            //        array(
-            //            'event' => 'portal_preview_identifier',
-            //            'record' => $this->getRecordFields($ro),
-             //           'identifier_relation_id' => $this->input->get('identifier_relation_id')
-             //       ),
-             //       'portal', 'info'
-             //   );
+            $ro = false;
 
+            $pullback = false;
 
-                $ro = false;
+            //ORCID "Pull back"
+            if ($fr->to_type == 'party' && $fr->to_identifier_type == 'orcid' && isset($fr->to_identifier)) {
 
-                $pullback = false;
-
-                //ORCID "Pull back"
-                if ($fr->to_type == 'party' && $fr->to_identifier_type == 'orcid' && isset($fr->to_identifier)) {
-
-                   $orcid = ORCIDRecordsRepository::obtain($fr->to_identifier);
-                   if($orcid != null){
-                        $bio = json_decode($orcid->record_data, true);
-                        $pullback = [
-                            'name' => $orcid->full_name,
-                            'bio' => $bio,
-                            'bio_content' => $bio['person']['biography']['content'],
-                            'orcidRecord' => $orcid,
-                            'orcid' => $orcid->orcid_id
-                        ];
-                   }
-                    $filters = array('identifier_value' => $fr->to_identifier);
-                    $ro = $this->ro->findRecord($filters);
-                }
-                $this->blade
-                    ->set('record', $input_array )
-                    ->set('ro', $ro)
-                    ->set('pullback', $pullback)
-                    ->render('registry_object/preview-identifier-relation');
+               $orcid = ORCIDRecordsRepository::obtain($fr->to_identifier);
+               if($orcid != null){
+                    $bio = json_decode($orcid->record_data, true);
+                    $pullback = [
+                        'name' => $orcid->full_name,
+                        'bio' => $bio,
+                        'bio_content' => $bio['person']['biography']['content'],
+                        'orcidRecord' => $orcid,
+                        'orcid' => $orcid->orcid_id
+                    ];
+               }
+                $filters = array('identifier_value' => $fr->to_identifier);
+                $ro = $this->ro->findRecord($filters);
+            }
+            // RDA-703 get related data using the RelationshipProvider
+            $this->blade
+                ->set('record', $input_array )
+                ->set('related_data' , RelationshipProvider::getRelatedDataToIdentifiers($input_array->to_identifier, $input_array->to_identifier_type))
+                ->set('ro', $ro)
+                ->set('pullback', $pullback)
+                ->render('registry_object/preview-identifier-relation');
 
         } else {
             if ($this->input->get('identifier_doi')) {
