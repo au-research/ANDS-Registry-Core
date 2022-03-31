@@ -95,18 +95,20 @@ class RelationshipProvider
 
     /**
      * Returns  a record relationships by a specific relatedObject class
-     *
+     * This function is called by the rda service getConnections function and will return the defined
+     * "People" or Organisations based on supplied type_filter of either 'parti_multi' or 'party_one'
      * @param RegistryObject $record
      * @param $class
      * @return array
      * @throws \Exception
      */
-    public static function getRelatedObjectsByClassType(RegistryObject $record, $class, $type)
+    public static function getRelatedObjectsByClassType(RegistryObject $record, $class, $type_filter)
     {
         $search_params =[];
         $search_params['from_id'] = $record->id;
-        if($type != null) $search_params['to_type'] = $type;
-        if($class != null) $search_params['to_class'] = $class;
+        if($type_filter != null && $type_filter == 'party_one') $search_params['not_to_type'] = 'group';
+        if($type_filter != null && $type_filter == 'party_multi') $search_params['to_type'] = 'group';
+        if($class != null ) $search_params['to_class'] = $class;
         $search_params["rows"] = self::$batch_size;
         $search_params["start"] = 0;
         $allRelationships = [];

@@ -245,8 +245,10 @@ angular.module('portal_theme',[]).
 					scope.key = iAttrs.key;
 					scope.type = iAttrs.type;
 					scope.conn = [];
+					scope.type_filter = '';
 					searches.getConnections(scope.key,scope.type).then(function(data){
 						scope.conn = data.connections;
+						scope.type_filter = data.type_filter
 					});
 				}
 			}

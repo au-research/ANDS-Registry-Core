@@ -228,17 +228,12 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
         $class = null;
         if($type_filter == 'party_one') {
             $class = 'party';
-            $type =  'person';
-
         }
         elseif($type_filter == 'party_multi') {
             $class = 'party';
-            $type =  'group';
-
         }
         else{
             $class = $type_filter;
-            $type = null;
         }
 
 
@@ -263,11 +258,10 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		}
         $record = ANDS\Repository\RegistryObjectsRepository::getRecordByID($registry_object->id);
 
-        $connections = ANDS\Registry\Providers\RelationshipProvider::getRelatedObjectsByClassType($record, $class, $type);
-        //var_dump($connections);
+        $connections = ANDS\Registry\Providers\RelationshipProvider::getRelatedObjectsByClassType($record, $class, $type_filter);
 
 		// Return this registry object's connections
-		echo json_encode(array("connections"=>$connections, 'class'=>$registry_object->class, 'slug'=>$registry_object->slug));
+		echo json_encode(array("connections"=>$connections, 'class'=>$registry_object->class, 'slug'=>$registry_object->slug, 'type_filter'=>$type_filter));
 	}
 
 

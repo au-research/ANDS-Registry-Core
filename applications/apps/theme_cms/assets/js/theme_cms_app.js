@@ -67,16 +67,21 @@ angular.module('theme_cms_app', ['slugifier', 'ui.sortable', 'ui.tinymce', 'ngSa
 	filter('relationships_display', function($filter){
 		return function(text, type){
 			var res = '';
+			var count = 0;
 			if(text){
 				var s = (text);
 				res += '<h4>'+$filter('class_name')(type)+'</h4>';
 				res +='<ul>';
 				$.each(s, function(i, k){
-					res += '<li><a href="'+k.to_url+'">'+k.to_title+' <small class="muted">'+k.relations[0].relation_type_text+'</small></a></li>';
+					if(count < 5) {
+						res += '<li><a href="' + k.to_url + '">' + k.to_title + ' <small class="muted">' + k.relations[0].relation_type + '</small></a></li>';
+						count ++;
+					}
 				});
 				res +='</ul>';
-				if(text[type+'_count']>5){
-					res += 'Total Count: '+text[type+'_count'];
+
+				if(text.length > 5){
+					res += 'Total Count: '+text.length;
 				}
 			}
 			return res;
@@ -160,7 +165,7 @@ function ListCtrl($scope, pages_factory){
 function ViewPage($scope, $http, $routeParams, pages_factory, $location, search_factory){
 
 	$scope.tinymceOptions = {
-	    theme: "modern",
+	    // theme: "modern",
 	    plugins: [
 	        "advlist autolink lists link image charmap print preview hr anchor pagebreak",
 	        "searchreplace wordcount visualblocks visualchars code fullscreen",
@@ -278,7 +283,6 @@ function ViewPage($scope, $http, $routeParams, pages_factory, $location, search_
 	}
 
 	$scope.save = function(){
-		// console.log($scope.page);
 		pages_factory.savePage($scope.page).then(function(data){
 			var now = new Date();
 			$scope.saved_msg = 'Last Saved: '+now; 
