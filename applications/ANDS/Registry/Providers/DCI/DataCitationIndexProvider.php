@@ -289,12 +289,14 @@ class DataCitationIndexProvider implements RegistryContentProvider
         foreach ($validRelationTypes as $relationType) {
             $authors_related = array_merge($authors, RelationshipProvider::getRelationByType($record, [$relationType]));
             foreach($authors_related as $author){
-               $id = $author['to_identifier_type'] == 'ro:id'? $author['to_identifier'] : null;
-                $authors[] = [
-                    'relation' => $author['relations'][0]['relation_type'],
-                    'name' => $author['to_title'],
-                    'id' => $id
-                ];
+                if(array_key_exists('to_title', $author)) {
+                    $id = $author['to_identifier_type'] == 'ro:id' ? $author['to_identifier'] : null;
+                    $authors[] = [
+                        'relation' => $author['relations'][0]['relation_type'],
+                        'name' => $author['to_title'],
+                        'id' => $id
+                    ];
+                }
             }
             if (count($authors)) {
                 return $authors;
