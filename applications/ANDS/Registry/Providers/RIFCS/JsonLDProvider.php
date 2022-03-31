@@ -11,6 +11,7 @@ use ANDS\Registry\Providers\MetadataProvider;
 use ANDS\Registry\Providers\RIFCSProvider;
 use ANDS\Registry\Providers\LinkProvider;
 use ANDS\RegistryObject\RegistryObjectVersion;
+use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\Config;
 use ANDS\Util\XMLUtil;
 use \ANDS\Registry\Schema;
@@ -27,7 +28,7 @@ class JsonLDProvider implements RIFCSProvider
 
     private static $schema_uri = "https://schema.org/";
     private static $origin = "REGISTRY";
-
+    private static $registerd_identifier_types = ["igsn","grid","isbn","isni","doi","orcid","pubmed","issn"];
     public static function base_url() {
         return Config::get('app.default_base_url');
     }
@@ -134,36 +135,14 @@ class JsonLDProvider implements RIFCSProvider
 
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class . '/ro:citationInfo/ro:citationMetadata/ro:identifier') AS $identifier) {
-            $identifier_url = LinkProvider::getResolvedLinkForIdentifier((string)$identifier['type'],(string)$identifier);
-            if($identifier_url) {
-                $identifiers[] = array( "@type"=> "PropertyValue",
-                    "propertyID"=> "URL",
-                    "value"=> $identifier_url
-                );
-            }else{
-                $identifiers[] = array( "@type"=> "PropertyValue",
-                    "propertyID"=> (string)$identifier['type'],
-                    "value"=> (string)$identifier
-                );
-            }
+            $identifiers[] = array("type"=>$identifier['type'],"value"=>(string)$identifier);
         };
 
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class . '/ro:identifier') AS $identifier) {
-            $identifier_url = LinkProvider::getResolvedLinkForIdentifier((string)$identifier['type'],(string)$identifier);
-            if($identifier_url) {
-                $identifiers[] = array( "@type"=> "PropertyValue",
-                    "propertyID"=> "URL",
-                    "value"=> $identifier_url
-                );
-            }else{
-                $identifiers[] = array( "@type"=> "PropertyValue",
-                    "propertyID"=> (string)$identifier['type'],
-                    "value"=> (string)$identifier
-                );
-            }
+            $identifiers[] = array("type"=>$identifier['type'],"value"=>(string)$identifier);
          };
-        return $identifiers;
+        return static::formatIdentifiers($identifiers);
     }
 
 
@@ -288,23 +267,8 @@ class JsonLDProvider implements RIFCSProvider
 
     public static function getCitation(RegistryObject $record)
     {
-        $citation = [];
-
         $relationships = RelationshipProvider::getRelationByClassTypeRelationType($record, null, 'publication', null);
-        foreach ($relationships as $relation) {
-            if($relation['to_url'] != ""){
-                $citation[] = array("@type"=>"CreativeWork","name"=>$relation['to_title'],"url"=> $relation["to_url"]);
-            }else{
-                $identifier =array(
-                    "@type"=> "PropertyValue",
-                    "propertyID"=> $relation["to_identifier_type"],
-                    "value"=> $relation["to_identifier"]
-                );
-                $citation[] = array("@type"=>"CreativeWork","name"=>$relation['to_title'],"identifier"=>[$identifier]);
-            }
-        }
-        return $citation;
-
+        return static::formatRelationship($relationships, "CreativeWork");
     }
 
     public static function processCoordinates($type, $coords){
@@ -434,64 +398,95 @@ class JsonLDProvider implements RIFCSProvider
 
     public static function getFunder(RegistryObject $record)
     {
-        $funders = [];
         $relationships = RelationshipProvider::getRelationByClassAndType($record, 'party', ['isFundedBy']);
-        foreach($relationships as $relationship) {
-                $type = ($relationship['to_type'] == "group") ? "Organization" : "Person";
-                $funders[] = array("@type" => $type, "name" => $relationship['to_title'], "url" =>  $relationship['to_url']);
-
-        }
-        return $funders;
+        return static::formatRelationship($relationships);
     }
 
     public static function getRelated(RegistryObject $record, $relation_type = array())
     {
-        $related = [];
-
         $relationships = RelationshipProvider::getRelationByType($record, $relation_type);
+        return static::formatRelationship($relationships);
+    }
 
+    private static function formatRelationship($relationships, $type=""){
+        $related = [];
         foreach ($relationships as $relation) {
-            if($relation["to_url"] != ""){
-                $related[] = array("@type"=>"CreativeWork","name"=>$relation["to_title"], "url"=> $relation["to_url"]);
-            }else{
-                $identifier =array(
-                    "@type"=> "PropertyValue",
-                    "propertyID"=> $relation["to_identifier_type"],
-                    "value"=> $relation["to_identifier"]
-                );
-                $related[] = array("@type"=>"CreativeWork","name"=>$relation["to_title"], "identifier"=>[$identifier]);
+            $related_record = null;
+            // if it's an actual record get it from the registry
+            if($relation["to_identifier_type"] == "ro:id"){
+                $related_record = RegistryObjectsRepository::getRecordByID($relation["to_identifier"]);
+            }
+            // if no record in the registry or not a registry object use what ever we get from the index
+            if($related_record == null){
+                if ($type === "") {
+                    if ($relation["to_type"] == 'group') {
+                        $type = "Organization";
+                    } else {
+                        $type = "Person";
+                    }
+                }
+                $identifiers[] = array("value"=>$relation["to_identifier"], "type"=>$relation["to_identifier_type"]);
+                $a_identifiers = static::formatIdentifiers($identifiers);
+                if(isset($relation["to_url"])){
+                    $related[] = array("@type" => $type, "name" => $relation["to_title"], "identifier" => $a_identifiers, "url" => $relation["to_url"]);
+                }
+                else{
+                    $related[] = array("@type" => $type, "name" => $relation["to_title"], "identifier" => $a_identifiers);
+                }
+            }
+            else {
+                // process the registry object
+                if ($type === "") {
+                    if (strtolower($related_record->type) == 'group') {
+                        $type = "Organization";
+                    } else {
+                        $type = "Person";
+                    }
+                }
+                $identifiers = IdentifierProvider::get($related_record);
+                if (sizeof($identifiers) > 0) {
+                    $a_identifiers = static::formatIdentifiers($identifiers);
+                    $related[] = array("@type" => $type, "name" => $relation["to_title"], "identifier" => $a_identifiers, "url" => $relation["to_url"]);
+                } else {
+                    $related[] = array("@type" => $type, "name" => $relation["to_title"], "url" => $relation["to_url"]);
+                }
             }
         }
         return $related;
+    }
 
+    public static function formatIdentifiers($identifiers){
+        $a_identifiers = [];
+
+        foreach($identifiers as $identifier){
+            $property_id = (string)($identifier["type"]);
+            if(in_array(strtolower($property_id), static::$registerd_identifier_types)){
+                $property_id = "https://registry.identifiers.org/registry/" .strtolower($property_id);
+            }
+            $formated = IdentifierProvider::format($identifier["value"], $identifier["type"]);
+            if(isset($formated['href']) && $formated['href'] !== ""){
+                $a_identifiers[] = array("@id"=>$formated['href'], "@type"=> "PropertyValue",
+                    "propertyID"=> $property_id, "value"=> $identifier["value"], "url" => $formated['href']);
+            }
+            else{
+                $a_identifiers[] = array("@id"=> $identifier["value"], "@type"=> "PropertyValue",
+                    "propertyID"=> $property_id, "value"=> $identifier["value"]);
+            }
+        }
+        if(sizeof($identifiers) === 1){
+            $a_identifiers = $a_identifiers[0];
+        }
+        return $a_identifiers;
     }
 
     public static function getProvider(RegistryObject $record)
     {
-        $related = [];
+
         $provider_relationships = array("isOwnedBy", "isManagedBy");
-
         $relationships = RelationshipProvider::getRelationByType($record, $provider_relationships);
-        foreach ($relationships as $relation) {
-            if ($relation["to_type"] == 'group') {
-                $type = "Organization";
-            } else {
-                $type = "Person";
-            }
-            if ($relation["to_url"] != "") {
-                $related[] = array("@type" => $type, "name" => $relation["to_title"], "url" => $relation["to_url"]);
-
-            } else {
-                $identifier =array(
-                    "@type"=> "PropertyValue",
-                    "propertyID"=> $relation["to_identifier_type"],
-                    "value"=> $relation["to_identifier"]
-                );
-                $related[] = array("@type" => $type, "name" => $relation["to_title"], "identifier" => $identifier);
-            }
-        }
-
-        if(count($related) > 0) return $related;
+        $related = static::formatRelationship($relationships);
+        if(count($related) > 0)
+            return $related;
 
         $related[] =array("@type" => "Organization", "name" => $record->group);
 
@@ -580,7 +575,6 @@ class JsonLDProvider implements RIFCSProvider
 
     public static function getCreator(RegistryObject $record, $data)
     {
-
         $creator = [];
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class . '/ro:citationInfo/ro:citationMetadata/ro:contributor') AS $contributor) {
@@ -599,30 +593,11 @@ class JsonLDProvider implements RIFCSProvider
         $relations_types = array("hasPrincipalInvestigator","author","coInvestigator", "hasCollector");
         foreach ($relations_types as $idx=>$relation_type) {
             $relationships = RelationshipProvider::getRelationByType($record, array($relation_type));
-            foreach ($relationships as $relation) {
-                if ($relation["class"] != 'party') // shouldn't happen with these relationship types but to be sure
-                {
-                    continue;
-                }
-                if ($relation["to_type"] == 'group') {
-                    $type = "Organization";
-                } else {
-                    $type = "Person";
-                }
-                if ($relation["to_url"] != '') {
-                    $creator[] = array("@type" => $type, "name" => $relation["to_title"], "url" => $relation["to_url"]);
-                } else {
-                    $identifier =array(
-                        "@type"=> "PropertyValue",
-                        "propertyID"=> $relation["to_identifier_type"],
-                        "value"=> $relation["to_identifier"]
-                    );
-                    $creator[] = array("@type" => $type, "name" => $relation["to_title"], "identifier" =>  $identifier);
-                }
-            }
+            $creator = static::formatRelationship($relationships);
             if(sizeof($creator) > 0)
                 return $creator;
         }
+
         return $creator;
     }
 
@@ -630,27 +605,11 @@ class JsonLDProvider implements RIFCSProvider
     public static function getAccountablePerson(RegistryObject $record)
     {
         $relations_types = ["isOwnedBy", "isManagedBy"];
-        $processedIds = [];
+
         $accountablePerson = [];
         foreach ($relations_types as $idx=>$relation_type) {
             $relationships = RelationshipProvider::getRelationByType($record, array($relation_type));
-            foreach ($relationships as $relation) {
-                // check for class == party in case shouldn't happen with these relationship types but to be sure
-                if ($relation["to_class"] != 'party' || $relation["type"] == 'group' || in_array_r($relation["id"] , $processedIds)) {
-                    continue;
-                }
-                $processedIds[] = $relation["id"];
-                if ($relation["to_url"] != "") {
-                    $accountablePerson[] = array("@type" => "Person", "name" => $relation["to_title"], "url" => $relation["to_url"]);
-                } else {
-                    $identifier =array(
-                        "@type"=> "PropertyValue",
-                        "propertyID"=> $relation["to_identifier_type"],
-                        "value"=> $relation["to_identifier"]
-                    );
-                    $accountablePerson[] = array("@type" => "Person", "name" => $relation["to_title"], "identifier" => $identifier);
-                }
-            }
+            $accountablePerson = static::formatRelationship($relationships);
             if(sizeof($accountablePerson) > 0)
                 return $accountablePerson;
         }
