@@ -492,9 +492,11 @@ class DataCitationIndexProvider implements RegistryContentProvider
                 $fundingInfo = ['GrantNumber' => $grantID['value']];
                 $funders = RelationshipProvider::getRelationByClassAndType($activity, 'party', ['isFundedBy']);
                 foreach($funders as $funder){
-                    foreach($funder['relations'] as $relations){
-                        if($relations['relation_origin']=="GrantsNetwork")
-                            $fundingInfo['FundingOrganization'] = $funder['to_title'];
+                    if(array_key_exists('to_title',$funder)) {
+                        foreach ($funder['relations'] as $relations) {
+                            if ($relations['relation_origin'] == "GrantsNetwork")
+                                $fundingInfo['FundingOrganization'] = $funder['to_title'];
+                        }
                     }
                 }
                 $fundingInfos[] = $fundingInfo;
