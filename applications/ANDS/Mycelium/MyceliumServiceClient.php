@@ -240,4 +240,12 @@ class MyceliumServiceClient
             ]
         ]);
     }
+
+    public function deleteDataSourceRecords(DataSource $dataSource) {
+        Log::debug(__METHOD__ , ["id" => $dataSource->id]);
+
+        return $this->client->delete("api/resources/mycelium-datasources/{$dataSource->id}/vertices", [
+            "headers" => ['Content-Type' => 'application/json']
+        ]);
+    }
 }

@@ -16,7 +16,7 @@ class RecordData extends Model
 
     public static function getTableName()
     {
-        return static::table;
+        return static::$table;
     }
 
     public function saveData($data, $scheme = "rif") {

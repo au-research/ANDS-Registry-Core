@@ -8,8 +8,12 @@ use ANDS\DataSource;
 use ANDS\Log\Log;
 use ANDS\Payload;
 use ANDS\API\Task\ImportTask;
+use ANDS\RecordData;
+use ANDS\Registry\Providers\DCI\DCI;
+use ANDS\Registry\Providers\Scholix\Scholix;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
+use ANDS\Util\SolrIndex;
 
 /**
  * Class Importer
@@ -229,5 +233,112 @@ class Importer
         }
 
         return $importTask;
+    }
+
+    public static function importDataSourceFromFile($path, $overwrite = true) {
+
+        if (! is_readable($path)) {
+            throw new \Exception("$path must be accessible");
+        }
+
+        if (is_file($path)) {
+            $dataSourceFile = $path;
+        } elseif (is_dir($path)) {
+            $dataSourceFile = $path .'/dataSource.json';
+        }
+
+        $dataSourceExport = json_decode(file_get_contents($dataSourceFile), true);
+
+        $dataSourceMeta = $dataSourceExport['metadata'];
+        if ($overwrite) {
+            DataSource::unguard(true);
+        }
+        $dataSource = DataSource::firstOrCreate($dataSourceMeta);
+
+        $dataSourceAttributes = $dataSourceExport['attributes'];
+        foreach ($dataSourceAttributes as $attribute) {
+            $dataSource->setDataSourceAttribute($attribute['attribute'], $attribute['value']);
+        }
+
+        return $dataSource;
+    }
+
+    public static function importRecordsFromDirectory($path) {
+        if (! is_dir($path) || is_readable($path)) {
+            throw new \Exception("$path must be accessible");
+        }
+
+        $recordsDirectory = $path .'/records';
+        $files = scandir($recordsDirectory);
+
+        foreach ($files as $file) {
+            if ($file == '.' || $file == '..') continue;
+            self::importRecordFromFile($file);
+        }
+    }
+
+    public static function importRecordFromFile($filePath, $overwrite = true) {
+        $recordExport = json_decode(file_get_contents($filePath), true);
+
+        $id = $recordExport['metadata']['registry_object_id'];
+
+        // quit if the record already exists if not overwriting
+        if (RegistryObject::where('registry_object_id', $id)->exists() && !$overwrite) {
+            return;
+        }
+
+        if ($overwrite) {
+            RegistryObject::unguard(true);
+        }
+
+        if (array_key_exists('registry_object_attributes', $recordExport['metadata'])) {
+            unset($recordExport['metadata']['registry_object_attributes']);
+        }
+
+        // create the records
+        $record = RegistryObject::firstOrCreate($recordExport['metadata']);
+
+        // create the attributes
+        foreach ($recordExport['attributes'] as $attribute) {
+            $record->setRegistryObjectAttribute($attribute['attribute'], $attribute['value']);
+        }
+
+        // create the record data
+        RecordData::firstOrCreate([
+            'registry_object_id' => $record->id,
+            'current' => TRUE,
+            'data' => base64_decode($recordExport['xml'])
+        ]);
+    }
+
+    public static function wipeDataSourceRecords(DataSource $dataSource, $softDelete = true) {
+
+        // delete portal index
+        SolrIndex::getClient('portal')->removeByQuery("data_source_id:$dataSource->id");
+
+        // delete mycelium vertices & relationship index
+        $myceliumServiceClient = new \ANDS\Mycelium\MyceliumServiceClient(\ANDS\Util\Config::get('mycelium.url'));
+        $myceliumServiceClient->deleteDataSourceRecords($dataSource);
+
+        // set the status of registryObjects to DELETED to prevent them from being accessed
+        RegistryObject::where('data_source_id', $dataSource->id)->update(['status' => 'DELETED']);
+
+        // delete record data & every other field, chunk by 100 for performance
+        $idQuery = function($query) use ($dataSource) {
+            $query->select('registry_object_id')->from('registry_objects')->where('data_source_id', '=', $dataSource->id);
+        };
+        $keyQuery = function($query) use ($dataSource) {
+            $query->select('key')->from('registry_objects')->where('data_source_id', '=', $dataSource->id);
+        };
+
+        RecordData::whereIn('registry_object_id', $idQuery)->delete();
+        Scholix::whereIn('registry_object_id', $idQuery)->delete();
+        DCI::whereIn('registry_object_id', $idQuery)->delete();
+        RegistryObject\Tag::whereIn('key', $keyQuery)->delete();
+
+        // delete the records afterwards
+        if ($softDelete === false) {
+            RegistryObject::where('data_source_id', $dataSource->id)->delete();
+        }
     }
 }

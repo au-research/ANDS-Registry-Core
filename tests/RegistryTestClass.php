@@ -135,6 +135,13 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
                 'slug' => str_slug($title)
             ], $attributes);
             return RegistryObject\ThemePage::create($attrs);
+        } elseif ($class == DataSource::class) {
+            $attrs = array_merge([
+                'title' => uniqid(),
+                'key' => uniqid(),
+                'slug' => uniqid()
+            ], $attributes);
+            return DataSource::create($attrs);
         }
 
         return null;
