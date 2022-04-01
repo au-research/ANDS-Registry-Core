@@ -437,7 +437,7 @@ class JsonLDProvider implements RIFCSProvider
                 $record = [];
                 $record['@type'] = $type;
                 if(isset($relation["to_title"]))
-                    $record['@type'] = $type;
+                    $record['name'] = $relation["to_title"];
                 if(isset($relation["to_url"]))
                     $record['url'] =$relation["to_url"];
                 $record['identifier'] = $a_identifiers;
@@ -445,7 +445,7 @@ class JsonLDProvider implements RIFCSProvider
             }
             else {
                 $identifiers = IdentifierProvider::get($related_record);
-                // these are actual registry objects so they will have to_title and to_url
+                // these are actual registry objects, so they will have to_title and to_url
                 if (sizeof($identifiers) > 0) {
                     $a_identifiers = static::formatIdentifiers($identifiers);
                     $related[] = array("@type" => $type, "name" => $relation["to_title"], "identifier" => $a_identifiers, "url" => $relation["to_url"]);
