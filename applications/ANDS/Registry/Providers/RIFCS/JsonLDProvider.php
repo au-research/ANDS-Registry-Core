@@ -113,6 +113,7 @@ class JsonLDProvider implements RIFCSProvider
     public static function get(RegistryObject $record)
     {
         // obtaining existing versions
+        return static::process($record);
         $schema = Schema::get(static::$schema_uri);
         $altVersionsIDs = RegistryObjectVersion::where('registry_object_id', $record->id)->get()->pluck('version_id')->toArray();
         $existingVersion = null;
@@ -412,38 +413,40 @@ class JsonLDProvider implements RIFCSProvider
         $related = [];
         foreach ($relationships as $relation) {
             $related_record = null;
+            if ($type === "") {
+                if ($relation["to_class"] === 'party' && $relation["to_type"] == 'group') {
+                    $type = "Organization";
+                } elseif($relation["to_class"] === 'party') {
+                    $type = "Person";
+                }else{
+                    $type = ucfirst($relation["to_type"]);
+                }
+            }
+            // Publication (The type Publication is not a type defined by the recognised schema (e.g. schema.org).)
+            // might need a lookup vocab for types
+            if($type === "Publication"){
+                $type = "PublicationIssue";
+            }
             // if it's an actual record get it from the registry
             if($relation["to_identifier_type"] == "ro:id"){
                 $related_record = RegistryObjectsRepository::getRecordByID($relation["to_identifier"]);
             }
             // if no record in the registry or not a registry object use what ever we get from the index
             if($related_record == null){
-                if ($type === "") {
-                    if ($relation["to_type"] == 'group') {
-                        $type = "Organization";
-                    } else {
-                        $type = "Person";
-                    }
-                }
                 $identifiers[] = array("value"=>$relation["to_identifier"], "type"=>$relation["to_identifier_type"]);
                 $a_identifiers = static::formatIdentifiers($identifiers);
-                if(isset($relation["to_url"])){
-                    $related[] = array("@type" => $type, "name" => $relation["to_title"], "identifier" => $a_identifiers, "url" => $relation["to_url"]);
-                }
-                else{
-                    $related[] = array("@type" => $type, "name" => $relation["to_title"], "identifier" => $a_identifiers);
-                }
+                $record = [];
+                $record['@type'] = $type;
+                if(isset($relation["to_title"]))
+                    $record['@type'] = $type;
+                if(isset($relation["to_url"]))
+                    $record['url'] =$relation["to_url"];
+                $record['identifier'] = $a_identifiers;
+                $related[] = $record;
             }
             else {
-                // process the registry object
-                if ($type === "") {
-                    if (strtolower($related_record->type) == 'group') {
-                        $type = "Organization";
-                    } else {
-                        $type = "Person";
-                    }
-                }
                 $identifiers = IdentifierProvider::get($related_record);
+                // these are actual registry objects so they will have to_title and to_url
                 if (sizeof($identifiers) > 0) {
                     $a_identifiers = static::formatIdentifiers($identifiers);
                     $related[] = array("@type" => $type, "name" => $relation["to_title"], "identifier" => $a_identifiers, "url" => $relation["to_url"]);
