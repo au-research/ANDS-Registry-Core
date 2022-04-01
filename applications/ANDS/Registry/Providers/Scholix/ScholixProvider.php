@@ -410,7 +410,9 @@ class ScholixProvider implements RegistryContentProvider
         $partyRelationships = RelationshipProvider::getRelationByClassAndType($record,'party',[]);
 
         foreach($partyRelationships as $party){
-            if($party['to_identifier_type'] == 'ro:id' && $party['to_title'] == $party['from_group']) {
+            if(array_key_exists('to_title', $party)
+                && $party['to_identifier_type'] == 'ro:id'
+                && $party['to_title'] == $party['from_group']) {
                 $party = RegistryObjectsRepository::getRecordByID($party['to_identifier']);
                 $identifiers = collect(IdentifierProvider::get($party))
                     ->map(function($item){

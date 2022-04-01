@@ -26,6 +26,7 @@ class Directaccess extends ROHandler
                 foreach($service['relations'] as $relation)
                 if (isset($relation['relation_url'])
                     && sizeof($relation['relation_url']) > 0
+                    && array_key_exists('to_title', $service)
                 ) {
                     $relationUrl = $relation['relation_url'];
                     $relationDescription = $service['to_title'];

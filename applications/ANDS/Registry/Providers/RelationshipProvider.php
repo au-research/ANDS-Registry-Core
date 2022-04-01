@@ -111,6 +111,7 @@ class RelationshipProvider
         if($class != null ) $search_params['to_class'] = $class;
         $search_params["rows"] = self::$batch_size;
         $search_params["start"] = 0;
+        $search_params["to_identifier_type"] = '"ro:id"';
         $allRelationships = [];
 
         do {
