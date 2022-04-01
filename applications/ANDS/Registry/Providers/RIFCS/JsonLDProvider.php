@@ -114,7 +114,6 @@ class JsonLDProvider implements RIFCSProvider
     {
         // obtaining existing versions
         return static::process($record);
-        $schema = Schema::get(static::$schema_uri);
         $altVersionsIDs = RegistryObjectVersion::where('registry_object_id', $record->id)->get()->pluck('version_id')->toArray();
         $existingVersion = null;
 
