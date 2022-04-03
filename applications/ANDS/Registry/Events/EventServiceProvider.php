@@ -4,8 +4,10 @@ namespace ANDS\Registry\Events;
 
 use ANDS\Registry\Events\Event\DataSourceUpdatedEvent;
 use ANDS\Registry\Events\Event\PortalIndexUpdateEvent;
+use ANDS\Registry\Events\Event\PrimaryKeyUpdatedEvent;
 use ANDS\Registry\Events\Listener\InsertDataSourceLog;
 use ANDS\Registry\Events\Listener\UpdatePortalIndex;
+use ANDS\Registry\Events\Listener\UpdatePortalIndexesPK;
 use Exception;
 use ReflectionClass;
 
@@ -13,7 +15,8 @@ class EventServiceProvider
 {
     private static $config = [
         DataSourceUpdatedEvent::class => [InsertDataSourceLog::class],
-        PortalIndexUpdateEvent::class => [UpdatePortalIndex::class]
+        PortalIndexUpdateEvent::class => [UpdatePortalIndex::class],
+        PrimaryKeyUpdatedEvent::class => [UpdatePortalIndexesPK::class]
     ];
 
     public static function getShortNames() {
