@@ -2000,7 +2000,9 @@ class Data_source extends MX_Controller {
         ds_acl_enforce((int) $id);
 
         $dataSource = \ANDS\Repository\DataSourceRepository::getByID($id);
-        // todo check dataSource existence
+        if (!$dataSource) {
+            throw new Exception("DataSource $id not found");
+        }
 
         try {
             $dataSource->appendDataSourceLog(

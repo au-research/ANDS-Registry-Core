@@ -862,6 +862,9 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 	$scope.wipe = function() {
 		if (window.confirm("You are about to wipe all registry content for data source "+$scope.ds.title+"\nDo you want to continue?") === true) {
 			ds_factory.wipe($scope.ds.id).then(function(data) {
+				if (data.status === "ERROR") {
+					alert(data.message);
+				}
 				$scope.get($routeParams.id);
 			});
 		}
