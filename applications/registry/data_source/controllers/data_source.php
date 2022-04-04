@@ -1923,6 +1923,47 @@ class Data_source extends MX_Controller {
 		echo json_encode($response);
 	}
 
+    /**
+     * /registry/data_sources/wipe/{id}
+     *
+     * Wiping a data source content
+     * @param $id
+     * @return void
+     * @throws \Exception
+     */
+    public function wipe($id) {
+
+        // headers
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Content-type: application/json');
+        set_exception_handler('json_exception_handler');
+
+        // check permission
+        acl_enforce('REGISTRY_USER');
+        ds_acl_enforce((int) $id);
+
+        $dataSource = \ANDS\Repository\DataSourceRepository::getByID($id);
+        // todo check dataSource existence
+
+        try {
+            $dataSource->appendDataSourceLog(
+                "Wiping data source contents".NL.
+                "Initiated: " . $this->user->name() . " (" . $this->user->localIdentifier() . ") at " . display_date().NL
+                ,'info', 'IMPORTER');
+            \ANDS\Registry\Importer::wipeDataSourceRecords($dataSource);
+        } catch (Exception $e) {
+            $dataSource->appendDataSourceLog(
+                "An error occur while wiping data source contents".NL.
+                "Message: {$e->getMessage()}" .NL.
+                "Code: {$e->getCode()}" .NL
+                , 'error', 'IMPORTER');
+        }
+
+        echo json_encode([
+            'data' => 'success',
+        ]);
+    }
+
 	function getDataSourceReport($id){
 
 		$dataSource = $this->ds->getByID($id);

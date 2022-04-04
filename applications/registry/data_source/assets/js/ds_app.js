@@ -29,6 +29,12 @@ angular.module('ds_app', ['slugifier', 'ui.sortable', 'ui.tinymce', 'ngSanitize'
 			remove: function(id) {
 				return $http.post(base_url+'data_source/delete/', {id:id}).then(function(response){return response.data});
 			},
+			wipe: function(id) {
+				return $http.post(base_url+'data_source/wipe/'+id)
+					.then(function(response) {
+						return response.data;
+					});
+			},
 			import: function(data) {
 				if (data.from == "xml") {
 					return $http({
@@ -849,6 +855,14 @@ function ViewCtrl($scope, $routeParams, ds_factory, $location, $timeout) {
 		if (window.confirm("You are about to delete data source '"+ $scope.ds.title +"'.\n Deleting this Data Source will remove it from the registry and delete all of its records.\n Do you want to continue?") === true){
 			ds_factory.remove($scope.ds.id).then(function(data){
 				$location.path('/');
+			});
+		}
+	}
+
+	$scope.wipe = function() {
+		if (window.confirm("You are about to wipe all registry content for data source "+$scope.ds.title+"\nDo you want to continue?") === true) {
+			ds_factory.wipe($scope.ds.id).then(function(data) {
+				$scope.get($routeParams.id);
 			});
 		}
 	}
