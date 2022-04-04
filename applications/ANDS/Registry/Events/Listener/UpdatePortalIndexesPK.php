@@ -21,17 +21,22 @@ class UpdatePortalIndexesPK
      */
     public function handle(Event\PrimaryKeyUpdatedEvent $event)
     {
-        if($event->data_source_id == null && $event->data_source_id == null ){
-            throw new Exception("data_source_id must be provided");
+        if($event->data_source_id == null || $event->data_source_id === "" ){
+            debug("data_source_id must be provided");
+            return;
         }
 
-        if($event->old_primary_key == null && $event->new_primary_key == null ){
-            throw new Exception("Either old or new primary_key must be provided");
+        if($event->old_primary_key === "" && $event->new_primary_key === "" ){
+            debug("Either old or new primary_key must be provided old:".$event->old_primary_key. " new:".$event->new_primary_key);
+            return;
         }
 
-        debug("PrimaryKeyUpdatedEvent ds_id:".$event->data_source_id ." old_pk:". $event->old_primary_key
-            ." new_pk:".$event->new_primary_key . " ar:" . $event->activity_relationship_type ." pr". $event->party_relationship_type
-            ." sr:".$event->service_relationship_type." cr:".$event->collection_relationship_type);
+        debug("PrimaryKeyUpdatedEvent ds_id:".$event->data_source_id .
+            " old_pk:". $event->old_primary_key ." new_pk:".$event->new_primary_key .
+            " old_ar:" . $event->old_activity_relationship_type . " old_pr". $event->old_party_relationship_type .
+            " old_sr:".$event->old_service_relationship_type . " old_cr:".$event->old_collection_relationship_type .
+            " new_ar:" . $event->new_activity_relationship_type . " new_pr". $event->new_party_relationship_type .
+            " new_sr:".$event->new_service_relationship_type . " new_cr:".$event->new_collection_relationship_type);
         $this->processEvent($event);
     }
 
@@ -61,15 +66,18 @@ class UpdatePortalIndexesPK
          * check relationship
          *
          */
-        if($event->old_primary_key !== null){
+        if($event->old_primary_key !== "" && ($event->old_primary_key !== $event->new_primary_key)){
             $this->processRemoveOldPrimaryKey($event);
         }
-        if($event->new_primary_key !== null){
+        if($event->new_primary_key !== "" && ($event->new_primary_key !== $event->old_primary_key)){
             $this->processAddNewPrimaryKey($event);
+        }
+        if($event->old_primary_key === $event->new_primary_key){
+            $this->processSetAndUnsetModifiedRelationships($event);
         }
     }
 
-    private function processAddNewPrimaryKey(Event\PrimaryKeyUpdatedEvent $event){
+    private function processSetAndUnsetModifiedRelationships(Event\PrimaryKeyUpdatedEvent $event){
         $primary_record = RegistryObjectsRepository::getPublishedByKey($event->new_primary_key);
         $data_source_id = $event->data_source_id;
         $pr_title = $primary_record->title;
@@ -85,17 +93,71 @@ class UpdatePortalIndexesPK
         }
 
         if($pr_class !== 'collection'){
-            // TODO: find all activities and add the primary key's title to their index in portal
-            if($event->activity_relationship_type !== null && $event->activity_relationship_type !== ""){
+            // if relation type added (new is set AND old was empty)
+            if($event->new_activity_relationship_type !== "" && $event->old_activity_relationship_type === ""){
                 $this->addPrimaryRecordToPortalIndex($data_source_id, 'activity', $indexed_field, $pr_title);
             }
-            if($event->party_relationship_type !== null && $event->party_relationship_type !== ""){
+            // if relations type is removed (old was set AND new is empty)
+            if($event->old_activity_relationship_type !== "" && $event->new_activity_relationship_type === ""){
+                $this->removeAllMatchingPortalIndex($data_source_id, 'activity', $indexed_field, $pr_title);
+            }
+            // same for party
+            if($event->new_party_relationship_type !== "" && $event->old_party_relationship_type === ""){
                 $this->addPrimaryRecordToPortalIndex($data_source_id, 'party', $indexed_field, $pr_title);
             }
-            if($event->collection_relationship_type !== null && $event->collection_relationship_type !== ""){
+            if($event->old_party_relationship_type !== "" && $event->new_party_relationship_type === ""){
+                $this->removeAllMatchingPortalIndex($data_source_id, 'party', $indexed_field, $pr_title);
+            }
+            // collection add
+            if($event->new_collection_relationship_type !== "" && $event->old_collection_relationship_type === ""){
                 $this->addPrimaryRecordToPortalIndex($data_source_id, 'collection', $indexed_field, $pr_title);
             }
-            if($event->service_relationship_type !== null && $event->service_relationship_type !== ""){
+            // collection removed
+            if($event->old_collection_relationship_type !== "" && $event->new_collection_relationship_type === ""){
+                $this->removeAllMatchingPortalIndex($data_source_id, 'collection', $indexed_field, $pr_title);
+            }
+            // service
+            if($event->new_service_relationship_type !== "" && $event->old_service_relationship_type === ""){
+                $this->addPrimaryRecordToPortalIndex($data_source_id, 'service', $indexed_field, $pr_title);
+            }
+            if($event->old_service_relationship_type !== "" && $event->new_service_relationship_type === ""){
+                $this->removeAllMatchingPortalIndex($data_source_id, 'service', $indexed_field, $pr_title);
+            }
+        }
+        RIFCSIndexProvider::indexRecord($primary_record);
+    }
+
+    private function processAddNewPrimaryKey(Event\PrimaryKeyUpdatedEvent $event){
+        $primary_record = RegistryObjectsRepository::getPublishedByKey($event->new_primary_key);
+        if(!$primary_record){
+            debug("Record with key:". $event->new_primary_key . "doesn't exists");
+            return;
+        }
+        $data_source_id = $event->data_source_id;
+        $pr_title = $primary_record->title;
+        $pr_class = $primary_record->class;
+        $pr_type = $primary_record->type;
+        $indexed_field = "related_".$pr_class;
+        if($pr_class === 'party' && strtolower($pr_type) === 'group'){
+            $indexed_field .= '_multi_title';
+        }elseif($pr_class === 'party'){
+            $indexed_field .= '_one_title';
+        }else{
+            $indexed_field .= '_title';
+        }
+
+        if($pr_class !== 'collection'){
+            // TODO: find all activities and add the primary key's title to their index in portal
+            if($event->new_activity_relationship_type !== ""){
+                $this->addPrimaryRecordToPortalIndex($data_source_id, 'activity', $indexed_field, $pr_title);
+            }
+            if($event->new_party_relationship_type !== ""){
+                $this->addPrimaryRecordToPortalIndex($data_source_id, 'party', $indexed_field, $pr_title);
+            }
+            if($event->new_collection_relationship_type !== ""){
+                $this->addPrimaryRecordToPortalIndex($data_source_id, 'collection', $indexed_field, $pr_title);
+            }
+            if($event->new_service_relationship_type !== ""){
                 $this->addPrimaryRecordToPortalIndex($data_source_id, 'service', $indexed_field, $pr_title);
             }
         }
@@ -136,7 +198,11 @@ class UpdatePortalIndexesPK
 
 
     private function processRemoveOldPrimaryKey(Event\PrimaryKeyUpdatedEvent $event){
-        $primary_record = RegistryObjectsRepository::getPublishedByKey($event->new_primary_key);
+        $primary_record = RegistryObjectsRepository::getPublishedByKey($event->old_primary_key);
+        if(!$primary_record){
+            debug("Record with key:". $event->old_primary_key . "doesn't exists");
+            return;
+        }
         $data_source_id = $event->data_source_id;
         $pr_title = $primary_record->title;
         $pr_class = $primary_record->class;
@@ -152,17 +218,17 @@ class UpdatePortalIndexesPK
 
         if($pr_class !== 'collection'){
             // TODO: find all activities and add the primary key's title to their index in portal
-            if($event->activity_relationship_type !== null && $event->activity_relationship_type !== ""){
-                $this->RemoveAllMatchingPortalIndex($data_source_id, 'activity', $indexed_field, $pr_title);
+            if($event->old_activity_relationship_type !== ""){
+                $this->removeAllMatchingPortalIndex($data_source_id, 'activity', $indexed_field, $pr_title);
             }
-            if($event->party_relationship_type !== null && $event->party_relationship_type !== ""){
-                $this->RemoveAllMatchingPortalIndex($data_source_id, 'party', $indexed_field, $pr_title);
+            if($event->old_party_relationship_type  !== ""){
+                $this->removeAllMatchingPortalIndex($data_source_id, 'party', $indexed_field, $pr_title);
             }
-            if($event->collection_relationship_type !== null && $event->collection_relationship_type !== ""){
-                $this->RemoveAllMatchingPortalIndex($data_source_id, 'collection', $indexed_field, $pr_title);
+            if($event->old_collection_relationship_type !== ""){
+                $this->removeAllMatchingPortalIndex($data_source_id, 'collection', $indexed_field, $pr_title);
             }
-            if($event->service_relationship_type !== null && $event->service_relationship_type !== ""){
-                $this->RemoveAllMatchingPortalIndex($data_source_id, 'service', $indexed_field, $pr_title);
+            if($event->old_service_relationship_type  !== ""){
+                $this->removeAllMatchingPortalIndex($data_source_id, 'service', $indexed_field, $pr_title);
             }
         }
         // reindex the primary record
@@ -175,7 +241,7 @@ class UpdatePortalIndexesPK
      * and replaces them with the new_value
      * @param $event
      */
-    public function RemoveAllMatchingPortalIndex($data_source_id, $target_class, $indexed_field, $value){
+    public function removeAllMatchingPortalIndex($data_source_id, $target_class, $indexed_field, $value){
         $solrClient = new SolrClient(Config::get('app.solr_url'));
         $solrClient->setCore("portal");
         $query = array();
@@ -196,7 +262,6 @@ class UpdatePortalIndexesPK
                     $targetRecordIds[] = $record["id"];
                     $processedRecordIds[] = $record["id"];
                 }
-
             }
             if(sizeof($targetRecordIds) > 0){
                 $this->updatePortalIndexes($targetRecordIds, $indexed_field, $value, null);

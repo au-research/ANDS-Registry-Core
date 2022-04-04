@@ -54,12 +54,8 @@ class UpdatePortalIndexPKTest extends \MyceliumTestClass
 
             EventServiceProvider::dispatch(PrimaryKeyUpdatedEvent::from([
                 "data_source_id" => $record->data_source_id,
-                "old_primary_key" => null,
                 "new_primary_key" => $party->key,
-                "service_relationship_type" => "supports",
-                "activity_relationship_type"=>"hasAssociationWith",
-                "collection_relationship_type"=>"hasAssociationWith",
-                "party_relationship_type"=> "hasAssociationWith"
+                "new_collection_relationship_type"=>"hasAssociationWith"
             ]));
             $doc = $solrClient->get($record->id)->toArray();
             $this->assertNotNull($doc);

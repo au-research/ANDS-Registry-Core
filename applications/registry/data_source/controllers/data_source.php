@@ -1,4 +1,6 @@
 <?php use ANDS\Mycelium\MyceliumServiceClient;
+use ANDS\Registry\Events\Event\PrimaryKeyUpdatedEvent;
+use ANDS\Registry\Events\EventServiceProvider;
 use ANDS\Util\Config;
 
 if ( ! defined('BASEPATH')) exit('No direct script access allowed');
@@ -285,7 +287,8 @@ class Data_source extends MX_Controller {
 		//unset values based on previous values
 		if(isset($data['create_primary_relationships'])){
 			if ($data['create_primary_relationships']===0 || $data['create_primary_relationships']===false || $data['create_primary_relationships']==='f') {
-				$data['primary_key_1']='';
+                $data['create_primary_relationships'] = 0;
+                $data['primary_key_1']='';
 				$data['primary_key_2']='';
 			}
 		}
@@ -304,7 +307,7 @@ class Data_source extends MX_Controller {
 			$data['collection_rel_2'] = '';
 			$data['party_rel_2'] = '';
 		}
-
+        $this->testAndActOnPrimaryKeyConfigChanges($ds->id, $data);
 		if(isset($data['crosswalks'])) {
 			$data['crosswalks'] = json_encode($data['crosswalks']);
 		}
@@ -416,13 +419,67 @@ class Data_source extends MX_Controller {
         $client->updateDataSource($dataSource);
 
 		//if all goes well
+
 		echo json_encode(
 			array(
 				'status' => 'OK',
 				'message' => 'Saved Success'
 			)
 		);
+
 	}
+
+    /**
+     * @param $ds_id
+     * @param $data
+     * @return void
+     * @throws Exception
+     */
+    private function testAndActOnPrimaryKeyConfigChanges($ds_id, $data){
+        $ds = $this->ds->getByID($ds_id);
+        $old_attributes = $ds->attributes();
+        // if it wasn't set prior and still not set, then nothing to do here
+        if((isset($old_attributes['create_primary_relationships']) && $old_attributes['create_primary_relationships'] == 0)
+            && (isset($data['create_primary_relationships']) && $data['create_primary_relationships'] == 0)){
+            return;
+        }
+        // check and act if primary_key_1 changed or any of the relationships was set or unset
+        $primary_key_indexes = ['1','2'];
+        foreach($primary_key_indexes as $pki){
+            $event = $this->getEventData($ds_id, $data , $old_attributes, $pki);
+            EventServiceProvider::dispatch(PrimaryKeyUpdatedEvent::from($event));
+        }
+    }
+
+    /**
+     * @param $ds_id
+     * @param $data
+     * @param $old_attributes
+     * @param $pki
+     * @return array
+     */
+    private function getEventData($ds_id, $data , $old_attributes, $pki){
+        $event = [];
+        $event['data_source_id'] = $ds_id;
+        if(isset($data['primary_key_'.$pki])) {
+            $event['new_primary_key'] = $data['primary_key_'.$pki];
+        }
+        if(isset($old_attributes['primary_key_'.$pki])) {
+            $event['old_primary_key'] = $old_attributes['primary_key_'.$pki];
+        }
+        // check and set the relationships old and new
+        $related_classes = ['service', 'activity', 'party', 'collection'];
+        foreach($related_classes as $rc) {
+            if(isset($data[$rc.'_rel_'.$pki])) {
+                $event['new_'.$rc.'_relationship_type'] = $data[$rc.'_rel_'.$pki];
+            }
+            if(isset($old_attributes[$rc.'_rel_'.$pki]))
+            {
+                $event['old_'.$rc.'_relationship_type'] = $old_attributes[$rc.'_rel_'.$pki];
+            }
+        }
+        return $event;
+    }
 
 	/**
 	 * updating all PUBLISHED records relationship metadata
