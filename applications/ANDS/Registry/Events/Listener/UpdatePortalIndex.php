@@ -102,12 +102,15 @@ class UpdatePortalIndex
             {
                 $indexed_fields = [];
                 // multi aka groups can be funders or administering institutions
+                // add the reverse type as well
                 if($event->indexed_field == "related_party_multi_title"){
                     switch (trim($relationshiType)){
                         case "isFundedBy":
+                        case "isFunderOf":
                             $indexed_fields = ["funders"];
                             break;
                         case "isManagedBy":
+                        case "isManagerOf":
                             $indexed_fields = ["administering_institution"];
                             break;
                         default:
@@ -118,12 +121,14 @@ class UpdatePortalIndex
                     // people can be researchers or principal Investigators
                     switch (trim($relationshiType)){
                         case "hasPrincipalInvestigator":
+                        case "isPrincipalInvestigatorOf":
                         case "Chief Investigator":
                         case "Principal Investigator":
                             $indexed_fields = ["principal_investigator","researchers"];
                             break;
                         case "Partner Investigator":
                         case "hasParticipant":
+                        case "isParticipantIn":
                         case "isAssociatedWith":
                             $indexed_fields = ["researchers"];
                             break;
