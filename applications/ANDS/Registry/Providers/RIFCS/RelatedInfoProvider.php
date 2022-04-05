@@ -39,5 +39,27 @@ class RelatedInfoProvider implements RIFCSProvider
         }
     }
 
+    /**
+     * Get the raw identifier value  of given relatedInfo type with a given normalised identifier
+     * @param Relationship $publication
+     * @param RegistryObject $record
+     * @param string $type
+     * @return string
+     */
+    public static function getNonNormalisedIdentifier($relationship, $record, $type){
+
+        foreach (XMLUtil::getElementsByXPath($record->getCurrentData()->data,
+            'ro:registryObject/ro:' . $record->class . '/ro:relatedInfo[@type="'.$type.'"]/ro:identifier') AS $relatedIdentifier) {
+            $string = trim((string) $relatedIdentifier);
+            $substring  = trim($relationship['to_identifier']);
+            $length = strlen($substring);
+            //if the provided normalised identifier is the ending substring of the rifcs provided identifier return
+            if ( substr_compare($string, $substring, -$length) === 0 ) {
+                return $string;
+            }
+        }
+        return $relationship['to_identifier'];
+    }
+
 
 }
