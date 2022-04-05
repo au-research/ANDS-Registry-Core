@@ -115,7 +115,41 @@ class ScholixProviderTest extends MyceliumTestClass
         $this->myceliumDelete($record16);
 
     }
+    /** @test **/
+    public function it_should_get_the_non_normalised_identifier()
+    {
+        $party = $this->stub(RegistryObject::class, [
+            'class' => 'party',
+            'type' => 'group',
+            'key' => 'AUTestingRecords2ScholixGroupRecord1'
+        ]);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $party->id,
+            'data' => Storage::disk('test')->get('rifcs/party_scholix_group.xml')
+        ]);
+        $this->myceliumInsert($party);
 
+        /* related party by reverse relationship */
+        $record4 = $this->stub(RegistryObject::class, [
+            'class' => 'collection',
+            'type' => 'dataset',
+            'key' => 'AUTestingRecords2ScholixRecords4',
+            'group' => $party->title
+        ]);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record4->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_scholix_4.xml')
+        ]);
+        $this->myceliumInsert($record4);
+
+        $scholix = ScholixProvider::get($record4);
+        $scholixArray = $scholix->toArray();
+        $this->assertNotEmpty($scholix);
+        $this->assertNotEmpty($scholixArray[0]['link']['target']['identifier'][0]['identifier'],"http://www.someExamplePublication.org/Scholix1");
+        $this->myceliumDelete($party);
+        $this->myceliumDelete($record4);
+
+    }
     /** @test **/
     public function it_should_get_the_right_publication_format()
     {

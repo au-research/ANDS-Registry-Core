@@ -13,6 +13,10 @@
                 <key>AUTestingRecords2ScholixRecords14</key>
                 <relation type="isManagerOf"/>
             </relatedObject>
+            <relatedObject>
+                <key>AUTestingRecords2ScholixRecords4</key>
+                <relation type="isManagerOf"/>
+            </relatedObject>
         </party>
     </registryObject>
 </registryObjects>

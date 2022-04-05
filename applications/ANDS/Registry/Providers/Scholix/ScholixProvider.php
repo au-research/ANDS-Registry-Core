@@ -8,6 +8,7 @@ use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 use ANDS\Registry\Providers\RIFCS\LocationProvider;
+use ANDS\Registry\Providers\RIFCS\RelatedInfoProvider;
 use ANDS\Registry\Relation;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
@@ -226,7 +227,7 @@ class ScholixProvider implements RegistryContentProvider
             } else {
                 $targets[] = [
                     'relationship' => $publication,
-                    'target' =>  self::getTargetMetadataRelatedInfo($publication)
+                    'target' =>  self::getTargetMetadataRelatedInfo($publication, $record)
                 ];
             }
         }
@@ -535,31 +536,28 @@ class ScholixProvider implements RegistryContentProvider
         return $creators;
     }
 
-    public static function getTargetMetadataRelatedInfo($publication)
+    public static function getTargetMetadataRelatedInfo($publication, $record)
     {
-        $identifierType = $publication['to_identifier_type'];
-        $identifierType = self::$validTargetIdentifierTypes[$identifierType];
-        $target = [
-            'identifier' => [
-                [
-                    'identifier' => $publication['to_identifier'],
-                    'schema' => $identifierType
-                ]
-            ],
-            'objectType' => 'literature'
-        ];
 
-        // no publication date
+            $identifierType = $publication['to_identifier_type'];
+            $identifierType = self::$validTargetIdentifierTypes[$identifierType];
+            $target = [
+                'identifier' => [
+                    [
+                        'identifier' => RelatedInfoProvider::getNonNormalisedIdentifier($publication, $record, 'publication'),
+                        'schema' => $identifierType
+                    ]
+                ],
+                'objectType' => 'literature'
+            ];
 
-        if ($publication['to_title']) {
-            $target['title'] = $publication['to_title'];
-        }
+            // no publication date
 
-      //  if ($publication['relation_to_title']) {
-       //     $target['title'] = $publication['relation_to_title'];
-      //  }
+            if ($publication['to_title']) {
+                $target['title'] = $publication['to_title'];
+            }
 
-        // No creator
+            // No creator
 
         return $target;
     }
