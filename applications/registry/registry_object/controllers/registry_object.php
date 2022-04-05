@@ -1296,10 +1296,18 @@ class Registry_object extends MX_Controller {
         echo json_encode($result);
 
     }
-    
-    
-    
+
+
+    /**
+     * /registry/registry_objects/delete
+     *
+     * @return void
+     */
     function delete(){
+        // increase available memory for this thread due to importTask can run immediately
+        // and to store (potentially) huge amount of ids to be deleted
+        ini_set('memory_limit', '256M');
+
         set_exception_handler('json_exception_handler');
         header('Cache-Control: no-cache, must-revalidate');
         header('Content-type: application/json');
@@ -1307,7 +1315,7 @@ class Registry_object extends MX_Controller {
         $this->load->model('registry_objects', 'ro');
         $this->load->model('data_source/data_sources', 'ds');
 
-        $affectedIDs = $this->input->post('affected_ids');
+        $affectedIDs = $this->input->post('affected_ids') ?: [];
 
         // select_all is the status
         $select_all = $this->input->post('select_all');
@@ -1318,21 +1326,18 @@ class Registry_object extends MX_Controller {
         // capture affected_ros mainly for select_all when affected_ids does not capture all;
         if($select_all && $select_all != "false"){
             $filters = $this->input->post('filters');
-            $args = [
-                'sort' => isset($filters['sort']) ? $filters['sort'] : ['updated'=>'desc'],
-                'search' => isset($filters['search']) ? $filters['search'] : false,
-                'or_filter' => isset($filters['or_filter']) ? $filters['or_filter'] : false,
-                'filter' => isset($filters['filter']) ? array_merge($filters['filter'], ['status'=>$this->input->post('select_all')]) : ['status'=>$this->input->post('select_all')],
-                'data_source_id' => $dataSourceID
-            ];
-            $affected_ros = $this->ro->filter_by($args, 0, 0, true);
-            $affectedIDs = [];
-            if (is_array($affected_ros)) {
-                foreach ($affected_ros as $r) {
-                    if (!in_array($r->registry_object_id, $excludedRecords)) {
-                        $affectedIDs[] = $r->registry_object_id;
-                    }
-                }
+
+            // filters only accept data_source_id and status for now
+            $query = \ANDS\RegistryObject::where('data_source_id', $dataSourceID);
+            if (array_key_exists('status', $filters)) {
+                $query = $query->where('status', $filters['status']);
+            }
+
+            $affectedIDs =  $query->pluck('registry_object_id')->toArray();
+
+            // exclusion
+            if (count($excludedRecords) > 0) {
+                $affectedIDs = array_diff($affectedIDs, $excludedRecords);
             }
         }
 
