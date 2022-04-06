@@ -312,32 +312,45 @@ class Importer
     }
 
     public static function wipeDataSourceRecords(DataSource $dataSource, $softDelete = true) {
+        Log::info(__METHOD__ . " Wiping DataSource Records", ['data_source_id' => $dataSource->id, 'softDelete' => $softDelete]);
 
         // delete portal index
+        Log::debug(__METHOD__ . " Deleting Portal Index", ['data_source_id' => $dataSource->id]);
         SolrIndex::getClient('portal')->removeByQuery("data_source_id:$dataSource->id");
 
         // delete mycelium vertices & relationship index
+        Log::debug(__METHOD__ . " Deleting Mycelium data", ['data_source_id' => $dataSource->id]);
         $myceliumServiceClient = new \ANDS\Mycelium\MyceliumServiceClient(\ANDS\Util\Config::get('mycelium.url'));
         $myceliumServiceClient->deleteDataSourceRecords($dataSource);
 
         // set the status of registryObjects to DELETED to prevent them from being accessed
+        Log::debug(__METHOD__ . " Soft deleting all RegistryObject", ['data_source_id' => $dataSource->id]);
         RegistryObject::where('data_source_id', $dataSource->id)->update(['status' => 'DELETED']);
 
-        // delete record data & every other field, chunk by 100 for performance
+        // sub-query for performance
         $idQuery = function($query) use ($dataSource) {
             $query->select('registry_object_id')->from('registry_objects')->where('data_source_id', '=', $dataSource->id);
         };
         $keyQuery = function($query) use ($dataSource) {
             $query->select('key')->from('registry_objects')->where('data_source_id', '=', $dataSource->id);
         };
+//        Log::debug("queries", ['idQuery' => $idQuery->toSql(), 'keyQuery' => $keyQuery->toSql()]);
 
+        Log::debug(__METHOD__ . " Deleting Record Data", ['data_source_id' => $dataSource->id]);
         RecordData::whereIn('registry_object_id', $idQuery)->delete();
+
+        Log::debug(__METHOD__ . " Deleting Scholix Data", ['data_source_id' => $dataSource->id]);
         Scholix::whereIn('registry_object_id', $idQuery)->delete();
+
+        Log::debug(__METHOD__ . " Deleting DCI", ['data_source_id' => $dataSource->id]);
         DCI::whereIn('registry_object_id', $idQuery)->delete();
+
+        Log::debug(__METHOD__ . " Deleting Tags", ['data_source_id' => $dataSource->id]);
         RegistryObject\Tag::whereIn('key', $keyQuery)->delete();
 
         // delete the records afterwards
         if ($softDelete === false) {
+            Log::debug(__METHOD__ . " Deleting RegistryObject", ['data_source_id' => $dataSource->id]);
             RegistryObject::where('data_source_id', $dataSource->id)->delete();
         }
     }

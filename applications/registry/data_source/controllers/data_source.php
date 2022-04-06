@@ -1990,6 +1990,14 @@ class Data_source extends MX_Controller {
      */
     public function wipe($id) {
 
+        \ANDS\Log\Log::info(__METHOD__. " wiping DataSource[id={$id}]", [
+            'user' => [
+                'name' => $this->user->name(),
+                'identifier' => $this->user->localIdentifier()
+            ],
+            'ip' => $this->input->ip_address()
+        ]);
+
         // headers
         header('Cache-Control: no-cache, must-revalidate');
         header('Content-type: application/json');
@@ -2001,16 +2009,28 @@ class Data_source extends MX_Controller {
 
         $dataSource = \ANDS\Repository\DataSourceRepository::getByID($id);
         if (!$dataSource) {
+            ANDS\Log\Log::warning(__METHOD__. " DataSource ");
             throw new Exception("DataSource $id not found");
         }
 
         try {
+            $total = \ANDS\RegistryObject::where('data_source_id', $dataSource->id)->count();
             $dataSource->appendDataSourceLog(
                 "Wiping data source contents".NL.
+                "$total records will be affected".NL.
                 "Initiated: " . $this->user->name() . " (" . $this->user->localIdentifier() . ") at " . display_date().NL
                 ,'info', 'IMPORTER');
+
             \ANDS\Registry\Importer::wipeDataSourceRecords($dataSource);
+
+            \ANDS\Log\Log::info(__METHOD__. " wiping DataSource[id={$id}] Completed Successfully");
+            $dataSource->appendDataSourceLog(
+                "Wiping data source contents Completed Successfully!".NL.
+                "Completed: at " . display_date().NL
+                ,'info', 'IMPORTER');
+
         } catch (Exception $e) {
+            \ANDS\Log\Log::error(__METHOD__ . " Failed to wipe DataSource[id={$dataSource->id}] Exception[message={$e->getMessage()} , trace={$e->getTraceAsString()}]");
             $dataSource->appendDataSourceLog(
                 "An error occur while wiping data source contents".NL.
                 "Message: {$e->getMessage()}" .NL.
