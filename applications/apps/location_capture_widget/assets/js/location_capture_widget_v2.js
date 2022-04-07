@@ -248,10 +248,11 @@
 							ENABLE_GAZETTEER = false;
 							alert("Australian Gazetteer is unavailable");
 						}
+						 addFeatureTypes();
+						 getMapControl();
 					 });
 			   });
-			addFeatureTypes();
-			getMapControl();
+
 		}
 
 		/**
