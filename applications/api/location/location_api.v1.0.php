@@ -123,7 +123,7 @@ class Location_api
 
             // Resolve and order the results (we only want a few of the feature types to avoid a massive list)
             $featureMemberList = $gXPath -> evaluate('//Australian_Gazetteer:Gazetteer_of_Australia');
-           // TODO: migh add new sorting rules based on new Feature_codes
+           // TODO: might add new sorting rules based on new Feature_codes
             $jsonData['items_count'] = ($featureMemberList -> length);
             $items = array();
             for ($i = 0; $i < $featureMemberList -> length; $i++) {

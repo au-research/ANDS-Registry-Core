@@ -164,7 +164,7 @@ if ($feature) {
     $operations = $gXPath -> evaluate('//ows:Operation');
     if(sizeof($operations) === 0){
         $jsonData['status'] = 'ERROR';
-        $jsonData['exception'] = "Gazeteer services at ".$wfsg_host." is not available";
+        $jsonData['exception'] = "Australian Gazetteer services at ".$wfsg_host." is unavailable";
     }
 }
 
