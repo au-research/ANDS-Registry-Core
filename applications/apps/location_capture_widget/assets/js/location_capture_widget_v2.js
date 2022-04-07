@@ -12,10 +12,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 *******************************************************************************/
-/* ANDS Location Capture Widget - v1.1 */
+/* ARDC Location Capture Widget - v1.1 */
 ;(function($) {
     "use strict";
-    var WIDGET_NAME = "ANDS Location Capture Widget";
+    var WIDGET_NAME = "ARDC Location Capture Widget";
     var WIDGET_NS = "location_widget";
     var DEFAULT_PROTOCOL = "https://";
     var DEFAULT_SERVICE_POINT = DEFAULT_PROTOCOL +	'researchdata.edu.au/api/location.jsonp/';
@@ -44,7 +44,7 @@
     var INLINE_MESSAGE_ID_PREFIX           = 'alw_msg_';
 
 
-    //ands environment
+    //ARDC environment
     if (typeof(window.real_base_url) !== 'undefined'){
         DEFAULT_SERVICE_POINT =  window.real_base_url + 'api/location.jsonp/'
 
@@ -198,11 +198,21 @@
 
 
 		/**
-		 * Pull down some feature data from the ANDS resolver, and build
+		 * Pull down some feature data from the ANDS resolver If it's reachable, and build
 		 * the map and associated controls.
 		 */
 		function makeMapWidget() {
-            loadFeatureTypes();
+			UrlExists(settings.endpoint, function(status){
+				if(status < 400 && status > 199){
+					loadFeatureTypes();
+				}
+				else{
+					// the resolver service is unaccessible
+					alert("Resolver to the Australian Gazetteer is unavailable");
+					addFeatureTypes();
+					getMapControl();
+				}
+			});
 		}
 
 		/**
@@ -225,6 +235,24 @@
 		}
 
 		/**
+		 * Test if the given URL is accessible
+		 * @param url
+		 * @param cb
+		 * @constructor
+		 */
+		function UrlExists(url, cb){
+			jQuery.ajax({
+				url:      url,
+				dataType: 'text',
+				type:     'GET',
+				complete:  function(xhr){
+					if(typeof cb === 'function')
+						cb.apply(this, [xhr.status]);
+				}
+			});
+		}
+
+		/**
 		 * Pull down map features (states, other cruft) from
 		 * the ANDS resolver
 		 */
@@ -241,18 +269,15 @@
 							if(data.status === 'OK'){
 								ENABLE_GAZETTEER = true;
 							}else{
-								ENABLE_GAZETTEER = false;
 								alert(data.exception);
 							}
 						}catch (error){
-							ENABLE_GAZETTEER = false;
 							alert("Australian Gazetteer is unavailable");
 						}
 						 addFeatureTypes();
 						 getMapControl();
 					 });
 			   });
-
 		}
 
 		/**
