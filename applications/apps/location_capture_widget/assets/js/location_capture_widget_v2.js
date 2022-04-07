@@ -45,10 +45,10 @@
 
 
     //ands environment
-/*    if (typeof(window.real_base_url) !== 'undefined'){
+    if (typeof(window.real_base_url) !== 'undefined'){
         DEFAULT_SERVICE_POINT =  window.real_base_url + 'api/location.jsonp/'
 
-    }*/
+    }
 
     var PLUGIN_DEFAULTS = {
 	target: "geoLocation",              //final resting place of the target data
