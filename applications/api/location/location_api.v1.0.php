@@ -50,7 +50,7 @@ class Location_api
         // CC-2874 GA's new service
         if ($feature) {
             $filterText = '<?xml version="1.0" encoding="UTF-8"?>'
-                .'<GetCapabilities xmlns="http://www.opengis.net/wfs" service="WFS" version="1.1.0" outputFormat="text/xml; subtype=gml/3.1.1"/>';
+                .'<GetCapabilities xmlns="http://www.opengis.net/wfs" service="WFS" version="2.0.0" outputFormat="text/xml; subtype=gml/3.1.1"/>';
 
         }
 
@@ -59,7 +59,7 @@ class Location_api
             $filterText = '<?xml version="1.0" encoding="UTF-8"?>'
                             .'<GetFeature xmlns="http://www.opengis.net/wfs"'
                                 .' xmlns:ogc="http://www.opengis.net/ogc" service="WFS"'
-                                .' version="1.1.0" outputFormat="text/xml; subtype=gml/3.1.1" maxFeatures="'.$limit.'">'
+                                .' version="2.0.0" outputFormat="text/xml; subtype=gml/3.1.1" maxFeatures="'.$limit.'">'
                              .' <Query typeName="Gazetteer_of_Australia" srsName="EPSG:4326">'
                              .' <ogc:Filter>'
                                 .'<ogc:PropertyIsLike wildCard="*" singleChar="#" escapeChar="\\" matchCase="false">'

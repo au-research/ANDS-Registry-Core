@@ -45,10 +45,10 @@
 
 
     //ands environment
-    if (typeof(window.real_base_url) !== 'undefined'){
+/*    if (typeof(window.real_base_url) !== 'undefined'){
         DEFAULT_SERVICE_POINT =  window.real_base_url + 'api/location.jsonp/'
 
-    }
+    }*/
 
     var PLUGIN_DEFAULTS = {
 	target: "geoLocation",              //final resting place of the target data
@@ -236,19 +236,22 @@
 				   type + '&callback=?';
  			       $.getJSON(source,
 					 function(data,textStatus) {
-                         data =JSON.parse(data)
-                         if(data.status === 'OK'){
-                             ENABLE_GAZETTEER = true;
-					         addFeatureTypes();
-                             getMapControl();
-                         }else{
-							 ENABLE_GAZETTEER = false;
-							 addFeatureTypes();
-							 getMapControl();
-							 alert(data.exception);
-						 }
+						try {
+							data = JSON.parse(data)
+							if(data.status === 'OK'){
+								ENABLE_GAZETTEER = true;
+							}else{
+								ENABLE_GAZETTEER = false;
+								alert(data.exception);
+							}
+						}catch (error){
+							ENABLE_GAZETTEER = false;
+							alert("Australian Gazetteer is unavailable");
+						}
 					 });
 			   });
+			addFeatureTypes();
+			getMapControl();
 		}
 
 		/**
