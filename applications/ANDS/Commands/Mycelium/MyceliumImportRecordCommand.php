@@ -37,7 +37,13 @@ class MyceliumImportRecordCommand extends ANDSCommand
             $record = RegistryObjectsRepository::getRecordByID($id);
             $this->timedActivity("Importing RegistryObject[id=$record->id] to Mycelium",
                 function () use ($record, $client) {
-                    $this->importRecord($record, $client);
+
+                    // get an request import id
+                    $result = $client->createNewImportRecordRequest(uniqid());
+                    $request = json_decode($result->getBody()->getContents(), true);
+                    $myceliumRequestId = $request['id'];
+
+                    $this->importRecord($record, $client, $myceliumRequestId);
                 });
         } else {
             $this->timedActivity("Importing all Published Records", function() use ($client) {
@@ -46,8 +52,8 @@ class MyceliumImportRecordCommand extends ANDSCommand
         }
     }
 
-    public function importRecord(RegistryObject $record, MyceliumServiceClient $client) {
-        $client->importRecord($record, null);
+    public function importRecord(RegistryObject $record, MyceliumServiceClient $client, $requestId) {
+        $client->importRecord($record, $requestId);
         $this->logv("Imported RegistryObject[id=$record->id] to Mycelium");
     }
 
@@ -56,11 +62,18 @@ class MyceliumImportRecordCommand extends ANDSCommand
         $total = count($ids);
         $progressBar = new ProgressBar($this->getOutput(), $total);
         $this->logv("Processing $total records");
-        collect($ids)->each(function($id)  use ($client, $progressBar){
+
+        // get a request import id
+        $result = $client->createNewImportRecordRequest(uniqid());
+        $request = json_decode($result->getBody()->getContents(), true);
+        $myceliumRequestId = $request['id'];
+
+        collect($ids)->each(function($id)  use ($client, $progressBar, $myceliumRequestId){
             $record = RegistryObject::find($id);
-            $this->importRecord($record, $client);
+            $this->importRecord($record, $client, $myceliumRequestId);
             $progressBar->advance();
         });
+
         $progressBar->finish();
     }
 }

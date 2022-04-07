@@ -39,5 +39,6 @@ $application->add(new \ANDS\Commands\DataSource\DataSourceImportCommand());
 $application->add(new \ANDS\Commands\DataSource\DataSourceImportMyceliumCommand());
 $application->add(new \ANDS\Commands\DataSource\DataSourceIndexMyceliumCommand());
 $application->add(new \ANDS\Commands\DataSource\DataSourceWipeCommand());
-
+$application->add(new \ANDS\Commands\Backup\BackupsCreateCommand());
+$application->add(new \ANDS\Commands\Backup\BackupRestoreCommand());
 $application->run();

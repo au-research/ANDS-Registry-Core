@@ -81,7 +81,6 @@ class DataSourceExportCommand extends ANDSCommand
                 file_put_contents($filePath, json_encode($exported));
                 $progressBar->advance(1);
             }
-
         });
     }
 }
