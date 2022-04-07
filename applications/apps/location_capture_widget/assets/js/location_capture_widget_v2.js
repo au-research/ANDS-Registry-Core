@@ -170,7 +170,6 @@
 		    'marker': null,
 		    'drawing_manager': null,
 		    'tools': {},
-		    'feature_types': {},
 		    'marker_listeners': []
 		});
 
@@ -238,11 +237,16 @@
  			       $.getJSON(source,
 					 function(data,textStatus) {
                          data =JSON.parse(data)
-                         if(data.status == 'OK'){
-                            ENABLE_GAZETTEER = true;
-					        addFeatureTypes(data);
-                            getMapControl();
-                         }
+                         if(data.status === 'OK'){
+                             ENABLE_GAZETTEER = true;
+					         addFeatureTypes();
+                             getMapControl();
+                         }else{
+							 ENABLE_GAZETTEER = false;
+							 addFeatureTypes();
+							 getMapControl();
+							 alert(data.exception);
+						 }
 					 });
 			   });
 		}
@@ -251,13 +255,8 @@
 		 * Store feature data with the plugin instance
 		 * @param feature data
 		 */
-		function addFeatureTypes(data) {
+		function addFeatureTypes() {
 		    var widget_data = $this.data(WIDGET_NS);
-		    for (var i=0; i < data.items.length; i++ ) {
-			var title = data.items[i].title;
-			var id = data.items[i].id;
-			widget_data.feature_types[id] = title;
-		    }
 		    $this.data(WIDGET_NS, widget_data);
 		}
 
@@ -1098,8 +1097,13 @@
 		    var markerBullet = '';
 		    var resultText = "";
 		    var coordString = "";
-		    if(status !== google.maps.GeocoderStatus.OK) {
-			resultText = "No locations found";
+			if(status === google.maps.GeocoderStatus.REQUEST_DENIED) {
+				resultText = "You must use an API key to authenticate each request to Google Maps Platform APIs." +
+					" For additional information, please refer to http://g.co/dev/maps-no-account";
+			}
+		    else if(status !== google.maps.GeocoderStatus.OK) {
+				resultText = "No locations found";
+
 		    }
 		    else {
 			// Loop through the results
@@ -1154,19 +1158,16 @@
 		    else {
 			// Loop through the results
 			for( var i=0; i < data.items.length; i++ ) {
-			    var pointStr = data.items[i].coords;
-			    coordString = data.items[i].lat +","+ data.items[i].lng ;
+			    coordString = data.items[i].lng +","+ data.items[i].lat ;
 			    var	typetext = '';
 			    for( var j=0; j < data.items[i].types.length; j++ ) {
-				if(j !== 0)
-				    typetext += ', '
-				if(widget_data.feature_types[data.items[i].types[j]]){
-				    typetext += widget_data.feature_types[data.items[i].types[j]];
+					if(j > 0){
+						typetext = typetext + ", " + data.items[i].types[j];
+					}else{
+						typetext = data.items[i].types[j];
+					}
+
 				}
-				else{
-				    typetext += data.items[i].types[j];
-				}
-			    }
 			    resultText  += '<div class="alw_search_result" data-coord="' + coordString + '" title="Set the map with this search result">' + markerBullet + '&nbsp;' + data.items[i].title + ' (' + typetext + ')</div>';
 			}
 		    }
