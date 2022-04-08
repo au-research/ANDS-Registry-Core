@@ -166,7 +166,7 @@ class ScholixDocument
         $str .= "</LinkProvider>";
 
         $str .= "<LinkProvider>";
-        $str .= "<name>Australian National Data Service</name>";
+        $str .= "<name>Australian Research Data Commons</name>";
         if (array_key_exists('identifier', $link['linkProvider'])) {
             foreach ($link['linkProvider']['identifier'] as $identifier) {
                 $str .= "<identifier>";
