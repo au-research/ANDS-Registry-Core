@@ -38,7 +38,7 @@ class RegistryObject extends Model
     /** @var string */
     protected static $STATUS_PUBLISHED = 'PUBLISHED';
 
-    protected $fillable = ['key', 'title', 'status', 'group', 'data_source_id', 'class', 'type', 'slug'];
+    protected $fillable = ['key', 'title', 'status', 'group', 'data_source_id', 'class', 'type', 'slug', 'record_owner', 'modified_at', 'created_at', 'synced_at'];
 
 
     /**

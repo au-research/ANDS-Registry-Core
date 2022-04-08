@@ -263,7 +263,7 @@ class BackupRepository
         $existing = RegistryObject::where('key', $recordMeta['key'])->where('status', $recordMeta['status'])->first();
         if ($existing) {
             $record = $existing;
-            $record->update($metaContent);
+            $record->update($recordMeta);
         } else {
             $record = RegistryObject::create($recordMeta);
         }
