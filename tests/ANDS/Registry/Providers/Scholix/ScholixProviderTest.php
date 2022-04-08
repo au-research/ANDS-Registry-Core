@@ -55,6 +55,46 @@ class ScholixProviderTest extends MyceliumTestClass
     }
 
     /** @test **/
+    public function it_should_create_link_to_related_object_publication()
+    {
+        // has a related object of type publication
+        $record2 = $this->stub(RegistryObject::class, [
+            'class' => 'collection',
+            'type' => 'publication',
+            'key' => 'AUTestingRecords2ScholixRecords4test',
+            'title' => 'The related publication record']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record2->id,
+            'title' => 'The related publication record',
+            'data' => Storage::disk('test')->get('rifcs/collection_scholix_4.xml')
+        ]);
+        $this->myceliumInsert($record2);
+
+        // is the related object of type publication that record2 is related to
+        $record1 = $this->stub(RegistryObject::class, [
+            'class' => 'collection',
+            'type' => 'collection',
+            'key' => 'AUTestingRecords2ScholixRecords39test']
+        );
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record1->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_scholix_39.xml')
+        ]);
+        $this->myceliumInsert($record1);
+        $result = ScholixProvider::isScholixable($record1);
+
+        $this->assertTrue($result);
+
+        $resultArray = ScholixProvider::process($record1);
+
+        $this->assertArrayHasKey('created',$resultArray);
+        $this->assertNotEmpty($resultArray['created']);
+
+        $this->myceliumDelete($record1);
+
+        $this->myceliumDelete($record2);
+    }
+    /** @test **/
     public function it_should_get_the_right_identifier()
     {
         $party = $this->stub(RegistryObject::class, [

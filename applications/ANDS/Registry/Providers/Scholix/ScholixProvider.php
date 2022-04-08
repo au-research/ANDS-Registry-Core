@@ -51,7 +51,7 @@ class ScholixProvider implements RegistryContentProvider
     public static function isScholixable(RegistryObject $record)
     {
         // early return if it's not a collection
-        if ($record->class != "collection") {
+       if ($record->class != "collection") {
             return false;
         }
 
@@ -61,7 +61,7 @@ class ScholixProvider implements RegistryContentProvider
         }
 
         // record needs to be related to a publication
-        return (RelationshipProvider::hasRelatedClass($record,'publication'));
+        return (RelationshipProvider::hasRelatedType($record,'publication'));
     }
 
     /**
@@ -187,7 +187,7 @@ class ScholixProvider implements RegistryContentProvider
 
         $relatedPublications = self::getRelatedPublications($record);
 
-        // construct targets
+       // construct targets
         $targets = [];
         foreach ($relatedPublications as $publication) {
            // if ($to = $publication->to()) {
@@ -357,23 +357,17 @@ class ScholixProvider implements RegistryContentProvider
     public static function getRelatedPublications(RegistryObject $record)
     {
         $publications = [];
-        $relatedPublications = RelationshipProvider::getRelationByClassTypeRelationType($record,'','publication',[]);
+        $relatedPublications = RelationshipProvider::getRelationByClassTypeRelationType($record,null,'publication',null);
         foreach( $relatedPublications as $publication){
             //we have a relatedInfo publication with a valid identifier type
-            if ($publication['to_identifier_type'] && in_array($publication['to_identifier_type'], array_keys(self::$validTargetIdentifierTypes))) {
+            if ($publication['to_identifier_type'] &&
+                in_array($publication['to_identifier_type'], array_keys(self::$validTargetIdentifierTypes))) {
                 $publications[] = $publication;
             }
+            //we have a relatedObject publication
             if($publication['to_identifier_type'] == 'ro:id'){
-                //we have a relatedObject publication - need to check if at least one of its identifiers are a valid type
-                 $relatedObjectPublication = RegistryObjectsRepository::getRecordByID($publication['to_identifier']);
-                 $objectPublications = IdentifierProvider::get($relatedObjectPublication);
-                 $validFound = false;
-;                foreach($objectPublications as $objectPublication) {
-                    if ( in_array($objectPublication['type'], array_keys(self::$validTargetIdentifierTypes))) {
-                        $validFound = true;
-                    }
-                }
-                if($validFound) $publications[] = $publication;
+
+                    $publications[] = $publication;
             }
         }
         return $publications;
@@ -596,7 +590,7 @@ class ScholixProvider implements RegistryContentProvider
                 'name' => $record->group
             ]
         ];
-
+        $creators = [];
         $authors = RelationshipProvider::getRelationByClassAndType($record,'party',['author']);
         foreach($authors as $author){
             if($author['to_identifier_type']=='ro:id'){

@@ -94,6 +94,27 @@ class RelationshipProvider
     }
 
     /**
+     * Returns if a record contains a specific relatedObject type
+     *
+     * @param RegistryObject $record
+     * @param $type
+     * @return bool
+     * @throws \Exception
+     */
+    public static function hasRelatedType(RegistryObject $record, $type)
+    {
+        $search_params =[];
+        $search_params['from_id'] = $record->id;
+        $search_params['to_type'] = $type;
+
+        $result = RelationshipSearchService::search($search_params);
+        $result = $result->toArray();
+        $result_total = $result['total'];
+
+        return $result_total > 0;
+    }
+
+    /**
      * Returns  a record relationships by a specific relatedObject class
      * This function is called by the rda service getConnections function and will return the defined
      * "People" or Organisations based on supplied type_filter of either 'parti_multi' or 'party_one'
