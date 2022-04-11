@@ -208,7 +208,7 @@
 				}
 				else{
 					// the resolver service is unaccessible
-					alert("Resolver to the Australian Gazetteer is unavailable");
+					console.error("Resolver to the Australian Gazetteer is unavailable");
 					addFeatureTypes();
 					getMapControl();
 				}
@@ -269,10 +269,10 @@
 							if(data.status === 'OK'){
 								ENABLE_GAZETTEER = true;
 							}else{
-								alert(data.exception);
+								console.error(data.exception);
 							}
 						}catch (error){
-							alert("Australian Gazetteer is unavailable");
+							console.error("Australian Gazetteer is unavailable");
 						}
 						 addFeatureTypes();
 						 getMapControl();
