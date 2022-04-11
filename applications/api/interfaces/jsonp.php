@@ -18,6 +18,7 @@ class JSONPInterface extends FormatHandler
     public function __construct()
     {
         header("Content: ". $this->output_mimetype());
+        header("Access-Control-Allow-Origin: *");
     }
 
     /**
