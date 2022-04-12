@@ -3,12 +3,7 @@
 namespace ANDS\Commands\Backup;
 
 use ANDS\Commands\ANDSCommand;
-use ANDS\DataSource;
-use ANDS\Registry\Backup\Backup;
 use ANDS\Registry\Backup\BackupRepository;
-use ANDS\Repository\DataSourceRepository;
-use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -22,7 +17,10 @@ class BackupsCreateCommand extends ANDSCommand
             ->setDescription('Create a new backup')
             ->setHelp("Create and Store a new Backup")
             ->addOption('id', null, InputOption::VALUE_REQUIRED, 'id of the backup, alphanumeric')
-            ->addOption('data_source_id', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'data source id to include in the backup');
+            ->addOption('data_source_id', null, InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'data source id to include in the backup')
+            ->addOption('include-graphs', null, InputOption::VALUE_OPTIONAL, 'include graph or not', true)
+            ->addOption('include-portal-index', null, InputOption::VALUE_OPTIONAL, 'include portal index', true)
+            ->addOption('include-relationships-index', null, InputOption::VALUE_OPTIONAL, 'include relationships index', true);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -31,26 +29,15 @@ class BackupsCreateCommand extends ANDSCommand
 
         $id = $input->getOption('id') ?: uniqid();
         $dataSourceIds = $input->getOption("data_source_id") ?: [];
-        $title = "No title";
-        $description = "No Description";
-        $authors = [
-            [
-                'name' => 'SYSTEM',
-                'email' => null
-            ]
-        ];
-        // todo check dataSourceIds existence
 
-        $dataSources = collect($dataSourceIds)->map(function($id) {
-            return DataSourceRepository::getByID($id);
-        })->filter(function($dataSource) {
-            return $dataSource != null;
-        });
+        $options = [
+            'includeGraphs' => $input->getOption('include-graphs'),
+            'includePortalIndex' => $input->getOption('include-portal-index'),
+            'includeRelationshipsIndex' => $input->getOption('include-relationships-index')
+        ];
 
         BackupRepository::init();
-        $backup = Backup::create($id, $title, $description, $authors, $dataSources);
-        $result = BackupRepository::storeBackup($backup);
-
+        $result = BackupRepository::create($id, $dataSourceIds, $options);
         $this->assocTable($result);
     }
 }

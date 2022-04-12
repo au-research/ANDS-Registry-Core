@@ -4,18 +4,29 @@ namespace ANDS\Registry\Backup;
 
 use ANDS\DataSource;
 use ANDS\Log\Log;
+use ANDS\Mycelium\MyceliumServiceClient;
+use ANDS\Mycelium\RelationshipSearchService;
 use ANDS\RecordData;
 use ANDS\RegistryObject;
 use ANDS\Repository\DataSourceRepository;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\Config;
+use ANDS\Util\SolrIndex;
 use ANDS\Util\XMLUtil;
+use MinhD\SolrClient\SolrClient;
+use MinhD\SolrClient\SolrDocument;
 use Symfony\Component\Stopwatch\Stopwatch;
 
 class BackupRepository
 {
 
     private static $config = null;
+
+    private static $defaultOptions = [
+        'includeGraphs' => true,
+        'includePortalIndex' => true,
+        'includeRelationshipsIndex' => true
+    ];
 
     public static function init()
     {
@@ -40,6 +51,41 @@ class BackupRepository
     public static function getAllBackups()
     {
 
+    }
+
+    public static function create($id, $dataSourceIds, $options = null)
+    {
+        if (!$options) {
+            $options = static::$defaultOptions;
+        }
+
+        // todo, allow passing title, descriptions and authors via $options
+        $title = "No title";
+        $description = "No Description";
+        $authors = [
+            [
+                'name' => 'SYSTEM',
+                'email' => null
+            ]
+        ];
+
+        $dataSources = collect($dataSourceIds)->map(function($id) {
+            return DataSourceRepository::getByID($id);
+        })->filter(function($dataSource) {
+            return $dataSource != null;
+        });
+
+        $backup = Backup::create($id, $title, $description, $authors, $dataSources);
+        return static::storeBackup($backup, $options);
+    }
+
+    public static function restore($id, $options = null)
+    {
+        if (!$options) {
+            $options = static::$defaultOptions;
+        }
+
+        return static::restoreBackupById($id, $options);
     }
 
     public static function getBackupById($id)
@@ -70,8 +116,12 @@ class BackupRepository
      * @return array
      * @throws \Exception
      */
-    public static function storeBackup(Backup $backup)
+    public static function storeBackup(Backup $backup, $options = null)
     {
+        if (!$options) {
+            $options = static::$defaultOptions;
+        }
+
         $path = static::getBackupPath();
         Log::info(__METHOD__. " Storing backup to $path", $backup->toMetaArray());
 
@@ -79,17 +129,17 @@ class BackupRepository
         $stopwatch->start('storing_backup');
 
         // create directory for backup path
-        try {
-            $backupDirectoryPath = static::getBackupPath() . $backup->getId();
-            Log::debug("DirectoryPath: $backupDirectoryPath");
-            if (! is_dir($backupDirectoryPath)) {
+        $backupDirectoryPath = static::getBackupPath() . $backup->getId();
+        if (! is_dir($backupDirectoryPath)) {
+            try {
                 mkdir($backupDirectoryPath, 0755);
                 Log::debug("Created $backupDirectoryPath");
+            } catch (\Exception $e) {
+                Log::error(__METHOD__ . " Failed to create directory $backupDirectoryPath");
+                throw $e;
             }
-        } catch (\Exception $e) {
-            Log::error(__METHOD__. " Failed to create directory $backupDirectoryPath");
-            throw $e;
         }
+        Log::debug("DirectoryPath: $backupDirectoryPath");
 
         // write backup meta
         file_put_contents($backupDirectoryPath .'/meta.json', json_encode($backup->toMetaArray()));
@@ -98,11 +148,12 @@ class BackupRepository
         $dataSourceBackupStats = [];
         foreach ($backup->getDataSources() as $dataSource) {
 
-            // export data sources
+            // backup data sources
             $dataSourcePath = "$backupDirectoryPath/datasources/$dataSource->id";
             if (! is_dir($dataSourcePath)) {
                 mkdir($dataSourcePath, 0755, true);
             }
+
             $dataSourceMetaPath = "$dataSourcePath/meta.json";
             $attributes = $dataSource->dataSourceAttributes->toArray();
             $exported = [
@@ -113,7 +164,8 @@ class BackupRepository
             file_put_contents($dataSourceMetaPath, json_encode($exported));
             Log::debug("Created DataSource[id={$dataSource->id}] meta at $dataSourceMetaPath");
 
-            // export records
+            // backup records
+            // todo backup_records_time_taken_in_seconds
             $recordsPath = "$backupDirectoryPath/datasources/$dataSource->id/records";
             if (! is_dir($recordsPath)) {
                 mkdir($recordsPath, 0755, true);
@@ -139,6 +191,24 @@ class BackupRepository
                 Log::debug("Created RegistryObject[id=$record->id] meta at $filePath");
             }
 
+
+            // todo backup_graphs_time_taken_in_seconds
+            if ($options['includeGraphs']) {
+                // todo backupGraphs on Mycelium
+                static::backupGraphs($backup->getId(), $dataSource->id);
+            }
+
+            // todo backup_portal_index_time_taken_in_seconds
+            if ($options['includePortalIndex']) {
+                static::backupPortalIndex($backup->getId(), $dataSource->id);
+            }
+
+            // todo backup_relationships_index_time_taken_in_seconds
+            if ($options['includeRelationshipsIndex']) {
+                static::backupRelationshipsIndex($backup->getId(), $dataSource->id);
+            }
+
+            // collect stats
             $dataSourceBackupStats[$dataSource->id] = [
                 'path' => $backupDirectoryPath,
                 'records_count' => $count
@@ -161,12 +231,18 @@ class BackupRepository
             'data_sources_count' => count($backup->getDataSources()),
             'records_count' => $totalRecordsCount,
             'time_taken_in_seconds' => $event->getDuration() / 1000,
-            'memory_usage_mb' => $event->getMemory() / 1000000
+            'memory_usage_mb' => $event->getMemory() / 1000000,
+            'include_graphs' => $options['includeGraphs'] ? "yes" : "no",
+            'include_portal_index' => $options['includePortalIndex'] ? "yes" : "no",
+            'include_relationships_index' => $options['includeRelationshipsIndex'] ? "yes" : "no"
         ];
     }
 
-    public static function restoreBackupById($id)
+    public static function restoreBackupById($id, $options = null)
     {
+        if (!$options) {
+            $options = static::$defaultOptions;
+        }
         Log::info(__METHOD__. " Restoring Backup[id=$id]");
 
         $stopwatch = new Stopwatch();
@@ -185,7 +261,7 @@ class BackupRepository
                 if ($file == '.' || $file == '..') continue;
                 $dataSourcePath = "$dataSourcesPath/$file";
                 if (is_dir($dataSourcePath) && is_readable($dataSourcePath)) {
-                    $dataSourceBackupStats[$file] = static::restoreDataSourcePath($dataSourcePath);
+                    $dataSourceBackupStats[$file] = static::restoreDataSourcePath($dataSourcePath, $options, $id);
                 }
             }
         }
@@ -209,7 +285,7 @@ class BackupRepository
 
     }
 
-    public static function restoreDataSourcePath($dataSourcePath) {
+    public static function restoreDataSourcePath($dataSourcePath, $options, $backupId) {
         $metaFile = "$dataSourcePath/meta.json";
         if (! is_file($metaFile) || ! is_readable($metaFile)) {
             throw new \Exception("$metaFile is not accessible");
@@ -247,6 +323,49 @@ class BackupRepository
                 }
             }
         }
+
+        // restore graphs
+        if ($options['includeGraphs']) {
+            static::restoreGraphs($backupId, $dataSource->id);
+        }
+
+        // restore portal documents
+        if ($options['includePortalIndex']) {
+            $portalPath = "$dataSourcePath/portal";
+            if (is_dir($portalPath) && is_readable($portalPath)) {
+                $files = scandir($portalPath);
+                $client = new SolrClient(Config::get('app.solr_url'));
+                $client->setCore("portal");
+                foreach ($files as $file) {
+                    if ($file == '.' || $file == '..') continue;
+                    $recordPath = "$portalPath/$file";
+                    if (is_file($recordPath) && is_readable($recordPath)) {
+                        static::restorePortalPath($recordPath, $client);
+                    }
+                }
+                $client->commit();
+            }
+        }
+
+
+        // restore relationship documents
+        if ($options['includeRelationshipsIndex']) {
+            $relationshipsPath = "$dataSourcePath/relationships";
+            if (is_dir($relationshipsPath) && is_readable($relationshipsPath)) {
+                $files = scandir($relationshipsPath);
+                $client = new SolrClient(Config::get('app.solr_url'));
+                $client->setCore("relationships");
+                foreach ($files as $file) {
+                    if ($file == '.' || $file == '..') continue;
+                    $recordPath = "$relationshipsPath/$file";
+                    if (is_file($recordPath) && is_readable($recordPath)) {
+                        static::restoreRelationshipPath($recordPath, $client);
+                    }
+                }
+                $client->commit();
+            }
+        }
+
 
         return [
             'path' => $metaFile,
@@ -291,6 +410,58 @@ class BackupRepository
         }
     }
 
+    public static function backupPortalIndex($backupId, $dataSourceId)
+    {
+        $backupPath = static::getBackupPath();
+        $portalBackupPath = "$backupPath/$backupId/datasources/$dataSourceId/portal";
+        if (! is_dir($portalBackupPath)) {
+            mkdir($portalBackupPath, 0755, true);
+        }
+
+        $client = new SolrClient(Config::get('app.solr_url'));
+        $client->setCore("portal");
+
+        $done = false;
+        $cursor = "*";
+        while ($done === false) {
+            $payload = $client->cursor($cursor, 100, [
+                'q' => "data_source_id:$dataSourceId"
+            ]);
+            foreach ($payload->getDocs() as $doc) {
+                file_put_contents("$portalBackupPath/{$doc->id}.json", $doc->toJson());
+            }
+            $done = $payload->getNextCursorMark() == $payload->getCursorMark();
+            $cursor = $payload->getNextCursorMark();
+        }
+    }
+
+    public static function backupRelationshipsIndex($backupId, $dataSourceId)
+    {
+        $backupPath = static::getBackupPath();
+        $relationshipsPath = "$backupPath/$backupId/datasources/$dataSourceId/relationships";
+        if (! is_dir($relationshipsPath)) {
+            mkdir($relationshipsPath, 0755, true);
+        }
+
+        $client = new SolrClient(Config::get('app.solr_url'));
+        $client->setCore("relationships");
+
+        $filters = RelationshipSearchService::getSolrParameters([
+            'q' => "(from_data_source_id:$dataSourceId OR to_data_source_id:$dataSourceId) AND type:relationship"
+        ], ['sort' => 'id desc']);
+
+        $done = false;
+        $cursor = "*";
+        while ($done === false) {
+            $payload = $client->cursor($cursor, 100, $filters);
+            foreach ($payload->getDocs() as $doc) {
+                file_put_contents("$relationshipsPath/{$doc->id}.json", $doc->toJson());
+            }
+            $done = $payload->getNextCursorMark() == $payload->getCursorMark();
+            $cursor = $payload->getNextCursorMark();
+        }
+    }
+
     /**
      * Delete a backup by id
      *
@@ -299,5 +470,61 @@ class BackupRepository
     public static function deleteBackupById($id)
     {
         throw new \Exception("Not Implemented");
+    }
+
+    private static function restorePortalPath($docPath, $client = null)
+    {
+        if ($client === null) {
+            $client = new SolrClient(Config::get('app.solr_url'));
+            $client->setCore("portal");
+        }
+
+        $content = json_decode(file_get_contents($docPath), true);
+
+        // title is a copyField of display_title
+        if (array_key_exists('display_title', $content)) {
+            unset($content['title']);
+        }
+
+        $doc = new SolrDocument($content);
+        $result = $client->add($doc);
+        if ($result['responseHeader']['status'] != 0) {
+            $errorMessage = $result['error']['msg'];
+            Log::error(__METHOD__. " Failed indexing $docPath. Message: $errorMessage");
+        }
+    }
+
+    private static function restoreRelationshipPath($docPath, SolrClient $client = null)
+    {
+        if ($client === null) {
+            $client = new SolrClient(Config::get('app.solr_url'));
+            $client->setCore("relationships");
+        }
+
+        $content = json_decode(file_get_contents($docPath), true);
+
+        $doc = new SolrDocument($content);
+        $result = $client->add($doc);
+
+        if ($result['responseHeader']['status'] != 0) {
+            $errorMessage = $result['error']['msg'];
+            Log::error(__METHOD__. " Failed indexing $docPath. Message: $errorMessage");
+        }
+    }
+
+    public static function backupGraphs($backupId, $dataSourceId)
+    {
+        $myceliumURL = Config::get('mycelium.url');
+        $client = new MyceliumServiceClient($myceliumURL);
+
+        $client->createBackup($backupId, $dataSourceId);
+    }
+
+    public static function restoreGraphs($backupId, $dataSourceId)
+    {
+        $myceliumURL = Config::get('mycelium.url');
+        $client = new MyceliumServiceClient($myceliumURL);
+
+        $client->restoreBackup($backupId, $dataSourceId);
     }
 }

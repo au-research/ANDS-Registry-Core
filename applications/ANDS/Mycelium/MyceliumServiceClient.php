@@ -248,4 +248,27 @@ class MyceliumServiceClient
             "headers" => ['Content-Type' => 'application/json']
         ]);
     }
+
+    public function createBackup($backupId, $dataSourceId) {
+        Log::debug(__METHOD__ , ["backupId" => $backupId, "dataSourceId" => $dataSourceId]);
+
+        return $this->client->post("api/resources/mycelium-backups/", [
+            "headers" => [],
+            "query" => [
+                "backupId" => $backupId,
+                "dataSourceId" => $dataSourceId
+            ]
+        ]);
+    }
+
+    public function restoreBackup($backupId, $dataSourceId) {
+        Log::debug(__METHOD__ , ["backupId" => $backupId, "dataSourceId" => $dataSourceId]);
+
+        return $this->client->post("api/resources/mycelium-backups/$backupId/_restore", [
+            "headers" => [],
+            "query" => [
+                "dataSourceId" => $dataSourceId
+            ]
+        ]);
+    }
 }
