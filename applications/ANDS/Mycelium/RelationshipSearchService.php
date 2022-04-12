@@ -3,6 +3,8 @@
 namespace ANDS\Mycelium;
 
 use ANDS\Log\Log;
+use ANDS\RegistryObject;
+use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\Config;
 use MinhD\SolrClient\SolrClient;
 
@@ -120,6 +122,7 @@ class RelationshipSearchService
         // construct filter queries based on provided criterias
         $fqs = [ '+type:relationship' ];
         // todo filter the criteras to remove empty value
+
         foreach ($criterias as $key => $value) {
             switch ($key) {
                 case "from_id":
@@ -169,12 +172,51 @@ class RelationshipSearchService
                     $fqs[] = "-to_type:$value";
                     break;
             }
+
+        }
+
+        //we will check if the datasource of 'from_id' has allowed reverse internal and external links
+        if(array_key_exists('from_id', $criterias)) {
+            //if the reverse links are not to be allowed,then we need to exclude the reverse relationships in the search
+            $dont_allow_reverse = static::getDatasourceSettings($criterias['from_id']);
+            if(array_key_exists('allow_reverse_internal_links', $dont_allow_reverse)){
+                //set up the query to not allow reverse internal links
+                $value = '{!parent which=$parentFilter}relation_reverse:true AND {!parent which=$parentFilter}relation_internal:true';
+                $fqs[] = "-($value)";
+            }
+            if(array_key_exists('allow_reverse_external_links', $dont_allow_reverse)){
+                //set up the query to not allow reverse external links
+               $value = '{!parent which=$parentFilter}relation_reverse:true AND {!parent which=$parentFilter}relation_internal:false';
+               $fqs[] = "-($value)";
+            }
         }
 
         // joins all fqs into a single long (space separated) fq parameter to POST to SOLR
         $fq = implode(" ", $fqs);
         $params['fq'] = $fq;
         return $params;
+    }
+
+
+    /**
+     * Returns if a record datasource has not been set to allow reverse links
+     *
+     * @param RegistryObject $record
+     * @return array
+     */
+    public static function getDatasourceSettings($ro_id)
+    {
+        $record = RegistryObjectsRepository::getRecordByID($ro_id);
+        $dataSource = $record->datasource;
+        $reverse_permissions = [];
+        //obtain the value of the datasource reverse links attributes
+        if(!$dataSource->attr('allow_reverse_internal_links')) {
+            $reverse_permissions['allow_reverse_internal_links'] = false ;
+        }
+        if(!$dataSource->attr('allow_reverse_external_links')) {
+            $reverse_permissions['allow_reverse_external_links'] = false ;
+        }
+        return $reverse_permissions;
     }
 
 }

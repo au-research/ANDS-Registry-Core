@@ -3,7 +3,9 @@ namespace ANDS\Mycelium;
 
 use ANDS\File\Storage;
 use ANDS\RecordData;
+use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\RegistryObject;
+use ANDS\Repository\RegistryObjectsRepository;
 
 class RelationshipSearchServiceTest extends \MyceliumTestClass
 {
@@ -41,6 +43,19 @@ class RelationshipSearchServiceTest extends \MyceliumTestClass
         $this->myceliumDelete($record3);
 
     }
+
+    /** @test */
+    public function test_it_should_not_return_related_reverse()
+    {
+        //TODO set up test data import to determine which data_sources and records will be useful for testing
+
+        $this->ensureKeyExist("AUTestingRecords3ScholixPublicationRecords7");
+        $record = RegistryObjectsRepository::getPublishedByKey("AUTestingRecords3ScholixPublicationRecords7");
+        $relatedRecords = RelationshipProvider::get($record);
+
+        $this->assertGreaterThan(1, sizeof($relatedRecords));
+    }
+
 }
 
 ?>
