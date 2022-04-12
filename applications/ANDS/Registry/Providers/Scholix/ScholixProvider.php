@@ -13,6 +13,7 @@ use ANDS\Registry\Relation;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\XMLUtil;
+use ANDS\Log\Log;
 use function baseUrl;
 use function collect;
 use function getReverseRelationshipString;
@@ -470,6 +471,7 @@ class ScholixProvider implements RegistryContentProvider
 
         // map and get identfiers
         foreach($authors as $author){
+            $creator = [];
             if($author['to_identifier_type']== 'ro:id'){
                 $to = RegistryObjectsRepository::getRecordByID($author['to_identifier']);
                 $identifiers = collect(IdentifierProvider::get($to))->map(function($item) {
@@ -478,15 +480,16 @@ class ScholixProvider implements RegistryContentProvider
                         'schema' => $item['type']
                     ];
                 })->toArray();
+
                 if (count($identifiers) > 0) {
                     $creator['identifier'] = $identifiers;
-                }
+                };
             }
-            $creator = [
-                'name' => $author['to_title']
-            ];
+            if(array_key_exists('to_title',$author))
+            $creator['name'] = $author['to_title'];
 
             $creators[] = $creator;
+
         }
 
 
