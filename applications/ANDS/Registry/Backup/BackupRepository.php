@@ -11,8 +11,7 @@ use ANDS\RegistryObject;
 use ANDS\Repository\DataSourceRepository;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\Config;
-use ANDS\Util\SolrIndex;
-use ANDS\Util\XMLUtil;
+use Exception;
 use MinhD\SolrClient\SolrClient;
 use MinhD\SolrClient\SolrDocument;
 use Symfony\Component\Stopwatch\Stopwatch;
@@ -28,26 +27,46 @@ class BackupRepository
         'includeRelationshipsIndex' => true
     ];
 
+    /**
+     * Initialise the BackupRepository
+     *
+     * Set up the proper backup path from the config/backup.php file
+     * @return void
+     * @throws \Exception
+     */
     public static function init()
     {
         static::$config = Config::get("backup");
 
         if (! is_readable(static::getBackupPath())) {
-            throw new \Exception("Backup path is not readable");
+            throw new Exception("Backup path is not readable");
         }
         if (! is_writable(static::getBackupPath())) {
-            throw new \Exception("Backup path is not writable");
+            throw new Exception("Backup path is not writable");
         }
     }
 
+    /**
+     * Obtain the backup path from the configuration
+     *
+     * @return mixed
+     * @throws \Exception
+     */
     public static function getBackupPath()
     {
+        // Runs init to cache the value if it's not already cached
         if (!static::$config) {
             static::init();
         }
+
         return static::$config['path'];
     }
 
+    /**
+     * Returns a list of Backups that is currently available in the system
+     * @return \ANDS\Registry\Backup\Backup[]
+     * @throws \Exception
+     */
     public static function getAllBackups()
     {
         $backups = [];
@@ -59,6 +78,15 @@ class BackupRepository
         return $backups;
     }
 
+    /**
+     * Create & store new Backup
+     *
+     * @param $id string backup id
+     * @param $dataSourceIds array datasource id
+     * @param $options array kvp of options
+     * @return array a kvp associated array of stats
+     * @throws \Exception
+     */
     public static function create($id, $dataSourceIds, $options = null)
     {
         if (!$options) {
@@ -75,16 +103,29 @@ class BackupRepository
             ]
         ];
 
+        // obtain actual DataSource instance, filter out those that are not found
+        /** @var DataSource[] $dataSources */
         $dataSources = collect($dataSourceIds)->map(function($id) {
             return DataSourceRepository::getByID($id);
         })->filter(function($dataSource) {
             return $dataSource != null;
         });
 
+        // create the Backup
         $backup = Backup::create($id, $title, $description, $authors, $dataSources);
+
+        // store the Backup
         return static::storeBackup($backup, $options);
     }
 
+    /**
+     * Restore a Backup by ID
+     *
+     * @param $id string the backup id
+     * @param $options array kvp associated array of options
+     * @return array a kvp associated array of stats
+     * @throws \Exception
+     */
     public static function restore($id, $options = null)
     {
         if (!$options) {
@@ -94,19 +135,26 @@ class BackupRepository
         return static::restoreBackupById($id, $options);
     }
 
+    /**
+     * Get a particular Backup by ID
+     *
+     * @param $id string backup id
+     * @return \ANDS\Registry\Backup\Backup
+     * @throws \Exception
+     */
     public static function getBackupById($id)
     {
         $path = static::getBackupPath();
         $backupPath = "$path/$id";
         if (! is_dir($backupPath) || ! is_readable($backupPath)) {
             Log::error("$backupPath not accessible");
-            throw new \Exception("$backupPath is not readable");
+            throw new Exception("$backupPath is not readable");
         }
 
         $metaFile = "$backupPath/meta.json";
         if (!is_file($metaFile) || !is_readable($metaFile)) {
             Log::error("$metaFile not accessible");
-            throw new \Exception("$metaFile is not readable");
+            throw new Exception("$metaFile is not readable");
         }
         $metaFileContent = file_get_contents($metaFile);
 
@@ -118,8 +166,11 @@ class BackupRepository
 
 
     /**
+     * Store a Backup to the file system.
+     *
      * @param \ANDS\Registry\Backup\Backup $backup
-     * @return array
+     * @param null $options kvp associated array of options
+     * @return array a kvp associated array of stats
      * @throws \Exception
      */
     public static function storeBackup(Backup $backup, $options = null)
@@ -140,7 +191,7 @@ class BackupRepository
             try {
                 mkdir($backupDirectoryPath, 0755);
                 Log::debug("Created $backupDirectoryPath");
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 Log::error(__METHOD__ . " Failed to create directory $backupDirectoryPath");
                 throw $e;
             }
@@ -159,7 +210,6 @@ class BackupRepository
             if (! is_dir($dataSourcePath)) {
                 mkdir($dataSourcePath, 0755, true);
             }
-
             $dataSourceMetaPath = "$dataSourcePath/meta.json";
             $attributes = $dataSource->dataSourceAttributes->toArray();
             $exported = [
@@ -168,10 +218,10 @@ class BackupRepository
             ];
             unset($exported['metadata']['data_source_attributes']);
             file_put_contents($dataSourceMetaPath, json_encode($exported));
-            Log::debug("Created DataSource[id={$dataSource->id}] meta at $dataSourceMetaPath");
+            Log::debug("Created DataSource[id=$dataSource->id] meta at $dataSourceMetaPath");
 
             // backup records
-            // todo backup_records_time_taken_in_seconds
+            // todo store backup_records_time_taken_in_seconds
             $recordsPath = "$backupDirectoryPath/datasources/$dataSource->id/records";
             if (! is_dir($recordsPath)) {
                 mkdir($recordsPath, 0755, true);
@@ -225,6 +275,7 @@ class BackupRepository
 
         $event = $stopwatch->stop('storing_backup');
 
+        // total records count = sum of all the records_count of all the dataSourceBackupStats
         $totalRecordsCount = collect($dataSourceBackupStats)->pluck('records_count')->reduce(function($carry, $item) {
             return $carry + $item;
         });
@@ -244,6 +295,14 @@ class BackupRepository
         ];
     }
 
+    /**
+     * Restore a specific data source by ID
+     *
+     * @param $id string the backup id
+     * @param $options array kvp associated array of options
+     * @return array a kvp associated array of stats
+     * @throws \Exception
+     */
     public static function restoreBackupById($id, $options = null)
     {
         if (!$options) {
@@ -294,10 +353,19 @@ class BackupRepository
 
     }
 
+    /**
+     * Restore a data source given the path
+     *
+     * @param $dataSourcePath string data source path
+     * @param $options array kvp associated array of options
+     * @param $backupId string backup id
+     * @return array a kvp associated array of stats
+     * @throws \Exception
+     */
     public static function restoreDataSourcePath($dataSourcePath, $options, $backupId) {
         $metaFile = "$dataSourcePath/meta.json";
         if (! is_file($metaFile) || ! is_readable($metaFile)) {
-            throw new \Exception("$metaFile is not accessible");
+            throw new Exception("$metaFile is not accessible");
         }
 
         $metaContent = json_decode(file_get_contents($metaFile), true);
@@ -356,7 +424,6 @@ class BackupRepository
             }
         }
 
-
         // restore relationship documents
         if ($options['includeRelationshipsIndex']) {
             $relationshipsPath = "$dataSourcePath/relationships";
@@ -375,7 +442,6 @@ class BackupRepository
             }
         }
 
-
         return [
             'path' => $metaFile,
             'records_count' => $recordFileCount
@@ -383,6 +449,13 @@ class BackupRepository
 
     }
 
+    /**
+     * Restore a particular record given a path
+     *
+     * Restore entries to the RegistryObject model, RegistryObjectAttributes and RecordData
+     * @param $recordPath string path to the record json file
+     * @return void
+     */
     public static function restoreRecordPath($recordPath) {
         $metaContent = json_decode(file_get_contents($recordPath), true);
         $recordMeta = $metaContent['metadata'];
@@ -409,16 +482,25 @@ class BackupRepository
 
         // if there's no previous current data, then insert a new current version
         if (!$currentData) {
-            \ANDS\Repository\RegistryObjectsRepository::addNewVersion($record->id, $xml);
+            RegistryObjectsRepository::addNewVersion($record->id, $xml);
         }
 
         // if there is a current data and the current data is different, insert a new version
         if ($currentData && $currentData->hash != $hash) {
             RecordData::where('registry_object_id', $record->id)->update(['current' => 'FALSE']);
-            \ANDS\Repository\RegistryObjectsRepository::addNewVersion($record->id, $xml);
+            RegistryObjectsRepository::addNewVersion($record->id, $xml);
         }
     }
 
+    /**
+     * Backup Portal Index for a data source
+     *
+     * Backup a data source worth of portal index into a series of json file stored in the backup id
+     * @param $backupId string backup id
+     * @param $dataSourceId string data source id
+     * @return void
+     * @throws \Exception
+     */
     public static function backupPortalIndex($backupId, $dataSourceId)
     {
         $backupPath = static::getBackupPath();
@@ -430,6 +512,7 @@ class BackupRepository
         $client = new SolrClient(Config::get('app.solr_url'));
         $client->setCore("portal");
 
+        // use the cursor to go through the "data_source_id:$dataSourceId" query and store each file in {$doc->id}.json
         $done = false;
         $cursor = "*";
         while ($done === false) {
@@ -444,6 +527,14 @@ class BackupRepository
         }
     }
 
+    /**
+     * Backup all relationships document for a particular data source
+     *
+     * @param $backupId string backup id
+     * @param $dataSourceId string data source id
+     * @return void
+     * @throws \Exception
+     */
     public static function backupRelationshipsIndex($backupId, $dataSourceId)
     {
         $backupPath = static::getBackupPath();
@@ -455,10 +546,13 @@ class BackupRepository
         $client = new SolrClient(Config::get('app.solr_url'));
         $client->setCore("relationships");
 
+        // use RelationshipSearchService::getSolrParameters, so we'll also get the _nested_documents_
+        // only backup parent type:relationship document
         $filters = RelationshipSearchService::getSolrParameters([
             'q' => "(from_data_source_id:$dataSourceId OR to_data_source_id:$dataSourceId) AND type:relationship"
         ], ['sort' => 'id desc']);
 
+        // use the cursor to go through the "data_source_id:$dataSourceId" query and store each file in {$doc->id}.json
         $done = false;
         $cursor = "*";
         while ($done === false) {
@@ -478,10 +572,17 @@ class BackupRepository
      */
     public static function deleteBackupById($id)
     {
-        throw new \Exception("Not Implemented");
+        throw new Exception("Not Implemented");
     }
 
-    private static function restorePortalPath($docPath, $client = null)
+    /**
+     * Restore a portal index document
+     *
+     * @param $docPath string the document path
+     * @param $client \MinhD\SolrClient\SolrClient|null the client to be reused
+     * @return void
+     */
+    private static function restorePortalPath($docPath, SolrClient $client = null)
     {
         if ($client === null) {
             $client = new SolrClient(Config::get('app.solr_url'));
@@ -490,7 +591,8 @@ class BackupRepository
 
         $content = json_decode(file_get_contents($docPath), true);
 
-        // title is a copyField of display_title
+        // title is a copyField of display_title but is stored, so gets backed up anyway
+        // need to be removed or else it'll cause an error upon indexing
         if (array_key_exists('display_title', $content)) {
             unset($content['title']);
         }
@@ -503,6 +605,13 @@ class BackupRepository
         }
     }
 
+    /**
+     * Restore a relationship document by path
+     *
+     * @param string $docPath the document path
+     * @param \MinhD\SolrClient\SolrClient|null $client the client to be reused
+     * @return void
+     */
     private static function restoreRelationshipPath($docPath, SolrClient $client = null)
     {
         if ($client === null) {
@@ -521,6 +630,13 @@ class BackupRepository
         }
     }
 
+    /**
+     * Uses Mycelium Backup API to back up the graphs
+     *
+     * @param string $backupId the backup id
+     * @param string $dataSourceId the data source id
+     * @return void
+     */
     public static function backupGraphs($backupId, $dataSourceId)
     {
         $myceliumURL = Config::get('mycelium.url');
@@ -529,6 +645,13 @@ class BackupRepository
         $client->createBackup($backupId, $dataSourceId);
     }
 
+    /**
+     * Uses Mycelium Backup API to restore the graphs for a data source
+     *
+     * @param string $backupId the backup id
+     * @param string $dataSourceId the data source id
+     * @return void
+     */
     public static function restoreGraphs($backupId, $dataSourceId)
     {
         $myceliumURL = Config::get('mycelium.url');
