@@ -21,10 +21,7 @@ class IndexGraphRelationships extends ImportSubTask
         $myceliumClient = new MyceliumServiceClient(Config::get('mycelium.url'));
 
         $targetStatus = $this->parent()->getTaskData('targetStatus');
-        if (!RegistryObjectsRepository::isPublishedStatus($targetStatus)) {
-            $this->log("Target status is ". $targetStatus.' does not process graph network');
-            return;
-        }
+        // as of Mycelium we are indexing records with any status
 
         $importedRecords = $this->parent()->getTaskData("importedRecords");
         $total = count($importedRecords);

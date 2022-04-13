@@ -31,10 +31,8 @@ class ProcessGraphRelationships extends ImportSubTask
         $error_count = 0;
         $startTime = microtime(true);
         $targetStatus = $this->parent()->getTaskData('targetStatus');
-        if (!RegistryObjectsRepository::isPublishedStatus($targetStatus)) {
-            $this->log("Target status is ". $targetStatus.' does not process graph network');
-            return;
-        }
+        // as of Mycelium we are indexing records with any status
+
         $importedRecords = $this->parent()->getTaskData("importedRecords");
         $total = count($importedRecords);
         

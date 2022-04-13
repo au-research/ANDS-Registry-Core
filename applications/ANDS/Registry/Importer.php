@@ -321,8 +321,11 @@ class Importer
         // delete mycelium vertices & relationship index
         Log::debug(__METHOD__ . " Deleting Mycelium data", ['data_source_id' => $dataSource->id]);
         $myceliumServiceClient = new \ANDS\Mycelium\MyceliumServiceClient(\ANDS\Util\Config::get('mycelium.url'));
-        $myceliumServiceClient->deleteDataSourceRecords($dataSource);
-
+        try {
+            $myceliumServiceClient->deleteDataSourceRecords($dataSource);
+        }catch(\Exception $e){
+            Log::error(__METHOD__ . " Failed Deleting Mycelium data", ['error:' => $e->getMessage()]);
+        }
         // set the status of registryObjects to DELETED to prevent them from being accessed
         Log::debug(__METHOD__ . " Soft deleting all RegistryObject", ['data_source_id' => $dataSource->id]);
         RegistryObject::where('data_source_id', $dataSource->id)->update(['status' => 'DELETED']);
