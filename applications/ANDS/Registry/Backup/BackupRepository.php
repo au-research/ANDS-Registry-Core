@@ -50,7 +50,13 @@ class BackupRepository
 
     public static function getAllBackups()
     {
-
+        $backups = [];
+        $files = scandir(self::getBackupPath());
+        foreach ($files as $file) {
+            if ($file == '.' || $file == '..' || $file == '.git') continue;
+            $backups[] = self::getBackupById($file);
+        }
+        return $backups;
     }
 
     public static function create($id, $dataSourceIds, $options = null)
@@ -280,7 +286,10 @@ class BackupRepository
             'data_sources_count' => count($dataSourceBackupStats),
             'records_count' => $totalRecordsCount,
             'time_taken_in_seconds' => $event->getDuration() / 1000,
-            'memory_usage_mb' => $event->getMemory() / 1000000
+            'memory_usage_mb' => $event->getMemory() / 1000000,
+            'include_graphs' => $options['includeGraphs'] ? "yes" : "no",
+            'include_portal_index' => $options['includePortalIndex'] ? "yes" : "no",
+            'include_relationships_index' => $options['includeRelationshipsIndex'] ? "yes" : "no"
         ];
 
     }
