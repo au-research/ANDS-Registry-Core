@@ -82,12 +82,15 @@ class ProcessDelete extends ImportSubTask
         $this->log("Deleting $count DRAFT records");
 
         $records = RegistryObject::whereIn('registry_object_id', $chunk)->get();
-
+        $ids = collect($records)->pluck('registry_object_id')->toArray();
         // TODO: refactor to reduce SQL queries
         foreach ($records as $record) {
             RegistryObjectsRepository::completelyEraseRecordByID($record->registry_object_id);
+
             $this->log("Record $record->registry_object_id ($record->status) is completely DELETED");
         }
+        $this->removeRegistryObjectFromGraphDatabase($ids);
+        $this->log("DRAFT Records were DELETED from GRAPH DB");
     }
 
     /**

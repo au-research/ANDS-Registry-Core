@@ -79,6 +79,10 @@ class UpdatePortalIndexesPK
 
     private function processSetAndUnsetModifiedRelationships(Event\PrimaryKeyUpdatedEvent $event){
         $primary_record = RegistryObjectsRepository::getPublishedByKey($event->new_primary_key);
+        if(!$primary_record){
+            debug("Record with key:". $event->new_primary_key . "doesn't exists");
+            return;
+        }
         $data_source_id = $event->data_source_id;
         $pr_title = $primary_record->title;
         $pr_class = $primary_record->class;
