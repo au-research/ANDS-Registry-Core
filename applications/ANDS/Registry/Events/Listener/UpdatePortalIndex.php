@@ -282,12 +282,13 @@ class UpdatePortalIndex
      * @param $ro_id
      * @return false|void
      */
-    private function hasPortalIndex($ro_id){
+    public function hasPortalIndex($ro_id){
         // we assume every PUBLISHED record has a portal index
         // if bug RDA-720 still exists we should test the actual portal index (but that is too slow)
         $record = RegistryObjectsRepository::getRecordByID($ro_id);
         if($record === null || $record->isDraftStatus()){
             return false;
         }
+        return true;
     }
 }

@@ -189,4 +189,26 @@ class UpdatePortalIndexTest extends \MyceliumTestClass
         }
     }
 
+    function test_it_should_detect_if_record_can_be_updated()
+    {
+        // given a record
+        $record = $this->stub(RegistryObject::class);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_all_elements.xml')
+        ]);
+        $record->status = "DRAFT";
+        CoreMetadataProvider::process($record);
+        $updater = new UpdatePortalIndex();
+        $hasIndex = $updater->hasPortalIndex($record->id);
+        $this->assertFalse($hasIndex);
+        $record->status = "PUBLISHED";
+        CoreMetadataProvider::process($record);
+        $hasIndex = $updater->hasPortalIndex($record->id);
+        $this->assertTrue($hasIndex);
+        // non-existent record
+        $hasIndex = $updater->hasPortalIndex(999999999);
+        $this->assertFalse($hasIndex);
+    }
+
 }
