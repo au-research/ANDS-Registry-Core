@@ -251,6 +251,9 @@ class UpdatePortalIndex
         $jsonPackets = array();
 
         foreach($idList as $id){
+            if(!$this->hasPortalIndex($id)){
+                continue;
+            }
             $json = array();
             $actions = array();
             $json["id"] = $id;
@@ -262,7 +265,10 @@ class UpdatePortalIndex
             $json[$indexed_field] = $actions;
             $jsonPackets[] = $json;
         }
-        $this->updateSolr(json_encode($jsonPackets));
+        if(sizeof($jsonPackets) > 0){
+            $this->updateSolr(json_encode($jsonPackets));
+        }
+
     }
 
     private function updateSolr($jsonBody){
@@ -272,4 +278,16 @@ class UpdatePortalIndex
         $solrClient->request("POST", "portal/update/json", ['commit' => 'true'], $jsonBody, "body");
     }
 
+    /** Check if the record exists, and it is PUBLISHED before attempting to update its portal index
+     * @param $ro_id
+     * @return false|void
+     */
+    private function hasPortalIndex($ro_id){
+        // we assume every PUBLISHED record has a portal index
+        // if bug RDA-720 still exists we should test the actual portal index (but that is too slow)
+        $record = RegistryObjectsRepository::getRecordByID($ro_id);
+        if($record === null || $record->isDraftStatus()){
+            return false;
+        }
+    }
 }
