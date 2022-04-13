@@ -34,8 +34,6 @@ $application->add(new \ANDS\Commands\Export\ExportRoles());
 $application->add(new \ANDS\Commands\Mycelium\MyceliumImportRecordCommand());
 $application->add(new \ANDS\Commands\Mycelium\MyceliumImportDataSourceCommand());
 $application->add(new \ANDS\Commands\Mycelium\MyceliumIndexRecordCommand());
-$application->add(new \ANDS\Commands\DataSource\DataSourceExportCommand());
-$application->add(new \ANDS\Commands\DataSource\DataSourceImportCommand());
 $application->add(new \ANDS\Commands\DataSource\DataSourceImportMyceliumCommand());
 $application->add(new \ANDS\Commands\DataSource\DataSourceIndexMyceliumCommand());
 $application->add(new \ANDS\Commands\DataSource\DataSourceWipeCommand());
