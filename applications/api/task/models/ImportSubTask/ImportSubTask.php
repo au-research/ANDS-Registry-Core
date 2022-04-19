@@ -142,8 +142,13 @@ class ImportSubTask extends Task
 
     public function addError($log)
     {
+        // add error to self as per
         parent::addError($log);
 
+        // parent task should also have this error
+        $this->parent()->addError($log);
+
+        // add importer error to the harvests
         $this->parent()->updateHarvest(["importer_message" => get_class($this) . "(ERROR) " . $log]);
         return $this;
     }
