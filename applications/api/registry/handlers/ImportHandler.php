@@ -1,6 +1,7 @@
 <?php
 namespace ANDS\API\Registry\Handler;
 use ANDS\API\Registry\Handler\errorPipeline;
+use ANDS\API\Task\Task;
 use ANDS\DataSource;
 use ANDS\Payload;
 use ANDS\Repository\DataSourceRepository;
@@ -77,9 +78,7 @@ class ImportHandler extends Handler
 
         $task = TaskRepository::create([
             'name' => $name,
-            'type' => 'PHPSHELL',
-            'frequency' => 'ONCE',
-            'priority' => 2,
+            'type' => Task::$TYPE_SHELL,
             'params' => http_build_query([
                 'class' => 'import',
                 'ds_id' => $dataSource->data_source_id,

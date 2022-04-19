@@ -71,6 +71,9 @@ class TaskRepositoryTest extends TestCase
         // it is saved to the database via model
         $model = $model->fresh();
         $this->assertEquals(Task::$STATUS_COMPLETED, $model->status);
+
+        // clean up
+        $model->delete();
     }
 
 }

@@ -76,7 +76,7 @@ class TaskRepository
             $model = new TaskModel();
         }
 
-        $model->update([
+        $model->fill([
             'name' => $task->getName(),
             'status' => $task->getStatus(),
             'message' => $task->getMessage(),
