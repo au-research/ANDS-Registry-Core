@@ -168,7 +168,6 @@ class Registry_object extends MX_Controller {
             // import Task creation
             $importTask = new \ANDS\API\Task\ImportTask();
             $importTask
-                ->setCI($this)->setDb($this->db)
                 ->init([
                     'name' => 'ARO',
                     'params' => http_build_query([
@@ -405,7 +404,6 @@ class Registry_object extends MX_Controller {
         // import Task creation
         $importTask = new \ANDS\API\Task\ImportTask();
         $importTask
-            ->setCI($this)->setDb($this->db)
             ->init([
                 'name' => 'ARO',
                 'params' => http_build_query([
@@ -570,7 +568,6 @@ class Registry_object extends MX_Controller {
         // import Task creation
         $importTask = new \ANDS\API\Task\ImportTask();
         $importTask
-            ->setCI($this)->setDb($this->db)
             ->init([
                 'name' => 'ARO',
                 'params' => http_build_query([
@@ -1000,9 +997,7 @@ class Registry_object extends MX_Controller {
             ]);
             $importTask
                 ->skipLoadingPayload()
-                ->enableRunAllSubTask()
-                ->setCI($this)
-                ->setDb($this->db);
+                ->enableRunAllSubTask();
 
             $importTask
                 ->setTaskData('affectedRecords', $affected_ids)
@@ -1255,7 +1250,6 @@ class Registry_object extends MX_Controller {
         // import Task creation
         $importTask = new \ANDS\API\Task\ImportTask();
         $importTask
-            ->setCI($this)->setDb($this->db)
             ->init([
                 'name' => 'Reinstate',
                 'params' => http_build_query([
@@ -1356,14 +1350,11 @@ class Registry_object extends MX_Controller {
         ]);
 
         $importTask
-            ->setCI($this)
             ->skipLoadingPayload()
             ->enableRunAllSubTask();
 
         $importTask
             ->setTaskData('deletedRecords', $affectedIDs)
-            ->setCI($this)
-            ->setDb($this->db)
             ->initialiseTask();
 
         // send the task to background to obtain a task ID

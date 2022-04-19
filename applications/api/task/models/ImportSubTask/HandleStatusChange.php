@@ -135,7 +135,7 @@ class HandleStatusChange extends ImportSubTask
         $importTask = new ImportTask();
         $importTask->init([
             'params'=>'ds_id='.$record->data_source_id.'&batch_id='.$batchID.'&targetStatus=PUBLISHED'
-        ])->setCI($this->parent()->getCI())->enableRunAllSubTask()->initialiseTask();
+        ])->enableRunAllSubTask()->initialiseTask();
 
         $importTask->run();
 
@@ -155,7 +155,7 @@ class HandleStatusChange extends ImportSubTask
         $importTask = new ImportTask();
         $importTask->init([
             'params'=>'ds_id='.$record->data_source_id.'&batch_id='.$batchID.'&targetStatus='.$targetStatus
-        ])->setCI($this->parent()->getCI())->initialiseTask();
+        ])->initialiseTask();
         $importTask->enableRunAllSubTask()->run();
 
         $importedRecord = array_first($importTask->getTaskData('importedRecords'));

@@ -523,7 +523,6 @@ class Data_source extends MX_Controller {
 				'pipeline' => 'ServiceDiscovery'
 			])
 		]);
-		$importTask->setDb($this->db)->setCI($this);
 		$importTask
 			->skipLoadingPayload()
 			->enableRunAllSubTask()
@@ -576,7 +575,6 @@ class Data_source extends MX_Controller {
                 'pipeline' => 'PublishingWorkflow'
             ])
         ]);
-        $importTask->setDb($this->db)->setCI($this);
         $importTask
             ->skipLoadingPayload()
             ->enableRunAllSubTask()
@@ -624,7 +622,6 @@ class Data_source extends MX_Controller {
                 'pipeline' => 'MetadataGenerationWorkflow'
             ])
         ]);
-        $importTask->setDb($this->db)->setCI($this);
         $importTask
             ->skipLoadingPayload()
             ->enableRunAllSubTask()

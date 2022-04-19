@@ -1,43 +1,57 @@
 <?php
-/**
- * Class:  Task
- * @author: Minh Duc Nguyen <minh.nguyen@ands.org.au>
- */
 
 namespace ANDS\API\Task;
 
 
+use ANDS\Task\TaskRepository;
 use ANDS\Util\NotifyUtil;
 use Symfony\Component\Stopwatch\Stopwatch;
 use \Exception as Exception;
 
+/**
+ * God object Task
+ *
+ * Manage business rules of running tasks.
+ * @see \ANDS\Task\TaskRepository for persistence model
+ */
 class Task
 {
     private $id;
     public $name;
     public $status;
-    public $priority;
     public $params;
     public $lastRun;
+    public $type;
     public $message = ['log' => [], 'error' => []];
     public $taskData = [];
-    private $db;
+
     private $memoryLimit = '256M';
     private $dateFormat = 'Y-m-d | h:i:sa';
     public $dateAdded;
 
+    public static $STATUS_STOPPED = "STOPPED";
+    public static $STATUS_PENDING = "PENDING";
+    public static $STATUS_RUNNING = "RUNNING";
+    public static $STATUS_SCHEDULED = "SCHEDULED";
+    public static $STATUS_COMPLETED = "COMPLETED";
+
+    public static $TYPE_SHELL = "PHPSHELL";
+    public static $TYPE_POKE = "POKE";
+    public static $TYPE_NONE = "NONE";
+
     /**
-     * Intialisation of this task
+     * Initialisation of this task
      * @param $task
      * @return $this
      */
     function init($task)
     {
-        $this->id = isset($task['id']) ? $task['id'] : false;
-        $this->name = isset($task['name']) ? $task['name'] : false;
-        $this->status = isset($task['status']) ? $task['status'] : false;
-        $this->priority = isset($task['priority']) ? $task['priority'] : false;
-        $this->params = isset($task['params']) ? $task['params'] : false;
+        $this->id = isset($task['id']) ? $task['id'] : null;
+        $this->name = isset($task['name']) ? $task['name'] : null;
+        $this->status = isset($task['status']) ? $task['status'] : static::$STATUS_PENDING;
+        $this->params = isset($task['params']) ? $task['params'] : null;
+        $this->type = isset($task['type']) ? $task['type']: static::$TYPE_NONE;
+
         if (isset($task['data'])) {
             $this->taskData = is_array($task['data']) ? $task['data'] : json_decode($task['data'], true);
         }
@@ -50,14 +64,12 @@ class Task
         $this->lastRun = isset($task['last_run']) ? $task['last_run'] : false;
         $this->dateAdded = array_key_exists('date_added', $task) ? $task['date_added'] : null;
 
-        $this->dateFormat = 'Y-m-d | h:i:sa';
-
         return $this;
     }
 
     /**
      * Primary task running function
-     * @return $this
+     * @return null|\ANDS\API\Task\Task
      */
     public function run()
     {
@@ -67,13 +79,17 @@ class Task
 
         $this->hook_start();
 
-        if ($this->getStatus() === "STOPPED") {
+        if ($this->getStatus() === static::$STATUS_STOPPED) {
             $this->log("Task is STOPPED");
-            return;
+            return null;
+        }
+
+        if (!ini_get('date.timezone')) {
+            date_default_timezone_set('UTC');
         }
 
         $this
-            ->setStatus('RUNNING')
+            ->setStatus(static::$STATUS_RUNNING)
             ->setLastRun(date('Y-m-d H:i:s', time()))
             ->log("Task run at " . date($this->dateFormat, $start))
             ->save();
@@ -240,15 +256,6 @@ class Task
         return array_key_exists($key, $this->taskData) ? $this->taskData[$key] : null;
     }
 
-
-    public function printTaskData()
-    {
-        $message = "DETAILS:".NL;
-        foreach($this->taskData as $key => $value){
-            $message .= $key.": ".$value.NL;
-        }
-        return $message;
-    }
     /**
      * Helper method
      * Format a time period nicely
@@ -271,36 +278,11 @@ class Task
      */
     public function save()
     {
-        $data = [
-            'status' => $this->status,
-            'priority' => $this->priority,
-            'message' => json_encode($this->message),
-            'data' => json_encode($this->taskData)
-        ];
-
-        if ($this->getLastRun())
-            $data['last_run'] = $this->getLastRun();
-
-        if ($this->dateAdded)
-            $data['date_added'] = $this->dateAdded;
-
-        if ($this->getId() === false || $this->getId() == "") {
-            // $this->log('This task does not have an ID, does not save');
-            return true;
-        }
-        $updateStatus = null;
-        try {
-            $updateStatus = $this->update_db($data);
-        }
-        catch(Exception $e){
-            // if we can't update the database throwing exception and
-            // trying to finalize will just get into an infinite loop!!
-            // just print error and die
-            $stderr = fopen('php://stderr','a'); //both (a)ppending, and (w)riting will work
-            fwrite($stderr,'Task data failed to update to the database' . $e->getMessage());
-            exit(1);
+        if ($this->id) {
+            return TaskRepository::save($this);
         }
 
+        // todo dispatch task saved event
 //        NotifyUtil::notify(
 //            $channel = "task.".$this->getId(),
 //            json_encode($this->toArray(), true)
@@ -312,7 +294,7 @@ class Task
     public function sendToBackground()
     {
         if ($this->getId()) {
-            return;
+            return null;
         }
 
         $params = [];
@@ -337,7 +319,7 @@ class Task
             }
         }
 
-        $task = [
+        return TaskRepository::create([
             'name' => $this->getName(),
             'priority' => 5,
             'status' => 'PENDING',
@@ -345,36 +327,7 @@ class Task
             'params' => http_build_query($params),
             'message' => json_encode($this->message),
             'data' => json_encode($this->taskData),
-        ];
-
-        $taskResult = TaskManager::create($this->db, $this->ci)->addTask($task);
-
-        $this->id = $taskResult['id'];
-
-        return $this;
-    }
-
-    /**
-     * Update the database with task information
-     * @param $stuff
-     * @return $this
-     */
-    public function update_db($stuff)
-    {
-        $result = null;
-        try {
-            $this->db->reconnect();
-            $result = $this->db
-                ->where('id', $this->getId())
-                ->update('tasks', $stuff);
-        }
-        catch(Exception $e){
-            throw new Exception($e->getMessage());
-        }
-        if(!$result){
-            throw new Exception(" Update DB failed: ". $this->db->_error_message());
-        }
-        return $result;
+        ], true);
     }
 
     /**
@@ -407,42 +360,6 @@ class Task
     }
 
     /**
-     * Setters and Getters
-     */
-
-    /**
-     * Set the database for use
-     * Works with Codeigniter DB class
-     * @param $db
-     * @return $this
-     */
-    public function setDb($db)
-    {
-        $this->db = $db;
-        return $this;
-    }
-
-    public function getCI()
-    {
-        if (isset($this->ci)) {
-            return $this->ci;
-        }
-        $ci =& get_instance();
-        return $ci;
-    }
-
-    /**
-     * Set the Codeigniter instance
-     * @param $ci
-     * @return $this
-     */
-    public function setCI($ci)
-    {
-        $this->ci = $ci;
-        return $this;
-    }
-
-    /**
      * Set the status of the task
      * @param $status
      * @return $this
@@ -458,7 +375,7 @@ class Task
      */
     public function getId()
     {
-        return isset($this->id) ? $this->id : null;
+        return $this->id;
     }
 
     /**
@@ -467,14 +384,6 @@ class Task
     public function getParams()
     {
         return $this->params;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function getDb()
-    {
-        return $this->db;
     }
 
     /**
@@ -513,22 +422,6 @@ class Task
     /**
      * @return mixed
      */
-    public function getPriority()
-    {
-        return $this->priority;
-    }
-
-    /**
-     * @param mixed $priority
-     */
-    public function setPriority($priority)
-    {
-        $this->priority = $priority;
-    }
-
-    /**
-     * @return mixed
-     */
     public function getLastRun()
     {
         return $this->lastRun;
@@ -561,6 +454,34 @@ class Task
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * @param mixed $id
+     * @return Task
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param mixed $type
+     * @return Task
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+        return $this;
     }
 
 }

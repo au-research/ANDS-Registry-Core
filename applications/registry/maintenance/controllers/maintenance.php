@@ -129,7 +129,6 @@ class Maintenance extends MX_Controller
             ]),
             'type' => 'DONTRUNME'
         ]);
-        $importTask->setDb($this->db)->setCI($this);
         $importTask
             ->skipLoadingPayload()
             ->enableRunAllSubTask()

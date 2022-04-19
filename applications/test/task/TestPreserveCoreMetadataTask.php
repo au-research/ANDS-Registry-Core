@@ -64,7 +64,7 @@ class TestPreserveCoreMetadataTask extends UnitTest
         $importTask->init([
             'name' => 'ImportTask',
             'params' => 'ds_id=209&batch_id=AUTestingRecords3'
-        ])->setCI($this->ci)->setPipeline('PublishingWorkflow')->initialiseTask();
+        ])->setPipeline('PublishingWorkflow')->initialiseTask();
         $task = $importTask->getTaskByName("PreserveCoreMetadata");
         $task->parent()->setTaskData("targetStatus", "PUBLISHED");
         return $task;

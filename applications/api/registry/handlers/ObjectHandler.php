@@ -322,7 +322,6 @@ class ObjectHandler extends Handler{
         ]);
 
         $importTask
-            ->setCI($this->ci)
             ->initialiseTask()
             ->skipLoadingPayload()
             ->enableRunAllSubTask()

@@ -3,6 +3,7 @@
 
 namespace ANDS\API\Task\ImportSubTask;
 
+use ANDS\Log\Log;
 use ANDS\Mycelium\MyceliumServiceClient;
 use ANDS\Registry\Providers\DCI\DCI;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
@@ -11,6 +12,7 @@ use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\RegistryObject\Links;
 use ANDS\Util\Config;
+use ANDS\Util\SolrIndex;
 
 /**
  * Class ProcessDelete
@@ -163,8 +165,6 @@ class ProcessDelete extends ImportSubTask
             $this->parent()->incrementTaskData("recordsDeletedCount");
         }
 
-        // TODO remove CI dependency
-        $this->parent()->getCI()->load->library('solr');
         // chunk the ids by 300
         $chunks = collect($ids)->chunk(300)->toArray();
         foreach ($chunks as $chunk) {
@@ -174,16 +174,12 @@ class ProcessDelete extends ImportSubTask
             })->implode(' ');
 
             // delete from the solr index
-            $result = $this->parent()->getCI()->solr->init()
-                ->setCore('portal')
-                ->deleteByQueryCondition($portalQuery);
-
-            $result = json_decode($result, true);
-            if (array_key_exists('error', $result)) {
-                $this->addError("delete index failed " . $result['error']['msg']);
+            $result = SolrIndex::getClient('portal')->removeByQuery($portalQuery);
+            if ($result['responseHeader']['status'] != 0) {
+                $errorMessage = $result['error']['msg'];
+                $this->addError("delete index failed " . $errorMessage);
             }
         }
-
-        $this->parent()->getCI()->solr->init()->setCore('portal')->commit();
+        SolrIndex::getClient('portal')->commit();
     }
 }

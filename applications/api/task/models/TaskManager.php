@@ -167,10 +167,6 @@ class TaskManager
         /** @var ImportTask $task */
         $task = $this->getTaskObject($taskResult);
 
-        $task
-            ->setDb($this->db)
-            ->setCI($this->ci);
-
         try {
             if ($subTaskName) {
                 debug($subTaskName . "is starting");
@@ -201,9 +197,6 @@ class TaskManager
         $taskResult = $query->first_row(true);
 
         $task = $this->getTaskObject($taskResult);
-        $task
-            ->setDb($this->db)
-            ->setCI($this->ci);
 
         try {
             $task->stopWithError();

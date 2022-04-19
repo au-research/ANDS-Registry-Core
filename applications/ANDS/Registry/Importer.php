@@ -48,9 +48,6 @@ class Importer
         $importTask->setPayload("customPayload", $payload);
         $importTask->initialiseTask();
         $importTask->enableRunAllSubTask();
-
-        $importTask->setCI($ci =& get_instance());
-        $importTask->setDb($ci->db);
         $importTask->sendToBackground();
 
         $importTask->run();
@@ -127,9 +124,6 @@ class Importer
 
         $importTask->initialiseTask();
         $importTask->enableRunAllSubTask();
-
-        $importTask->setCI($ci =& get_instance());
-        $importTask->setDb($ci->db);
         $importTask->sendToBackground();
 
         $importTask->run();
@@ -163,8 +157,6 @@ class Importer
         ])->skipLoadingPayload()->enableRunAllSubTask()->initialiseTask();
         $importTask->setTaskData("deletedRecords", $ids);
 
-        $importTask->setCI($ci =& get_instance());
-        $importTask->setDb($ci->db);
         $importTask->sendToBackground();
 
         $importTask->run();
@@ -192,9 +184,6 @@ class Importer
             ])
         ])->skipLoadingPayload()->enableRunAllSubTask()->initialiseTask();
         $importTask->setTaskData("importedRecords", [$record->id]);
-
-        $importTask->setCI($ci =& get_instance());
-        $importTask->setDb($ci->db);
 
         if ($background) {
             $importTask->sendToBackground();
@@ -224,8 +213,6 @@ class Importer
 
         $importTask->setTaskData("importedRecords", $ids);
 
-        $importTask->setCI($ci =& get_instance());
-        $importTask->setDb($ci->db);
         $importTask->sendToBackground();
 
         if ($background === false) {

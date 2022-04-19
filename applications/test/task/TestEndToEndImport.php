@@ -20,7 +20,7 @@ class TestEndToEndImport extends UnitTest
         $importTask = new ImportTask();
         $importTask->init([
             'params'=>'ds_id=209&batch_id=AUTestingRecordsImport'
-        ])->setCI($this->ci)->initialiseTask();
+        ])->initialiseTask();
 
         // PopulateImportOptions
         $importTask->run_task();
@@ -103,7 +103,7 @@ class TestEndToEndImport extends UnitTest
         $importTask = new ImportTask();
         $importTask->init([
             'params'=>'ds_id=209&batch_id=AUTestingRecordsImport'
-        ])->setCI($this->ci)->initialiseTask();
+        ])->initialiseTask();
         $importTask->enableRunAllSubTask()->run();
 
         $record = RegistryObject::where('key', 'minh-test-record-pipeline')->first();
@@ -126,7 +126,7 @@ class TestEndToEndImport extends UnitTest
         $importTask = new ImportTask();
         $importTask->init([
             'params'=>'ds_id=209&batch_id=AUTestingRecordsImport&targetStatus=DRAFT'
-        ])->setCI($this->ci)->initialiseTask();
+        ])->initialiseTask();
         $importTask->enableRunAllSubTask()->run();
 
         // make sure it's draft

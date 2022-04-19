@@ -23,8 +23,6 @@ class TestOAIImport extends UnitTest
         ]);
 
         $taskObject = $taskManager->getTaskObject($task);
-        $taskObject->setDb($this->ci->db);
-        $taskObject->setCI($this->ci);
 
         $importTask = new ImportTask();
         $defaultImportTasks = $importTask->getDefaultImportSubtasks();

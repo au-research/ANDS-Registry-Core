@@ -88,8 +88,6 @@ class Task_api
                 $task = $this->taskManager->getTask($this->params['identifier']);
                 $taskObject = $this->taskManager->getTaskObject($task);
                 $taskObject
-                    ->setCI($this->ci)
-                    ->setDb($this->ci->db)
                     ->setStatus('PENDING')
                     ->enableRunAllSubTask()
                     ->setMessage()
@@ -126,14 +124,12 @@ class Task_api
                     $taskObject = $this->taskManager->getTaskObject($task);
                     if ($this->params['identifier'] == 'message' && $this->params['object_module'] == 'clear') {
                         $taskObject
-                            ->setDb($this->db)
                             ->setMessage()
                             ->clearTaskData()
                             ->save();
                         $task = $this->taskManager->getTask($taskObject->getId());
                     } elseif ($this->params['identifier'] == 'reschedule') {
                         $taskObject
-                            ->setDb($this->db)
                             ->setStatus('PENDING')
                             ->save();
                         $task = $this->taskManager->getTask($taskObject->getId());
