@@ -3,8 +3,13 @@
 namespace ANDS\API\Task;
 
 
+use ANDS\Log\Log;
 use ANDS\Task\TaskRepository;
+use ANDS\Util\Config;
 use ANDS\Util\NotifyUtil;
+use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger as Monolog;
 use Symfony\Component\Stopwatch\Stopwatch;
 use \Exception as Exception;
 
@@ -28,6 +33,9 @@ class Task
     private $memoryLimit = '256M';
     private $dateFormat = 'Y-m-d | h:i:sa';
     public $dateAdded;
+
+    /** @var \Monolog\Logger */
+    private $logger = null;
 
     public static $STATUS_STOPPED = "STOPPED";
     public static $STATUS_PENDING = "PENDING";
@@ -64,6 +72,9 @@ class Task
         $this->lastRun = isset($task['last_run']) ? $task['last_run'] : false;
         $this->dateAdded = array_key_exists('date_added', $task) ? $task['date_added'] : null;
 
+        $this->setTaskData('log_path', $this->getLogPath());
+        $this->initLogger();
+
         return $this;
     }
 
@@ -85,7 +96,8 @@ class Task
         }
 
         if (!ini_get('date.timezone')) {
-            date_default_timezone_set('UTC');
+            $timezone = Config::get('app.timezone') ?: 'UTC';
+            date_default_timezone_set($timezone);
         }
 
         $this
@@ -135,7 +147,6 @@ class Task
 
     public function finalize($start)
     {
-
         try {
             $end = microtime(true);
             if ($this->getStatus() !== "STOPPED") {
@@ -163,7 +174,10 @@ class Task
      */
     public function log($log)
     {
-        $this->message['log'][] = $log;
+        if ($logger = $this->getLogger()) {
+            $logger->info($log);
+        }
+
         if ($this->getId()) {
             NotifyUtil::notify('task.'.$this->getId(), $log);
         }
@@ -321,12 +335,11 @@ class Task
 
         return TaskRepository::create([
             'name' => $this->getName(),
-            'priority' => 5,
-            'status' => 'PENDING',
-            'type' => "PHPSHELL",
+            'status' => Task::$STATUS_PENDING,
+            'type' => Task::$TYPE_SHELL,
             'params' => http_build_query($params),
             'message' => json_encode($this->message),
-            'data' => json_encode($this->taskData),
+            'data' => $this->taskData,
         ], true);
     }
 
@@ -482,6 +495,68 @@ class Task
     {
         $this->type = $type;
         return $this;
+    }
+
+    public function getLogPath() {
+        if (! $this->id) {
+            // no id, no specific logger to write to
+            return null;
+        }
+
+        $storageConfig = Config::get('app.storage');
+        $globalLogPath = array_key_exists('logs', $storageConfig) ? $storageConfig['logs']['path'] : null;
+        if (!$globalLogPath) {
+            return null;
+        }
+
+        return rtrim($globalLogPath, '/') . "/tasks/$this->id.log";
+    }
+
+    public function initLogger()
+    {
+        $path = $this->getLogPath();
+        if (!$path) {
+            return;
+        }
+
+        $logger = new Monolog("task.$this->id.log");
+
+        try {
+            $handler = new StreamHandler($path, Monolog::DEBUG);
+
+            // formatter
+            $format =  LineFormatter::SIMPLE_FORMAT;
+            $formatter = new LineFormatter($format);
+            $handler->setFormatter($formatter);
+
+            $logger->pushHandler($handler);
+
+            $this->setTaskData('log_path', $path);
+            $this->setLogger($logger);
+        } catch (Exception $e) {
+            $msg = get_exception_msg($e);
+            Log::error(__METHOD__. " Failed to create logger for Task[id=$this->id], reason: $msg");
+            return;
+        }
+    }
+
+    /**
+     * @return \Monolog\Logger
+     */
+    public function getLogger()
+    {
+        if (!$this->logger) {
+            $this->initLogger();
+        }
+        return $this->logger;
+    }
+
+    /**
+     * @param \Monolog\Logger $logger
+     */
+    public function setLogger($logger)
+    {
+        $this->logger = $logger;
     }
 
 }

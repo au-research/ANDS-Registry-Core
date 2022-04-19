@@ -9,6 +9,7 @@ namespace ANDS\API;
 
 use ANDS\API\Task\ImportTask;
 use ANDS\RegistryObject;
+use ANDS\Task\TaskRepository;
 use \Exception as Exception;
 use ANDS\Registry\Providers\RelationshipProvider;
 use Illuminate\Database\Capsule\Manager as Capsule;
@@ -50,9 +51,6 @@ class Task_api
             'object_module' => isset($method[3]) ? $method[3] : false,
         );
         switch (strtolower($this->params['submodule'])) {
-            case 'test':
-                return $this->test();
-                break;
             case 'stop':
                 if ($this->params['identifier']) {
                     return $this->taskManager->stopTask($this->params['identifier']);
@@ -117,25 +115,6 @@ class Task_api
 
                 //return task api/task/:id if exists
                 if ($task = $this->taskManager->getTask($this->params['submodule'])) {
-                    /**
-                     * api/task/:id/message/clear
-                     * Clear the message log
-                     */
-                    $taskObject = $this->taskManager->getTaskObject($task);
-                    if ($this->params['identifier'] == 'message' && $this->params['object_module'] == 'clear') {
-                        $taskObject
-                            ->setMessage()
-                            ->clearTaskData()
-                            ->save();
-                        $task = $this->taskManager->getTask($taskObject->getId());
-                    } elseif ($this->params['identifier'] == 'reschedule') {
-                        $taskObject
-                            ->setStatus('PENDING')
-                            ->save();
-                        $task = $this->taskManager->getTask($taskObject->getId());
-                    } elseif ($this->params['identifier'] == 'clear') {
-                        return $this->taskManager->deleteTask($taskObject->getId());
-                    }
                     if ($task['message']) $task['message'] = json_decode($task['message'], true);
                     if (array_key_exists('data', $task)) $task['data'] = json_decode($task['data'], true);
                     $task['params'] = urldecode($task['params']);
@@ -148,13 +127,6 @@ class Task_api
                     return $this->report();
                 }
         }
-    }
-
-    private function test() {
-        initEloquent();
-        // $record = RegistryObject::find(570703);
-        $record = RegistryObject::find(568190);
-        RelationshipProvider::process($record);
     }
 
     /**

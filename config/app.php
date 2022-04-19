@@ -42,7 +42,7 @@ return [
             'path' => 'etc/schema'
         ],
         'logs' => [
-            'path' => env('LOGS_PATH', '/var/log/'),
+            'path' => env('LOGS_PATH', '/var/log/registry/'),
 
             // legacy_path for CodeIgniter, default empty for engine/logs location
             'legacy_path' => env('LOGS_PATH_LEGACY', '')

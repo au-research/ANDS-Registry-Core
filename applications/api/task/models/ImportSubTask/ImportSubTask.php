@@ -135,7 +135,7 @@ class ImportSubTask extends Task
 
     public function log($log)
     {
-        $this->message['log'][] = $log;
+//        $this->message['log'][] = $log;
         $this->parent()->log(get_class($this) . ": " . $log);
         return $this;
     }
