@@ -65,55 +65,6 @@ class Maintenance extends MX_Controller
         echo json_encode($data);
     }
 
-    function findMissingRecords($dataSourceID, $spawnTask = false) {
-        $this->load->model('data_source/data_sources', 'ds');
-        $this->load->model('registry_object/registry_objects', 'ro');
-        $dataSource = $this->ds->getByID($dataSourceID);
-        $publishedRecords = $this->ro->getIDsByDataSourceID($dataSourceID);
-
-        $this->load->library('solr');
-        $this->solr
-            ->setOpt('fq', '+data_source_id:'.$dataSourceID)
-            ->setOpt('fl', 'id')
-            ->setOpt('rows', sizeof($publishedRecords));
-        $result = $this->solr->executeSearch(true);
-
-        $indexedRecords = [];
-        foreach ($result['response']['docs'] as $doc) {
-            $indexedRecords[] = $doc['id'];
-        }
-
-        $difference = array_diff($publishedRecords, $indexedRecords);
-
-        // spawn task to deal with the difference records
-
-        echo "published: ". count($publishedRecords)."\n";
-        echo "indexed: ".count($indexedRecords). "\n";
-        echo "difference: ".count($difference). "\n";
-
-        if ($spawnTask === FALSE) return;
-
-        echo "---spawning task---";
-
-        require_once BASE . 'vendor/autoload.php';
-
-        $task = [
-            'name' => "Sync Missing Records for Data Source: ". $dataSourceID,
-            'type' => 'POKE',
-            'frequency' => 'ONCE',
-            'priority' => 5,
-            'params' => http_build_query([
-                'class' => 'sync',
-                'type' => 'ro',
-                'id' => implode(',',$difference)
-            ])
-        ];
-
-        $taskManager = new \ANDS\API\Task\TaskManager($this->db, $this);
-        $taskAdded = $taskManager->addTask($task);
-        echo "task added: ".$taskAdded['id'];
-    }
-
     function fixRecordsWithNoIdentifiers()
     {
         initEloquent();

@@ -1,7 +1,6 @@
 <?php
 namespace ANDS\API\Registry\Handler;
 use ANDS\API\Registry\Handler\errorPipeline;
-use ANDS\API\Task\TaskManager;
 use ANDS\DataSource;
 use ANDS\Payload;
 use ANDS\Repository\DataSourceRepository;
@@ -76,7 +75,7 @@ class ImportHandler extends Handler
 
         $name = array_key_exists('name', $params) ? $params['name'] : "Harvester initiated import - $dataSource->title($dataSource->data_source_id) - $batchID";
 
-        $task = [
+        $task = TaskRepository::create([
             'name' => $name,
             'type' => 'PHPSHELL',
             'frequency' => 'ONCE',
@@ -88,13 +87,9 @@ class ImportHandler extends Handler
                 'harvest_id' => $harvest ? $harvest->harvest_id : null,
                 'source' => $from
             ])
-        ];
+        ], true);
 
-
-        $taskManager = new TaskManager($this->ci->db, $this);
-        $taskCreated = $taskManager->addTask($task);
-
-        return $taskCreated;
+        return $task->toArray();
     }
 
     /**
@@ -182,7 +177,8 @@ class ImportHandler extends Handler
      *
      * @param $dataSource
      * @param $batchID
-     * @return mixed
+     * @param bool $noRecords
+     * @return array
      */
     private function errorPipeline($dataSource, $batchID, $noRecords = false)
     {
@@ -202,21 +198,16 @@ class ImportHandler extends Handler
             $params['noRecords'] = true;
         }
 
-        $task = [
+        /** @var \ANDS\API\Task\ImportTask $task */
+        $task = TaskRepository::create([
             'name' =>  "$title - $dataSource->title($dataSource->data_source_id)",
             'type' => 'POKE',
             'frequency' => 'ONCE',
             'priority' => 2,
             'params' => http_build_query($params)
-        ];
+        ], true);
 
-        $taskManager = new TaskManager($this->ci->db, $this);
-        $taskCreated = $taskManager->addTask($task);
-        $task = $taskManager->getTaskObject($taskCreated);
-
-        $task->initialiseTask()->enableRunAllSubTask();
-
-        $task->run();
+        $task->initialiseTask()->enableRunAllSubTask()->run();
 
         return $task->toArray();
     }
