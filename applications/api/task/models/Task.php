@@ -27,10 +27,8 @@ class Task
     public $params;
     public $lastRun;
     public $type;
-    public $message = ['log' => [], 'error' => []];
+    public $message;
     public $taskData = [];
-
-    private $memoryLimit = '256M';
     private $dateFormat = 'Y-m-d | h:i:sa';
     public $dateAdded;
 
@@ -63,11 +61,8 @@ class Task
         if (isset($task['data'])) {
             $this->taskData = is_array($task['data']) ? $task['data'] : json_decode($task['data'], true);
         }
-        if (isset($task['message'])) {
-            $this->message = is_array($task['message']) ? $task['message'] : json_decode($task['message'], true);
-        } else {
-            $this->message = ['log' => [], 'error' => []];
-        }
+
+        $this->message = isset($task['message']) ? $task['message']: null;
 
         $this->lastRun = isset($task['last_run']) ? $task['last_run'] : false;
         $this->dateAdded = array_key_exists('date_added', $task) ? $task['date_added'] : null;
@@ -104,6 +99,7 @@ class Task
             ->setStatus(static::$STATUS_RUNNING)
             ->setLastRun(date('Y-m-d H:i:s', time()))
             ->log("Task run at " . date($this->dateFormat, $start))
+            ->setMessage("Task started at ". date($this->dateFormat, $start))
             ->save();
 
         // high memory limit and execution time prep for big tasks
@@ -145,19 +141,34 @@ class Task
         return $this;
     }
 
+    /**
+     * Set the task status to STOPPED
+     *
+     * Does not stop already running task in memory
+     * @return $this
+     */
     public function stop()
     {
         $this->setStatus(static::$STATUS_STOPPED);
+        $this->log("Task is requested to stop");
         $this->save();
         return $this;
     }
 
-    public function finalize($start)
+    /**
+     * Finalise a Task
+     *
+     * Run as part of `run`
+     * @param $start
+     * @return void
+     * @throws \Exception
+     */
+    private function finalize($start)
     {
         try {
             $end = microtime(true);
-            if ($this->getStatus() !== "STOPPED") {
-                $this->setStatus('COMPLETED');
+            if ($this->getStatus() !== static::$STATUS_STOPPED) {
+                $this->setStatus(static::$STATUS_COMPLETED);
             } else {
                 $this->log("Task completed with error");
             }
@@ -165,6 +176,7 @@ class Task
                 ->log("Task finished at " . date($this->dateFormat, $end))
                 ->log("Peak memory usage: " . memory_get_peak_usage() . " bytes")
                 ->log("Took: " . $this->formatPeriod($end, $start))
+                ->setMessage("Task finished at " . date($this->dateFormat, $end))
                 ->save();
             $this->hook_end();
         }
@@ -174,81 +186,102 @@ class Task
     }
 
     /**
-     * Add a log message to the internal log array
-     * Can chain save() after
+     * Log a message
+     *
+     * Synonym with logger.info
      * @param $log
      * @return $this
      */
     public function log($log)
     {
+        // log the message in info level if there's a logger defined
         if ($logger = $this->getLogger()) {
             $logger->info($log);
         }
 
-        if ($this->getId()) {
-            NotifyUtil::notify('task.'.$this->getId(), $log);
-        }
+        // todo dispatch an event instead
+//        if ($this->getId()) {
+//            NotifyUtil::notify('task.'.$this->getId(), $log);
+//        }
         return $this;
     }
 
-    public function getLog()
-    {
-        return array_key_exists('log', $this->message) ? $this->message['log'] : null;
-    }
-
+    /**
+     * Get all error from the task
+     *
+     * Error is located in data['errors']
+     * @return array
+     */
     public function getError()
     {
-        return array_key_exists('error', $this->message) ? $this->message['error'] : null;
+        return $this->getTaskData('errors') ?: [];
     }
 
+    /**
+     * Quick check whether the task has any errors or not
+     *
+     * @return bool
+     */
     public function hasError()
     {
-        $error = $this->getError();
-        if ($error != null && count($error) > 0) {
-            return true;
-        }
+        return count($this->getError()) > 0;
+    }
 
-        return false;
+    /**
+     * Add an error to this task
+     *
+     * Stores the error in task data as well as log the error message
+     * @param $errorMessage
+     * @return $this
+     */
+    public function addError($errorMessage)
+    {
+        $this->addTaskData('errors', $errorMessage);
+        if ($logger = $this->getLogger()) {
+            $logger->error($errorMessage);
+        }
+        return $this;
     }
 
     /**
      * Stop a task when an error is encountered
      * Log the error and save
-     * @param $error
+     * @param $errorMessage
      * @return $this
      */
-    public function stoppedWithError($error)
+    public function stoppedWithError($errorMessage)
     {
         $this
-            ->setStatus("STOPPED")
-            ->log("Task stopped with error: " . $error)
-            ->addError($error)
+            ->setStatus(self::$STATUS_STOPPED)
+            ->log("Task stopped with error: $errorMessage")
+            ->setMessage("Task stopped with error: $errorMessage")
+            ->addError($errorMessage)
             ->save();
         return $this;
     }
 
-    public function addError($log)
-    {
-        if (!array_key_exists('error', $this->message)) $this->message['error'] = [];
-        if (!in_array($log, $this->message['error'])) {
-            $this->message['error'][] = $log;
-        }
-        return $this;
-    }
 
-
+    /**
+     * Fluently set a task data by key, value
+     *
+     * @param $key
+     * @param $val
+     * @return $this
+     */
     public function setTaskData($key, $val)
     {
         $this->taskData[$key] = $val;
         return $this;
     }
 
-    public function clearTaskData()
-    {
-        $this->taskData = [];
-        return $this;
-    }
-
+    /**
+     * Set a task data to an array value
+     *
+     * Adds to existing array if the value exists, otherwise sets it to an array with the value
+     * @param $key
+     * @param $val
+     * @return void
+     */
     public function addTaskData($key, $val)
     {
         if (array_key_exists($key, $this->taskData)) {
@@ -258,6 +291,14 @@ class Task
         }
     }
 
+    /**
+     * Increment the task data value
+     *
+     * Requires the task data to be cast to an integer
+     * @param $key
+     * @param $value
+     * @return $this
+     */
     public function incrementTaskData($key, $value = 1)
     {
         if (!array_key_exists($key, $this->taskData)) {
@@ -268,6 +309,12 @@ class Task
         return $this;
     }
 
+    /**
+     * Safe way to obtain a task data by key
+     *
+     * @param $key
+     * @return array|mixed|null
+     */
     public function getTaskData($key = null)
     {
         if ($key === null) {
@@ -280,6 +327,8 @@ class Task
     /**
      * Helper method
      * Format a time period nicely
+     * todo move to helper
+     *
      * @param $endtime
      * @param $starttime
      * @return string
@@ -294,7 +343,9 @@ class Task
     }
 
     /**
-     * Save the status and the message of this task
+     * Persist the task
+     *
+     * @see TaskRepository
      * @return Task
      */
     public function save()
@@ -312,6 +363,11 @@ class Task
         return $this;
     }
 
+    /**
+     * Send a task to the background for later processing
+     *
+     * @return \ANDS\API\Task\Task|null
+     */
     public function sendToBackground()
     {
         if ($this->getId()) {
@@ -345,7 +401,6 @@ class Task
             'status' => Task::$STATUS_PENDING,
             'type' => Task::$TYPE_SHELL,
             'params' => http_build_query($params),
-            'message' => json_encode($this->message),
             'data' => $this->taskData,
         ], true);
     }
@@ -358,16 +413,26 @@ class Task
     }
 
     /**
-     * Hooks
+     * Hook to run before the task is run
      */
     public function hook_start()
     {
     }
 
+    /**
+     * Hook to run before finalise
+     *
+     * @return void
+     */
     public function hook_end()
     {
     }
 
+    /**
+     * Task in array format
+     *
+     * @return array
+     */
     public function toArray()
     {
         return [
@@ -424,22 +489,6 @@ class Task
     }
 
     /**
-     * @return string
-     */
-    public function getMemoryLimit()
-    {
-        return $this->memoryLimit;
-    }
-
-    /**
-     * @param string $memoryLimit
-     */
-    public function setMemoryLimit($memoryLimit)
-    {
-        $this->memoryLimit = $memoryLimit;
-    }
-
-    /**
      * @return mixed
      */
     public function getLastRun()
@@ -455,16 +504,6 @@ class Task
     public function setLastRun($lastRun)
     {
         $this->lastRun = $lastRun;
-        return $this;
-    }
-
-    /**
-     * @param array $message
-     */
-    public function setMessage($message = false)
-    {
-        if (!$message) $message = ['log' => [], 'error' => []];
-        $this->message = $message;
         return $this;
     }
 
@@ -504,6 +543,11 @@ class Task
         return $this;
     }
 
+    /**
+     * Obtain the log path of the Task Logger
+     *
+     * @return string|null
+     */
     public function getLogPath() {
         if (! $this->id) {
             // no id, no specific logger to write to
@@ -519,6 +563,11 @@ class Task
         return rtrim($globalLogPath, '/') . "/tasks/$this->id.log";
     }
 
+    /**
+     * Initialise the Task Logger
+     *
+     * @return void
+     */
     public function initLogger()
     {
         $path = $this->getLogPath();
@@ -564,6 +613,16 @@ class Task
     public function setLogger($logger)
     {
         $this->logger = $logger;
+    }
+
+    /**
+     * @param mixed $message
+     * @return Task
+     */
+    public function setMessage($message)
+    {
+        $this->message = $message;
+        return $this;
     }
 
 }

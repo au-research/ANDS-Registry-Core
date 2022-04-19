@@ -1278,14 +1278,14 @@ class Registry_object extends MX_Controller {
         elseif($importTask->getTaskData("recordsExistOtherDataSourceCount") > 0)
         {
             $result['log'] = "Record key:(".$record->key.NL.") exists in a different data source".NL;
-            $result['log'] .= str_replace("," , NL, implode("," , $message['log']));
+            $result['log'] .= str_replace("," , NL, implode("," , $message));
         }
         else
         {
             $result['response'] = 'success';
             $result['message'] = "Record Reinstated as ". $importTask->getTaskData("targetStatus");
             $result['target_status'] = $importTask->getTaskData("targetStatus");
-            $result['log'] = str_replace("," , NL, implode("," , $message['log']));
+            $result['log'] = str_replace("," , NL, implode("," , $message));
         }
         echo json_encode($result);
 

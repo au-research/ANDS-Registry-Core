@@ -11,8 +11,7 @@ class TaskModel extends Model
     public $timestamps = false;
 
     protected $casts = [
-        'data' => 'array',
-        'message' => 'array'
+        'data' => 'array'
     ];
 
     protected $fillable = ['name', 'status', 'data', 'params', 'type', 'message', 'date_added', 'next_run', 'last_run'];

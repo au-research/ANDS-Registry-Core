@@ -595,13 +595,12 @@ class ImportTask extends Task
     {
         $this->initialiseTask();
 
-        $message = $this->getMessage();
-        $error_msg = "";
-        if (array_key_exists('error', $message) && $message['error']['errored'] === true){
-            $error_msg =  $message['error']['log'];
+        $errorMessage = "";
+        if ($this->hasError()) {
+            $errorMessage = $this->getError();
         }
 
-        $this->stoppedWithError($error_msg, false);
+        $this->stoppedWithError($errorMessage, false);
     }
 
     public function checkHarvesterMessages()
@@ -656,8 +655,10 @@ class ImportTask extends Task
         }
 
         $this->writeLog("ImportStopped");
-        if($notify)
+
+        if($notify) {
             parent::stoppedWithError($message);
+        }
     }
 
     public function getDataSourceMessage()
