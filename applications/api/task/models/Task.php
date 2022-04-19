@@ -145,6 +145,13 @@ class Task
         return $this;
     }
 
+    public function stop()
+    {
+        $this->setStatus(static::$STATUS_STOPPED);
+        $this->save();
+        return $this;
+    }
+
     public function finalize($start)
     {
         try {
