@@ -16,7 +16,6 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 
 class Task_api
 {
-    private $ci;
     private $params;
     private $taskManager;
 
@@ -25,11 +24,7 @@ class Task_api
      */
     public function __construct()
     {
-        $this->ci = &get_instance();
-        $this->db = $this->ci->load->database('registry', true);
         require_once BASE . 'vendor/autoload.php';
-
-        $this->taskManager = new Task\TaskManager($this->db, $this->ci);
 
         // task operation takes a long time
         ini_set('memory_limit', '1024M');
@@ -52,129 +47,44 @@ class Task_api
         );
         switch (strtolower($this->params['submodule'])) {
             case 'stop':
-                if ($this->params['identifier']) {
-                    return $this->taskManager->stopTask($this->params['identifier']);
-                } else {
+                $taskID = array_key_exists('identifier', $this->params) ? $this->params['identifier'] : null;
+                if (!$taskID) {
                     throw new Exception("A task ID is required");
                 }
-                break;
+                $task = TaskRepository::getById($taskID);
+                $task->stop();
+                return $task->toArray();
             case 'run':
-                $someTask = $this->taskManager->findPendingTask();
-                // if (!$someTask) $someTask = $this->taskManager->findRandomTask();
-                if (!$someTask) {
-                    return "Nothing to do";
-                } else {
-                    return $this->taskManager->runTask($someTask['id']);
-                }
-
-                break;
+                // run random pending tasks
+                // todo implement
+                throw new Exception("Not Implemented!");
             case 'exe' :
-                if ($this->params['identifier']) {
-                    if ($this->ci->input->get('subtask')) {
-                        return $this->taskManager->runTask($this->params['identifier'], $this->ci->input->get('subtask'));
-                    }
-                    return $this->taskManager->runTask($this->params['identifier']);
-                } else {
+                $taskID = array_key_exists('identifier', $this->params) ? $this->params['identifier'] : null;
+                if (!$taskID) {
                     throw new Exception("A task ID is required");
                 }
-                break;
+                $task = TaskRepository::getById($taskID);
+                $task->run();
+                return $task->toArray();
             case 'restart':
+                // restart a task & subtasks
+                // todo implement restart
                 if (!$this->params['identifier']) {
                     throw new Exception("A task ID is required");
                 }
-
-                $task = $this->taskManager->getTask($this->params['identifier']);
-                $taskObject = $this->taskManager->getTaskObject($task);
-                $taskObject
-                    ->setStatus('PENDING')
-                    ->enableRunAllSubTask()
-                    ->setMessage()
-                    ->clearTaskData()
-                    ->save();
-
-                return $taskObject->run();
-
-                // return $this->taskManager->runTask($this->params['identifier']);
-
-                break;
+                throw new Exception("Not Implemented!");
             case 'all' :
             case 'pending' :
             case 'completed' :
             case 'running' :
             case 'stopped':
-                $status = strtoupper($this->params['submodule']);
-                if ($status=='ALL') $status = false;
-                if ($this->params['identifier'] == 'clear') {
-                    return $this->taskManager->deleteTasks($status);
-                } elseif($this->params['identifier'] == 'reschedule') {
-                    return $this->taskManager->changeTasksStatus($status, 'PENDING');
-                }
-                return $this->taskManager->listTasks($status, $this->ci->input->get('limit'), $this->ci->input->get('offset'));
-                break;
+                // todo implement filter by status
+                throw new Exception("Not Implemented!");
             default:
-
                 //return task api/task/:id if exists
-                if ($task = $this->taskManager->getTask($this->params['submodule'])) {
-                    if ($task['message']) $task['message'] = json_decode($task['message'], true);
-                    if (array_key_exists('data', $task)) $task['data'] = json_decode($task['data'], true);
-                    $task['params'] = urldecode($task['params']);
-                    return $task;
-                }
-
-                if ($this->ci->input->post('name')) {
-                    return $this->handleAddingTask();
-                } else {
-                    return $this->report();
-                }
+                $taskID = $this->params['submodule'];
+                $task = TaskRepository::getById($taskID);
+                return $task->toArray();
         }
-    }
-
-    /**
-     * POST to api/task
-     * Adding a new task on command
-     * @return bool|Task
-     */
-    public function handleAddingTask()
-    {
-        $post = $this->ci->input->post();
-
-        $params = isset($post['params']) ? $post['params'] : array();
-
-        $params['type'] = $post['type'];
-        $params['id'] = $post['id'];
-
-        $task = [
-            'name' => $post['name'],
-            'type' => 'POKE',
-            'frequency' => 'ONCE',
-            'priority' => isset($post['priority']) ? $post['priority'] : 1,
-            'params' => http_build_query($params)
-        ];
-
-        return $this->taskManager->addTask($task);
-    }
-
-    /**
-     * Display a report of all the tasks
-     * @return mixed
-     */
-    public function report()
-    {
-        $query = $this->db
-            ->select(['status', 'count(*) as count'])
-            ->group_by('status')
-            ->get('tasks');
-        $queryResult = $query->result_array();
-
-        $result = array();
-        foreach($queryResult as $row) {
-            $result[$row['status']] = $row['count'];
-        }
-        if (!isset($result['PENDING'])) $result['PENDING'] = 0;
-        if (!isset($result['RUNNING'])) $result['RUNNING'] = 0;
-        if (!isset($result['COMPLETED'])) $result['COMPLETED'] = 0;
-        if (!isset($result['STOPPED'])) $result['STOPPED'] = 0;
-        ksort($result);
-        return $result;
     }
 }
