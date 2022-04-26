@@ -112,7 +112,13 @@ class Registry_object extends MX_Controller
                     ->render('deleted_record');
                 return;
             }else{
-                $this->displayRecord($ro);
+                if($ro->core['status'] === "PUBLISHED" || $this->ro->canUserPreview($ro->core['data_source_id'])){
+                    $this->displayRecord($ro);
+                }else{
+                    $this->blade
+                        ->set('message', "Viewing This Record Is Limited To Data Source Admins")
+                        ->render('insufficient_user_access');
+                }
             }
 
 

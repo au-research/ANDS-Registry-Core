@@ -21,6 +21,21 @@ class Registry_objects extends CI_Model {
 		return new _ro($id, $props, $useCache);
 	}
 
+    public function canUserPreview($ds_id){
+        $_ci =& get_instance();
+        $_ci->load->model('registry/data_source/data_sources', 'ds');
+        $ds = $_ci->ds->getByID($ds_id);
+        if($ds){
+            if (!$_ci->user->hasAffiliation($ds->record_owner)){
+                return false;
+            }
+        }else{
+            return false;
+        }
+        return true;
+    }
+
+
 	/**
 	 * get an _ro by SLUG
 	 * @param  string $slug
