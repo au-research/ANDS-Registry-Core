@@ -261,13 +261,14 @@ class MyceliumServiceClient
         ]);
     }
 
-    public function restoreBackup($backupId, $dataSourceId) {
+    public function restoreBackup($backupId, $dataSourceId, $correctedDataSourceId) {
         Log::debug(__METHOD__ , ["backupId" => $backupId, "dataSourceId" => $dataSourceId]);
 
         return $this->client->post("api/resources/mycelium-backups/$backupId/_restore", [
             "headers" => [],
             "query" => [
-                "dataSourceId" => $dataSourceId
+                "dataSourceId" => $dataSourceId,
+                "correctedDataSourceId" => $correctedDataSourceId
             ]
         ]);
     }

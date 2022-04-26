@@ -406,7 +406,7 @@ class BackupRepository
         // restore graphs from the original data source id, Mycelium only has knowledge of
         // the original data source id
         if ($options['includeGraphs']) {
-            static::restoreGraphs($backupId, $dataSourceMeta['data_source_id']);
+            static::restoreGraphs($backupId, $dataSourceMeta['data_source_id'], $dataSource->id);
         }
 
         // restore portal documents
@@ -666,14 +666,14 @@ class BackupRepository
      * Uses Mycelium Backup API to restore the graphs for a data source
      *
      * @param string $backupId the backup id
-     * @param string $dataSourceId the data source id
+     * @param string $dataSourceId the data source id for path
      * @return void
      */
-    public static function restoreGraphs($backupId, $dataSourceId)
+    public static function restoreGraphs($backupId, $dataSourceId, $correctedDataSourceId)
     {
         $myceliumURL = Config::get('mycelium.url');
         $client = new MyceliumServiceClient($myceliumURL);
 
-        $client->restoreBackup($backupId, $dataSourceId);
+        $client->restoreBackup($backupId, $dataSourceId, $correctedDataSourceId);
     }
 }
