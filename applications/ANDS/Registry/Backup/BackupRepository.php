@@ -368,6 +368,8 @@ class BackupRepository
             throw new Exception("$metaFile is not accessible");
         }
 
+        // dataSourceMeta contains original data source metadata
+        // if there's already an existing data source with the same id, this would be wrong
         $metaContent = json_decode(file_get_contents($metaFile), true);
         $dataSourceMeta = $metaContent['metadata'];
 
@@ -396,14 +398,15 @@ class BackupRepository
                 $recordPath = "$recordsPath/$file";
                 if (is_file($recordPath) && is_readable($recordPath)) {
                     $recordFileCount++;
-                    static::restoreRecordPath($recordPath);
+                    static::restoreRecordPath($recordPath, $dataSource);
                 }
             }
         }
 
-        // restore graphs
+        // restore graphs from the original data source id, Mycelium only has knowledge of
+        // the original data source id
         if ($options['includeGraphs']) {
-            static::restoreGraphs($backupId, $dataSource->id);
+            static::restoreGraphs($backupId, $dataSourceMeta['data_source_id']);
         }
 
         // restore portal documents
@@ -417,7 +420,7 @@ class BackupRepository
                     if ($file == '.' || $file == '..') continue;
                     $recordPath = "$portalPath/$file";
                     if (is_file($recordPath) && is_readable($recordPath)) {
-                        static::restorePortalPath($recordPath, $client);
+                        static::restorePortalPath($recordPath, $client, $dataSource->id);
                     }
                 }
                 $client->commit();
@@ -435,7 +438,7 @@ class BackupRepository
                     if ($file == '.' || $file == '..') continue;
                     $recordPath = "$relationshipsPath/$file";
                     if (is_file($recordPath) && is_readable($recordPath)) {
-                        static::restoreRelationshipPath($recordPath, $client);
+                        static::restoreRelationshipPath($recordPath, $client, $dataSource->id);
                     }
                 }
                 $client->commit();
@@ -456,7 +459,7 @@ class BackupRepository
      * @param $recordPath string path to the record json file
      * @return void
      */
-    public static function restoreRecordPath($recordPath) {
+    public static function restoreRecordPath($recordPath, DataSource $dataSource = null) {
         $metaContent = json_decode(file_get_contents($recordPath), true);
         $recordMeta = $metaContent['metadata'];
 
@@ -467,6 +470,10 @@ class BackupRepository
             $record->update($recordMeta);
         } else {
             $record = RegistryObject::create($recordMeta);
+        }
+
+        if ($dataSource != null) {
+            $record->update(['data_source_id' => $dataSource->id]);
         }
 
         // update/create attributes
@@ -582,7 +589,7 @@ class BackupRepository
      * @param $client \MinhD\SolrClient\SolrClient|null the client to be reused
      * @return void
      */
-    private static function restorePortalPath($docPath, SolrClient $client = null)
+    private static function restorePortalPath($docPath, SolrClient $client = null, $dataSourceId = null)
     {
         if ($client === null) {
             $client = new SolrClient(Config::get('app.solr_url'));
@@ -595,6 +602,11 @@ class BackupRepository
         // need to be removed or else it'll cause an error upon indexing
         if (array_key_exists('display_title', $content)) {
             unset($content['title']);
+        }
+
+        // if the dataSourceId is defined, then the portal document would have that data source id
+        if ($dataSourceId != null) {
+            $content['data_source_id'] = $dataSourceId;
         }
 
         $doc = new SolrDocument($content);
@@ -612,7 +624,7 @@ class BackupRepository
      * @param \MinhD\SolrClient\SolrClient|null $client the client to be reused
      * @return void
      */
-    private static function restoreRelationshipPath($docPath, SolrClient $client = null)
+    private static function restoreRelationshipPath($docPath, SolrClient $client = null, $dataSourceId = null)
     {
         if ($client === null) {
             $client = new SolrClient(Config::get('app.solr_url'));
@@ -620,6 +632,11 @@ class BackupRepository
         }
 
         $content = json_decode(file_get_contents($docPath), true);
+
+        // allow overwriting of data source id
+        if ($dataSourceId != null) {
+            $content['from_data_source_id'] = $dataSourceId;
+        }
 
         $doc = new SolrDocument($content);
         $result = $client->add($doc);
