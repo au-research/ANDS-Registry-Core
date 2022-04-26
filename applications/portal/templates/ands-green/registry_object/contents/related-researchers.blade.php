@@ -106,7 +106,7 @@
             </li>
             @endif
             @endforeach
-            @if($related['researchers']['total'] > 5)
+            @if($related['researchers']['total'] > 5 && $ro->core['status'] === 'PUBLISHED')
                 <li><a href="{{ $related['researchers']['searchUrl'] }}">View all {{ $related['researchers']['total'] }} related people</a></li>
             @endif
         @endif

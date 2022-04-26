@@ -37,7 +37,7 @@
                 </li>
                 @endif
         @endforeach
-        @if($related['data']['total']> 5)
+        @if($related['data']['total']> 5 && $ro->core['status'] === 'PUBLISHED')
             <li><a href="{{ $related['data']['searchUrl'] }}">View all {{ $related['data']['total'] }} related data</a></li>
         @endif
     </ul>

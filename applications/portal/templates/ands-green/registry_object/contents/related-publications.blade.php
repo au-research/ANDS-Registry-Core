@@ -55,7 +55,7 @@
                 @endif
 
             </li>
-            @if($disp_count==5 AND $related['publications']['total']>5)
+            @if($disp_count==5 && $related['publications']['total'] >5 && $ro->core['status'] === 'PUBLISHED')
                 <a href="" class="showMorePublications showPublications" >Show all {{$related['publications']['total']}} related publications</a>
             @elseif(($disp_count==$related['publications']['total']))
                 <a href="" class="showLessPublications showPublications" style="display:none">Show less related publications</a>

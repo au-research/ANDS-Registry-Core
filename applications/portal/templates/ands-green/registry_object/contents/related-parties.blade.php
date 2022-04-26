@@ -142,7 +142,7 @@
             @endif
         @endforeach
 
-        @if($related['researchers']['total'] > 5)
+        @if($related['researchers']['total'] > 5 && $ro->status === 'PUBLISHED')
             <a href="{{ $related['researchers']['searchUrl'] }}">View all {{ $related['researchers']['total'] }} related researchers</a>
         @endif
 
@@ -245,7 +245,7 @@
                 </a>
             @endif
         @endforeach
-        @if(isset($related['organisations']['total']) && $related['organisations']['total'] > 5)
+        @if(isset($related['organisations']['total']) && $related['organisations']['total'] > 5 && $ro->core['status'] === 'PUBLISHED')
             <a href="{{ $related['organisations']['searchUrl'] }}">View all {{ $related['organisations']['total'] }} related organisations</a>
         @endif
     @endif
