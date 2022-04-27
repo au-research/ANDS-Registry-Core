@@ -64,7 +64,7 @@ class Task
 
         $this->message = isset($task['message']) ? $task['message']: null;
 
-        $this->lastRun = isset($task['last_run']) ? $task['last_run'] : false;
+        $this->lastRun = isset($task['last_run']) ? $task['last_run'] : null;
         $this->dateAdded = array_key_exists('date_added', $task) ? $task['date_added'] : null;
 
         $this->setTaskData('log_path', $this->getLogPath());
