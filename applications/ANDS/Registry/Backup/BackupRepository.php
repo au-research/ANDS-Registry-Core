@@ -745,7 +745,7 @@ class BackupRepository
 
                 $metaContent = json_decode(file_get_contents($recordPath), true);
                 $recordMeta = $metaContent['metadata'];
-                $recordID = $recordMeta['id'];
+                $recordID = $recordMeta['registry_object_id'];
 
                 if (RegistryObjectsRepository::getRecordByID($recordID)) {
                     throw new Exception("RegistryObject[id=$recordID] already exists");

@@ -20,7 +20,8 @@ class BackupRestoreCommand extends ANDSCommand
             ->addOption('id', null, InputOption::VALUE_REQUIRED, 'id of the backup, alphanumeric')
             ->addOption('include-graphs', null, InputOption::VALUE_OPTIONAL, 'include graph or not', true)
             ->addOption('include-portal-index', null, InputOption::VALUE_OPTIONAL, 'include portal index', true)
-            ->addOption('include-relationships-index', null, InputOption::VALUE_OPTIONAL, 'include relationships index', true);
+            ->addOption('include-relationships-index', null, InputOption::VALUE_OPTIONAL, 'include relationships index', true)
+            ->addOption('force', null, InputOption::VALUE_NONE);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -38,8 +39,24 @@ class BackupRestoreCommand extends ANDSCommand
             'includeRelationshipsIndex' => $input->getOption('include-relationships-index')
         ];
 
+        $force = $input->getOption('force');
+
         BackupRepository::init();
+
+        // validate the backup first
+        try {
+            BackupRepository::validateBackup($id);
+        } catch (\Exception $e) {
+            $this->log("Backup Validation Failed: ". $e->getMessage(),$force ? "comment" : "error");
+            if (! $force) {
+                $this->log("Use --force to force a restoration. WARNING: All data would be overwritten", "comment");
+                return;
+            }
+        }
+
+        $this->log("Starting to Restore Backup[id=$id]", "comment");
         $result = BackupRepository::restore($id, $options);
         $this->assocTable($result);
+
     }
 }
