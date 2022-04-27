@@ -713,9 +713,16 @@ class Data_source extends MX_Controller {
 
 		if(sizeof($records) > 0){
             foreach($records as $record){
-                $deletedRecords[$record->key] = array('title'=>$record->title,'key'=>$record->key,
-                    'id'=>$record->registry_object_id, 'record_data'=>$record->getCurrentData()->data,
-                    'deleted_date'=>timeAgo($record->getRegistryObjectAttributeValue('updated')));
+                // RDA-749 Some records that were deleted using the "wipe" method don't have record data and can not be recovered
+                
+                $current_data = $record->getCurrentData();
+                if($current_data != null){
+                    $deletedRecords[$record->key] = array('title'=>$record->title,'key'=>$record->key,
+                        'id'=>$record->registry_object_id, 'record_data'=>$current_data->data,
+                        'deleted_date'=>timeAgo($record->getRegistryObjectAttributeValue('updated')));
+                }else{
+                    $data['record_count'] = $data['record_count'] -1;
+                }
             }
 		}
 
