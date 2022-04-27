@@ -34,9 +34,9 @@ class BackupRepository
      * @return void
      * @throws \Exception
      */
-    public static function init()
+    public static function init($config = null)
     {
-        static::$config = Config::get("backup");
+        static::$config = $config === null ? Config::get("backup") : $config;
 
         if (! is_readable(static::getBackupPath())) {
             throw new Exception("Backup path is not readable");
@@ -373,13 +373,13 @@ class BackupRepository
         $metaContent = json_decode(file_get_contents($metaFile), true);
         $dataSourceMeta = $metaContent['metadata'];
 
-        // check existing datasource by key
-        $existing = DataSourceRepository::getByKey($dataSourceMeta['key']);
+        // overwrite datasource
+        $existing = DataSourceRepository::getByID($dataSourceMeta['data_source_id']);
         if ($existing) {
             $dataSource = $existing;
             $dataSource->update($dataSourceMeta);
         } else {
-            $dataSource = DataSource::create($dataSourceMeta);
+            $dataSource = DataSource::forceCreate($dataSourceMeta);
         }
 
         // update/create attributes
@@ -463,8 +463,11 @@ class BackupRepository
         $metaContent = json_decode(file_get_contents($recordPath), true);
         $recordMeta = $metaContent['metadata'];
 
-        // check existing record by key & status
-        $existing = RegistryObject::where('key', $recordMeta['key'])->where('status', $recordMeta['status'])->first();
+        // overwrite
+        $recordId = $recordMeta['registry_object_id'];
+        $existing = RegistryObject::find($recordId);
+        unset($recordMeta['registry_object_attributes']);
+        RegistryObject::unguard();
         if ($existing) {
             $record = $existing;
             $record->update($recordMeta);
@@ -675,5 +678,87 @@ class BackupRepository
         $client = new MyceliumServiceClient($myceliumURL);
 
         $client->restoreBackup($backupId, $dataSourceId, $correctedDataSourceId);
+    }
+
+    /**
+     * Validate a backup by Id
+     *
+     * @throws \Exception when the backup is not valid
+     */
+    public static function validateBackup($backupId)
+    {
+        // validate each data source
+        $path = static::getBackupPath();
+
+        $dataSourcesPath = "$path/$backupId/datasources/";
+        if (is_dir($dataSourcesPath) && is_readable($dataSourcesPath)) {
+            $files = scandir($dataSourcesPath);
+            foreach ($files as $file) {
+                if ($file == '.' || $file == '..') continue;
+                $dataSourcePath = "$dataSourcesPath/$file";
+                self::validateDataSourceBackup($dataSourcePath);
+            }
+        }
+    }
+
+    /**
+     * Validates a backup data source path
+     *
+     * @throws \Exception when it's not valid
+     */
+    public static function validateDataSourceBackup($dataSourcePath)
+    {
+        if (!is_dir($dataSourcePath)) {
+            throw new Exception("DataSource[path=$dataSourcePath] is not a valid directory");
+        }
+
+        if (!is_readable($dataSourcePath)) {
+            throw new Exception("DataSource[path=$dataSourcePath] is not a readable");
+        }
+
+        // check if the data source id already exist
+        $metaFile = "$dataSourcePath/meta.json";
+        if (! is_file($metaFile) || ! is_readable($metaFile)) {
+            throw new Exception("DataSource[meta=$metaFile] is not accessible");
+        }
+
+        // dataSourceMeta contains original data source metadata
+        $metaContent = json_decode(file_get_contents($metaFile), true);
+        $dataSourceMeta = $metaContent['metadata'];
+        $dataSourceId = $dataSourceMeta['data_source_id'];
+        $existing = DataSourceRepository::getByID($dataSourceId);
+        if ($existing) {
+            throw new Exception("DataSource[id=$dataSourceId] already exists");
+        }
+
+        // restore records
+        $recordsPath = "$dataSourcePath/records";
+        if (is_dir($recordsPath) && is_readable($recordsPath)) {
+            $files = scandir($recordsPath);
+            foreach ($files as $file) {
+                if ($file == '.' || $file == '..') continue;
+                $recordPath = "$recordsPath/$file";
+
+                if (!is_file($recordPath) || !is_readable($recordPath)) {
+                    throw new Exception("RecordPath[path=$recordPath] is not accessible");
+                }
+
+                $metaContent = json_decode(file_get_contents($recordPath), true);
+                $recordMeta = $metaContent['metadata'];
+                $recordID = $recordMeta['id'];
+
+                if (RegistryObjectsRepository::getRecordByID($recordID)) {
+                    throw new Exception("RegistryObject[id=$recordID] already exists");
+                }
+
+                $recordKey = $recordMeta['key'];
+                $recordStatus = $recordMeta['status'];
+                if (RegistryObject::where('key', $recordKey)->where('status', $recordStatus)->first()) {
+                    throw new Exception("RegistryObject[key=$recordKey, status=$recordStatus] already exists");
+                }
+            }
+        }
+
+        return true;
     }
 }
