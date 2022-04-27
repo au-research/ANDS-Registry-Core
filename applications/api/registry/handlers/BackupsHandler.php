@@ -31,6 +31,8 @@ class BackupsHandler extends Handler
         // [PUT|POST] /api/registry/backups/{backupId}/_restore
         $router->route(['PUT', 'POST'], 'backups/(\w+)/_restore', 'BackupsAPI@restore');
 
+        $router->route(['PUT', 'POST'], 'backups/(\w+)/_validate', 'BackupsAPI@validate');
+
         return $this->format($router->execute());
     }
 

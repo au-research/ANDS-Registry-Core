@@ -52,4 +52,9 @@ class BackupsAPI extends HTTPController
 
         return BackupRepository::restore($id, $options);
     }
+
+    public function validate($id)
+    {
+        return BackupRepository::validateBackup($id);
+    }
 }
