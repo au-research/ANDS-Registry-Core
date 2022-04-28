@@ -36,11 +36,12 @@
             @endforeach
         </div>
         @endif
-    	<div class="btn-group btn-group-justified element element-shorter-bottom element-no-top" role="group" aria-label="...">
-            <a class="btn btn-sm btn-default" ng-click="bookmark()" ng-if="ro.bookmarked"><i class="fa fa-bookmark"></i> Saved to MyRDA</a>
-            <a class="btn btn-sm btn-default" ng-click="bookmark()" ng-if="!ro.bookmarked"><i class="fa fa-bookmark-o"></i> Save to MyRDA</a>
-        </div>
-
+        @if($ro->core['status']!='DRAFT')
+            <div class="btn-group btn-group-justified element element-shorter-bottom element-no-top" role="group" aria-label="...">
+                <a class="btn btn-sm btn-default" ng-click="bookmark()" ng-if="ro.bookmarked"><i class="fa fa-bookmark"></i> Saved to MyRDA</a>
+                <a class="btn btn-sm btn-default" ng-click="bookmark()" ng-if="!ro.bookmarked"><i class="fa fa-bookmark-o"></i> Save to MyRDA</a>
+            </div>
+        @endif
         <div>
             @if($ar || $cc || $detail)
                 <h4>Licence & Rights</h4>
