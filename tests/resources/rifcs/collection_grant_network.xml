@@ -74,7 +74,7 @@
             <location dateFrom="2013-02-14T00:00:00Z" dateTo="2013-03-02T00:00:00Z">
                 <address>
                     <electronic type="url" target="landingPage">
-                        <value>https://demo.ands.org.au/thredds/fileServer</value>
+                        <value>https://demo.ands.org.au/thredds/fileServer/dodsC</value>
                         <title>My Landing Page for the data</title>
                     </electronic>
                     <physical type="postalAddress">
@@ -101,6 +101,12 @@
                     <electronic type="url">
                         <value>https://dl.wcs.com/u/49073372/RIF16WithError.xml</value>
                         <title>My WCS link</title>
+                        <mediaType>XML</mediaType>
+                        <byteSize>3KB</byteSize>
+                    </electronic>
+                    <electronic type="url">
+                        <value>https://dl.wfs.com/u/49073372/RIF16WithError.xml</value>
+                        <title>My WFS link</title>
                         <mediaType>XML</mediaType>
                         <byteSize>3KB</byteSize>
                     </electronic>
