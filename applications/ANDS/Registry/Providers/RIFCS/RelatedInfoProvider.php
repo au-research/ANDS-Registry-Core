@@ -54,7 +54,7 @@ class RelatedInfoProvider implements RIFCSProvider
             $substring  = trim($relationship['to_identifier']);
             $length = strlen($substring);
             //if the provided normalised identifier is the ending substring of the rifcs provided identifier return
-            if ( substr_compare($string, $substring, -$length) === 0 ) {
+            if ( substr_compare(strtoupper($string), strtoupper($substring), -$length) === 0 ) {
                 return $string;
             }
         }

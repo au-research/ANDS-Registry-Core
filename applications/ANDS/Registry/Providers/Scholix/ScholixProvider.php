@@ -550,7 +550,7 @@ class ScholixProvider implements RegistryContentProvider
 
             // no publication date
 
-            if ($publication['to_title']) {
+            if (array_key_exists('to_title',$publication)) {
                 $target['title'] = $publication['to_title'];
             }
 
@@ -596,6 +596,7 @@ class ScholixProvider implements RegistryContentProvider
         $creators = [];
         $authors = RelationshipProvider::getRelationByClassAndType($record,'party',['author']);
         foreach($authors as $author){
+            $creator = [];
             if($author['to_identifier_type']=='ro:id'){
                 $to = RegistryObjectsRepository::getRecordByID($author['to_identifier']);
                 $identifiers = collect(IdentifierProvider::get($to))->map(function($item) {
@@ -608,9 +609,10 @@ class ScholixProvider implements RegistryContentProvider
                     $creator['identifier'] = $identifiers;
                 }
             }
-            $creator['name']  = $author['to_title'];
-            $creators[] = $creator;
-
+            if(array_key_exists('to_title',$author)) {
+                $creator['name'] = $author['to_title'];
+                $creators[] = $creator;
+            }
         }
 
         // citationMetadata/contributor

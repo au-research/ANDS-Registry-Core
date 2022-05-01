@@ -173,7 +173,7 @@ class ScholixProviderTest extends MyceliumTestClass
         $record4 = $this->stub(RegistryObject::class, [
             'class' => 'collection',
             'type' => 'dataset',
-            'key' => 'AUTestingRecords2ScholixRecords4',
+            'key' => 'AUTestingRecords2ScholixRecords4test',
             'group' => $party->title
         ]);
         $this->stub(RecordData::class, [
@@ -185,10 +185,10 @@ class ScholixProviderTest extends MyceliumTestClass
         $scholix = ScholixProvider::get($record4);
         $scholixArray = $scholix->toArray();
         $this->assertNotEmpty($scholix);
-        $this->assertNotEmpty($scholixArray[0]['link']['target']['identifier'][0]['identifier'],"http://www.someExamplePublication.org/Scholix1");
+        // ensure that the doi value has not been upper-cased and is returned as provided in rif-cs
+        $this->assertEquals($scholixArray[0]['link']['target']['identifier'][0]['identifier'],"10.4567.dd");
         $this->myceliumDelete($party);
         $this->myceliumDelete($record4);
-
     }
     /** @test **/
     public function it_should_get_the_right_publication_format()

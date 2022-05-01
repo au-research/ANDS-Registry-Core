@@ -16,19 +16,13 @@
                     &#xD; 1 with a link from the collection doi identifier to the publication identifier
                     &#xD; NO link from the collection local identifier to the publication identifier</description>
                 <relatedInfo type="publication">
-                    <title>Related Info Title</title>
-                    <identifier type="uri">http://www.someExamplePublication.org/Scholix1</identifier>
+                    <identifier type="doi">10.4567.dd</identifier>
                     <relation type="isReviewedBy"/>
                 </relatedInfo>
                 <relatedObject>
                     <key>AUTestingRecords2ScholixRecords39test</key>
                     <relation type="references"/>
                 </relatedObject>
-                <relatedInfo type="publication">
-                    <title>Related Info Title2</title>
-                    <identifier type="uri">http://www.someExamplePublication.org/Scholix12test</identifier>
-                    <relation type="isReviewedBy"/>
-                </relatedInfo>
             </collection>
         </registryObject>
 </registryObjects>
