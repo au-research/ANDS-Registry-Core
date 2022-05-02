@@ -1966,15 +1966,14 @@ class Data_source extends MX_Controller {
 			exit();
 		}
 
-		$dataSource = $this->ds->getByID($ds_id);
-
         // wipe from mycelium
-        $ds = \ANDS\Repository\DataSourceRepository::getByID($dataSource->id);
-        $client = new MyceliumServiceClient(Config::get('mycelium.url'));
-        $client->deleteDataSource($ds);
+        $ds = \ANDS\Repository\DataSourceRepository::getByID($ds_id);
 
-		if($dataSource) {
-			$response['log'] .= $dataSource->eraseFromDB();
+		if($ds) {
+            \ANDS\Registry\Importer::wipeDataSourceRecords($ds);
+			$response['log'] .= $ds->delete();
+            $client = new MyceliumServiceClient(Config::get('mycelium.url'));
+            $client->deleteDataSource($ds);
 			$response['success'] = true;
 		}
 		else{
