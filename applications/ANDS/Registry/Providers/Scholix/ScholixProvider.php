@@ -474,22 +474,22 @@ class ScholixProvider implements RegistryContentProvider
             $creator = [];
             if($author['to_identifier_type']== 'ro:id'){
                 $to = RegistryObjectsRepository::getRecordByID($author['to_identifier']);
-                $identifiers = collect(IdentifierProvider::get($to))->map(function($item) {
-                    return [
-                        'identifier' => $item['value'],
-                        'schema' => $item['type']
-                    ];
-                })->toArray();
-
+                if(isset($to)) {
+                    $identifiers = collect(IdentifierProvider::get($to))->map(function ($item) {
+                        return [
+                            'identifier' => $item['value'],
+                            'schema' => $item['type']
+                        ];
+                    })->toArray();
+                }
                 if (count($identifiers) > 0) {
                     $creator['identifier'] = $identifiers;
                 };
             }
-            if(array_key_exists('to_title',$author))
-            $creator['name'] = $author['to_title'];
-
+            if(array_key_exists('to_title',$author)) {
+                $creator['name'] = $author['to_title'];
+            }
             $creators[] = $creator;
-
         }
 
 
