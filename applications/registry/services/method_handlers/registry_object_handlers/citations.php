@@ -133,9 +133,9 @@ Content:text/plain; charset="utf-8"
         if($contributors!=''){
             foreach($contributors as $contributor){
                 if(isset($contributor['to_id']) && $contributor['to_id'] != '') {
-                    $record = RegistryObject::find($contributor['to_id']);
+                    $party_record = RegistryObject::find($contributor['to_id']);
                     if ($record != null) {
-                        $names = TitleProvider::get($record);
+                        $names = TitleProvider::get($party_record);
                         $nameParts = [];
                         //need to take into account that a name part might not have a type
                         //and if here is only one it will be flattened by the TitleProvider
