@@ -1118,7 +1118,7 @@ function initRelatedObjects(){
 	//reverse links and contributors page
 	$('.automated_links').remove();
 	$.ajax({
-		url: api_url +'registry/relationships?from_key='+$('#ro_key').val() + '&rows=400&boost_to_origin=RelatedObject&boost_to_reverse=false',
+		url: api_url +'registry/relationships?from_id='+$('#ro_id').val() + '&rows=400&boost_to_origin=RelatedObject&boost_to_reverse=false',
 		type: 'GET',
 		dataType: 'json',
 		success: function(data){
