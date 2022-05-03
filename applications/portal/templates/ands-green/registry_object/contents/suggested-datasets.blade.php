@@ -1,4 +1,4 @@
-@if($ro->suggest && isset($ro->suggest['final']) && ($ro->core['status']!='DRAFT')))
+@if($ro->suggest && isset($ro->suggest['final']) && ($ro->core['status']!='DRAFT'))
 <div class="panel swatch-white">
 	<div class="panel-heading">Similar data you may be interested in:</div>
 	<div class="panel-body">
