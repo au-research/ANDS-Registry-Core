@@ -27,7 +27,8 @@ class ScholixProvider implements RegistryContentProvider
         "handle" => 'hdl',
         "purl" => 'purl',
         "uri" => 'url',
-        "url" => 'url'
+        "url" => 'url',
+        "ror" => 'ror'
     ];
     public static $validTargetIdentifierTypes = [
         "ark" => 'ark',
@@ -166,7 +167,7 @@ class ScholixProvider implements RegistryContentProvider
                 'identifier' => [
                     [
                         'identifier' =>  'https://ror.org/038sjwq14',
-                        'schema' => 'url'
+                        'schema' => 'ror'
                     ]
                 ],
                 'objectType' => $record->type,
