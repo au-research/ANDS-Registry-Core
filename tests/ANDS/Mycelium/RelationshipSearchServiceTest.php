@@ -1,10 +1,14 @@
 <?php
 namespace ANDS\Mycelium;
 
+use ANDS\DataSource;
 use ANDS\File\Storage;
 use ANDS\RecordData;
+use ANDS\Registry\Backup\BackupRepository;
+use ANDS\Registry\Importer;
 use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\RegistryObject;
+use ANDS\Repository\DataSourceRepository;
 use ANDS\Repository\RegistryObjectsRepository;
 
 class RelationshipSearchServiceTest extends \MyceliumTestClass
@@ -12,7 +16,7 @@ class RelationshipSearchServiceTest extends \MyceliumTestClass
     /** @test */
     public function test_search_multiple_to_type()
     {
-        $record2 = $this->stub(RegistryObject::class, ['class' => 'party', 'type' => 'group', 'key' => 'AODN']);
+      $record2 = $this->stub(RegistryObject::class, ['class' => 'party', 'type' => 'group', 'key' => 'AODN']);
         $this->stub(RecordData::class, [
             'registry_object_id' => $record2->id,
             'data' => Storage::disk('test')->get('rifcs/party_funds_activity.xml')
@@ -47,15 +51,47 @@ class RelationshipSearchServiceTest extends \MyceliumTestClass
     /** @test */
     public function test_it_should_not_return_related_reverse()
     {
-        //TODO set up test data import to determine which data_sources and records will be useful for testing
+      BackupRepository::restore("16_RelationshipScenario", $options = [
+            'includeGraphs' => true,
+          'includePortalIndex' => false,
+           'includeRelationshipsIndex' => true
+        ]);
 
-        $this->ensureKeyExist("AUTestingRecords3ScholixPublicationRecords7");
-        $record = RegistryObjectsRepository::getPublishedByKey("AUTestingRecords3ScholixPublicationRecords7");
+      $dataSource1 = DataSourceRepository::getByKey("16_RelationshipScenario_AUTestingRecords");
+      $dataSource2 = DataSourceRepository::getByKey("16_RelationshipScenario_AUTestingRecords2");
+      $dataSource3 = DataSourceRepository::getByKey("16_RelationshipScenario_AUTestingRecords3");
+
+      //This record has 5 internal reverse relationships
+       $this->ensureKeyExist("P5_16");
+       $record = RegistryObjectsRepository::getPublishedByKey("P5_16");
+       $relatedRecords = RelationshipProvider::get($record);
+       $this->assertEquals(5, sizeof($relatedRecords));
+
+       //turn off allow_reverse_internal_links and check relationships aren't returned
+       $dataSource3->setDataSourceAttribute('allow_reverse_internal_links',null);
+       $relatedRecords = RelationshipProvider::get($record);
+       $this->assertEquals(0, sizeof($relatedRecords));
+
+       $dataSource3->setDataSourceAttribute('allow_reverse_internal_links',1);
+
+
+         //This record has an external reverse relationships
+        $this->ensureKeyExist("C4_16");
+        $record = RegistryObjectsRepository::getPublishedByKey("C4_16");
+        $relatedRecords = RelationshipProvider::get($record);
+        $this->assertEquals(6, sizeof($relatedRecords));
+
+        $dataSource2->setDataSourceAttribute('allow_reverse_external_links',null);
         $relatedRecords = RelationshipProvider::get($record);
 
-        $this->assertGreaterThan(1, sizeof($relatedRecords));
-    }
+        $this->assertEquals(2, sizeof($relatedRecords));
 
+        Importer::wipeDataSourceRecords($dataSource1, $softDelete = false);
+
+        Importer::wipeDataSourceRecords($dataSource2, $softDelete = false);
+
+        Importer::wipeDataSourceRecords($dataSource3, $softDelete = false);
+    }
 }
 
 ?>

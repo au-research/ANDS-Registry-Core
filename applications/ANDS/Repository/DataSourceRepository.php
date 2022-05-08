@@ -5,6 +5,7 @@ namespace ANDS\Repository;
 
 
 use ANDS\DataSource;
+use ANDS\DataSourceAttribute;
 
 class DataSourceRepository
 {
@@ -24,6 +25,17 @@ class DataSourceRepository
     public static function getByID($data_source_id)
     {
         return DataSource::where('data_source_id', $data_source_id)->first();
+    }
+
+
+    /**
+     * @param $data_source_id
+     * @return DataSource
+     */
+    public static function delete($data_source_id)
+    {
+        DataSourceAttribute::where('data_source_id', $data_source_id)->delete();
+        return DataSource::where('data_source_id', $data_source_id)->delete();
     }
 
     /**

@@ -38,6 +38,8 @@ class RegistryTestClass extends PHPUnit_Framework_TestCase
         $this->dataSource = DataSourceRepository::getByKey($this->dsAttributes['key']);
         if (!$this->dataSource) {
             $this->dataSource = DataSource::create($this->dsAttributes);
+            $this->dataSource->setDataSourceAttribute('allow_reverse_internal_links',1);
+            $this->dataSource->setDataSourceAttribute('allow_reverse_external_links',1);
         }
     }
 

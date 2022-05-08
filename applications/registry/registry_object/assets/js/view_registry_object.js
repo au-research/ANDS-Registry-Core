@@ -144,7 +144,17 @@ $(function(){
     });
 
 	formatTip($('#qa_level_results'));
-    processRelatedObjects();
+
+    //display current related objects title and status
+    var relatedObjects = [];
+
+    $("#rorow td[class='resolvedRelated']").each(function () {
+
+        if ($(this).attr("key_value") !== ''){
+            relatedObjects.push($(this).attr("key_value"));
+        }
+    });
+    processRelatedObjects(0,relatedObjects);
 
 });
 function formatTip(tt){
@@ -194,18 +204,33 @@ function formatTip(tt){
     $('.qa_error').addClass('warning');
 }
 
-function processRelatedObjects(offset)
-{
+
+function processRelatedObjects(offset, relatedObjects) {
+    if (offset === 0 && relatedObjects.length > 0) {
+        $.ajax({
+            url: base_url + 'registry_object/fetch_related_object_aro/',
+            type: 'POST',
+            data: {related: relatedObjects},
+            success: function (data) {
+                if (data.result) {
+                    $.each(data.result, function (i, v) {
+                        var theInput = $('#rorow td[key_value="' + i + '"]');
+                        if (v.status !== 'notfound') {
+                            $(theInput).append('<a href="' + v.link + '">' + v.title + '</a> <span class="muted">(' + v.class + ')</span>');
+                        } else {
+                            $(theInput).append('Registry Object Not Found');
+                        }
+                    });
+                }
+            }
+        });
+    }
+
     var rows = 10;
-    if(typeof offset !== 'undefined')
+    if(offset !== 0)
     {
 	// This occurs when the "Show More" button is clicked
 	  $('#moreRowsNotice').remove();
-    }
-    else
-    {
-	   // Default number of related Objects to get
-	   offset = 0;
     }
 
     $.ajax({
@@ -220,74 +245,81 @@ function processRelatedObjects(offset)
        
                 var id = this.to_identifier;
                 var title = this.to_title;
-                // TODO need to add ro_key to relationships to find exist records in the list
-                var key = this.to_key;
-                var ro_class = this.to_class;
-                var status = "PUBLISHED";// we don't index drafts yet!! we should though this.status;
-                if(id)
-                {
-                    title = '<a href="' + base_url + 'registry_object/view/'+id+'">'+title+'</a> <span class="muted">(' + ro_class + ')</span>';
-                }
-                var newRow = "";
-                var display = false;
-
-                newRow = '<table class="subtable">' +
-                    '<tr><td><table class="subtable1">'+
-                    '<tr><td>Title:</td><td class="resolvedRelated" >'+title+'</td></tr>'+
-                    '<tr><td class="attribute">Key</td>' +
-                    '<td class="valueAttribute resolvable_key" key_value="'+ key +'">'+key+'</td>' +
-                    '</tr>';
-
-
-                $.each(this.relations, function(){
-                    var origin = this.relation_origin;
-                    var reverse = this.relation_reverse;
-                    var relationship = this.relation_type
-                    var add = false;
-                    var revStr = '';
-
-                    if(reverse === false && origin === 'RelatedObject')
+                console.log("testing"+ this.to_key)
+                if(!relatedObjects.includes(this.to_key)){
+                    console.log(this.to_key)
+                    var key = this.to_key;
+                    var ro_class = this.to_class;
+                    var status = "PUBLISHED";// we don't index drafts yet!! we should though this.status;
+                    if(id)
                     {
-                        revStr = "";
-                        display = true;
-                        add = true;
+                        title = '<a href="' + base_url + 'registry_object/view/'+id+'">'+title+'</a> <span class="muted">(' + ro_class + ')</span>';
                     }
-                    else if(reverse === true && origin === 'RelatedObject')
-                    {
-                        revStr = "<em> (Automatically generated reverse link) </em>";
-                        display = true;
-                        add = true;
-                    }
-                    else if(origin === 'PrimaryLink')
-                    {
-                        revStr = "<em> (Automatically generated primary link) </em>";
-                        display = true;
-                        add = true;
-                    }
-                    else if(reverse === true && (origin === 'RelatedInfo' || origin === 'Identifier'))
-                    {
-                        revStr = "<em> (Automatically generated reverse link by Identifier) </em>";
-                        display = true;
-                        add = true;
-                    }
+                    var newRow = "";
+                    var display = false;
 
-                    if(add === true){
-                        newRow += '<tr><td class="attribute">Relation:</td>' +
-                            '<td class="valueAttribute"><table class="subtable1"><tr><td>type:</td><td>'+
-                            relationship+revStr+'</td></tr></table></td></tr>';
-                    }
-                });
+                    newRow = '<table class="subtable">' +
+                        '<tr><td><table class="subtable1">'+
+                        '<tr><td>Title:</td><td class="resolvedRelated" >'+title+'</td></tr>'+
+                        '<tr><td class="attribute">Key</td>' +
+                        '<td class="valueAttribute resolvable_key" key_value="'+ key +'">'+key+'</td>' +
+                        '</tr>';
 
-                if(display === true){
-                    newRow  += '</table></tr></td></table>';
-                    $('#related_objects_table').last().append(newRow);
-                    $('#rorow').show();
-                }
+                    $.each(this.relations, function(){
+                        var origin = this.relation_origin;
+                        var reverse = this.relation_reverse;
+                        var relationship = this.relation_type
+                        var add = false;
+                        var revStr = '';
+
+                        if(reverse === false && origin === 'RelatedObject')
+                        {
+                            revStr = "";
+                            display = true;
+                            add = true;
+                        }
+                        else if(reverse === true && origin === 'RelatedObject')
+                        {
+                            revStr = "<em> (Automatically generated reverse link) </em>";
+                            display = true;
+                            add = true;
+                        }
+                        else if(origin === 'PrimaryLink')
+                        {
+                            revStr = "<em> (Automatically generated primary link) </em>";
+                            display = true;
+                            add = true;
+                        }
+                        else if(reverse === true && origin === 'GrantsNetwork')
+                        {
+                            revStr = "<em> (Automatically generated implicit link) </em>";
+                            display = true;
+                            add = true;
+                        }
+                        else if(reverse === true && (origin === 'RelatedInfo' || origin === 'Identifier'))
+                        {
+                            revStr = "<em> (Automatically generated reverse link by Identifier) </em>";
+                            display = true;
+                            add = true;
+                        }
+
+                        if(add === true){
+                            newRow += '<tr><td class="attribute">Relation:</td>' +
+                                '<td class="valueAttribute"><table class="subtable1"><tr><td>type:</td><td>'+
+                                relationship+revStr+'</td></tr></table></td></tr>';
+                        }});
+
+                    if(display === true){
+                        newRow  += '</table></tr></td></table>';
+                        $('#related_objects_table').last().append(newRow);
+                        $('#rorow').show();
+                    }
+            }
 
             });
-            if(data.total > (offset + rows))
+            if(data.total > (offset + rows + relatedObjects.length))
             {
-                numToShow = data.total - (offset + rows);
+                numToShow = data.total - (offset + rows + relatedObjects.length);
         		moreToShow = '<table class="subtable" id="moreRowsNotice"><a id="moreRelatedObjects" />' +
                                     '<tr><td><table class="subtable1">'+
         			    '<tr><td></td><td class="resolvedRelated" > There '+ (numToShow == 1 ? "is" : "are") + ' ' + numToShow + ' more related object(s) not being displayed - <a href="#moreRelatedObjects" id="relatedObjectShowMore" data-more-length="'+Math.min(numToShow,rows)+'">show more</a></td></tr>'+
@@ -295,14 +327,9 @@ function processRelatedObjects(offset)
         		$('#related_objects_table').last().append(moreToShow);
         		$('#relatedObjectShowMore').on('click', function()
         		{
-			    processRelatedObjects(offset + rows);
+			    processRelatedObjects(offset + rows, relatedObjects);
         		});
             }
-                              
         }
-                      
     });
-
-
-
 }

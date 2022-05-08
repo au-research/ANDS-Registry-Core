@@ -82,22 +82,30 @@ class Relationships extends ROHandler
         $programs = $result->toArray();
 
         //obtaining to_funder for each of the program
-        foreach($programs['contents'] as $grant){
-
-            // if the grant is not a related Object, then it shouldn't have to_funder
-            if ($grant['to_identifier_type'] != "ro:id") {
-                continue;
-            }
-
-            $result2 = RelationshipSearchService::search([
-                'from_id' => $grant["to_identifier"],
-                'to_class' => 'party',
-                'relation_type' =>  ['isFunderOf', 'isFundedBy']
-            ], ['rows' => 1]);
-            $funded_by = $result2->toArray();
-
-            if (array_key_exists('contents', $funded_by) && count($funded_by['contents']) > 0) {
-                $grant["to_funder"] = $funded_by['contents'][0]["from_title"];
+        foreach($programs['contents'] as $key=>$grant){
+            // if the grant is not a related Object
+            if ($grant['to_identifier_type'] === "ro:id") {
+                $result2 = RelationshipSearchService::search([
+                    'from_id' => $grant["to_identifier"],
+                    'to_class' => 'party',
+                    'relation_type' =>  ['isFunderOf', 'isFundedBy']
+                ], ['rows' => 1]);
+                $funded_by = $result2->toArray();
+                // the funder's title is the to_title
+                if (array_key_exists('contents', $funded_by) && count($funded_by['contents']) > 0) {
+                    $programs['contents'][$key]["to_funder"] = $funded_by['contents'][0]["to_title"];
+                }
+            }else{ // it should still have a funder but we need to search from their end
+                $result2 = RelationshipSearchService::search([
+                    'to_identifier' => $grant["to_identifier"],
+                    'from_class' => 'party',
+                    'relation_type' =>  ['isFunderOf', 'isFundedBy']
+                ], ['rows' => 1]);
+                $funded_by = $result2->toArray();
+                // the funder's title is the from_title
+                if (array_key_exists('contents', $funded_by) && count($funded_by['contents']) > 0) {
+                    $programs['contents'][$key]["to_funder"] = $funded_by['contents'][0]["from_title"];
+                }
             }
         }
         return $programs ;
@@ -118,14 +126,30 @@ class Relationships extends ROHandler
 
         $grants_projects = $result->toArray();
 
-        foreach($grants_projects['contents'] as $grant){
-            $result2 = RelationshipSearchService::search([
-               'from_id' => $grant["to_identifier"],
-                'to_class' => 'party',
-                'relation_type' =>  ['isFunderOf', 'isFundedBy']
-            ], ['rows' => 1]);
-            $funded_by = $result2->toArray();
-            if(isset($funded_by['contents']) && count($funded_by['contents'])>0) $grant["to_funder"] = $funded_by['contents'][0]["from_title"];
+        foreach($grants_projects['contents'] as $key=>$grant){
+            if($grant["to_identifier_type"] === "ro:id"){
+                $result2 = RelationshipSearchService::search([
+                    'from_id' => $grant["to_identifier"],
+                    'to_class' => 'party',
+                    'relation_type' =>  ['isFunderOf', 'isFundedBy']
+                ], ['rows' => 1]);
+                $funded_by = $result2->toArray();
+                // the funder's title is the to_title
+                if(isset($funded_by['contents']) && count($funded_by['contents'])>0){
+                    $grants_projects['contents'][$key]["to_funder"] = $funded_by['contents'][0]["to_title"];
+                }
+            }else{// it should still have a funder but we need to search from their end
+                $result2 = RelationshipSearchService::search([
+                    'to_identifier' => $grant["to_identifier"],
+                    'from_class' => 'party',
+                    'relation_type' =>  ['isFunderOf', 'isFundedBy']
+                ], ['rows' => 1]);
+                $funded_by = $result2->toArray();
+                // the funder's title is the from_title
+                if(isset($funded_by['contents']) && count($funded_by['contents'])>0){
+                    $grants_projects['contents'][$key]["to_funder"] = $funded_by['contents'][0]["from_title"];
+                }
+            }
         }
         return $grants_projects ;
     }
