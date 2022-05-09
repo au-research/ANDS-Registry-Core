@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+    <registryObject group="AUTestingRecords">
+        <key>http://museumex.maas.museum/oai/nfsa/2807AUT7a</key>
+        <originatingSource type="authoritative">National Film and Sound Archive</originatingSource>
+        <collection type="collection">
+            <identifier type="uri">http://colsearch.nfsa.gov.au/nfsa/search/summary/summary.w3p;adv=yes;group=;groupequals=;page=810AUT7a</identifier>
+            <name type="primary">
+                <namePart>(AUTestingRecords) Temporal Search Collection 7a (1975-11-01-01T00:00:00Z to 1978-11-01-01T00:00:00Z) &amp; (2011-01-01T00:00:00Z to 2014-11-30T00:00:00Z)Youth and Teenage Documentaries</namePart>
+            </name>
+            <relatedObject>
+                <key>http://museumex.maas.museum/oai/nfsa</key>
+                <relation type="isManagedBy"/>
+            </relatedObject>
+            <relatedObject>
+                <key>http://museumex.maas.museum</key>
+                <relation type="isAvailableThrough">
+                    <description>The Museum Metadata Exchange is an aggregator service which provides a finding aid for researchers and others by describing collections held by Museums and other collecting institutions in Australia. The service gives an overview of the collection and details of the holding institution.</description>
+                </relation>
+            </relatedObject>
+            <location>
+                <address>
+                    <electronic type="url">
+                        <value>http://museumex.maas.museum/oai/nfsa/2807</value>
+                    </electronic>
+                </address>
+            </location>
+            <subject type="scot">Adolescents</subject>
+            <subject type="scot">Youth</subject>
+            <description type="brief">A collection of over 100 items including film, television, radio, photographs and documents about a range of youth issues.  Issues covered include domestic violence, youth homelessness, unemployment and marginalisation.  Other items cover youth attitudes and opinion.</description>
+            <description type="full"/>
+            <description type="rights">The NFSA does not usually hold the copyright for the works in its collection, so clearing the rights to use the material will be up to you.</description>
+            <description type="accessRights">The NFSA does not usually hold the copyright for the works in its collection, so clearing the rights to use the material will be up to you.</description>
+            <coverage>
+                <temporal>
+                    <date type="dateFrom" dateFormat="UTC">1975-11-01-01T00:00:00Z</date>
+                    <date type="dateTo" dateFormat="UTC">1978-11-01-01T00:00:00Z</date>
+                </temporal>
+                <temporal>
+                    <date type="dateFrom" dateFormat="W3CDTF">2011-01-01T00:00:00Z</date>
+                    <date type="dateTo" dateFormat="W3CDTF">2014-11-30T00:00:00Z</date>
+                </temporal>
+                <temporal>
+                    <date type="dateFrom" dateFormat="W3CDTF">long long ago</date>
+                    <date type="dateTo" dateFormat="W3CDTF">far far away</date>
+                </temporal>
+            </coverage>
+        </collection>
+    </registryObject>
+</registryObjects>

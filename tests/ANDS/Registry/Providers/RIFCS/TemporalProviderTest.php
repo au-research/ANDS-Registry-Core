@@ -31,4 +31,18 @@ class TemporalProviderTest extends \RegistryTestClass
 
     }
 
+    /** @test TODO stubs**/
+    public function it_should_get_the_correct_pub_date()
+    {
+        $record = $this->stub(RegistryObject::class);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/rif_date_test.xml')
+        ]);
+        $dates = TemporalProvider::getIndexableArray($record);
+        $this->assertNotContains(false, $dates["date_from"]);
+        $this->assertNotContains(false, $dates["date_to"]);
+    }
+
+
 }

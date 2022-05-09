@@ -48,7 +48,10 @@ class TemporalProvider implements RIFCSProvider
         $dates = self::get($record);
         foreach($dates as $date){
             if($date['type'] == 'dateFrom') {
-                $date_from[] = self::getWTCdate($date['value']);
+                $date_val = self::getWTCdate($date['value']);
+                if($date_val !== false){
+                    $date_from[] = $date_val;
+                }
             }
         }
         return $date_from;
@@ -60,7 +63,10 @@ class TemporalProvider implements RIFCSProvider
         $dates = self::get($record);
         foreach($dates as $date){
             if($date['type'] == 'dateTo') {
-                $date_to[] = self::getWTCdate($date['value']);
+                $date_val = self::getWTCdate($date['value']);
+                if($date_val !== false){
+                    $date_to[] = $date_val;
+                }
             }
         }
         return $date_to;
@@ -105,7 +111,9 @@ class TemporalProvider implements RIFCSProvider
         if (strlen($value) == 4) {
             // Assume this is a year:
             $value = "Jan 1 " . $value;
-        } else if (preg_match("/\d{4}\-\d{2}/", $value) === 1) {
+        } else if (strlen($value) == 7 && preg_match("/\d{4}\-\d{2}/", $value) === 1) {
+            // add day only if it's yyyy-mm
+            //RDA-770
             $value = $value . "-01";
         }
 
