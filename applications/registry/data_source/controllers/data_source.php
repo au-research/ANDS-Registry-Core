@@ -2119,6 +2119,64 @@ class Data_source extends MX_Controller {
 
 		echo json_encode($jsonData);
 	}
+
+    /**
+     * Moved from applications/registry/import/controllers/import.php
+     * as part of refactoring RDA-760
+     * @param $id. The datasource's id
+     * returns json containing the
+     * list of the harvested content's directory of the given datasource
+     * or
+     * the content of the files, if a given "path" of a file is requested
+     * @throws Exception
+     */
+    public function list_files($id=false) {
+        if(!$id) throw new Exception('Data Source ID required');
+        $dir = \ANDS\Util\config::get('app.harvested_contents_path');
+        $dir = rtrim($dir, '/') . '/';
+        if(!$dir) throw new Exception('Harvested Contents Path not configured');
+
+        if($this->input->get('path')){
+            $path = $this->input->get('path');
+            if(!is_file($path)) throw new Exception('Path not found');
+            $content = @file_get_contents($path);
+            echo json_encode(array(
+                'status' => 'OK',
+                'content' => $content
+            ));
+            return;
+        }
+
+        $path = $dir.$id;
+
+        if(!is_dir($path)) throw new Exception('Datasource does not have any harvested path');
+        $batches = array();
+        foreach(scandir($path) as $f){
+            if($f!="." && $f!="..") $batches[] = $f;
+        }
+        if(sizeof($batches) == 0) throw new Exception('Data source does not have any batch harvested');
+
+        $result = array();
+
+        foreach($batches as $b) {
+            $link = $path.'/'.$b;
+            if(is_file($link)) $result[] = array('type'=>'file', 'link'=>$link, 'name'=>$b);
+            if(is_dir($link)) {
+                $files = array();
+                foreach(scandir($link) as $file){
+                    if($file!="." && $file!="..") $files[] = array('type'=>'file', 'link'=>$link.'/'.$file, 'name'=>$file);
+                }
+                $result[] = array('type'=>'folder', 'link'=>$link, 'files'=>$files, 'name'=>$b);
+            }
+        }
+
+        echo json_encode(array(
+            'status' => 'OK',
+            'content' => $result
+        ));
+    }
+
+
 	/**
 	 * @ignore
 	 */
