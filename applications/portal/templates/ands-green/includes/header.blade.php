@@ -59,9 +59,9 @@
 </head>
 <!-- Environment Indicator -->
 
-@if(ENVIRONMENT!='production' || (isset($ro->core['status']) && $ro->core['status']=='DRAFT'))
+@if(ENVIRONMENT!='production' || (isset($ro->core['status']) && $ro->core['status']!='PRODUCTION'))
 	<div class="environment" style="background:{{\ANDS\Util\config::get('app.environment_colour')}};color:white;padding:5px 10px;">
-        @if(isset($ro->core['status']) && $ro->core['status']=='DRAFT')
+        @if(isset($ro->core['status']) && $ro->core['status']!='PRODUCTION')
             <h3>The current record page is for preview only, certain actions are not available under current mode.</h3>
         @else
 		    <h3>{{\ANDS\Util\config::get('app.environment_name')}} - {{ENVIRONMENT}} ...</h3>
