@@ -95,7 +95,7 @@ class Relationships extends ROHandler
                 if (array_key_exists('contents', $funded_by) && count($funded_by['contents']) > 0) {
                     $programs['contents'][$key]["to_funder"] = $funded_by['contents'][0]["to_title"];
                 }
-            }else{ // it should still have a funder but we need to search from their end
+            }else{ // RDA-758 it should still have a funder but we need to search from their end
                 $result2 = RelationshipSearchService::search([
                     'to_identifier' => $grant["to_identifier"],
                     'from_class' => 'party',
@@ -138,7 +138,7 @@ class Relationships extends ROHandler
                 if(isset($funded_by['contents']) && count($funded_by['contents'])>0){
                     $grants_projects['contents'][$key]["to_funder"] = $funded_by['contents'][0]["to_title"];
                 }
-            }else{// it should still have a funder but we need to search from their end
+            }else{// RDA-758 it should still have a funder but we need to search from their end
                 $result2 = RelationshipSearchService::search([
                     'to_identifier' => $grant["to_identifier"],
                     'from_class' => 'party',
