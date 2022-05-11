@@ -591,8 +591,8 @@ class JsonLDProvider implements RIFCSProvider
 
         if(sizeof($creator) > 0)
             return $creator;
-
-        $relations_types = array("hasPrincipalInvestigator","author","coInvestigator", "hasCollector");
+        // RDA-777 almost complete relationship types to find a creator
+        $relations_types = ['hasPrincipalInvestigator', 'hasAuthor', 'coInvestigator', 'isOwnedBy', 'hasCollector', "author"];
         foreach ($relations_types as $idx=>$relation_type) {
             $relationships = RelationshipProvider::getRelationByType($record, array($relation_type));
             $creator = static::formatRelationship($relationships);
