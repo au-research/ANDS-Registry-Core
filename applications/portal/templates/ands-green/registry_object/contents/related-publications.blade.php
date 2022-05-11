@@ -5,6 +5,8 @@
 
         @foreach($related['publications']['contents'] as $col)
                 <?php
+                //if the realtedInfo has no title, set the title to the identifier value
+                if(!array_key_exists('to_title',$col)) $col['to_title'] = $col['to_identifier'];
                 $result = array();
                 $relation_types = [];
                 foreach ($col['relations'] as $element) {
