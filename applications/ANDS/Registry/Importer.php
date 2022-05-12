@@ -13,6 +13,7 @@ use ANDS\Registry\Providers\DCI\DCI;
 use ANDS\Registry\Providers\Scholix\Scholix;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
+use ANDS\Task\TaskRepository;
 use ANDS\Util\SolrIndex;
 
 /**
@@ -115,17 +116,14 @@ class Importer
             'batch_id' => $batchID
         ];
 
-        $params = array_merge($params, $customParameters);
-        $importTask = new ImportTask();
-        $importTask->init([
+        /** @var \ANDS\API\Task\ImportTask $importTask */
+        $importTask = TaskRepository::create([
             'name' => "Import Task for $dataSource->title ($batchID)",
-            'params' => http_build_query($params)
-        ]);
+            'params' => http_build_query(array_merge($params, $customParameters))
+        ], true);
 
         $importTask->initialiseTask();
         $importTask->enableRunAllSubTask();
-        $importTask->sendToBackground();
-
         $importTask->run();
 
         return $importTask;
@@ -148,16 +146,19 @@ class Importer
             $ids = collect($records)->pluck('registry_object_id')->toArray();
         }
 
-        $importTask = new ImportTask();
-        $importTask->init([
+        /** @var \ANDS\API\Task\ImportTask $importTask */
+        $importTask = TaskRepository::create([
+            'name' => 'Delete Data Source Content',
             'params' => http_build_query([
+                'class' => 'import',
                 'ds_id' => $dataSource->data_source_id,
                 'pipeline' => 'PublishingWorkflow'
             ])
-        ])->skipLoadingPayload()->enableRunAllSubTask()->initialiseTask();
-        $importTask->setTaskData("deletedRecords", $ids);
+        ], true);
 
-        $importTask->sendToBackground();
+        $importTask->skipLoadingPayload()->enableRunAllSubTask()->initialiseTask();
+
+        $importTask->setTaskData("deletedRecords", $ids);
 
         $importTask->run();
 
