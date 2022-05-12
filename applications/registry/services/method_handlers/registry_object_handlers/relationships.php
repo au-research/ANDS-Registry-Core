@@ -191,8 +191,7 @@ class Relationships extends ROHandler
 
         $result = RelationshipSearchService::search([
             'from_id' => $this->ro->id,
-            'to_class' => 'website',
-            'to_title' => '*'
+            'to_class' => 'website'
         ], ['boost_to_group' => $this->ro->group ,'rows' =>100]);
 
         return $result->toArray();
