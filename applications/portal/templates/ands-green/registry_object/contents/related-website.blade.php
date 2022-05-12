@@ -6,6 +6,7 @@
 
         @foreach($related['websites']['contents'] as $col)
             <?php
+            if(!array_key_exists('to_title',$col)) $col['to_title'] = $col['to_identifier'];
             $result = array();
             $relation_types = [];
 

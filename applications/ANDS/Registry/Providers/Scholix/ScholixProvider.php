@@ -466,7 +466,7 @@ class ScholixProvider implements RegistryContentProvider
          * relatedInfo/relation/party
          */
         $creators = [];
-        $validRelations = ['hasPrincipalInvestigator', 'hasAuthor', 'coInvestigator', 'isOwnedBy', 'hasCollector', "author"];
+        $validRelations = ['hasPrincipalInvestigator', 'hasAuthor', 'hasCoInvestigator', 'coInvestigator', 'isOwnedBy', 'hasCollector', "author"];
         $authors = RelationshipProvider::getRelationByClassAndType($record,'party',$validRelations);
 
 
