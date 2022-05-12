@@ -288,7 +288,11 @@ function initConnectionGraph() {
 			}
 
 			// if there are children and there are supposed to be more children, attempt to add paging node
-			if (n.children && n.data.childrenCount > n.children.length) {
+			if (typeof n.children == "undefined") {
+				n.children = [];
+			}
+
+			if (n.data.childrenCount > n.children.length) {
 				let hasPagingNode = n.children.filter(function (nc) {
 					return nc.isPagingNode();
 				}).length > 0;
@@ -344,7 +348,6 @@ function initConnectionGraph() {
 			let n = data.node;
 			data.result = {
 				url: api_url + 'registry/records/'+n.data.identifier+'/nested-collection-children',
-				data: {mode: "children", parent: n.key},
 				cache: false
 			};
 		},
@@ -357,6 +360,9 @@ function initConnectionGraph() {
 					visitNode(n);
 				});
 			}
+
+			// revisit the parent due to the loaded data might not contain the full set
+			visitNode(node);
 		},
 
 		// visit all nodes initially
