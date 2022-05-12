@@ -384,21 +384,31 @@ class ScholixProviderTest extends MyceliumTestClass
         }
     }
 
-    /** test **/
-  /*  public function test1()
-    {
-        $record = $this->ensureKeyExist("AUTestingRecords2ScholixRecords59");
-        $scholix = ScholixProvider::get($record);
-        $this->assertNotEmpty($scholix->getLinks());
-
-        $links = $scholix->getLinks();
-        $linkIdentifiers = [];
-        foreach ($links as $link) {
-            $linkIdentifiers[] = $scholix->getLinkIdentifier($link);
+    /** @test **/
+    public function it_should_not_limit_links(){
+        $need_to_delete = false;
+        $record43 = RegistryObjectsRepository::getPublishedByKey('AUTestingRecords2ScholixRecords43');
+        if($record43 === null) {
+            $record43 = $this->stub(RegistryObject::class, [
+                'class' => 'collection',
+                'type' => 'dataset',
+                'key' => 'AUTestingRecords2ScholixRecords43',
+                'group' => 'AUTestingRecords2'
+            ]);
+            $this->stub(RecordData::class, [
+                'registry_object_id' => $record43->id,
+                'data' => Storage::disk('test')->get('rifcs/collection_scholix_43.xml')
+            ]);
+            $need_to_delete = true;
         }
 
-        $this->assertEquals($linkIdentifiers, array_unique($linkIdentifiers));
-    } */
+        $record43 = RegistryObjectsRepository::getPublishedByKey('AUTestingRecords2ScholixRecords43');
+        $this->myceliumInsert($record43);
+        $scholix = ScholixProvider::get($record43);
+        $this->assertEquals('17',count($scholix->toArray()));
+        if($need_to_delete){
+            $this->myceliumDelete($record43);
+        }
 
-
+    }
 }
