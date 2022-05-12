@@ -145,6 +145,11 @@ class RecordsGraphController
                 return $node;
             }
 
+            // add RelatedInfo to labels if it's not a RegistryObject cluster
+            if (!in_array('RegistryObject', $node['labels'])) {
+                $node['labels'][] = 'RelatedInfo';
+            }
+
             $node['properties']['clusterClass'] = $node['properties']['class'];
 
             $edgeToCluster = collect($edges)->filter(function ($edge) use ($node) {
@@ -166,7 +171,7 @@ class RecordsGraphController
             $node['properties']['count'] = $count;
 
             // todo populate portalSearchUrl
-            $node['properties']['url'] = baseUrl();
+            $node['properties']['url'] = null;
 
             return $node;
         });
