@@ -227,21 +227,21 @@ class RelationshipProvider
         if($relations != null){
             $search_params['relation_type'] = $relations;
         }
-        $search_params["rows"] = self::$batch_size;
-        $search_params["start"] = 0;
+        $page_params["rows"] = self::$batch_size;
+        $page_params["start"] = 0;
 
         $allRelationships = [];
 
         do {
-            $result = RelationshipSearchService::search($search_params);
+            $result = RelationshipSearchService::search($search_params, $page_params);
             $result = $result->toArray();
             $result_count = $result['count'];
             $result_total = $result['total'];
             foreach($result['contents'] as $item){
                 $allRelationships[] = $item;
             }
-            $search_params["start"] += self::$batch_size;
-        } while ($result_count > 0 && $search_params["start"] <= $result_total);
+            $page_params["start"] += self::$batch_size;
+        } while ($result_count > 0 && $page_params["start"] <= $result_total);
         return $allRelationships;
     }
 
