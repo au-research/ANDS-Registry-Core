@@ -113,7 +113,9 @@ class Importer
     {
         $params = [
             'ds_id' => $dataSource->data_source_id,
-            'batch_id' => $batchID
+            'batch_id' => $batchID,
+            'pipeline' => 'ImportPipeline',
+            'class' => 'import'
         ];
 
         /** @var \ANDS\API\Task\ImportTask $importTask */
