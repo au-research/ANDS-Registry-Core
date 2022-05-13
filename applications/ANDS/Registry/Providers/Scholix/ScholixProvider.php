@@ -579,7 +579,7 @@ class ScholixProvider implements RegistryContentProvider
         if (count($identifiers) === 0) {
             $identifiers = [
                 [
-                    'identifier' => $publication['to_url'],
+                    'identifier' => baseUrl('view?key=') . $record->key,
                     'schema' => 'url'
                 ]
             ];
