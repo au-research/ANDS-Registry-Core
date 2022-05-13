@@ -411,4 +411,35 @@ class ScholixProviderTest extends MyceliumTestClass
         }
 
     }
+
+    /** @test **/
+    public function it_should_not_return_slug(){
+        $need_to_delete = false;
+        $record16 = RegistryObjectsRepository::getPublishedByKey('AUTestingRecords2ScholixRecords16');
+        if($record16 === null) {
+            $record16 = $this->stub(RegistryObject::class, [
+                'class' => 'collection',
+                'type' => 'dataset',
+                'key' => 'AUTestingRecords2ScholixRecords16',
+                'group' => 'AUTestingRecords2'
+            ]);
+            $this->stub(RecordData::class, [
+                'registry_object_id' => $record16->id,
+                'data' => Storage::disk('test')->get('rifcs/collection_scholix_16.xml')
+            ]);
+            $need_to_delete = true;
+            $record16 = RegistryObjectsRepository::getPublishedByKey('AUTestingRecords2ScholixRecords16');
+            $this->myceliumInsert($record16);
+        }
+
+        $scholix = ScholixProvider::get($record16);
+        $scholix_array = $scholix->toArray();
+        $expected = baseUrl('view?key=') . $record16->key;
+        $actual = $scholix_array[0]['link']['source']['identifier'][0]['identifier'];
+        $this->assertEquals($expected,$actual);
+        if($need_to_delete){
+            $this->myceliumDelete($record16);
+        }
+
+    }
 }

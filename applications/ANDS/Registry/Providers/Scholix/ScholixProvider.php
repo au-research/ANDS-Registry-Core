@@ -305,7 +305,7 @@ class ScholixProvider implements RegistryContentProvider
         $source = [
             'identifier' => [
                 [
-                    'identifier' => baseUrl($record->slug) ."/". $record->id,
+                    'identifier' => baseUrl('view?key=') . $record->key,
                     'schema' => 'url'
                 ]
             ],
