@@ -16,7 +16,7 @@ class JsonLDProviderTest extends \MyceliumTestClass
     public function it_should_output_json_encode_object_collection()
     {
 
-        $key = "C1_46";
+        $key = "P8dftL_.YY_moreData";
         $this->ensureKeyExist($key);
         $record = RegistryObjectsRepository::getPublishedByKey($key);
         $output = JsonLDProvider::process($record);

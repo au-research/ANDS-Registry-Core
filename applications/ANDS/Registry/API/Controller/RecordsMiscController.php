@@ -77,7 +77,11 @@ class RecordsMiscController
     public function json_ld($id)
     {
         $record = RegistryObjectsRepository::getRecordByID($id);
-        $jsonLD = JsonLDProvider::get($record);
+        if($record == null){
+            return "Registry Object with ID ". $id . " not found";
+        }
+        // always use 'process' to get the latest
+        $jsonLD = JsonLDProvider::process($record);
         return json_decode($jsonLD);
     }
 

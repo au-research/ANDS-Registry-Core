@@ -26,9 +26,13 @@ use \ANDS\Registry\Schema;
 class JsonLDProvider implements RIFCSProvider
 {
 
+    private static $myceliumServiceClient;
     private static $schema_uri = "https://schema.org/";
     private static $origin = "REGISTRY";
-    private static $registerd_identifier_types = ["igsn","grid","isbn","isni","doi","orcid","pubmed","issn"];
+    // RIF identifier types in registry.identifeirs at 1 March 2022:
+    // source https://confluence.ardc.edu.au/pages/viewpage.action?spaceKey=DPST&title=RIF-CS+to+Science-on-Schema.org+%28SOSO%29+crosswalk
+    private static $registerd_identifier_types = ["ark", "doi", "grid", "igsn", "isbn", "isni", "issn", "orcid"];
+    private static $other_resolvable_identifier_types = ["handle"=>["propertyID"=>"https://hdl.handle.net","prefix"=>"hdl"]];
     public static function base_url() {
         return Config::get('app.default_base_url');
     }
@@ -130,19 +134,13 @@ class JsonLDProvider implements RIFCSProvider
         return static::process($record);
     }
 
-    public static function getIdentifier(RegistryObject $record, $data = null){
-        $identifiers = [];
-
-        foreach (XMLUtil::getElementsByXPath($data['recordData'],
-            'ro:registryObject/ro:' . $record->class . '/ro:citationInfo/ro:citationMetadata/ro:identifier') AS $identifier) {
-            $identifiers[] = array("type"=>$identifier['type'],"value"=>(string)$identifier);
-        };
-
-        foreach (XMLUtil::getElementsByXPath($data['recordData'],
-            'ro:registryObject/ro:' . $record->class . '/ro:identifier') AS $identifier) {
-            $identifiers[] = array("type"=>$identifier['type'],"value"=>(string)$identifier);
-         };
-        return static::formatIdentifiers($identifiers);
+    public static function getIdentifier(RegistryObject $record){
+        $myceliumServiceClient = new \ANDS\Mycelium\MyceliumServiceClient(\ANDS\Util\Config::get('mycelium.url'));
+        $result = $myceliumServiceClient->getIdentifiers($record);
+        $identifiers = json_decode($result->getBody());
+        if (sizeof($identifiers) > 0) {
+            return static::formatIdentifierVertices($identifiers);
+        }
     }
 
 
@@ -444,10 +442,12 @@ class JsonLDProvider implements RIFCSProvider
                 $related[] = $record;
             }
             else {
-                $identifiers = IdentifierProvider::get($related_record);
+                $myceliumServiceClient = new \ANDS\Mycelium\MyceliumServiceClient(\ANDS\Util\Config::get('mycelium.url'));
+                $result = $myceliumServiceClient->getIdentifiers($related_record);
+                $identifiers = json_decode($result->getBody());
                 // these are actual registry objects, so they will have to_title and to_url
                 if (sizeof($identifiers) > 0) {
-                    $a_identifiers = static::formatIdentifiers($identifiers);
+                    $a_identifiers = static::formatIdentifierVertices($identifiers);
                     $related[] = array("@type" => $type, "name" => $relation["to_title"], "identifier" => $a_identifiers, "url" => $relation["to_url"]);
                 } else {
                     $related[] = array("@type" => $type, "name" => $relation["to_title"], "url" => $relation["to_url"]);
@@ -459,21 +459,76 @@ class JsonLDProvider implements RIFCSProvider
 
     public static function formatIdentifiers($identifiers){
         $a_identifiers = [];
-
+        $f_identifier = [];
+        $f_identifier["@type"] = "PropertyValue";
         foreach($identifiers as $identifier){
-            $property_id = (string)($identifier["type"]);
-            if(in_array(strtolower($property_id), static::$registerd_identifier_types)){
-                $property_id = "https://registry.identifiers.org/registry/" .strtolower($property_id);
-            }
             $formated = IdentifierProvider::format($identifier["value"], $identifier["type"]);
-            if(isset($formated['href']) && $formated['href'] !== ""){
-                $a_identifiers[] = array("@id"=>$formated['href'], "@type"=> "PropertyValue",
-                    "propertyID"=> $property_id, "value"=> $identifier["value"], "url" => $formated['href']);
+            if(isset($formated['href']) && $formated['href'] !== "" && $formated['href'] != null){
+                $f_identifier["@id"] = $formated['href'];
+                $f_identifier["url"] = $formated['href'];
+            }else{
+                $f_identifier["@id"] = $identifier["value"];
             }
-            else{
-                $a_identifiers[] = array("@id"=> $identifier["value"], "@type"=> "PropertyValue",
-                    "propertyID"=> $property_id, "value"=> $identifier["value"]);
+            if(in_array(strtolower($identifier["type"]), static::$registerd_identifier_types)){
+
+                $f_identifier["propertyID"] = "https://registry.identifiers.org/registry/" .strtolower($identifier["type"]);
+                if(strpos($identifier["value"], strtolower($identifier["type"].":")) === 0){
+                    $f_identifier["value"] = $identifier["value"];
+                }else{
+                    $f_identifier["value"] = strtolower($identifier["type"]).":".$identifier["value"];
+                }
             }
+            elseif(array_key_exists(strtolower($identifier["type"]), static::$other_resolvable_identifier_types)){
+                $prefix = static::$other_resolvable_identifier_types[strtolower($identifier["type"])]["prefix"].":";
+                $f_identifier["propertyID"] = static::$other_resolvable_identifier_types[strtolower($identifier["type"])]["propertyID"];
+                if(strpos($identifier["value"], $prefix) === 0){
+                    $f_identifier["value"] = $identifier["value"];
+                }else{
+                    $f_identifier["value"] = $prefix.$identifier["value"];
+                }
+            }else{
+                $f_identifier["value"] = $identifier["value"];
+            }
+            $a_identifiers[] = $f_identifier;
+
+        }
+        if(sizeof($identifiers) === 1){
+            $a_identifiers = $a_identifiers[0];
+        }
+        return $a_identifiers;
+    }
+
+    public static function formatIdentifierVertices($identifiers){
+        $a_identifiers = [];
+        foreach($identifiers as $identifier){
+            $f_identifier = [];
+            $f_identifier["@type"] = "PropertyValue";
+            if($identifier->url !== "" && $identifier->url != null ){
+                $f_identifier["@id"] = $identifier->url;
+                $f_identifier["url"] = $identifier->url;
+            }else{
+                $f_identifier["@id"] = $identifier->identifier;
+            }
+            if(in_array(strtolower($identifier->identifierType), static::$registerd_identifier_types)){
+                $f_identifier["propertyID"] = "https://registry.identifiers.org/registry/" .strtolower($identifier->identifierType);
+                if(strpos($identifier->identifier, strtolower($identifier->identifierType.":")) === 0) {
+                    $f_identifier["value"] = $identifier->identifier;
+                }else{
+                    $f_identifier["value"] = strtolower($identifier->identifierType).":".$identifier->identifier;
+                }
+            }
+            elseif(array_key_exists(strtolower($identifier->identifierType), static::$other_resolvable_identifier_types)){
+                $prefix = static::$other_resolvable_identifier_types[strtolower($identifier->identifierType)]["prefix"].":";
+                $f_identifier["propertyID"] = static::$other_resolvable_identifier_types[strtolower($identifier->identifierType)]["propertyID"];
+                if(strpos($identifier->identifier, $prefix) === 0) {
+                    $f_identifier["value"] = $identifier->identifier;
+                }else{
+                    $f_identifier["value"] = $prefix.$identifier->identifier;
+                }
+            }else{
+                $f_identifier["value"] = $identifier->identifier;
+            }
+            $a_identifiers[] = $f_identifier;
         }
         if(sizeof($identifiers) === 1){
             $a_identifiers = $a_identifiers[0];
