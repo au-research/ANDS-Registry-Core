@@ -275,7 +275,7 @@ class MyceliumServiceClient
 
     public function getIdentifiers(RegistryObject $record){
         Log::debug(__METHOD__ . "Getting Identifiers for", ["id" => $record->id]);
-        return $this->client->get("resources/records/".$record->id."/identifiers");
+        return $this->client->get("/api/resources/mycelium-registry-objects/$record->id/identifiers");
     }
 
 }
