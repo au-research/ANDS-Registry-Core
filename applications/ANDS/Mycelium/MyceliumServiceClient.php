@@ -51,16 +51,21 @@ class MyceliumServiceClient
      * @param $requestId
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function importRecord(RegistryObject $record, $requestId)
+    public function importRecord(RegistryObject $record, $requestId = null)
     {
         Log::debug(__METHOD__ . " Importing Record to Mycelium", ["id" => $record->id, 'requestId' => $requestId]);
 
-        return $this->client->post("api/services/mycelium/import-record", [
+        $query = [];
+        if ($requestId !== null) {
+            $query = [
+                'requestId' => $requestId
+            ];
+        }
+
+        return $this->client->post("api/resources/mycelium-registry-objects/", [
             "headers" => ['Content-Type' => 'application/json'],
             "body" => json_encode(MyceliumImportPayloadProvider::get($record)),
-            "query" => [
-                "requestId" => $requestId
-            ]
+            "query" => $query
         ]);
     }
 
