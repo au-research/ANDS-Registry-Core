@@ -33,8 +33,6 @@ class GrantsMetadataProvider implements RIFCSProvider
        $indexableArray = [];
 
        $indexableArray["activity_status"] = GrantsMetadataProvider::getActivityStatus($record);
-
-
        $indexableArray["administering_institution"] = GrantsMetadataProvider::getAdministeringInstitutions($record);
        $indexableArray["institutions"] = GrantsMetadataProvider::getInstitutions($record);
        $indexableArray["funders"] = RelationshipProvider::getFunders($record);
@@ -56,6 +54,14 @@ class GrantsMetadataProvider implements RIFCSProvider
         if(GrantsMetadataProvider::getLatestYear($record))
             $indexableArray["latest_year"] = GrantsMetadataProvider::getLatestYear($record);
 
+        return GrantsMetadataProvider::validateIndexableArray($indexableArray);
+    }
+
+    public static function validateIndexableArray(Array $indexableArray){
+        foreach($indexableArray as $key=>$attribute){
+            if($attribute === false) unset($indexableArray[(string)$key]);
+            //TO DO log the unexpected result;
+        }
         return $indexableArray;
     }
 
