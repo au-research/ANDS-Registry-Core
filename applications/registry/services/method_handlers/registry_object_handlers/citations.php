@@ -573,7 +573,7 @@ Content:text/plain; charset="utf-8"
             // update 21/02/2022 to use RelationshipSearchService
             $validRelationTypes[] = ['isPrincipalInvestigatorOf', 'hasPrincipalInvestigator'];
             $validRelationTypes[] = ['author'];
-            $validRelationTypes[] = ['coInvestigator'];
+            $validRelationTypes[] = ['coInvestigator', 'hasCoInvestigator'];
             $validRelationTypes[] = ['isOwnedBy','isOwnerOf'];
             $validRelationTypes[] = ['hasCollector','isCollectorOf'];
                  /* Ensure the search loops through the pre determined order of relationships

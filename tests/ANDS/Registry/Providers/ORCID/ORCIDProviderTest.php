@@ -116,8 +116,15 @@ class ORCIDProviderTest extends \MyceliumTestClass
 
     public function test_obtain_orcid()
     {
-        $record = ORCIDRecordsRepository::obtain("0000-0003-0670-6058");
-        $this->assertInstanceOf( ORCIDRecord::class, $record);
-        $this->assertEquals("Sarah Graham", $record->full_name);
+
+        $data['orcid'] = "0000-0003-0670-6058";
+        $data['name'] = "Sarah Graham";
+        $data['access_token'] = "eb0dbd0e-e7ab-4283-9da3-8709c3c2b4a1";
+        $data['refresh_token'] = "baae832d-460b-4dff-a405-35da4b7ff21e";
+        ORCIDRecordsRepository::firstOrCreate("0000-0003-0670-6058", $data);
+
+        $orcid = ORCIDRecordsRepository::obtain("0000-0003-0670-6058");
+        $this->assertInstanceOf( ORCIDRecord::class, $orcid);
+        $this->assertEquals("Sarah Graham", $orcid->full_name);
     }
 }

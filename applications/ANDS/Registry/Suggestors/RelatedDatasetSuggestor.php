@@ -33,6 +33,7 @@ class RelatedDatasetSuggestor implements RegistryObjectSuggestor
             'principalInvestigator',
             'author',
             'coInvestigator',
+            'hasCoInvestigator',
             'isOwnedBy',
             'hasCollector',
             'isManagedBy',

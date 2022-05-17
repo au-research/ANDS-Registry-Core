@@ -222,7 +222,7 @@ class AltmetricsProvider implements RIFCSProvider
 
         $validRelationTypes[] = ['isPrincipalInvestigatorOf', 'hasPrincipalInvestigator'];
         $validRelationTypes[] = ['author'];
-        $validRelationTypes[] = ['coInvestigator'];
+        $validRelationTypes[] = ['coInvestigator', 'hasCoInvestigator'];
         $validRelationTypes[] = ['isOwnedBy','IsOwnerOf'];
         $validRelationTypes[] = ['hasCollector','IsCollectorOf'];
         foreach ($validRelationTypes as $relationTypes) {

@@ -418,7 +418,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
         $returnStr = '';
         if($ro){
 
-            $relationshipTypeArray = ['hasPrincipalInvestigator','principalInvestigator','author','coInvestigator','isOwnedBy','hasCollector'];
+            $relationshipTypeArray = ['hasPrincipalInvestigator','principalInvestigator','author','coInvestigator','hasCoInvestigator', 'isOwnedBy','hasCollector'];
             $classArray = ['party'];
             $connections = $ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray);
 

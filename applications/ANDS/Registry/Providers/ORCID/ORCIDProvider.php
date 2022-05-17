@@ -211,7 +211,9 @@ class ORCIDProvider implements RegistryContentProvider
         $mapping = [
             "hasPrincipalInvestigator" => "principal-investigator",
             "author" => "author",
-            "coinvestigator" => "co-investigator"
+            "coinvestigator" => "co-investigator",
+            "coInvestigator" => "co-investigator",
+            "hasCoInvestigator" => "co-investigator"
         ];
 
         foreach ($mapping as $key => $value) {

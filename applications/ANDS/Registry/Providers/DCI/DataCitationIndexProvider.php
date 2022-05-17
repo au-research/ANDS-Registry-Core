@@ -285,7 +285,7 @@ class DataCitationIndexProvider implements RegistryContentProvider
             return $authors;
         }
 
-        $validRelationTypes = ['isPrincipalInvestigatorOf', 'author', 'hasAuthor', 'coInvestigator', 'isOwnedBy', 'hasCollector'];
+        $validRelationTypes = ['isPrincipalInvestigatorOf', 'author', 'hasAuthor', 'coInvestigator', 'hasCoInvestigator','isOwnedBy', 'hasCollector'];
         foreach ($validRelationTypes as $relationType) {
             $authors_related = array_merge($authors, RelationshipProvider::getRelationByType($record, [$relationType]));
             foreach($authors_related as $author){
