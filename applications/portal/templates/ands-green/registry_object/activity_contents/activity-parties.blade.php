@@ -9,7 +9,7 @@ display it but only once
 store the relationship and title of the organisation in an array to stop them being displayed multiple times
 
 --}}
-@if($related['organisations'] && $related['organisations']['total'] > 0)
+@if(isset($related['organisations']['contents'] ) && sizeof($related['organisations']['contents']) > 0)
 
     @foreach($order as $o)
         @foreach ($related['organisations']['contents'] as $col)

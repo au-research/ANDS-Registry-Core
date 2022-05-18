@@ -1,4 +1,4 @@
-@if (isset($related['researchers']) && sizeof($related['researchers']['contents']) > 0)
+@if (isset($related['researchers']['contents']) && sizeof($related['researchers']['contents']) > 0)
     <?php
         // preparation
       //  $researchers_array = array();
