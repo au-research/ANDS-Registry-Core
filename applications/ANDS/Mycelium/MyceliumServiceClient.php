@@ -69,16 +69,20 @@ class MyceliumServiceClient
         ]);
     }
 
-    public function deleteRecord($registryObjectId, $requestId) {
+    public function deleteRecord($registryObjectId, $requestId = null) {
 
         Log::debug(__METHOD__ . " Deleting Record in Mycelium", ["id" => $registryObjectId, 'requestId' => $requestId]);
 
-        return $this->client->post("api/services/mycelium/delete-record", [
+        $query = [];
+        if ($requestId !== null) {
+            $query = [
+                'requestId' => $requestId
+            ];
+        }
+
+        return $this->client->delete("api/resources/mycelium-registry-objects/$registryObjectId", [
             "headers" => ['Content-Type' => 'application/json'],
-            "query" => [
-                "registryObjectId" => $registryObjectId,
-                "requestId" => $requestId
-            ]
+            "query" => $query
         ]);
     }
 

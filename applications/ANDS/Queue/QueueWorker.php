@@ -4,6 +4,8 @@ namespace ANDS\Queue;
 
 use ANDS\Log\Log;
 use ANDS\Registry\Events\EventServiceProvider;
+use Monolog\Handler\NullHandler;
+use Monolog\Logger as Monolog;
 
 class QueueWorker
 {
@@ -27,6 +29,8 @@ class QueueWorker
         $this->queue = $queue;
         $this->name = $name ?: uniqid();
         $this->setDaemon($daemon);
+        $this->logger = new Monolog("worker.logger.$this->name");
+        $this->logger->pushHandler(new NullHandler());
     }
 
     /**
