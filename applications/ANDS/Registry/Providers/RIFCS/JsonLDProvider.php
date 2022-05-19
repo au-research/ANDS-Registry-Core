@@ -32,7 +32,10 @@ class JsonLDProvider implements RIFCSProvider
     // RIF identifier types in registry.identifeirs at 1 March 2022:
     // source https://confluence.ardc.edu.au/pages/viewpage.action?spaceKey=DPST&title=RIF-CS+to+Science-on-Schema.org+%28SOSO%29+crosswalk
     private static $registerd_identifier_types = ["ark", "doi", "grid", "igsn", "isbn", "isni", "issn", "orcid"];
-    private static $other_resolvable_identifier_types = ["handle"=>["propertyID"=>"https://hdl.handle.net","prefix"=>"hdl"]];
+    private static $other_resolvable_identifier_types = ["handle"=>["propertyID"=>"https://hdl.handle.net","prefix"=>"hdl"],
+                                                        "ror"=>["propertyID"=>"https://ror.org","prefix"=>""],
+                                                        "purl"=>["propertyID"=>"https://purl.org","prefix"=>""],
+                                                        "au-anl:peau"=>["propertyID"=>"https://nla.gov.au","prefix"=>""]];
     public static function base_url() {
         return Config::get('app.default_base_url');
     }
@@ -472,7 +475,7 @@ class JsonLDProvider implements RIFCSProvider
             if(in_array(strtolower($identifier["type"]), static::$registerd_identifier_types)){
 
                 $f_identifier["propertyID"] = "https://registry.identifiers.org/registry/" .strtolower($identifier["type"]);
-                if(strpos($identifier["value"], strtolower($identifier["type"].":")) === 0){
+                if(strpos($identifier["value"], "http") === 0 || strpos($identifier["value"], strtolower($identifier["type"].":")) === 0){
                     $f_identifier["value"] = $identifier["value"];
                 }else{
                     $f_identifier["value"] = strtolower($identifier["type"]).":".$identifier["value"];
@@ -481,7 +484,7 @@ class JsonLDProvider implements RIFCSProvider
             elseif(array_key_exists(strtolower($identifier["type"]), static::$other_resolvable_identifier_types)){
                 $prefix = static::$other_resolvable_identifier_types[strtolower($identifier["type"])]["prefix"].":";
                 $f_identifier["propertyID"] = static::$other_resolvable_identifier_types[strtolower($identifier["type"])]["propertyID"];
-                if(strpos($identifier["value"], $prefix) === 0){
+                if(strpos($identifier["value"], "http") === 0 || $prefix == ":" || strpos($identifier["value"], $prefix) === 0){
                     $f_identifier["value"] = $identifier["value"];
                 }else{
                     $f_identifier["value"] = $prefix.$identifier["value"];
@@ -511,7 +514,7 @@ class JsonLDProvider implements RIFCSProvider
             }
             if(in_array(strtolower($identifier->identifierType), static::$registerd_identifier_types)){
                 $f_identifier["propertyID"] = "https://registry.identifiers.org/registry/" .strtolower($identifier->identifierType);
-                if(strpos($identifier->identifier, strtolower($identifier->identifierType.":")) === 0) {
+                if(strpos($identifier->identifier, "http") === 0 || strpos($identifier->identifier, strtolower($identifier->identifierType.":")) === 0) {
                     $f_identifier["value"] = $identifier->identifier;
                 }else{
                     $f_identifier["value"] = strtolower($identifier->identifierType).":".$identifier->identifier;
@@ -520,7 +523,7 @@ class JsonLDProvider implements RIFCSProvider
             elseif(array_key_exists(strtolower($identifier->identifierType), static::$other_resolvable_identifier_types)){
                 $prefix = static::$other_resolvable_identifier_types[strtolower($identifier->identifierType)]["prefix"].":";
                 $f_identifier["propertyID"] = static::$other_resolvable_identifier_types[strtolower($identifier->identifierType)]["propertyID"];
-                if(strpos($identifier->identifier, $prefix) === 0) {
+                if(strpos($identifier->identifier, "http") === 0 || $prefix == ":" || strpos($identifier->identifier, $prefix) === 0) {
                     $f_identifier["value"] = $identifier->identifier;
                 }else{
                     $f_identifier["value"] = $prefix.$identifier->identifier;
