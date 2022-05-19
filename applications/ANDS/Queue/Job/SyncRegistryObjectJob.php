@@ -28,27 +28,23 @@ class SyncRegistryObjectJob extends Job
             return;
         }
 
-        // process
+        // process core
         CoreMetadataProvider::process($record);
 
-        // todo determine the jobs that needs to run to fully sync a record
-        // import graph to mycelium
-        // index relationships
-        // index portal
+        $myceliumClient = new MyceliumServiceClient(Config::get('mycelium.url'));
+
+        // import graph
+        $myceliumClient->importRecord($record);
 
         // index relationships
-//        $myceliumClient = new MyceliumServiceClient(Config::get('mycelium.url'));
-//        $myceliumClient->indexRecord($record);
-//
-//        try {
-//            $portalIndex = RIFCSIndexProvider::get($record);
-//            $solrClient = new SolrClient(Config::get('app.solr_url'));
-//            $solrClient->setCore("portal");
-//            $solrClient->request("POST", "portal/update/json/docs", ['commit' => 'true'],
-//                json_encode($portalIndex), "body");
-//        } catch (\Exception $e) {
-//
-//        }
+        $myceliumClient->indexRecord($record);
+
+        // index portal
+        $portalIndex = RIFCSIndexProvider::get($record);
+        $solrClient = new SolrClient(Config::get('app.solr_url'));
+        $solrClient->setCore("portal");
+        $solrClient->request("POST", "portal/update/json/docs", ['commit' => 'true'],
+            json_encode($portalIndex), "body");
     }
 
     function toArray() {

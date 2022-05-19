@@ -153,10 +153,7 @@ class MyceliumServiceClient
     {
         Log::debug(__METHOD__ . " Obtaining Record Graph", ["id" => $recordId]);
 
-        return $this->client->get("api/services/mycelium/get-record-graph", [
-            "query" => ["registryObjectId" => $recordId]
-        ]);
-
+        return $this->client->get("api/resources/mycelium-registry-objects/{$recordId}/graph");
     }
     /**
      * Get duplicates for a record via Mycelium
@@ -167,12 +164,7 @@ class MyceliumServiceClient
     {
         Log::debug(__METHOD__ . " Get Duplicate Records", ["id" => $registryObjectId]);
 
-        return $this->client->get("api/services/mycelium/get-duplicate-records", [
-            "headers" => [],
-            "query" => [
-                "registryObjectId" => $registryObjectId
-            ]
-        ]);
+        return $this->client->get("api/resources/mycelium-registry-objects/{$registryObjectId}/duplicates");
     }
 
     /**
@@ -223,22 +215,16 @@ class MyceliumServiceClient
     {
         Log::debug(__METHOD__, ["id" => $registryObjectId]);
 
-        return $this->client->get("api/services/mycelium/get-nested-collection-parents", [
-            "headers" => [],
-            "query" => [
-                "registryObjectId" => $registryObjectId
-            ]
-        ]);
+        return $this->client->get("api/resources/mycelium-registry-objects/{$registryObjectId}/nested-collection-parents");
     }
 
     public function getNestedCollectionChildren($registryObjectId, $offset, $limit, $excludeIdentifiers)
     {
         Log::debug(__METHOD__ , ["id" => $registryObjectId]);
 
-        return $this->client->get("api/services/mycelium/get-nested-collection-children", [
+        return $this->client->get("api/resources/mycelium-registry-objects/{$registryObjectId}/nested-collection-children", [
             "headers" => [],
             "query" => [
-                "registryObjectId" => $registryObjectId,
                 "offset" => $offset,
                 "limit" => $limit,
                 "excludeIdentifiers" => $excludeIdentifiers
