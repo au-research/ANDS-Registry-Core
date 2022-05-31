@@ -4,6 +4,8 @@ namespace ANDS\Queue;
 
 use ANDS\Log\Log;
 use ANDS\Registry\Events\EventServiceProvider;
+use Monolog\Handler\NullHandler;
+use Monolog\Logger as Monolog;
 
 class QueueWorker
 {
@@ -27,6 +29,8 @@ class QueueWorker
         $this->queue = $queue;
         $this->name = $name ?: uniqid();
         $this->setDaemon($daemon);
+        $this->logger = new Monolog("worker.logger.$this->name");
+        $this->logger->pushHandler(new NullHandler());
     }
 
     /**
@@ -46,20 +50,29 @@ class QueueWorker
      */
     public function work() {
 
-        Log::info("Worker {$this->name} started");
-        $this->logger->info("Worker {$this->name} started");
+        $this->logger->info("Worker Started", ['worker' => $this->name, 'queue' => $this->queue->getName()]);
 
         while($this->shouldContinue()) {
             $job = $this->getNextJob();
             if ($job) {
-                $this->logger->info("Worker[name={$this->name}] running Job $job");
-                $job->run();
+                $this->logger->info("Running Job", ['worker' => $this->name, 'job' => (string) $job]);
+                try {
+                    $job->run();
+                } catch (\Exception $e) {
+                    $this->logger->error("Job Failed", [
+                            'worker' => $this->name,
+                            'job' => (string)$job,
+                            'exception' => [
+                                'message' => $e->getMessage()
+                            ]
+                        ]
+                    );
+                }
             }
             sleep(1);
         }
 
         $this->logger->info("Worker {$this->name} stopped");
-        Log::info("Worker[name={$this->name}] stopped");
     }
 
     /**

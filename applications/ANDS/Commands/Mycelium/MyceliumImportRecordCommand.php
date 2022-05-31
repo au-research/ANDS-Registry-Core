@@ -37,13 +37,7 @@ class MyceliumImportRecordCommand extends ANDSCommand
             $record = RegistryObjectsRepository::getRecordByID($id);
             $this->timedActivity("Importing RegistryObject[id=$record->id] to Mycelium",
                 function () use ($record, $client) {
-
-                    // get an request import id
-                    $result = $client->createNewImportRecordRequest(uniqid());
-                    $request = json_decode($result->getBody()->getContents(), true);
-                    $myceliumRequestId = $request['id'];
-
-                    $this->importRecord($record, $client, $myceliumRequestId);
+                    $this->importRecord($record, $client);
                 });
         } else {
             $this->timedActivity("Importing all Published Records", function() use ($client) {
@@ -52,8 +46,8 @@ class MyceliumImportRecordCommand extends ANDSCommand
         }
     }
 
-    public function importRecord(RegistryObject $record, MyceliumServiceClient $client, $requestId) {
-        $client->importRecord($record, $requestId);
+    public function importRecord(RegistryObject $record, MyceliumServiceClient $client) {
+        $client->importRecord($record);
         $this->logv("Imported RegistryObject[id=$record->id] to Mycelium");
     }
 

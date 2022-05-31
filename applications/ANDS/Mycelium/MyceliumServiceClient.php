@@ -69,16 +69,20 @@ class MyceliumServiceClient
         ]);
     }
 
-    public function deleteRecord($registryObjectId, $requestId) {
+    public function deleteRecord($registryObjectId, $requestId = null) {
 
         Log::debug(__METHOD__ . " Deleting Record in Mycelium", ["id" => $registryObjectId, 'requestId' => $requestId]);
 
-        return $this->client->post("api/services/mycelium/delete-record", [
+        $query = [];
+        if ($requestId !== null) {
+            $query = [
+                'requestId' => $requestId
+            ];
+        }
+
+        return $this->client->delete("api/resources/mycelium-registry-objects/$registryObjectId", [
             "headers" => ['Content-Type' => 'application/json'],
-            "query" => [
-                "registryObjectId" => $registryObjectId,
-                "requestId" => $requestId
-            ]
+            "query" => $query
         ]);
     }
 
@@ -153,10 +157,7 @@ class MyceliumServiceClient
     {
         Log::debug(__METHOD__ . " Obtaining Record Graph", ["id" => $recordId]);
 
-        return $this->client->get("api/services/mycelium/get-record-graph", [
-            "query" => ["registryObjectId" => $recordId]
-        ]);
-
+        return $this->client->get("api/resources/mycelium-registry-objects/{$recordId}/graph");
     }
     /**
      * Get duplicates for a record via Mycelium
@@ -167,12 +168,7 @@ class MyceliumServiceClient
     {
         Log::debug(__METHOD__ . " Get Duplicate Records", ["id" => $registryObjectId]);
 
-        return $this->client->get("api/services/mycelium/get-duplicate-records", [
-            "headers" => [],
-            "query" => [
-                "registryObjectId" => $registryObjectId
-            ]
-        ]);
+        return $this->client->get("api/resources/mycelium-registry-objects/{$registryObjectId}/duplicates");
     }
 
     /**
@@ -223,22 +219,16 @@ class MyceliumServiceClient
     {
         Log::debug(__METHOD__, ["id" => $registryObjectId]);
 
-        return $this->client->get("api/services/mycelium/get-nested-collection-parents", [
-            "headers" => [],
-            "query" => [
-                "registryObjectId" => $registryObjectId
-            ]
-        ]);
+        return $this->client->get("api/resources/mycelium-registry-objects/{$registryObjectId}/nested-collection-parents");
     }
 
     public function getNestedCollectionChildren($registryObjectId, $offset, $limit, $excludeIdentifiers)
     {
         Log::debug(__METHOD__ , ["id" => $registryObjectId]);
 
-        return $this->client->get("api/services/mycelium/get-nested-collection-children", [
+        return $this->client->get("api/resources/mycelium-registry-objects/{$registryObjectId}/nested-collection-children", [
             "headers" => [],
             "query" => [
-                "registryObjectId" => $registryObjectId,
                 "offset" => $offset,
                 "limit" => $limit,
                 "excludeIdentifiers" => $excludeIdentifiers
