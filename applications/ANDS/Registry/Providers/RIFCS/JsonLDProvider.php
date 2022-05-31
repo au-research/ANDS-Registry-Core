@@ -433,15 +433,15 @@ class JsonLDProvider implements RIFCSProvider
             }
             // if no record in the registry or not a registry object use what ever we get from the index
             if($related_record == null){
-                $identifiers[] = array("value"=>$relation["to_identifier"], "type"=>$relation["to_identifier_type"]);
-                $a_identifiers = static::formatIdentifiers($identifiers);
+                $identifier = array("value"=>$relation["to_identifier"], "type"=>$relation["to_identifier_type"]);
+                $f_identifier = static::formatIdentifier($identifier);
                 $record = [];
                 $record['@type'] = $type;
                 if(isset($relation["to_title"]))
                     $record['name'] = $relation["to_title"];
                 if(isset($relation["to_url"]))
                     $record['url'] =$relation["to_url"];
-                $record['identifier'] = $a_identifiers;
+                $record['identifier'] = $f_identifier;
                 $related[] = $record;
             }
             else {
@@ -460,45 +460,37 @@ class JsonLDProvider implements RIFCSProvider
         return $related;
     }
 
-    public static function formatIdentifiers($identifiers){
-        $a_identifiers = [];
+    public static function formatIdentifier($identifier){
         $f_identifier = [];
         $f_identifier["@type"] = "PropertyValue";
-        foreach($identifiers as $identifier){
-            $formated = IdentifierProvider::format($identifier["value"], $identifier["type"]);
-            if(isset($formated['href']) && $formated['href'] !== "" && $formated['href'] != null){
-                $f_identifier["@id"] = $formated['href'];
-                $f_identifier["url"] = $formated['href'];
-            }else{
-                $f_identifier["@id"] = $identifier["value"];
-            }
-            if(in_array(strtolower($identifier["type"]), static::$registerd_identifier_types)){
+        $formated = IdentifierProvider::format($identifier["value"], $identifier["type"]);
+        if(isset($formated['href']) && $formated['href'] !== "" && $formated['href'] != null){
+            $f_identifier["@id"] = $formated['href'];
+            $f_identifier["url"] = $formated['href'];
+        }else{
+            $f_identifier["@id"] = $identifier["value"];
+        }
+        if(in_array(strtolower($identifier["type"]), static::$registerd_identifier_types)){
 
-                $f_identifier["propertyID"] = "https://registry.identifiers.org/registry/" .strtolower($identifier["type"]);
-                if(strpos($identifier["value"], "http") === 0 || strpos($identifier["value"], strtolower($identifier["type"].":")) === 0){
-                    $f_identifier["value"] = $identifier["value"];
-                }else{
-                    $f_identifier["value"] = strtolower($identifier["type"]).":".$identifier["value"];
-                }
-            }
-            elseif(array_key_exists(strtolower($identifier["type"]), static::$other_resolvable_identifier_types)){
-                $prefix = static::$other_resolvable_identifier_types[strtolower($identifier["type"])]["prefix"].":";
-                $f_identifier["propertyID"] = static::$other_resolvable_identifier_types[strtolower($identifier["type"])]["propertyID"];
-                if(strpos($identifier["value"], "http") === 0 || $prefix == ":" || strpos($identifier["value"], $prefix) === 0){
-                    $f_identifier["value"] = $identifier["value"];
-                }else{
-                    $f_identifier["value"] = $prefix.$identifier["value"];
-                }
-            }else{
+            $f_identifier["propertyID"] = "https://registry.identifiers.org/registry/" .strtolower($identifier["type"]);
+            if(strpos($identifier["value"], "http") === 0 || strpos($identifier["value"], strtolower($identifier["type"].":")) === 0){
                 $f_identifier["value"] = $identifier["value"];
+            }else{
+                $f_identifier["value"] = strtolower($identifier["type"]).":".$identifier["value"];
             }
-            $a_identifiers[] = $f_identifier;
-
         }
-        if(sizeof($identifiers) === 1){
-            $a_identifiers = $a_identifiers[0];
+        elseif(array_key_exists(strtolower($identifier["type"]), static::$other_resolvable_identifier_types)){
+            $prefix = static::$other_resolvable_identifier_types[strtolower($identifier["type"])]["prefix"].":";
+            $f_identifier["propertyID"] = static::$other_resolvable_identifier_types[strtolower($identifier["type"])]["propertyID"];
+            if(strpos($identifier["value"], "http") === 0 || $prefix == ":" || strpos($identifier["value"], $prefix) === 0){
+                $f_identifier["value"] = $identifier["value"];
+            }else{
+                $f_identifier["value"] = $prefix.$identifier["value"];
+            }
+        }else{
+            $f_identifier["value"] = $identifier["value"];
         }
-        return $a_identifiers;
+        return $f_identifier;
     }
 
     public static function formatIdentifierVertices($identifiers){
