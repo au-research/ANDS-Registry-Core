@@ -13,7 +13,9 @@
 sender_email      = Admin.Email@organization.org
 
 # SMTP host
-smtp_host         = localhost
+smtp_host         = smtp.gmail.com
+smtp_port         = 587
+smtp_password     = password
 
 # Database connection for accessing the links to be checked.
 database_module   = pymysql

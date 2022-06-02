@@ -38,7 +38,7 @@ etc/misc/python/citation_services/update_citation_data.ini
 etc/misc/python/linkchecker/linkchecker.ini
 etc/misc/python/linkchecker/__pycache__
 etc/misc/python/linkchecker/checkers/__pycache__
-
+etc/misc/python/linkchecker/venv
 # etc
 wordpress/
 
