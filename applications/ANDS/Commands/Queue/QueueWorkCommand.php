@@ -28,7 +28,7 @@ class QueueWorkCommand extends ANDSCommand
             ->addOption('name', null, InputOption::VALUE_OPTIONAL)
             ->addOption('queue', null, InputOption::VALUE_OPTIONAL)
             ->addOption('daemon', null, InputOption::VALUE_NONE, null)
-            ->addOption('log_path', null, InputOption::VALUE_OPTIONAL)
+            ->addOption('log-path', null, InputOption::VALUE_OPTIONAL)
         ;
     }
 
@@ -37,24 +37,19 @@ class QueueWorkCommand extends ANDSCommand
         $this->setUp($input, $output);
 
         QueueService::init();
+
         $queue = $input->getOption('queue') ?: QueueService::getQueue();
         $name = $input->getOption('name') ?: uniqid();
         $daemon = $input->getOption('daemon');
+
         $worker = new QueueWorker($queue, $name, $daemon);
 
-        $logPath = $input->getOption('log_path');
+        // give the worker a logger
+        $logPath = $input->getOption('log-path');
         if ($logPath) {
-            $logger = Log::createDriver("worker.logger.$name", [
-                'driver' => 'single',
-                'path' => $logPath,
-                'file' => "worker.$name.log",
-                'level' => 'debug'
-            ]);
-
-            if ($logger) {
-                $logger->pushHandler(new StreamHandler("php://stdout"));
-                $worker->setLogger($logger);
-            }
+            $logger = $this->getLogger($name, $logPath);
+            $logger->pushHandler(new StreamHandler("php://stdout"));
+            $worker->setLogger($logger);
         }
 
         // catch catchable termination signals
@@ -76,5 +71,33 @@ class QueueWorkCommand extends ANDSCommand
         });
 
         $worker->work();
+    }
+
+    /**
+     * Determine a Logger instance depends on the logPath is a directory or a file
+     * @param $name
+     * @param $logPath
+     * @return \Monolog\Logger|\Psr\Log\LoggerInterface|null
+     */
+    private function getLogger($name, $logPath)
+    {
+
+        // default is a dir path
+        $dirPath = $logPath;
+        $fileName = "worker.$name.log";
+
+        // if logPath is to a file
+        if (!is_dir($logPath)) {
+            $dirPath = dirname($logPath);
+            $fileName = basename($logPath);
+        }
+
+        return Log::createDriver("worker.logger.$name", [
+            'driver' => 'single',
+            'path' => $dirPath,
+            'file' => $fileName,
+            'level' => 'debug'
+        ]);
+
     }
 }

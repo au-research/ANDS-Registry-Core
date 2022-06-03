@@ -19,13 +19,15 @@ class SyncRegistryObjectJob extends Job
         $this->registryObjectId = $payload['registry_object_id'];
     }
 
+    /**
+     * @throws \Exception
+     */
     function run()
     {
         $record = RegistryObjectsRepository::getRecordByID($this->registryObjectId);
 
         if (!$record) {
-            // todo log
-            return;
+            throw new \Exception("No RegistryObject[registryObjectId=$this->registryObjectId] found");
         }
 
         // process core

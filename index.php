@@ -233,6 +233,7 @@ if (!defined('BASE')) {
 }
 initEloquent();
 \ANDS\Log\Log::init();
+\ANDS\Queue\QueueService::init();
 require_once APPPATH.'libraries/RegistryPlugin.php';
 require_once BASEPATH.'core/CodeIgniter.php';
 
