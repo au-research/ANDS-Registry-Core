@@ -11,6 +11,7 @@ abstract class Queue
     abstract function enqueue(Job $job);
     abstract function dequeue();
     abstract function size();
+    abstract function get($limit, $offset);
 
     /**
      * @return mixed

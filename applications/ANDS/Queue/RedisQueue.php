@@ -33,4 +33,10 @@ class RedisQueue extends Queue
     {
         return $this->client->llen($this->name);
     }
+
+    function get($limit, $offset)
+    {
+        // todo convert proper limit offset to index range
+        return $this->client->lrange($this->name, $offset, $limit);
+    }
 }
