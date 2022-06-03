@@ -28,6 +28,7 @@ class QueueWorkCommand extends ANDSCommand
             ->addOption('name', null, InputOption::VALUE_OPTIONAL)
             ->addOption('queue', null, InputOption::VALUE_OPTIONAL)
             ->addOption('daemon', null, InputOption::VALUE_NONE, null)
+            ->addOption('quiet', 'q', InputOption::VALUE_NONE, null)
             ->addOption('log-path', null, InputOption::VALUE_OPTIONAL)
         ;
     }
@@ -41,6 +42,7 @@ class QueueWorkCommand extends ANDSCommand
         $queue = $input->getOption('queue') ?: QueueService::getQueue();
         $name = $input->getOption('name') ?: uniqid();
         $daemon = $input->getOption('daemon');
+        $quiet = $input->getOption('quiet');
 
         $worker = new QueueWorker($queue, $name, $daemon);
 
@@ -48,7 +50,9 @@ class QueueWorkCommand extends ANDSCommand
         $logPath = $input->getOption('log-path');
         if ($logPath) {
             $logger = $this->getLogger($name, $logPath);
-            $logger->pushHandler(new StreamHandler("php://stdout"));
+            if (!$quiet) {
+                $logger->pushHandler(new StreamHandler("php://stdout"));
+            }
             $worker->setLogger($logger);
         }
 
