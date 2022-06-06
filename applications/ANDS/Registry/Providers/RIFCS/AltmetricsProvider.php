@@ -221,7 +221,7 @@ class AltmetricsProvider implements RIFCSProvider
         // update 21/02/2022 to use RelationshipSearchService
 
         $validRelationTypes[] = ['isPrincipalInvestigatorOf', 'hasPrincipalInvestigator'];
-        $validRelationTypes[] = ['author'];
+        $validRelationTypes[] = ['author','hasAuthor'];
         $validRelationTypes[] = ['coInvestigator', 'hasCoInvestigator'];
         $validRelationTypes[] = ['isOwnedBy','IsOwnerOf'];
         $validRelationTypes[] = ['hasCollector','IsCollectorOf'];
