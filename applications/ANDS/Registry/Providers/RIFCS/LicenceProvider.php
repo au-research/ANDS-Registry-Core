@@ -148,7 +148,7 @@ class LicenceProvider implements RIFCSProvider
             foreach($rights as $right) {
                 if (isset($right['licence_group'])) {
                     $licence_class = strtolower($right['licence_group']);
-                    if ($licence_class == 'unknown') $json['license_class'] = 'Other';
+                    if ($licence_class == 'unknown') $licence_class = 'Other';
                 }
             }
         }

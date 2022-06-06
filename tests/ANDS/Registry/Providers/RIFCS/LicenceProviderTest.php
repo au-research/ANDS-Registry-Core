@@ -43,4 +43,22 @@ class LicenceProviderTest extends \RegistryTestClass
         $this->assertNotNull($license_class);
         $this->assertSame($license_class['license_class'], 'open licence');
     }
+
+    /** @test */
+    public function test_it_gets_the_other_licence_class()
+    {
+        // given a record
+        /** @var RegistryObject */
+        //test license_class
+        $record = $this->stub(RegistryObject::class,
+            ['class' => 'collection', 'type' => 'dataset', 'key' => 'AUTESTING_NO_RIGHTS_ELEMENTS_TEST']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_unknown_rights.xml')
+        ]);
+
+        $license_class = LicenceProvider::getIndexableArray($record);
+        $this->assertNotNull($license_class);
+        $this->assertSame($license_class['license_class'], 'Other');
+    }
 }
