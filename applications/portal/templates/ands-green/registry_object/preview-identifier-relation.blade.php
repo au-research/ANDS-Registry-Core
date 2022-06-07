@@ -85,7 +85,7 @@
 <!-- RDA-703 show the first 5 related data to the given identifier (that we don't have an RO for
 		TODO: find a portal search end to search for more data (if more than 5 related data exists)
 -->
-		@if($related_data)
+		@if($related_data['total'] > 0)
 			<h4>More data related to {{$record->to_title}}</h4>
 			<ul>
 				@foreach($related_data['contents'] as $col)
