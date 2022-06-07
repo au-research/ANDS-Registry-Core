@@ -1,6 +1,25 @@
+
 <div class="panel panel-primary panel-content swatch-white">
 	<div class="panel-body">
 		@if(!$pullback && $record->connections_preview_div)
+			<h2 class="bordered bold">
+			@if($record->to_class =='collection' && $record->to_class=='software')
+				<i class="fa fa-file-code-o icon-portal"></i>
+			@elseif($record->to_class=='collection')
+				<i class="fa fa-folder-open icon-portal">
+			@elseif($record->to_class=='activity')
+				<i class="fa fa-flask icon-portal"></i>
+			@elseif($record->to_class=='service')
+				<i class="fa fa-wrench icon-portal"></i>
+			@elseif($record->to_class=='party')
+				@if($record->to_type=='party')
+					<i class="fa fa-user icon-portal"></i>
+				@else
+					<i class="fa fa-group icon-portal"></i>
+				@endif
+			@endif
+					<a href="">{{$record->to_title}}</a>
+			</h2>
 			{{$record->connections_preview_div}}
 			@if($ro)
 				<a href="{{portal_url($ro->core['slug'].'/'.$ro->core['id'])}}" class="btn btn-primary btn-link btn-sm">View Record</a>
