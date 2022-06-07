@@ -1146,8 +1146,13 @@ class Registry_object extends MX_Controller {
 
             // filters only accept data_source_id and status for now
             $query = \ANDS\RegistryObject::where('data_source_id', $dataSourceID);
-            if (array_key_exists('filter', $filters) && array_key_exists('status', $filters['filter'])) {
-                $query = $query->where('status', $filters['filter']['status']);
+
+            // the status to filter on would be nested under filters[filter] or as the value of the select_all POST field
+            $status = array_key_exists('filter', $filters) && array_key_exists('status', $filters['filter'])
+                ? $filters['filter']['status']
+                : $select_all;
+            if (isset($status)) {
+                $query = $query->where('status', $status);
             }
 
             $affectedIDs =  $query->pluck('registry_object_id')->toArray();
