@@ -538,18 +538,10 @@ class Registry_object extends MX_Controller
             }else{
                 $identifier =$input_array->to_identifier.$identifier_icon."</br>";
             }
-            $identifiers_div = "<h5>Identifier:</h5>".$identifier_type .": ". $identifier;
-
-            $imgUrl = asset_url('img/' . $input_array->to_type . '.png', 'base');
-            $classImg = '<img class="icon-heading" src="' . $imgUrl . '" alt="' . $input_array->to_type . '" style="width:24px; float:left;">';
-            $connections_preview_div = '<h2 class="bordered bold">'.$classImg.$title . '</h2><div class="post">' .
-                $identifiers_div . '</div>';
-            $input_array->connections_preview_div = $connections_preview_div;
-
+            $identifiers_div = "<h4>Identifier:</h4>".$identifier_type .": ". $identifier;
+            $input_array->connections_preview_div = $identifiers_div;
             $fr= $input_array;
-
             $ro = false;
-
             $pullback = false;
 
             //ORCID "Pull back"
