@@ -1,5 +1,6 @@
 <div class="related-organisations">
     <h4>Related Organisations</h4>
+
     <ul class="list-unstyled">
         <? $relation_to_title = [];
         $dupes = 0;?>
@@ -22,12 +23,22 @@
             <li>
                 <i class="fa fa-group icon-portal"></i>
                 <small>{{ $relation_type_text }}</small>
-                <a href="{{$col['to_url']}}"
-                   title="{{ $col['to_title'] }}"
-                   class="ro_preview"
-                   tip="{{ $col['to_title'] }}"
-                   ro_id="{{ $col['to_identifier'] }}">
-                    {{$col['to_title']}}</a>
+                @if($col["to_identifier_type"]=="ro:id")
+                   <a href="{{$col['to_url']}}"
+                    title="{{ $col['to_title'] }}"
+                    class="ro_preview"
+                    ro_id="{{$col['to_identifier']}}">
+                       {{$col['to_title']}}
+                @elseif($col["to_identifier_type"]!="ro:id")
+                   <a  href="false"
+                    title="{{ $col['to_title'] }}"
+                    class="ro_preview"
+                    <?php $col_json = urlencode(json_encode($col)); ?>
+                    identifier_relation_id="{{$col_json}}">
+                    {{$col['to_title']}}
+                @endif
+                   </a>
+
                 {{ isset($col['to_funder']) ? "(funded by ". $col['to_funder'] .")" : '' }}
             </li>
             @endif
