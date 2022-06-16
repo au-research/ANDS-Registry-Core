@@ -60,3 +60,8 @@ database_name     = dbs_registry
 # then registry_prefix should be set to http://myhost.org/core/
 # (A slash is added to the end, if you don't include one.)
 registry_prefix   = http://registry.organization.org/
+# HTTP status codes to be allowed , not marked as BROKEN
+# eg: 503 status returns by Cloudflare DDOS protection
+permitted_status_codes = 503
+# comma separated data_source_id that are excluded from link checking
+excluded_data_source_id = 44, 200

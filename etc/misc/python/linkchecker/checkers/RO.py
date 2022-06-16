@@ -80,6 +80,7 @@ class ROChecker(base.BaseChecker):
     # registry_prefix: "http://path-to-registry-objects/"
     #   A trailing slash will be added, if there isn't one.
     required_options = {'registry_prefix'}
+    permitted_status_codes = []
 
     def do_link_checking(self):
         """Do the link checking.
@@ -89,11 +90,23 @@ class ROChecker(base.BaseChecker):
         if not self._params['registry_prefix'].endswith('/'):
             self._params['registry_prefix'] += '/'
 
+        excluded_data_source_ids = []
+
+        if 'excluded_data_source_id' in self._params and self._params['excluded_data_source_id'] != '':
+            excluded_data_source_ids = self._params['excluded_data_source_id'].split(",")
+
+        if 'permitted_status_codes' in self._params and self._params['permitted_status_codes'] != '':
+            self.permitted_status_codes = self._params['permitted_status_codes'].split(",")
+
         data_sources = {}
-        self._get_data_sources(data_sources, self._params['client_id'])
+        self._get_data_sources(data_sources, self._params['client_id'], excluded_data_source_ids)
 
         test_results = {}
         error_count = {}
+        if len(data_sources) < 1:
+            print("DEBUG: No Data Sources found", file=sys.stderr)
+            return
+
 
         self._run_tests(self._params['ssl_context'],
                         self._params['client_id'],
@@ -117,7 +130,7 @@ class ROChecker(base.BaseChecker):
       `title`
     """
 
-    def _get_data_sources(self, data_sources, data_source_id):
+    def _get_data_sources(self, data_sources, data_source_id, excluded_data_source_ids):
         """Get data source information for ROs.
 
         Get data source information for generating a personalised record
@@ -127,12 +140,18 @@ class ROChecker(base.BaseChecker):
             of the database query.
         data_source_id -- A data_source_id to use for searching the database,
             or None, if all data sources are to be returned.
+        excluded_data_source_ids -- a list of data source ids that should be skipped
+        these datasource admins reported high level of activities until a new link checker is developed
+        we should avoid testing links for those datasources
         """
         cur = self._conn.cursor()
         query = "SELECT " + self.DATA_SOURCES_COLUMNS + " FROM data_sources"
         if data_source_id is not None:
             cur.execute(query + " where `data_source_id`=" +
                         str(data_source_id) + ";")
+        elif len(excluded_data_source_ids) > 0:
+            ds_string = ",".join(excluded_data_source_ids)
+            cur.execute(query + " where `data_source_id` NOT IN (" + ds_string + ");")
         else:
             cur.execute(query + ";")
         for r in cur:
@@ -186,7 +205,7 @@ class ROChecker(base.BaseChecker):
         rol_list = []
         testing_array = {}
 
-        self._get_RO_links_for_checking(rol_list, client_id)
+        self._get_RO_links_for_checking(rol_list, data_sources)
 
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
         if self._debug:
@@ -265,7 +284,7 @@ class ROChecker(base.BaseChecker):
         'link_type',
         'link']
 
-    def _get_RO_links_for_checking(self, rol_list, data_source_id=None):
+    def _get_RO_links_for_checking(self, rol_list, data_sources):
         """Get all RO links to be tested.
 
         Links are tested irrespective of the status of the
@@ -278,8 +297,7 @@ class ROChecker(base.BaseChecker):
         Arguments:
         rol_list -- The array to be populated with RO link data
             from the database.
-        data_source_id -- A data_source_id to use for searching the database,
-            or None, if the ROs of all data sources are to be returned.
+        data_source_ids -- The data_source_ids to use for searching the database
         """
         cur = self._conn.cursor()
 
@@ -289,11 +307,12 @@ class ROChecker(base.BaseChecker):
         # Use "DISTINCT", as the same link may appear multiple
         # times, but we only need to check it once.
         # (Cf. _get_RO_links_for_reporting().)
+        data_source_ids = []
+        for item in data_sources.items():
+            data_source_ids.append(str(item[0]))
+        ds_string = ",".join(data_source_ids)
         query = ("SELECT DISTINCT " + ", ".join(columns_for_query) +
-                 " FROM registry_object_links")
-        if data_source_id is not None:
-            query += " WHERE `data_source_id`=" + str(data_source_id)
-        query += ";"
+                 " FROM registry_object_links WHERE `data_source_id` IN (" + ds_string + ");")
         if self._debug:
             print("DEBUG: get_RO_links query:", query, file=sys.stderr)
         cur.execute(query)
@@ -553,7 +572,22 @@ class ROChecker(base.BaseChecker):
                     # i.e., at position 1.
                     status_code = int(mStatus.split()[1])
                     # Now treat the different status codes as appropriate.
-                    if status_code > 399:
+                    if str(status_code) in self.permitted_status_codes:
+                        # Not complete Success. But most likely false positive
+                        # eg 503 behind DDOS protection by Cloudflare
+                        try:
+                            self._mark_status_and_timestamp(url_str_original,
+                                                            SUCCESS,
+                                                            timestamp)
+                            del testing_array[counter]
+                        except KeyError:
+                            pass
+                        if self._debug:
+                            print("DEBUG:", counter, "Closing writer",
+                                  file=sys.stderr)
+                        writer.close()
+                        return
+                    elif status_code > 399:
                         # Status > 399 is an error, e.g., a "404".
                         self._handle_one_error(url_str_original,
                                                STATUS_ERROR_FORMAT.format(
@@ -654,6 +688,7 @@ class ROChecker(base.BaseChecker):
                     print("DEBUG:", counter, "Closing writer",
                           file=sys.stderr)
                 writer.close()
+            print("OTHER: " + EXCEPTION_FORMAT.format(e))
             self._handle_one_error(url_str_original,
                                    EXCEPTION_FORMAT.format(e),
                                    timestamp,
@@ -763,7 +798,7 @@ data_source_id: {}
         # Are we reporting on just one data source?
         is_one_data_source = data_source_id
         rol_list = []
-        self._get_RO_links_for_reporting(rol_list, data_source_id)
+        self._get_RO_links_for_reporting(rol_list, data_sources)
 
         result_list = {}
         error_count = {}
@@ -877,7 +912,7 @@ data_source_id: {}
         'title',
         'slug']
 
-    def _get_RO_links_for_reporting(self, rol_list, data_source_id=None):
+    def _get_RO_links_for_reporting(self, rol_list, data_sources):
         """Get all RO links to be reported.
 
         Only links from published records are reported.
@@ -898,6 +933,11 @@ data_source_id: {}
         ro_columns_for_query = ["ro.`" + c + "`"
                                 for c in self.RO_REPORTING_COLUMNS]
         # No "DISTINCT" this time (cf. _get_RO_links_for_checking()).
+
+        data_source_ids = []
+        for item in data_sources.items():
+            data_source_ids.append(str(item[0]))
+        ds_string = ",".join(data_source_ids)
         query = ("SELECT " +
                  ", ".join(rol_columns_for_query) +
                  ", " +
@@ -905,9 +945,8 @@ data_source_id: {}
                  " FROM registry_object_links rol"
                  " JOIN registry_objects ro"
                  " WHERE rol.registry_object_id = ro.registry_object_id"
-                 " AND ro.status = 'PUBLISHED'")
-        if data_source_id is not None:
-            query += " AND rol.`data_source_id`=" + str(data_source_id)
+                 " AND ro.status = 'PUBLISHED'"
+                 " AND rol.`data_source_id` IN (" + ds_string + ")")
         query += " ORDER BY ro.registry_object_id;"
         if self._debug:
             print("DEBUG: get_RO_links query:", query, file=sys.stderr)
