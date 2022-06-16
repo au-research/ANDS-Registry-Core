@@ -67,6 +67,7 @@ import datetime
 import socket
 import sys
 import time
+import random
 import urllib
 
 # The base module contains the BaseChecker class.
@@ -328,6 +329,10 @@ class ROChecker(base.BaseChecker):
             if self._is_link_to_be_checked(rol):
                 rol_list.append(rol)
         cur.close()
+        # Shuffle the list of link
+        # generally the links be added in a sequence during a datasource imports,
+        # shuffling would reduce the frequency a given server (domain) is tested
+        random.shuffle(rol_list)
         if self._debug:
             print("DEBUG: _get_RO_links_for_checking rol_list:",
                   rol_list, file=sys.stderr)
