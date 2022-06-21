@@ -113,48 +113,22 @@ class Registry_objects extends CI_Model {
 	 */
 	public function resolveIdentifier($type = 'orcid', $identifier) {
 		if (!$identifier) throw new Exception('No Identifier Provided');
+
+        $myceliumServiceClient = new \ANDS\Mycelium\MyceliumServiceClient(\ANDS\Util\Config::get('mycelium.url'));
+        $result = $myceliumServiceClient->resolveIdentifier($identifier, $type);
+        $result = json_decode((String) $result->getBody(), true);
+
 		if ($type=='orcid') {
-			$ch = curl_init();
-			$headers = array('Accept: application/orcid+json');
-			curl_setopt($ch, CURLOPT_URL, "http://pub.orcid.org/".$identifier); # URL to post to
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1 ); # return into a variable
-			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers ); # custom headers, see above
-			$result = curl_exec( $ch ); # run!
-			curl_close($ch);
-
-			$result = json_decode($result, true);
-
-			if(!isset($result['orcid-profile'])) return false;
-
-			$first_name = $result['orcid-profile']['orcid-bio']['personal-details']['given-names']['value'];
-			$last_name = $result['orcid-profile']['orcid-bio']['personal-details']['family-name']['value'];
-			$name = $first_name.' '.$last_name;
-			$bio = "";
-
-			if(isset($result['orcid-profile']['orcid-bio']['biography'])){
-				$bio = $result['orcid-profile']['orcid-bio']['biography']['value'];
-			}
-
 			return array(
-				'name' => $name,
-				'bio' => $bio,
-				'orcid' => $identifier
+				'name' => isset($result['title']) ? $result['title'] : $result['meta']['rawTitle'],
+				'bio' => isset($result['meta']['biography']) ? $result['meta']['biography'] : '',
+				'orcid' => $identifier,
+                'url' => $result['url']
 			);
 		} elseif ($type=='doi') {
-
-			//prepare identifier, strip out http
-			$identifier = str_replace("http://dx.doi.org/", "", $identifier);
-            $identifier = str_replace("https://doi.org/", "", $identifier);
-
-            //
-            $myceliumServiceClient = new \ANDS\Mycelium\MyceliumServiceClient(\ANDS\Util\Config::get('mycelium.url'));
-            $result = $myceliumServiceClient->resolveIdentifier($identifier, "doi");
-			$result = json_decode((String) $result->getBody(), true);
-			$title = isset($result['title']) ? $result['title'] : $result['meta']['rawTitle'];
-
  			if($result) {
 				return array(
-					'title' => $title,
+					'title' => isset($result['title']) ? $result['title'] : $result['meta']['rawTitle'],
 					'publisher' => isset($result["meta"]['publisher']) ? $result["meta"]['publisher'] : '',
 					'source' => isset($result["meta"]['source']) ? $result["meta"]['source'] : '',
 					'DOI' => isset($result["meta"]['DOI']) ? $result["meta"]['DOI'] : '',
@@ -162,10 +136,18 @@ class Registry_objects extends CI_Model {
 					'url' => isset($result['url']) ? $result['url'] : '',
 					'description' => isset($result["meta"]['abstract']) ? $result["meta"]['abstract'] : ''
 				);
-			} else {
-                 return [];
 			}
-		}
+        } elseif ($type=='ror') {
+            if($result) {
+                return array(
+                    'name' => isset($result['title']) ? $result['title'] : $result['meta']['rawTitle'],
+                    'url' => isset($result['url']) ? $result['url'] : '',
+                    'moreinfo' => isset($result['moreinfo']) ? $result['moreinfo'] : ''
+                );
+            }
+        }
+
+        return [];
 	}
 
 	public function findRecord($filters = array(), $id_only = false){
