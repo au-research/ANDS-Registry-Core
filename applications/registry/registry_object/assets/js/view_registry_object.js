@@ -235,7 +235,7 @@ function processRelatedObjects(offset, relatedObjects) {
 
     $.ajax({
         type: 'GET',
-        url: api_url +'registry/relationships?from_id='+$('#registry_object_id').val() + "&boost_to_origin=RelatedObject&boost_to_reverse=false&rows=" + rows + "&offset="+offset,
+        url: api_url +'registry/relationships?from_id='+$('#registry_object_id').val() + "&relation_origin=RelatedObject&rows=" + rows + "&offset="+offset,
         dataType: 'json',
         success: function(data){
              var moreToShow = '';
