@@ -26,7 +26,10 @@ class SearchHandler extends Handler{
         if ($custom_query) {
             $this->ci->solr->setCustomQuery($custom_query);
         } else {
-            $this->ci->solr->setFilters(array('q'=>$query));
+            $this->ci->solr->setFilters([
+                'q'=>$query,
+                'qf' => 'key^2 title_search^1 identifier_value^0.05 tag_search^0.05 fulltext^0.01 _text_^0.01'
+            ]);
         }
 
         $result = $this->ci->solr->executeSearch(true);

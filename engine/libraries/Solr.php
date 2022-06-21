@@ -854,6 +854,9 @@ class Solr
                 case 'relation':
                     $this->setOpt('fq', "{!join from=to_identifier to=id fromIndex=relationships}(relationType:$value)");
                     break;
+                case 'qf':
+                    $this->setOpt('qf', $value);
+                    break;
             }
         }
         return $this;
