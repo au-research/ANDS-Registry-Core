@@ -16,9 +16,6 @@ class RelationshipsAPI extends HTTPController
         'fl',
         'relations_fl',
         'relations_limit',
-        'boost_to_origin',
-        'boost_to_reverse'
-
     ];
 
     public static $searchParameters = [
@@ -32,6 +29,7 @@ class RelationshipsAPI extends HTTPController
         'relation_type',
         'include_reverse',
         'include_external',
+        'relation_origin'
     ];
 
     public function index()
