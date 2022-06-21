@@ -123,7 +123,8 @@ class Registry_objects extends CI_Model {
 				'name' => isset($result['title']) ? $result['title'] : $result['meta']['rawTitle'],
 				'bio' => isset($result['meta']['biography']) ? $result['meta']['biography'] : '',
 				'orcid' => $identifier,
-                'url' => $result['url']
+                'url' => $result['url'],
+                'relatedInfo_type' => $type
 			);
 		} elseif ($type=='doi') {
  			if($result) {
@@ -134,7 +135,8 @@ class Registry_objects extends CI_Model {
 					'DOI' => isset($result["meta"]['DOI']) ? $result["meta"]['DOI'] : '',
 					'type' => isset($result["meta"]['type']) ? $result["meta"]['type'] : '',
 					'url' => isset($result['url']) ? $result['url'] : '',
-					'description' => isset($result["meta"]['abstract']) ? $result["meta"]['abstract'] : ''
+					'description' => isset($result["meta"]['abstract']) ? $result["meta"]['abstract'] : '',
+                    'relatedInfo_type' => $type
 				);
 			}
         } elseif ($type=='ror') {
@@ -142,7 +144,11 @@ class Registry_objects extends CI_Model {
                 return array(
                     'name' => isset($result['title']) ? $result['title'] : $result['meta']['rawTitle'],
                     'url' => isset($result['url']) ? $result['url'] : '',
-                    'moreinfo' => isset($result['moreinfo']) ? $result['moreinfo'] : ''
+                    'types' => isset($result["meta"]['types']) ? $result["meta"]['types'] : 'Other',
+                    'links' => isset($result["meta"]['links']) ? $result["meta"]['links'] : '',
+                    'country' => isset($result["meta"]['country']) ? $result["meta"]['country'] : 'No specified',
+                    'moreinfo' => isset($result['moreinfo']) ? $result['moreinfo'] : '',
+                    'relatedInfo_type' => $type
                 );
             }
         }

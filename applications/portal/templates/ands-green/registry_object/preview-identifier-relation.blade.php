@@ -34,13 +34,27 @@
 						</a>
 				@endif
 			</h4>
-
 			@if(!$pullback)
 				<p>@include('registry_object/contents/the-description')</p>
-			@elseif(isset($pullback['bio']))
+			@elseif($pullback['relatedInfo_type'] == 'orcid' && isset($pullback['bio']))
 				<p> {{ $pullback['bio']  }}</p>
-			@elseif(isset($pullback['moreinfo']))
-				<p> {{ $pullback['moreinfo']  }}</p>
+			@elseif($pullback['relatedInfo_type'] == 'ror')
+				<h5>Type</h5>
+				<p> {{ $pullback['types']  }}</p>
+
+				<h5>Country</h5>
+				<p> {{ $pullback['country']  }}</p>
+
+				@if($pullback['links'] != "")
+
+				<?php
+				$link_array = explode("'",$pullback['links'])
+				?>
+					<h5>Links</h5>
+					@foreach($link_array as $link)
+						<p><a href="{{$link}}" target="_blank">{{$link}}</p>
+					@endforeach
+				@endif
 			@endif
 
 			@if($ro)
