@@ -6,7 +6,7 @@
 			@if($record->to_class =='collection' && $record->to_class=='software')
 				<i class="fa fa-file-code-o icon-portal"></i>
 			@elseif($record->to_class=='collection')
-				<i class="fa fa-folder-open icon-portal">
+				<i class="fa fa-folder-open icon-portal"></i>
 			@elseif($record->to_class=='activity')
 				<i class="fa fa-flask icon-portal"></i>
 			@elseif($record->to_class=='service')
@@ -26,23 +26,35 @@
 			@endif
 		@elseif($pullback)
 			<h4>
-				@if($record->to_title)
-					{{$record->to_title}}
-					@if($pullback['orcidRecord'])
-						<br/>
-						<a href="{{ $pullback['orcidRecord']->url }}">
-							{{  $pullback['orcidRecord']->url }}
+				@if($pullback['name'] )
+					{{$pullback['name'] }}
+							<br/>
+						<a href="{{ $pullback['url'] }}">
+							{{  $pullback['url'] }}
 						</a>
-					@endif
-				@else
-					{{ $pullback['name'] }} ({{ $pullback['orcidRecord'] ? $pullback['orcidRecord']->url : '' }})
 				@endif
 			</h4>
-
 			@if(!$pullback)
 				<p>@include('registry_object/contents/the-description')</p>
-			@else
-				<p> {{ $pullback['bio_content']  }}</p>
+			@elseif($pullback['relatedInfo_type'] == 'orcid' && isset($pullback['bio']))
+				<p> {{ $pullback['bio']  }}</p>
+			@elseif($pullback['relatedInfo_type'] == 'ror')
+				<h5>Type</h5>
+				<p> {{ $pullback['types']  }}</p>
+
+				<h5>Country</h5>
+				<p> {{ $pullback['country']  }}</p>
+
+				@if($pullback['links'] != "")
+
+				<?php
+				$link_array = explode("'",$pullback['links'])
+				?>
+					<h5>Links</h5>
+					@foreach($link_array as $link)
+						<p><a href="{{$link}}" target="_blank">{{$link}}</p>
+					@endforeach
+				@endif
 			@endif
 
 			@if($ro)
@@ -75,8 +87,13 @@
 				@if($ro)
 					<a href="{{portal_url($ro->core['slug'].'/'.$ro->core['id'])}}" class="btn btn-primary btn-link btn-sm">View Record</a>
 				@endif
-				<a href="{{ $pullback['orcidRecord']->url }} " class="btn btn-primary btn-link btn-sm">View profile in <img src="{{asset_url('img/orcid_tagline_small.png', 'base')}}" alt="" style="border: none;width: 50px;margin-top: -5px;
+				@if(isset($pullback['bio']))
+				<a href="{{ $pullback['url'] }} " class="btn btn-primary btn-link btn-sm">View profile in <img src="{{asset_url('img/orcid_tagline_small.png', 'base')}}" alt="" style="border: none;width: 50px;margin-top: -5px;
 			margin-left: 5px;"></a>
+				@elseif(isset($pullback['moreinfo']))
+						<a href="{{ $pullback['url'] }} " class="btn btn-primary btn-link btn-sm">View profile in <img src="{{asset_url('img/ror-logo.svg', 'base')}}" alt="" style="border: none;width: 50px;margin-top: -5px;
+			margin-left: 5px;"></a>
+				@endif
 			</p>
 			
 

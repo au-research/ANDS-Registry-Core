@@ -547,17 +547,16 @@ class Registry_object extends MX_Controller
             //ORCID "Pull back"
             if ($fr->to_type == 'party' && $fr->to_identifier_type == 'orcid' && isset($fr->to_identifier)) {
 
-               $orcid = ORCIDRecordsRepository::obtain($fr->to_identifier);
-               if($orcid != null){
-                    $bio = json_decode($orcid->record_data, true);
-                    $pullback = [
-                        'name' => $orcid->full_name,
-                        'bio' => $bio,
-                        'bio_content' => $bio['person']['biography']['content'],
-                        'orcidRecord' => $orcid,
-                        'orcid' => $orcid->orcid_id
-                    ];
-               }
+                $pullback = $this->ro->resolveIdentifier('orcid', $fr->to_identifier);
+                $filters = array('identifier_value' => $fr->to_identifier);
+                $ro = $this->ro->findRecord($filters);
+            }
+
+            //ROR "Pull back"
+
+            if ($fr->to_type == 'group' && $fr->to_identifier_type == 'ror' && isset($fr->to_identifier)) {
+
+                $pullback = $this->ro->resolveIdentifier('ror', $fr->to_identifier);
                 $filters = array('identifier_value' => $fr->to_identifier);
                 $ro = $this->ro->findRecord($filters);
             }

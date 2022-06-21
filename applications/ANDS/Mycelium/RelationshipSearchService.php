@@ -92,23 +92,6 @@ class RelationshipSearchService
                 case "boost_to_group":
                     $params['bq'] = "to_group:${value}";
                     break;
-                case "boost_to_origin":
-                    if(isset($params['bq'])){
-                        $params['bq'] .= " OR relation_origin:${value}";
-                    }
-                    else{
-                        $params['bq'] = "relation_origin:${value}";
-                    }
-                    break;
-                case "boost_to_reverse":
-                    if(isset($params['bq'])){
-                        $params['bq'] .= " OR relation_reverse:${value}";
-                    }
-                    else{
-                        $params['bq'] = "relation_reverse:${value}";
-                    }
-
-                    break;
             }
         }
 
@@ -171,6 +154,18 @@ class RelationshipSearchService
                 case "not_to_type":
                     $fqs[] = "-to_type:$value";
                     break;
+                case "relation_origin":
+                    // supports comma separated value, and PHP array (when using PHP API)
+                    // RelatedObject -> +({!parent which=$parentFilter}relation_origin:RelatedObject)
+                    // RelatedObject,RelatedInfo -> +({!parent which=$parentFilter}relation_origin:RelatedObjectOR {!parent which=$parentFilter}relation_origin:RelatedObject)
+                    $value = is_array($value) ? $value : explode(',', $value);
+                    $value = collect($value)->map(function ($val) {
+                        return '{!parent which=$parentFilter}relation_origin:' . $val;
+                    })->toArray();
+                    $value = implode(' OR ', $value);
+                    $fqs[] = "+($value)";
+                    break;
+
             }
 
         }

@@ -113,93 +113,47 @@ class Registry_objects extends CI_Model {
 	 */
 	public function resolveIdentifier($type = 'orcid', $identifier) {
 		if (!$identifier) throw new Exception('No Identifier Provided');
+
+        $myceliumServiceClient = new \ANDS\Mycelium\MyceliumServiceClient(\ANDS\Util\Config::get('mycelium.url'));
+        $result = $myceliumServiceClient->resolveIdentifier($identifier, $type);
+        $result = json_decode((String) $result->getBody(), true);
+
 		if ($type=='orcid') {
-			$ch = curl_init();
-			$headers = array('Accept: application/orcid+json');
-			curl_setopt($ch, CURLOPT_URL, "http://pub.orcid.org/".$identifier); # URL to post to
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1 ); # return into a variable
-			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers ); # custom headers, see above
-			$result = curl_exec( $ch ); # run!
-			curl_close($ch);
-
-			$result = json_decode($result, true);
-
-			if(!isset($result['orcid-profile'])) return false;
-
-			$first_name = $result['orcid-profile']['orcid-bio']['personal-details']['given-names']['value'];
-			$last_name = $result['orcid-profile']['orcid-bio']['personal-details']['family-name']['value'];
-			$name = $first_name.' '.$last_name;
-			$bio = "";
-
-			if(isset($result['orcid-profile']['orcid-bio']['biography'])){
-				$bio = $result['orcid-profile']['orcid-bio']['biography']['value'];
-			}
-
 			return array(
-				'name' => $name,
-				'bio' => $bio,
-				'orcid' => $identifier
+				'name' => isset($result['title']) ? $result['title'] : $result['meta']['rawTitle'],
+				'bio' => isset($result['meta']['biography']) ? $result['meta']['biography'] : '',
+				'orcid' => $identifier,
+                'url' => $result['url'],
+                'relatedInfo_type' => $type
 			);
 		} elseif ($type=='doi') {
-
-			//prepare identifier, strip out http
-			$identifier = str_replace("http://dx.doi.org/", "", $identifier);
-            $identifier = str_replace("https://doi.org/", "", $identifier);
-
-			//Crossref
-			$ch = curl_init();
-			curl_setopt($ch, CURLOPT_URL, "http://api.crossref.org/works/".$identifier);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1 );
-			$result = curl_exec( $ch );
-			curl_close($ch);
-
-			$result = json_decode($result, true);
-
-
-			$title = isset($result['message']['title'][0]) ? $result['message']['title'][0] : false;
-			if (!$title) $title = isset($result['message']['container-title'][0]) ? $result['message']['container-title'][0] : 'No Title';
-
-			if($result) {
+ 			if($result) {
 				return array(
-					'title' => $title,
-					'publisher' => isset($result['message']['publisher']) ? $result['message']['publisher'] : '',
-					'source' => isset($result['message']['source']) ? $result['message']['source'] : '',
-					'DOI' => isset($result['message']['DOI']) ? $result['message']['DOI'] : '',
-					'type' => isset($result['message']['type']) ? $result['message']['type'] : '',
-					'url' => isset($result['message']['URL']) ? $result['message']['URL'] : '',
-					'description' => ''
+					'title' => isset($result['title']) ? $result['title'] : $result['meta']['rawTitle'],
+					'publisher' => isset($result["meta"]['publisher']) ? $result["meta"]['publisher'] : '',
+					'source' => isset($result["meta"]['source']) ? $result["meta"]['source'] : '',
+					'DOI' => isset($result["meta"]['DOI']) ? $result["meta"]['DOI'] : '',
+					'type' => isset($result["meta"]['type']) ? $result["meta"]['type'] : '',
+					'url' => isset($result['url']) ? $result['url'] : '',
+					'description' => isset($result["meta"]['abstract']) ? $result["meta"]['abstract'] : '',
+                    'relatedInfo_type' => $type
 				);
-			} else {
-				//try get it from Datacite
-				$ch = curl_init();
-				curl_setopt($ch, CURLOPT_URL, "http://search.datacite.org/api?wt=json&fl=doi,creator,resourceTypeGeneral,description,publisher,title&q=doi:".$identifier);
-				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1 );
-				$result = curl_exec( $ch );
-				curl_close($ch);
-
-				$result = json_decode($result, true);
-				if ($result) {
-					if($result['response']['numFound'] > 0) {
-						$record = $result['response']['docs'][0];
-						return array(
-							'title' => isset($record['title']) ? $record['title'][0] : 'No Title',
-							'publisher' => isset($record['publisher']) ? $record['publisher'] : '',
-							'doi' => isset($record['doi']) ? $record['doi'] : '',
-							'type' => isset($record['resourceTypeGeneral']) ? $record['resourceTypeGeneral'] : '',
-							'url' => 'https://doi.org/'.$identifier,
-							'source' => '',
-							'description' => isset($record['description']) ? $record['description'][0] : ''
-						);
-					} else {
-						//No result from Datacite
-						return false;
-					}
-				} else {
-					//No result from Crossref nor Datacite
-					return false;
-				}
 			}
-		}
+        } elseif ($type=='ror') {
+            if($result) {
+                return array(
+                    'name' => isset($result['title']) ? $result['title'] : $result['meta']['rawTitle'],
+                    'url' => isset($result['url']) ? $result['url'] : '',
+                    'types' => isset($result["meta"]['types']) ? $result["meta"]['types'] : 'Other',
+                    'links' => isset($result["meta"]['links']) ? $result["meta"]['links'] : '',
+                    'country' => isset($result["meta"]['country']) ? $result["meta"]['country'] : 'No specified',
+                    'moreinfo' => isset($result['moreinfo']) ? $result['moreinfo'] : '',
+                    'relatedInfo_type' => $type
+                );
+            }
+        }
+
+        return [];
 	}
 
 	public function findRecord($filters = array(), $id_only = false){

@@ -260,6 +260,9 @@ class IdentifierProvider implements RIFCSProvider
             case 'arc':
                 $identifiers['display_text'] = 'ARC';
                 return $identifiers;
+            case 'ror':
+                $identifiers['display_text'] = 'ROR';
+                return $identifiers;
             default:
                 return false;
         }
