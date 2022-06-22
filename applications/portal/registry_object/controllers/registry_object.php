@@ -571,16 +571,17 @@ class Registry_object extends MX_Controller
         } else {
             if ($this->input->get('identifier_doi')) {
                 $identifier = $this->input->get('identifier_doi');
-
+                $identifier_type = $this->input->get('identifier_doi_type');
                 //DOI "Pullback"
                 $pullback = $this->ro->resolveIdentifier('doi', $identifier);
+                $pullback['identifier_doi_type'] =  $identifier_type;
                 $ro = $this->ro->findRecord(array('identifier_value' => $identifier));
 
                 monolog(
                     array(
                         'event' => 'portal_preview_doi',
                         'record' => $ro ? $this->getRecordFields($ro) : null,
-                        'identifier_doi' => $this->input->get('identifier_doi')
+                        'identifier_doi' => $this->input->get('identifier_doi'),
                     ),
                     'portal', 'info'
                 );

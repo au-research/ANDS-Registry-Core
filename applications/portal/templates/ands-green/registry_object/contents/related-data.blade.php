@@ -30,6 +30,7 @@
                             ro_id="{{$col['to_identifier']}}"
                        @elseif($col["to_identifier_type"]=="doi")
                             identifier_doi="{{ $col['to_identifier'] }}"
+                            identifier_doi_type="collection"
                        @else
                             <?php  $col_json = urlencode(json_encode($col)); ?>
                             identifier_relation_id="{{$col_json}}"
