@@ -2024,7 +2024,7 @@ class Data_source extends MX_Controller {
                 "Initiated: " . $this->user->name() . " (" . $this->user->localIdentifier() . ") at " . display_date().NL
                 ,'info', 'IMPORTER');
 
-            \ANDS\Registry\Importer::wipeDataSourceRecords($dataSource);
+            \ANDS\Registry\Importer::wipeDataSourceRecords($dataSource, false);
 
             \ANDS\Log\Log::info(__METHOD__. " wiping DataSource[id={$id}] Completed Successfully");
             $dataSource->appendDataSourceLog(

@@ -343,7 +343,7 @@ class Importer
 
         // delete the records afterwards
         if ($softDelete === false) {
-            Log::debug(__METHOD__ . " Deleting RegistryObject", ['data_source_id' => $dataSource->id]);
+            Log::debug(__METHOD__ . " Deleting All RegistryObjects", ['data_source_id' => $dataSource->id]);
             RegistryObject::where('data_source_id', $dataSource->id)->delete();
         }
     }
