@@ -146,7 +146,7 @@ class Registry_objects extends CI_Model {
                     'url' => isset($result['url']) ? $result['url'] : '',
                     'types' => isset($result["meta"]['types']) ? $result["meta"]['types'] : 'Other',
                     'links' => isset($result["meta"]['links']) ? $result["meta"]['links'] : '',
-                    'country' => isset($result["meta"]['country']) ? $result["meta"]['country'] : 'No specified',
+                    'country' => isset($result["meta"]['country']) ? $result["meta"]['country'] : '',
                     'moreinfo' => isset($result['moreinfo']) ? $result['moreinfo'] : '',
                     'relatedInfo_type' => $type
                 );

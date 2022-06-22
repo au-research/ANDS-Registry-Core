@@ -104,7 +104,7 @@ $(document).on('click', '.ro_preview', function(event){
 				} else if($(element).attr('identifier_relation_id')) {
 					var url = base_url+'registry_object/preview/?identifier_relation_id='+$(element).attr('identifier_relation_id');
 				} else if($(element).attr('identifier_doi')) {
-					var url = base_url+'registry_object/preview/?identifier_doi='+$(element).attr('identifier_doi');
+					var url = base_url+'registry_object/preview/?identifier_doi='+$(element).attr('identifier_doi')+'&identifier_doi_type='+$(element).attr('identifier_doi_type');
 				}
 
                 if (url && $(element).attr('href').indexOf('source=')) {

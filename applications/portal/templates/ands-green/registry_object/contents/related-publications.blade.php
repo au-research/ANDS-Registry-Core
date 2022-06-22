@@ -28,6 +28,7 @@
                     @if($col['to_identifier_type'] == 'doi')
                          <a href="" class="ro_preview"
                             identifier_doi="{{ $col['to_identifier'] }}"
+                            identifier_doi_type="publication"
                             tip="{{ $col['to_title'] }}">
                              {{ $col['to_title'] }}
                          </a>

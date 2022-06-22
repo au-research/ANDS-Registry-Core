@@ -1,8 +1,7 @@
 
 <div class="panel panel-primary panel-content swatch-white">
 	<div class="panel-body">
-		@if(!$pullback && $record->connections_preview_div)
-			<h2 class="bordered bold">
+		<h2 class="bordered bold">
 			@if($record->to_class =='collection' && $record->to_class=='software')
 				<i class="fa fa-file-code-o icon-portal"></i>
 			@elseif($record->to_class=='collection')
@@ -18,17 +17,21 @@
 					<i class="fa fa-group icon-portal"></i>
 				@endif
 			@endif
-					<a href="">{{$record->to_title}}</a>
+		@if(!$pullback && $record->connections_preview_div)
+
+
+					{{$record->to_title}}
 			</h2>
 			{{$record->connections_preview_div}}
 			@if($ro)
 				<a href="{{portal_url($ro->core['slug'].'/'.$ro->core['id'])}}" class="btn btn-primary btn-link btn-sm">View Record</a>
 			@endif
 		@elseif($pullback)
-			<h4>
+
+
 				@if($pullback['name'] )
 					{{$pullback['name'] }}
-							<br/>
+							</h2><h4>
 						<a href="{{ $pullback['url'] }}">
 							{{  $pullback['url'] }}
 						</a>
@@ -41,9 +44,10 @@
 			@elseif($pullback['relatedInfo_type'] == 'ror')
 				<h5>Type</h5>
 				<p> {{ $pullback['types']  }}</p>
-
+				@if($pullback['country'] != "")
 				<h5>Country</h5>
 				<p> {{ $pullback['country']  }}</p>
+				@endif
 
 				@if($pullback['links'] != "")
 
