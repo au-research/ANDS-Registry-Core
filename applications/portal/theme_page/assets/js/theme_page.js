@@ -13,11 +13,21 @@ angular.module('portal_theme',[]).
 	factory('searches', function($http){
 		return{
 			search: function(filters){
+
 				// not logging this search event
-				var promise = $http.post(base_url+'registry_object/filter/true', {'filters':filters}).then(function(response){
-					return response.data;
+				// var promise = $http.post(api_url+'registry_object/filter/true', {'filters':filters}).then(function(response){
+				// 	return response.data;
+				// });
+				// return promise;
+
+				// RDA-762. uses the same endpoint as theme_cms_app.js
+				return $http.post(base_url + 'registry/services/registry/post_solr_search', {'filters': filters})
+					.then(function (response) {
+						return {
+							response: response.data.result
+						};
 				});
-				return promise;
+
 			},
 			constructFilterArray: function(search){
 				var filters = {};
