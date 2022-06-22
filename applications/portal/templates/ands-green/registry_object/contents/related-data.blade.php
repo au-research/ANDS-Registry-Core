@@ -28,6 +28,8 @@
                        class="ro_preview"
                        @if($col["to_identifier_type"]=="ro:id")
                             ro_id="{{$col['to_identifier']}}"
+                       @elseif($col["to_identifier_type"]=="doi")
+                            identifier_doi="{{ $col['to_identifier'] }}"
                        @else
                             <?php  $col_json = urlencode(json_encode($col)); ?>
                             identifier_relation_id="{{$col_json}}"
