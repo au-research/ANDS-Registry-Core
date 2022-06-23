@@ -988,27 +988,26 @@ class Registry_object extends MX_Controller {
             // for ARO screen
             $result['message_code'] = $targetStatus;
 
-            $importTask = new \ANDS\API\Task\ImportTask();
-            $importTask->init([
-                'name' => "HandleStatusChange Pipeline",
+            // intialise the ImportTask
+            // with the type to NONE so that the TaskManager won't act on it
+            /** @var \ANDS\API\Task\ImportTask $importTask */
+            $importTask = TaskRepository::create([
+                'name' => "Manual Delete",
+                'type' => Task::$TYPE_NONE,
                 'params' => http_build_query([
-                    'pipeline' => 'PublishingWorkflow',
+                    'class' => 'import',
                     'ds_id' => $dataSourceID,
-                    'user_name' => $this->user->name(),
+                    'pipeline' => 'PublishingWorkflow',
+                    'source' => 'manual',
                     'targetStatus' => $targetStatus,
-                    'source' => 'manual'
+                    'user_name' => $this->user->name()
                 ])
-            ]);
-            $importTask
-                ->skipLoadingPayload()
-                ->enableRunAllSubTask();
+            ], true);
 
+            // assign affectedRecords for the operation
             $importTask
                 ->setTaskData('affectedRecords', $affected_ids)
                 ->initialiseTask();
-
-            // send the task to background to obtain a task ID
-            $importTask->sendToBackground();
 
             // append data source log
             $dataSource = ANDS\DataSource::find($dataSourceID);
@@ -1021,7 +1020,12 @@ class Registry_object extends MX_Controller {
                 implode(NL, $importStartMessage),
                 "info", "IMPORTER"
             );
-            $importTask->run();
+
+            // run the task
+            $importTask
+                ->skipLoadingPayload()
+                ->enableRunAllSubTask()
+                ->run();
 
             $result['error'] = array_merge($result['error'], $importTask->getError());
 
