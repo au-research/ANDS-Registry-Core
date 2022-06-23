@@ -118,11 +118,16 @@ class ProcessDelete extends ImportSubTask
 
     public function removeRegistryObjectFromDatabaseTables($ids)
     {
+        $count = count($ids);
+        $this->log("Removing Links, Scholix and DCI of $count records");
+
         Links::whereIn('registry_object_id', $ids)->delete();
         Scholix::whereIn('registry_object_id', $ids)->delete();
         DCI::whereIn('registry_object_id', $ids)->delete();
 
         // TODO alt schema versions
+
+        $this->log("Soft Deleting $count records");
 
         // soft delete the registryObject (for PUBLISHED)
         RegistryObject::whereIn('registry_object_id', $ids)->update(['status' => 'DELETED']);
