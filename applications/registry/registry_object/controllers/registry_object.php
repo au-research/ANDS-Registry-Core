@@ -2,12 +2,16 @@
 define('SERVICES_MODULE_PATH', REGISTRY_APP_PATH.'services/');
 
 include_once("applications/registry/registry_object/models/_transforms.php");
+
+use ANDS\API\Task\Task;
 use ANDS\DataSource;
 use ANDS\Registry\Providers\Quality\Types;
 use ANDS\RegistryObject\AltSchemaVersion;
 use ANDS\Registry\Providers\ServiceDiscovery\ServiceProducer;
 use ANDS\Registry\Providers\ServiceDiscovery\ServiceDiscovery;
 use \ANDS\Registry\Schema;
+use ANDS\Task\TaskRepository;
+
 /**
  * Registry Object controller
  *
@@ -1164,29 +1168,23 @@ class Registry_object extends MX_Controller {
         }
 
         // The affected_ids list should be good now
-        // Running delete pipeline
-        $importTask = new \ANDS\API\Task\ImportTask();
-
-        $importTask->init([
+        // task type set to NONE so that TaskManager won't act on it
+        /** @var \ANDS\API\Task\ImportTask $importTask */
+        $importTask = TaskRepository::create([
             'name' => "Manual Delete",
-			'type' => "PHPSHELL",
+            'type' => Task::$TYPE_NONE,
             'params' => http_build_query([
+                'class' => 'import',
                 'ds_id' => $dataSourceID,
-                'pipeline' => 'PublishingWorkflow',
+                'pipeline' => 'default',
                 'source' => 'manual'
             ])
-        ]);
+        ], true);
 
-        $importTask
-            ->skipLoadingPayload()
-            ->enableRunAllSubTask();
-
-        $importTask
-            ->setTaskData('deletedRecords', $affectedIDs)
+        // skip loading payload because there's none and load deletedRecords
+        $importTask->skipLoadingPayload();
+        $importTask->setTaskData('deletedRecords', $affectedIDs)
             ->initialiseTask();
-
-        // send the task to background to obtain a task ID
-        $importTask->sendToBackground();
 
         // append data source log
         $dataSource = ANDS\DataSource::find($dataSourceID);
@@ -1200,17 +1198,20 @@ class Registry_object extends MX_Controller {
             "info", "IMPORTER"
         );
 
-        // send the task to background to obtain a task ID
-        $importTask->sendToBackground();
-        $message = "Deleting $count Registry Objects in the background. Please refer to the Data Source Dashboard for updates.";
-
         // if we're deleting a small amount of records, do it immediately
         $threshold = 5;
         if ($count < $threshold) {
             $ds = $this->ds->getByID($dataSourceID);
             $ds->updateStats();
-            $importTask->run();
+
+            // enable running of all subtasks and immediately run the task and return
+            $importTask->enableRunAllSubTask()->run();
             $message = "Deleted $count Registry Objects";
+        } else {
+
+            // by setting the task type to SHELL and save it, TaskManager will pick it up later
+            $importTask->setType(\ANDS\API\Task\Task::$TYPE_SHELL)->save();
+            $message = "Deleting $count Registry Objects in the background. Please refer to the Data Source Dashboard for updates.";
         }
 
         echo json_encode([
