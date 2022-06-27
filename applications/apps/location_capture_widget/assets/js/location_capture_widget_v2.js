@@ -12,10 +12,10 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 *******************************************************************************/
-/* ANDS Location Capture Widget - v1.1 */
+/* ARDC Location Capture Widget - v1.1 */
 ;(function($) {
     "use strict";
-    var WIDGET_NAME = "ANDS Location Capture Widget";
+    var WIDGET_NAME = "ARDC Location Capture Widget";
     var WIDGET_NS = "location_widget";
     var DEFAULT_PROTOCOL = "https://";
     var DEFAULT_SERVICE_POINT = DEFAULT_PROTOCOL +	'researchdata.edu.au/api/location.jsonp/';
@@ -44,7 +44,7 @@
     var INLINE_MESSAGE_ID_PREFIX           = 'alw_msg_';
 
 
-    //ands environment
+    //ARDC environment
     if (typeof(window.real_base_url) !== 'undefined'){
         DEFAULT_SERVICE_POINT =  window.real_base_url + 'api/location.jsonp/'
 
@@ -170,7 +170,6 @@
 		    'marker': null,
 		    'drawing_manager': null,
 		    'tools': {},
-		    'feature_types': {},
 		    'marker_listeners': []
 		});
 
@@ -199,11 +198,21 @@
 
 
 		/**
-		 * Pull down some feature data from the ANDS resolver, and build
+		 * Pull down some feature data from the ANDS resolver If it's reachable, and build
 		 * the map and associated controls.
 		 */
 		function makeMapWidget() {
-            loadFeatureTypes();
+			UrlExists(settings.endpoint, function(status){
+				if(status < 400 && status > 199){
+					loadFeatureTypes();
+				}
+				else{
+					// the resolver service is unaccessible
+					console.error("Resolver to the Australian Gazetteer is unavailable");
+					addFeatureTypes();
+					getMapControl();
+				}
+			});
 		}
 
 		/**
@@ -226,6 +235,24 @@
 		}
 
 		/**
+		 * Test if the given URL is accessible
+		 * @param url
+		 * @param cb
+		 * @constructor
+		 */
+		function UrlExists(url, cb){
+			jQuery.ajax({
+				url:      url,
+				dataType: 'text',
+				type:     'GET',
+				complete:  function(xhr){
+					if(typeof cb === 'function')
+						cb.apply(this, [xhr.status]);
+				}
+			});
+		}
+
+		/**
 		 * Pull down map features (states, other cruft) from
 		 * the ANDS resolver
 		 */
@@ -237,12 +264,18 @@
 				   type + '&callback=?';
  			       $.getJSON(source,
 					 function(data,textStatus) {
-                         data =JSON.parse(data)
-                         if(data.status == 'OK'){
-                            ENABLE_GAZETTEER = true;
-					        addFeatureTypes(data);
-                            getMapControl();
-                         }
+						try {
+							data = JSON.parse(data)
+							if(data.status === 'OK'){
+								ENABLE_GAZETTEER = true;
+							}else{
+								console.error(data.exception);
+							}
+						}catch (error){
+							console.error("Australian Gazetteer is unavailable");
+						}
+						 addFeatureTypes();
+						 getMapControl();
 					 });
 			   });
 		}
@@ -251,13 +284,8 @@
 		 * Store feature data with the plugin instance
 		 * @param feature data
 		 */
-		function addFeatureTypes(data) {
+		function addFeatureTypes() {
 		    var widget_data = $this.data(WIDGET_NS);
-		    for (var i=0; i < data.items.length; i++ ) {
-			var title = data.items[i].title;
-			var id = data.items[i].id;
-			widget_data.feature_types[id] = title;
-		    }
 		    $this.data(WIDGET_NS, widget_data);
 		}
 
@@ -1098,8 +1126,13 @@
 		    var markerBullet = '';
 		    var resultText = "";
 		    var coordString = "";
-		    if(status !== google.maps.GeocoderStatus.OK) {
-			resultText = "No locations found";
+			if(status === google.maps.GeocoderStatus.REQUEST_DENIED) {
+				resultText = "You must use an API key to authenticate each request to Google Maps Platform APIs." +
+					" For additional information, please refer to http://g.co/dev/maps-no-account";
+			}
+		    else if(status !== google.maps.GeocoderStatus.OK) {
+				resultText = "No locations found";
+
 		    }
 		    else {
 			// Loop through the results
@@ -1154,19 +1187,16 @@
 		    else {
 			// Loop through the results
 			for( var i=0; i < data.items.length; i++ ) {
-			    var pointStr = data.items[i].coords;
-			    coordString = data.items[i].lat +","+ data.items[i].lng ;
+			    coordString = data.items[i].lng +","+ data.items[i].lat ;
 			    var	typetext = '';
 			    for( var j=0; j < data.items[i].types.length; j++ ) {
-				if(j !== 0)
-				    typetext += ', '
-				if(widget_data.feature_types[data.items[i].types[j]]){
-				    typetext += widget_data.feature_types[data.items[i].types[j]];
+					if(j > 0){
+						typetext = typetext + ", " + data.items[i].types[j];
+					}else{
+						typetext = data.items[i].types[j];
+					}
+
 				}
-				else{
-				    typetext += data.items[i].types[j];
-				}
-			    }
 			    resultText  += '<div class="alw_search_result" data-coord="' + coordString + '" title="Set the map with this search result">' + markerBullet + '&nbsp;' + data.items[i].title + ' (' + typetext + ')</div>';
 			}
 		    }

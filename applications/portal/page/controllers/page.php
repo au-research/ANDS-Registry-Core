@@ -195,11 +195,13 @@ class Page extends MX_Controller
 
         // CC-1519
         // parties with identifier_type:fundref returned instead of funders
+        // CC-2843
+        // limit the fields to 'title, id, list_description, slug' for funding institutions
         $this->load->library('solr');
         $this->solr->init()->setOpt('rows', 25)
                 ->setOpt('fq', '+class:party')
-                ->setOpt('fq', '+identifier_type:fundref');
-
+                ->setOpt('fq', '+identifier_type:fundref')
+                ->setOpt('fl','title,id,list_description,slug');
         $result = $this->solr->executeSearch(true);
         $parties = $result['response']['docs'];
         $this->record_hit('grants');
