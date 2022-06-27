@@ -86,7 +86,12 @@ class BaseChecker:
                 print("DEBUG: recipient_email:", recipient_email,
                       file=sys.stderr)
                 print("DEBUG: msg:", msg.as_string(), file=sys.stderr)
-            my_smtp = smtplib.SMTP(self._params['smtp_host'])
+            # server's SMTP server no longer used
+            # switching to services@ardc.edu.au google account
+            my_smtp = smtplib.SMTP(self._params['smtp_host'], self._params['smtp_port'])
+            my_smtp.ehlo()
+            my_smtp.starttls()
+            my_smtp.login(sender, self._params['smtp_password'])
             my_smtp.sendmail(sender, recipient_email, msg.as_string())
             my_smtp.quit()
         except Exception as e:
