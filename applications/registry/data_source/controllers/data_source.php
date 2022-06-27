@@ -1970,7 +1970,7 @@ class Data_source extends MX_Controller {
         $ds = \ANDS\Repository\DataSourceRepository::getByID($ds_id);
 
 		if($ds) {
-            \ANDS\Registry\Importer::wipeDataSourceRecords($ds);
+            \ANDS\Registry\Importer::wipeDataSourceRecords($ds, false);
 			$response['log'] .= $ds->delete();
             $client = new MyceliumServiceClient(Config::get('mycelium.url'));
             $client->deleteDataSource($ds);
