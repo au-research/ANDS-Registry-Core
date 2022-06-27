@@ -1,5 +1,8 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+## Release 44
+RDA Registry
+* Add configuration options to the Broken Link Checker that will allow the exclusion of specific data sources and HTTP status codes.
 
 ## Release 43.1
 RDA Portal
@@ -7,7 +10,6 @@ RDA Portal
 
 RDA Registry
 * Fix loading issue with HTML editor in the RDA Registry Theme Page CMS.
-
 
 ## Release 43
 RDA Portal

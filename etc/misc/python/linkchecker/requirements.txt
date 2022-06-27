@@ -1,0 +1,4 @@
+pymysql
+asyncio
+urllib3
+requests

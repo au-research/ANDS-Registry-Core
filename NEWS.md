@@ -1,3 +1,13 @@
+
+## Release 44
+**Research Data Australia**
+* Add configuration options to the Broken Link Checker that will allow the exclusion of specific data sources and HTTP status codes.
+
+**Research Vocabularies Australia**
+* Fix the remaining places in the Portal's error messages that still linked to the old ANDS services email address
+* Use the latest version of the PoolParty export API method to fetch vocabulary data and project metadata
+* Add a "Community lens" finding aid feature, accessible from the top-level menu bar
+
 ## Release 43.1
 **Research Data Australia**
 * Update to the DataCite API used to resolve DOIs in RDA.
