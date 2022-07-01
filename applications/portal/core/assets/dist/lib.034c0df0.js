@@ -19110,13 +19110,13 @@ Dn._=Vn):Gn._=Vn}).call(this);;// https://d3js.org Version 4.13.0. Copyright 201
                     html += ' <img class="identifier_logo" src="'+base_url+'/assets/core/images/icons/external_link.png" alt="External Link">';
                 }
                 html += '</a>';
-            } else if (node.properties.identifier) {
-                html += node.properties.title ;
             } else if (node.properties.count && !node.labels.has('RelatedInfo')) {
                 html += '<a target="_blank" href="'+node.properties.url+'">' + node.properties.count + " related " + getReadableTypeForNode(node) + '</a>';
             } else if (node.properties.count && node.labels.has('RelatedInfo')) {
                 // no link for relatedInfo yet
                 html += node.properties.count + " related " + getReadableTypeForNode(node);
+            } else if (node.properties.title) {
+                html += node.properties.title ;
             }
             html += '</h4>';
             //html += '<p>LABELS: '+JSON.stringify(node.labels)+'</p>';
