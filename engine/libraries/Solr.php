@@ -852,7 +852,7 @@ class Solr
                     $this->setOpt('fq', '+access_methods:("'.$value.'")');
                     break;
                 case 'relation':
-                    $this->setOpt('fq', "{!join from=to_identifier to=id fromIndex=relationships}(relationType:$value)");
+                    $this->setOpt('fq', "{!join from=to_identifier to=id fromIndex=relationships}({!parent which=type:relationship}+relation_type:$value)");
                     break;
                 case 'qf':
                     $this->setOpt('qf', $value);

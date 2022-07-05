@@ -171,7 +171,13 @@ class RecordsGraphController
             $node['properties']['count'] = $count;
 
             // todo populate portalSearchUrl
-            $node['properties']['url'] = null;
+//            $node['properties']['url'] = null;
+            $node['properties']['url'] = constructPortalSearchQuery([
+                'related_object_id' => $record->id,
+                'class' => $node['properties']['class'],
+                'type' => $node['properties']['type'],
+                'relation' => $edgeToCluster['type']
+            ]);
 
             return $node;
         });

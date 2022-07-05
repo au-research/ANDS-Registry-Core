@@ -101,13 +101,18 @@
                     'value': roID
                 }],
                 onNodeDoubleClick: function(node) {
-                    var url = api_url + 'registry/records/' + node.properties.roId + '/graph';
-                    neo4jd3.setNodeLoading(node, true);
-                    $.getJSON(url, function(data) {
-                        var graph = neo4jd3.neo4jDataToD3Data(data);
-                        neo4jd3.updateWithD3Data(graph);
-                        neo4jd3.setNodeLoading(node, false);
-                    });
+                    // open in a new tab the url if there's one available, if not, attempt to expand the roID graph
+                    if (node.properties.url) {
+                        window.open(node.properties.url, '_blank');
+                    } else {
+                        var url = api_url + 'registry/records/' + node.properties.roId + '/graph';
+                        neo4jd3.setNodeLoading(node, true);
+                        $.getJSON(url, function(data) {
+                            var graph = neo4jd3.neo4jDataToD3Data(data);
+                            neo4jd3.updateWithD3Data(graph);
+                            neo4jd3.setNodeLoading(node, false);
+                        });
+                    }
                 },
                 onLoading: function() {
                     $('#toggle-visualisation i').removeClass('fa-sort').addClass('fa-spin').addClass('fa-spinner');
