@@ -162,15 +162,23 @@ class MyceliumServiceClient
     public function getIdentifierGraph($identifier_value, $identifier_type)
     {
         Log::debug(__METHOD__ . " Obtaining Identifier Graph", ["identifier" => $identifier_value]);
-
-        return $this->client->get("api/resources/mycelium-identifier-objects/graph?identifier_value={$identifier_value}&identifier_type={$identifier_type}");
+        try{
+            // if identifier vertex doesn't exist an exception is thrown
+            return $this->client->get("api/resources/mycelium-identifier-objects/graph?identifier_value={$identifier_value}&identifier_type={$identifier_type}");
+        }catch(\Exception $e){
+            return null;
+        }
     }
 
     public function getRecordGraph($recordId)
     {
         Log::debug(__METHOD__ . " Obtaining Record Graph", ["id" => $recordId]);
-
-        return $this->client->get("api/resources/mycelium-registry-objects/{$recordId}/graph");
+        try{
+            // if vertex doesn't exist an exception is thrown
+            return $this->client->get("api/resources/mycelium-registry-objects/{$recordId}/graph");
+        }catch(\Exception $e){
+            return null;
+        }
     }
     /**
      * Get duplicates for a record via Mycelium

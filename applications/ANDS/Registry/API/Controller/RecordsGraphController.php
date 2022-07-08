@@ -87,7 +87,7 @@ class RecordsGraphController
         // obtain the graph data from MyceliumService
         $myceliumClient = new MyceliumServiceClient(Config::get('mycelium.url'));
         $graphResult = $myceliumClient->getIdentifierGraph($params['identifier'], $params['identifier_type']);
-        if ($graphResult->getStatusCode() != 200) {
+        if ($graphResult === null || $graphResult->getStatusCode() != 200) {
             // todo log mycelium errors
             return $this->formatForJSLibrary([], []);
         }
@@ -108,7 +108,7 @@ class RecordsGraphController
         // obtain the graph data from MyceliumService
         $myceliumClient = new MyceliumServiceClient(Config::get('mycelium.url'));
         $graphResult = $myceliumClient->getRecordGraph($record->id);
-        if ($graphResult->getStatusCode() != 200) {
+        if ($graphResult === null || $graphResult->getStatusCode() != 200) {
             // todo log mycelium errors
             return $this->formatForJSLibrary([], []);
         }
