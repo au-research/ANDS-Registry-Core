@@ -102,10 +102,22 @@
                 }],
                 onNodeDoubleClick: function(node) {
                     // open in a new tab the url if there's one available, if not, attempt to expand the roID graph
-                    if (node.properties.url) {
+                    if (node.labels.includes('cluster')) {
                         window.open(node.properties.url, '_blank');
-                    } else {
+                    } else if (node.labels.includes('RegistryObject')){
                         var url = api_url + 'registry/records/' + node.properties.roId + '/graph';
+                        neo4jd3.setNodeLoading(node, true);
+                        $.getJSON(url, function(data) {
+                            var graph = neo4jd3.neo4jDataToD3Data(data);
+                            neo4jd3.updateWithD3Data(graph);
+                            neo4jd3.setNodeLoading(node, false);
+                        });
+                    } else if (node.labels.includes('Identifier')){
+                        // add special graph resolver url for non RegistryObject Nodes
+                        var url = api_url + 'registry/records/by_identifier/graph?identifier='
+                            + node.properties.identifier + '&identifier_type='
+                            + node.properties.identifier_type + '&class='
+                            + node.properties.class;
                         neo4jd3.setNodeLoading(node, true);
                         $.getJSON(url, function(data) {
                             var graph = neo4jd3.neo4jDataToD3Data(data);

@@ -152,6 +152,19 @@ class MyceliumServiceClient
         ]);
     }
 
+    /**
+     * get a graph fro any given Identifier and type
+     * (doesn't have to be an actual RegistryObject)
+     * @param $identifier_value
+     * @param $identifier_type
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function getIdentifierGraph($identifier_value, $identifier_type)
+    {
+        Log::debug(__METHOD__ . " Obtaining Identifier Graph", ["identifier" => $identifier_value]);
+
+        return $this->client->get("api/resources/mycelium-identifier-objects/graph?identifier_value={$identifier_value}&identifier_type={$identifier_type}");
+    }
 
     public function getRecordGraph($recordId)
     {

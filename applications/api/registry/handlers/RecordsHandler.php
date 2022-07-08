@@ -33,9 +33,9 @@ class RecordsHandler extends Handler {
 
         $router->get('records/(\w+)/versions', 'RecordsVersionsController@index');
         $router->get('records/(\w+)/versions/(\w+)', 'RecordsVersionsController@show');
-
+        // get graph by by_identifier and type might have to move to its own Identifier controller
+        $router->get('records/(by_identifier)/graph?(.*)', 'RecordsGraphController@index_identifier');
         $router->get('records/(\w+)/graph', 'RecordsGraphController@index');
-
         $router->get('records/(\w+)/nested-collection', 'RecordsNestedCollectionController@index');
         $router->get('records/(\w+)/nested-collection-children', 'RecordsNestedCollectionController@children');
 

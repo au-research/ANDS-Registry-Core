@@ -71,6 +71,32 @@ class RecordsGraphController
         //        return $this->getGraphVisualisationForRecord($id);
     }
 
+    /**
+     * get a graph for any given Identifier Node
+     * eg /api/registry/records/by_identifier/graph?identifier=10.5555/AIRHEWI3&identifier_type=doi&class=publication
+     * @param $method
+     * @param $type
+     * @param $query
+     * @return array|\array[][][][][]
+     */
+    public function index_identifier($method, $type, $query)
+    {
+
+        parse_str($query, $params);
+
+        // obtain the graph data from MyceliumService
+        $myceliumClient = new MyceliumServiceClient(Config::get('mycelium.url'));
+        $graphResult = $myceliumClient->getIdentifierGraph($params['identifier'], $params['identifier_type']);
+        if ($graphResult->getStatusCode() != 200) {
+            // todo log mycelium errors
+            return $this->formatForJSLibrary([], []);
+        }
+        $graphContent = json_decode($graphResult->getBody()->getContents(), true);
+
+        return $this->formatGrapResult($graphContent, $params['identifier'], $params['class']);
+    }
+
+
     public function getGraphVisualisationForRecord($id)
     {
         $record = RegistryObjectsRepository::getRecordByID($id);
@@ -88,34 +114,44 @@ class RecordsGraphController
         }
         $graphContent = json_decode($graphResult->getBody()->getContents(), true);
 
+        return $this->formatGrapResult($graphContent, $record->id, $record->class);
+    }
 
+    /**
+     * @param $graphContent
+     * @return array|\array[][][][][]
+     */
+    private function formatGrapResult($graphContent, $from_id, $from_class)
+    {
         // format the nodes
         $nodes = collect($graphContent['vertices'])
             ->map(function ($vertex) {
-            $labels = $vertex['labels'];
+                $labels = $vertex['labels'];
 
-            // RegistryObject, cluster label have to be the first label for highlighting purpose
-            if (in_array('Cluster', $vertex['labels'])) {
-                $labels = ['cluster'];
-            } else {
-                if (in_array('RegistryObject', $vertex['labels'])) {
-                    $labels = ['RegistryObject'];
+                // RegistryObject, cluster label have to be the first label for highlighting purpose
+                if (in_array('Cluster', $vertex['labels'])) {
+                    $labels = ['cluster'];
+                } else {
+                    if (in_array('RegistryObject', $vertex['labels'])) {
+                        $labels = ['RegistryObject'];
+                    }
                 }
-            }
 
-            $labels[] = $vertex['objectClass'];
-            $labels[] = $vertex['objectType'];
-            return [
-                'id' => $vertex['id'],
-                'labels' => $labels,
-                'properties' => [
-                    'url' => $vertex['url'],
-                    'title' => $vertex['title'],
-                    'roId' => $vertex['identifier'],
-                    'class' => $vertex['objectClass'],
-                    'type' => $vertex['objectType']
-                ]
-            ];
+                $labels[] = $vertex['objectClass'];
+                $labels[] = $vertex['objectType'];
+                return [
+                    'id' => $vertex['id'],
+                    'labels' => $labels,
+                    'properties' => [
+                        'url' => $vertex['url'],
+                        'title' => $vertex['title'],
+                        'roId' => $vertex['identifier'],
+                        'identifier' => $vertex['identifier'],
+                        'identifier_type' => $vertex['identifierType'],
+                        'class' => $vertex['objectClass'],
+                        'type' => $vertex['objectType']
+                    ]
+                ];
             })->filter(function ($vertex) {
                 // exclude the vertices that are not visualise-able
                 return count(array_intersect($vertex['labels'], static::$visualisableLabels)) >= 1;
@@ -125,7 +161,7 @@ class RecordsGraphController
         $validNodeIDs = collect($nodes)->pluck('id')->toArray();
 
         // format the edges
-        $edges = collect($graphContent['edges'])->map(function ($edge) use ($record) {
+        $edges = collect($graphContent['edges'])->map(function ($edge) use ($from_id) {
             return [
                 'id' => $edge['id'],
                 'from' => $edge['from'],
@@ -140,7 +176,7 @@ class RecordsGraphController
         })->toArray();
 
         // format the cluster nodes
-        $nodes = collect($nodes)->map(function ($node) use ($record, $edges) {
+        $nodes = collect($nodes)->map(function ($node) use ($from_id, $edges) {
             if (!in_array('cluster', $node['labels'])) {
                 return $node;
             }
@@ -160,7 +196,7 @@ class RecordsGraphController
             if ($edgeToCluster) {
                 // populate count from SOLR
                 $result = RelationshipSearchService::search([
-                    'from_id' => $record->id,
+                    'from_id' => $from_id,
                     'relation_type' => $edgeToCluster['type'],
                     'to_class' => $node['properties']['class'],
                     'to_type' => $node['properties']['type']
@@ -173,7 +209,7 @@ class RecordsGraphController
             // todo populate portalSearchUrl
 //            $node['properties']['url'] = null;
             $node['properties']['url'] = constructPortalSearchQuery([
-                'related_object_id' => $record->id,
+                'related_object_id' => $from_id,
                 'class' => $node['properties']['class'],
                 'type' => $node['properties']['type'],
                 'relation' => $edgeToCluster['type']
@@ -185,7 +221,7 @@ class RecordsGraphController
         $edges = $this->flipEdges($edges);
         $edges = $this->dedupeDirectEdges($edges);
         $edges = $this->dedupeReversedEdges($edges);
-        $edges = $this->formatEdges($edges, $record);
+        $edges = $this->formatEdges($edges, $from_class);
         $edges = $this->cleanEdges($edges);
 
         return $this->formatForJSLibrary($nodes, $edges);
@@ -302,16 +338,16 @@ class RecordsGraphController
      * @param $record
      * @return \Illuminate\Support\Collection
      */
-    public function formatEdges($edges, $record)
+    public function formatEdges($edges, $from_class)
     {
-        return collect($edges)->map(function ($edge) use ($record) {
+        return collect($edges)->map(function ($edge) use ($from_class) {
 
             $fromIcon = StrUtil::portalIconHTML($edge['from']['objectClass'], $edge['from']['objectType']);
             $toIcon = StrUtil::portalIconHTML($edge['to']['objectClass'], $edge['to']['objectType']);
 
             $relation = $edge['type'];
             $relationType = RelationUtil::contains($relation)
-                ? RelationUtil::getDisplayText($relation, $record->class) : $relation;
+                ? RelationUtil::getDisplayText($relation, $from_class) : $relation;
 
             $edge['type'] = $relationType;
             $edge['html'] = "$fromIcon $relationType $toIcon";
@@ -320,7 +356,7 @@ class RecordsGraphController
                 $edge['html'] = '';
                 foreach ($edge['properties']['types'] as $type) {
                     $relationType = RelationUtil::contains($type)
-                        ? RelationUtil::getDisplayText($type, $record->class) : $type;
+                        ? RelationUtil::getDisplayText($type, $from_class) : $type;
                     $edge['html'] .= "$fromIcon $relationType $toIcon<br/>";
                 }
             }
