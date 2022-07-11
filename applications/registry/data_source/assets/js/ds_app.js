@@ -12,7 +12,7 @@ angular.module('ds_app', ['slugifier', 'ui.sortable', 'ui.tinymce', 'ngSanitize'
 				return $http.get(base_url+'data_source/list_files/'+id).then(function(response){return response.data});
 			},
 			get_file: function(id, path) {
-				return $http.get(base_url+'data_sourceq/list_files/'+id+'?path='+path).then(function(response){return response.data});
+				return $http.get(base_url+'data_source/list_files/'+id+'?path='+path).then(function(response){return response.data});
 			},
 			get_log: function(id, offset, limit, logid) {
 				return $http.get(base_url+'data_source/get_log/'+id+'/'+offset+'/'+limit+'/'+logid).then(function(response){return response.data});

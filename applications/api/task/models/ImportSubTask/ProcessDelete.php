@@ -87,9 +87,27 @@ class ProcessDelete extends ImportSubTask
         $ids = collect($records)->pluck('registry_object_id')->toArray();
         // TODO: refactor to reduce SQL queries
         foreach ($records as $record) {
-            RegistryObjectsRepository::completelyEraseRecordByID($record->registry_object_id);
+            // if this is a HandleStatusChange pipeline
 
+            if($this->parent()->getTaskByName("HandleStatusChange") != null){
+                $publishedRecord = RegistryObjectsRepository::getPublishedByKey($record->key);
+                // make sure we have a published version of the DRAFT before deleting it.
+                // test for PUBLISHED exists and its harvest_id is the same as the DRAFT's harvest_id
+                if($publishedRecord &&
+                    $publishedRecord->getRegistryObjectAttributeValue('harvest_id') === $record->getRegistryObjectAttributeValue('harvest_id')){
+                    RegistryObjectsRepository::completelyEraseRecordByID($record->registry_object_id);
+                }else{
+                    $this->log("Record $record->registry_object_id ($record->status) is not DELETED due to missing PUBLISHED version");
+                    // remove it from the ids array as well
+                    unset($ids[$record->registry_object_id]);
+                }
+            }
+        else{
+            RegistryObjectsRepository::completelyEraseRecordByID($record->registry_object_id);
             $this->log("Record $record->registry_object_id ($record->status) is completely DELETED");
+        }
+
+
         }
         $this->removeRegistryObjectFromGraphDatabase($ids);
         $this->log("DRAFT Records were DELETED from GRAPH DB");
