@@ -992,7 +992,7 @@ class Registry_object extends MX_Controller {
             // with the type to NONE so that the TaskManager won't act on it
             /** @var \ANDS\API\Task\ImportTask $importTask */
             $importTask = TaskRepository::create([
-                'name' => "Manual Delete",
+                'name' => "Manual Status Change",
                 'type' => Task::$TYPE_NONE,
                 'params' => http_build_query([
                     'class' => 'import',
@@ -1180,7 +1180,7 @@ class Registry_object extends MX_Controller {
             'params' => http_build_query([
                 'class' => 'import',
                 'ds_id' => $dataSourceID,
-                'pipeline' => 'default',
+                'pipeline' => 'manualDelete',
                 'source' => 'manual'
             ])
         ], true);

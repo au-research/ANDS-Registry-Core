@@ -357,6 +357,15 @@ class ImportTask extends Task
                     "ScheduleHarvest"
                 ];
                 break;
+            case "manualDelete":
+                $tasks = [
+                    "PopulateImportOptions",
+                    "ProcessDelete",
+                    "FinishImport",
+                    "WriteImportSummary"
+
+                ];
+                break;
             case "default":
             default:
                 $tasks = [
