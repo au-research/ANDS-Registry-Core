@@ -20,12 +20,12 @@
     */
     $arrayNames = array();
 
-    if(isset($related['researchers'])){
+    if(isset($related['researchers']) && isset($related['researchers']['contents'])){
         foreach($related['researchers']['contents'] as $col){
             $arrayNames[] = $col['to_title'];
         }
     }
-    if(isset($related['organisations'])){
+    if(isset($related['organisations']) && isset($related['organisations']['contents'])){
         foreach($related['organisations']['contents'] as $col){
             $arrayNames[] = $col['to_title'];
         }
