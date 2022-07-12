@@ -14632,6 +14632,7 @@ app.config(function (uiGmapGoogleMapApiProvider) {
 				case 'completion_from': return 'Completion From'; break;
 				case 'spatial': return 'Location'; break;
 				case 'access_methods': return 'Access Method'; break;
+				case 'related_object_id': return 'Related to'; break;
 				default: return text;
 			}
 		}
