@@ -93,8 +93,11 @@ class Ingest extends ImportSubTask
             $existingRecord->setRegistryObjectAttribute('data_source_key', $this->data_source->key);
             $existingRecord->save();
             $this->parent()->addTaskData("importedRecords", $existingRecord->registry_object_id);
-            $this->parent()->addTaskData("imported_".$existingRecord->class."_ids", $existingRecord->registry_object_id);
-            $this->parent()->addTaskData("imported_".$existingRecord->class."_keys", $existingRecord->key);
+            if($existingRecord->class === 'collection' || $existingRecord->class === 'service'){
+                $this->parent()->addTaskData("imported_".$existingRecord->class."_ids", $existingRecord->registry_object_id);
+            }
+
+            //$this->parent()->addTaskData("imported_".$existingRecord->class."_keys", $existingRecord->key);
             
 
         } elseif (Repo::isPublishedStatus($this->parent()->getTaskData("targetStatus")) &&
@@ -139,8 +142,10 @@ class Ingest extends ImportSubTask
 
             $deletedRecord->setRegistryObjectAttribute('updated', time());
             $this->parent()->addTaskData("importedRecords", $deletedRecord->registry_object_id);
-            $this->parent()->addTaskData("imported_".$deletedRecord->class."_ids", $deletedRecord->registry_object_id);
-            $this->parent()->addTaskData("imported_".$deletedRecord->class."_keys", $deletedRecord->key);
+            if($deletedRecord->class === 'collection' || $deletedRecord->class === 'service') {
+                $this->parent()->addTaskData("imported_" . $deletedRecord->class . "_ids", $deletedRecord->registry_object_id);
+            }
+           //$this->parent()->addTaskData("imported_".$deletedRecord->class."_keys", $deletedRecord->key);
 
         } else {
             $xml = XMLUtil::wrapRegistryObject($registryObject->saveXML());
@@ -176,8 +181,10 @@ class Ingest extends ImportSubTask
 
             // TODO: add this record to the imported records
             $this->parent()->addTaskData("importedRecords", $newRecord->registry_object_id);
-            $this->parent()->addTaskData("imported_".$newRecord->class."_ids", $newRecord->registry_object_id);
-            $this->parent()->addTaskData("imported_".$newRecord->class."_keys", $newRecord->key);
+            if($newRecord->class === 'collection' || $newRecord->class === 'service') {
+                $this->parent()->addTaskData("imported_" . $newRecord->class . "_ids", $newRecord->registry_object_id);
+            }
+           //$this->parent()->addTaskData("imported_".$newRecord->class."_keys", $newRecord->key);
         }
     }
 
