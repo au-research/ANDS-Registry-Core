@@ -1,4 +1,4 @@
-@if(true)
+@if($ro->relationships['related_count'] > 0)
     @if($ro->core['class']=='collection')
     <div id="nested-collection-tree-container" class="panel panel-primary element-no-top element-short-bottom panel-content">
         <div class="panel panel-primary panel-content swatch-white">
