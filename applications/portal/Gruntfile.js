@@ -107,7 +107,7 @@ module.exports = function (grunt) {
     watch: {
       styles: {
         files: ['**/*.less', '**/*.css', '!core/assets/dist/*.css'],
-        tasks: ['less', 'concat:styles', 'clean','assets_versioning']
+        tasks: ['less', 'concat:styles', 'clean','assets_versioning', 'copy']
       },
       scripts: {
         files: [
