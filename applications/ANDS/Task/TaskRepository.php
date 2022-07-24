@@ -15,8 +15,7 @@ class TaskRepository
         if (! $model) {
             return null;
         }
-
-        return self::getTaskObject($model->toArray());
+        return self::getTaskObject($model['attributes']);
     }
 
     /**
@@ -26,6 +25,7 @@ class TaskRepository
      */
     public static function getTaskObject($taskArray)
     {
+
         parse_str($taskArray['params'], $params);
 
         $taskClass = $params['class'];

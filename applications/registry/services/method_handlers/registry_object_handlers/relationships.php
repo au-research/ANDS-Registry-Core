@@ -13,7 +13,8 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
  */
 class Relationships extends ROHandler
 {
-
+    // get a total of relationships to check if graph should be displayed
+    private $related_count;
     /**
      * Primary handle function
      *
@@ -21,6 +22,7 @@ class Relationships extends ROHandler
      */
     public function handle($params='')
     {
+        $this->related_count = 0;
         return [
             'data' => $this->getRelatedData(),
             'software' => $this->getRelatedSoftware(),
@@ -30,7 +32,8 @@ class Relationships extends ROHandler
             'services' => $this->getRelatedService(),
             'websites' => $this->getRelatedWebsites(),
             'researchers' => $this->getRelatedResearchers(),
-            'organisations' => $this->getRelatedOrganisations()
+            'organisations' => $this->getRelatedOrganisations(),
+            'related_count' => $this->related_count
         ];
     }
 
@@ -46,7 +49,7 @@ class Relationships extends ROHandler
             'not_to_type' => 'software',
             'to_title' => '*'
         ], ['boost_to_group' => $this->ro->group ,'rows' => 5]);
-
+        $this->related_count += $result->total;
         return $result->toArray();
     }
 
@@ -62,7 +65,7 @@ class Relationships extends ROHandler
             'to_type' => 'software',
             'to_title' => '*'
         ], ['boost_to_group' => $this->ro->group , 'rows' => 5]);
-
+        $this->related_count += $result->total;
         return $result->toArray();
     }
 
@@ -78,7 +81,7 @@ class Relationships extends ROHandler
             'to_type' => 'program',
             'to_title' => '*'
         ], ['boost_to_group' => $this->ro->group , 'rows' => 5]);
-
+        $this->related_count += $result->total;
         $programs = $result->toArray();
 
         //obtaining to_funder for each of the program
@@ -123,7 +126,7 @@ class Relationships extends ROHandler
             'to_title' => '*',
             'not_to_type' => 'program'
         ], ['boost_to_group' => $this->ro->group, 'rows' => 5]);
-
+        $this->related_count += $result->total;
         $grants_projects = $result->toArray();
 
         foreach($grants_projects['contents'] as $key=>$grant){
@@ -164,7 +167,7 @@ class Relationships extends ROHandler
             'from_id' => $this->ro->id,
             'to_class' => 'publication'
         ], ['boost_to_group' => $this->ro->group, 'rows' =>100]);
-
+        $this->related_count += $result->total;
         return $result->toArray();
     }
 
@@ -179,7 +182,7 @@ class Relationships extends ROHandler
             'to_class' => 'service',
             'to_title' => '*'
         ], ['boost_to_group' => $this->ro->group, 'rows' => 5]);
-
+        $this->related_count += $result->total;
         return $result->toArray();
     }
 
@@ -193,7 +196,7 @@ class Relationships extends ROHandler
             'from_id' => $this->ro->id,
             'to_class' => 'website'
         ], ['boost_to_group' => $this->ro->group ,'rows' =>100]);
-
+        $this->related_count += $result->total;
         return $result->toArray();
     }
 
@@ -213,6 +216,7 @@ class Relationships extends ROHandler
         ], ['boost_to_group' => $this->ro->group ,'boost_relation_type' =>
             ['Principal Investigator','hasPrincipalInvestigator','Chief Investigator'] ,
             'rows' => 5, 'sort' => 'score desc, to_title asc']);
+        $this->related_count += $result->total;
         return $result->toArray();
 
     }
@@ -229,7 +233,7 @@ class Relationships extends ROHandler
             'to_type' => 'group',
             'to_title' => '*'
         ], ['rows' => 5]);
-
+        $this->related_count += $result->total;
         return $result->toArray();
     }
 

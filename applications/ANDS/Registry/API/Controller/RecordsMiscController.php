@@ -10,6 +10,7 @@ use ANDS\Registry\Providers\ORCID\ORCIDProvider;
 use ANDS\Registry\Providers\ORCID\ORCIDRecord;
 use ANDS\Registry\Providers\Quality\QualityMetadataProvider;
 use ANDS\Registry\Providers\RIFCS\JsonLDProvider;
+use ANDS\Registry\Providers\RIFCS\RIFCSIndexProvider;
 use ANDS\Repository\RegistryObjectsRepository;
 
 class RecordsMiscController
@@ -67,6 +68,15 @@ class RecordsMiscController
         $dci = DataCitationIndexProvider::get($record);
         $this->printXML($dci);
     }
+
+
+    public function solr_index($id)
+    {
+        $record = RegistryObjectsRepository::getRecordByID($id);
+        $solr_index = RIFCSIndexProvider::get($record);
+        return $solr_index;
+    }
+
 
     /**
      * GET json_ld endpoint for a record

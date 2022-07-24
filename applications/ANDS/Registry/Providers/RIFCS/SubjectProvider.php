@@ -139,7 +139,7 @@ class SubjectProvider implements RIFCSProvider
                     $top_response = $result[0];
 
                     // RDA-740. Mitigate the unintended side effects of incomplete or faulty concepts
-                    if (!isset($top_response->label) || !isset($top_response->iri) || !isset($top_response->type)) {
+                    if (!isset($top_response->label[0]) || !isset($top_response->iri[0]) || !isset($top_response->type[0])) {
                         Log::warning(__METHOD__. " Failed resolving concept. Incomplete concept", [
                             'search_value' => $search_value,
                             'subject_type' => $type,

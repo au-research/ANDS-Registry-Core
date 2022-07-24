@@ -59,7 +59,18 @@ class Task
         $this->type = isset($task['type']) ? $task['type']: static::$TYPE_NONE;
 
         if (isset($task['data'])) {
-            $this->taskData = is_array($task['data']) ? $task['data'] : json_decode($task['data'], true);
+            if(is_array($task['data'])){
+                $this->taskData = $task['data'];
+            }else{
+                $this->taskData = json_decode($task['data'], true);
+                $error = json_last_error();
+                if($error !== JSON_ERROR_NONE){
+                    $this->taskData = [];
+                    $this->addTaskData('last_known_task_data', $task['data']);
+                    $this->stoppedWithError("TaskData couldn't be imported json_last_error_msg: " . json_last_error_msg());
+                    return null;
+                }
+            }
         }
 
         $this->message = isset($task['message']) ? $task['message']: null;

@@ -4,6 +4,7 @@ namespace ANDS\Task;
 
 use ANDS\API\Task\ImportTask;
 use ANDS\API\Task\Task;
+use ANDS\File\Storage;
 use PHPUnit\Framework\TestCase;
 
 class TaskRepositoryTest extends TestCase
@@ -76,4 +77,18 @@ class TaskRepositoryTest extends TestCase
         $model->delete();
     }
 
+    public function testLoadTaskObjectBroken()
+    {
+        date_default_timezone_set("Australia/Melbourne");
+        $model = new TaskModel();
+        $model->fill([
+            'name' => 'test task',
+            'data' => Storage::disk('test')->get('task/arc_saved_task_data.txt'),
+            'params' => http_build_query([
+                'class' => 'import'
+            ])
+        ]);
+        $task = TaskRepository::getTaskObject($model->toArray());
+        $this->assertEquals("Task stopped with error: TaskData couldn't be imported json_last_error_msg: Syntax error", $task->getMessage());
+    }
 }
