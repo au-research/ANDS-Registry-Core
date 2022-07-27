@@ -43,13 +43,18 @@ class ProcessAffectedRelationships extends ImportSubTask
         // TODO implement a better progress checking, consider remove elapsed for make the value larger
         // setting limit to 5 minutes = 300 seconds
         $elapsed = 0;
-        while ($requestStatus != "COMPLETED" && $elapsed < 300) {
+        while ($requestStatus != "COMPLETED") {
             $now = microtime(true);
             $elapsed = $now - $startTime;
             $result = $myceliumClient->getRequestById($myceliumRequestId);
             $request = json_decode($result->getBody()->getContents(), true);
             $requestStatus = $request['status'];
-            $this->log("Request Status is now $requestStatus, elapsed $elapsed");
+            if(is_array($request['summary']) && isset($request['summary']['total'])){
+                $total = $request['summary']['total'];
+                $processed = $request['summary']['processed'];
+                $this->updateProgress($processed, $total, "Processed ($processed/$total)");
+                $this->log("Processed $processed/$total, elapsed $elapsed");
+            }
             sleep(1);
         }
 
