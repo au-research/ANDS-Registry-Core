@@ -151,7 +151,7 @@ class GrantsMetadataProvider implements RIFCSProvider
         $administeringInstitutions = $result->toArray();
         if(isset($administeringInstitutions['contents']) && count($administeringInstitutions['contents']) > 0 ){
             foreach($administeringInstitutions['contents'] as $party){
-                if(array_key_exists('to_title', $party))
+                if(isset($party['to_title']))
                 $administeringInstitution[] = $party['to_title'];
             }
         }
@@ -178,7 +178,7 @@ class GrantsMetadataProvider implements RIFCSProvider
                         $include = false;
                     }
                     //to do - determine if we include the institution if only one of multilple relationships are funding
-                    if($include === true && array_key_exists('to_title', $party))
+                    if($include === true && isset($party['to_title']))
                         $institutions[] = $party['to_title'];
                 }
             }
@@ -215,7 +215,11 @@ class GrantsMetadataProvider implements RIFCSProvider
 
         if(isset($researcherResult['contents']) && count($researcherResult['contents']) > 0 ){
            foreach($researcherResult['contents'] as $researcher){
-               if(array_key_exists('to_title', $researchers))
+               /*** RDA-815
+               https://stackoverflow.com/questions/10008366/php-array-key-exists-returning-false-incorrectly
+               PHP array_key_exists returning FALSE incorrectly
+               */
+               if(isset($researcher['to_title']))
                 $researchers[] = $researcher['to_title'];
            }
         }
@@ -242,7 +246,7 @@ class GrantsMetadataProvider implements RIFCSProvider
         $investigatorResult = $result->toArray();
         if(isset($investigatorResult['contents']) && count($investigatorResult['contents']) > 0 ){
             foreach($investigatorResult['contents'] as $investigator){
-                if(array_key_exists('to_title', $investigator))
+                if(isset( $investigator['to_title']))
                 $principalInvestigator[] = $investigator['to_title'];
             }
         }
