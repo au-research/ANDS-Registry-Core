@@ -176,13 +176,13 @@ class RelationshipSearchService
             $dont_allow_reverse = static::getDatasourceSettings($criterias['from_id']);
             if(array_key_exists('allow_reverse_internal_links', $dont_allow_reverse)){
                 //set up the query to not allow reverse internal links
-                $value = '{!parent which=$parentFilter}relation_reverse:true AND {!parent which=$parentFilter}relation_internal:true';
-                $fqs[] = "-($value)";
+                $value = '{!parent which=$parentFilter}relation_reverse:false AND {!parent which=$parentFilter}relation_internal:true';
+                $fqs[] = "+($value)";
             }
             if(array_key_exists('allow_reverse_external_links', $dont_allow_reverse)){
                 //set up the query to not allow reverse external links
-               $value = '{!parent which=$parentFilter}relation_reverse:true AND {!parent which=$parentFilter}relation_internal:false';
-               $fqs[] = "-($value)";
+               $value = '{!parent which=$parentFilter}relation_reverse:false AND {!parent which=$parentFilter}relation_internal:false';
+               $fqs[] = "+($value)";
             }
         }
 
