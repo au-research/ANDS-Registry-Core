@@ -172,16 +172,26 @@ class RelationshipSearchService
 
         //we will check if the datasource of 'from_id' has allowed reverse internal and external links
         if(array_key_exists('from_id', $criterias)) {
-            //if the reverse links are not to be allowed,then we need to exclude the reverse relationships in the search
+            // if the reverse links are not to be allowed,then we need to exclude the reverse relationships in the search
+            // by allowing only relationships that are DIRECT
             $dont_allow_reverse = static::getDatasourceSettings($criterias['from_id']);
-            if(array_key_exists('allow_reverse_internal_links', $dont_allow_reverse)){
-                //set up the query to not allow reverse internal links
-                $value = '{!parent which=$parentFilter}relation_reverse:false AND {!parent which=$parentFilter}relation_internal:true';
+            // if no reverse links of any kind is allowed
+            if(array_key_exists('allow_reverse_internal_links', $dont_allow_reverse) && array_key_exists('allow_reverse_external_links', $dont_allow_reverse) )
+            {
+                // allow only if there is at least one edges that is => direct AND from RegistryObject origin
+                $value = '{!parent which=$parentFilter}relation_reverse:false AND {!parent which=$parentFilter}relation_origin:RelatedObject';
                 $fqs[] = "+($value)";
             }
-            if(array_key_exists('allow_reverse_external_links', $dont_allow_reverse)){
-                //set up the query to not allow reverse external links
-               $value = '{!parent which=$parentFilter}relation_reverse:false AND {!parent which=$parentFilter}relation_internal:false';
+            // if ONLY direct internal reverse links are allowed
+            elseif(array_key_exists('allow_reverse_internal_links', $dont_allow_reverse)){
+                // allow only if there is at least one edges that is => (direct OR external) AND from RegistryObject origin
+                $value = '({!parent which=$parentFilter}relation_reverse:false OR {!parent which=$parentFilter}relation_internal:false) AND {!parent which=$parentFilter}relation_origin:RelatedObject';
+                $fqs[] = "+($value)";
+            }
+            // if only direct
+            elseif(array_key_exists('allow_reverse_external_links', $dont_allow_reverse)){
+                // allow only if there is at least one edge is (direct OR internal) AND from RegistryObject origin
+               $value = '({!parent which=$parentFilter}relation_reverse:false OR {!parent which=$parentFilter}relation_internal:true) AND {!parent which=$parentFilter}relation_origin:RelatedObject';
                $fqs[] = "+($value)";
             }
         }
