@@ -122,7 +122,9 @@
     </div> -->
     <div class="panel-body swatch-white">
         <div ng-repeat="(name, value) in filters" ng-if="showFilter(name)">
-            <h4 ng-if="name!='q' && name !='nottype' && name!='related_collection_id'&& name!='related_party_one_id'&& name!='related_party_multi_id' && name!='related_activity_id'&& name!='related_service_id'|| (name=='q' && !filters.cq)">[[name | filter_name]]</h4>
+            <h4 ng-if="name!='q' && name !='nottype' && name!='related_collection_id'
+            && name!='related_party_one_id'&& name!='related_party_multi_id'
+            && name!='related_activity_id'&& name!='related_service_id' && name!='related_object_id' || (name=='q' && !filters.cq)">[[name | filter_name]]</h4>
             <h4 ng-if="name!='nottype' && name=='related_object_id'" >Related to</h4>
 
             <h4 ng-if="name=='q' && prefilters.cq">Search Terms</h4>
