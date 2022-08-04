@@ -143,7 +143,7 @@ class LicenceProvider implements RIFCSProvider
     }
 
     public static function getLicenceClass(RegistryObject $record){
-        $licence_class = '';
+        $licence_class = 'Other';
         if ($rights = self::get($record)) {
             foreach($rights as $right) {
                 if (isset($right['licence_group'])) {
