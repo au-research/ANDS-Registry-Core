@@ -111,7 +111,7 @@ class UpdatePortalIndex
                             break;
                         case "isManagedBy":
                         case "isManagerOf":
-                            $indexed_fields = ["administering_institution"];
+                            $indexed_fields = ["administering_institution","institutions"];
                             break;
                         default:
                             $indexed_fields = ["institutions"];
