@@ -127,6 +127,7 @@ class Registry_objects extends CI_Model {
                 'relatedInfo_type' => $type
 			);
 		} elseif ($type=='doi') {
+
  			if($result) {
 				return array(
 					'title' => isset($result['title']) ? $result['title'] : $result['meta']['rawTitle'],
@@ -152,7 +153,6 @@ class Registry_objects extends CI_Model {
                 );
             }
         }
-
         return [];
 	}
 

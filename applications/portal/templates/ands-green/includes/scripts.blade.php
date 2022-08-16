@@ -7,6 +7,15 @@
 
 @if(\ANDS\Util\config::get('app.tracking'))
     <?php $tracking = \ANDS\Util\config::get('app.tracking'); ?>
+    @if(isset($tracking['googleGA']['tagmanager_id']))
+        <!-- Google Tag Manager -->
+        <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+                    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+                j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+                'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','{{  $tracking['googleGA']['tagmanager_id'] }}');</script>
+        <!-- End Google Tag Manager -->
+    @endif
     @if($tracking['googleGA']['enabled'])
         <!-- Global site tag (gtag.js) - Google Analytics -->
         <script async src="https://www.googletagmanager.com/gtag/js?id={{ $tracking['googleGA']['keys']['id'] }}"></script>
@@ -14,7 +23,6 @@
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-
             gtag('config', '{{ $tracking['googleGA']['keys']['id'] }}', {
                 cookie_domain: '{{ $tracking['googleGA']['keys']['cookie_domain'] }}',
                 cookie_flags: 'SameSite=None;Secure',

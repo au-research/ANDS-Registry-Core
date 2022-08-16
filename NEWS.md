@@ -1,3 +1,32 @@
+
+## Release 44
+**Research Data Australia**
+* Add configuration options to the Broken Link Checker that will allow the exclusion of specific data sources and HTTP status codes.
+
+**Research Vocabularies Australia**
+* Fix the remaining places in the Portal's error messages that still linked to the old ANDS services email address
+* Use the latest version of the PoolParty export API method to fetch vocabulary data and project metadata
+* Add a "Community lens" finding aid feature, accessible from the top-level menu bar
+
+## Release 43.1
+**Research Data Australia**
+* Update to the DataCite API used to resolve DOIs in RDA.
+* Fix loading issue with HTML editor in the RDA Registry Theme Page CMS.
+
+**Research Vocabularies Australia**
+* Simplification of the link text shown in the vocabulary browse visualisation that is used to access the Linked Data API view of resources.
+ 
+## Release 43
+**Research Data Australia**
+* Fix bug causing http/https to be stripped from RelatedInfo urls.
+
+**Research Vocabularies Australia**
+* When fetching vocabulary data from PoolParty, get connection parameters from the right place, rather than from a legacy configuration file.
+* When using My Vocabs to add a vocabulary from PoolParty, disable the "Use this PoolParty Project" button until a project has been selected.
+* When doing backups of vocabulary data from PoolParty, set connect and read timeouts for the connection to PoolParty in case the connection hangs.
+* Restore correct behaviour for the canonical URL path to the search page (/vocabs/search).
+* Configure the Portal's analytics log files to be created and named per-day.
+
 ## Release 42
 
 **Research Data Australia**

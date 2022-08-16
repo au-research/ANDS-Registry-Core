@@ -54,12 +54,11 @@ class IdentifierProviderTest extends \RegistryTestClass
     public function it_should_process_handles()
     {
         $tests = [
-            ['value' => 'http://handle.westernsydney.edu.au:8081/1959.7/512474', 'type' => 'uri', 'expectedValue' => '1959.7/512474', 'expectedType' => 'handle'],
             ['value' => 'hdl:1959.7/512474', 'type' => 'handle', 'expectedValue' => '1959.7/512474', 'expectedType' => 'handle'],
             ['value' => 'hdl:1959.7/512474', 'type' => 'global', 'expectedValue' => '1959.7/512474', 'expectedType' => 'handle'],
             ['value' => 'hdl.handle.net/1959.7/512474', 'type' => 'url', 'expectedValue' => '1959.7/512474', 'expectedType' => 'handle'],
-            ['value' => 'https://hdl.handle.net/1959.7/512474', 'type' => 'uri', 'expectedValue' => '1959.7/512474', 'expectedType' => 'handle'],
-            ['value' => 'http://hdl.handle.net/1959.7/512474', 'type' => 'handle', 'expectedValue' => '1959.7/512474', 'expectedType' => 'handle'],
+            ['value' => 'https://hdl.handle.net/1959.7/512475', 'type' => 'uri', 'expectedValue' => '1959.7/512475', 'expectedType' => 'handle'],
+            ['value' => 'http://hdl.handle.net/1959.7/512476', 'type' => 'handle', 'expectedValue' => '1959.7/512476', 'expectedType' => 'handle'],
             ['value' => '1959.7/512474', 'type' => 'handle', 'expectedValue' => '1959.7/512474', 'expectedType' => 'handle'],
             ['value' => 'http://researchdata.ands.org.au/view/?key=http://hdl.handle.net/1959.14/201435', 'type' => 'uri', 'expectedValue' => 'researchdata.ands.org.au/view/?key=http://hdl.handle.net/1959.14/201435', 'expectedType' => 'uri']
 
@@ -99,7 +98,8 @@ class IdentifierProviderTest extends \RegistryTestClass
             ['value' => 'http://nla.gov.au/nla.party-1692395', 'type' => 'nla.party', 'expectedValue' => 'nla.party-1692395', 'expectedType' => 'AU-ANL:PEAU'],
             ['value' => 'nla.party-1692395', 'type' => 'AU-ANL:PEAU', 'expectedValue' => 'nla.party-1692395', 'expectedType' => 'AU-ANL:PEAU'],
             ['value' => 'nla.party-1692395', 'type' => 'AU-QGU', 'expectedValue' => 'nla.party-1692395', 'expectedType' => 'AU-ANL:PEAU'],
-            ['value' => '1692395', 'type' => 'NLA.PARTY', 'expectedValue' => 'nla.party-1692395', 'expectedType' => 'AU-ANL:PEAU']
+            ['value' => '1692395', 'type' => 'NLA.PARTY', 'expectedValue' => 'nla.party-1692395', 'expectedType' => 'AU-ANL:PEAU'],
+            ['value' => 'AU-ANL:PEAU.party-1904955ac1', 'type' => 'AU-ANL:PEAU', 'expectedValue' => 'nla.party-1904955ac1', 'expectedType' => 'AU-ANL:PEAU'],
         ];
         foreach ($tests as $test) {
             $identifier = IdentifierProvider::getNormalisedIdentifier($test["value"], $test["type"]);
@@ -129,14 +129,13 @@ class IdentifierProviderTest extends \RegistryTestClass
     }
 
     /** @test * */
-    public function it_should_remove_protocol_from_all_other()
+    public function it_should_remove_protocol_from_uri_and_url()
     {
         $tests = [
             ['value' => 'http://geoserver-123.aodn.org.au/geoserver/ncwms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities', 'type' => 'url', 'expectedValue' => 'geoserver-123.aodn.org.au/geoserver/ncwms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities', 'expectedType' => 'url'],
             ['value' => 'https://geoserver.imas.utas.edu.au/geoserver/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities', 'type' => 'uri', 'expectedValue' => 'geoserver.imas.utas.edu.au/geoserver/wms?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetCapabilities', 'expectedType' => 'uri'],
-            ['value' => 'http://google.com', 'type' => 'local', 'expectedValue' => 'google.com', 'expectedType' => 'local'],
-            ['value' => 'fish.org', 'type' => 'global', 'expectedValue' => 'fish.org', 'expectedType' => 'global'],
-            ['value' => 'https://fish.org?url=http://google.com', 'type' => 'noidea', 'expectedValue' => 'fish.org?url=http://google.com', 'expectedType' => 'noidea'],
+            ['value' => 'http://google.com', 'type' => 'uri', 'expectedValue' => 'google.com', 'expectedType' => 'uri'],
+            ['value' => 'http://fish.org', 'type' => 'url', 'expectedValue' => 'fish.org', 'expectedType' => 'url'],
             ['value' => 'fish.org?url="http://google.com', 'type' => 'uri', 'expectedValue' => 'fish.org?url="http://google.com', 'expectedType' => 'uri']
         ];
         foreach ($tests as $test) {
@@ -160,6 +159,57 @@ class IdentifierProviderTest extends \RegistryTestClass
         $this->assertArrayHasKey('identifier_value', $index);
         $this->assertGreaterThan(1, $index['identifier_type']);
         $this->assertSameSize($index['identifier_type'], $index['identifier_value']);
+    }
+
+    /** @test * */
+    public function it_should_leave_all_other()
+    {
+        $tests = [
+            ['value' => 'http://google.com', 'type' => 'local', 'expectedValue' => 'http://google.com', 'expectedType' => 'local'],
+            ['value' => 'https://fish.org', 'type' => 'global', 'expectedValue' => 'https://fish.org', 'expectedType' => 'global'],
+            ['value' => 'https://fish.org?url=http://google.com', 'type' => 'noidea', 'expectedValue' => 'https://fish.org?url=http://google.com', 'expectedType' => 'noidea'],
+        ];
+        foreach($tests as $test){
+            $identifier = IdentifierProvider::getNormalisedIdentifier($test["value"], $test["type"]);
+            $this->assertEquals($test["expectedValue"], $identifier["value"]);
+            $this->assertEquals($test["expectedType"], $identifier["type"]);
+        }
+    }
+
+
+    /** @test **/
+    public function it_should_provide_a_resolvable_url_for_uris()
+    {
+        $tests = [
+            ['value' => 'fish.org', 'type' => 'url'],
+            ['value' => 'https://fish.org', 'type' => 'url'],
+            ['value' => 'http://fish.org', 'type' => 'uri'],
+        ];
+        foreach($tests as $test){
+            $normalised = IdentifierProvider::getNormalisedIdentifier($test["value"], $test["type"]);
+            $identifier = IdentifierProvider::format($normalised["value"], $normalised["type"]);
+            //var_dump($identifier);
+            $this->assertEquals("https://fish.org", $identifier["href"]);
+        }
+    }
+
+    /** @test * */
+    public function it_should_handle_special_cases()
+    {
+        /**
+         * RDA-584 some special case Identifiers found during testing
+         */
+        $tests = [
+            ['value' => 'http://handle.westernsydney.edu.au:8771/2009.7/hiev_104ac1', 'type' => 'handle', 'expectedValue' => 'http://handle.westernsydney.edu.au:8771/2009.7/hiev_104ac1', 'expectedType' => 'handle'],
+            ['value' => 'http://www.MyorcidResolver.com.au77ac1', 'type' => 'orcid', 'expectedValue' => 'http://www.MyorcidResolver.com.au77ac1', 'expectedType' => 'orcid'],
+            ['value' => 'http://MyAU-ANL:PEAUResolver.com.au88ac1', 'type' => 'AU-ANL:PEAU', 'expectedValue' => 'http://MyAU-ANL:PEAUResolver.com.au88ac1', 'expectedType' => 'AU-ANL:PEAU'],
+            ['value' => 'http://www.MypurlResolver.com.aua7896c1', 'type' => 'purl', 'expectedValue' => 'http://www.MypurlResolver.com.aua7896c1', 'expectedType' => 'purl'],
+        ];
+        foreach($tests as $test){
+            $identifier = IdentifierProvider::getNormalisedIdentifier($test["value"], $test["type"]);
+            $this->assertEquals($test["expectedValue"], $identifier["value"]);
+            $this->assertEquals($test["expectedType"], $identifier["type"]);
+        }
     }
 
 }
