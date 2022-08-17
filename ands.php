@@ -43,4 +43,5 @@ $application->add(new \ANDS\Commands\Task\TaskRunCommand());
 $application->add(new \ANDS\Commands\Task\TaskStopCommand());
 $application->add(new \ANDS\Commands\Queue\QueueSyncCommand());
 $application->add(new \ANDS\Commands\Queue\QueueWorkCommand());
+$application->add(new \ANDS\Commands\Queue\QueueListCommand());
 $application->run();
