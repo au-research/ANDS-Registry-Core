@@ -30,9 +30,6 @@ class SyncRegistryObjectJob extends Job
             throw new \Exception("No RegistryObject[registryObjectId=$this->registryObjectId] found");
         }
 
-        // process core
-        CoreMetadataProvider::process($record);
-
         $myceliumClient = new MyceliumServiceClient(Config::get('mycelium.url'));
         $solrClient = new SolrClient(Config::get('app.solr_url'));
 
@@ -50,6 +47,9 @@ class SyncRegistryObjectJob extends Job
             }
             return;
         }
+
+        // process core metadata
+        CoreMetadataProvider::process($record);
 
         // import graph
         $result = $myceliumClient->importRecord($record);
@@ -80,6 +80,8 @@ class SyncRegistryObjectJob extends Job
             $reason = join(',', $solrClient->getErrors());
             throw new \Exception("Failed to index portal SOLR for RegistryObject[registryObjectId=$this->registryObjectId]. Reason: $reason");
         }
+
+        // todo alternate versions
     }
 
     function toArray() {
