@@ -32,6 +32,7 @@ class SyncRegistryObjectJob extends Job
 
         $myceliumClient = new MyceliumServiceClient(Config::get('mycelium.url'));
         $solrClient = new SolrClient(Config::get('app.solr_url'));
+        $solrClient->setCore("portal");
 
         // if this record is deleted, remove mycelium data (& relationships) and solr
         if ($record->status === 'DELETED') {
@@ -72,8 +73,6 @@ class SyncRegistryObjectJob extends Job
 
         // index portal
         $portalIndex = RIFCSIndexProvider::get($record);
-
-        $solrClient->setCore("portal");
         $solrClient->request("POST", "portal/update/json/docs", ['commit' => 'true'],
             json_encode($portalIndex), "body");
         if ($solrClient->hasError()) {

@@ -24,6 +24,7 @@ class QueueSyncCommand extends ANDSCommand
             ->setName('queue:sync')
             ->setDescription('Add Record to Queue')
             ->addOption('published-only', null, InputOption::VALUE_NONE, 'Only include Published RegistryObjects (default: all RegistryObjects in any status)')
+            ->addOption('deleted-only', null, InputOption::VALUE_NONE, 'Only include DELETED RegistryObjects (default: all RegistryObjects in any status)')
             ->addOption('data_source_id', null, InputOption::VALUE_OPTIONAL, 'RegistryObjects within this data source', null)
             ->addOption('queue', null, InputOption::VALUE_OPTIONAL, "Target Queue ID", null)
         ;
@@ -35,13 +36,18 @@ class QueueSyncCommand extends ANDSCommand
         QueueService::init();
 
         $publishedOnly = $input->getOption('published-only');
+        $deletedOnly = $input->getOption('deleted-only');
         $dataSourceId = $input->getOption('data_source_id');
 
         $ids = RegistryObject::query();
         if ($publishedOnly) {
             $ids = $ids->where('status', 'PUBLISHED');
             $this->log("Include only PUBLISHED registryObjects");
+        } else if ($deletedOnly) {
+            $ids = $ids->where('status', 'DELETED');
+            $this->log("Include only DELETED registryObjects");
         }
+
         if ($dataSourceId) {
             $ids = $ids->where('data_source_id', $dataSourceId);
             $this->log("Include only RegistryObjects from DataSource:$dataSourceId");
@@ -52,6 +58,12 @@ class QueueSyncCommand extends ANDSCommand
 
         $ids = $ids->pluck('registry_object_id');
         $total = $ids->count();
+
+        if ($total === 0) {
+            $this->log("No records match!");
+            return;
+        }
+
         $this->log("Queueing $total RegistryObjects");
 
         $progressBar = new ProgressBar($this->getOutput(), $total);
