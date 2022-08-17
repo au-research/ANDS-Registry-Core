@@ -35,7 +35,7 @@ class SyncRegistryObjectJob extends Job
 
         // if this record is deleted, remove mycelium data (& relationships) and solr
         if ($record->status === 'DELETED') {
-            $result = $myceliumClient->deleteRecord($record);
+            $result = $myceliumClient->deleteRecord($this->registryObjectId);
             if ($result->getStatusCode() != 200) {
                 $reason = $result->getBody()->getContents();
                 throw new \Exception("Failed to Delete RegistryObject[registryObjectId=$this->registryObjectId] to Mycelium. Reason: $reason");
