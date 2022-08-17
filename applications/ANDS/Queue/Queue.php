@@ -12,6 +12,7 @@ abstract class Queue
     abstract function dequeue();
     abstract function size();
     abstract function get($limit, $offset);
+    abstract function flush();
 
     /**
      * @return mixed
