@@ -178,20 +178,23 @@ class RelationshipSearchService
             // if no reverse links of any kind is allowed
             if(array_key_exists('allow_reverse_internal_links', $dont_allow_reverse) && array_key_exists('allow_reverse_external_links', $dont_allow_reverse) )
             {
-                // allow only if there is at least one edges that is => direct AND from RegistryObject origin
-                $value = '{!parent which=$parentFilter}relation_reverse:false AND {!parent which=$parentFilter}relation_origin:RelatedObject';
+                // allow only if there is at least one edges that is => direct AND from RegistryObject or RelatedInfo origin
+                $value = '{!parent which=$parentFilter}relation_reverse:false 
+                AND ({!parent which=$parentFilter}relation_origin:RelatedObject OR {!parent which=$parentFilter}relation_origin:RelatedInfo)';
                 $fqs[] = "+($value)";
             }
             // if ONLY direct internal reverse links are allowed
             elseif(array_key_exists('allow_reverse_internal_links', $dont_allow_reverse)){
-                // allow only if there is at least one edges that is => (direct OR external) AND from RegistryObject origin
-                $value = '({!parent which=$parentFilter}relation_reverse:false OR {!parent which=$parentFilter}relation_internal:false) AND {!parent which=$parentFilter}relation_origin:RelatedObject';
+                // allow only if there is at least one edges that is => (direct OR external) AND from RegistryObject or RelatedInfo origin
+                $value = '({!parent which=$parentFilter}relation_reverse:false OR {!parent which=$parentFilter}relation_internal:false) 
+                AND ({!parent which=$parentFilter}relation_origin:RelatedObject OR {!parent which=$parentFilter}relation_origin:RelatedInfo)';
                 $fqs[] = "+($value)";
             }
             // if only direct
             elseif(array_key_exists('allow_reverse_external_links', $dont_allow_reverse)){
-                // allow only if there is at least one edge is (direct OR internal) AND from RegistryObject origin
-               $value = '({!parent which=$parentFilter}relation_reverse:false OR {!parent which=$parentFilter}relation_internal:true) AND {!parent which=$parentFilter}relation_origin:RelatedObject';
+                // allow only if there is at least one edge is (direct OR internal) AND from RegistryObject or RelatedInfo origin
+               $value = '({!parent which=$parentFilter}relation_reverse:false OR {!parent which=$parentFilter}relation_internal:true) 
+               AND ({!parent which=$parentFilter}relation_origin:RelatedObject OR {!parent which=$parentFilter}relation_origin:RelatedInfo)';
                $fqs[] = "+($value)";
             }
         }
