@@ -34,19 +34,52 @@ class SyncRegistryObjectJob extends Job
         CoreMetadataProvider::process($record);
 
         $myceliumClient = new MyceliumServiceClient(Config::get('mycelium.url'));
+        $solrClient = new SolrClient(Config::get('app.solr_url'));
+
+        // if this record is deleted, remove mycelium data (& relationships) and solr
+        if ($record->status === 'DELETED') {
+            $result = $myceliumClient->deleteRecord($record);
+            if ($result->getStatusCode() != 200) {
+                $reason = $result->getBody()->getContents();
+                throw new \Exception("Failed to Delete RegistryObject[registryObjectId=$this->registryObjectId] to Mycelium. Reason: $reason");
+            }
+            $solrClient->remove($this->registryObjectId);
+            if ($solrClient->hasError()) {
+                $reason = join(',', $solrClient->getErrors());
+                throw new \Exception("Failed to delete portal SOLR for RegistryObject[registryObjectId=$this->registryObjectId]. Reason: $reason");
+            }
+            return;
+        }
 
         // import graph
-        $myceliumClient->importRecord($record);
+        $result = $myceliumClient->importRecord($record);
+        if ($result->getStatusCode() != 200) {
+            $reason = $result->getBody()->getContents();
+            throw new \Exception("Failed to Import RegistryObject[registryObjectId=$this->registryObjectId] to Mycelium. Reason: $reason");
+        }
 
         // index relationships
-        $myceliumClient->indexRecord($record);
+        $result = $myceliumClient->indexRecord($record);
+        if ($result->getStatusCode() != 200) {
+            $reason = $result->getBody()->getContents();
+            throw new \Exception("Failed to Index Relationship for RegistryObject[registryObjectId=$this->registryObjectId] to Mycelium. Reason: $reason");
+        }
+
+        // only PUBLISHED records proceed past this point
+        if ($record->isDraftStatus()) {
+            return;
+        }
 
         // index portal
         $portalIndex = RIFCSIndexProvider::get($record);
-        $solrClient = new SolrClient(Config::get('app.solr_url'));
+
         $solrClient->setCore("portal");
         $solrClient->request("POST", "portal/update/json/docs", ['commit' => 'true'],
             json_encode($portalIndex), "body");
+        if ($solrClient->hasError()) {
+            $reason = join(',', $solrClient->getErrors());
+            throw new \Exception("Failed to index portal SOLR for RegistryObject[registryObjectId=$this->registryObjectId]. Reason: $reason");
+        }
     }
 
     function toArray() {
