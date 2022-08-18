@@ -25,11 +25,12 @@ class QueueWorkCommand extends ANDSCommand
         $this
             ->setName('queue:work')
             ->setDescription('Work the Queue')
-            ->addOption('name', null, InputOption::VALUE_OPTIONAL)
-            ->addOption('queue', null, InputOption::VALUE_OPTIONAL)
-            ->addOption('daemon', null, InputOption::VALUE_NONE, null)
-            ->addOption('quiet', 'q', InputOption::VALUE_NONE, null)
-            ->addOption('log-path', null, InputOption::VALUE_OPTIONAL)
+            ->addOption('name', null, InputOption::VALUE_OPTIONAL, "Name of the worker, defaults to a unique id")
+            ->addOption('queue', null, InputOption::VALUE_OPTIONAL, "Default Queue")
+            ->addOption('daemon', null, InputOption::VALUE_NONE, "Doesn't stop even if the queue has no more jobs, waiting for more jobs")
+            ->addOption('quiet', 'q', InputOption::VALUE_NONE, 'Writes nothing to stdout')
+            ->addOption('log-path', null, InputOption::VALUE_OPTIONAL, 'Path to the log file')
+            ->addOption('sleep', null, InputOption::VALUE_OPTIONAL, 'How long (in seconds) the worker will sleep between polls when there are no jobs available', 3)
         ;
     }
 
@@ -54,6 +55,11 @@ class QueueWorkCommand extends ANDSCommand
                 $logger->pushHandler(new StreamHandler("php://stdout"));
             }
             $worker->setLogger($logger);
+        }
+
+        $sleep = $input->getOption('sleep');
+        if ($sleep) {
+            $worker->setSleep($sleep);
         }
 
         // catch catchable termination signals

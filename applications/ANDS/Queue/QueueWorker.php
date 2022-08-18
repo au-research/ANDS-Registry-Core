@@ -16,6 +16,8 @@ class QueueWorker
 
     protected $daemon = false;
 
+    protected $sleep = 3;
+
     /** @var \Psr\Log\LoggerInterface */
     protected $logger;
 
@@ -54,6 +56,8 @@ class QueueWorker
 
         while($this->shouldContinue()) {
             $job = $this->getNextJob();
+
+            // execute the job if there's a job found
             if ($job) {
                 $this->logger->info("Running Job", ['worker' => $this->name, 'job' => (string) $job]);
                 try {
@@ -68,8 +72,11 @@ class QueueWorker
                         ]
                     );
                 }
+            } else {
+                // by default, the worker will keep processing jobs until it's finished
+                // when the queue is empty, it will sleep between each poll by the configured amount
+                sleep($this->getSleep());
             }
-            sleep(1);
         }
 
         $this->logger->info("Worker {$this->name} stopped");
@@ -146,5 +153,21 @@ class QueueWorker
     public function setLogger($logger)
     {
         $this->logger = $logger;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSleep()
+    {
+        return $this->sleep;
+    }
+
+    /**
+     * @param int $sleep
+     */
+    public function setSleep($sleep)
+    {
+        $this->sleep = $sleep;
     }
 }
