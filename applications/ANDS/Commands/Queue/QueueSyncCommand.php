@@ -19,7 +19,7 @@ class QueueSyncCommand extends ANDSCommand
     protected function configure()
     {
         /**
-         * php ands.php queue:sync --published-only --data_source_id={} --queue={} --log_path={} -q
+         * php ands.php queue:sync --published-only --data_source_id={} --modified_after={}
          */
         $this
             ->setName('queue:sync')
