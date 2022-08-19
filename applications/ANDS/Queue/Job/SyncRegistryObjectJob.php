@@ -59,12 +59,15 @@ class SyncRegistryObjectJob extends Job
             throw new \Exception("Failed to Import RegistryObject[registryObjectId=$this->registryObjectId] to Mycelium. Reason: $reason");
         }
 
-        // index relationships
-        $result = $myceliumClient->indexRecord($record);
-        if ($result->getStatusCode() != 200) {
-            $reason = $result->getBody()->getContents();
-            throw new \Exception("Failed to Index Relationship for RegistryObject[registryObjectId=$this->registryObjectId] to Mycelium. Reason: $reason");
-        }
+        // index relationships with retries
+        // this offers some breathing room for import task to fully committed the change and avoid 404s on the vertex
+        retry(function() use($record, $myceliumClient) {
+            $result = $myceliumClient->indexRecord($record);
+            if ($result->getStatusCode() != 200) {
+                $reason = $result->getBody()->getContents();
+                throw new \Exception("Failed to Index Relationship for RegistryObject[registryObjectId=$this->registryObjectId] to Mycelium. Reason: $reason");
+            }
+        }, 2, 3);
 
         // only PUBLISHED records proceed past this point
         if ($record->isDraftStatus()) {
