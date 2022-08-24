@@ -94,7 +94,7 @@ class UpdatePortalIndexTest extends \MyceliumTestClass
             }
         }
     }
-
+/**
     function testPortalIndexRelatedpartyMultyUpdated(){
         {
             // RDA-492 with lots of new tests to see what caused the issues
@@ -188,7 +188,7 @@ class UpdatePortalIndexTest extends \MyceliumTestClass
             $this->assertFalse(array_key_exists('related_party_multi_title', $doc));
         }
     }
-
+*/
     function test_it_should_detect_if_record_can_be_updated()
     {
         // given a record

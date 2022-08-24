@@ -14,7 +14,7 @@ use MinhD\SolrClient\SolrClient;
 
 class UpdatePortalIndexPKTest extends \MyceliumTestClass
 {
-
+/**
     function testPortalIndexRelatedpartyMultiUpdated(){
         {
             // RDA-492 with lots of new tests to see what caused the issues
@@ -63,7 +63,7 @@ class UpdatePortalIndexPKTest extends \MyceliumTestClass
 
         }
     }
-
+*/
     function testLogging(){
         debug("PortalIndexUpdateEvent");
     }
