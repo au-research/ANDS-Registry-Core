@@ -13,7 +13,7 @@ use ANDS\Repository\RegistryObjectsRepository;
 
 class RelationshipSearchServiceTest extends \MyceliumTestClass
 {
-    /** @test */
+
     public function moved_to_integration_test_search_multiple_to_type()
     {
       $record2 = $this->stub(RegistryObject::class, ['class' => 'party', 'type' => 'group', 'key' => 'AODN']);
@@ -48,7 +48,6 @@ class RelationshipSearchServiceTest extends \MyceliumTestClass
 
     }
 
-    /** @test */
     public function moved_to_integration_test_it_should_not_return_related_reverse()
     {
       BackupRepository::restore("16_RelationshipScenario", $options = [

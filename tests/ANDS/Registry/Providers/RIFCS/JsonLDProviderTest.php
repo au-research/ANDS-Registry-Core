@@ -123,7 +123,7 @@ class JsonLDProviderTest extends \MyceliumTestClass
 //        self::assertEquals("AUTParty6Has_Collector", $output[0]['name']);
 //    }
 //
-    /** @test **/
+
     public function move_to_integration_test_it_should_find_a_funder()
     {
         // given a record with an author (party)
@@ -154,7 +154,6 @@ class JsonLDProviderTest extends \MyceliumTestClass
 
     }
 
-    /** @test **/
     public function move_to_integarion_test_it_should_find_a_publication()
     {
         $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'collection','key' => 'AUTESTING_ALL_ELEMENTS_TEST']);
