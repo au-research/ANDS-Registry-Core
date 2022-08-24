@@ -51,7 +51,7 @@ class RIFCSIndexProviderTest extends \MyceliumTestClass
         $this->myceliumDelete($record);
     }
 
-    public function test_getIndexActivity()
+    public function move_to_integration_test_getIndexActivity()
     {
         $record = $this->stub(RegistryObject::class, ['class' => 'activity', 'type' => 'project','key' => 'ACTIVITY_GRANT_NETWORK']);
         $this->stub(RecordData::class, [
@@ -119,7 +119,7 @@ class RIFCSIndexProviderTest extends \MyceliumTestClass
         );
     }
 
-    public function testIndexRecord()
+    public function move_to_integration_testIndexRecord()
     {
         $solrClient = SolrIndex::getClient("portal");
 
@@ -140,7 +140,7 @@ class RIFCSIndexProviderTest extends \MyceliumTestClass
         $this->assertEquals($record->key, $doc['key']);
     }
 
-    public function testUpdateFieldTags()
+    public function move_to_integration_testUpdateFieldTags()
     {
         $solrClient = SolrIndex::getClient("portal");
 

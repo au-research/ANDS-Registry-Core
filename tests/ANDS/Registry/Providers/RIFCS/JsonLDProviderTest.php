@@ -124,7 +124,7 @@ class JsonLDProviderTest extends \MyceliumTestClass
 //    }
 //
     /** @test **/
-    public function it_should_find_a_funder()
+    public function move_to_integration_test_it_should_find_a_funder()
     {
         // given a record with an author (party)
         $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'AUT_DCI_COLLECTION']);
@@ -155,7 +155,7 @@ class JsonLDProviderTest extends \MyceliumTestClass
     }
 
     /** @test **/
-    public function it_should_find_a_publication()
+    public function move_to_integarion_test_it_should_find_a_publication()
     {
         $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'collection','key' => 'AUTESTING_ALL_ELEMENTS_TEST']);
         $this->stub(RecordData::class, [
