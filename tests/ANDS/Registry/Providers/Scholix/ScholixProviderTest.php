@@ -9,7 +9,7 @@ use ANDS\Repository\RegistryObjectsRepository;
 
 class ScholixProviderTest extends MyceliumTestClass
 {
-    /** @test **/
+    /** @test
     public function it_should_return_true_for_scholixable_record()
     {
         // should pass
@@ -26,7 +26,7 @@ class ScholixProviderTest extends MyceliumTestClass
 
         $this->myceliumDelete($record);
     }
-
+*/
     /** @test **/
     public function it_should_fail_for_nonscholixable_records()
     {
@@ -54,7 +54,7 @@ class ScholixProviderTest extends MyceliumTestClass
 
     }
 
-    /** @test **/
+    /** @test
     public function it_should_create_link_to_related_object_publication()
     {
         // has a related object of type publication
@@ -93,8 +93,8 @@ class ScholixProviderTest extends MyceliumTestClass
         $this->myceliumDelete($record1);
 
         $this->myceliumDelete($record2);
-    }
-    /** @test **/
+    }*/
+    /** @test
     public function it_should_get_the_right_identifier()
     {
         $party = $this->stub(RegistryObject::class, [
@@ -112,7 +112,7 @@ class ScholixProviderTest extends MyceliumTestClass
 
         $partyRecordIdentifiers = collect($partyRecordIdentifiers)->pluck('value')->toArray();
 
-        /* related party by reverse relationship */
+        // related party by reverse relationship
         $record14 = $this->stub(RegistryObject::class, [
             'class' => 'collection',
             'type' => 'dataset',
@@ -131,7 +131,7 @@ class ScholixProviderTest extends MyceliumTestClass
             $this->assertContains($id['identifier'], $partyRecordIdentifiers);
         }
 
-        /* related party by related Object*/
+        // related party by related Object
         $record16 = $this->stub(RegistryObject::class, [
             'class' => 'collection',
             'type' => 'dataset',
@@ -154,8 +154,9 @@ class ScholixProviderTest extends MyceliumTestClass
         $this->myceliumDelete($record14);
         $this->myceliumDelete($record16);
 
-    }
-    /** @test **/
+    }*/
+
+    /** @test
     public function it_should_get_the_non_normalised_identifier()
     {
         $party = $this->stub(RegistryObject::class, [
@@ -169,7 +170,7 @@ class ScholixProviderTest extends MyceliumTestClass
         ]);
         $this->myceliumInsert($party);
 
-        /* related party by reverse relationship */
+        // related party by reverse relationship
         $record4 = $this->stub(RegistryObject::class, [
             'class' => 'collection',
             'type' => 'dataset',
@@ -189,7 +190,7 @@ class ScholixProviderTest extends MyceliumTestClass
         $this->assertEquals($scholixArray[0]['link']['target']['identifier'][0]['identifier'],"10.4567.dd");
         $this->myceliumDelete($party);
         $this->myceliumDelete($record4);
-    }
+    }*/
     /** @test **/
     public function it_should_get_the_right_publication_format()
     {
@@ -384,7 +385,7 @@ class ScholixProviderTest extends MyceliumTestClass
         }
     }
 
-    /** @test **/
+    /** @test
     public function it_should_not_limit_links(){
         $need_to_delete = false;
         $record43 = RegistryObjectsRepository::getPublishedByKey('AUTestingRecords2ScholixRecords43');
@@ -411,8 +412,8 @@ class ScholixProviderTest extends MyceliumTestClass
         }
 
     }
-
-    /** @test **/
+*/
+    /** @test
     public function it_should_not_return_source_slug(){
         $need_to_delete = false;
         $record16 = RegistryObjectsRepository::getPublishedByKey('AUTestingRecords2ScholixRecords16');
@@ -442,8 +443,8 @@ class ScholixProviderTest extends MyceliumTestClass
         }
 
     }
-
-    /** @test **/
+*/
+    /** @test
     public function it_should_not_return_target_slug(){
         $need_to_delete = false;
         $record39 = RegistryObjectsRepository::getPublishedByKey('AUTestingRecords2ScholixRecords39');
@@ -472,6 +473,6 @@ class ScholixProviderTest extends MyceliumTestClass
             $this->myceliumDelete($record39);
         }
 
-    }
+    }*/
 
 }

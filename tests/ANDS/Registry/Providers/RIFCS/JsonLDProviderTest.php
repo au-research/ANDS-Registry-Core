@@ -24,7 +24,7 @@ class JsonLDProviderTest extends \MyceliumTestClass
         // TODO add assertions
     }
 
-    /** @test **/
+    /** @test
     public function it_should_output_json_encode_object_software()
     {
 
@@ -35,8 +35,8 @@ class JsonLDProviderTest extends \MyceliumTestClass
 //        echo $output;
         // TODO add assertions
     }
-
-    /** @test **/
+*/
+    /** @test
     public function it_should_output_json_encode_object_service()
     {
 
@@ -47,7 +47,7 @@ class JsonLDProviderTest extends \MyceliumTestClass
 //        echo $output;
         // TODO add assertions
     }
-
+*/
 
     /** @test **/
     public function it_should_convert_dcmi_box()

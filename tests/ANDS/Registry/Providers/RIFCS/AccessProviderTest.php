@@ -22,7 +22,7 @@ class AccessProviderTest extends \MyceliumTestClass
         $this->myceliumDelete($record);
     }
 
-    /** @test */
+    /** @test
     public function test_directDownload()
     {
         //obtain the directDownload from electronic address with type url and target directDownload
@@ -67,8 +67,8 @@ class AccessProviderTest extends \MyceliumTestClass
         $this->myceliumDelete($record);
         $this->myceliumDelete($record2);
     }
-
-    /** @test */
+*/
+    /** @test
     public function test_ogc_wms()
     {
         // electronic url and relatedInfo
@@ -82,8 +82,8 @@ class AccessProviderTest extends \MyceliumTestClass
         $this->assertNotEmpty($actual);
         $this->myceliumDelete($record);
     }
-
-    /** @test */
+*/
+    /** @test
     public function test_ogc_wcs()
     {
         // electronic url and relatedInfo
@@ -97,8 +97,8 @@ class AccessProviderTest extends \MyceliumTestClass
         $this->assertNotEmpty($actual);
         $this->myceliumDelete($record);
     }
-
-    /** @test */
+*/
+    /** @test
     public function test_ogc_wfs()
     {
         // electronic url, relatedInfo and relatedObject
@@ -121,8 +121,8 @@ class AccessProviderTest extends \MyceliumTestClass
         $this->myceliumDelete($record);
         $this->myceliumDelete($record2);
     }
-
-    /** @test */
+*/
+    /** @test
     public function test_thredds()
     {
         // electronic url
@@ -136,9 +136,9 @@ class AccessProviderTest extends \MyceliumTestClass
         $actual = AccessProvider::getTHREDDS($record,$record->getCurrentData()->data);
         $this->assertNotEmpty($actual);
         $this->myceliumDelete($record);
-    }
+    }*/
 
-    /** @test */
+    /** @test
     public function test_thredds_wms() {
 
         // electronic url
@@ -153,9 +153,9 @@ class AccessProviderTest extends \MyceliumTestClass
         $this->assertNotEmpty($actual);
         $this->myceliumDelete($record);
     }
+*/
 
-
-    /** @test */
+    /** @test
     public function test_get_overall()
     {
         //  relatedObject
@@ -178,9 +178,9 @@ class AccessProviderTest extends \MyceliumTestClass
         $this->assertArrayHasKey("THREDDS", $actual);
         $this->myceliumDelete($record);
         $this->myceliumDelete($record2);
-    }
+    }*/
 
-    /** @test */
+    /** @test
     public function test_geoserver()
     {
         // electronic url
@@ -195,8 +195,8 @@ class AccessProviderTest extends \MyceliumTestClass
         $this->assertNotEmpty($actual);
         $this->myceliumDelete($record);
     }
-
-    /** @test */
+*/
+    /** @test
     public function test_landingpage_geoserver_and_wfs()
     {
         // electronic url
@@ -212,7 +212,8 @@ class AccessProviderTest extends \MyceliumTestClass
         $this->assertArrayHasKey("GeoServer", $actual);
         $this->assertArrayHasKey("OGC:WFS", $actual);
     }
-
+*/
+/**
     public function test_thredds_opendap()
     {
         $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'COLLECTION_GRANT_NETWORK']);
@@ -236,7 +237,8 @@ class AccessProviderTest extends \MyceliumTestClass
         $this->myceliumDelete($record2);
 
     }
-
+ */
+/**
     public function test_contact_custodian()
     {
         $record = $this->stub(RegistryObject::class, ['class' => 'collection', 'type' => 'dataset', 'key' => 'AUTala.org.au/dr6006']);
@@ -250,8 +252,8 @@ class AccessProviderTest extends \MyceliumTestClass
         $this->assertNotEmpty($actual);
         $this->myceliumDelete($record);
 
-    }
-
+    }*/
+/**
     public function test_other()
     {
         $record = $this->stub(RegistryObject::class, ['class' => 'collection', 'type' => 'dataset', 'key' => 'COLLECTION_GRANT_NETWORK']);
@@ -265,7 +267,7 @@ class AccessProviderTest extends \MyceliumTestClass
         $this->assertNotEmpty($actual);
         $this->myceliumDelete($record);
     }
-
+*/
     public function test_ogcwps()
     {
         // electronic url

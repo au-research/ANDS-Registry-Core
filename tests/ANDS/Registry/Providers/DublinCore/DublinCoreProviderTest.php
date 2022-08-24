@@ -16,7 +16,7 @@ class DublinCoreProviderTest extends \MyceliumTestClass
 {
     /** @test
      * @throws \Exception
-     */
+
     public function get_dc_for_record_should_provide_dc()
     {
         $record = $this->stub(RegistryObject::class);
@@ -31,7 +31,7 @@ class DublinCoreProviderTest extends \MyceliumTestClass
         $dom->loadXML($dc);
         $this->assertEquals("oai_dc:dc", $dom->firstChild->tagName);
     }
-
+    */
     /** @test
      * @throws \Exception
      */
@@ -58,7 +58,7 @@ class DublinCoreProviderTest extends \MyceliumTestClass
 
     /** @test
      * @throws \Exception
-     */
+
     function it_should_have_the_right_identifiers()
     {
         // given a collection record
@@ -90,10 +90,10 @@ class DublinCoreProviderTest extends \MyceliumTestClass
         // has the second local identifier
         $this->assertContains("nla.part.12345", $identifiers);
     }
-
+   */
     /** @test
      * @throws \Exception
-     */
+
     function it_should_have_descriptions()
     {
         // given a collection record
@@ -116,10 +116,10 @@ class DublinCoreProviderTest extends \MyceliumTestClass
         }
         $this->assertNotEmpty($descriptions);
     }
-
+*/
     /** @test
      * @throws \Exception
-     */
+
     function rights_can_come_from_description_of_type_rights()
     {
         // given a collection record with rights description
@@ -142,7 +142,7 @@ class DublinCoreProviderTest extends \MyceliumTestClass
         }
         $this->assertNotEmpty($descriptions);
     }
-
+*/
     /** TODO test
      * @throws \Exception
      */
