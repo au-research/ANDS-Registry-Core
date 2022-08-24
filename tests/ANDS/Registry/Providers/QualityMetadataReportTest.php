@@ -47,7 +47,7 @@ class QualityMetadataReportTest extends \MyceliumTestClass
 
     /** @test
      * @throws \Exception
-     */
+
     function it_passes_related_object_party_for_collection()
     {
         // given a record with an author (party)
@@ -77,10 +77,10 @@ class QualityMetadataReportTest extends \MyceliumTestClass
 
         $this->checkReport($report);
     }
-
+*/
     /** @test
      * @throws \Exception
-     */
+
     function it_passes_reverse_related_party_for_collection()
     {
         // given a record
@@ -113,10 +113,10 @@ class QualityMetadataReportTest extends \MyceliumTestClass
 
         $this->checkReport($report);
     }
-
+*/
     /** @test
      * @throws \Exception
-     */
+
     function it_passes_related_object_activity_for_collection()
     {
         // given a record with an author (party)
@@ -147,10 +147,10 @@ class QualityMetadataReportTest extends \MyceliumTestClass
 
         $this->checkReport($report);
     }
-
+*/
     /** @test
      * @throws \Exception
-     */
+
     function it_passes_related_object_service_for_collection()
     {
         $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'AUT_QUALITY_COLLECTION']);
@@ -180,7 +180,7 @@ class QualityMetadataReportTest extends \MyceliumTestClass
 
         $this->checkReport($report);
     }
-
+*/
     /** @test
      * @throws \Exception
      */

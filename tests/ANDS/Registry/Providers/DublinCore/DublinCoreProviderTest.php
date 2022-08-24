@@ -207,7 +207,7 @@ class DublinCoreProviderTest extends \MyceliumTestClass
 
     /** @test
      * @throws \Exception
-     */
+
     function it_should_have_contributor_as_related_parties()
     {
         // given a record with an author (party)
@@ -240,11 +240,11 @@ class DublinCoreProviderTest extends \MyceliumTestClass
         $actual = (string) array_first($sml->xpath('//dc:contributor'));
         $this->assertContains("(isFundedBy)", $actual);
     }
-
+*/
     /** @test
      * @throws \Exception
      */
-    function it_should_have_all_subject_resolved()
+    function it_should_have_all_subjects()
     {
         // given a collection record
         $record = $this->stub(RegistryObject::class);
@@ -266,6 +266,6 @@ class DublinCoreProviderTest extends \MyceliumTestClass
         }
         $this->assertNotEmpty($subjects);
         $this->assertContains("localSubject", $subjects);
-        $this->assertContains("CHEMICAL SCIENCES", $subjects);
+        $this->assertContains("830201", $subjects);
     }
 }

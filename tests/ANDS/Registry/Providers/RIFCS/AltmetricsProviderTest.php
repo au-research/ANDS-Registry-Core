@@ -28,7 +28,7 @@ class AltmetricsProviderTest extends \MyceliumTestClass
 
     }
 
-    /** @test */
+    /** @test
     function it_gets_the_related_contributor_metadata()
     {
         $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'AUTestingRecords2AltmetricsRecords12a']);
@@ -60,8 +60,9 @@ class AltmetricsProviderTest extends \MyceliumTestClass
         $this->myceliumDelete($party);
 
     }
+    */
 
-    /** @test */
+    /** @test
     function it_gets_the_reverse_related_collector_metadata()
     {
         $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'AUTestingRecords2AltmetricsRecords12b']);
@@ -93,5 +94,5 @@ class AltmetricsProviderTest extends \MyceliumTestClass
         $this->myceliumDelete($party);
 
     }
-
+*/
 }

@@ -92,7 +92,7 @@ class DataCitationIndexProviderTest extends \MyceliumTestClass
         $this->assertNotEmpty($sml->xpath('//NamedPersonList/NamedPerson'));
     }
 
-    /** @test */
+    /** @test
     function author_address()
     {
         // given a record with an author (party)
@@ -137,8 +137,8 @@ class DataCitationIndexProviderTest extends \MyceliumTestClass
         $this->myceliumDelete($record);
         $this->myceliumDelete($party);
     }
-
-    /** @test */
+*/
+    /** @test
     function funding_info()
     {
         $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'AUT_DCI_COLLECTION']);
@@ -182,8 +182,8 @@ class DataCitationIndexProviderTest extends \MyceliumTestClass
         $this->myceliumDelete($funder);
         $this->myceliumDelete($activity);
     }
-
-    /** @test */
+*/
+    /** @test
     function parent_data_ref()
     {
         // given a record
@@ -211,7 +211,7 @@ class DataCitationIndexProviderTest extends \MyceliumTestClass
         $this->myceliumDelete($record);
         $this->myceliumDelete($record2);
     }
-
+*/
     /** @test */
     function it_provides_dci_only_for_ds_that_has_the_flag()
     {

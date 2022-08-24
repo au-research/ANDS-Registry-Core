@@ -11,7 +11,7 @@ use MinhD\SolrClient\SolrClient;
 
 class RIFCSIndexProviderTest extends \MyceliumTestClass
 {
-
+/**
     public function test_getIndexCollection()
     {
         $record = $this->stub(RegistryObject::class, ['class' => 'collection','key' => 'AUTESTING_ALL_ELEMENTS_TEST']);
@@ -88,7 +88,7 @@ class RIFCSIndexProviderTest extends \MyceliumTestClass
 
         $this->myceliumDelete($record);
     }
-
+*/
     public function test_isIndexable()
     {
         // PUBLISHED record is indexable

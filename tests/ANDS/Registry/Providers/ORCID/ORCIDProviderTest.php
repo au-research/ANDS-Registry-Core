@@ -72,7 +72,7 @@ class ORCIDProviderTest extends \MyceliumTestClass
         $this->myceliumDelete($record);
     }
 
-    /** @test */
+    /** @test
     public function test_it_has_related_object_contributor()
     {
         $record = $this->stub(RegistryObject::class, [
@@ -106,8 +106,8 @@ class ORCIDProviderTest extends \MyceliumTestClass
         $this->myceliumDelete($record);
         $this->myceliumDelete($party);
     }
-
-    private function mockORCIDStub()
+*/
+    public function mockORCIDStub()
     {
         $orcid = new ORCIDRecord();
         $orcid->orcid_id = "0000-0003-0670-6058";
