@@ -9,6 +9,15 @@ use ANDS\Repository\RegistryObjectsRepository;
 
 class ScholixProviderTest extends MyceliumTestClass
 {
+
+    /**
+     * @test
+     */
+    public function test_until_we_get_solr_8_in_ci_machine(){
+        $this->assertTrue(true);
+    }
+
+
     /** @test
     public function it_should_return_true_for_scholixable_record()
     {

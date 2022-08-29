@@ -12,6 +12,15 @@ use ANDS\Util\XMLUtil;
 
 class DataCitationIndexProviderTest extends \MyceliumTestClass
 {
+
+    /**
+     * @test
+     */
+    public function test_until_we_get_solr_8_in_ci_machine(){
+        $this->assertTrue(true);
+    }
+
+
     /** @test
      * @throws \Exception
 

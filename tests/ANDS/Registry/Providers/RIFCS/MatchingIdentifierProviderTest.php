@@ -9,6 +9,14 @@ use ANDS\RegistryObject;
 
 class MatchingIdentifierProviderTest extends \MyceliumTestClass
 {
+
+    /**
+     * @test
+     */
+    public function test_until_we_get_solr_8_in_ci_machine(){
+        $this->assertTrue(true);
+    }
+
     function move_to_integration_it_gets_the_matching_identifier_record_ids()
     {
         $record = $this->stub(RegistryObject::class, ['class' => 'collection','key' => 'AUTESTING_ALL_ELEMENTS_TEST']);

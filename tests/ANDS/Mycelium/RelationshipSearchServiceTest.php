@@ -14,6 +14,14 @@ use ANDS\Repository\RegistryObjectsRepository;
 class RelationshipSearchServiceTest extends \MyceliumTestClass
 {
 
+    /**
+     * @test
+     */
+    public function test_until_we_get_solr_8_in_ci_machine(){
+        $this->assertTrue(true);
+    }
+
+
     public function moved_to_integration_test_search_multiple_to_type()
     {
       $record2 = $this->stub(RegistryObject::class, ['class' => 'party', 'type' => 'group', 'key' => 'AODN']);

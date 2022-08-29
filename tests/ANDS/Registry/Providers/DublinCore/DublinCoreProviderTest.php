@@ -14,6 +14,14 @@ use DOMDocument;
 
 class DublinCoreProviderTest extends \MyceliumTestClass
 {
+
+    /**
+     * @test
+     */
+    public function test_until_we_get_solr_8_in_ci_machine(){
+        $this->assertTrue(true);
+    }
+
     /** @test
      * @throws \Exception
      *
