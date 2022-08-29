@@ -27,7 +27,7 @@ class ScholixProviderTest extends MyceliumTestClass
         $this->myceliumDelete($record);
     }
 */
-    /** @test **/
+    /** @test /
     public function it_should_fail_for_nonscholixable_records()
     {
         // should fail, no related publication
@@ -53,7 +53,7 @@ class ScholixProviderTest extends MyceliumTestClass
         $this->myceliumDelete($record2);
 
     }
-
+*/
     /** @test
     public function it_should_create_link_to_related_object_publication()
     {
@@ -191,7 +191,7 @@ class ScholixProviderTest extends MyceliumTestClass
         $this->myceliumDelete($party);
         $this->myceliumDelete($record4);
     }*/
-    /** @test **/
+    /** @test /
     public function it_should_get_the_right_publication_format()
     {
         $party = $this->stub(RegistryObject::class, [
@@ -205,7 +205,7 @@ class ScholixProviderTest extends MyceliumTestClass
         ]);
         $this->myceliumInsert($party);
 
-        /* related party by relatedInfo*/
+        // related party by relatedInfo
         $record18 = $this->stub(RegistryObject::class, [
             'class' => 'collection',
             'type' => 'dataset',
@@ -218,7 +218,7 @@ class ScholixProviderTest extends MyceliumTestClass
         ]);
         $this->myceliumInsert($record18);
 
-        /* record 18 has related object 54 which is a collection of type publication */
+        // record 18 has related object 54 which is a collection of type publication
         $record54 = $this->stub(RegistryObject::class, [
             'class' => 'collection',
             'type' => 'publication',
@@ -287,6 +287,7 @@ class ScholixProviderTest extends MyceliumTestClass
         $this->myceliumDelete($record18);
         $this->myceliumDelete($record54);
     }
+     * */
 
     /** test **/
     public function it_should_has_all_identifiers_as_source()

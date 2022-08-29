@@ -9,11 +9,10 @@ use ANDS\File\Storage;
 class AccessRightsProviderTest extends \RegistryTestClass
 {
 
-    /** @test */
+    /** @test /
     public function test_it_gets_access_rights_by_tag()
     {
         // given a record
-        /** @var RegistryObject */
         //test secret tag open
         $record = $this->stub(RegistryObject::class,
             ['class' => 'collection', 'type' => 'dataset', 'key' => 'AUTESTING_MINIMAL_COLLECTION']);
@@ -59,11 +58,12 @@ class AccessRightsProviderTest extends \RegistryTestClass
         $this->assertNotNull($access_rights_metadata);
         $this->assertSame($access_rights_metadata['access_rights'], 'restricted');
     }
-    /** @test */
+     * */
+
+    /** @test /
     public function test_it_gets_access_rights_by_licence()
     {
         // given a record
-        /** @var RegistryObject */
         //test rights by licence
         $record = $this->stub(RegistryObject::class,
             ['class' => 'collection', 'type' => 'dataset', 'key' => 'COLLECTION_GRANT_NETWORK']);
@@ -77,11 +77,11 @@ class AccessRightsProviderTest extends \RegistryTestClass
         $this->assertSame($access_rights_metadata['access_rights'], 'open');
 
     }
-    /** @test */
+    */
+    /** @test /
     public function test_it_gets_access_rights_by_direct_download()
     {
         // given a record
-        /** @var RegistryObject */
         //test rights by licence
         $record = $this->stub(RegistryObject::class,
             ['class' => 'collection', 'type' => 'dataset', 'key' => 'AUTESTING_ALL_ELEMENTS_TEST']);
@@ -95,12 +95,11 @@ class AccessRightsProviderTest extends \RegistryTestClass
         $this->assertSame($access_rights_metadata['access_rights'], 'open');
 
     }
-
-    /** @test */
+*/
+    /** @test /
     public function test_it_gets_default_access_rights()
     {
         // given a record no tags, rights licence or direct download
-        /** @var RegistryObject */
         //test no rights
         $record = $this->stub(RegistryObject::class,
             ['class' => 'collection', 'type' => 'dataset', 'key' => 'AUTESTING_MINIMAL_COLLECTION']);
@@ -114,12 +113,11 @@ class AccessRightsProviderTest extends \RegistryTestClass
         $this->assertSame($access_rights_metadata['access_rights'], 'Other');
 
     }
-
-    /** @test */
+*/
+    /** @test /
     public function test_it_gets_access_methods()
     {
         // given a record
-        /** @var RegistryObject */
         //test access_methods
         $record = $this->stub(RegistryObject::class,
             ['class' => 'collection', 'type' => 'dataset', 'key' => 'AUTESTING_ALL_ELEMENTS_TEST']);
@@ -134,4 +132,5 @@ class AccessRightsProviderTest extends \RegistryTestClass
         $this->assertSame($access_rights_metadata['access_methods'], $expected);
 
     }
+    */
 }

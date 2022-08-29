@@ -267,7 +267,7 @@ class AccessProviderTest extends \MyceliumTestClass
         $this->assertNotEmpty($actual);
         $this->myceliumDelete($record);
     }
-*/
+
     public function test_ogcwps()
     {
         // electronic url
@@ -283,4 +283,5 @@ class AccessProviderTest extends \MyceliumTestClass
         $this->assertNotEmpty("OGC:WPS", $actual);
         $this->myceliumDelete($record);
     }
+ * */
 }
