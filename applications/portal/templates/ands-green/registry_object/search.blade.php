@@ -138,7 +138,7 @@
             <ul class="listy no-bottom" ng-show="isArray(value)===false && (name!='anzsrc-for' && name!='anzsrc-seo' && name!='anzsrc-for-2020' && name!='anzsrc-seo-2020') && name!='nottype'">
                 <li>
                     <a href="" ng-click="toggleFilter(name, value, true)">
-                        <span ng-if="name!='related_object_id'">[[ value | formatFacet | truncate:30  ]]</span>
+                        <span ng-if="name!='related_object_id'&&name!='q'">[[ value | formatFacet | truncate:30  ]]</span>
                         <span ng-if="name!='related_party_one_id'&&name=='q'" tip="<b>Query</b>:[[value]]">[[ value | truncate:30  ]]</span>
                         <span ng-if="name=='related_object_id'" resolve-ro roid="value">[[value | truncate:30 ]]</span>
                         <small><i class="fa fa-remove" tip="Remove Item"></i></small>
