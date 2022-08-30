@@ -3,7 +3,9 @@
 namespace ANDS\Commands\Queue;
 
 use ANDS\Commands\ANDSCommand;
-use ANDS\Queue\Job\SyncRegistryObjectJob;
+use ANDS\Queue\Job\ImportRegistryObjectToMyceliumJob;
+use ANDS\Queue\Job\IndexRegistryObjectRelationshipsJob;
+use ANDS\Queue\Job\IndexPortalRegistryObjectJob;
 use ANDS\Queue\QueueService;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\RegistryObject;
@@ -78,10 +80,24 @@ class QueueSyncCommand extends ANDSCommand
         $progressBar->setFormat('ands-command');
         $progressBar->start();
         foreach ($ids as $id) {
-            $job = new SyncRegistryObjectJob();
+            $job = new ImportRegistryObjectToMyceliumJob();
             $job->init(['registry_object_id' => $id]);
             QueueService::push($job);
-            $progressBar->setMessage("Queued Job[class=SyncRegistryObjectJob, registryObjectId=$id]");
+            $progressBar->setMessage("Queued Job[class=ImportRegistryObjectToMyceliumJob, registryObjectId=$id]");
+            $progressBar->advance();
+        }
+        foreach ($ids as $id) {
+            $job = new IndexRegistryObjectRelationshipsJob();
+            $job->init(['registry_object_id' => $id]);
+            QueueService::push($job);
+            $progressBar->setMessage("Queued Job[class=IndexRegistryObjectRelationshipsJob, registryObjectId=$id]");
+            $progressBar->advance();
+        }
+        foreach ($ids as $id) {
+            $job = new IndexPortalRegistryObjectJob();
+            $job->init(['registry_object_id' => $id]);
+            QueueService::push($job);
+            $progressBar->setMessage("Queued Job[class=IndexPortalRegistryObjectJob, registryObjectId=$id]");
             $progressBar->advance();
         }
         $progressBar->setMessage("Done");
