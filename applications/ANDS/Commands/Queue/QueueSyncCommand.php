@@ -39,7 +39,8 @@ class QueueSyncCommand extends ANDSCommand
         QueueService::init();
 
         $ids = RegistryObject::query();
-
+        // increase memory limit in case we are syncing the entire content
+        ini_set('memory_limit', '2048M');
         // include registryObjects with status published-only or deleted-only, not both
         $publishedOnly = $input->getOption('published-only');
         $deletedOnly = $input->getOption('deleted-only');
