@@ -39,7 +39,7 @@ class Auth extends CI_Controller {
         $rapid_connect = array(
             'slug'		=> 'aaf_rapid',
             'default'	=> true,
-            'display' 	=> 'AAF Rapid Connect',
+            'display' 	=> 'Australian Access Federation Login',
             'view' 		=>  $this->load->view('authenticators/aaf_rapid', false, true)
         );
         array_push($data['authenticators'], $rapid_connect);

@@ -293,7 +293,7 @@ class Profile extends MX_Controller
             ),
             'aaf' => array(
                 'slug' => 'aaf',
-                'display' => 'Shibboleth AAF Rapid Connect',
+                'display' => 'Australian Access Federation Login',
             ),
         );
 
