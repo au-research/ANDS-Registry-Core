@@ -67,8 +67,8 @@ class QueueSyncCommand extends ANDSCommand
             $this->log("Include only RegistryObjects modified after $dateTimeString");
         }
 
-        $ids = $ids->pluck('registry_object_id');
-        $total = $ids->count();
+        $ids = $ids->pluck('registry_object_id')->toArray();
+        $total = sizeof($ids);
 
         if ($total === 0) {
             $this->log("No records match!");
@@ -80,6 +80,9 @@ class QueueSyncCommand extends ANDSCommand
         $progressBar = new ProgressBar($this->getOutput(), $total);
         $progressBar->setFormat('ands-command');
         $progressBar->start();
+        // shuffle the ids so they most likely not from the same DS or related
+        // deadlocks are managed but better to avoid delays and reties
+        shuffle($ids);
         foreach ($ids as $id) {
             $job = new ImportRegistryObjectToMyceliumJob();
             $job->init(['registry_object_id' => $id]);
@@ -87,6 +90,12 @@ class QueueSyncCommand extends ANDSCommand
             $progressBar->setMessage("Queued Job[class=ImportRegistryObjectToMyceliumJob, registryObjectId=$id]");
             $progressBar->advance();
         }
+        $progressBar->setMessage("Done");
+        $progressBar->finish();
+
+        $progressBar = new ProgressBar($this->getOutput(), $total);
+        $progressBar->setFormat('ands-command');
+        $progressBar->start();
         foreach ($ids as $id) {
             $job = new IndexRegistryObjectRelationshipsJob();
             $job->init(['registry_object_id' => $id]);
@@ -94,6 +103,12 @@ class QueueSyncCommand extends ANDSCommand
             $progressBar->setMessage("Queued Job[class=IndexRegistryObjectRelationshipsJob, registryObjectId=$id]");
             $progressBar->advance();
         }
+        $progressBar->setMessage("Done");
+        $progressBar->finish();
+
+        $progressBar = new ProgressBar($this->getOutput(), $total);
+        $progressBar->setFormat('ands-command');
+        $progressBar->start();
         foreach ($ids as $id) {
             $job = new IndexPortalRegistryObjectJob();
             $job->init(['registry_object_id' => $id]);

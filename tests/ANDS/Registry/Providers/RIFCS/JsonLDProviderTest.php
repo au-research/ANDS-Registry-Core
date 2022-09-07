@@ -113,60 +113,6 @@ class JsonLDProviderTest extends \MyceliumTestClass
         $output = JsonLDProvider::formatTempCoverages($coverages);
         self::assertEquals("2019-05-31/2019-06-07", $output);
     }
-//
-//    /** @test **/
-//    public function it_should_find_a_creator()
-//    {
-//        $record = $this->ensureKeyExist("AUTSchemaOrgCollection3");
-//        $data['recordData'] = $record->getCurrentData()->data;
-//        $output = JsonLDProvider::getCreator($record, $data);
-//        self::assertEquals("AUTParty6Has_Collector", $output[0]['name']);
-//    }
-//
-
-    public function move_to_integration_test_it_should_find_a_funder()
-    {
-        // given a record with an author (party)
-        $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'dataset','key' => 'AUT_DCI_COLLECTION']);
-        $this->stub(RecordData::class, [
-            'registry_object_id' => $record->id,
-            'data' => Storage::disk('test')->get('rifcs/collection_DCI.xml')
-        ]);
-        $this->myceliumInsert($record);
-
-        // with an author (party)
-        $party = $this->stub(RegistryObject::class, ['class' => 'party','type' => 'person', 'title'=>'The Funder Party', 'key' => 'AUT_DCI_PARTY']);
-
-        $this->stub(RecordData::class, [
-            'registry_object_id' => $party->id,
-            'data' => Storage::disk('test')->get('rifcs/party_DCI.xml')
-        ]);
-
-        $this->myceliumInsert($party);
-
-        // author address with lines are present
-        CoreMetadataProvider::process($record);
-        CoreMetadataProvider::process($party);
-        $output = JsonLDProvider::getFunder($record);
-        self::assertEquals($party->title, $output[0]['name']);
-        $output = JsonLDProvider::getProvider($record);
-        self::assertEquals("AUTestingRecords", $output[0]['name']);
-
-    }
-
-    public function move_to_integarion_test_it_should_find_a_publication()
-    {
-        $record = $this->stub(RegistryObject::class, ['class' => 'collection','type' => 'collection','key' => 'AUTESTING_ALL_ELEMENTS_TEST']);
-        $this->stub(RecordData::class, [
-            'registry_object_id' => $record->id,
-            'data' => Storage::disk('test')->get('rifcs/collection_all_elements.xml')
-        ]);
-        $this->myceliumInsert($record);
-        CoreMetadataProvider::process($record);
-        $output = JsonLDProvider::process($record);
-        $output = JsonLDProvider::getCitation($record);
-        self::assertEquals("https://doi.org/10.123123123", $output[0]['url']);
-    }
 
 
 }
