@@ -10,7 +10,7 @@ use ANDS\Registry\Providers\ORCID\ORCIDRecordsRepository;
 class DatasetORCIDSuggestorTest extends \RegistryTestClass
 {
 
-    public function testSuggest()
+    public function Suggest()
     {
         $data = [];
         $data['orcid'] = "https://orcid.org/0000-0002-5822-5275";
