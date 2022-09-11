@@ -84,7 +84,6 @@ class JsonLDProvider implements RIFCSProvider
             $json_ld->provider = self::getProvider($record, $data);
             $json_ld->termsOfService = self::getTermsOfService($record, $data);
         } elseif ($record->class == 'collection'){
-            $json_ld->accountablePerson = self::getAccountablePerson($record, $data);
             $json_ld->creator = self::getCreator($record, $data);
             $json_ld->citation = self::getCitation($record);
             $json_ld->dateCreated = self::getDateCreated($record, $data);
@@ -92,7 +91,7 @@ class JsonLDProvider implements RIFCSProvider
             $json_ld->alternativeHeadline = self::getAlternateName($record, $data);
             $json_ld->version = self::getVersion($record, $data);
             $json_ld->encodingFormat = self::getEncodingFormat($record, $data);
-            $json_ld->funder = self::getFunder($record);
+            $json_ld->funding = self::getFunding($record);
             $json_ld->hasPart = self::getRelated($record, array("hasPart"));
             $json_ld->isBasedOn = self::getRelated($record, array("isDerivedFrom"));
             $json_ld->isPartOf = self::getRelated($record, array("isPartOf"));
@@ -460,6 +459,52 @@ class JsonLDProvider implements RIFCSProvider
         return $related;
     }
 
+    private static function formatCreators($relationships, $relations_types){
+        $related = [];
+        foreach ($relationships as $relation) {
+            $related_record = null;
+            $type = "Person";
+            // if it's an actual record get it from the registry
+            if($relation["to_identifier_type"] == "ro:id"){
+                $related_record = RegistryObjectsRepository::getRecordByID($relation["to_identifier"]);
+            }
+            // if no record in the registry or not a registry object use what ever we get from the index
+            if($related_record == null){
+                $identifier = array("value"=>$relation["to_identifier"], "type"=>$relation["to_identifier_type"]);
+                $f_identifier = static::formatIdentifier($identifier);
+                $record = [];
+                $record['@type'] = $type;
+                if(isset($relation["to_title"]))
+                    $record['name'] = $relation["to_title"];
+                if(isset($relation["to_url"]))
+                    $record['url'] =$relation["to_url"];
+                $record['identifier'] = $f_identifier;
+                $creator = $record;
+            }
+            else {
+                $myceliumServiceClient = new \ANDS\Mycelium\MyceliumServiceClient(\ANDS\Util\Config::get('mycelium.url'));
+                $result = $myceliumServiceClient->getIdentifiers($related_record);
+                $identifiers = json_decode($result->getBody());
+                // these are actual registry objects, so they will have to_title and to_url
+                if (sizeof($identifiers) > 0) {
+                    $a_identifiers = static::formatIdentifierVertices($identifiers);
+                    $creator = array("@type" => $type, "name" => $relation["to_title"], "identifier" => $a_identifiers, "url" => $relation["to_url"]);
+                } else {
+                    $creator = array("@type" => $type, "name" => $relation["to_title"], "url" => $relation["to_url"]);
+                }
+            }
+
+            foreach($relation['relations'] as $r){
+                if(in_array($r['relation_type'], $relations_types)){
+                    $related[] = array("@type" => "Role", "roleName" => $r['relation_type_text'] , "creator" => $creator);
+                }
+            }
+        }
+        return $related;
+    }
+
+
+
     public static function formatIdentifier($identifier){
         $f_identifier = [];
         $f_identifier["@type"] = "PropertyValue";
@@ -628,6 +673,13 @@ class JsonLDProvider implements RIFCSProvider
     public static function getCreator(RegistryObject $record, $data)
     {
         $creator = [];
+        $relations_types = ['hasPrincipalInvestigator', 'hasAuthor', 'coInvestigator', 'hasCoInvestigator', 'isOwnedBy', 'hasCollector', "author", "isManagedBy"];
+
+        $relationships = RelationshipProvider::getRelationByType($record, $relations_types);
+        if(sizeof($relationships) > 0){
+            $creator = static::formatCreators($relationships, $relations_types);
+        }
+
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class . '/ro:citationInfo/ro:citationMetadata/ro:contributor') AS $contributor) {
             $names = (array)$contributor;
@@ -636,36 +688,9 @@ class JsonLDProvider implements RIFCSProvider
             }else{
                 $name = $names['namePart'];
             }
-            $creator[] = array("@type"=>"Person","name"=>$name);
-        };
-
-        if(sizeof($creator) > 0)
-            return $creator;
-        // RDA-777 almost complete relationship types to find a creator
-        $relations_types = ['hasPrincipalInvestigator', 'hasAuthor', 'coInvestigator', 'hasCoInvestigator', 'isOwnedBy', 'hasCollector', "author"];
-        foreach ($relations_types as $idx=>$relation_type) {
-            $relationships = RelationshipProvider::getRelationByType($record, array($relation_type));
-            $creator = static::formatRelationship($relationships);
-            if(sizeof($creator) > 0)
-                return $creator;
+            $creator[] = array("@type" => "Role", "roleName" => "Contributor", "creator" => array("@type"=>"Person","name"=>$name));
         }
-
         return $creator;
-    }
-
-
-    public static function getAccountablePerson(RegistryObject $record)
-    {
-        $relations_types = ["isOwnedBy", "isManagedBy"];
-
-        $accountablePerson = [];
-        foreach ($relations_types as $idx=>$relation_type) {
-            $relationships = RelationshipProvider::getRelationByType($record, array($relation_type));
-            $accountablePerson = static::formatRelationship($relationships);
-            if(sizeof($accountablePerson) > 0)
-                return $accountablePerson;
-        }
-        return $accountablePerson;
     }
 
     public static function getDescriptions(RegistryObject $record, $data = null)
