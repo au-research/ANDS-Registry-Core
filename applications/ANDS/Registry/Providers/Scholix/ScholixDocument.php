@@ -153,9 +153,9 @@ class ScholixDocument
         $str .= "<LinkPublicationDate>".$link['publicationDate']."</LinkPublicationDate>";
 
         $str .= "<LinkProvider>";
-        $str .= "<name>".htmlspecialchars($link['publisher']['name'])."</name>";
-        if (array_key_exists('identifier', $link['publisher'])) {
-            foreach ($link['publisher']['identifier'] as $identifier) {
+        $str .= "<name>".htmlspecialchars($link['linkProvider'][0]['name'])."</name>";
+        if (array_key_exists('identifier', $link['linkProvider'][0])) {
+            foreach ($link['linkProvider'][0]['identifier'] as $identifier) {
                 $str .= "<identifier>";
                 $str .= "<ID>".htmlspecialchars($identifier['identifier'])."</ID>";
                 $str .= "<IDScheme>".htmlspecialchars($identifier['schema'])."</IDScheme>";
@@ -167,8 +167,8 @@ class ScholixDocument
 
         $str .= "<LinkProvider>";
         $str .= "<name>Australian Research Data Commons</name>";
-        if (array_key_exists('identifier', $link['linkProvider'])) {
-            foreach ($link['linkProvider']['identifier'] as $identifier) {
+        if (array_key_exists('identifier', $link['linkProvider'][1])) {
+            foreach ($link['linkProvider'][1]['identifier'] as $identifier) {
                 $str .= "<identifier>";
                 $str .= "<ID>" . htmlspecialchars($identifier['identifier']) . "</ID>";
                 $str .= "<IDScheme>" . htmlspecialchars($identifier['schema']) . "</IDScheme>";
@@ -222,9 +222,9 @@ class ScholixDocument
         }
 
         $str .= "<publisher>";
-        $str .= "<name>".htmlspecialchars($link['publisher']['name'])."</name>";
-        if (array_key_exists('identifier', $link['publisher'])) {
-            foreach ($link['publisher']['identifier'] as $identifier) {
+        $str .= "<name>".htmlspecialchars($link['linkProvider'][0]['name'])."</name>";
+        if (array_key_exists('identifier', $link['linkProvider'][0])) {
+            foreach ($link['linkProvider'][0]['identifier'] as $identifier) {
                 $str .= "<identifier>";
                 $str .= "<ID>".htmlspecialchars($identifier['identifier'])."</ID>";
                 $str .= "<IDScheme>".htmlspecialchars($identifier['schema'])."</IDScheme>";

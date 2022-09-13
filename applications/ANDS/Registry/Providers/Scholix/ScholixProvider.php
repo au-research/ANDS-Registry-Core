@@ -157,28 +157,30 @@ class ScholixProvider implements RegistryContentProvider
         $doc = new ScholixDocument;
         $doc->record = $record;
 
+
+
+
         $commonLinkMetadata = [
             'publicationDate' => DatesProvider::getCreatedDate($record),
-            'publisher' => [
-                'name' => $record->group
-            ],
-            'linkProvider' => [
-                'name' => 'ARDC',
+            'linkProvider' => [[
+                    'name' => $record->group
+                ],[
+                'name' => 'Australian Research Data Commons',
                 'identifier' => [
                     [
                         'identifier' =>  'https://ror.org/038sjwq14',
                         'schema' => 'ror'
                     ]
-                ],
-                'objectType' => $record->type,
-                'title' => $record->title
+                ]
+            ]],
+            "relationshipType" => [
+                "name"=>"isRelatedTo"
             ]
         ];
-
         // identifiers
         $identifiers = self::getIdentifiers($record);
         if (count($identifiers) > 0) {
-            $commonLinkMetadata['publisher']['identifier'] = $identifiers;
+            $commonLinkMetadata['linkProvider'][0]['identifier'] = $identifiers;
         }
 
         /**
