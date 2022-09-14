@@ -4,9 +4,9 @@
 namespace ANDS\Commands;
 
 
+use ANDS\Commands\Script\DataAnalyser;
 use ANDS\Commands\Script\GenericScript;
 use ANDS\Commands\Script\NLAPullBack;
-use ANDS\Commands\Script\NormaliseIdentifier;
 use ANDS\Commands\Script\ProcessDates;
 use ANDS\Commands\Script\ProcessDCI;
 use ANDS\Commands\Script\ProcessGroups;
@@ -36,7 +36,7 @@ class RunScriptCommand extends ANDSCommand
         "testScript" => TestScript::class,
         "processLinks" => ProcessLinksScript::class,
         'processDCI' => ProcessDCI::class,
-        "normaliseIdentifier" => NormaliseIdentifier::class
+        "dataAnalyser" => DataAnalyser::class
     ];
 
     protected function configure()

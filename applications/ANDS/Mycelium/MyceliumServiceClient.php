@@ -294,6 +294,11 @@ class MyceliumServiceClient
         return $this->client->get("api/resources/mycelium-registry-objects/$record->id/identifiers");
     }
 
+    public function getVertex(RegistryObject $record){
+        Log::debug(__METHOD__ . "Getting Vertex for", ["id" => $record->id]);
+        return $this->client->get("api/resources/mycelium-registry-objects/$record->id");
+    }
+
     public function resolveIdentifier($value, $type){
         Log::debug(__METHOD__ . "Resolving ".$type. " identifer ".$value, []);
         return $this->client->get("api/services/mycelium/resolve-identifiers?value=".$value."&type=".$type);
