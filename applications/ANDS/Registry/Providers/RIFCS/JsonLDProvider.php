@@ -396,10 +396,74 @@ class JsonLDProvider implements RIFCSProvider
     }
 
 
-    public static function getFunder(RegistryObject $record)
+    public static function getFunding(RegistryObject $record)
     {
-        $relationships = RelationshipProvider::getRelationByClassAndType($record, 'party', ['isFundedBy']);
-        return static::formatRelationship($relationships);
+        $grantsRelationships = RelationshipProvider::getRelationByClassTypeRelationType($record, 'activity','grant', ['isOutputOf']);
+        $fundings = [];
+        foreach ($grantsRelationships as $relation) {
+            $grant_record = null;
+            $funding = [];
+            $funding["@type"] = "MonetaryGrant";
+            $funding["name"] = $relation["to_title"];
+            if($relation["to_identifier_type"] == "ro:id"){
+                $grant_record = RegistryObjectsRepository::getRecordByID($relation["to_identifier"]);
+
+            }
+            // if no record in the registry or not a registry object use what ever we get from the index
+            if($grant_record  == null){
+                $identifier = array("value"=>$relation["to_identifier"], "type"=>$relation["to_identifier_type"]);
+                $f_identifier = static::formatIdentifier($identifier);
+                $funding['identifier'] = $f_identifier;
+            }
+            else {
+                $funderRelationships = RelationshipProvider::getRelationByClassTypeRelationType($grant_record, 'party','group', ['isFundedBy']);
+                $myceliumServiceClient = new \ANDS\Mycelium\MyceliumServiceClient(\ANDS\Util\Config::get('mycelium.url'));
+                $result = $myceliumServiceClient->getIdentifiers($grant_record);
+                $identifiers = json_decode($result->getBody());
+                // these are actual registry objects, so they will have to_title and to_url
+
+                if($funderRelationships){
+                    foreach ($funderRelationships as $f_relation) {
+                        $funder = [];
+                        if($relation["to_identifier_type"] == "ro:id"){
+                            $funderRecord = RegistryObjectsRepository::getRecordByID($f_relation["to_identifier"]);
+                            $urls = LocationProvider::getElectronicUrl($funderRecord);
+                            $funder['@type'] = 'Organization';
+                            if(isset($f_relation["to_title"]))
+                                $funder['name'] = $f_relation["to_title"];
+                            if(sizeof($urls) > 0)
+                            {
+                                $funder['url'] =$urls[0];
+                            }elseif(isset($f_relation["to_url"]))
+                            {
+                                $funder['url'] =$f_relation["to_url"];
+                            }
+                            $funding['funder'] = $funder;
+                        }
+                        else{
+                            $funder['@type'] = 'Organization';
+                            if(isset($f_relation["to_title"]))
+                                $funder['name'] = $f_relation["to_title"];
+                            if(isset($relation["to_url"]))
+                                $funder['url'] =$f_relation["to_url"];
+                            $identifier = array("value"=>$f_relation["to_identifier"], "type"=>$f_relation["to_identifier_type"]);
+                            $f_identifier = static::formatIdentifier($identifier);
+                            $funder['identifier'] = $f_identifier;
+                            $funding['funder'] = $funder;
+                        }
+                    }
+                }
+                if (sizeof($identifiers) > 0) {
+                    $a_identifiers = static::formatIdentifierVertices($identifiers);
+                    $funding["identifier"] = $a_identifiers;
+                }
+                if(isset($relation["to_url"]))
+                    $funding['url'] =$relation["to_url"];
+
+            }
+            $fundings[] = $funding;
+        }
+        return $fundings;
     }
 
     public static function getRelated(RegistryObject $record, $relation_type = array())
