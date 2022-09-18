@@ -90,7 +90,7 @@ class DataCitationIndexProvider implements RegistryContentProvider
     public static function get(RegistryObject $record)
     {
         if (!static::isValid($record)) {
-            return null;
+            return "<DataRecord/>";
         }
 
         $provider = new static;
@@ -122,7 +122,8 @@ class DataCitationIndexProvider implements RegistryContentProvider
      */
     public static function isValid(RegistryObject $record)
     {
-        if ($record->class != "collection" || $record->status == 'DELETED') {
+
+        if ($record->class != "collection" || $record->status == "DELETED") {
             return false;
         }
 
