@@ -122,7 +122,7 @@ class DataCitationIndexProvider implements RegistryContentProvider
      */
     public static function isValid(RegistryObject $record)
     {
-        if ($record->class != "collection") {
+        if ($record->class != "collection" || $record->status == 'DELETED') {
             return false;
         }
 
