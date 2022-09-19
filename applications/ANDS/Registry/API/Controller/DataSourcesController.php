@@ -142,6 +142,9 @@ class DataSourcesController extends HTTPController implements RestfulController
             Request::value('record_owner')
         );
 
+        $client = new MyceliumServiceClient(Config::get('mycelium.url'));
+        $client->createDataSource($dataSource);
+
         return $dataSource;
     }
 }
