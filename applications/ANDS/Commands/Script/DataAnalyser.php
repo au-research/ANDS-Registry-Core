@@ -5,6 +5,7 @@ namespace ANDS\Commands\Script;
 use ANDS\Mycelium\MyceliumServiceClient;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\Providers\RIFCS\RIFCSIndexProvider;
+use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\Config;
 use ANDS\Util\XMLUtil;
@@ -14,7 +15,7 @@ class DataAnalyser extends GenericScript implements GenericScriptRunnable
 {
     // should make it either to read a file or pass in idlist as params
     // the id array contains the regiostryObject IDs
-    private $id_array = [954547];
+    private $id_array = [636499];
     // spatial index issue
     //private $id_array = [476745,691252,954985,961096,954961];
     //
@@ -31,7 +32,18 @@ class DataAnalyser extends GenericScript implements GenericScriptRunnable
             $contents = file_get_contents($file);
             $this->id_array = explode(',', $contents);
         }
-
+        // not implemented yet
+        /**
+        $all_status = $this->getInput()->getOption("all-status");
+        if($all_status){
+            $ids = RegistryObject::query();
+            $missing_record = [];
+            // increase memory limit in case we are syncing the entire content
+            ini_set('memory_limit', '2048M');
+            // include registryObjects with status published-only or deleted-only, not both
+            $this->id_array = $ids->where('status', $all_status)->pluck("registry_object_id")->toArray();
+        }
+        */
         $params = $this->getInput()->getOption('params');
         if (!$params) {
             $this->log("You have to specify a param: available: ". implode('|', $this->availableParams), "info");
@@ -63,11 +75,32 @@ class DataAnalyser extends GenericScript implements GenericScriptRunnable
                 $this->log("Index Remote");
                 $this->indexRemoteURL();
                 break;
+            case "check-portal-index":
+                $this->checkPortalIndex();
+                break;
             default:
                 $this->log("Undefined params. Provided $params");
                 break;
         }
     }
+
+
+    private function checkPortalIndex(){
+
+        $this->log("Checking Portal Index for %s records", sizeof($this->id_array));
+        foreach($this->id_array as $id) {
+            $record = $this->getSolrDoc($id);
+            if($record == null){
+                $missing_records[] = $id;
+                print("missing $id");
+            }
+        }
+        print("\n________MISSING FROM PORTAL__________".sizeof($missing_records)."___\n");
+        foreach($missing_records as $id) {
+            print("$id,");
+        }
+    }
+
 
     private function checkRecords()
     {
@@ -236,6 +269,21 @@ class DataAnalyser extends GenericScript implements GenericScriptRunnable
             throw new \Exception("ERROR while indexing records".$msg[0]);
         }
     }
+
+    /**
+     * @throws \Exception
+     */
+    private function getSolrDoc($id){
+        $solrClient = new SolrClient(Config::get('app.solr_url'));
+        $solrClient->setCore("portal");
+        $record = $solrClient->get($id);
+        if($solrClient->hasError()){
+            $msg = $solrClient->getErrors();
+            throw new \Exception("ERROR while indexing records".$msg[0]);
+        }
+        return $record;
+    }
+
 
     /** sync records is just insert mycelium, index relationships and index portal
      * @return void

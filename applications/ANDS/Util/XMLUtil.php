@@ -388,7 +388,7 @@ class XMLUtil
         foreach($elements as $element){
             $str = preg_replace('/(\v|\s)+/', ' ', strip_tags($element->asXML()));
             if(trim($str) != "")
-            $text_content[] = trim($str);
+            $text_content[] = utf8_encode(trim($str));
         }
         return $text_content;
     }

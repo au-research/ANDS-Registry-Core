@@ -27,6 +27,7 @@ class RIFCSIndexProvider
     public static function get(RegistryObject $record)
     {
         if (!self::isIndexable($record)) {
+            Log::debug("Not Indexable ". $record->id);
             return [];
         }
 

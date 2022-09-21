@@ -28,7 +28,7 @@ class DescriptionProvider implements RIFCSProvider
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class . '/ro:description') AS $description){
             $type = (string) $description['type'];
-            $description = html_entity_decode((string) $description);
+            $description = utf8_encode(html_entity_decode((string) $description));
             $descriptions[] = [
                 'type' => $type,
                 'value' => $description

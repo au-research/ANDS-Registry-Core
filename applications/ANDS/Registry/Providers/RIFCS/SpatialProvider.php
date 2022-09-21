@@ -59,15 +59,15 @@ class SpatialProvider implements RIFCSProvider
                 foreach ($predicate as $idx=>&$pred) {
                     // longitude
                     if ($idx === 0) {
-                        if ((float)$pred >= 176) {
-                            $pred = 176;
-                        } elseif ((float)$pred <= -176) {
-                            $pred = -176;
+                        if ((float)$pred >= 180) {
+                            $pred = 180;
+                        } elseif ((float)$pred <= -180) {
+                            $pred = -180;
                         } else {
                             $pred = round($pred, 5);
                         }
                     }
-                    //latitude
+                    //latitude: Google map doesn't render well too close to the poles
                     if ($idx === 1) {
                         if ((float)$pred >= 86) {
                             $pred = 86;

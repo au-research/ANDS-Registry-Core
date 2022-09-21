@@ -74,7 +74,13 @@ class RecordsMiscController
     {
         $record = RegistryObjectsRepository::getRecordByID($id);
         $solr_index = RIFCSIndexProvider::get($record);
-        return $solr_index;
+        $response = json_encode($solr_index);
+        $json_error = json_last_error();
+        if($json_error == JSON_ERROR_NONE) {
+            return $solr_index;
+        }else{
+            return "Unable to provide solr doc for record ". $id . " JSON_ERROR_NUMBER:".$json_error;
+        }
     }
 
 
