@@ -61,7 +61,7 @@ class SpatialProvider implements RIFCSProvider
                     if ($idx === 0) {
                         if ((float)$pred >= 176) {
                             $pred = 176;
-                        } elseif ((float)$pred <= -1176) {
+                        } elseif ((float)$pred <= -176) {
                             $pred = -176;
                         } else {
                             $pred = round($pred, 5);
