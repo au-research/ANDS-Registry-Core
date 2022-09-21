@@ -23,6 +23,8 @@ class DescriptionProvider implements RIFCSProvider
 
         $descriptions = [];
 
+
+
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class . '/ro:description') AS $description){
             $type = (string) $description['type'];
@@ -67,19 +69,20 @@ class DescriptionProvider implements RIFCSProvider
      */
     public static function getIndexableArray(RegistryObject $record)
     {
+
         $types = [];
         $values = [];
-
+        $solr_byte_limit = 32766;
         $descriptions = self::get($record);
         foreach ($descriptions['descriptions'] as $description) {
             $types[] = $description['type'];
-            $values[] = $description['value'];
+            $values[] = mb_strcut($description['value'], 0, $solr_byte_limit);
         }
 
-        $theDescription = $descriptions['primary_description'];
+        $theDescription = mb_strcut($descriptions['primary_description'],0, $solr_byte_limit);;
 
         // list description is the trimmed form of the description
-        $listDescription = trim(strip_tags(html_entity_decode(html_entity_decode($theDescription)), ENT_QUOTES));
+        $listDescription = mb_strcut(trim(strip_tags(html_entity_decode(html_entity_decode($theDescription)), ENT_QUOTES)),0, $solr_byte_limit);;
 
         //add <br/> for NL if doesn't already have <p> or <br/>
         $theDescription = !(strpos($theDescription, "&lt;br") !== FALSE || strpos($theDescription, "&lt;p") !== FALSE || strpos($theDescription, "&amp;#60;p") !== FALSE) ? nl2br($theDescription) : $theDescription;

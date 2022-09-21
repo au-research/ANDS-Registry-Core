@@ -32,10 +32,10 @@ class SpatialProvider implements RIFCSProvider
     {
         $index = [];
         $sumOfAllAreas = 0;
-
+        $solr_byte_limit = 32766;
         $spatialLocations = self::getLocationAsLonLats($record);
 
-        foreach ($spatialLocations as $lonLat) {
+        foreach ($spatialLocations as $pos=>$lonLat) {
             $extents = SpatialUtil::calcExtent($lonLat);
             if ($extents['west'] + $extents['east'] < 5 && $extents['east'] > 175) {
                 //need to insert zero bypass
@@ -43,10 +43,9 @@ class SpatialProvider implements RIFCSProvider
             } else {
                 $lonLatPolygonFixed = $lonLat;
             }
-            $index['spatial_coverage_polygons'][] = $lonLatPolygonFixed;
-            $index['spatial_coverage_extents'][] = $extents['extent'];
 
-            $points = explode(' ', $lonLat);
+
+            $points = explode(' ', $lonLatPolygonFixed);
             foreach ($points as $key => &$point) {
                 $point = implode(' ', explode(',', $point));
                 if (trim($point) == "") {
@@ -54,24 +53,30 @@ class SpatialProvider implements RIFCSProvider
                 }
             }
 
-            //make it smaller if it's too big
+            //make it smaller if it's too big to fit in Google Map
             foreach ($points as &$point) {
                 $predicate = explode(' ', $point);
-                foreach ($predicate as &$pred) {
-                    if ((float)$pred >= 179) {
-                        $pred = 178;
-                    } elseif ((float)$pred <= -179) {
-                        $pred = -178;
-                    } elseif ((float)$pred == 90) {
-                        $pred = 86;
-                    } elseif ((float)$pred == -90) {
-                        $pred = -86;
-                    } else {
-                        $pred = round($pred, 5);
+                foreach ($predicate as $idx=>&$pred) {
+                    // longitude
+                    if ($idx === 0) {
+                        if ((float)$pred >= 176) {
+                            $pred = 176;
+                        } elseif ((float)$pred <= -1176) {
+                            $pred = -176;
+                        } else {
+                            $pred = round($pred, 5);
+                        }
                     }
-                }
-                if (isset($predicate[1]) && (float)$predicate[1] > 90) {
-                    $predicate[1] = 86;
+                    //latitude
+                    if ($idx === 1) {
+                        if ((float)$pred >= 86) {
+                            $pred = 86;
+                        } elseif ((float)$pred <= -86) {
+                            $pred = -86;
+                        } else {
+                            $pred = round($pred, 5);
+                        }
+                    }
                 }
                 $point = implode(' ', $predicate);
             }
@@ -113,48 +118,62 @@ class SpatialProvider implements RIFCSProvider
                     unset($points[$key]);
                 }
             }
-
             $uniquePoints = array_unique($points);
-
+            $wktString = "";
+            $longLatString = "";
             if (sizeof($points) > 0) {
                 $points = array_values($points);
                 if (sizeof($uniquePoints) < 2) {
-                    $index['spatial_coverage_extents_wkt'][] = 'POINT(' . implode(', ', $uniquePoints) . ')';
+                    $longLatString = implode(', ', $uniquePoints);
+                    $wktString = 'POINT(' . $longLatString . ')';
                 } else if (sizeof($uniquePoints) < 3) {
-
-                    $index['spatial_coverage_extents_wkt'][] = 'LINESTRING(' . implode(', ', $uniquePoints) . ')';
+                    $longLatString = implode(', ', $uniquePoints);
+                    $wktString = 'LINESTRING(' . $longLatString . ')';
                 } else if (sizeof($points) > 2 && sizeof($uniquePoints) != 3) {
-
                     //fix last point
-                    if ($points[0] != end($points)) {
-                        $index['spatial_coverage_extents_wkt'][] = 'LINESTRING(' . implode(', ', $points) . ')';
+                    if ($points[0] != end($points) && !SpatialUtil::isSelfIntersectPolygon($points)) {
+                           foreach ($points as &$point) {
+                                $point = (is_array($point)) ? implode(' ', $point) : $point;
+                           }
+                        $longLatString = implode(', ', $points);
+                        $wktString = 'LINESTRING(' . $longLatString . ')';
+                        //print(implode(', ', $points)."\n");
                     } else if (!SpatialUtil::isSelfIntersectPolygon($points)) {
                         foreach ($points as &$point) {
                             $point = (is_array($point)) ? implode(' ', $point) : $point;
                         }
-                        $index['spatial_coverage_extents_wkt'][] = 'POLYGON((' . implode(', ', $points) . '))';
+                        $longLatString = implode(', ', $points);
+                        $wktString = 'POLYGON((' . $longLatString. '))';
                     } else if (!SpatialUtil::isSelfIntersectPolygon($uniquePoints)) {
                         foreach ($uniquePoints as &$point) {
                             $point = (is_array($point)) ? implode(' ', $point) : $point;
                         }
-
                         //putting end point back
                         $uniquePoints = array_values($uniquePoints);
                         $uniquePoints[] = $uniquePoints[0];
-                        $index['spatial_coverage_extents_wkt'][] = 'POLYGON((' . implode(', ', $uniquePoints) . '))';
+                        $longLatString = implode(', ', $uniquePoints);
+                        $wktString = 'POLYGON((' . $longLatString . '))';
                     }
 
                 } else if (sizeof($points) < 2) {
-                    $index['spatial_coverage_extents_wkt'][] = 'POINT(' . implode(', ', $points) . ')';
+                    $wktString = 'POINT(' . implode(', ', $points) . ')';
+                }
+                if ($wktString != '' && strlen($wktString) <= $solr_byte_limit) {
+
+                    $latLongString = SpatialUtil::toGoogleMapStr($longLatString);
+
+                    $index['spatial_coverage_extents_wkt'][] = $wktString;
+                    $index['spatial_coverage_polygons'][] = $latLongString;
+                    $index['spatial_coverage_extents'][] = $extents['extent'];
+                    $sumOfAllAreas += $extents['area'];
+                    $index['spatial_coverage_centres'][] = $extents['center'];
                 }
             }
-
-            $sumOfAllAreas += $extents['area'];
-            $index['spatial_coverage_centres'][] = $extents['center'];
         }
         $index['spatial_coverage_area_sum'] = $sumOfAllAreas;
         return $index;
     }
+
 
     public static function getLocationAsLonLats(RegistryObject $record)
     {

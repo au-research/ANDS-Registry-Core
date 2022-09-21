@@ -53,6 +53,12 @@ class RunScriptCommand extends ANDSCommand
                 InputOption::VALUE_OPTIONAL,
                 "custom parameters for scripts",
                 null
+            )->addOption(
+                'file',
+                'f',
+                InputOption::VALUE_OPTIONAL,
+                "custom parameters for scripts",
+                null
             )
         ;
     }

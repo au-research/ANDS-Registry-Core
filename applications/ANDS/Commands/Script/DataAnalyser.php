@@ -14,10 +14,24 @@ class DataAnalyser extends GenericScript implements GenericScriptRunnable
 {
     // should make it either to read a file or pass in idlist as params
     // the id array contains the regiostryObject IDs
-    private $id_array = [11158];
-    private $availableParams = ["check","mycelium-import","mycelium-index","portal-index","sync", "idx-remote"];
+    private $id_array = [954547];
+    // spatial index issue
+    //private $id_array = [476745,691252,954985,961096,954961];
+    //
+    // long text issue
+    //private $id_array = [954547,1541862,1435702,1600668,1588284,616616,1923984,1542078,1542480,1601067,1601073,1547166];
+    //private $id_array = [1939353,1937190,1919970,1938978,1941582,1933959,955132,1935258,1918608,1939605,1933329,690964,1792113,1931625,1936446,955153,954973,1932672,1935861,955063,955150,1879464,1938366,993004,476242,1792119,1793721,1793727,1879929,476745,1927872,1793703,691252,954985,1927668,961255,1930566,1930614,1942631,1879935,954925,691237,1933239,476758,955093,1935891,992140,954892,961024,1928943,961096,1933101,1939743,1935102,1939314,1792107,1793718,1941192,1879308,1936950,1937400,961204,1792110,961294,1792080,1879296,1938330,955042,1793733,954961,1305580,1934946,1927500,1937628,1937223,1935948,961309,961117,1917501,954883,1930620,1793730,1304104,1933449,961135,1879098,1931913,1917498,1938384,1940490,1938126,961009,475867,1938672,1933305,1941555,476817,954508,1792098];
+    private $availableParams = ["check","mycelium-import","mycelium-index","portal-index","sync", "idx-remote", "id_file"];
 
     public function run(){
+
+        $file = $this->getInput()->getOption('file');
+        if ($file) {
+            $this->log("loading ids from a file". $file);
+            $contents = file_get_contents($file);
+            $this->id_array = explode(',', $contents);
+        }
+
         $params = $this->getInput()->getOption('params');
         if (!$params) {
             $this->log("You have to specify a param: available: ". implode('|', $this->availableParams), "info");
@@ -189,16 +203,17 @@ class DataAnalyser extends GenericScript implements GenericScriptRunnable
             // index without relationship data
             try {
                 $record = RegistryObjectsRepository::getRecordByID($id);
-                $this->log("indexed portal ro id: $id ($index)");
+
                 $portalIndex = RIFCSIndexProvider::get($record);
                 $this->insertSolrDoc($portalIndex);
-
+                $this->log("indexed portal ro id: $id ($index)");
             } catch (\Exception $e) {
                 $msg = $e->getMessage();
                 if (!$msg) {
                     $msg = implode(" ", array_first($e->getTrace())['args']);
                 }
-                print($msg);
+                $this->log("Failed indexing portal ro id: $id ($index)");
+                $this->log($msg);
             }
             // save last_sync_portal
             DatesProvider::touchSync($record);
@@ -208,11 +223,18 @@ class DataAnalyser extends GenericScript implements GenericScriptRunnable
     }
 
 
+    /**
+     * @throws \Exception
+     */
     private function insertSolrDoc($json){
         $solrClient = new SolrClient(Config::get('app.solr_url'));
         $solrClient->setCore("portal");
         $solrClient->request("POST", "portal/update/json/docs", ['commit' => 'true'],
             json_encode($json), "body");
+        if($solrClient->hasError()){
+            $msg = $solrClient->getErrors();
+            throw new \Exception("ERROR while indexing records".$msg[0]);
+        }
     }
 
     /** sync records is just insert mycelium, index relationships and index portal

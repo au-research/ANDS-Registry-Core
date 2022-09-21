@@ -65,7 +65,7 @@ class RIFCSIndexProvider
     public static function isIndexable(RegistryObject $record)
     {
         // only index PUBLISHED records
-        if ($record->isDraftStatus()) {
+        if (!$record->isPublishedStatus()) {
             return false;
         }
 

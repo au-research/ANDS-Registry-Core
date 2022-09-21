@@ -18,9 +18,12 @@ class SpatialUtil
         $polygon = array_values($polygon);
 
         //polygon comes in as a list of string, convert to a list of array of vertices
+
         foreach ($polygon as &$v) {
-            $pp = explode(' ', $v);
-            $v = array($pp[0], $pp[1]);
+            if(!is_array($v)){
+                $pp = explode(' ', $v);
+                $v = array($pp[0], $pp[1]);
+            }
         }
 
         //remove the last vertices
@@ -127,13 +130,13 @@ class SpatialUtil
         if ($north == $south && $east == $west) {
             $extents['area'] = 0;
             $extents['center'] = $west . "," . $south;
-            $extents['extent'] = $west . " " . $south;
+            $extents['extent'] = round($west, 5). " " . round($south, 5);
             $extents['west'] = $west;
             $extents['east'] = $east;
         } else {
             $extents['area'] = ($east - $west) * ($north - $south);
             $extents['center'] = (($east + $west) / 2) . "," . (($north + $south) / 2);
-            $extents['extent'] = $west . " " . $south . " " . $east . " " . $north . " ";
+            $extents['extent'] = round($west, 5) . " " . round($south, 5) . " " . round($east, 5) . " " . round($north, 5) . " ";
             $extents['west'] = $west;
             $extents['east'] = $east;
         }
@@ -243,6 +246,11 @@ class SpatialUtil
             $valid = true;
         }
         return $valid;
+    }
+
+    public static function toGoogleMapStr($longLatString){
+        $trans = array(" " => ",", ", " => " ");
+        return strtr($longLatString, $trans);
     }
 }
 
