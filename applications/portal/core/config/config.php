@@ -10,7 +10,7 @@ if (isset($environment_directives) && isset($environment_directives['portal'])) 
 
 $config['subjects'] = array(
 	array(
-		'display'=>'Humanities, Arts and Social Sciencesq:q',
+		'display'=>'Humanities, Arts and Social Sciences',
 		'codes' => array('13','16','17','19','20','21','22'),
 		'img' => 'Humanities_3.jpg'
 	),
