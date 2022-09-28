@@ -54,8 +54,14 @@ class RunScriptCommand extends ANDSCommand
                 "custom parameters for scripts",
                 null
             )->addOption(
-                'file',
+                'ids_file',
                 'f',
+                InputOption::VALUE_OPTIONAL,
+                "custom parameters for scripts",
+                null
+            )->addOption(
+                'all-status',
+                's',
                 InputOption::VALUE_OPTIONAL,
                 "custom parameters for scripts",
                 null

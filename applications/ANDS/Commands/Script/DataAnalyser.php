@@ -3,47 +3,44 @@
 namespace ANDS\Commands\Script;
 
 use ANDS\Mycelium\MyceliumServiceClient;
+use ANDS\Mycelium\RelationshipSearchService;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\Providers\RIFCS\RIFCSIndexProvider;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\Config;
-use ANDS\Util\XMLUtil;
 use MinhD\SolrClient\SolrClient;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class DataAnalyser extends GenericScript implements GenericScriptRunnable
 {
-    // should make it either to read a file or pass in idlist as params
-    // the id array contains the regiostryObject IDs
-    private $id_array = [636499];
-    // spatial index issue
-    //private $id_array = [476745,691252,954985,961096,954961];
-    //
-    // long text issue
-    //private $id_array = [954547,1541862,1435702,1600668,1588284,616616,1923984,1542078,1542480,1601067,1601073,1547166];
-    //private $id_array = [1939353,1937190,1919970,1938978,1941582,1933959,955132,1935258,1918608,1939605,1933329,690964,1792113,1931625,1936446,955153,954973,1932672,1935861,955063,955150,1879464,1938366,993004,476242,1792119,1793721,1793727,1879929,476745,1927872,1793703,691252,954985,1927668,961255,1930566,1930614,1942631,1879935,954925,691237,1933239,476758,955093,1935891,992140,954892,961024,1928943,961096,1933101,1939743,1935102,1939314,1792107,1793718,1941192,1879308,1936950,1937400,961204,1792110,961294,1792080,1879296,1938330,955042,1793733,954961,1305580,1934946,1927500,1937628,1937223,1935948,961309,961117,1917501,954883,1930620,1793730,1304104,1933449,961135,1879098,1931913,1917498,1938384,1940490,1938126,961009,475867,1938672,1933305,1941555,476817,954508,1792098];
-    private $availableParams = ["check","mycelium-import","mycelium-index","portal-index","sync", "idx-remote", "id_file"];
 
+    // the id array contains the regiostryObject IDs
+    // either loaded from a file or queried from DB
+    private $id_array = [];
+    private $availableParams = ["sync","import-mycelium","index-relationships","index-portal","check","check-portal-index","check-relationships-index","check-mycelium-import", "ids_file", "all-status"];
+
+    //TODO: save the failed records' id in a {method}-{date}--error-id.txt file so it can be loaded by future processes
     public function run(){
 
-        $file = $this->getInput()->getOption('file');
+        $file = $this->getInput()->getOption('ids_file');
         if ($file) {
             $this->log("loading ids from a file". $file);
             $contents = file_get_contents($file);
             $this->id_array = explode(',', $contents);
         }
-        // not implemented yet
-        /**
+
         $all_status = $this->getInput()->getOption("all-status");
         if($all_status){
             $ids = RegistryObject::query();
             $missing_record = [];
             // increase memory limit in case we are syncing the entire content
             ini_set('memory_limit', '2048M');
+            $this->log("loading ids from dbs_registry.registry_objects with status = ". $all_status);
             // include registryObjects with status published-only or deleted-only, not both
             $this->id_array = $ids->where('status', $all_status)->pluck("registry_object_id")->toArray();
         }
-        */
+
         $params = $this->getInput()->getOption('params');
         if (!$params) {
             $this->log("You have to specify a param: available: ". implode('|', $this->availableParams), "info");
@@ -51,32 +48,35 @@ class DataAnalyser extends GenericScript implements GenericScriptRunnable
         }
 
         switch ($params) {
-            case "check":
-                $this->log("checking records");
-                $this->checkRecords();
+            case "sync":
+                $this->log("Syncing Records: Mycelium Import -> Index relationships -> Index Portal");
+                $this->syncRecords();
                 break;
-            case "mycelium-import":
+            case "import-mycelium":
                 $this->log("Importing Records to Mycelium");
                 $this->importRecordsToMycelium();
                 break;
-            case "mycelium-index":
+            case "index-relationships":
                 $this->log("Indexing Relationships core");
                 $this->indexRelationships();
                 break;
-            case "portal-index":
+            case "index-portal":
                 $this->log("Indexing Portal core");
                 $this->indexPortal();
                 break;
-            case "sync":
-                $this->log("Import -> Index relationships -> Index Portal");
-                $this->syncRecords();
-                break;
-            case "idx-remote":
-                $this->log("Index Remote");
-                $this->indexRemoteURL();
+            // to check for record's existence in mycelium and indexes
+            case "check":
+                $this->log("Checking records: vertexes in Neo4J (Mycelium), SOLR indexes for Relationships and Portal ");
+                $this->checkRecords();
                 break;
             case "check-portal-index":
                 $this->checkPortalIndex();
+                break;
+            case "check-relationships-index":
+                $this->checkRelationshipsIndex();
+                break;
+            case "check-mycelium-import":
+                $this->checkMyceliumImport();
                 break;
             default:
                 $this->log("Undefined params. Provided $params");
@@ -85,105 +85,64 @@ class DataAnalyser extends GenericScript implements GenericScriptRunnable
     }
 
 
-    private function checkPortalIndex(){
-
-        $this->log("Checking Portal Index for %s records", sizeof($this->id_array));
-        foreach($this->id_array as $id) {
-            $record = $this->getSolrDoc($id);
-            if($record == null){
-                $missing_records[] = $id;
-                print("missing $id");
-            }
-        }
-        print("\n________MISSING FROM PORTAL__________".sizeof($missing_records)."___\n");
-        foreach($missing_records as $id) {
-            print("$id,");
-        }
-    }
-
-
+    /**
+     * @return void
+     * this method check if the given ro:id (records)
+     * are import into mycelium eg Neo4j
+     * have relationships index (that is not a 100% because we still have records that aren't related to other records
+     * have an index in portal
+     */
     private function checkRecords()
     {
-        $wrong_keys = [];
-        $missing_from_neo = [];
-        $exists_in_neo = [];
-        $c = 0;
-        print("__________________");
-        $client = new MyceliumServiceClient(Config::get('mycelium.url'));
-        foreach($this->id_array as $id){
-            $record = RegistryObjectsRepository::getRecordByID($id);
-            $key = $record->key;
-            $xml = $record->getCurrentData()->data;
-
-            $registryObject = XMLUtil::getElementsByName($xml, 'registryObject');
-            $rif_key = trim((string) $registryObject[0]->key);
-            if($rif_key != $key){
-                $wrong_keys[] = $id;
-            }else{
-                $result = $client->getVertex($record);
-                $vertex = json_decode($result->getBody());
-                if($vertex != null && $id == $vertex->identifier){
-                    $exists_in_neo[] = $id;
-                }else{
-                    $missing_from_neo[] = $id;
-                }
-            }
-        }
-        print("\n________WRONG KEYS__________".sizeof($wrong_keys)."___\n");
-
-        foreach($wrong_keys as $id) {
-            print("$id,");
-        }
-        print("\n________MISSING FROM NEO__________".sizeof($missing_from_neo)."___\n");
-        foreach($missing_from_neo as $id) {
-            print("$id,");
-        }
-        print("\n________PROD UPDATE ERROR__________".sizeof($exists_in_neo)."___\n");
-        foreach($exists_in_neo as $id) {
-            print("$id,");
-        }
-
-
+        $this->checkMyceliumImport();
+        $this->checkRelationshipsIndex();
+        $this->checkPortalIndex();
     }
 
-    /**
-     * quick hack to index prod records until prod has command scripts to do so
+    /** sync records is just insert mycelium, index relationships and index portal
      * @return void
      */
-    private function indexRemoteURL()
-    {
-        foreach ($this->id_array as $index => $id) {
-            try {
-                $url = "https://researchdata.edu.au/api/registry/object/" . $id . "/sync";
-                $content = \ANDS\Util\URLUtil::file_get_contents($url);
-                print($content);
-            } catch (\Exception $e) {
-                print("Failed importing record {$id} to mycelium. Reason: " . $e->getMessage());
-            }
-        }
+    private function syncRecords(){
+        $this->importRecordsToMycelium();
+        $this->indexRelationships();
+        $this->indexPortal();
     }
 
     /** import records into Mycelium
      * @return void
      */
     private function importRecordsToMycelium(){
-        $import_count = 0;
+        $cSuccess = 0;
+        $aErrored = [];
+        print("\n\nIMPORTING ".sizeof($this->id_array)." RECORD(S) IN MYCELIUM\n");
         $myceliumClient = new MyceliumServiceClient(Config::get('mycelium.url'));
+        $progressBar = new ProgressBar($this->getOutput(), sizeof($this->id_array));
+        $progressBar->setFormat('ands-command');
+        $progressBar->start();
         foreach ($this->id_array as $index => $id) {
             $record = RegistryObjectsRepository::getRecordByID($id);
             try {
                 $result = $myceliumClient->importRecord($record);
                 // it just says done with 200,
                 if ($result->getStatusCode() === 200) {
-                    $this->log("imported ro id: $id ($index)");
-                    $import_count++;
+                    $cSuccess++;
                 } else {
                     $reason = $result->getBody()->getContents();
-                    print("Failed to index record {$id} to mycelium. Reason: $reason");
+                    $aErrored[] = $id;
+                    $this->log("Failed importing record  {$id} to mycelium. Reason: $reason");
                 }
             }catch(\Exception $e){
-                print("Failed importing record {$id} to mycelium. Reason: ".$e->getMessage());
+                $aErrored[] = $id;
+                $this->log("Failed importing record {$id} to mycelium. Reason: ".$e->getMessage());
             }
+            $progressBar->setMessage("Indexed: $cSuccess Failed:".sizeof($aErrored)." ro_id:$id");
+            $progressBar->advance();
+        }
+        $progressBar->setMessage("Done");
+        $progressBar->finish();
+        print("\nNUMBER OF RECORDS SUCCESSFULLY IMPORTED:".$cSuccess." OUT OF:".sizeof($this->id_array). "\n");
+        foreach($aErrored as $id) {
+            print("$id,");
         }
     }
 
@@ -192,32 +151,38 @@ class DataAnalyser extends GenericScript implements GenericScriptRunnable
      * @return void
      */
     private function indexRelationships(){
-        $indexed_count = 0;
-        $error_count = 0;
+        $cSuccess = 0;
+        $aErrored = [];
+        print("\n\nINDEXING RELATIONSHIPS FOR ".sizeof($this->id_array)." RECORD(S)\n");
         $myceliumClient = new MyceliumServiceClient(Config::get('mycelium.url'));
-
+        $progressBar = new ProgressBar($this->getOutput(), sizeof($this->id_array));
+        $progressBar->setFormat('ands-command');
+        $progressBar->start();
         foreach ($this->id_array as $index => $id) {
             $record = RegistryObjectsRepository::getRecordByID($id);
             try{
-            $result = $myceliumClient->indexRecord($record);
-            // it just says done with 200,
-            if ($result->getStatusCode() === 200) {
-                $this->log("indexed relationship ro id: $id ($index)");
-                $indexed_count++;
-            } else {
-                $reason = $result->getBody()->getContents();
-                print("Failed to index record {$id} to mycelium. Reason: $reason");
-            }
+                $result = $myceliumClient->indexRecord($record);
+                // it just says done with 200,
+                if ($result->getStatusCode() === 200) {
+                    $cSuccess++;
+                } else {
+                    $reason = $result->getBody()->getContents();
+                    $this->log("Failed to index Relationships of Record {$id} by mycelium. Reason: ".$reason);
+                    $aErrored[] = $id;
+                }
             }
             catch(\Exception $e){
-                print("Failed to index record {$id} to mycelium. Reason: ".$e->getMessage());
+                $aErrored[] = $id;
+                $this->log("Failed to index Relationships of Record {$id} by mycelium. Reason: ".$e->getMessage());
             }
+            $progressBar->setMessage("Indexed: $cSuccess Failed:".sizeof($aErrored)." ro_id:$id");
+            $progressBar->advance();
         }
-        if($indexed_count > 0){
-            $this->log("Indexed {$indexed_count} record(s) by mycelium");
-        }
-        if($error_count > 0){
-            $this->log("Failed to Index {$error_count} record(s) by mycelium");
+        $progressBar->setMessage("Done");
+        $progressBar->finish();
+        print("\nNUMBER OF RECORDS' RELATIONSHIPS INDEXED:".$cSuccess." OUT OF:".sizeof($this->id_array). "\n");
+        foreach($aErrored as $id) {
+            print("$id,");
         }
     }
 
@@ -225,13 +190,18 @@ class DataAnalyser extends GenericScript implements GenericScriptRunnable
      * @return void
      */
     private function indexPortal(){
-        $total = count($this->id_array);
 
-        if ($total == 0) {
-            $this->log("No records needed to be reindexed");
+        if (sizeof($this->id_array) == 0) {
+            $this->log("No records needed to be indexed");
             return;
         }
-        foreach ($this->id_array as $index=>$id) {
+        $cSuccess = 0;
+        $aErrored = [];
+        print("\n\nINDEXING PORTAL FOR ".sizeof($this->id_array)." RECORD(S)\n");
+        $progressBar = new ProgressBar($this->getOutput(), sizeof($this->id_array));
+        $progressBar->setFormat('ands-command');
+        $progressBar->start();
+        foreach ($this->id_array as $id) {
 
             // index without relationship data
             try {
@@ -239,20 +209,27 @@ class DataAnalyser extends GenericScript implements GenericScriptRunnable
 
                 $portalIndex = RIFCSIndexProvider::get($record);
                 $this->insertSolrDoc($portalIndex);
-                $this->log("indexed portal ro id: $id ($index)");
+                $cSuccess++;
             } catch (\Exception $e) {
                 $msg = $e->getMessage();
                 if (!$msg) {
                     $msg = implode(" ", array_first($e->getTrace())['args']);
                 }
-                $this->log("Failed indexing portal ro id: $id ($index)");
+                $aErrored[] = $id;
                 $this->log($msg);
             }
+            $progressBar->setMessage("Indexed: $cSuccess Failed:".sizeof($aErrored)." ro_id:$id");
+            $progressBar->advance();
             // save last_sync_portal
             DatesProvider::touchSync($record);
         }
+        $progressBar->setMessage("Done");
+        $progressBar->finish();
+        print("\nNUMBER OF RECORDS INDEXED (PORTAL):".$cSuccess." OUT OF:".sizeof($this->id_array). "\n");
+        foreach($aErrored as $id) {
+            print("$id,");
+        }
 
-        $this->log("Finished Indexing $total records");
     }
 
 
@@ -270,28 +247,133 @@ class DataAnalyser extends GenericScript implements GenericScriptRunnable
         }
     }
 
+
     /**
-     * @throws \Exception
+     * @return void
+     * Checks if there is a vertex with ro:id in Neo4j
      */
-    private function getSolrDoc($id){
-        $solrClient = new SolrClient(Config::get('app.solr_url'));
-        $solrClient->setCore("portal");
-        $record = $solrClient->get($id);
-        if($solrClient->hasError()){
-            $msg = $solrClient->getErrors();
-            throw new \Exception("ERROR while indexing records".$msg[0]);
+    private function checkMyceliumImport(){
+        print("\n\nCHECKING MYCELIUM ENTRIES OF ".sizeof($this->id_array)." RECORD(S)\n");
+        $progressBar = new ProgressBar($this->getOutput(), sizeof($this->id_array));
+        $progressBar->setFormat('ands-command');
+        $progressBar->start();
+        $missing_from_neo = [];
+        $cSuccess = 0;
+        $client = new MyceliumServiceClient(Config::get('mycelium.url'));
+        foreach($this->id_array as $id){
+            $record = RegistryObjectsRepository::getRecordByID($id);
+            if($record != null) {
+                try{
+                    $result = $client->getVertex($record);
+                    $vertex = json_decode($result->getBody());
+                    if ($vertex == null || $id != $vertex->identifier) {
+                        $missing_from_neo[] = $id;
+                    }
+                    else{
+                        $cSuccess++;
+                    }
+                }catch(\Exception $e){
+                    $missing_from_neo[] = $id;
+                    $msg = $e->getMessage();
+                    if (!$msg) {
+                        $msg = implode(" ", array_first($e->getTrace())['args']);
+                    }
+                    $this->log($msg);
+                }
+            }else{
+                $missing_from_neo[] = $id;
+            }
+            $progressBar->setMessage("Found: $cSuccess Missing:".sizeof($missing_from_neo));
+            $progressBar->advance();
         }
-        return $record;
+        $progressBar->setMessage("Done");
+        $progressBar->finish();
+        print("\nNUMBER OF RECORDS MISSING FROM MYCELIUM:".sizeof($missing_from_neo)."\n");
+        foreach($missing_from_neo as $id) {
+            print("$id,");
+        }
     }
 
-
-    /** sync records is just insert mycelium, index relationships and index portal
+    /**
      * @return void
+     * check if the record is related to any other records
      */
-    private function syncRecords(){
-        $this->importRecordsToMycelium();
-        $this->indexRelationships();
-        $this->indexPortal();
+    private function checkRelationshipsIndex(){
+
+        $missing_from_relationships_index = [];
+        print("\n\nCHECKING RELATIONSHIPS INDEX FOR ".sizeof($this->id_array)." RECORD(S)\n");
+        $progressBar = new ProgressBar($this->getOutput(), sizeof($this->id_array));
+        $progressBar->setFormat('ands-command');
+        $progressBar->start();
+        $cSuccess = 0;
+        foreach($this->id_array as $id){
+            try{
+                $result = RelationshipSearchService::search([
+                    'from_id' => $id
+                ]);
+                if($result->total == 0){
+                    $missing_from_relationships_index[] = $id;
+                }else{
+                    $cSuccess++;
+                }
+            }catch(\Exception $e){
+                $missing_from_relationships_index[] = $id;
+                $msg = $e->getMessage();
+                if (!$msg) {
+                    $msg = implode(" ", array_first($e->getTrace())['args']);
+                }
+                $this->log($msg);
+            }
+
+            $progressBar->setMessage("Found: $cSuccess Missing:".sizeof($missing_from_relationships_index));
+            $progressBar->advance();
+        }
+        $progressBar->setMessage("Done");
+        $progressBar->finish();
+        print("\nNUMBER OF RECORDS MISSING FROM RELATIONSHIPS INDEX:".sizeof($missing_from_relationships_index)."\n");
+        foreach($missing_from_relationships_index as $id) {
+            print("$id,");
+        }
+    }
+
+    /**
+     * @return void
+     * Checks if the record has a portal index
+     */
+    private function checkPortalIndex(){
+        $missing_portal_index = [];
+        $cSuccess = 0;
+        $solrClient = new SolrClient(Config::get('app.solr_url'));
+        $solrClient->setCore("portal");
+        $this->log("\n\nCHECKING PORTAL INDEX FOR ".sizeof($this->id_array)." RECORD(S)\n");
+        $progressBar = new ProgressBar($this->getOutput(), sizeof($this->id_array));
+        $progressBar->setFormat('ands-command');
+        $progressBar->start();
+        foreach($this->id_array as $id) {
+            try{
+                $record = $solrClient->get($id);
+                if($record == null || $solrClient->hasError()){
+                    $missing_portal_index[] = $id;
+                }else{
+                    $cSuccess++;
+                }
+            }catch(\Exception $e){
+                $missing_portal_index[] = $id;
+                $msg = $e->getMessage();
+                if (!$msg) {
+                    $msg = implode(" ", array_first($e->getTrace())['args']);
+                }
+                $this->log($msg);
+            }
+            $progressBar->setMessage("Found: $cSuccess Missing:".sizeof($missing_portal_index));
+            $progressBar->advance();
+        }
+        $progressBar->setMessage("Done");
+        $progressBar->finish();
+        print("\nNUMBER OF RECORDS MISSING FROM PORTAL INDEX:".sizeof($missing_portal_index)."\n");
+        foreach($missing_portal_index as $id) {
+            print("$id,");
+        }
     }
 
 }

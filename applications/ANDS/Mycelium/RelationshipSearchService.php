@@ -215,6 +215,9 @@ class RelationshipSearchService
     public static function getDatasourceSettings($ro_id)
     {
         $record = RegistryObjectsRepository::getRecordByID($ro_id);
+        if($record == null){
+            return [];
+        }
         $dataSource = $record->datasource;
         $reverse_permissions = [];
         //obtain the value of the datasource reverse links attributes
