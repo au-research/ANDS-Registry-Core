@@ -28,6 +28,7 @@ class QueueSyncCommand extends ANDSCommand
             ->setDescription('Add Record to Queue')
             ->addOption('published-only', null, InputOption::VALUE_NONE, 'Only include Published RegistryObjects (default: all RegistryObjects in any status)')
             ->addOption('deleted-only', null, InputOption::VALUE_NONE, 'Only include DELETED RegistryObjects (default: all RegistryObjects in any status)')
+            ->addOption('ro-id', null, InputOption::VALUE_OPTIONAL, 'RegistryObject id', null)
             ->addOption('data_source_id', null, InputOption::VALUE_OPTIONAL, 'RegistryObjects within this data source', null)
             ->addOption('modified_after', null, InputOption::VALUE_OPTIONAL, 'RegistryObjects modified after a date stamp, "yyyy-mm-dd hh:mm:ss" format', null)
         ;
@@ -37,37 +38,43 @@ class QueueSyncCommand extends ANDSCommand
     {
         $this->setUp($input, $output);
         QueueService::init();
-
-        $ids = RegistryObject::query();
-        // increase memory limit in case we are syncing the entire content
-        ini_set('memory_limit', '2048M');
-        // include registryObjects with status published-only or deleted-only, not both
-        $publishedOnly = $input->getOption('published-only');
-        $deletedOnly = $input->getOption('deleted-only');
-        if ($publishedOnly) {
-            $ids = $ids->where('status', 'PUBLISHED');
-            $this->log("Include only PUBLISHED registryObjects");
-        } else if ($deletedOnly) {
-            $ids = $ids->where('status', 'DELETED');
-            $this->log("Include only DELETED registryObjects");
+        $roId = $input->getOption('ro-id');
+        if($roId){
+            $ids = [];
+            $ids[] = $roId;
         }
+        else {
+            $ids = RegistryObject::query();
+            // increase memory limit in case we are syncing the entire content
+            ini_set('memory_limit', '2048M');
+            // include registryObjects with status published-only or deleted-only, not both
+            $publishedOnly = $input->getOption('published-only');
+            $deletedOnly = $input->getOption('deleted-only');
+            if ($publishedOnly) {
+                $ids = $ids->where('status', 'PUBLISHED');
+                $this->log("Include only PUBLISHED registryObjects");
+            } else if ($deletedOnly) {
+                $ids = $ids->where('status', 'DELETED');
+                $this->log("Include only DELETED registryObjects");
+            }
 
-        // include registryObjects belongs to a specific data source by id
-        $dataSourceId = $input->getOption('data_source_id');
-        if ($dataSourceId) {
-            $ids = $ids->where('data_source_id', $dataSourceId);
-            $this->log("Include only RegistryObjects from DataSource:$dataSourceId");
+            // include registryObjects belongs to a specific data source by id
+            $dataSourceId = $input->getOption('data_source_id');
+            if ($dataSourceId) {
+                $ids = $ids->where('data_source_id', $dataSourceId);
+                $this->log("Include only RegistryObjects from DataSource:$dataSourceId");
+            }
+
+            // include registryObjects that is modified after a certain timestamp in yyyy-mm-dd format
+            $modifiedAfter = $input->getOption('modified_after');
+            if ($modifiedAfter) {
+                $dateTimeString = DatesProvider::parseDate($modifiedAfter)->toDateTimeString();
+                $ids = $ids->where('modified_at', '>=', $dateTimeString);
+                $this->log("Include only RegistryObjects modified after $dateTimeString");
+            }
+
+            $ids = $ids->pluck('registry_object_id')->toArray();
         }
-
-        // include registryObjects that is modified after a certain timestamp in yyyy-mm-dd format
-        $modifiedAfter = $input->getOption('modified_after');
-        if ($modifiedAfter) {
-            $dateTimeString = DatesProvider::parseDate($modifiedAfter)->toDateTimeString();
-            $ids = $ids->where('modified_at', '>=', $dateTimeString);
-            $this->log("Include only RegistryObjects modified after $dateTimeString");
-        }
-
-        $ids = $ids->pluck('registry_object_id')->toArray();
         $total = sizeof($ids);
 
         if ($total === 0) {
