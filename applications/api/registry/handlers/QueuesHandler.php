@@ -7,7 +7,7 @@ use ANDS\Registry\API\Router;
 class QueuesHandler extends Handler
 {
     /**
-     * handles /api/registry/backups
+     * handles /api/registry/queues
      *
      * @return false|string
      * @throws \Exception

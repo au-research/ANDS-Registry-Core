@@ -92,15 +92,15 @@ class MyceliumServiceClient
      * @param \ANDS\RegistryObject $record
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function indexRecord(RegistryObject $record, $timeout_seconds = 0)
+    public function indexRecord(RegistryObject $record, $allowSuperNodes = false)
     {
         Log::debug(__METHOD__ . " Indexing Record in Mycelium", ["id" => $record->id]);
         return $this->client->post("api/services/mycelium/index-record", [
             "headers" => [],
             "query" => [
-                "registryObjectId" => $record->id
-            ],
-            'connect_timeout' => $timeout_seconds
+                "registryObjectId" => $record->id,
+                'allowSuperNodes' => $allowSuperNodes
+            ]
         ]);
     }
 

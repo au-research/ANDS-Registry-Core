@@ -17,7 +17,7 @@ class DataAnalyser extends GenericScript implements GenericScriptRunnable
 
     // the id array contains the regiostryObject IDs
     // either loaded from a file or queried from DB
-    private $id_array = [];
+    private $id_array = [681882];
     private $availableParams = ["sync","import-mycelium","index-relationships","index-portal","check","check-portal-index","check-relationships-index","check-mycelium-import", "ids_file", "all-status"];
 
     //TODO: save the failed records' id in a {method}-{date}--error-id.txt file so it can be loaded by future processes
@@ -161,7 +161,7 @@ class DataAnalyser extends GenericScript implements GenericScriptRunnable
         foreach ($this->id_array as $index => $id) {
             $record = RegistryObjectsRepository::getRecordByID($id);
             try{
-                $result = $myceliumClient->indexRecord($record);
+                $result = $myceliumClient->indexRecord($record, false);
                 // it just says done with 200,
                 if ($result->getStatusCode() === 200) {
                     $cSuccess++;

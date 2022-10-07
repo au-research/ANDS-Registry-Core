@@ -40,7 +40,7 @@ class QueueWorkCommand extends ANDSCommand
 
         QueueService::init();
 
-        $queue = $input->getOption('queue') ?: QueueService::getQueue();
+        $queue = $input->getOption('queue') ? QueueService::getQueue($input->getOption('queue')) : QueueService::getQueue();
         $name = $input->getOption('name') ?: uniqid();
         $daemon = $input->getOption('daemon');
         $quiet = $input->getOption('quiet');

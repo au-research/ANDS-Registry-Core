@@ -105,7 +105,7 @@ class QueueSyncCommand extends ANDSCommand
         $progressBar->start();
         foreach ($ids as $id) {
             $job = new IndexRegistryObjectRelationshipsJob();
-            $job->init(['registry_object_id' => $id]);
+            $job->init(['registry_object_id' => $id, 'allow_supernodes'=> false]);
             QueueService::push($job);
             $progressBar->setMessage("Queued Job[class=IndexRegistryObjectRelationshipsJob, registryObjectId=$id]");
             $progressBar->advance();
