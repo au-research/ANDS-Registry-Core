@@ -43,36 +43,53 @@ class IndexPortal extends ImportSubTask
         );
 
         foreach ($importedRecords as $index=>$roID) {
-
-            // index without relationship data
             try {
                 $record = RegistryObjectsRepository::getRecordByID($roID);
-                debug("updatePortal Index ". $record->title);
                 $portalIndex = RIFCSIndexProvider::get($record);
                 $this->insertSolrDoc($portalIndex);
-
+                $cSuccess++;
             } catch (\Exception $e) {
                 $msg = $e->getMessage();
-                if (!$msg) {
-                    $msg = implode(" ", array_first($e->getTrace())['args']);
+                if(str_contains($msg, 'org.locationtech.jts.geom.TopologyException')){
+                    // try indexing without the spatial data if it's invalid WKT
+                    try {
+                        $portalIndex = RIFCSIndexProvider::get($record, false);
+                        $this->insertSolrDoc($portalIndex);
+                        $cSuccess++;
+                    } catch (\Exception $e) {
+                        $msg = $e->getMessage();
+                        if (!$msg) {
+                            $msg = implode(" ", array_first($e->getTrace())['args']);
+                        }
+                        $this->addError("Error getting portalIndex for $roID : $msg");
+                    }
                 }
-                $this->addError("Error getting portalIndex for $roID : $msg");
+                else{
+                    $msg = $e->getMessage();
+                    if (!$msg) {
+                        $msg = implode(" ", array_first($e->getTrace())['args']);
+                    }
+                    $this->addError("Error getting portalIndex for $roID : $msg");
+                }
             }
             // save last_sync_portal
             DatesProvider::touchSync($record);
             $this->updateProgress($index, $total, "Processed ($index/$total) $record->title");
         }
-
         $this->log("Finished Indexing $total records");
     }
 
 
+
     private function insertSolrDoc($json){
-        //debug("updatePortal Index Doc".json_encode($json));
-        $jsonPackets[] = $json;
         $solrClient = new SolrClient(Config::get('app.solr_url'));
         $solrClient->setCore("portal");
         $solrClient->request("POST", "portal/update/json/docs", ['commit' => 'true'],
             json_encode($json), "body");
-}
+        if($solrClient->hasError()){
+            $msg = $solrClient->getErrors();
+            throw new \Exception("ERROR while indexing records".$msg[0]);
+        }
+    }
+
 }

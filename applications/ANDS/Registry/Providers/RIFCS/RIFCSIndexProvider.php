@@ -24,7 +24,7 @@ class RIFCSIndexProvider
      * @param RegistryObject $record
      * @return array
      */
-    public static function get(RegistryObject $record)
+    public static function get(RegistryObject $record, $includeSpatial = true)
     {
         if (!self::isIndexable($record)) {
             Log::debug("Not Indexable ". $record->id);
@@ -44,14 +44,20 @@ class RIFCSIndexProvider
             ->merge(AccessRightsProvider::getIndexableArray($record))
             ->merge(LicenceProvider::getIndexableArray($record))
             ->merge(TemporalProvider::getIndexableArray($record))
-            ->merge(SpatialProvider::getIndexableArray($record))
             ->merge(RelatedInfoProvider::getIndexableArray($record))
             ->merge(CitationProvider::getIndexableArray($record))
             ->toArray();
 
         /* activity records should have grants metadata indexed */
         if ($record->class === "activity") {
-            $index = collect($index)->merge(GrantsMetadataProvider::getIndexableArray($record));
+            $index = collect($index)->merge(GrantsMetadataProvider::getIndexableArray($record))->toArray();
+        }
+        // try indexing without the spatial data if record has an invalid WKT
+        // $includeSpatial is true by default but
+        // the index handlers will need to catch "org.locationtech.jts.geom.TopologyException" from solr and
+        // request a solr doc without spatial data if WKT is invalid otherwise the record will not be indexed at all
+        if($includeSpatial){
+            $index = collect($index)->merge(SpatialProvider::getIndexableArray($record))->toArray();
         }
 
         return $index;

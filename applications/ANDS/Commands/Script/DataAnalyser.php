@@ -17,7 +17,8 @@ class DataAnalyser extends GenericScript implements GenericScriptRunnable
 
     // the id array contains the regiostryObject IDs
     // either loaded from a file or queried from DB
-    private $id_array = [681882];
+
+    private $id_array = [];
     private $availableParams = ["sync","import-mycelium","index-relationships","index-portal","check","check-portal-index","check-relationships-index","check-mycelium-import", "ids_file", "all-status"];
 
     //TODO: save the failed records' id in a {method}-{date}--error-id.txt file so it can be loaded by future processes
@@ -212,11 +213,27 @@ class DataAnalyser extends GenericScript implements GenericScriptRunnable
                 $cSuccess++;
             } catch (\Exception $e) {
                 $msg = $e->getMessage();
-                if (!$msg) {
-                    $msg = implode(" ", array_first($e->getTrace())['args']);
+                // try indexing without the spatial data if it's invalid WKT
+                if(str_contains($msg, 'org.locationtech.jts.geom.TopologyException')){
+                    $portalIndex = RIFCSIndexProvider::get($record, false);
+                    $cSuccess++;
+                    try {
+                        $this->insertSolrDoc($portalIndex);
+                    } catch (\Exception $e) {
+                        $msg = $e->getMessage();
+                        if (!$msg) {
+                            $msg = implode(" ", array_first($e->getTrace())['args']);
+                        }
+                        $aErrored[] = $id;
+                        $this->log($msg);
+                    }
                 }
-                $aErrored[] = $id;
-                $this->log($msg);
+                elseif (!$msg) {
+                    $msg = implode(" ", array_first($e->getTrace())['args']);
+                    $aErrored[] = $id;
+                    $this->log($msg);
+                }
+
             }
             $progressBar->setMessage("Indexed: $cSuccess Failed:".sizeof($aErrored)." ro_id:$id");
             $progressBar->advance();

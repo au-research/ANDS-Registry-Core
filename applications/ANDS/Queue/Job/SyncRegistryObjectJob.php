@@ -80,7 +80,17 @@ class SyncRegistryObjectJob extends Job
             json_encode($portalIndex), "body");
         if ($solrClient->hasError()) {
             $reason = join(',', $solrClient->getErrors());
-            throw new \Exception("Failed to index portal SOLR for RegistryObject[registryObjectId=$this->registryObjectId]. Reason: $reason");
+            // id topology Exception occured crate a solr index without spatial data
+            if(str_contains($reason, 'org.locationtech.jts.geom.TopologyException')){
+                $portalIndex = RIFCSIndexProvider::get($record, false);
+                $solrClient->request("POST", "portal/update/json/docs", ['commit' => 'true'],
+                    json_encode($portalIndex), "body");
+                if ($solrClient->hasError()) {
+                    throw new \Exception("Failed to index portal SOLR for RegistryObject[registryObjectId=$this->registryObjectId]. Reason: $reason");
+                }
+            }else{
+                throw new \Exception("Failed to index portal SOLR for RegistryObject[registryObjectId=$this->registryObjectId]. Reason: $reason");
+            }
         }
 
         // todo alternate versions
