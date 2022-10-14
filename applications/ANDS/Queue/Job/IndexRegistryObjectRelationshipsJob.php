@@ -53,9 +53,9 @@ class IndexRegistryObjectRelationshipsJob extends Job
         }catch(\Exception $e){
             // if Mycelium flagged the Record as Supernode (has more than 200 direct relationships)
             // then put the relationship indexing into a separate low priority (slow) queue
-            // instead block the rest of the records from getting indexed
+            // instead of blocking the rest of the records from getting indexed
             if(str_contains(get_exception_msg($e), "should be processed by the supernode queue")){
-                $record->setRegistryObjectAttribute("isSuperNode", true);
+                //$record->setRegistryObjectAttribute("isSuperNode", true);
                 $job = new IndexRegistryObjectRelationshipsJob();
                 $job->init(['registry_object_id' => $this->registryObjectId, 'allow_supernodes' => true]);
                 QueueService::init();

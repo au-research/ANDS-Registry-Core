@@ -24,7 +24,18 @@ class RecordsNestedCollectionController
         $myceliumClient = new MyceliumServiceClient(Config::get('mycelium.url'));
 
         // get parents graph
-        $result = $myceliumClient->getNestedCollectionParents($record->id);
+        // TODO
+        // temporary fallback to nestedCollections of the published record if exists
+        // remove switch once DRAFT records are imported into Neo4j
+        if(!$record->isPublishedStatus()){
+            $publishedRecord = RegistryObjectsRepository::getPublishedByKey($record->key);
+            if($publishedRecord != null){
+                $result = $myceliumClient->getNestedCollectionParents($publishedRecord->id);
+            }
+        }else{
+            $result = $myceliumClient->getNestedCollectionParents($record->id);
+        }
+
         $graph = json_decode($result->getBody()->getContents(), true);
 
         return [$graph];
@@ -32,12 +43,22 @@ class RecordsNestedCollectionController
 
     public function children($id) {
         $myceliumClient = new MyceliumServiceClient(Config::get('mycelium.url'));
-
+        $record = RegistryObjectsRepository::getRecordByID($id);
         $offset = Request::get('offset');
         $limit = Request::get('limit');
         $excludeIDs = Request::get('excludeIDs');
+        // TODO
+        // temporary fallback to nestedCollections of the published record if exists
+        // remove switch once DRAFT records are imported into Neo4j
+        if(!$record->isPublishedStatus()){
+            $publishedRecord = RegistryObjectsRepository::getPublishedByKey($record->key);
+            if($publishedRecord != null){
+                $result = $myceliumClient->getNestedCollectionChildren($publishedRecord->id, $offset, $limit, $excludeIDs);
+            }
+        }else{
+            $result = $myceliumClient->getNestedCollectionChildren($id, $offset, $limit, $excludeIDs);
+        }
 
-        $result = $myceliumClient->getNestedCollectionChildren($id, $offset, $limit, $excludeIDs);
         $children = json_decode($result->getBody()->getContents(), true);
         return $children;
     }

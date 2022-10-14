@@ -5,6 +5,7 @@ namespace ANDS\API\Task\ImportSubTask;
 
 use ANDS\Mycelium\MyceliumServiceClient;
 use ANDS\Util\Config;
+use ANDS\Repository\RegistryObjectsRepository as Repo;
 
 /**
  * Class ProcessAffectedRelationships
@@ -16,6 +17,14 @@ class ProcessAffectedRelationships extends ImportSubTask
 
     public function run_task()
     {
+
+
+        $targetStatus = $this->parent()->getTaskData('targetStatus');
+        // TODO: until DRAFT records are 100% isolated in Mycelium we should only allow PUBLISHED records
+        if (!Repo::isPublishedStatus($targetStatus)) {
+            $this->log("Target status is ". $targetStatus.' No indexing required');
+            return;
+        }
         $myceliumRequestId = $this->parent()->getTaskData("myceliumRequestId");
 
         // requires sideEffectRequestId to continue

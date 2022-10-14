@@ -1,5 +1,6 @@
 <?php
 use ANDS\Mycelium\RelationshipSearchService;
+use ANDS\Repository\RegistryObjectsRepository as Repo;
 if (!defined('BASEPATH')) {
     exit('No direct script access allowed');
 }
@@ -15,6 +16,8 @@ class Relationships extends ROHandler
 {
     // get a total of relationships to check if graph should be displayed
     private $related_count;
+
+    private $from_id;
     /**
      * Primary handle function
      *
@@ -23,6 +26,18 @@ class Relationships extends ROHandler
     public function handle($params='')
     {
         $this->related_count = 0;
+
+        // TODO
+        // temporary fallback to published relationships if exists
+        // remove switch once DRAFT records are indexed by Mycelium
+        $this->from_id = $this->ro->id;
+        if(!Repo::isPublishedStatus($this->ro->status)){
+            $publishedRecord = Repo::getPublishedByKey($this->ro->key);
+            if($publishedRecord != null){
+                $this->from_id = $publishedRecord->id;
+            }
+        }
+
         return [
             'data' => $this->getRelatedData(),
             'software' => $this->getRelatedSoftware(),
@@ -44,7 +59,7 @@ class Relationships extends ROHandler
     private function getRelatedData() {
 
         $result = RelationshipSearchService::search([
-            'from_id' => $this->ro->id,
+            'from_id' => $this->from_id,
             'to_class' => 'collection',
             'not_to_type' => 'software',
             'to_title' => '*'
@@ -60,7 +75,7 @@ class Relationships extends ROHandler
     private function getRelatedSoftware() {
 
         $result = RelationshipSearchService::search([
-            'from_id' => $this->ro->id,
+            'from_id' => $this->from_id,
             'to_class' => 'collection',
             'to_type' => 'software',
             'to_title' => '*'
@@ -76,7 +91,7 @@ class Relationships extends ROHandler
     private function getRelatedPrograms() {
 
         $result = RelationshipSearchService::search([
-            'from_id' => $this->ro->id,
+            'from_id' => $this->from_id,
             'to_class' => 'activity',
             'to_type' => 'program',
             'to_title' => '*'
@@ -121,7 +136,7 @@ class Relationships extends ROHandler
     private function getRelatedGrantsProjects() {
 
         $result = RelationshipSearchService::search([
-            'from_id' => $this->ro->id,
+            'from_id' => $this->from_id,
             'to_class' => 'activity',
             'to_title' => '*',
             'not_to_type' => 'program'
@@ -164,7 +179,7 @@ class Relationships extends ROHandler
     private function getRelatedPublication() {
 
         $result = RelationshipSearchService::search([
-            'from_id' => $this->ro->id,
+            'from_id' => $this->from_id,
             'to_class' => 'publication'
         ], ['boost_to_group' => $this->ro->group, 'rows' =>100]);
         $this->related_count += $result->total;
@@ -178,7 +193,7 @@ class Relationships extends ROHandler
     private function getRelatedService() {
 
         $result = RelationshipSearchService::search([
-            'from_id' => $this->ro->id,
+            'from_id' => $this->from_id,
             'to_class' => 'service',
             'to_title' => '*'
         ], ['boost_to_group' => $this->ro->group, 'rows' => 5]);
@@ -193,7 +208,7 @@ class Relationships extends ROHandler
     private function getRelatedWebsites() {
 
         $result = RelationshipSearchService::search([
-            'from_id' => $this->ro->id,
+            'from_id' => $this->from_id,
             'to_class' => 'website'
         ], ['boost_to_group' => $this->ro->group ,'rows' =>100]);
         $this->related_count += $result->total;
@@ -209,7 +224,7 @@ class Relationships extends ROHandler
     private function getRelatedResearchers() {
 
         $result = RelationshipSearchService::search([
-            'from_id' => $this->ro->id,
+            'from_id' => $this->from_id,
             'to_class' => 'party',
             'not_to_type' => 'group',
             'to_title' => '*',
@@ -228,7 +243,7 @@ class Relationships extends ROHandler
     private function getRelatedOrganisations() {
 
         $result = RelationshipSearchService::search([
-            'from_id' => $this->ro->id,
+            'from_id' => $this->from_id,
             'to_class' => 'party',
             'to_type' => 'group',
             'to_title' => '*'

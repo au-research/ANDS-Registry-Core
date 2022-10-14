@@ -7,6 +7,7 @@ namespace ANDS\API\Task\ImportSubTask;
 use ANDS\Mycelium\MyceliumServiceClient;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\Config;
+use ANDS\Repository\RegistryObjectsRepository as Repo;
 
 class ProcessGraphRelationships extends ImportSubTask
 {
@@ -19,6 +20,14 @@ class ProcessGraphRelationships extends ImportSubTask
     public function run_task()
     {
 
+
+        $targetStatus = $this->parent()->getTaskData('targetStatus');
+        // TODO: until DRAFT records are 100% isolated in Mycelium we should only allow PUBLISHED records
+        if (!Repo::isPublishedStatus($targetStatus)) {
+            $this->log("Target status is ". $targetStatus.' No indexing required');
+            return;
+        }
+
         $myceliumUrl = Config::get('mycelium.url');
         $myceliumClient = new MyceliumServiceClient($myceliumUrl);
 
@@ -30,8 +39,7 @@ class ProcessGraphRelationships extends ImportSubTask
         $import_count = 0;
         $error_count = 0;
         $startTime = microtime(true);
-        $targetStatus = $this->parent()->getTaskData('targetStatus');
-        // as of Mycelium we are indexing records with any status
+
 
         $importedRecords = $this->parent()->getTaskData("importedRecords");
         $total = count($importedRecords);

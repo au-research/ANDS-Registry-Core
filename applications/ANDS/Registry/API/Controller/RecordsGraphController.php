@@ -104,10 +104,21 @@ class RecordsGraphController
         if (!$record) {
             return $this->formatForJSLibrary([], []);
         }
-
         // obtain the graph data from MyceliumService
         $myceliumClient = new MyceliumServiceClient(Config::get('mycelium.url'));
-        $graphResult = $myceliumClient->getRecordGraph($record->id);
+        // TODO
+        // temporary fallback to published relationships if exists
+        // remove switch once DRAFT records are indexed by Mycelium
+
+        if(!$record->isPublishedStatus()){
+            $publishedRecord = RegistryObjectsRepository::getPublishedByKey($record->key);
+            if($publishedRecord != null){
+                $graphResult = $myceliumClient->getRecordGraph($publishedRecord->id);
+            }
+        }else{
+            $graphResult = $myceliumClient->getRecordGraph($record->id);
+        }
+
         if ($graphResult === null || $graphResult->getStatusCode() != 200) {
             // todo log mycelium errors
             return $this->formatForJSLibrary([], []);
