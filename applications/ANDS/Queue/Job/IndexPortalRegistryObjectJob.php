@@ -47,7 +47,7 @@ class IndexPortalRegistryObjectJob extends Job
             json_encode($portalIndex), "body");
         if ($solrClient->hasError()) {
             $reason = join(',', $solrClient->getErrors());
-            // id topology Exception occured crate a solr index without spatial data
+            // if topology Exception occurred crate a solr index without spatial data
             if(str_contains($reason, 'org.locationtech.jts.geom.TopologyException')){
                 $portalIndex = RIFCSIndexProvider::get($record, false);
                 $solrClient->request("POST", "portal/update/json/docs", ['commit' => 'true'],

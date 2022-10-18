@@ -210,7 +210,7 @@ class RecordsGraphController
                     'from_id' => $from_id,
                     'relation_type' => $edgeToCluster['type'],
                     'to_class' => $node['properties']['class'],
-                    'to_type' => $node['properties']['type']
+                    'to_type' => escapeSolrValue($node['properties']['type'])
                 ], ['rows' => 0]);
                 $count = $result->total;
             }

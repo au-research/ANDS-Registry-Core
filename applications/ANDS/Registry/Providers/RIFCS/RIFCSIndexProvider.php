@@ -5,7 +5,6 @@ namespace ANDS\Registry\Providers\RIFCS;
 use ANDS\Log\Log;
 use ANDS\Registry\Providers\RelatedTitlesProvider;
 use ANDS\RegistryObject;
-use ANDS\Util\Config;
 use ANDS\Util\SolrIndex;
 use MinhD\SolrClient\SolrClient;
 use MinhD\SolrClient\SolrDocument;

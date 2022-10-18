@@ -47,7 +47,7 @@ class MyceliumIndexRecordCommand extends ANDSCommand
     public function indexRecord(RegistryObject $record, MyceliumServiceClient $client)
     {
         $client->indexRecord($record);
-        $this->logv("Imported RegistryObject[id=$record->id] to Mycelium");
+        $this->logv ("Indexed RegistryObject[id=$record->id] via Mycelium");
     }
 
     public function indexPublishedRecords(MyceliumServiceClient $client)

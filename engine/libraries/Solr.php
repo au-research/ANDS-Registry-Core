@@ -365,7 +365,7 @@ class Solr
             unset($filters['year_to']);
         }
 
-        // map each of the user-supplied filters to it's corresponding SOLR parameter
+        // map each of the user-supplied filters to its corresponding SOLR parameter
         foreach ($filters as $key => $value) {
             if (!is_array($value) && $key != 'q') {
                 $value = $this->escapeInvalidXmlChars($value);

@@ -6,7 +6,6 @@ namespace ANDS\Registry\Providers;
 
 use ANDS\Mycelium\RelationshipSearchService;
 use ANDS\RegistryObject;
-use ANDS\Util\XMLUtil;
 
 class RelatedTitlesProvider implements RIFCSProvider
 {
