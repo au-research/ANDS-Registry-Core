@@ -5,6 +5,7 @@ cites,isCitedBy,Cites,Cites,,,
 coInvestigator,hasCoInvestigator,Co investigator,,,,
 custodian,hasCustodian,Custodian of,,,,
 describes,isDescribedBy,Describes,Describes,,,
+distributor,isDistributedBy,Distributes,Distributes,,,
 documents,isDocumentedBy,Documents,Documents,,,
 enriches,isEnrichedBy,Enriches,,Enriches,,
 hasAssociationWith,hasAssociationWith,Associated with,Associated with,Associated with,Associated with,Associated with
@@ -19,6 +20,7 @@ hasOriginator,originator,Has originator,,,,
 hasOutput,isOutputOf,Has output,,,,Has output
 hasPart,isPartOf,Is part of,Contains,Has part,Includes,Includes
 hasParticipant,isParticipantIn,Undertaken by,Undertaken by,Undertaken by,Undertaken by,Undertaken by
+hasPointOfContact,isPointOfContactOf,Has point of contact,,,,
 hasPrincipalInvestigator,isPrincipalInvestigatorOf,Principal investigator,Principal investigator,,Principal investigator,Principal investigator
 hasProcessor,processor,Has processor,,,,
 hasResourceProvider,resourceProvider,Has resource provider,,,,
@@ -30,6 +32,7 @@ isCollectorOf,hasCollector,Collector of,,Collector of,,
 isCreatorOf,hasCreator,Creator of,,,,
 isDerivedFrom,hasDerivedCollection,Derived from,Derived from,,,
 isDescribedBy,describes,Described by,Described by,,,
+isDistributedBy,distributer,Distributer of,Distributed by,,,
 isDocumentedBy,documents,Documented by,Documented by,,,
 isEnrichedBy,enriches,Enriched by,Enriched by,,,
 isFundedBy,isFunderOf,Funded by,Funded by,Funded by,,Funded by
@@ -45,6 +48,7 @@ isOwnedBy,isOwnerOf,Owned by,Owned by,Owned by,Owned by,Owned by
 isOwnerOf,isOwnedBy,Owner of,,Owner of,,
 isParticipantIn,hasParticipant,Participant in,Participant,Participant in,Participant,Participant in
 isPartOf,hasPart,Has part,Part of,Part of,Part of,Part of
+isPointOfContactOf,hasPointOfContact,Point of contact,,,,
 isPresentedBy,presents,Presented by,Presented by,,,
 isPrincipalInvestigator,hasPrincipalInvestigator,Principal investigator of,,Principal investigator of,,Principal investigator of
 isPrincipalInvestigatorOf,hasPrincipalInvestigator,Principal investigator of,,Principal investigator of,,Principal investigator of
@@ -58,6 +62,8 @@ isVersionOf,hasVersion,Is version of,Is version of,,,
 makesAvailable,isAvailableThrough,Makes available,,Makes available,Makes available,
 operatesOn,isOperatedOnBy,Operates on,,,Operates on,
 originator,hasOriginator,Originator of,,,,
+owner,isOwnerOf,Owner,,,,
+pointOfContact,hasPointOfContact,Point of contact,,,,
 presents,isPresentedBy,Presents,,,Presents,
 processor,hasProcessor,Processor of,,,,
 produces,isProducedBy,Produces,,,Produces,
