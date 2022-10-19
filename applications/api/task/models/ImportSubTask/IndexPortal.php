@@ -43,11 +43,13 @@ class IndexPortal extends ImportSubTask
         );
 
         foreach ($importedRecords as $index=>$roID) {
+            $record = RegistryObjectsRepository::getRecordByID($roID);
+            if($record == null){
+                continue;
+            }
             try {
-                $record = RegistryObjectsRepository::getRecordByID($roID);
                 $portalIndex = RIFCSIndexProvider::get($record);
                 $this->insertSolrDoc($portalIndex);
-                $cSuccess++;
             } catch (\Exception $e) {
                 $msg = $e->getMessage();
                 if(str_contains($msg, 'org.locationtech.jts.geom.TopologyException')){
@@ -55,17 +57,15 @@ class IndexPortal extends ImportSubTask
                     try {
                         $portalIndex = RIFCSIndexProvider::get($record, false);
                         $this->insertSolrDoc($portalIndex);
-                        $cSuccess++;
-                    } catch (\Exception $e) {
-                        $msg = $e->getMessage();
+                    } catch (\Exception $ee) {
+                        $msg = $ee->getMessage();
                         if (!$msg) {
-                            $msg = implode(" ", array_first($e->getTrace())['args']);
+                            $msg = implode(" ", array_first($ee->getTrace())['args']);
                         }
                         $this->addError("Error getting portalIndex for $roID : $msg");
                     }
                 }
                 else{
-                    $msg = $e->getMessage();
                     if (!$msg) {
                         $msg = implode(" ", array_first($e->getTrace())['args']);
                     }
