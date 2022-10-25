@@ -59,4 +59,27 @@ class CoreMetadataProvider implements RIFCSProvider
     {
         // TODO: Implement get() method.
     }
+
+    /**
+     * Obtain an associative array for the indexable fields
+     *
+     * @param RegistryObject $record
+     * @return array
+     */
+    public static function getIndexableArray(RegistryObject $record)
+    {
+        return [
+            'id' => $record->id,
+            'slug' => $record->slug,
+            'key' => $record->key,
+            'status' => $record->status,
+            'group' => $record->group,
+            'type' => $record->type,
+            'class' => $record->class,
+            'data_source_id' => $record->dataSource->id,
+            'data_source_key' => $record->dataSource->key,
+            'record_modified_timestamp' => $record->modified_at,
+            'record_created_timestamp' => $record->created_at
+        ];
+    }
 }

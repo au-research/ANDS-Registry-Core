@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+        <registryObject group="AUTestingRecords2">
+            <key>AUTestingRecords2ScholixRecords43</key>
+            <originatingSource>http://test.ands.org.au/registry/orca/register_my_data</originatingSource>
+            <collection type="collection" dateModified="2016-04-10T23:51:40Z">
+                <identifier type="doi">10.1234/00/Scholix5643</identifier>
+                <identifier type="local">ScholixLocalId43</identifier>
+                <name type="primary">
+                    <namePart>(AUTestingRecords2) Scholix Source Collection With a 2 x Identifier, CitationMetadata with contributor with multiple nameParts, relatedInfo isOwnedBy creator, reverse relatedInfo hasCollector creator and 15 RelatedInfo Publication. 2 of the publications have 2 identifiers</namePart>
+                </name>
+                <description type="full">Expected Result:
+                    15 Link Info Packages with a link from the collection doi identifier to each publication identifier. And NONE from the collection local identifier to each publication identifier.
+                    &#xD; Source publication date, creator and identifier shall be taken from citationMetadata.
+                    &#xD; CitationMetadata Creator name is display name for contributor (all nameParts Firstname, Surname)
+                    &#xD; 2nd creator taken from relatedInfo isOwnedBy party.
+                    &#xD; 3rd creator taken from reverse relatedInfo isCollectorOf party.
+                </description>
+                <relatedInfo type="publication">
+                    <title>Related Info Title</title>
+                    <identifier type="uri">http://www.someExamplePublication.org/Scholix1</identifier>
+                    <identifier type="handle">10.3555/23434/Scholix1</identifier>
+                    <relation type="hasAssociationWith"/>
+                </relatedInfo>
+                <relatedInfo type="publication">
+                    <title>Related Info Title 2</title>
+                    <identifier type="uri">http://www.someExamplePublication.org/Scholix2</identifier>
+                    <relation type="isCitedBy"/>
+                </relatedInfo>
+                <relatedInfo type="publication">
+                    <title>Related Info Title 3</title>
+                    <identifier type="uri">http://www.someExamplePublication.org/Scholix3</identifier>
+                    <relation type="isReferencedBy"/>
+                </relatedInfo>
+                <relatedInfo type="publication">
+                    <title>Related Info Title 4</title>
+                    <identifier type="uri">http://www.someExamplePublication.org/Scholix4</identifier>
+                    <relation type="localRelation"/>
+                </relatedInfo>
+                <relatedInfo type="publication">
+                    <title>Related Info Title 5</title>
+                    <identifier type="uri">http://www.someExamplePublication.org/Scholix5</identifier>
+                    <identifier type="handle">10.3555/23434/Scholix5</identifier>
+                    <relation type="hasAssociationWith"/>
+                </relatedInfo>
+                <relatedInfo type="publication">
+                    <title>Related Info Title 6</title>
+                    <identifier type="uri">http://www.someExamplePublication.org/Scholix6</identifier>
+                    <relation type="hasAssociationWith"/>
+                </relatedInfo>
+                <relatedInfo type="publication">
+                    <title>Related Info Title 7</title>
+                    <identifier type="uri">http://www.someExamplePublication.org/Scholix7</identifier>
+                    <relation type="isReviewedBy"/>
+                </relatedInfo>
+                <relatedInfo type="publication">
+                    <title>Related Info Title 8</title>
+                    <identifier type="uri">http://www.someExamplePublication.org/Scholix8</identifier>
+                    <relation type="isDocumentedBy"/>
+                </relatedInfo>
+                <relatedInfo type="publication">
+                    <title>Related Info Title 9</title>
+                    <identifier type="uri">http://www.someExamplePublication.org/Scholix9</identifier>
+                    <relation type="hasAssociationWith"/>
+                </relatedInfo>
+                <relatedInfo type="publication">
+                    <title>Related Info Title 10</title>
+                    <identifier type="uri">http://www.someExamplePublication.org/Scholix10</identifier>
+                    <relation type="hasAssociationWith"/>
+                </relatedInfo>
+                <relatedInfo type="publication">
+                    <title>Related Info Title 11</title>
+                    <identifier type="uri">http://www.someExamplePublication.org/Scholix11</identifier>
+                    <relation type="hasAssociationWith"/>
+                </relatedInfo>
+                <relatedInfo type="publication">
+                    <title>Related Info Title 12</title>
+                    <identifier type="uri">http://www.someExamplePublication.org/Scholix12</identifier>
+                    <relation type="hasAssociationWith"/>
+                </relatedInfo>
+                <relatedInfo type="publication">
+                    <title>Related Info Title 13</title>
+                    <identifier type="uri">http://www.someExamplePublication.org/Scholix13</identifier>
+                    <relation type="hasAssociationWith"/>
+                </relatedInfo>
+                <relatedInfo type="publication">
+                    <title>Related Info Title 14</title>
+                    <identifier type="uri">http://www.someExamplePublication.org/Scholix14</identifier>
+                    <relation type="hasAssociationWith"/>
+                </relatedInfo>
+                <relatedInfo type="publication">
+                    <title>Related Info Title 15</title>
+                    <identifier type="uri">http://www.someExamplePublication.org/Scholix15</identifier>
+                    <relation type="hasAssociationWith"/>
+                </relatedInfo>
+                <relatedInfo type="party">
+                    <title>Related Info Party Author</title>
+                    <identifier type="uri">http://scholixParties.com/ScholixPartyRecords2</identifier>
+                    <relation type="isOwnedBy"/>
+                </relatedInfo>
+                <citationInfo>
+                    <citationMetadata>
+                        <identifier type="doi">10.1234/00/Scholix5643</identifier>
+                        <title>
+                            (citation/title) Scholix Source Collection With a Single Identifier, CitationMetadata with contributor with multiple nameParts and Single RelatedInfo Publication.
+                        </title>
+                        <date type="publicationDate">2001-03-05</date>
+                        <contributor>
+                            <namePart type="title">Mr</namePart>
+                            <namePart type="family">Scholix</namePart>
+                            <namePart type="given">Contributor</namePart>
+                        </contributor>
+                        <publisher>AUTestingRecords2 Citation Publisher</publisher>
+                    </citationMetadata>
+                </citationInfo>
+            </collection>
+        </registryObject>
+    </registryObjects>
+</registryObjects>

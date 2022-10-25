@@ -19,7 +19,7 @@ class TestHandleStatusChange extends UnitTest
         $importTask = new ImportTask();
         $importTask->init([
             'params'=>'ds_id=209&batch_id=AUTestingRecordsImport'
-        ])->setCI($this->ci)->initialiseTask();
+        ])->initialiseTask();
         $importTask->enableRunAllSubTask()->run();
 
         // now we have a PUBLISHED record
@@ -30,7 +30,7 @@ class TestHandleStatusChange extends UnitTest
         $importTask = new ImportTask();
         $importTask->init([
             'params' => 'ro_id='.$record->registry_object_id.'&targetStatus=DRAFT'
-        ])->setCI($this->ci)->setPipeline('PublishingWorkflow');
+        ])->setPipeline('PublishingWorkflow');
 
         $importTask->enableRunAllSubTask()->run();
 
@@ -62,7 +62,7 @@ class TestHandleStatusChange extends UnitTest
         $importTask = new ImportTask();
         $importTask->init([
             'params'=>'ds_id=209&batch_id=AUTestingRecordsImport&targetStatus=DRAFT'
-        ])->setCI($this->ci)->initialiseTask();
+        ])->initialiseTask();
 
         $importTask->enableRunAllSubTask()->run();
 
@@ -72,7 +72,7 @@ class TestHandleStatusChange extends UnitTest
         $importTask = new ImportTask();
         $importTask->init([
             'params' => 'ro_id='.$record->registry_object_id.'&targetStatus=SUBMITTED_FOR_ASSESSMENT'
-        ])->setCI($this->ci)->setPipeline('PublishingWorkflow');
+        ])->setPipeline('PublishingWorkflow');
 
         $importTask->initialiseTask()->enableRunAllSubTask();
 
@@ -98,7 +98,7 @@ class TestHandleStatusChange extends UnitTest
         $importTask = new ImportTask();
         $importTask->init([
             'params'=>'ds_id=209&batch_id=AUTestingRecordsImport&targetStatus=DRAFT'
-        ])->setCI($this->ci)->initialiseTask();
+        ])->initialiseTask();
         $importTask->enableRunAllSubTask()->run();
         $record = RegistryObjectsRepository::getByKeyAndStatus('minh-test-record-pipeline', 'DRAFT');
         $this->assertTrue($record);
@@ -107,7 +107,7 @@ class TestHandleStatusChange extends UnitTest
         $importTask = new ImportTask();
         $importTask->init([
             'params' => 'ro_id='.$record->registry_object_id.'&targetStatus=PUBLISHED'
-        ])->setCI($this->ci)->setPipeline('PublishingWorkflow');
+        ])->setPipeline('PublishingWorkflow');
         $importTask->enableRunAllSubTask()->run();
 
         $record = RegistryObjectsRepository::getPublishedByKey('minh-test-record-pipeline');
@@ -125,13 +125,13 @@ class TestHandleStatusChange extends UnitTest
         $importTask = new ImportTask();
         $importTask->init([
             'params'=>'ds_id=209&batch_id=AUTestingRecordsImport&targetStatus=DRAFT'
-        ])->setCI($this->ci)->initialiseTask();
+        ])->initialiseTask();
         $importTask->enableRunAllSubTask()->run();
 
         $importTask = new ImportTask();
         $importTask->init([
             'params'=>'ds_id=209&batch_id=AUTestingRecordsImport&targetStatus=PUBLISHED'
-        ])->setCI($this->ci)->initialiseTask();
+        ])->initialiseTask();
         $importTask->enableRunAllSubTask()->run();
 
         $publishedRecord = RegistryObjectsRepository::getByKeyAndStatus('minh-test-record-pipeline', 'PUBLISHED');
@@ -144,7 +144,7 @@ class TestHandleStatusChange extends UnitTest
         $importTask = new ImportTask();
         $importTask->init([
             'params' => 'ro_id='.$draftRecord->registry_object_id.'&targetStatus=PUBLISHED'
-        ])->setCI($this->ci)->setPipeline('PublishingWorkflow');
+        ])->setPipeline('PublishingWorkflow');
         $importTask->enableRunAllSubTask()->run();
 
         $publishedRecord = RegistryObjectsRepository::getPublishedByKey('minh-test-record-pipeline');

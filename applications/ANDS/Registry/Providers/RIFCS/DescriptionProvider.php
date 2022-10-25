@@ -23,10 +23,12 @@ class DescriptionProvider implements RIFCSProvider
 
         $descriptions = [];
 
+
+
         foreach (XMLUtil::getElementsByXPath($data['recordData'],
             'ro:registryObject/ro:' . $record->class . '/ro:description') AS $description){
             $type = (string) $description['type'];
-            $description = html_entity_decode((string) $description);
+            $description = utf8_encode(html_entity_decode((string) $description));
             $descriptions[] = [
                 'type' => $type,
                 'value' => $description
@@ -57,5 +59,40 @@ class DescriptionProvider implements RIFCSProvider
             // 'logo' => null TODO logo
             'descriptions' => $descriptions
         ];
+    }
+
+    /**
+     * Obtain an associative array for the indexable fields
+     *
+     * @param RegistryObject $record
+     * @return array
+     */
+    public static function getIndexableArray(RegistryObject $record)
+    {
+
+        $types = [];
+        $values = [];
+        $solr_byte_limit = 32766;
+        $descriptions = self::get($record);
+        foreach ($descriptions['descriptions'] as $description) {
+            $types[] = $description['type'];
+            $values[] = mb_strcut($description['value'], 0, $solr_byte_limit);
+        }
+
+        $theDescription = mb_strcut($descriptions['primary_description'],0, $solr_byte_limit);;
+
+        // list description is the trimmed form of the description
+        $listDescription = mb_strcut(trim(strip_tags(html_entity_decode(html_entity_decode($theDescription)), ENT_QUOTES)),0, $solr_byte_limit);;
+
+        //add <br/> for NL if doesn't already have <p> or <br/>
+        $theDescription = !(strpos($theDescription, "&lt;br") !== FALSE || strpos($theDescription, "&lt;p") !== FALSE || strpos($theDescription, "&amp;#60;p") !== FALSE) ? nl2br($theDescription) : $theDescription;
+
+        return [
+            'description_type' => $types,
+            'description_value' => $values,
+            'list_description' => $listDescription,
+            'description' => $theDescription
+        ];
+
     }
 }

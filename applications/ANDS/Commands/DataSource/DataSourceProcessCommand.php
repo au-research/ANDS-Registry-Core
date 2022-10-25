@@ -6,18 +6,14 @@ namespace ANDS\Commands\DataSource;
 
 use ANDS\Commands\ANDSCommand;
 use ANDS\Registry\Providers\DCI\DataCitationIndexProvider;
-use ANDS\Registry\Providers\GraphRelationshipProvider;
 use ANDS\Registry\Providers\LinkProvider;
 use ANDS\Registry\Providers\Quality\QualityMetadataProvider;
-use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\Registry\Providers\RIFCS\CoreMetadataProvider;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\Providers\RIFCS\SubjectProvider;
 use ANDS\Registry\Providers\Scholix\ScholixProvider;
 use ANDS\Registry\Providers\RIFCS\TitleProvider;
 use ANDS\RegistryObject;
-use ANDS\Repository\DataSourceRepository;
-use ANDS\Repository\RegistryObjectsRepository;
 use ReflectionMethod;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
@@ -32,11 +28,9 @@ class DataSourceProcessCommand extends ANDSCommand
         'subject' => SubjectProvider::class,
         'quality' => QualityMetadataProvider::class,
         'links' => LinkProvider::class,
-        'relationship' => RelationshipProvider::class,
         'title' => TitleProvider::class,
         'core' => CoreMetadataProvider::class,
         'date' => DatesProvider::class,
-        'graph' => GraphRelationshipProvider::class,
         'dci' => DataCitationIndexProvider::class
     ];
 
@@ -73,7 +67,7 @@ class DataSourceProcessCommand extends ANDSCommand
                 ->orderBy('registry_object_id');
         }
 
-        return $this->timedActivity("Process {$process} on data source: {$id}",
+        $this->timedActivity("Process {$process} on data source: {$id}",
             function () use ($id, $records, $process) {
                 $progressBar = new ProgressBar($this->getOutput(), $records->count());
                 $records->chunk(1000, function ($records) use ($progressBar, $process) {

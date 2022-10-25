@@ -2,6 +2,8 @@
 
 namespace ANDS\Registry\Providers\RIFCS;
 
+use ANDS\File\Storage;
+use ANDS\RecordData;
 use ANDS\Registry\Providers\RIFCS\TitleProvider;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
@@ -292,5 +294,17 @@ class TitleProviderTest extends \RegistryTestClass
         $this->assertContains("Alexander Öpik", $titles['alt_titles']);
     }
 
+    public function testGetIndexableArray()
+    {
+        $record = $this->stub(RegistryObject::class, ['class' => 'collection']);
+        $this->stub(RecordData::class, [
+            'registry_object_id' => $record->id,
+            'data' => Storage::disk('test')->get('rifcs/collection_all_elements.xml')
+        ]);
+        $index = TitleProvider::getIndexableArray($record);
+        $this->assertEquals("Collection with all RIF v1.6 elements (primaryName)", $index['display_title']);
+        $this->assertEquals("Collection with all RIF v1.6 elements (primaryName)", $index['list_title']);
+        $this->assertContains("alternativeName", $index['alt_display_title']);
+    }
 
 }

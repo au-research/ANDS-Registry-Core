@@ -32,7 +32,7 @@ class Router
 
     public function post($pattern, $callback)
     {
-        $this->route(['get'], $pattern, $callback);
+        $this->route(['post'], $pattern, $callback);
     }
 
     public function resource($resources, $controller) {
@@ -76,6 +76,13 @@ class Router
         if (!$url) {
             $url = $_SERVER['REQUEST_URI'];
         }
+        // add query params too
+        $parts = [];
+        $parts["query"] = "";
+        if(str_contains($url, "?")){
+            $parts = parse_url($url);
+        }
+
 
         $parsedUrl = parse_url(baseUrl());
         $path = array_key_exists('path', $parsedUrl) ? $parsedUrl['path'] : null;
@@ -105,6 +112,8 @@ class Router
                 // var_dump($pattern, $url);
                 if (preg_match($pattern, $url, $params)) {
                     array_shift($params);
+                    // query params added to the params
+                    $params[] = $parts["query"];
                     return [
                         'pattern' => $pattern,
                         'url' => $url,

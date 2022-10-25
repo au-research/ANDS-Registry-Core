@@ -20,57 +20,12 @@ class IdentifierProvider implements RIFCSProvider
      * Add all Identifiers from rifcs
      *
      * @param RegistryObject $record
-     * @return array
      */
     public static function process(RegistryObject $record)
     {
-        static::deleteAllIdentifiers($record);
-        $identifiers = static::processIdentifiers($record);
-        return $identifiers;
+        // Identifier Processing is done by Mycelium
     }
 
-    /**
-     * Delete Identifiers
-     * Clean up before a processing
-     *
-     * @param RegistryObject $record
-     */
-    public static function deleteAllIdentifiers(RegistryObject $record)
-    {
-        Identifier::where('registry_object_id',
-            $record->registry_object_id)->delete();
-    }
-
-
-    /**
-     * Create Identifiers from current RIFCS
-     * TODO: Refactor to use self::get()
-     * @param RegistryObject $record
-     * @return array
-     */
-    public static function processIdentifiers(RegistryObject $record)
-    {
-        $identifiers = [];
-        $xml = $record->getCurrentData()->data;
-        foreach (XMLUtil::getElementsByXPath($xml,
-            'ro:registryObject/ro:' . $record->class . '/ro:identifier') AS $identifier) {
-            if (trim((string)$identifier) == "") {
-                continue;
-            }
-            $normalisedIdentifier = IdentifierProvider::getNormalisedIdentifier(trim((string)$identifier), trim((string)$identifier['type']));
-
-            $identifiers[] = $normalisedIdentifier["value"];
-            Identifier::create(
-                [
-                    'registry_object_id' => $record->registry_object_id,
-                    'identifier' => $normalisedIdentifier["value"],
-                    'identifier_type' => $normalisedIdentifier["type"]
-                ]
-            );
-
-        }
-        return $identifiers;
-    }
 
     /**
      * Get all identifiers from RIFCS
@@ -171,12 +126,12 @@ class IdentifierProvider implements RIFCSProvider
      *
      * @param $identifier
      * @param $type
-     * @return bool
+     * @return array|false
      * @throws \Exception
      */
     public static function format($identifier, $type)
     {
-        switch($type)
+        switch(strtolower($type))
         {
             case 'doi':
                 //if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier."mystuff";
@@ -187,7 +142,6 @@ class IdentifierProvider implements RIFCSProvider
                 $identifiers['hover_text'] = 'Resolve this DOI';
                 $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/doi_icon.png alt="DOI Link"/>';
                 return  $identifiers;
-                break;
             case 'ark':
                 $identifiers['href'] = '';
                 $identifiers['display_icon'] = '';
@@ -202,7 +156,6 @@ class IdentifierProvider implements RIFCSProvider
                 $identifiers['display_text'] = 'ARK';
                 $identifiers['hover_text'] = 'Resolve this ARK identifier';
                 return $identifiers;
-                break;
             case 'orcid':
                 if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
                 elseif(!strpos($identifier,"orcid.org/")) $identifier_href ="http://orcid.org/".$identifier;
@@ -212,8 +165,8 @@ class IdentifierProvider implements RIFCSProvider
                 $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/orcid_icon.png alt="ORCID Link"/>';
                 $identifiers['hover_text'] = 'Resolve this ORCID';
                 return  $identifiers;
-                break;
-            case 'AU-ANL:PEAU':
+            case 'nla':
+            case 'au-anl:peau':
                 if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
                 elseif(!strpos($identifier,"nla.gov.au/")) $identifier_href ="http://nla.gov.au/".$identifier;
                 else $identifier_href = "http://nla.gov.au/".substr($identifier,strpos($identifier,"nla.gov.au/")+11);
@@ -222,7 +175,6 @@ class IdentifierProvider implements RIFCSProvider
                 $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/nla_icon.png alt="NLA Link"/>';
                 $identifiers['hover_text'] = 'View the record for this party in Trove';
                 return  $identifiers;
-                break;
             case 'handle':
                 if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
                 elseif(strpos($identifier,"dl:")>0) $identifier_href ="http://hdl.handle.net/".substr($identifier,strpos($identifier,"hdl:")+4);
@@ -233,7 +185,6 @@ class IdentifierProvider implements RIFCSProvider
                 $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/handle_icon.png alt="Handle Link"/>';
                 $identifiers['hover_text'] = 'Resolve this handle';
                 return  $identifiers;
-                break;
             case 'raid':
                 if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
                 elseif(strpos($identifier,"dl:")>0) $identifier_href ="http://hdl.handle.net/".substr($identifier,strpos($identifier,"hdl:")+4);
@@ -244,7 +195,6 @@ class IdentifierProvider implements RIFCSProvider
                 $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/handle_icon.png alt="Handle Link"/>';
                 $identifiers['hover_text'] = 'Resolve this handle';
                 return  $identifiers;
-                break;
             case 'purl':
                 if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
                 elseif(strpos($identifier,"url.org/")<1) $identifier_href ="http://purl.org/".$identifier;
@@ -254,7 +204,6 @@ class IdentifierProvider implements RIFCSProvider
                 $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/external_link.png alt="External Link"/>';
                 $identifiers['hover_text'] = 'Resolve this PURL';
                 return  $identifiers;
-                break;
             case 'isni':
                 if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
                 elseif(strpos($identifier,"isni.org/")<1) $identifier_href ="http://isni.org/".$identifier;
@@ -264,7 +213,6 @@ class IdentifierProvider implements RIFCSProvider
                 $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/external_link.png alt="External Link"/>';
                 $identifiers['hover_text'] = 'Resolve this ISNI';
                 return  $identifiers;
-                break;
             case 'igsn':
                 if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
                 elseif(strpos($identifier,"igsn.org/")<1) $identifier_href ="http://igsn.org/".$identifier;
@@ -274,7 +222,6 @@ class IdentifierProvider implements RIFCSProvider
                 $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/external_link.png alt="External Link"/>';
                 $identifiers['hover_text'] = 'Resolve this IGSN';
                 return  $identifiers;
-                break;
             case 'grid':
                 if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
                 if(isset($identifier_href)) {
@@ -284,8 +231,8 @@ class IdentifierProvider implements RIFCSProvider
                 }
                 $identifiers['display_text'] = 'GRID';
                 return $identifiers;
-                break;
-            case 'scopusID':
+            case 'scopus':
+            case 'scopusid':
                 if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
                 if(isset($identifier_href)) {
                     $identifiers['href'] = $identifier_href;
@@ -303,30 +250,24 @@ class IdentifierProvider implements RIFCSProvider
                 $identifiers['hover_text'] = 'Resolve this URI';
                 $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/external_link.png alt="External Link"/>';
                 return $identifiers;
-                break;
-            case 'urn':
-                break;
             case 'local':
                 $identifiers['display_text'] = 'Local';
                 return $identifiers;
-                break;
             case 'isil':
                 $identifiers['display_text'] = 'ISIL';
                 return $identifiers;
-                break;
             case 'abn':
                 $identifiers['display_text'] = 'ABN';
                 return $identifiers;
-                break;
             case 'arc':
                 $identifiers['display_text'] = 'ARC';
                 return $identifiers;
-                break;
+            case 'ror':
+                $identifiers['display_text'] = 'ROR';
+                return $identifiers;
             default:
                 return false;
-                break;
         }
-
 
         throw new \Exception("$type not supported for formatting");
     }
@@ -462,5 +403,29 @@ class IdentifierProvider implements RIFCSProvider
             return "AU-ANL:PEAU";
         }
         return $type;
+    }
+
+    /**
+     * Obtain an associative array for the indexable fields
+     *
+     * @param RegistryObject $record
+     * @return array
+     */
+    public static function getIndexableArray(RegistryObject $record)
+    {
+        $identifiers = static::get($record);
+
+        $types = [];
+        $values = [];
+
+        foreach ($identifiers as $identifier) {
+            $types[] = $identifier['type'];;
+            $values[] = $identifier['value'];
+        }
+
+        return [
+            'identifier_type' => $types,
+            'identifier_value' => $values
+        ];
     }
 }

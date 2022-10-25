@@ -1,4 +1,21 @@
-@if($related['total']['count'] > 0)
+@if($ro->relationships['related_count'] > 0)
+    @if($ro->core['class']=='collection')
+    <div id="nested-collection-tree-container" class="panel panel-primary element-no-top element-short-bottom panel-content">
+        <div class="panel panel-primary panel-content swatch-white">
+            <!-- <div class="panel-heading">Connection Tree</div> -->
+            <div class="panel-tools">
+                <a href="" tip="Closely related datasets to this record (they have a parent-child relationship) are displayed in a browsable tree structure to provide contextual information for this record and to facilitate discovery. Browse the related datasets by expanding each tree node. Access a related dataset of interest by clicking on the hyperlink."><i class="fa fa-info"></i></a>
+            </div>
+            <div class="panel-body">
+                <?php $data = rawurlencode(json_encode($ro->connectiontrees));?>
+                <h4>This dataset is part of a larger collection</h4>
+                <div id="nested-collection-tree" ></div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    <div class="clearfix"></div>
     <div class="panel panel-primary element-no-top element-short-bottom panel-content">
 
         <div class="swatch-white" style="position:relative;">
@@ -20,39 +37,39 @@
         <div class="panel-body swatch-white" style="padding-top:0;">
 
             {{--Related Publications--}}
-            @if (isset($related['publications']) && sizeof($related['publications']['docs']) > 0)
+            @if (isset($related['publications']['contents']) && sizeof($related['publications']['contents']) > 0)
                 @include('registry_object/contents/related-publications')
             @endif
 
-            @if (isset($related['data']) && sizeof($related['data']['docs']) > 0)
+            @if (isset($related['data']['contents']) && sizeof($related['data']['contents']) > 0)
                 @include('registry_object/contents/related-data')
             @endif
 
-            @if (isset($related['software']) && sizeof($related['software']['docs']) > 0)
+            @if (isset($related['software']['contents']) && sizeof($related['software']['contents']) > 0)
                 @include('registry_object/contents/related-software')
             @endif
 
-            @if (isset($related['organisations']) && sizeof($related['organisations']['docs']) > 0)
+            @if (isset($related['organisations']['contents']) && sizeof($related['organisations']['contents']) > 0)
                 @include('registry_object/contents/related-organisation')
             @endif
 
-            @if (isset($related['researchers']) && sizeof($related['researchers']['docs']) > 0)
+            @if (isset($related['researchers']['contents']) && sizeof($related['researchers']['contents']) > 0)
                 @include('registry_object/contents/related-researchers')
             @endif
 
-            @if (isset($related['programs']) && sizeof($related['programs']['docs']) > 0)
+            @if (isset($related['programs']['contents']) && sizeof($related['programs']['contents']) > 0)
                 @include('registry_object/contents/related-program')
             @endif
 
-            @if (isset($related['grants_projects']) && sizeof($related['grants_projects']['docs']) > 0)
+            @if (isset($related['grants_projects']['contents']) && sizeof($related['grants_projects']['contents']) > 0)
                 @include('registry_object/contents/related-grants_projects')
             @endif
 
-            @if (isset($related['services']) && sizeof($related['services']['docs']) > 0)
+            @if (isset($related['services']['contents']) && sizeof($related['services']['contents']) > 0)
                 @include('registry_object/contents/related-service')
             @endif
 
-            @if (isset($related['websites']) && sizeof($related['websites']['docs']) > 0)
+            @if (isset($related['websites']['contents']) && sizeof($related['websites']['contents']) > 0)
                 @include('registry_object/contents/related-website')
             @endif
 
@@ -84,13 +101,30 @@
                     'value': roID
                 }],
                 onNodeDoubleClick: function(node) {
-                    var url = api_url + 'registry/records/' + node.properties.roId + '/graph';
-                    neo4jd3.setNodeLoading(node, true);
-                    $.getJSON(url, function(data) {
-                        var graph = neo4jd3.neo4jDataToD3Data(data);
-                        neo4jd3.updateWithD3Data(graph);
-                        neo4jd3.setNodeLoading(node, false);
-                    });
+                    // open in a new tab the url if there's one available, if not, attempt to expand the roID graph
+                    if (node.labels.includes('cluster')) {
+                        window.open(node.properties.url, '_blank');
+                    } else if (node.labels.includes('RegistryObject')){
+                        var url = api_url + 'registry/records/' + node.properties.roId + '/graph';
+                        neo4jd3.setNodeLoading(node, true);
+                        $.getJSON(url, function(data) {
+                            var graph = neo4jd3.neo4jDataToD3Data(data);
+                            neo4jd3.updateWithD3Data(graph);
+                            neo4jd3.setNodeLoading(node, false);
+                        });
+                    } else if (node.labels.includes('Identifier')){
+                        // add special graph resolver url for non RegistryObject Nodes
+                        var url = api_url + 'registry/records/by_identifier/graph?identifier='
+                            + node.properties.identifier + '&identifier_type='
+                            + node.properties.identifier_type + '&class='
+                            + node.properties.class;
+                        neo4jd3.setNodeLoading(node, true);
+                        $.getJSON(url, function(data) {
+                            var graph = neo4jd3.neo4jDataToD3Data(data);
+                            neo4jd3.updateWithD3Data(graph);
+                            neo4jd3.setNodeLoading(node, false);
+                        });
+                    }
                 },
                 onLoading: function() {
                     $('#toggle-visualisation i').removeClass('fa-sort').addClass('fa-spin').addClass('fa-spinner');

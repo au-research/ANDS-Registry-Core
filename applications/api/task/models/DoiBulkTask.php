@@ -13,6 +13,7 @@ use ANDS\DOI\Formatter\ArrayFormatter;
 use ANDS\DOI\Formatter\JSONFormatter;
 use ANDS\DOI\Formatter\StringFormatter;
 use ANDS\DOI\MdsClient;
+use ANDS\DOI\Model\ActivityLog;
 use ANDS\DOI\Model\Doi;
 use ANDS\DOI\Model\ClientPrefixes;
 use ANDS\DOI\Model\Prefix;
@@ -374,18 +375,16 @@ class DoiBulkTask extends Task
      */
     public function logToActivityLogTable($message, $doiValue, $result, $activity = 'UPDATE')
     {
-        $data = [
+        $log = new ActivityLog();
+        $log->setConnection("dois");
+        $log->fill([
             'activity' => $activity,
             'doi_id' => $doiValue,
             'result' => $result,
             'client_id' => $this->doiService->getAuthenticatedClient()->client_id,
             'message' => $message
-        ];
-        $db = $this->getCI()->load->database('dois', TRUE);
-        $result = $db->insert('activity_log', $data);
-        if (!$result) {
-            $this->addError("Failed to write to activity log table");
-        }
+        ]);
+        $log->save();
     }
 
     /**

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+    <registryObject group="AUTestingRecords">
+        <key>13181AUT22a</key>
+        <originatingSource>http://www.records.nsw.gov.au</originatingSource>
+        <collection dateModified="" type="collection">
+            <identifier type="uri">http://search.records.nsw.gov.au/series/13181AUT2a</identifier>
+            <dates type="dc.created">
+                <date dateFormat="W3CDTF" type="dateFrom">1917-01-01</date>
+                <date dateFormat="W3CDTF" type="dateTo">1927-12-31</date>
+            </dates>
+            <name>
+                <namePart type="full">(AUTestingRecords) Temporal Search Collection 2a (1981-01-01T00:00:00+10:00 to 1983-12-31T00:00:00+10:00) Account book of analysis of expenditure</namePart>
+            </name>
+            <location>
+                <address>
+                    <electronic type="url">
+                        <value>http://search.records.nsw.gov.au/series/13181</value>
+                    </electronic>
+                    <physical type="streetAddress">
+                        <addressPart type="text">Western Sydney Records Centre
+                            143 O'Connell Street KINGSWOOD NSW</addressPart>
+                    </physical>
+                </address>
+            </location>
+            <relatedObject>
+                <key>http://search.records.nsw.gov.au/agencies/1730</key>
+                <relation type="hasCreator">
+                    <description>Royal Mint, Sydney</description>
+                </relation>
+            </relatedObject>
+            <relatedObject>
+                <key>PartyOrcid1</key>
+                <relation type="hasPrincipalInvestigator">
+                    <description>A description</description>
+                </relation>
+            </relatedObject>
+            <subject type="anzsrc-for">2103 HISTORICAL STUDIES</subject>
+            <description type="full">This volume records weekly wages paid to each member of staff. (3/1711). 1 vol. Note: This description is extracted from Concise Guide to the State Archives of New South Wales, 3rd Edition 2000.</description>
+            <coverage>
+                <temporal>
+                    <date dateFormat="W3CDTF" type="dateFrom">1981-01-01T00:00:00+00:00</date>
+                    <date dateFormat="W3CDTF" type="dateTo">1983-12-31T00:00:00+00:00</date>
+                </temporal>
+            </coverage>
+            <rights>
+                <accessRights rightsUri="http://www.records.nsw.gov.au/state-archives/register-of-access-directions">The State Records Act 1998 (NSW) provides a general entitlement of public access to State records that are at least 30 years old. For a record to be available under the Act it must be subject to an 'open to public access' direction. Some records containing sensitive information may be closed for longer than 30 years under a ‘closed to public access’ direction. View access directions at: http://www.records.nsw.gov.au/state-archives/register-of-access-directions</accessRights>
+                <rightsStatement rightsUri="http://www.records.nsw.gov.au/state-archives/guides-and-finding-aids/archives-in-brief/archives-in-brief-74"> Records held by the State Records Authority of New South Wales are covered by copyright. For information on reusing material from the collection see Archives in Brief 74 – Research and Copyright.</rightsStatement>
+            </rights>
+            <relatedInfo>
+                <identifier type="website">http://search.records.nsw.gov.au/series/13181</identifier>
+            </relatedInfo>
+            <citationInfo>
+                <fullCitation>SRNSW: NRS 13181</fullCitation>
+            </citationInfo>
+        </collection>
+    </registryObject>
+</registryObjects>

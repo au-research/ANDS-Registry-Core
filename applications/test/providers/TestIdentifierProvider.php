@@ -33,18 +33,6 @@ class TestIdentifierProvider extends UnitTest
         //QualityMetadataProvider::process($record);
     }
 
-    public function test_it_sould_create_Identifiers()
-    {
-        // $collectionkey = 'AUTestingRecords3RelatedCollectionDatasetRelObj1';
 
-        $record = $this->ensureKeyExist('AUTCollection2');
-
-        IdentifierProvider::process($record);
-
-        $Identifiers = Identifier::where('registry_object_id',
-            $record->registry_object_id)->get();
-        $this->assertEquals(count($Identifiers), 31);
-
-    }
 
 }

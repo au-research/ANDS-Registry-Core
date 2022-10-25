@@ -1,4 +1,9 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php use ANDS\Mycelium\MyceliumServiceClient;
+use ANDS\Registry\Events\Event\PrimaryKeyUpdatedEvent;
+use ANDS\Registry\Events\EventServiceProvider;
+use ANDS\Util\Config;
+
+if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 
 /**
@@ -243,50 +248,6 @@ class Data_source extends MX_Controller {
 		echo json_encode($jsonData);
 	}
 
-	/**
-	 * Get a list of contributor of a data source
-	 * @param  data_source_id $id
-	 * @return json
-	 */
-	public function get_contributor($id=false){
-		//prepare
-		header('Cache-Control: no-cache, must-revalidate');
-		header('Content-type: application/json');
-		set_exception_handler('json_exception_handler');
-
-		if (!$id) throw new Exception('ID must be specified');
-
-		$jsonData = array();
-		$this->load->model("data_sources","ds");
-		$ds = $this->ds->getByID($id);
-		$dataSourceGroups = $ds->get_groups();
-		$items = array();
-		if (sizeof($dataSourceGroups) > 0) {
-			foreach($dataSourceGroups as $group) {
-				$group_contributor = $ds->get_group_contributor($group);
-				$item = array();
-				$item['group'] = $group;
-				if(isset($group_contributor['key'])) {
-					$item['contributor_page_key'] = $group_contributor['key'];
-					$item['contributor_page_id'] = $group_contributor['registry_object_id'];
-					$item['contributor_page_link'] = base_url('registry_object/view/'.$group_contributor["registry_object_id"]);
-					$item['authorative_data_source_id'] = $group_contributor['authorative_data_source_id'];
-					//check if it's the authorative data source, if not then present the authorative one
-					if ((int) $item['authorative_data_source_id'] != $ds->id) {
-						$auth_ds = $this->ds->getByID((int) $item['authorative_data_source_id']);
-						$item['authorative_data_source_title'] = $auth_ds->title;
-						$item['has_authorative'] = true;
-					} else $item['authorative_data_source_title'] = $ds->title;
-				} else {
-					$item['contributor_page_key'] = '';
-				}
-				array_push($items, $item);
-			}
-
-			$jsonData['items'] = $items;
-			echo json_encode($jsonData);
-		}
-	}
 
 	/**
 	 * Save a data source
@@ -315,7 +276,6 @@ class Data_source extends MX_Controller {
 		$ds = $this->ds->getByID($id);
 		if(!$ds) throw new Exception('Data source not found with the ID: '. $id);
 		$resetHarvest = false;
-		$resetPrimaryRelationships = false;
 
 		//construct a list of possible attributes, attributes that are not in this list will not get updated
 		$valid_attributes = array_merge(array_keys($ds->attributes()), array_keys($ds->harvesterParams));
@@ -327,7 +287,8 @@ class Data_source extends MX_Controller {
 		//unset values based on previous values
 		if(isset($data['create_primary_relationships'])){
 			if ($data['create_primary_relationships']===0 || $data['create_primary_relationships']===false || $data['create_primary_relationships']==='f') {
-				$data['primary_key_1']='';
+                $data['create_primary_relationships'] = 0;
+                $data['primary_key_1']='';
 				$data['primary_key_2']='';
 			}
 		}
@@ -346,7 +307,7 @@ class Data_source extends MX_Controller {
 			$data['collection_rel_2'] = '';
 			$data['party_rel_2'] = '';
 		}
-
+        $this->testAndActOnPrimaryKeyConfigChanges($ds->id, $data);
 		if(isset($data['crosswalks'])) {
 			$data['crosswalks'] = json_encode($data['crosswalks']);
 		}
@@ -399,22 +360,10 @@ class Data_source extends MX_Controller {
 			   $resetHarvest = true;
 			}
 
-			if($new_value != $ds->{$attrib} && in_array($attrib, $ds->primaryRelationship)){
-			   $resetPrimaryRelationships = true;
-			}
-
 			//detect manual_publish flag changed to false
 			if($attrib=='manual_publish' && ($new_value=='f' || !$new_value || $new_value==DB_FALSE) && $new_value!=$ds->{$attrib}){
 				//publish all approved record
                 $this->updateAllRecordsStatusMatching($ds->id, APPROVED, PUBLISHED);
-            }
-
-            if ($attrib == "allow_reverse_internal_links" && $new_value != $ds->{$attrib}) {
-                $resetPrimaryRelationships = true;
-            }
-
-            if ($attrib == "allow_reverse_external_links" && $new_value != $ds->{$attrib}) {
-                $resetPrimaryRelationships = true;
             }
 
             // handle dci
@@ -445,10 +394,6 @@ class Data_source extends MX_Controller {
 			if($resetHarvest && $data['uri'] != '' && $data['uri'] != 'http://') {
 				$this->trigger_harvest($ds->id, true);
 			}
-
-			if($resetPrimaryRelationships) {
-                $this->updateDataSourceRelationship($ds->id);
-			}
 		} catch (Exception $e) {
 			$ds->append_log($e, 'error');
 			throw new Exception($e);
@@ -467,63 +412,74 @@ class Data_source extends MX_Controller {
 			throw new Exception($e);
 		}
 
+        // sync data source with mycelium
+        initEloquent();
+        $dataSource = \ANDS\Repository\DataSourceRepository::getByID($ds->id);
+        $client = new MyceliumServiceClient(Config::get('mycelium.url'));
+        $client->updateDataSource($dataSource);
+
 		//if all goes well
+
 		echo json_encode(
 			array(
 				'status' => 'OK',
 				'message' => 'Saved Success'
 			)
 		);
+
 	}
 
     /**
-     * updating all PUBLISHED records relationship metadata
-     *
-     * @param $dataSourceID
+     * @param $ds_id
+     * @param $data
+     * @return void
+     * @throws Exception
      */
-    public function updateDataSourceRelationship($dataSourceID)
-    {
-        initEloquent();
-        $dataSource = \ANDS\Repository\DataSourceRepository::getByID($dataSourceID);
-
-        // all published records
-        $records = \ANDS\RegistryObject::where('data_source_id', $dataSourceID)->where('status', PUBLISHED);
-
-        // getting the count
-        $total = $records->count();
-        if ($total === 0) {
+    private function testAndActOnPrimaryKeyConfigChanges($ds_id, $data){
+        $ds = $this->ds->getByID($ds_id);
+        $old_attributes = $ds->attributes();
+        // if it wasn't set prior and still not set, then nothing to do here
+        if((isset($old_attributes['create_primary_relationships']) && $old_attributes['create_primary_relationships'] == 0)
+            && (isset($data['create_primary_relationships']) && $data['create_primary_relationships'] == 0)){
             return;
         }
+        // check and act if primary_key_1 changed or any of the relationships was set or unset
+        $primary_key_indexes = ['1','2'];
+        foreach($primary_key_indexes as $pki){
+            $event = $this->getEventData($ds_id, $data , $old_attributes, $pki);
+            EventServiceProvider::dispatch(PrimaryKeyUpdatedEvent::from($event));
+        }
+    }
 
-        $ids = $records->get()->pluck('registry_object_id')->toArray();
-
-        // task initialisation
-        $importTask = new \ANDS\API\Task\ImportTask();
-        $importTask->init([
-            'name' => "Background Task for $dataSource->title($dataSourceID) Updating $total records relationship metadata",
-            'params' => http_build_query([
-                'ds_id' => $dataSourceID,
-                'targetStatus' => 'PUBLISHED',
-                'pipeline' => 'UpdateRelationshipWorkflow'
-            ])
-        ]);
-        $importTask->setDb($this->db)->setCI($this);
-        $importTask
-            ->skipLoadingPayload()
-            ->enableRunAllSubTask()
-            ->setTaskData("importedRecords", $ids);
-        $importTask->initialiseTask();
-
-        // sending the task to the background
-        $importTask->sendToBackground();
-
-        // returning the ID and log that
-        $id = $importTask->getId();
-        $message =
-            "Updating $total records relationship metadata as per data source settings changes". NL.
-            "TaskID: $id";
-        $dataSource->appendDataSourceLog($message, 'info', 'IMPORTER');
-	}
+    /**
+     * @param $ds_id
+     * @param $data
+     * @param $old_attributes
+     * @param $pki
+     * @return array
+     */
+    private function getEventData($ds_id, $data , $old_attributes, $pki){
+        $event = [];
+        $event['data_source_id'] = $ds_id;
+        if(isset($data['primary_key_'.$pki])) {
+            $event['new_primary_key'] = $data['primary_key_'.$pki];
+        }
+        if(isset($old_attributes['primary_key_'.$pki])) {
+            $event['old_primary_key'] = $old_attributes['primary_key_'.$pki];
+        }
+        // check and set the relationships old and new
+        $related_classes = ['service', 'activity', 'party', 'collection'];
+        foreach($related_classes as $rc) {
+            if(isset($data[$rc.'_rel_'.$pki])) {
+                $event['new_'.$rc.'_relationship_type'] = $data[$rc.'_rel_'.$pki];
+            }
+            if(isset($old_attributes[$rc.'_rel_'.$pki]))
+            {
+                $event['old_'.$rc.'_relationship_type'] = $old_attributes[$rc.'_rel_'.$pki];
+            }
+        }
+        return $event;
+    }
 
 	/**
 	 * updating all PUBLISHED records relationship metadata
@@ -567,7 +523,6 @@ class Data_source extends MX_Controller {
 				'pipeline' => 'ServiceDiscovery'
 			])
 		]);
-		$importTask->setDb($this->db)->setCI($this);
 		$importTask
 			->skipLoadingPayload()
 			->enableRunAllSubTask()
@@ -620,7 +575,6 @@ class Data_source extends MX_Controller {
                 'pipeline' => 'PublishingWorkflow'
             ])
         ]);
-        $importTask->setDb($this->db)->setCI($this);
         $importTask
             ->skipLoadingPayload()
             ->enableRunAllSubTask()
@@ -668,7 +622,6 @@ class Data_source extends MX_Controller {
                 'pipeline' => 'MetadataGenerationWorkflow'
             ])
         ]);
-        $importTask->setDb($this->db)->setCI($this);
         $importTask
             ->skipLoadingPayload()
             ->enableRunAllSubTask()
@@ -760,9 +713,16 @@ class Data_source extends MX_Controller {
 
 		if(sizeof($records) > 0){
             foreach($records as $record){
-                $deletedRecords[$record->key] = array('title'=>$record->title,'key'=>$record->key,
-                    'id'=>$record->registry_object_id, 'record_data'=>$record->getCurrentData()->data,
-                    'deleted_date'=>timeAgo($record->getRegistryObjectAttributeValue('updated')));
+                // RDA-749 Some records that were deleted using the "wipe" method don't have record data and can not be recovered
+                
+                $current_data = $record->getCurrentData();
+                if($current_data != null){
+                    $deletedRecords[$record->key] = array('title'=>$record->title,'key'=>$record->key,
+                        'id'=>$record->registry_object_id, 'record_data'=>$current_data->data,
+                        'deleted_date'=>timeAgo($record->getRegistryObjectAttributeValue('updated')));
+                }else{
+                    $data['record_count'] = $data['record_count'] -1;
+                }
             }
 		}
 
@@ -1343,6 +1303,12 @@ class Data_source extends MX_Controller {
 			throw new Exception ($e);
 		}
 		if($ds && $ds->id) {
+
+            // create in mycelium
+            $dataSource = \ANDS\Repository\DataSourceRepository::getByID($ds->id);
+            $client = new MyceliumServiceClient(Config::get('mycelium.url'));
+            $client->createDataSource($dataSource);
+
 			$result = array(
 				'status'=>'OK',
 				'data_source_id' => $ds->id
@@ -1840,374 +1806,6 @@ class Data_source extends MX_Controller {
 		echo $jsonData;
 	}
 
-	/**
-	 * Importing (Leo's reinstate based on ... Ben's import from XML Paste)
-	 *
-	 *
-	 * @author Ben Greenwood <ben.greenwood@anu.edu.au>
-	 * @param [POST] xml A blob of XML data to parse and import
-	 * @todo ACL on which data source you have access to, error handling
-	 * @return [JSON] result of the saving [VOID]
-	 */
-	function reinstateRecordforDataSource()
-	{
-		$this->load->library('importer');
-
-		$deletedRegistryObjectId = $this->input->post('deleted_registry_object_id');
-
-		$xml = $this->input->post('xml');
-
-		$log = 'REINSTATE RECORD LOG' . NL;
-		$log .= 'deleted Registry Object ID: '.$deletedRegistryObjectId . NL;
-		$this->load->model('data_source/data_sources', 'ds');
-		$data_source = $this->ds->getByID($this->input->post('data_source_id'));
-
-		// ACL enforcement
-		acl_enforce('REGISTRY_USER');
-		ds_acl_enforce((int)$this->input->post('data_source_id'));
-
-		$this->load->model("registry_object/registry_objects", "ro");
-
-		$deletedRo = $this->ro->getDeletedRegistryObject($deletedRegistryObjectId);
-		if($deletedRo)
-		{
-		$xml = wrapRegistryObjects($deletedRo[0]['record_data']);
-		}
-		else{
-			$log .= 'record is missing' . NL;
-			echo json_encode(array("response"=>"failure", "message"=>"Record is missing", "log"=>$log));
-			return;
-		}
-		try
-		{
-
-			$this->importer->setXML($xml);
-
-			$this->importer->setDatasource($data_source);
-			$this->importer->forceDraft();
-			$this->importer->commit();
-
-
-			if ($error_log = $this->importer->getErrors())
-			{
-				$log .= NL . "ERRORS DURING IMPORT" . NL;
-				$log .= "====================" . NL ;
-				$log .= $error_log;
-			}
-
-			$log .= "IMPORT COMPLETED" . NL;
-			$log .= "====================" . NL;
-			$log .= $this->importer->getMessages();
-
-			// data source log append...
-			$this->ro->removeDeletedRegistryObject($deletedRegistryObjectId);
-			$data_source->append_log($log, ($error_log ? HARVEST_ERROR : null),"registry_object");
-		}
-		catch (Exception $e)
-		{
-
-			$log .= "CRITICAL IMPORT ERROR [IMPORT COULD NOT CONTINUE]" . NL;
-			$log .= $e->getMessage();
-			$data_source->append_log($log, HARVEST_ERROR ,"registry_object");
-			echo json_encode(array("response"=>"failure", "message"=>"An error occured whilst importing from the specified XML", "log"=>$log));
-			return;
-		}
-
-
-		echo json_encode(array("response"=>"success", "message"=>"Import completed successfully!", "log"=>$log));
-
-	}
-
-
-	public function testHarvest()
-	{
-		header('Content-type: application/json');
-		$jsonData = array();
-		$dataSource = NULL;
-		$id = NULL;
-
-
-		$jsonData['status'] = 'OK';
-		$POST = $this->input->post();
-		if (isset($POST['data_source_id'])){
-			$id = (int) $this->input->post('data_source_id');
-		}
-
-		// ACL enforcement
-		acl_enforce('REGISTRY_USER');
-		ds_acl_enforce((int)$this->input->post('data_source_id'));
-
-		$this->load->model("data_sources","ds");
-		$this->load->model("registry_object/registry_objects", "ro");
-
-		if ($id == 0) {
-			 $jsonData['status'] = "ERROR: Invalid data source ID";
-		}
-		else
-		{
-			$dataSource = $this->ds->getByID($id);
-		}
-
-		// XXX: This doesn't handle "new" attribute creation? Probably need a whitelist to allow new values to be posted. //**whitelist**//
-		if ($dataSource)
-		{
-			$dataSourceURI = $this->input->post("uri");
-			$providerType = $this->input->post("provider_type");
-			$OAISet = $this->input->post("oai_set");
-			$harvestMethod = $this->input->post("harvest_method");
-			$harvestDate = $this->input->post("harvest_date");
-			$harvestFrequency = $this->input->post("harvest_frequency");
-			$advancedHarvestingMethod = $this->input->post("advanced_harvesting_mode");
-			$nextHarvest = $harvestDate;
-			$jsonData['logid'] = $dataSource->requestHarvest('','',$dataSourceURI, $providerType, $OAISet, $harvestMethod, $harvestDate, $harvestFrequency, $advancedHarvestingMethod, $nextHarvest, true);
-		}
-
-		$jsonData = json_encode($jsonData);
-		echo $jsonData;
-	}
-
-
-	public function putHarvestData()
-	{
-		$POST = $this->input->post();
-		$done = false;
-		$mode = 'MODE';
-		header("Content-Type: text/xml; charset=UTF-8", true);
-		date_default_timezone_set('Australia/Canberra');
-		$responseType = 'error';
-		$nextHarvestDate = '';
-		$errmsg = '';
-		$message = 'THANK YOU';
-		$harvestId = false;
-		$gotErrors = false;
-		$logMsg = 'Harvest completed successfully';
-		$logMsgErr = 'An error occurred whilst trying to harvest records';
-
-		if (isset($POST['harvestid'])){
-			$harvestId = (int) $this->input->post('harvestid');
-		}
-		if($harvestId)
-		{
-		$this->load->model("data_sources","ds");
-		$dataSource = $this->ds->getByHarvestID($harvestId);
-			if($dataSource)// WE MIGHT GET A GHOST HARVEST
-			{
-                $dataSource->updateHarvestStatus($harvestId,'RECEIVING RECORDS');
-                $batchNumber = $dataSource->getCurrentBatchNumber($harvestId);
-                if (isset($POST['content'])){
-					$data =  $this->input->post('content');
-				}
-				if (isset($POST['errmsg'])){
-					$errmsg =  $this->input->post('errmsg');
-				}
-				if (isset($POST['done'])){
-					$done =  strtoupper($this->input->post('done'));
-				}
-				if (isset($POST['date'])){
-					$nextHarvestDate =  $this->input->post('date');
-				}
-				if (isset($POST['mode'])){
-					$mode =  strtoupper($this->input->post('mode'));
-				}
-
-				if($mode == 'TEST')
-				{
-					$logMsg = 'Test harvest completed successfully (harvest ID: '.$harvestId.')' . NL . ' ---';
-					$logMsgErr = 'An error occurred whilst testing harvester settings (harvest ID: '.$harvestId.')';
-				}
-
-				// OAI requests get a different message
-				if ($mode == 'HARVEST' && $dataSource->harvest_method != 'GET')
-				{
-					$logMsg = 'Received some new records from the OAI provider... (harvest ID: '.$harvestId.')' . NL . ' ---';
-					$logMsgErr = 'An error occurred whilst receiving records from the OAI provider... (harvest ID: '.$harvestId.')';
-				}
-
-
-				if($errmsg)
-				{
-					$dataSource->append_log($logMsgErr.NL."HARVESTER RESPONDED UNEXPECTEDLY: ".$errmsg, HARVEST_ERROR, "harvester","HARVESTER_ERROR");
-					$gotErrors = true;
-					$done = 'TRUE';
-				}
-				else
-				{
-					$this->load->library('importer');
-					$this->importer->maintainStatus(); // records which already exist are harvested into their same status
-
-					$this->load->model('data_source/data_sources', 'ds');
-
-                    $this->importer->setXML($data);
-
-					$this->importer->setHarvestID($harvestId);
-
-					$this->importer->setDatasource($dataSource);
-
-					if ($dataSource->harvest_method != 'GET')
-					{
-						$this->importer->setPartialCommitOnly(TRUE);
-					}
-
-					if($mode == "HARVEST")
-					{
-						try
-						{
-							$this->importer->commit(false);
-
-
-							if($this->importer->getErrors())
-							{
-								$gotErrors = true;
-							}
-							//else
-							//{
-							if($dataSource->harvest_method != 'GET')
-							{
-								$logMsg = 'Received ' . $this->importer->ingest_attempts . ' new records from the OAI provider... (harvest ID: '.$harvestId.')' . NL . ' ---';
-							}
-
-
-							$dataSource->append_log($logMsg.NL.$this->importer->getMessages(), HARVEST_INFO, 'oai', "HARVESTER_INFO");
-							//}
-
-							$responseType = 'success';
-						}
-						catch (Exception $e)
-						{
-							$dataSource->append_log($logMsgErr.NL."CRITICAL ERROR: " . NL . $e->getMessage() . NL . $this->importer->getErrors(), HARVEST_ERROR, 'harvester',"HARVESTER_ERROR");
-							$done = 'TRUE';
-						}
-					}
-					else
-					{
-						$dataSource->append_log($logMsg, HARVEST_INFO, "harvester", "HARVESTER_INFO");
-					}
-				}
-				if($done == 'TRUE')
-				{
-					$dataSource->updateHarvestStatus($harvestId,'FINISHED HARVESTING');
-					if($mode == 'HARVEST')
-					{
-						if($dataSource->advanced_harvest_mode == 'REFRESH' && !$gotErrors)
-						{
-							$deleted_and_affected_record_keys = $dataSource->deleteOldRecords($harvestId);
-							$this->importer->addToDeletedList($deleted_and_affected_record_keys['deleted_record_keys']);
-							$this->importer->addToAffectedList($deleted_and_affected_record_keys['affected_record_keys']);
-						}
-					}
-					if ($dataSource->harvest_method != 'GET')
-					{
-						$importer_log = "IMPORT COMPLETED" . NL;
-						$importer_log .= "====================" . NL;
-						$importer_log .= $this->importer->getMessages() . NL;
-						$dataSource->append_log($importer_log, HARVEST_INFO,"HARVEST_INFO");
-					}
-
-				}
-			}
-			else
-			{
-				$message = "DataSource doesn't exists";
-			}
-
-		}
-		else
-		{
-			$message = "Missing harvestid param";
-		}
-
-
-		print('<?xml version="1.0" encoding="UTF-8"?>'."\n");
-		print('<response type="'.$responseType.'">'."\n");
-		print('<timestamp>'.date("Y-m-d H:i:s").'</timestamp>'."\n");
-		print("<message>".$message."</message>\n");
-		print("</response>");
-		flush(); ob_flush();
-
-		// Continue post-harvest cleanup...
-
-		if ($done =='TRUE' && $mode =='HARVEST')
-		{
-			//if ($dataSource->harvest_method == 'RIF')
-			//{
-				$harvested_record_count = 0;
-				$this->db->select('registry_object_id')->from('registry_object_attributes')->where(array('attribute'=>'harvest_id','value'=>$harvestId));
-				$query = $this->db->get();
-				$importedIDList = $query->result_array();
-				$harvested_record_count = $query->num_rows();
-
-				if ($harvested_record_count < 300)
-				{
-					$log_estimate = 'less than a minute';
-				}
-				else
-				{
-					// estimate 0.2s per record ingest speed
-					$log_estimate = "+/- " . ceil($harvested_record_count / (60*5)) . " minutes";
-				}
-
-				$dataSource->append_log($harvested_record_count . ' records received from Provider. Ingesting them into the registry... (harvest ID: '.$harvestId.')' . NL
-										. "* This should take " . $log_estimate . NL . ' --- ' . NL . $dataSource->consolidateHarvestLogs($harvestId)
-										, HARVEST_INFO, "harvester", "HARVESTER_INFO");
-
-				// The importer will only get the last OAI chunk! so reindex the lot...
-				//
-				//$dataSource->reindexAllRecords();
-				$importedIds = array();
-				foreach($importedIDList as $row){
-					$importedIds[] = $row['registry_object_id'];
-				}
-				$this->importer->addToImportedIDList($importedIds);
-				$importLog = $this->importer->finishImportTasks();
-
-				if($dataSource->advanced_harvest_mode == 'INCREMENTAL')
-				{
-					date_default_timezone_set('UTC');
-					$dataSource->setAttribute("last_harvest_run_date",date("Y-m-d\TH:i:s\Z", time()));
-					date_default_timezone_set('Australia/Canberra');
-				}
-				else
-				{
-					$dataSource->setAttribute("last_harvest_run_date",'');
-				}
-
-				$dataSource->updateStats();
-
-				$dataSource->append_log('Harvest complete! '.$harvested_record_count.' records harvested and ingested into the registry...  (harvest ID: '.$harvestId.')'. NL . $importLog, HARVEST_INFO, "harvester", "HARVESTER_INFO");
-			//}
-			//else
-			//{
-				// clean-up after harvest?
-			//}
-			if($this->importer->runBenchMark)
-			{
-				$dataSource->append_log('IMPORTER BENCHMARK RESULTS:'.NL.$this->importer->getBenchMarkLogs(), HARVEST_INFO, "importer", "BENCHMARK_INFO");
-			}
-
-            if($dataSource->harvest_frequency != '')
-            {
-                $dataSource->setNextHarvestRun($harvestId);
-            }
-		}
-
-	}
-
-
-
-	function getContributorPages()
-	{
-		$POST = $this->input->post();
-		print_r($POST);
-		print('<?xml version="1.0" encoding="UTF-8"?>'."\n");
-		print('<response type="">'."\n");
-		print('<timestamp>'.date("Y-m-d H:i:s").'</timestamp>'."\n");
-		print("<message> we need to get the contibutor groups and the pages if required</message>\n");
-		print("</response>");
-		return " we need to get the contibutor groups and the pages if required";
-
-	}
-
-
 	function exportDataSource($id)
 	{
 		parse_str($_SERVER['QUERY_STRING'], $_GET);
@@ -2368,10 +1966,14 @@ class Data_source extends MX_Controller {
 			exit();
 		}
 
-		$dataSource = $this->ds->getByID($ds_id);
+        // wipe from mycelium
+        $ds = \ANDS\Repository\DataSourceRepository::getByID($ds_id);
 
-		if($dataSource) {
-			$response['log'] .= $dataSource->eraseFromDB();
+		if($ds) {
+            \ANDS\Registry\Importer::wipeDataSourceRecords($ds, false);
+			$response['log'] .= $ds->delete();
+            $client = new MyceliumServiceClient(Config::get('mycelium.url'));
+            $client->deleteDataSource($ds);
 			$response['success'] = true;
 		}
 		else{
@@ -2380,6 +1982,69 @@ class Data_source extends MX_Controller {
 
 		echo json_encode($response);
 	}
+
+    /**
+     * /registry/data_sources/wipe/{id}
+     *
+     * Wiping a data source content
+     * @param $id
+     * @return void
+     * @throws \Exception
+     */
+    public function wipe($id) {
+
+        \ANDS\Log\Log::info(__METHOD__. " wiping DataSource[id={$id}]", [
+            'user' => [
+                'name' => $this->user->name(),
+                'identifier' => $this->user->localIdentifier()
+            ],
+            'ip' => $this->input->ip_address()
+        ]);
+
+        // headers
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Content-type: application/json');
+        set_exception_handler('json_exception_handler');
+
+        // check permission
+        acl_enforce('REGISTRY_USER');
+        ds_acl_enforce((int) $id);
+
+        $dataSource = \ANDS\Repository\DataSourceRepository::getByID($id);
+        if (!$dataSource) {
+            ANDS\Log\Log::warning(__METHOD__. " DataSource ");
+            throw new Exception("DataSource $id not found");
+        }
+
+        try {
+            $total = \ANDS\RegistryObject::where('data_source_id', $dataSource->id)->count();
+            $dataSource->appendDataSourceLog(
+                "Wiping data source contents".NL.
+                "$total records will be affected".NL.
+                "Initiated: " . $this->user->name() . " (" . $this->user->localIdentifier() . ") at " . display_date().NL
+                ,'info', 'IMPORTER');
+
+            \ANDS\Registry\Importer::wipeDataSourceRecords($dataSource, false);
+
+            \ANDS\Log\Log::info(__METHOD__. " wiping DataSource[id={$id}] Completed Successfully");
+            $dataSource->appendDataSourceLog(
+                "Wiping data source contents Completed Successfully!".NL.
+                "Completed: at " . display_date().NL
+                ,'info', 'IMPORTER');
+
+        } catch (Exception $e) {
+            \ANDS\Log\Log::error(__METHOD__ . " Failed to wipe DataSource[id={$dataSource->id}] Exception[message={$e->getMessage()} , trace={$e->getTraceAsString()}]");
+            $dataSource->appendDataSourceLog(
+                "An error occur while wiping data source contents".NL.
+                "Message: {$e->getMessage()}" .NL.
+                "Code: {$e->getCode()}" .NL
+                , 'error', 'IMPORTER');
+        }
+
+        echo json_encode([
+            'data' => 'success',
+        ]);
+    }
 
 	function getDataSourceReport($id){
 
@@ -2454,6 +2119,64 @@ class Data_source extends MX_Controller {
 
 		echo json_encode($jsonData);
 	}
+
+    /**
+     * Moved from applications/registry/import/controllers/import.php
+     * as part of refactoring RDA-760
+     * @param $id. The datasource's id
+     * returns json containing the
+     * list of the harvested content's directory of the given datasource
+     * or
+     * the content of the files, if a given "path" of a file is requested
+     * @throws Exception
+     */
+    public function list_files($id=false) {
+        if(!$id) throw new Exception('Data Source ID required');
+        $dir = \ANDS\Util\config::get('app.harvested_contents_path');
+        $dir = rtrim($dir, '/') . '/';
+        if(!$dir) throw new Exception('Harvested Contents Path not configured');
+
+        if($this->input->get('path')){
+            $path = $this->input->get('path');
+            if(!is_file($path)) throw new Exception('Path not found');
+            $content = @file_get_contents($path);
+            echo json_encode(array(
+                'status' => 'OK',
+                'content' => $content
+            ));
+            return;
+        }
+
+        $path = $dir.$id;
+
+        if(!is_dir($path)) throw new Exception('Datasource does not have any harvested path');
+        $batches = array();
+        foreach(scandir($path) as $f){
+            if($f!="." && $f!="..") $batches[] = $f;
+        }
+        if(sizeof($batches) == 0) throw new Exception('Data source does not have any batch harvested');
+
+        $result = array();
+
+        foreach($batches as $b) {
+            $link = $path.'/'.$b;
+            if(is_file($link)) $result[] = array('type'=>'file', 'link'=>$link, 'name'=>$b);
+            if(is_dir($link)) {
+                $files = array();
+                foreach(scandir($link) as $file){
+                    if($file!="." && $file!="..") $files[] = array('type'=>'file', 'link'=>$link.'/'.$file, 'name'=>$file);
+                }
+                $result[] = array('type'=>'folder', 'link'=>$link, 'files'=>$files, 'name'=>$b);
+            }
+        }
+
+        echo json_encode(array(
+            'status' => 'OK',
+            'content' => $result
+        ));
+    }
+
+
 	/**
 	 * @ignore
 	 */

@@ -39,14 +39,14 @@ angular.module('theme_cms_app', ['slugifier', 'ui.sortable', 'ui.tinymce', 'ngSa
 	factory('search_factory', function($http){
 		return{
 			search: function(filters){
-               // console.log(filters);
 				var promise = $http.post(real_base_url+'registry/services/registry/post_solr_search', {'filters':filters}).then(function(response){
 					return response.data;
 				});
 				return promise;
 			},
-			getConnections: function(key){
-				var promise = $http.get(real_base_url+'registry/services/rda/getConnections/?registry_object_key='+encodeURIComponent(key)).then(function(response){
+			getConnections: function(key,type = 'all'){
+				var promise = $http.get(real_base_url+'registry/services/rda/getConnections/?registry_object_key='
+					+encodeURIComponent(key)+'&type_filter='+encodeURIComponent(type)).then(function(response){
 					return response.data;
 				});
 				return promise;
@@ -67,16 +67,21 @@ angular.module('theme_cms_app', ['slugifier', 'ui.sortable', 'ui.tinymce', 'ngSa
 	filter('relationships_display', function($filter){
 		return function(text, type){
 			var res = '';
-			if(text && text[type]){
-				var s = (text[type]);
+			var count = 0;
+			if(text){
+				var s = (text);
 				res += '<h4>'+$filter('class_name')(type)+'</h4>';
 				res +='<ul>';
 				$.each(s, function(i, k){
-					res += '<li><a href="'+real_base_url+''+k['slug']+'">'+k['title']+' <small class="muted">'+k['relation_type']+'</small></a></li>';
+					if(count < 5) {
+						res += '<li><a href="' + k.to_url + '">' + k.to_title + ' <small class="muted">' + k.relations[0].relation_type + '</small></a></li>';
+						count ++;
+					}
 				});
 				res +='</ul>';
-				if(text[type+'_count']>5){
-					res += 'Total Count: '+text[type+'_count'];
+
+				if(text.length > 5){
+					res += 'Total Count: '+text.length;
 				}
 			}
 			return res;
@@ -89,6 +94,7 @@ angular.module('theme_cms_app', ['slugifier', 'ui.sortable', 'ui.tinymce', 'ngSa
 				case 'activity': return 'Activities';break;
 				case 'party_one': return 'People';break;
 				case 'party_multi': return 'Organisation & Groups';break;
+				case 'group': return 'Organisation & Groups';break;
 				case 'service': return 'Services';break;
 				default: return text;break;
 			}
@@ -277,7 +283,6 @@ function ViewPage($scope, $http, $routeParams, pages_factory, $location, search_
 	}
 
 	$scope.save = function(){
-		// console.log($scope.page);
 		pages_factory.savePage($scope.page).then(function(data){
 			var now = new Date();
 			$scope.saved_msg = 'Last Saved: '+now; 
@@ -370,9 +375,9 @@ function ViewPage($scope, $http, $routeParams, pages_factory, $location, search_
 
 	$scope.preview_relation= function(c){
 		if(c.relation){
-			search_factory.getConnections(c.relation.key).then(function(data){
+			search_factory.getConnections(c.relation.key,c.relation.type).then(function(data){
 				if(data.status!='ERROR'){
-					$scope.relationships[c.relation.key] = data.connections[0];
+					$scope.relationships[c.relation.key] = data.connections;
 				}
 			});
 		}

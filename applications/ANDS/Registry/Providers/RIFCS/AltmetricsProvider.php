@@ -66,6 +66,7 @@ class AltmetricsProvider implements RIFCSProvider
         /* dc.creator */
         $creators = self::getCreators($record );
         foreach($creators as $creator) {
+            if(array_key_exists('name',$creator))
             $altmetrics[] = [
                 'type' => "dc.creator",
                 'value' => (string)$creator["name"]
@@ -180,7 +181,7 @@ class AltmetricsProvider implements RIFCSProvider
      */
     public function getCreators(RegistryObject $record, $simpleXML = null)
     {
-        $simpleXML = $simpleXML ? $simpleXML : MetadataProvider::getSimpleXML($record);
+        $simpleXML = $simpleXML ? $simpleXML : XMLUtil::getSimpleXMLFromString($record->getCurrentData()->data);;
 
         /**
          * registryObject:collection:citationInfo:citationMetadata:contributor
@@ -203,7 +204,7 @@ class AltmetricsProvider implements RIFCSProvider
                     'name' => (string)$namePart
                 );
             }
-            $name = formatName($nameParts);
+            $name = self::formatName($nameParts);
             if(trim($name)!="")
             $creators[] = [ 'name' => $name ];
         }
@@ -212,13 +213,25 @@ class AltmetricsProvider implements RIFCSProvider
             return $creators;
         }
 
-        $validRelationTypes[] = ['IsPrincipalInvestigatorOf', 'hasPrincipalInvestigator'];
-        $validRelationTypes[] = ['author'];
-        $validRelationTypes[] = ['coInvestigator'];
+        /*
+ * We do query the "relations" core for related parties.
+ * We do index reverse relationships BUT without the mirrored (reversed) relationship type
+ * adding the reversed types to the query ensures that the party is found in either ways in the index
+ */
+        // update 21/02/2022 to use RelationshipSearchService
+
+        $validRelationTypes[] = ['isPrincipalInvestigatorOf', 'hasPrincipalInvestigator'];
+        $validRelationTypes[] = ['author','hasAuthor'];
+        $validRelationTypes[] = ['coInvestigator', 'hasCoInvestigator'];
         $validRelationTypes[] = ['isOwnedBy','IsOwnerOf'];
         $validRelationTypes[] = ['hasCollector','IsCollectorOf'];
         foreach ($validRelationTypes as $relationTypes) {
-            $creators = array_merge($creators, RelationshipProvider::getRelationByType($record, $relationTypes));
+            $authors = RelationshipProvider::getRelationByClassAndType($record, 'party', $relationTypes);
+                foreach ($authors as $author) {
+                    if(array_key_exists('to_title', $author))
+                    $creators[] = array('name' => $author['to_title']
+                    );
+                }
             if (count($creators)) {
                 return $creators;
             }
@@ -351,28 +364,25 @@ class AltmetricsProvider implements RIFCSProvider
     //function to concatenate name values based on the name part type
     function formatName($a)
     {
-        $order = array('family','given','initial','title','superior');
+        $order = array('family', 'given', 'initial', 'title', 'superior');
         $displayName = '';
-        foreach($order as $o){
+        foreach ($order as $o) {
             $givenFound = false;
-            foreach($a as $namePart)
-            {
-              $displayName = implode(",",$namePart);
-                  if($namePart['namePart_type']==$o) {
-                     if($namePart['namePart_type']=='given') $givenFound = true;
-                     if($namePart['namePart_type']=='initial' && $givenFound) $namePart['name']='';
-                     else $displayName .=  $namePart['value'].", ";
-                 }
+            foreach ($a as $namePart) {
+                if ($namePart['namePart_type'] == $o) {
+                    if ($namePart['namePart_type'] == 'given') $givenFound = true;
+                    if ($namePart['namePart_type'] == 'initial' && $givenFound) $namePart['name'] = '';
+                    else $displayName .= $namePart['name'] . ", ";
+                }
             }
 
         }
-       foreach($a as $namePart)
-        {
-            if(!$namePart['type']) {
-                $displayName .=  $namePart['name'].", ";
+        foreach ($a as $namePart) {
+            if (!$namePart['namePart_type']) {
+                $displayName .= $namePart['name'] . ", ";
             }
         }
-        return trim($displayName,", ")." ";
+        return trim($displayName, ", ") . " ";
     }
 
 }

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
     <registryObject group="AUTestingRecords">
-        <key>AODN/Aalbersberg,BillAUT3aa</key>
+        <key>AODN/Aalbersberg,BillAUT3bb</key>
         <originatingSource>http://catalogue.aodn.org.au</originatingSource>
         <party type="person">
             <name type="primary">
-                <namePart>Aalbersberg, Bill</namePart>
+                <namePart>Aalbersberg, Billbb</namePart>
             </name>
             <identifier type="purl">http://purl.org/au-research/grants/nhmrc/640318AUT</identifier>
             <relatedObject>

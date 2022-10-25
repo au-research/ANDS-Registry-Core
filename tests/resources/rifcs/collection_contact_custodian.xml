@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+    <registryObject group="AUTestingRecords">
+        <key>AUTala.org.au/dr6006</key>
+        <originatingSource>Mark2Cure</originatingSource>
+        <collection type="dataset">
+            <identifier type="local">AUTala.org.adu/dr6006</identifier>
+            <name type="primary">
+                <namePart type="full">(AUTestingRecords) CONTACT CUSTODIAN email only</namePart>
+            </name>
+            <location>
+                <address>
+                    <electronic type="email">
+                        <value>exampleEmail@email.com</value>
+                    </electronic>
+                </address>
+            </location>
+            <relatedInfo type="website">
+                <identifier type="uri">http://scistarter.com/project/1096-Mark2Cure</identifier>
+                <title>See this Collection on the website of Mark2Cure</title>
+            </relatedInfo>
+            <relatedInfo type="website">
+                <identifier type="uri">http://collections.ala.org.au/public/show/dr6006</identifier>
+            </relatedInfo>
+            <relatedObject>
+                <key>ala.org.au/dp4309</key>
+                <relation type="isManagedBy"/>
+            </relatedObject>
+            <relatedObject>
+                <key>Contributor:Atlas of Living Australia</key>
+                <relation type="hasCollector"/>
+            </relatedObject>
+            <rights>
+                <licence type="other"/>
+            </rights>
+            <description type="brief">Mark2Cure allows&#160;anyone that can read English, regardless of background, to help in the process of biomedical discovery. Scientific literature is&#160;growing&#160;at a rate of more than 2 new articles every single minute. It is hard for scientists to know what to read and to read everything that is relevant. Mark2Cure works by teaching citizen scientists to precisely identify concepts and concept relationships in biomedical text. This is a task that anyone can learn to do and can perform better than any known computer program. Once these tasks are completed, advanced statistical algorithms take the data provided by the volunteers and use it to provide scientists with new tools for finding the information that they require within the sea of biomedical knowledge.</description>
+        </collection>
+    </registryObject>
+</registryObjects>
+
+

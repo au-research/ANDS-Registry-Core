@@ -162,4 +162,8 @@ class Request
         // command line?
         return "0.0.0.0";
     }
+
+    public static function user_agent() {
+        return (!isset($_SERVER['HTTP_USER_AGENT'])) ? null : $_SERVER['HTTP_USER_AGENT'];
+    }
 }

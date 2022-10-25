@@ -6,9 +6,12 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
 * @return array
 */
+use ANDS\Registry\Providers\RIFCS\AccessProvider;
+use ANDS\RegistryObject;
 class Core extends ROHandler {
 	function handle() {
 		$result = array();
+        $record = RegistryObject::find($this->ro->id);
         $fl = isset($this->params['fl']) ? explode(',',$this->params['fl']) : explode(',',$this->default_params['fl']);
         foreach($fl as $f) {
             $attr = $this->ro->{$f};
@@ -41,9 +44,12 @@ class Core extends ROHandler {
 
         if($this->ro->class == 'activity' && $this->ro->type == 'grant' && strrpos($this->ro->key, 'purl') > 0) {
             $result['url'] = $this->ro->key;
-            // get Landing Page for Activities
-            $result['landingPage'] = $this->ro->getLandingPage();
-            /**
+
+            // get Landing Page for Activities -- TODO determine if we actually use this value ?
+            $access = AccessProvider::getLandingPage($record,$record->getCurrentData()->data);
+            if(isset($access[0]->url)) $result['landingPage'] = $access[0]->url;
+
+             /**
              * Check if list_description exists in the index
              * @todo default description?
              */

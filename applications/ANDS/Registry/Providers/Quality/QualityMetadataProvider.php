@@ -88,7 +88,7 @@ class QualityMetadataProvider
 
         // (collection only) must have a description
         if ($class === "collection") {
-            $descriptions = $sm->xpath("//ro:description");
+            $descriptions = $sm->xpath("/ro:registryObjects/ro:registryObject/ro:collection/ro:description");
             if (count($descriptions) === 0) {
                 throw new MissingDescriptionForCollection("Collection must have a description");
             }

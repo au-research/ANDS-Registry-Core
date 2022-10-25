@@ -8,42 +8,30 @@ use ANDS\Repository\RegistryObjectsRepository;
 
 class RelationshipProviderTest extends \RegistryTestClass
 {
-    protected $requiredKeys = [
-        // these records exist in demo
-//        "Collection31_demo",
-//        "Collection346"
-    ];
 
-    /** @test **/
-    public function it_should_1()
+    public function test_it_should_find_related_records()
     {
-        $record = $this->ensureKeyExist("Collection346");
-        RelationshipProvider::process($record);
-        RelationshipProvider::processGrantsRelationship($record);
-
-        $implicitRelationships = RelationshipProvider::getImplicitRelationship($record);
+        $this->ensureKeyExist("C1_46");
+        $record = RegistryObjectsRepository::getPublishedByKey("C1_46");
+        $relatedRecords = RelationshipProvider::get($record);
+        $this->assertGreaterThan(1, sizeof($relatedRecords));
     }
 
-    /** @test **/
-    public function it_should_find_all_implicit_links()
+
+    public function test_it_should_find_related_class()
     {
-        $record = $this->ensureKeyExist("Collection31_demo");
-
-        $parentCollections = GrantsConnectionsProvider::create()->getParentsCollections($record);
-        $this->assertGreaterThan(0, count($parentCollections));
-
-        $parentActivities = GrantsConnectionsProvider::create()->getParentsActivities($record);
-        $this->assertEquals(0, count($parentActivities));
-
-        $funder = GrantsConnectionsProvider::create()->getFunder($record);
-        // TODO: verify funder exists, this one has a relatedInfo (reverse) isFundedBy a party
+        $this->ensureKeyExist("C1_46");
+        $record = RegistryObjectsRepository::getPublishedByKey("C1_46");
+        $hasRelatedParty = RelationshipProvider::hasRelatedClass($record, "party");
+        $this->assertTrue($hasRelatedParty);
     }
 
-    public function test_it_should_find_affected_records()
+    public function test_it_should_find_related_by_types()
     {
-        $record = $this->ensureIDExist(86321);
-        $affectedRecords = RelationshipProvider::getAffectedIDsFromIDs([$record->id], [$record->key]);
+        $this->ensureKeyExist("C1_46");
+        $record = RegistryObjectsRepository::getPublishedByKey("C1_46");
+        $relatedRecords = RelationshipProvider::getRelationByType($record, ["hasAssociationWith", "hasCollector"]);
+        $this->assertGreaterThan(1, sizeof($relatedRecords));
     }
-
 
 }

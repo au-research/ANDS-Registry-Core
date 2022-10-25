@@ -15,7 +15,11 @@ class Transforms_Extension extends ExtensionBase
             $dom = new DOMDocument();
             $dom->loadXML(str_replace('&', '&amp;' , $xml), LIBXML_NOENT);
             $xslt_processor->setParameter('','dataSource', $data_source_key ?: $this->ro->data_source_key );
-            $xslt_processor->setParameter('','relatedObjectClassesStr',$this->ro->getRelatedClassesString());
+
+            // todo populate relatedClassString from RelationshipSearchService
+            $relatedClassString = "";
+
+            $xslt_processor->setParameter('','relatedObjectClassesStr', $relatedClassString);
             $xslt_processor->setParameter("","output", $output);
             return $xslt_processor->transformToXML($dom);
         }catch (Exception $e)

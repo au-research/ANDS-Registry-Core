@@ -2,12 +2,15 @@
 namespace ANDS\Registry\API\Controller;
 
 
+use ANDS\Mycelium\MyceliumImportPayloadProvider;
 use ANDS\Registry\API\Request;
 use ANDS\Registry\Providers\DCI\DataCitationIndexProvider;
 use ANDS\Registry\Providers\DublinCore\DublinCoreProvider;
 use ANDS\Registry\Providers\ORCID\ORCIDProvider;
 use ANDS\Registry\Providers\ORCID\ORCIDRecord;
+use ANDS\Registry\Providers\Quality\QualityMetadataProvider;
 use ANDS\Registry\Providers\RIFCS\JsonLDProvider;
+use ANDS\Registry\Providers\RIFCS\RIFCSIndexProvider;
 use ANDS\Repository\RegistryObjectsRepository;
 
 class RecordsMiscController
@@ -66,6 +69,21 @@ class RecordsMiscController
         $this->printXML($dci);
     }
 
+
+    public function solr_index($id)
+    {
+        $record = RegistryObjectsRepository::getRecordByID($id);
+        $solr_index = RIFCSIndexProvider::get($record);
+        $response = json_encode($solr_index);
+        $json_error = json_last_error();
+        if($json_error == JSON_ERROR_NONE) {
+            return $solr_index;
+        }else{
+            return "Unable to provide solr doc for record ". $id . " JSON_ERROR_NUMBER:".$json_error;
+        }
+    }
+
+
     /**
      * GET json_ld endpoint for a record
      *
@@ -75,7 +93,11 @@ class RecordsMiscController
     public function json_ld($id)
     {
         $record = RegistryObjectsRepository::getRecordByID($id);
-        $jsonLD = JsonLDProvider::get($record);
+        if($record == null){
+            return "Registry Object with ID ". $id . " not found";
+        }
+        // always use 'process' to get the latest
+        $jsonLD = JsonLDProvider::process($record);
         return json_decode($jsonLD);
     }
 
@@ -90,6 +112,18 @@ class RecordsMiscController
     {
         $record = RegistryObjectsRepository::getRecordByID($id);
         return ORCIDProvider::getORCID($record, new ORCIDRecord())->validate();
+    }
+
+    public function mycelium($id)
+    {
+        $record = RegistryObjectsRepository::getRecordByID($id);
+        return MyceliumImportPayloadProvider::get($record);
+    }
+
+    public function quality($id)
+    {
+        $record = RegistryObjectsRepository::getRecordByID($id);
+        return QualityMetadataProvider::getMetadataReport($record);
     }
 
     private function printXML($xml)

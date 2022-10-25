@@ -44,8 +44,21 @@ class Suggestor_ands_subjects implements GenericSuggestor
 
 
 		// But exclude already related objects
-		$my_relationships = array_map(function($elt){ return $elt; }, $registry_object->getRelatedKeys());
-		$my_relationships[] = $registry_object->key;
+        $relatedObjectRelations = \ANDS\Mycelium\RelationshipSearchService::search([
+            'from_id' => $registry_object->id,
+            'to_identifier_type' => 'ro:id',
+            'limit' => 100
+        ])->toArray();
+
+        $relatedKeys = collect($relatedObjectRelations)
+            ->pluck('to_identifier')
+            ->map(function($id) {
+                return ($record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($id)) ? $record->key : null;
+            })->filter(function($item) {
+                return !is_null($item);
+            })->toArray();
+
+        $my_relationships = $relatedKeys;
 
 		$relationship_search_query = '';
 		if(sizeof($my_relationships) > 0) {

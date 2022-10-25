@@ -95,7 +95,7 @@
                     <p class="footer-text">
                         The Australian Research Data Commons (ARDC) is enabled by NCRIS.
                     </p>
-                    <a href="https://education.gov.au/national-collaborative-research-infrastructure-strategy-ncris"
+                    <a href="https://www.education.gov.au/ncris"
                        target="_blank" class="gov_logo">
                         <img src="<?php echo asset_url('images/NCRIS_PROVIDER_rev.png', 'core');?>"
                              alt="National Collaborative Research Infrastructure Strategy (NCRIS)" height="100px"/>

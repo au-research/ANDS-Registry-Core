@@ -53,7 +53,7 @@ class NativeMethod extends MethodHandler
 				{
 					$nativeFormat = $registryObject->getNativeFormat();
 					// Try and get the native version?
-					if (in_array($nativeFormat, array(RIFCS_SCHEME, EXTRIF_SCHEME)))
+					if ($nativeFormat == RIFCS_SCHEME)
 					{
 						$registryObjects[] = array(	
 													"slug"=>$registryObject->slug,

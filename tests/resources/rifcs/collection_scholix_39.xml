@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+    <registryObject group="AUTestingRecords2">
+        <key>AUTestingRecords2ScholixRecords39test</key>
+        <originatingSource>http://test.ands.org.au/registry/orca/register_my_data</originatingSource>
+        <collection type="collection" dateModified="2016-04-10T23:51:40Z">
+            <identifier type="doi">10.1234/00/Scholix5639test</identifier>
+            <name type="primary">
+                <namePart>(AUTestingRecords2) Scholix Source Collection With a Single Identifier, CitationMetadata with contributor with multiple nameParts, relatedInfo isOwnedBy creator, reverse relatedInfo hasCollector creator and Single reverse relatedObject collection/publication.</namePart>
+            </name>
+            <description type="full">Expected Result:
+                1 Link Info Package with a link from the collection doi identifier to the publication uri identifier.
+                &#xD; Source publication date, creator and identifier shall be taken from citationMetadata.
+                &#xD; CitationMetadata Creator name is display name for contributor (all nameParts Firstname, Surname)
+                &#xD; 2nd creator taken from relatedInfo isOwnedBy party.
+                &#xD; 3rd creator taken from reverse relatedInfo isCollectorOf party.
+            </description>
+            <relatedInfo type="party">
+                <title>Related Info Party Author</title>
+                <identifier type="uri">http://scholixParties.com/ScholixPartyRecords2test</identifier>
+                <relation type="isOwnedBy"/>
+            </relatedInfo>
+            <citationInfo>
+                <citationMetadata>
+                    <identifier type="doi">10.1234/00/Scholix5639test</identifier>
+                    <title>
+                        (citation/title) Scholix Source Collection With a Single Identifier, CitationMetadata with contributor with multiple nameParts, relatedInfo isOwnedBy creator, reverse relatedInfo hasCollector creator and Single reverse relatedObject collection/publication.
+                    </title>
+                    <date type="issued">2001-03-05</date>
+                    <contributor>
+                        <namePart type="title">Mr</namePart>
+                        <namePart type="family">Scholix</namePart>
+                        <namePart type="given">Contributor</namePart>
+                    </contributor>
+                    <publisher>AUTestingRecords2 Citation Publisher</publisher>
+                </citationMetadata>
+            </citationInfo>
+        </collection>
+    </registryObject>
+</registryObjects>

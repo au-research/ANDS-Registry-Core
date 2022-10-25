@@ -643,21 +643,6 @@ class Registry_objects extends CI_Model {
 		}
 	}
 
-	public function getRelationContent($fromID, $toID){
-		$fromRO = $this->getByID($fromID);
-		$toRO = $this->getByID($toID);
-		$query = $this->db
-				->get_where('registry_object_relationships', array('registry_object_id'=> $fromRO->id, 'related_object_key' => $toRO->key))
-				->first_row(true);
-
-		if (!$query) {
-			$query = $this->db
-					->get_where('registry_object_relationships', array('registry_object_id'=>$toRO->id, 'related_object_key' => $fromRO->key))
-					->first_row(true);
-		}
-
-		return ($query) ? $query : false;
-	}
 
 	function getPortalStat($ro_id, $type = false) {
 		if ($type) {
@@ -682,18 +667,8 @@ class Registry_objects extends CI_Model {
 		$CI =& get_instance();
 
 		$result = $CI->db->select('r.registry_object_id')->from('registry_objects r')
-		->join('record_data d', "d.registry_object_id = r.registry_object_id AND scheme='extrif'", 'left')->where('data IS NULL');
+		->join('record_data d', "d.registry_object_id = r.registry_object_id AND scheme='rif'", 'left')->where('data IS NULL');
 		return $result->get();
-		/* use LEFT JOIN to palm off this overhead to the DB instead of two queries and a massive WHERE_NOT_IN call!!
-
-		$enrichedResult = $CI->db->select('registry_object_id')->from('record_data')->where('scheme', 'extrif')->get();
-		$enriched = array();
-		foreach($enrichedResult->result() as $e){
-			array_push($enriched, $e->registry_object_id);
-		}
-		$result = $CI->db->select('registry_object_id')->from('record_data')->where_not_in('registry_object_id', $enriched);
-		return $result->get();
-		*/
 	}
 
 	function getGroupSuggestor($data_source_ids){
@@ -789,45 +764,10 @@ class Registry_objects extends CI_Model {
 		}
 	}
 
-	/**
-	  * XXX:
-	  */
-	function cloneToDraft($registry_object)
-	{
-		if (!($registry_object instanceof _registry_object))
-		{
-			// Then this is a registry object ID
-			$registry_object = $this->getByID($registry_object);
-		}
-		if (!$registry_object) { throw new Exception ("Could not load registry object to create draft."); }
-
-		// Add the XML content of this draft to the published record (and follow enrichment process, etc.)
-		$this->load->model('data_source/data_sources', 'ds');
-		$this->importer->_reset();
-		$this->importer->setXML(wrapRegistryObjects(html_entity_decode($registry_object->getRif())));
-		//echo $registry_object->getRif();
-		$this->importer->setDatasource($this->ds->getByID($registry_object->data_source_id));
-		$this->importer->forceDraft();
-		$this->importer->forceClone();
-		$this->importer->statusAlreadyChanged = true;
-		$this->importer->commit(false);
-
-		if ($error_log = $this->importer->getErrors())
-		{
-			throw new Exception("Errors occured whilst cloning the record to DRAFT status: " . NL . $error_log);
-		}
-
-		return $this->getDraftByKey($registry_object->key);
-	}
-
-
     function erase($id)
     {
         $log ='';
         $CI =& get_instance();
-        $CI->db->delete('registry_object_relationships', array('registry_object_id'=>$id));
-        $CI->db->delete('registry_object_identifier_relationships', array('registry_object_id'=>$id));
-        $CI->db->delete('registry_object_identifiers', array('registry_object_id'=>$id));
         //if($error = $this->db->_error_message())
         //$log = NL."registry_object_relationships: " .$error;
         $CI->db->delete('registry_object_metadata', array('registry_object_id'=>$id));
@@ -851,37 +791,6 @@ class Registry_objects extends CI_Model {
         return $log;
     }
 
-	public function deleteRegistryObjects($target_ro_ids, $finalise = true)
-	{
-
-		$this->load->library('Solr');
-		$this->solr->deleteByIDsCondition($target_ro_ids);
-		$deleted_record_keys = array();
-		$affected_record_keys = array();
-
-		foreach($target_ro_ids AS $target_ro_id)
-		{
-			try{
-				$deletedRegObject = $this->getByID($target_ro_id);
-				$deleted_record_keys[] = $deletedRegObject->key;
-				$affected_record_keys = array_unique(array_merge($affected_record_keys, $this->deleteRegistryObject($target_ro_id, false)));
-			}
-			catch(Exception $e)
-			{
-				throw new Exception("ERROR REMOVING RECORD: " .$target_ro_id.NL.$e);
-			}
-		}
-		if($finalise)
-		{
-			// And then their related records get reindexed...
-			$this->importer->_enrichRecords($affected_record_keys);
-			$this->importer->_reindexRecords($affected_record_keys);
-		}
-
-
-		return array('deleted_record_keys'=>$deleted_record_keys, 'affected_record_keys'=>$affected_record_keys);
-	}
-
 	public function getAllThemePages() {
 		$themes = array();
 		$CI =& get_instance();
@@ -889,32 +798,6 @@ class Registry_objects extends CI_Model {
 		if($query && $query->num_rows() > 0) {
 			return $query->result_array();
 		}else return array();
-	}
-
-	/**
-	 * batch enrich and index a set of keys, required in multiple places, put in for tag deletion
-	 * @param  [array] $keys [list of registry object keys to enrich and index]
-	 * @return [void]
-	 */
-	public function batchIndexKeys($keys){
-		$_CI =& get_instance();
-		$solr_docs = array();
-		$chunkSize = 400;
-		$arraySize = sizeof($keys);
-		for($i=0;$i<$arraySize; $i++){
-			$key = $keys[$i];
-			$ro = $this->getPublishedByKey($key);
-			if($ro){
-				$ro->enrich();
-				$solr_docs[] = $ro->indexable_json();
-				if(($i % $chunkSize == 0 && $i != 0) || $i == ($arraySize -1)){
-					$_CI->solr->add_json(json_encode($solr_docs));
-					$_CI->solr->commit();
-					$solr_docs = array();
-				}
-			}
-			unset($ro);
-		}
 	}
 
 	/**
@@ -969,15 +852,6 @@ class Registry_objects extends CI_Model {
 			));
 			$this->db->insert('deleted_registry_objects');
 		}
-
-		// Also treat identifier matches as affected records which need to be enriched
-		// (to increment their extRif:matching_identifier_count)
-//		$related_ids_by_identifier_matches = $target_ro->findMatchingRecords(); // from ro/extensions/identifiers.php
-//		$related_keys = array();
-//		foreach($related_ids_by_identifier_matches AS $matching_record_id) {
-//			$matched_ro = $this->ro->getByID($matching_record_id);
-//			$reenrich_queue[] = $matched_ro->key;
-//		}
 
 		// Delete the actual registry object
 		$this->load->model('data_source/data_sources', 'ds');

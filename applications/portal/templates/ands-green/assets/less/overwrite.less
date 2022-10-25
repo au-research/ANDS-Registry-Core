@@ -233,3 +233,49 @@ a[class*="btn"]{
 	text-decoration: none !important;
 }
 
+#nested-collection-tree {
+	overflow-y: scroll;
+	> ul {
+		border:none
+	}
+}
+
+.fancytree-selected .fancytree-title {
+	font-weight: bold !important;
+	font-style: italic !important;
+	color: #00819D !important;
+}
+
+ul.fancytree-container li {
+	background-image: url("./skin-xp/vline.gif") !important;
+}
+
+#fancytree-drop-marker,
+span.fancytree-checkbox,
+span.fancytree-drag-helper-img,
+span.fancytree-empty,
+span.fancytree-expander,
+span.fancytree-icon,
+span.fancytree-vline,
+.fancytree-exp-n span.fancytree-expander,
+.fancytree-exp-nl span.fancytree-expander,
+.fancytree-connectors .fancytree-exp-n span.fancytree-expander,
+.fancytree-connectors .fancytree-exp-nl span.fancytree-expander {
+	background-image: url("./skin-xp/icons.gif");
+}
+
+.fancytree-loading span.fancytree-expander,
+.fancytree-loading span.fancytree-expander:hover,
+.fancytree-statusnode-loading span.fancytree-icon,
+.fancytree-statusnode-loading span.fancytree-icon:hover,
+span.fancytree-icon.fancytree-icon-loading {
+	background-image: url("./skin-xp/loading.gif") !important;
+	background-position: 0 0 !important;
+}
+
+.fancytree-exp-cd span.fancytree-expander,
+.fancytree-exp-cd span.fancytree-expander:hover,
+.fancytree-exp-cdl span.fancytree-expander,
+.fancytree-exp-cdl span.fancytree-expander:hover {
+	background-position: 0 -96px;
+}

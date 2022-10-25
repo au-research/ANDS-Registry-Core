@@ -33,7 +33,7 @@ class DataSourcesRecordsController extends HTTPController implements RestfulCont
         return $records;
     }
 
-    public function show()
+    public function show($id)
     {
         throw new \Exception("Not implemented");
     }

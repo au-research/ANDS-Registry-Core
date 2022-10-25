@@ -40,10 +40,13 @@ class ProcessScholix extends ImportSubTask
                 $this->log("No record with ID $roID found");
                 continue;
             }
+
+            $this->log("Processing Scholix for RegistryObject[id={$record->id}]");
             ScholixProvider::process($record);
 
             // piggyback this provider on this record
             // TODO maybe refactor into a dedicated (extra) metadata processor for various records
+            $this->log("Processing DCI for RegistryObject[id={$record->id}]");
             DataCitationIndexProvider::process($record);
 
             $this->updateProgress($index, $total, "Processed ($index/$total) $record->title($roID)");

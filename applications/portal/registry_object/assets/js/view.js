@@ -1,5 +1,6 @@
+/*jshint esversion: 6 */
 $(document).ready(function() {
-    initConnectionGraph()
+    initConnectionGraph();
     // drawMap();
     setTimeout( "drawMap()",500 );
     //console.log($.browser)
@@ -101,9 +102,9 @@ $(document).on('click', '.ro_preview', function(event){
 				if ($(element).attr('ro_id')) {
 					var url = base_url+'registry_object/preview/?ro_id='+$(element).attr('ro_id')+'&omit='+$('#ro_id').val();
 				} else if($(element).attr('identifier_relation_id')) {
-					var url = base_url+'registry_object/preview/?identifier_relation_id='+$(element).attr('identifier_relation_id')
+					var url = base_url+'registry_object/preview/?identifier_relation_id='+$(element).attr('identifier_relation_id');
 				} else if($(element).attr('identifier_doi')) {
-					var url = base_url+'registry_object/preview/?identifier_doi='+$(element).attr('identifier_doi')
+					var url = base_url+'registry_object/preview/?identifier_doi='+$(element).attr('identifier_doi')+'&identifier_doi_type='+$(element).attr('identifier_doi_type');
 				}
 
                 if (url && $(element).attr('href').indexOf('source=')) {
@@ -250,101 +251,159 @@ function drawMap(){//drawing the map on the left side
 
 function initConnectionGraph() {
 
-	// Attach the dynatree widget to an existing <div id="tree"> element
-	// and pass the tree options as an argument to the dynatree() function:
-	if ($('#connectionTree').attr('mydata')) {
-		var data = JSON.parse(decodeURIComponent($('#connectionTree').attr('mydata')));
-		$('#connectionTree').removeAttr('mydata');
-		var ro_id = $('#connectionTree').attr('ro_id');
-		$('#connectionTree').removeAttr('ro_id');
-		data = traverseAndSelectChildren(data, ro_id);
+	// hide the container until the tree is fully loaded and have data
+	$("#nested-collection-tree-container").hide();
 
-		/* Generate the tree */
-		$("#connectionTree").dynatree({
-			debugLevel: 0,
-			children: data,
-			onActivate: function(node) {
-			// If this has more parts, open them...
-			    if (node.data.children)	{
-				    node.expand();
-			    }
-			},
+	/**
+	 * Visit the node and set data
+	 *
+	 * @param {FancytreeNode} n
+	 */
+	function visitNode(n) {
 
-			onPostInit: function (isReloading, isError) {
-				// Hackery to make the nodes representing THIS registry object
-				// visible, but not highlighted
-				nodes = this.getSelectedNodes();
-				for (var i = nodes.length - 1; i >= 0; i--) {
-					nodes[i].activate();
-					nodes[i].deactivate();
-				};
-			},
+		// don't do anything to paging node or status node
+		if (n.isPagingNode() || n.isStatusNode()) {
+			return;
+		}
 
-			onRender: function(node, nodeSpan) {
-				var preview_url;
-				if (node.data.status=='PUBLISHED')
-				{
-					preview_url = base_url + "preview/" + node.data.slug;
-				}
-				else
-				{
-					var draftText = '<small class="lightgrey">[DRAFT]</small> ';
-					$('a', nodeSpan).prepend(draftText);
-					preview_url = base_url + "preview/?registry_object_id=" + node.data.registry_object_id;
-				}
+		// set and make visible the current node
+		if (n.data.identifier === $("#ro_id").val()) {
+			n.setSelected(true);
+			n.makeVisible({scrollIntoView: false});
+		}
 
-				/* Change the icon in the tree */
-				if (node.data['class']=="collection")
-				{
-					$(nodeSpan).find("span.dynatree-icon").css("background-position", "-38px -155px");
-				}
-				else if (node.data['class']=="party")
-				{
-					$(nodeSpan).find("span.dynatree-icon").css("background-position", "-19px -155px");
-				}
-				else if (node.data['class']=="service")
-				{
-					$(nodeSpan).find("span.dynatree-icon").css("background-position", "0px -156px");
-				}
-				else if (node.data['class']=="activity")
-				{
-					$(nodeSpan).find("span.dynatree-icon").css("background-position", "-57px -155px");
-				}
+		// if this node is supposed to be a parent node
+		if (n.data.childrenCount > 0) {
 
-				$('a',$(nodeSpan)).attr('title', $(nodeSpan).text());
-				$('a',$(nodeSpan)).attr('href', base_url + node.data.slug +"/"+node.data.registry_object_id);
-                $('a',$(nodeSpan)).attr('ro_id', node.data.registry_object_id);
-                $('a',$(nodeSpan)).addClass('ro_preview');
-                if($(nodeSpan).text().length>100){
-                    $('a',$(nodeSpan)).text($(nodeSpan).text().substring(0,100)+' ...');
-                }
-				if (node.data['class']=="more")
-				{
-					$(nodeSpan).find("span.dynatree-icon").remove();
-					var a = $('a',$(nodeSpan));
+			n.data.folder = true;
 
-					// Bind the accordion classes and attributes
-					a.addClass('view_all_connection');
-					if (node.data.status=='PUBLISHED')
-					{
-						a.attr('ro_slug', node.data.slug);
-					}
-					else
-					{
-						a.attr('ro_id', node.data.registry_object_id);
-					}
-
-					a.attr('relation_type','nested_collection');
-					a.attr('page', 2);
-                }
+			// if there's no children, then it's a lazy node
+			if (n.children === null && !n.isLazy()) {
+				n.resetLazy();
 			}
 
-	    });
-        window.scrollTo(0,0);
+			// there are children, expand this node
+			if (n.children && n.children.length > 0) {
+				n.setExpanded(true);
+			}
+
+			// if there are children and there are supposed to be more children, attempt to add paging node
+			if (typeof n.children == "undefined") {
+				n.children = [];
+			}
+
+			if (n.data.childrenCount > n.children.length) {
+				let hasPagingNode = n.children.filter(function (nc) {
+					return nc.isPagingNode();
+				}).length > 0;
+
+				// only add paging node if it doesn't already have one
+				if (!hasPagingNode) {
+
+					let offset = n.children.length - 1;
+					let excludeIDs = [];
+
+					// special case, if there's exactly 1 children (initial load)
+					if (n.children.length === 1) {
+						excludeIDs.push(n.children[0].data.identifier);
+						offset = offset > 0 ? offset - 1 : offset;
+					}
+
+					// exclude the current record (because it should already loaded)
+					excludeIDs.push($("#ro_id").val());
+
+					// comma separated
+					excludeIDs = excludeIDs.join();
+
+					n.addPagingNode({
+						title: "Load More...",
+						statusNodeType: "paging",
+						icon: false,
+						url: api_url + 'registry/records/' + n.data.identifier + '/nested-collection-children?offset=' + offset + '&excludeIDs=' + excludeIDs
+					});
+				}
+			}
+
+		}
 	}
 
+	// initialise the fancytree for nested collection
+	$("#nested-collection-tree").fancytree({
+		activeVisible: true,
 
+		source: {
+			url: api_url + 'registry/records/'+$('#ro_id').val()+'/nested-collection',
+			cache: false
+		},
 
+		icon: function(event, data) {
+			if (data.node.icon !== false) {
+				return "fa fa-folder-open icon-portal";
+			}
+			return "";
+		},
+
+		// upon expansion of a lazy node
+		lazyLoad: function(event, data) {
+			let n = data.node;
+			data.result = {
+				url: api_url + 'registry/records/'+n.data.identifier+'/nested-collection-children',
+				cache: false
+			};
+		},
+
+		// when new children are loaded, visit them
+		loadChildren: function(event, data) {
+			let node = data.node;
+			if (node.children) {
+				$.each(node.children, function(index, n) {
+					visitNode(n);
+				});
+			}
+
+			// revisit the parent due to the loaded data might not contain the full set
+			visitNode(node);
+		},
+
+		// visit all nodes initially
+		init: function(event, data) {
+			data.tree.visit(function(node) {
+				visitNode(node);
+			});
+
+			// only display the tree if there are more than 1 nodes
+			if (data.tree.count() > 1) {
+				$("#nested-collection-tree-container").show();
+			}
+		},
+
+		// add ro_preview and update the href to match
+		// ro_preview would be automatically bind with qtip for preview
+		renderNode: function(event, data) {
+			let node = data.node;
+			let $span = $(node.span);
+			if (data.node.data.identifier && data.node.data.url) {
+				$span.find('> span.fancytree-title')
+					.addClass('ro_preview')
+					.attr("ro_id", data.node.data.identifier)
+					.attr("href", data.node.data.url);
+			}
+		},
+
+		// upon clicking the PaginationNode
+		clickPaging: function(event, data) {
+			data.node.replaceWith({
+				url: data.node.data.url
+			}).done(function(data){
+				if (data && data.length > 0) {
+					$("#nested-collection-tree").fancytree("getTree").visit(function(n) {
+						visitNode(n);
+					});
+				}
+			});
+		},
+
+	});
 }
 
 

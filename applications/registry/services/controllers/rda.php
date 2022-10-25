@@ -13,14 +13,14 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 {
 	// Some internal defaults
 	const response_format = "application/json";
-	const default_retrieval_scheme = "extrif";
+	const default_retrieval_scheme = "rif";
 	const default_retrieval_status = PUBLISHED;
 
 
 	/**
 	 * Fetch a registry object from the registry by "SLUG"
 	 *
-	 * Responds with a JSON array containing the data of the record's extrif
+	 * Responds with a JSON array containing the data of the record's rif
 	 * (or a JSON-formatted error response, if no matching data is available)
 	 *
 	 * @param $_GET[slug] "SLUG" of the registry object to retrieve
@@ -35,7 +35,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 			throw new Exception("No valid URL SLUG or registry_object_id specified.");
 		}
 
-		// Lightweight registry object get (get the latest version of the extRif for this record)
+		// Lightweight registry object get (get the latest version of the rif-cs for this record)
 		// See registry_object/models/registry_objects for description of this method syntax
 		$record = $this->ro->_get(array(
 									array('args' => array(	'slug'=>$this->input->get('slug'),
@@ -78,26 +78,14 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 			$this->load->model('data_source/data_sources', 'ds');
 			//we have a reord, get the object to get the object's group
 			$theObject = $this->ro->getByID($record[0]['registry_object_id']);
-			//see if this group has a contributor page
-			$contributor = $this->db->get_where('institutional_pages',array('group' => $theObject->getAttribute('group')));
-			if ($contributor->num_rows() >0)
-			{
-				//if there is a contributor page see if the key of the page is this one (to cater for when a draft and published contibutor page exists)
-				$contributorRecord = array_pop($contributor->result_array());
-				$theContributor = $this->ro->getByID($contributorRecord['registry_object_id']);
-				if($theContributor && $theContributor->getAttribute('key')==$record[0]['key'])
-				{
-					$record[0]['template'] = CONTRIBUTOR_PAGE_TEMPLATE;
-				}
 
-			}
 
 			$result = json_encode($record[0]);
 			$result_decoded = json_decode($result,true);
 			if(!$result_decoded['data']) {
 				$result = array();
 				$theObject->enrich();
-				$result['data'] = $theObject->getExtRif();
+				$result['data'] = $theObject->getRif();
 				$result['registry_object_id'] = $theObject->id;
 				$result['key'] = $theObject->key;
 				echo json_encode($result);
@@ -105,34 +93,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 
 			return;
 		} else if(count($record)==0){
-			//NO EXTRIF, attempt to create one
-			if($this->input->get('slug')){
-				$ro = $this->ro->getBySlug($this->input->get('slug'));
-			}elseif($this->input->get('registry_object_id')){
-				$ro = $this->ro->getByID($this->input->get('registry_object_id'));
-			}
-			if (!$ro) throw new Exception('Registry Object not found');
-
-			try{
-				$ro->enrich();
-			} catch (Exception $e){
-				throw new Exception('ERROR: Registry Object cannot be enriched: '. $e->getMessage());
-			}
-
-			$result = array();
-			$this->load->model('data_source/data_sources', 'ds');
-			$contributor = $this->db->get_where('institutional_pages',array('group' => $ro->getAttribute('group')));
-			if ($contributor->num_rows() >0) {
-				$contributorRecord = array_pop($contributor->result_array());
-				$theContributor = $this->ro->getByID($contributorRecord['registry_object_id']);
-				if($theContributor && $theContributor->getAttribute('key')==$ro->key){
-					$result['template'] = CONTRIBUTOR_PAGE_TEMPLATE;
-				}
-			}
-			$result['data'] = $ro->getExtRif();
-			$result['registry_object_id'] = $ro->id;
-			$result['key'] = $ro->key;
-			echo json_encode($result);
+				throw new Exception('ERROR: Registry Object does not exist ');
 		}
 		else
 		{
@@ -148,7 +109,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 					$orphan_slug = array_pop($query->result_array());
 					if ($orphan_slug['slug'] == $this->input->get('slug'))
 					{
-						throw new Exception("Error: Unable to fetch extRif, despite active SLUG mapping.");
+						throw new Exception("Error: Unable to fetch Rif, despite active SLUG mapping.");
 					}
 
 					$contents = array('redirect_registry_object_slug' => $orphan_slug['slug']);
@@ -264,6 +225,17 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		$limit = ($this->input->get('limit') ? $this->input->get('limit') : 5);
 		$offset = ($this->input->get('offset') ? $this->input->get('offset') : null);
 		$type_filter = ($this->input->get('type_filter') ? $this->input->get('type_filter') : null);
+        $class = null;
+        if($type_filter == 'party_one') {
+            $class = 'party';
+        }
+        elseif($type_filter == 'party_multi') {
+            $class = 'party';
+        }
+        else{
+            $class = $type_filter;
+        }
+
 
 		// Get the RO instance for this registry object so we can fetch its connections
 		$this->load->model('registry_object/registry_objects', 'ro');
@@ -284,14 +256,15 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		{
 			throw new Exception("Unable to fetch connections for this registry object.");
 		}
+        $record = ANDS\Repository\RegistryObjectsRepository::getRecordByID($registry_object->id);
 
-		// Include inferred connections from duplicates
-		//getConnections($published_only = true, $specific_type = null, $limit = 100, $offset = 0, $include_dupe_connections = false)
-		$connections = $registry_object->getConnections($published_only,$type_filter,$limit,$offset, true);
-//var_dump($connections);
+        $connections = ANDS\Registry\Providers\RelationshipProvider::getRelatedObjectsByClassType($record, $class, $type_filter);
+
 		// Return this registry object's connections
-		echo json_encode(array("connections"=>$connections, 'class'=>$registry_object->class, 'slug'=>$registry_object->slug));
+		echo json_encode(array("connections"=>$connections, 'class'=>$registry_object->class, 'slug'=>$registry_object->slug, 'type_filter'=>$type_filter));
 	}
+
+
 //
 //	public function getRelatedInfoByIrId()
 //	{
@@ -438,33 +411,6 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		echo json_encode(array("contents"=>$contents));
 	}
 
-	public function getInstitutionals(){
-		$result_inst = $this->db->select('group, registry_object_id')->from('institutional_pages')->get();
-		$inst = array();
-		foreach($result_inst->result() as $r){
-			array_push($inst, $r->registry_object_id);
-		}
-		$result_things = $this->db->select('title, slug, registry_object_id')->from('registry_objects')->where('status', 'PUBLISHED')->where_in('registry_object_id', $inst)->get();
-
-		$things = array();
-		foreach($result_things->result() as $vv) {
-			$things[$vv->registry_object_id] = array('slug'=>$vv->slug);
-		}
-
-		$fresult = array();
-		foreach($result_inst->result() as $r) {
-			if(isset($things[$r->registry_object_id])){
-				array_push($fresult, array(
-					'registry_object_id' => $r->registry_object_id,
-					'title' => $r->group,
-					'slug' => $things[$r->registry_object_id]['slug']
-				));
-			}
-		}
-
-		echo json_encode(array("contents"=>$fresult));
-	}
-
     public function getCollectionCreators(){
         $this->load->model('registry_object/registry_objects', 'ro');
         $ro_id = $this->input->get('id');
@@ -472,7 +418,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
         $returnStr = '';
         if($ro){
 
-            $relationshipTypeArray = ['hasPrincipalInvestigator','principalInvestigator','author','coInvestigator','isOwnedBy','hasCollector'];
+            $relationshipTypeArray = ['hasPrincipalInvestigator','principalInvestigator','author','coInvestigator','hasCoInvestigator', 'isOwnedBy','hasCollector'];
             $classArray = ['party'];
             $connections = $ro->getRelatedObjectsByClassAndRelationshipType($classArray ,$relationshipTypeArray);
 
@@ -908,7 +854,9 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 		$this->load->model('registry_object/registry_objects','ro');
 		$ro = $this->ro->getPublishedByKey($key);
 		if($ro){
-			$ro->sync();
+            if ($record = \ANDS\Repository\RegistryObjectsRepository::getPublishedByKey($key)) {
+                \ANDS\Registry\Importer::instantSyncRecord($record);
+            }
 			$this->output->set_output(json_encode(array('status'=>'OK')));
 		}else {
 			throw new Exception("Unable to find registry object");

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+    <registryObject group="AUTestingRecords">
+    <key>AUT_QUALITY_PARTY</key>
+    <originatingSource type="">http://api.crossref.org/funders?filter=location:Australia</originatingSource>
+    <party type="group">
+      <name type="primary">
+        <namePart>Just a Related Party</namePart>
+      </name>
+      <description type="brief">Related PArty Description</description>
+        <relatedObject>
+            <key>AUT_QUALITY_COLLECTION_2</key>
+            <relation type="hasAssociationWith"/>
+        </relatedObject>
+    </party>
+  </registryObject>
+</registryObjects>

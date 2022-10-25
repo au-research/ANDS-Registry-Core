@@ -4,7 +4,6 @@ namespace ANDS\API;
 
 use ANDS\API\DOI\Bulk;
 use ANDS\API\DOI\BulkRequest;
-use ANDS\API\Task\TaskManager;
 use ANDS\DOI\MdsClient;
 use ANDS\DOI\FabricaClient;
 use ANDS\DOI\DOIServiceProvider;
@@ -18,6 +17,7 @@ use ANDS\DOI\Repository\ClientRepository;
 use ANDS\DOI\Repository\DoiRepository;
 use ANDS\DOI\Transformer\XMLTransformer;
 use ANDS\DOI\Validator\URLValidator;
+use ANDS\Task\TaskRepository;
 use ANDS\Util\Config;
 use \Exception as Exception;
 
@@ -963,15 +963,16 @@ class Doi_api
         $bulkRequest->save();
 
         // Generate new task do process the BulkRequest
-        $taskManager = new TaskManager($this->ci->db, $this->ci);
-        $task = $taskManager->addTask([
+
+        /** @var \ANDS\API\Task\DoiBulkTask $task */
+        $task = TaskRepository::create([
             'name' => 'DOI Bulk Request: ' . $this->client->client_name,
             'params' => http_build_query([
                 'class' => 'doiBulk',
                 'bulkID' => $bulkRequest->id
             ]),
             'type' => 'PHPSHELL'
-        ]);
+        ], true);
 
         // log to ELK
         monolog(
@@ -989,7 +990,7 @@ class Doi_api
                     ],
                     'result' => [
                         'bulk_id' => $bulkRequest->id,
-                        'task_id' => $task['id']
+                        'task_id' => $task->toArray()['id']
                     ],
                     'bulk' => true
                 ]

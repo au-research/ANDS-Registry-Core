@@ -4,9 +4,9 @@
 namespace ANDS\Commands;
 
 
+use ANDS\Commands\Script\DataAnalyser;
 use ANDS\Commands\Script\GenericScript;
 use ANDS\Commands\Script\NLAPullBack;
-use ANDS\Commands\Script\NormaliseIdentifier;
 use ANDS\Commands\Script\ProcessDates;
 use ANDS\Commands\Script\ProcessDCI;
 use ANDS\Commands\Script\ProcessGroups;
@@ -36,7 +36,7 @@ class RunScriptCommand extends ANDSCommand
         "testScript" => TestScript::class,
         "processLinks" => ProcessLinksScript::class,
         'processDCI' => ProcessDCI::class,
-        "normaliseIdentifier" => NormaliseIdentifier::class
+        "dataAnalyser" => DataAnalyser::class
     ];
 
     protected function configure()
@@ -50,6 +50,18 @@ class RunScriptCommand extends ANDSCommand
             ->addOption(
                 'params',
                 'p',
+                InputOption::VALUE_OPTIONAL,
+                "custom parameters for scripts",
+                null
+            )->addOption(
+                'ids_file',
+                'f',
+                InputOption::VALUE_OPTIONAL,
+                "custom parameters for scripts",
+                null
+            )->addOption(
+                'all-status',
+                's',
                 InputOption::VALUE_OPTIONAL,
                 "custom parameters for scripts",
                 null

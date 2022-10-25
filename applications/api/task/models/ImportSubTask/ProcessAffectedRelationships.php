@@ -3,8 +3,9 @@
 
 namespace ANDS\API\Task\ImportSubTask;
 
-use ANDS\Repository\RegistryObjectsRepository;
-use ANDS\Registry\Providers\RelationshipProvider;
+use ANDS\Mycelium\MyceliumServiceClient;
+use ANDS\Util\Config;
+use ANDS\Repository\RegistryObjectsRepository as Repo;
 
 /**
  * Class ProcessAffectedRelationships
@@ -12,66 +13,60 @@ use ANDS\Registry\Providers\RelationshipProvider;
  */
 class ProcessAffectedRelationships extends ImportSubTask
 {
-    protected $requireAffectedRecords = true;
     protected $title = "PROCESSING AFFECTED RELATIONSHIPS";
 
     public function run_task()
     {
+
+
         $targetStatus = $this->parent()->getTaskData('targetStatus');
-        if (!RegistryObjectsRepository::isPublishedStatus($targetStatus)) {
-            $this->log("Target status is ". $targetStatus.' does not affect records');
+        // TODO: until DRAFT records are 100% isolated in Mycelium we should only allow PUBLISHED records
+        if (!Repo::isPublishedStatus($targetStatus)) {
+            $this->log("Target status is ". $targetStatus.' No indexing required');
+            return;
+        }
+        $myceliumRequestId = $this->parent()->getTaskData("myceliumRequestId");
+
+        // requires sideEffectRequestId to continue
+        if (!$myceliumRequestId) {
+            $this->log("myceliumRequestId required for this task");
             return;
         }
 
-        $affectedRecords = $this->parent()->getTaskData('affectedRecords');
-        $duplicateRecords = $this->parent()->getTaskData("duplicateRecords") ? $this->parent()->getTaskData("duplicateRecords") : [];
+        $this->log("Processing RequestID: $myceliumRequestId");
 
-        $this->log("Size of affected records: ".count($affectedRecords));
+        $myceliumUrl = Config::get('mycelium.url');
+        $myceliumClient = new MyceliumServiceClient($myceliumUrl);
 
-        $total = count($affectedRecords);
-
-        $this->log("Processing relationships of $total affected records");
-        debug("Processing $total affected records");
-        $affected_by_class = ["party"=>[],
-            "activity"=>[],
-            "service"=>[],
-            "collection"=>[]
-        ];
-
-        foreach ($affectedRecords as $index => $roID) {
-            $record = RegistryObjectsRepository::getRecordByID($roID);
-            if($record){
-                $affected_by_class[$record->class][] = $record;
-            }
-
+        // requires Mycelium service being online to continue
+        if (!$myceliumClient->ping()) {
+            $this->addError("Failed to contact Mycelium at $myceliumUrl. ProcessAffectedRelationships is skipped");
+            return;
         }
 
-        foreach ($affected_by_class as $class => $classArray) {
-            foreach($classArray as $index=>$record) {
-                debug("Processing affected record: $record->title($record->registry_object_id)");
-                RelationshipProvider::process($record);
-                RelationshipProvider::processGrantsRelationship($record);
-                $this->updateProgress($index, $total, "Processed affected ($index/$total) $record->title($record->registry_object_id)");
+        $myceliumClient->startProcessingSideEffectQueue($myceliumRequestId);
+
+        $requestStatus = null;
+        $startTime = microtime(true);
+
+        // TODO implement a better progress checking, consider remove elapsed for make the value larger
+        // setting limit to 5 minutes = 300 seconds
+        $elapsed = 0;
+        while ($requestStatus != "COMPLETED") {
+            $now = microtime(true);
+            $elapsed = $now - $startTime;
+            $result = $myceliumClient->getRequestById($myceliumRequestId);
+            $request = json_decode($result->getBody()->getContents(), true);
+            $requestStatus = $request['status'];
+            if(is_array($request['summary']) && isset($request['summary']['total'])){
+                $total = $request['summary']['total'];
+                $processed = $request['summary']['processed'];
+                $this->updateProgress($processed, $total, "Processed ($processed/$total)");
+                $this->log("Processed $processed/$total, elapsed $elapsed");
             }
-            tearDownEloquent();
+            sleep(1);
         }
 
-        $this->log("Size of duplicate records: ".count($duplicateRecords));
-
-        $total_dup = count($duplicateRecords);
-
-        foreach($duplicateRecords as $index => $roID) {
-            $record = RegistryObjectsRepository::getRecordByID($roID);
-            if($record){
-                debug("Processing duplicate record: $record->title($record->registry_object_id)");
-                RelationshipProvider::process($record);
-                RelationshipProvider::processGrantsRelationship($record);
-                $this->updateProgress($index, $total_dup, "Processed duplicate ($index/$total_dup) $record->title($record->registry_object_id)");
-            }
-        }
-
-        debug("Finished processing (".($total + $total_dup).") affected/duplicate records");
-
-        return;
+        $this->log("Processing Affected Relationships Finished");
     }
 }

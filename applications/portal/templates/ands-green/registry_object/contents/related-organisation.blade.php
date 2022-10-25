@@ -1,21 +1,52 @@
 <div class="related-organisations">
     <h4>Related Organisations</h4>
+
     <ul class="list-unstyled">
-        @foreach($related['organisations']['docs'] as $col)
+        <? $relation_to_title = [];
+        $dupes = 0;?>
+        @foreach($related['organisations']['contents'] as $col)
+            <?php
+            $result = array();
+            $relation_types = [];
+            foreach ($col['relations'] as $element) {
+                $relation_types[] = $element['relation_type_text'];
+            }
+            $relation_types = array_unique($relation_types);
+            $relation_type_text =  implode($relation_types,", ");
+            if(!isset($col['to_url'])){
+                $col['to_url']="";
+            }
+            $relation_to_title[$col['to_title']][] = $col['to_title'];
+            $dupes = count($relation_to_title[$col['to_title']]);
+            ?>
+            @if($dupes<2)
             <li>
                 <i class="fa fa-group icon-portal"></i>
-                <small>{{ $col['display_relationship'] }}</small>
-                <a href="{{ base_url() }}{{$col['to_slug']}}/{{$col['to_id']}}"
-                   title="{{ $col['to_title'] }}"
-                   class="ro_preview"
-                   tip="{{ $col['display_description'] }}"
-                   ro_id="{{ $col['to_id'] }}">
-                    {{$col['to_title']}}</a>
+                <small>{{ $relation_type_text }}</small>
+                @if($col["to_identifier_type"]=="ro:id")
+                   <a href="{{$col['to_url']}}"
+                    title="{{ $col['to_title'] }}"
+                    class="ro_preview"
+                    ro_id="{{$col['to_identifier']}}">
+                       {{$col['to_title']}}
+                @elseif($col["to_identifier_type"]!="ro:id")
+                   <a  href="false"
+                    title="{{ $col['to_title'] }}"
+                    class="ro_preview"
+                    <?php $col_json = urlencode(json_encode($col)); ?>
+                    identifier_relation_id="{{$col_json}}">
+                    {{$col['to_title']}}
+                @endif
+                   </a>
+
                 {{ isset($col['to_funder']) ? "(funded by ". $col['to_funder'] .")" : '' }}
             </li>
+            @endif
+
+
         @endforeach
-        @if($related['organisations']['count'] > 5)
-            <li><a href="{{ $related['organisations']['searchUrl'] }}">View all {{ $related['organisations']['count'] }} related organisations</a></li>
+        @if($related['organisations']['total'] > 5 && $ro->core['status']=== 'PUBLISHED')
+            <li><a href="{{ $related['organisations']['searchUrl'] }}">View all {{ $related['organisations']['total'] }} related organisations</a></li>
         @endif
     </ul>
 </div>

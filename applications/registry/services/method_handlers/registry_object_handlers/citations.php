@@ -8,19 +8,24 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
  * @param  string type
  * @return array
  */
+use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\Registry\Providers\RIFCS\TitleProvider;
+use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
+use ANDS\Registry\Providers\RIFCS\LicenceProvider;
 use ANDS\RegistryObject;
+
 class Citations extends ROHandler {
 
     public $ro;
 
+
 	function handle() {
 
         $result = array();
-
+        $record = RegistryObject::find($this->ro->id);
 
         if ($this->xml) {
-            $coins = $this->getCoinsSpan();
+            $coins = $this->getCoinsSpan($record);
             foreach($this->xml->{$this->ro->class}->citationInfo as $citation){
                 foreach($citation->citationMetadata as $citationMetadata){
                     $contributors = Array();
@@ -47,7 +52,7 @@ class Citations extends ROHandler {
                         $displayNames .= formatName($contributor['name']);
                         if($contributorCount < count($contributors)) $displayNames .= "; ";
                     }
-                    $identifierResolved = identifierResolution((string)$citationMetadata->identifier, (string)$citationMetadata->identifier['type']);
+                    $identifierResolved = IdentifierProvider::format((string)$citationMetadata->identifier, (string)$citationMetadata->identifier['type']);
 
                     $publicationDate = (string)$citationMetadata->date;
                     if(strlen($citationMetadata->date) > 4){
@@ -97,6 +102,7 @@ class Citations extends ROHandler {
 
     public function getEndnoteText()
     {
+        $record = RegistryObject::find($this->ro->id);
         $endNote = 'Provider: Australian Research Data Commons
 Database: Research Data Australia
 Content:text/plain; charset="utf-8"
@@ -123,21 +129,30 @@ Content:text/plain; charset="utf-8"
 ";
         }
 
-        $contributors = $this->getContributors();
+        $contributors = $this->getContributors($record);
         if($contributors!=''){
             foreach($contributors as $contributor){
-                if(isset($contributor['to_id'])){
-                    $record = RegistryObject::find($contributor['to_id']);
-                    $names = TitleProvider::get($record);
-                    $nameParts = '';
-                    foreach($names["raw"][0]["value"] as $namePart=>$nameParts_raw){
-                        if((string)$nameParts_raw['@attributes']['type']!='title')
-                        $nameParts[] = array(
-                            'namePart_type' => (string)$nameParts_raw['@attributes']['type'],
-                            'name' => (string)$nameParts_raw['value']
-                        );
+                if(isset($contributor['to_id']) && $contributor['to_id'] != '') {
+                    $party_record = RegistryObject::find($contributor['to_id']);
+                    if ($party_record != null) {
+                        $names = TitleProvider::get($party_record);
+                        $nameParts = [];
+                        //need to take into account that a name part might not have a type
+                        //and if here is only one it will be flattened by the TitleProvider
+                        if(is_array($names["raw"][0]['value'])) {
+                            foreach ($names["raw"][0]['value'] as $namePart => $nameParts_raw) {
+                                if (isset($nameParts_raw['@attributes']['type']) && (string)$nameParts_raw['@attributes']['type'] != 'title')
+                                   $nameParts[] = array(
+                                        'namePart_type' => (string)$nameParts_raw['@attributes']['type'],
+                                       'name' => (string)$nameParts_raw['value']
+                                    );
+                            }
+                            $contributor["name"] = formatName($nameParts);
+                        }else{
+                            $contributor["name"] = $names["raw"][0]['value'];
+                        }
+
                     }
-                    $contributor["name"] = formatName($nameParts);
                 }
                 $endNote .= "AU  - ".$contributor['name']."
 ";
@@ -148,7 +163,7 @@ Content:text/plain; charset="utf-8"
 ";
         }
 
-        $funders = $this->getFunders();
+        $funders = RelationshipProvider::getFunders($record);
         foreach($funders as $funder){
             $endNote .= "A4  - ".$funder."
 ";
@@ -183,7 +198,7 @@ Content:text/plain; charset="utf-8"
 
         $endNote .="LA  - English
 ";
-        $rights = $this->ro->processLicence();
+        $rights = LicenceProvider::get($record);
         foreach($rights as $right) {
             if($right['value']!='') $endNote .="C5  - ".$right['value']."
 ";
@@ -225,7 +240,7 @@ Content:text/plain; charset="utf-8"
         return html_entity_decode($endNote);
     }
 
-    private function getCoinsSpan()
+    private function getCoinsSpan($record)
     {
         $coins = '';
 
@@ -239,14 +254,13 @@ Content:text/plain; charset="utf-8"
             $rft_description .= $description;
         }
         $rft_creators = '';
-        $creators= $this->getContributors();
+        $creators= $this->getContributors($record);
         foreach($creators as $creator){
             $rft_creators .= '&rft.creator='.$creator['name'];
         }
 
         $rft_date = $this->getPublicationdate();
-
-        $rights  = $this->ro->processLicence();
+        $rights = LicenceProvider::get($record);
 
         $rft_rights = '';
         foreach($rights as $right){
@@ -257,7 +271,7 @@ Content:text/plain; charset="utf-8"
                 }
             }
         }
-       // return $rft_rights;
+
         $subjects = $this->getKeywords();
         $rft_subjects = '';
         foreach($subjects as $subject){
@@ -339,7 +353,7 @@ Content:text/plain; charset="utf-8"
             foreach($identifiers as $identifiervalue) {
                 $identifier = $identifiervalue->nodeValue;
             }
-                    }
+        }
         return $identifier;
 
     }
@@ -443,7 +457,7 @@ Content:text/plain; charset="utf-8"
             foreach($urls as $url) {
                 $sourceUrl = trim($url->nodeValue);
                  if($output=='endNote' && $type!="url"){
-                    $resolved = identifierResolution($sourceUrl,$type);
+                    $resolved = IdentifierProvider::format($sourceUrl,$type);
                     $sourceUrl = trim($resolved['href']);
                 }elseif($output == 'coins'){
                     if(strpos($sourceUrl,"doi.org/")) $sourceUrl ="info:doi".substr($sourceUrl,strpos($sourceUrl,"doi.org/")+8);
@@ -519,7 +533,7 @@ Content:text/plain; charset="utf-8"
         return $version;
     }
 
-    function getContributors()
+    function getContributors($record)
     {
         $contributors = Array();
         $noseq = 9999;
@@ -556,37 +570,31 @@ Content:text/plain; charset="utf-8"
              * We do index reverse relationships BUT without the mirrored (reversed) relationship type
              * adding the reversed types to the query ensures that the party is found in either ways in the index
              */
-                $relationshipTypeArray = array(
-                     'hasPrincipalInvestigator',
-                     'isPrincipalInvestigatorOf',
-                     'author',
-                     'coInvestigator',
-                     'isOwnedBy',
-                     'isOwnerOf',
-                     'hasCollector',
-                     'isCollectorOf'
-                 );
-                 $classArray = array('party');
-
+            // update 21/02/2022 to use RelationshipSearchService
+            $validRelationTypes[] = ['isPrincipalInvestigatorOf', 'hasPrincipalInvestigator'];
+            $validRelationTypes[] = ['author'];
+            $validRelationTypes[] = ['coInvestigator', 'hasCoInvestigator'];
+            $validRelationTypes[] = ['isOwnedBy','isOwnerOf'];
+            $validRelationTypes[] = ['hasCollector','isCollectorOf'];
                  /* Ensure the search loops through the pre determined order of relationships
                     and return as soon as a particular type is found */
-
-                 foreach ($relationshipTypeArray as $relationType) {
-                 $authors = $this->ro->getRelatedObjectsIndex($classArray, [$relationType]);
-                 if (sizeof($authors) > 0) {
-                     foreach ($authors as $author) {
-                         $contributors[] = array(
-                             'name' => $author['to_title'],
-                             'seq' => '',
-                             'to_id' => $author['to_id']
-                         );
-                     }
-
-                    /* sort the  array by name */
-                     usort($contributors, "cmpTitle");
-                     return $contributors;
-                 }
-             }
+                /* Call the RelationshipProvider  and pass in the order to prioritise the search */
+            foreach( $validRelationTypes as $relationshipType){
+                $authors = RelationshipProvider::getRelationByClassAndType($record, "party", $relationshipType);
+                foreach($authors as $author){
+                    $to_id = ($author['to_identifier_type'] == "ro:id") ? $author['to_identifier'] : '';
+                    if(array_key_exists('to_title', $author))
+                    $contributors[] = array(
+                        'name' => $author['to_title'],
+                        'seq' => '',
+                        'to_id' => $to_id
+                    );
+                }
+                if(count($contributors)>0){
+                    usort($contributors, "cmpTitle");
+                    return $contributors;
+                }
+            }
         }
 
         if (!$contributors) {
@@ -600,48 +608,6 @@ Content:text/plain; charset="utf-8"
         return $contributors;
     }
 
-    private function getFunders()
-    {
-        $CI =& get_instance();
-        $CI->load->model('registry_object/registry_objects', 'mro');
-        $funders = Array();
-
-        foreach($this->xml->{$this->ro->class}->relatedObject as $partyFunder){
-            if($partyFunder->relation['type']=='isOutputOf'){
-                $key = $partyFunder->key;
-
-                $grant_objects = $CI->mro->getAllByKey($key);
-                if($grant_objects){
-                    foreach ($grant_objects as $grant_object)
-                    {
-                        // true means extrif !!
-                        $grant_sxml = $grant_object->getSimpleXML(NULL);
-                        if($grant_object->status == PUBLISHED){
-                            $grant_id = $grant_sxml->xpath("//ro:identifier[@type='arc'] | //ro:identifier[@type='nhmrc'] | //ro:identifier[@type='purl']");
-
-                            $related_party = array();
-                            $relationships = $grant_object->getAllRelatedObjects();
-                            foreach ($relationships as $rr) {
-                                if (in_array($rr['class'], ['party']) && in_array($rr['relation_type'], ['isFunderOf','isFundedBy'])) {
-                                    array_push($related_party, $rr);
-                                }
-                            }
-
-                            if (is_array($grant_id))
-                            {
-                                if (is_array($related_party) && isset($related_party[0]))
-                                {
-                                    $funders[] = $related_party[0]['title'];
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return $funders;
-    }
 
     function getType()
     {
@@ -714,11 +680,6 @@ Content:text/plain; charset="utf-8"
         foreach($ro_descriptions as $a_description) {
             $descriptions[] = strip_tags(html_entity_decode($a_description->nodeValue));
         }
-
-     /*   $ro_descriptions = $this->gXPath->query("//ro:collection/ro:description[@type='note']");
-        foreach($ro_descriptions as $a_description) {
-            $descriptions[] = strip_tags(html_entity_decode($a_description->nodeValue));
-        } */
 
         $ro_descriptions = $this->gXPath->query("//ro:collection/ro:description[@type='lineage']");
         foreach($ro_descriptions as $a_description) {

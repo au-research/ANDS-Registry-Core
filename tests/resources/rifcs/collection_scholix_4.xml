@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+ <registryObject group="AUTestingRecords2">
+            <key>AUTestingRecords2ScholixRecords4test</key>
+            <originatingSource>http://test.ands.org.au/registry/orca/register_my_data</originatingSource>
+            <collection type="publication" dateModified="2016-04-10T23:51:40Z">
+                <identifier type="doi">10.1234/00/Scholix564test</identifier>
+                <identifier type="local">LocalIdentifier-Scholix564test</identifier>
+                <name type="primary">
+                    <namePart>(AUTestingRecords2) Simple Scholix Source Collection With 2 Identifiers and Single RelatedInfo Publication. No creators</namePart>
+                </name>
+                <description type="full">Expected Result:
+                    1 x Link Info Packages:
+                    &#xD; 1 with a link from the collection doi identifier to the publication identifier
+                    &#xD; NO link from the collection local identifier to the publication identifier</description>
+                <relatedInfo type="publication">
+                    <identifier type="doi">10.4567.dd</identifier>
+                    <relation type="isReviewedBy"/>
+                </relatedInfo>
+                <relatedObject>
+                    <key>AUTestingRecords2ScholixRecords39test</key>
+                    <relation type="references"/>
+                </relatedObject>
+            </collection>
+        </registryObject>
+</registryObjects>

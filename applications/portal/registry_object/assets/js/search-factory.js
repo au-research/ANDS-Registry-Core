@@ -68,21 +68,21 @@
 
             default_filters: {
                 'rows': 15,
-                'sort': 'list_title_sort asc',
+                'sort': 'list_title asc',
                 'class': 'collection'
             },
 
             sort: [
                 {value: 'score desc', label: 'Relevance'},
-                {value: 'list_title_sort asc', label: 'Title A-Z'},
-                {value: 'list_title_sort desc', label: 'Title Z-A'},
+                {value: 'list_title asc', label: 'Title A-Z'},
+                {value: 'list_title desc', label: 'Title Z-A'},
                 {value: 'record_created_timestamp desc', label: 'Date Added  <i class="fa fa-sort-amount-desc"></i>'}
             ],
 
             activity_sort: [
                 {value: 'score desc', label: 'Relevance'},
-                {value: 'list_title_sort asc', label: 'Title A-Z'},
-                {value: 'list_title_sort desc', label: 'Title Z-A'},
+                {value: 'list_title asc', label: 'Title A-Z'},
+                {value: 'list_title desc', label: 'Title Z-A'},
                 {value: 'earliest_year asc', label: 'Commencement <i class="fa fa-sort-amount-asc"></i>'},
                 {value: 'earliest_year desc', label: 'Commencement <i class="fa fa-sort-amount-desc"></i>'},
                 {value: 'latest_year asc', label: 'Completion <i class="fa fa-sort-amount-asc"></i>'},
@@ -97,7 +97,7 @@
                 {'name': 'subject', 'display': 'Subject'},
                 {'name': 'group', 'display': 'Data Provider'},
                 {'name': 'access_rights', 'display': 'Access'},
-                {'name': 'access_methods_ss', 'display': 'Access Method'},
+                {'name': 'access_methods', 'display': 'Access Method'},
                 {'name': 'license_class', 'display': 'Licence'},
                 {'name': 'temporal', 'display': 'Time Period'},
                 {'name': 'spatial', 'display': 'Location'},
@@ -138,7 +138,7 @@
                 {'name': 'help', 'display': '<i class="fa fa-question-circle"></i> Help'}
             ],
 
-            collection_facet_order: ['collection_type','group', 'access_rights', 'access_methods_ss','license_class','type'],
+            collection_facet_order: ['collection_type','group', 'access_rights', 'access_methods','license_class','type'],
             activity_facet_order: ['type', 'activity_status', 'funding_scheme', 'administering_institution', 'funders'],
 
             ingest: function (hash) {

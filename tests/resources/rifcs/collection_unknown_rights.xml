@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+    <registryObject group="AUTestingRecords">
+        <key>AUTESTING_NO_RIGHTS_ELEMENTS_TEST</key>
+        <originatingSource type="">http://demo.ands.org.au/registry/orca/register_my_data</originatingSource>
+        <collection type="collection" dateModified="2013-04-10T23:51:55Z">
+            <name type="abbreviated">
+                <namePart>abbreviatedName</namePart>
+            </name>
+            <name type="alternative">
+                <namePart>alternativeName</namePart>
+            </name>
+            <name type="primary">
+                <namePart>Collection with all RIF v1.6 elements (primaryName)</namePart>
+            </name>
+            <description type="significanceStatement">&amp;lt;p&amp;gt;significanceStatement significanceStatement&amp;lt;/p&amp;gt;</description>
+            <description type="researchSupport">&amp;lt;p&amp;gt;researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport researchSupport&amp;lt;/p&amp;gt;</description>
+            <description type="researchDataProflie">&amp;lt;p&amp;gt;researchDataProflieresea rchDataProflie researchDataP roflieresearchDataProflie researchDataProflie researchDataProflie researchDataProflie researchDataProflie&amp;lt;/p&amp;gt;</description>
+            <description type="researchAreas">&amp;lt;p&amp;gt;researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas researchAreas&amp;lt;/p&amp;gt;</description>
+            <description type="note">&amp;lt;p&amp;gt;note note note note note note note note note note note note note note note note note note note note note note&amp;lt;/p&amp;gt;</description>
+            <description type="logo">&amp;lt;p&amp;gt;https://dl.dropbox.com/u/49073372/LOGO.jpg&amp;lt;/p&amp;gt;</description>
+            <description type="full">&amp;lt;p&amp;gt;full full full full full full full full full full full full full full full full full full&amp;lt;/p&amp;gt;</description>
+            <description type="deliverymethod">&amp;lt;p&amp;gt;deliverymethod deliverymethod deliverymethod deliverymethod deliverymethod deliverymethod deliverymethod deliverymethod deliverymethod deliverymethod deliverymethod deliverymethod deliverymethod deliverymethod&amp;lt;/p&amp;gt;</description>
+            <description type="brief">&amp;lt;p&amp;gt;brief brief brief brief brief brief brief brief brief brief brief brief brief brief brief brief&amp;lt;/p&amp;gt;</description>
+            <description type="lineage">&amp;lt;p&amp;gt;This is the lineage statement for the collection&amp;lt;/p&amp;gt;</description>
+            <description type="local">&amp;lt;p&amp;gt;This is a local statement for the colleciton&amp;lt;/p&amp;gt;</description>
+            <rights>
+                <licence>CC-BY</licence>
+                <accessRights>My Access Rights details are listed here and my data is open</accessRights>
+            </rights>
+            <identifier type="AU-ANL:PEAU">nla.AUTCollection1</identifier>
+            <identifier type="AU-ANL:PEAU">nla.part.12345 </identifier>
+            <dates type="dc.available">
+                <date type="dateFrom" dateFormat="W3CDTF">2013-02-07T00:00:00Z</date>
+            </dates>
+            <dates type="dc.issued">
+                <date type="dateFrom" dateFormat="W3CDTF">2022-03-03T00:00:00Z</date>
+            </dates>
+            <location dateFrom="2013-02-14T00:00:00Z" dateTo="2013-03-02T00:00:00Z">
+                <address>
+                    <electronic type="url" target="landingPage">
+                        <value>https://demo.ands.org.au</value>
+                        <title>My Landing Page for the data</title>
+                    </electronic>
+                    <physical type="postalAddress">
+                        <addressPart type="addressLine">&amp;lt;p&amp;gt; 123 Example St&amp;lt;/p&amp;gt; &amp;lt;p&amp;gt; Canberra ACT 2131&amp;lt;/p&amp;gt;</addressPart>
+                    </physical>
+                    <electronic type="url" target="directDownload">
+                        <value>https://dl.dropboxusercontent.com/u/49073372/RIF16WithError.xml</value>
+                        <title>My Direct Download link</title>
+                        <mediaType>XML</mediaType>
+                        <byteSize>3KB</byteSize>
+                    </electronic>
+                </address>
+                <spatial type="kmlPolyCoords">119.707031,-20.468189 152.753906,-32.101190 119.707031,-20.468189</spatial>
+            </location>
+            <coverage>
+                <temporal>
+                    <date type="dateFrom" dateFormat="W3CDTF">2013-01-30T00:00:00Z</date>
+                    <date type="dateTo" dateFormat="W3CDTF">2017-03-03T00:00:00Z</date>
+                </temporal>
+                <spatial type="kmlPolyCoords">143.085938,-22.917923</spatial>
+                <spatial type="kmlPolyCoords">121.640625,-35.173808 150.644531,-20.961440 117.246094,-14.093957 110.390625,-26.273714 127.441406,-20.961440 128.847656,-27.527758 121.640625,-35.173808</spatial>
+            </coverage>
+            <coverage>
+                <spatial type="text">Some place in Australia</spatial>
+            </coverage>
+            <relatedObject>
+                <key>Collection1</key>
+                <relation type="isDerivedFrom">
+                    <description>relationshipdescription</description>
+                </relation>
+            </relatedObject>
+            <relatedObject>
+                <key>AUTParty1</key>
+                <relation type="isManagedBy">
+                    <description>relationshipdescription</description>
+                </relation>
+            </relatedObject>
+            <relatedObject>
+                <key>AUTParty2</key>
+                <relation type="isOwnedBy">
+                    <description>relationshipdescription</description>
+                </relation>
+            </relatedObject>
+            <relatedObject>
+                <key>AUTParty3</key>
+                <relation type="hasPrincipalInvestigator">
+                    <description>relationshipdescription</description>
+                </relation>
+            </relatedObject>
+            <relatedObject>
+                <key>AUTParty4</key>
+                <relation type="hasPrincipalInvestigator">
+                    <description>relationshipdescription</description>
+                </relation>
+            </relatedObject>
+            <relatedObject>
+                <key>AUTParty5</key>
+                <relation type="hasCollector">
+                    <description>relationshipdescription</description>
+                </relation>
+            </relatedObject>
+            <relatedObject>
+                <key>Service1</key>
+                <relation type="isDerivedFrom">
+                    <description>These two have quite a serious relationship going on</description>
+                </relation>
+            </relatedObject>
+            <relatedObject>
+                <key>Activity1</key>
+                <relation type="hasValueAddedBy">
+                    <description>Very casual</description>
+                </relation>
+            </relatedObject>
+            <relatedObject>
+                <key>Collection28</key>
+                <relation type="hasPart"/>
+            </relatedObject>
+            <relatedObject>
+                <key>MON:be2d9ab52bb74712850b5900180cbc5d</key>
+                <relation type="hasCollector"/>
+            </relatedObject>
+            <subject type="local">localSubject</subject>
+            <subject type="anzsrc-seo">830201</subject>
+            <subject type="anzsrc-for">0303</subject>
+            <subject type="AU-ANL:PEAU">au-anl:peau subject</subject>
+            <subject type="orcid">0000-0000-0001</subject>
+            <relatedInfo type="metadata">
+                <title>Related Info Title</title>
+                <identifier type="doi">10.1234567882484</identifier>
+                <format>
+                    <identifier type="mediaType">formatidentifier</identifier>
+                </format>
+                <notes>related info notes</notes>
+            </relatedInfo>
+            <relatedInfo type="dataQualityInformation">
+                <title>relatedinfo Title</title>
+                <identifier type="infouri">infouri.12345</identifier>
+                <notes>Related Info Notes</notes>
+            </relatedInfo>
+            <relatedInfo type="publication">
+                <title>Related Info Title</title>
+                <identifier type="doi">10.123123123</identifier>
+                <relation type="hasPart"/>
+            </relatedInfo>
+            <relatedInfo type="website">
+                <title>Stuff</title>
+                <identifier type="uri">http://www.smithy.com</identifier>
+                <relation type="hasAssociationWith">
+                    <description>A website relationship</description>
+                </relation>
+            </relatedInfo>
+            <relatedInfo type="party">
+                <title>AUTParty6</title>
+                <identifier type="orcid">orcid.AUTParty6</identifier>
+                <relation type="hasCollector"/>
+            </relatedInfo>
+            <relatedInfo type="reuseInformation">
+                <title>Example Reuse Information</title>
+                <identifier type="uri">http://exampleofreuse.com</identifier>
+                <notes>To reuse this data following the steps outlined at the URL</notes>
+            </relatedInfo>
+            <relatedInfo type="publication">
+                <title>Another Publication Example</title>
+                <identifier type="issn">789879.3.34.ISSN</identifier>
+            </relatedInfo>
+            <relatedInfo type="service">
+                <title>Related Service</title>
+                <identifier type="issn">789879.3.34.ISSN</identifier>
+            </relatedInfo>
+            <citationInfo>
+                <citationMetadata>
+                    <identifier type="doi">10.123123123</identifier>
+                    <title>Citation Title</title>
+                    <version>V0.2</version>
+                    <placePublished>Australia</placePublished>
+                    <publisher>Some Example Publisher</publisher>
+                    <url>http://www.exapmle.com</url>
+                    <context>Context</context>
+                    <contributor seq="1">
+                        <namePart type="given">Joe Blogs</namePart>
+                    </contributor>
+                    <date type="created">12-12-2001</date>
+                </citationMetadata>
+            </citationInfo>
+        </collection>
+    </registryObject>
+
+</registryObjects>

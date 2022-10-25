@@ -116,7 +116,9 @@ class Tags_Extension extends ExtensionBase{
 				}else $data['type'] = $type;
 				$this->db->insert('registry_object_tags', $data);
 				$this->markTag(1);
-                $this->ro->sync();
+                if ($record = \ANDS\Repository\RegistryObjectsRepository::getPublishedByKey($this->ro->key)) {
+                    \ANDS\Registry\Importer::instantSyncRecord($record);
+                }
 				return true;
 			}else return false;
 	
@@ -146,7 +148,12 @@ class Tags_Extension extends ExtensionBase{
 			$this->markTag(0);
 		}
 		$this->removeTagDB($tag);
-        $this->ro->update_field_index('tag');
+
+        // regenerate the tags in portal index
+        if ($record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($this->ro->id)) {
+            \ANDS\Registry\Providers\RIFCS\RIFCSIndexProvider::regenerateField($record, 'tags');
+            \ANDS\Util\SolrIndex::getClient('portal')->commit();
+        }
 		return true;
 	}
 }

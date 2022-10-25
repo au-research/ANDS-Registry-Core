@@ -3,7 +3,9 @@
 use ANDS\Cache\Cache;
 use ANDS\Cache\CacheManager;
 use ANDS\Registry\Providers\ORCID\ORCIDRecordsRepository;
-use GraphAware\Neo4j\Client\ClientBuilder;
+use ANDS\Registry\Providers\RelationshipProvider;
+use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
+
 
 /**
  * Class Registry_object
@@ -110,7 +112,13 @@ class Registry_object extends MX_Controller
                     ->render('deleted_record');
                 return;
             }else{
-                $this->displayRecord($ro);
+                if($ro->core['status'] === "PUBLISHED" || $this->ro->canUserPreview($ro->core['data_source_id'])){
+                    $this->displayRecord($ro);
+                }else{
+                    $this->blade
+                        ->set('message', "Viewing This Record Is Limited To Data Source Admins")
+                        ->render('insufficient_user_access');
+                }
             }
 
 
@@ -247,13 +255,13 @@ class Registry_object extends MX_Controller
 
 
         // Determine resolved party identifiers
-        $resolvedPartyIdentifiers = array();
+       $resolvedPartyIdentifiers = array();
+        //to do - use mycelium to find these??
         if (isset($ro->relationships['researchers'])) {
-            foreach ($ro->relationships['researchers']['docs'] as $rel) {
-                if(is_array($rel)) {
-                    $rels = is_array($rel['relation_origin']) ? $rel['relation_origin'] : array($rel['relation_origin']);
-                    if ((in_array('IDENTIFIER', $rels) || in_array('IDENTIFIER REVERSE', $rels)) && $rel['from_id'] != '' && array_key_exists('relation_identifier_identifier', $rel)) {
-                        $resolvedPartyIdentifiers[] = $rel['relation_identifier_identifier'];
+            foreach ($ro->relationships['researchers']['contents'] as $relations) {
+                foreach($relations['relations'] as $relation){
+                    if($relation['relation_origin'] == 'RelatedInfo'){
+                        $resolvedPartyIdentifiers[] = $relation['to_identifier'];
                     }
                 }
             }
@@ -287,7 +295,7 @@ class Registry_object extends MX_Controller
         //Do the rendering
         $this->blade
             ->set('scripts', array('view', 'view_app', 'tag_controller'))
-            ->set('lib', array('jquery-ui', 'dynatree', 'qtip', 'map'))
+            ->set('lib', array('jquery-ui', 'qtip', 'map'))
             ->set('relatedLimit', 5)
             ->set('ro', $ro)
             ->set('resolvedPartyIdentifiers', $resolvedPartyIdentifiers)
@@ -359,6 +367,7 @@ class Registry_object extends MX_Controller
         // Redirection switchboard
         switch ($type) {
             case "endnote":
+                var_dump($exportUrl);
                 redirect($exportUrl);
                 break;
             case "endnote_web":
@@ -378,10 +387,11 @@ class Registry_object extends MX_Controller
     {
         //initialisation to prevent logic error
         $related = $ro->relationships;
-
+        //var_dump($ro->relationships);
+      //  return $related;
         if (!$related) $related = [];
 
-        foreach ($related as &$rel) {
+     /*   foreach ($related as &$rel) {
             foreach ($rel['docs'] as &$doc) {
                 $doc['display_relationship'] = [];
                 if (array_key_exists('relation', $doc)) {
@@ -398,7 +408,7 @@ class Registry_object extends MX_Controller
                 $doc['display_description'] = '';
             }
 
-        }
+        } */
 
         // search class for constructing search queries
         $searchClass = $ro->core['class'];
@@ -440,7 +450,7 @@ class Registry_object extends MX_Controller
             $related[$rr]['searchUrl'] = constructPortalSearchQuery($query);
 
             // fix count in case not all records are synced correctly
-            if (array_key_exists('count', $related[$rr]) && $related[$rr]['count'] > 5) {
+       /*     if (array_key_exists('count', $related[$rr]) && $related[$rr]['count'] > 5) {
                 $related[$rr]['count'] = $this->getSolrCountForQuery($query);
             } elseif (!array_key_exists('count', $related[$rr])) {
                 $related[$rr]['count'] = 0;
@@ -452,12 +462,12 @@ class Registry_object extends MX_Controller
 
             if ($rr == "researchers" || $rr == "organisations") {
                 $related[$rr]['docs'] = $this->researcherSort($related[$rr]['docs']);
-            }
+            } */
         }
 
         // Fix duplicate researchers display value TODO: investigate why
-        $related['researchers']['docs'] = collect($related['researchers']['docs'])
-            ->unique()->toArray();
+       // $related['researchers']['contents'] = collect($related['researchers']['contents'])
+         //   ->unique()->toArray();
 
         return $related;
     }
@@ -493,70 +503,85 @@ class Registry_object extends MX_Controller
                 ->render('registry_object/preview');
         } elseif ($this->input->get('identifier_relation_id')) {
 
-            //hack into the registry network and grab things
-            //@todo: figure things out for yourself
-
-
-
-            $rdb = $this->load->database('registry', true);
-            $result = $rdb->get_where('registry_object_identifier_relationships',
-                array('id' => $this->input->get('identifier_relation_id')));
-
-
-            if ($result->num_rows() > 0) {
-                $fr = $result->first_row();
-
-                $ro = $this->ro->getByID($fr->registry_object_id);
-                monolog(
-                    array(
-                        'event' => 'portal_preview_identifier',
-                        'record' => $this->getRecordFields($ro),
-                        'identifier_relation_id' => $this->input->get('identifier_relation_id')
-                    ),
-                    'portal', 'info'
-                );
-
-
-                $ro = false;
-
-                $pullback = false;
-
-                //ORCID "Pull back"
-                if ($fr->related_info_type == 'party' && $fr->related_object_identifier_type == 'orcid' && isset($fr->related_object_identifier)) {
-
-                    $orcid = ORCIDRecordsRepository::obtain($fr->related_object_identifier);
-                    if($orcid != null){
-                        $bio = json_decode($orcid->record_data, true);
-                        $pullback = [
-                            'name' => $orcid->full_name,
-                            'bio' => $bio,
-                            'bio_content' => $bio['person']['biography']['content'],
-                            'orcidRecord' => $orcid,
-                            'orcid' => $orcid->orcid_id
-                        ];
-                    }
-                    $filters = array('identifier_value' => $fr->related_object_identifier);
-                    $ro = $this->ro->findRecord($filters);
-                }
-                $this->blade
-                    ->set('record', $fr)
-                    ->set('ro', $ro)
-                    ->set('pullback', $pullback)
-                    ->render('registry_object/preview-identifier-relation');
+            $input = $this->input->get('identifier_relation_id');
+            $input = urldecode($input);
+            $input_array = json_decode($input);
+            $input_array->connections_preview_div="";
+            $title = $input_array->to_title;
+            $connections_preview_div = "";
+            $relation_url ="";
+            $resolved_identifier = IdentifierProvider::format($input_array->to_identifier, $input_array->to_identifier_type);
+            $identifier_type = "";
+            $identifier_icon = "";
+            if(isset($resolved_identifier['display_text'])){
+                $identifier_type =  $resolved_identifier['display_text'];
             }
+            if(isset($resolved_identifier['display_icon'])){
+                $identifier_icon =  $resolved_identifier['display_icon'];
+            }
+            if(isset($resolved_identifier['href'])){
+                $relation_url =  $resolved_identifier['href'];
+            }
+            elseif(isset($input_array->to_url)){
+                $relation_url = $input_array->to_url;
+            }
+            else{
+                foreach ($input_array->relations as $i) {
+                    if(isset($i->relation_url)){
+                        $relation_url = $i->relation_url;
+                    }
+                }
+            }
+            if($relation_url !== ""){
+                $title = '<a href="'.$relation_url.'">'.$title."</a></br>";
+                $identifier = '<a href="'.$relation_url.'">'.$input_array->to_identifier.$identifier_icon."</a></br>";
+            }else{
+                $identifier =$input_array->to_identifier.$identifier_icon."</br>";
+            }
+            $identifiers_div = "<h4>Identifier:</h4>".$identifier_type .": ". $identifier;
+            $input_array->connections_preview_div = $identifiers_div;
+            $fr= $input_array;
+            $ro = false;
+            $pullback = false;
+
+            //ORCID "Pull back"
+            if ($fr->to_type == 'party' && $fr->to_identifier_type == 'orcid' && isset($fr->to_identifier)) {
+
+                $pullback = $this->ro->resolveIdentifier('orcid', $fr->to_identifier);
+                $filters = array('identifier_value' => $fr->to_identifier);
+                $ro = $this->ro->findRecord($filters);
+            }
+
+            //ROR "Pull back"
+
+            if ($fr->to_type == 'group' && $fr->to_identifier_type == 'ror' && isset($fr->to_identifier)) {
+
+                $pullback = $this->ro->resolveIdentifier('ror', $fr->to_identifier);
+                $filters = array('identifier_value' => $fr->to_identifier);
+                $ro = $this->ro->findRecord($filters);
+            }
+            // RDA-703 get related data using the RelationshipProvider
+            $this->blade
+                ->set('record', $input_array )
+                ->set('related_data' , RelationshipProvider::getRelatedDataToIdentifiers($input_array->to_identifier, $input_array->to_identifier_type))
+                ->set('ro', $ro)
+                ->set('pullback', $pullback)
+                ->render('registry_object/preview-identifier-relation');
+
         } else {
             if ($this->input->get('identifier_doi')) {
                 $identifier = $this->input->get('identifier_doi');
-
+                $identifier_type = $this->input->get('identifier_doi_type');
                 //DOI "Pullback"
                 $pullback = $this->ro->resolveIdentifier('doi', $identifier);
+                $pullback['identifier_doi_type'] =  $identifier_type;
                 $ro = $this->ro->findRecord(array('identifier_value' => $identifier));
 
                 monolog(
                     array(
                         'event' => 'portal_preview_doi',
                         'record' => $ro ? $this->getRecordFields($ro) : null,
-                        'identifier_doi' => $this->input->get('identifier_doi')
+                        'identifier_doi' => $this->input->get('identifier_doi'),
                     ),
                     'portal', 'info'
                 );
@@ -865,7 +890,6 @@ class Registry_object extends MX_Controller
 
         $content = curl_post(base_url() . 'registry/services/rda/addTag', $fields,
             array('header' => 'multipart/form-data'));
-        $this->_dropCache($data['id']);
 
         monolog([
             'event' => 'portal_tag_add',
@@ -1265,7 +1289,6 @@ class Registry_object extends MX_Controller
                 'reuse-list',
                 'quality-list',
                 'dates-list',
-                'connectiontree',
                 'related-objects-list',
                 'spatial-info',
                 'subjects-list',
@@ -1274,7 +1297,7 @@ class Registry_object extends MX_Controller
             ),
             'aside' => array('rights-info', 'contact-info'),
             'view_headers' => array('title', 'related-parties'),
-            'facet' => array('spatial', 'group', 'license_class', 'access_methods_ss','type', 'temporal', 'access_rights'),
+            'facet' => array('spatial', 'group', 'license_class', 'access_methods','type', 'temporal', 'access_rights'),
             'activity_facet' => array(
                 'type',
                 'activity_status',
@@ -1283,25 +1306,5 @@ class Registry_object extends MX_Controller
                 'funders'
             )
         );
-    }
-
-    /**
-     * Dropping the cache of this registry object ID
-     * todo determine the nessessity of this function
-     *
-     * @param $ro_id
-     */
-    function _dropCache($ro_id)
-    {
-        $api_id = 'ro-api-' . $ro_id . '-portal';
-        $portal_id = 'ro-portal-' . $ro_id;
-        $ci =& get_instance();
-        $ci->load->driver('cache');
-        try {
-            $ci->cache->file->delete($api_id);
-            $ci->cache->file->delete($portal_id);
-        } catch (Exception $e) {
-
-        }
     }
 }

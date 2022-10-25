@@ -1,177 +1,255 @@
-<?php if (!defined('BASEPATH')) {
+<?php
+use ANDS\Mycelium\RelationshipSearchService;
+use ANDS\Repository\RegistryObjectsRepository as Repo;
+if (!defined('BASEPATH')) {
     exit('No direct script access allowed');
 }
 require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_ro_handler.php');
 
 /**
  * Class:  relationships handler
- * Getting data from the relations index instead of the database call
+ * Getting data from the RelationshipSearchService
  *
- * @author: Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author: Liz Woods <liz.woods@ardc.edu.au>
  */
 class Relationships extends ROHandler
 {
+    // get a total of relationships to check if graph should be displayed
+    private $related_count;
 
+    private $from_id;
     /**
      * Primary handle function
      *
      * @return array
      */
-    public function handle()
+    public function handle($params='')
     {
-        $result = array(
-            'data' => $this->getRelatedFromIndex('data'),
-            'software' => $this->getRelatedFromIndex('software'),
-            'publications' => $this->getRelatedFromIndex('publications'),
+        $this->related_count = 0;
 
-            'programs' => $this->getRelatedFromIndex('programs'),
-            'grants_projects' => $this->getRelatedFromIndex('grants_projects'),
+        // TODO
+        // temporary fallback to published relationships if exists
+        // remove switch once DRAFT records are indexed by Mycelium
+        $this->from_id = $this->ro->id;
+        if(!Repo::isPublishedStatus($this->ro->status)){
+            $publishedRecord = Repo::getPublishedByKey($this->ro->key);
+            if($publishedRecord != null){
+                $this->from_id = $publishedRecord->id;
+            }
+        }
 
-            'services' => $this->getRelatedFromIndex('services'),
-            'websites' => $this->getRelatedFromIndex('websites'),
-            'researchers' => $this->getRelatedFromIndex('researchers'),
-
-            'organisations' => $this->getRelatedFromIndex('organisations')
-
-        );
-
-        return $result;
+        return [
+            'data' => $this->getRelatedData(),
+            'software' => $this->getRelatedSoftware(),
+            'publications' => $this->getRelatedPublication(),
+            'programs' => $this->getRelatedPrograms(),
+            'grants_projects' =>$this->getRelatedGrantsProjects(),
+            'services' => $this->getRelatedService(),
+            'websites' => $this->getRelatedWebsites(),
+            'researchers' => $this->getRelatedResearchers(),
+            'organisations' => $this->getRelatedOrganisations(),
+            'related_count' => $this->related_count
+        ];
     }
 
     /**
-     * @param $type
+     * Obtain related data from SOLR
      * @return array
      */
-    private function getRelatedFromIndex($type)
-    {
-        $relationships = $this->searchById($type, $this->ro->id);
+    private function getRelatedData() {
 
-        // get my duplicates and search for their relationships too
-        $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($this->ro->id);
-        $duplicates = $record
-            ->getDuplicateRecords()
-            ->pluck('registry_object_id')
-            ->toArray();
-
-        // early return if there's no duplicate records found
-        if (count($duplicates) == 0) {
-           return $relationships;
-        }
-
-        // find duplicate relationships
-        $idQuery = implode(' OR ', $duplicates);
-        $duplicateRelationships = $this->searchById($type, $idQuery);
-
-        // return if there's no additional relationships found
-        if ($duplicateRelationships['count'] == 0) {
-            return $relationships;
-        }
-
-        // check for duplicate that already points to existing records
-        $existing_to_ids = collect($relationships['docs'])
-            ->pluck('to_id')->toArray();
-        $existing_to_identifiers = collect($relationships['docs'])
-            ->pluck('to_identifier')->toArray();
-
-        // add the relationships that is not already in the existing
-        foreach ($duplicateRelationships['docs'] as $relations) {
-            if (!in_array($relations['to_id'], $existing_to_ids) || (array_key_exists('to_identifier', $relations) && !in_array($relations['to_identifier'], $existing_to_identifiers))) {
-                $relationships['docs'][] = $relations;
-                $relationships['count']++;
-            }
-        }
-
-        return $relationships;
+        $result = RelationshipSearchService::search([
+            'from_id' => $this->from_id,
+            'to_class' => 'collection',
+            'not_to_type' => 'software',
+            'to_title' => '*'
+        ], ['boost_to_group' => $this->ro->group ,'rows' => 5]);
+        $this->related_count += $result->total;
+        return $result->toArray();
     }
 
-    private function searchById($type, $idQuery)
-    {
-        $ci =& get_instance();
-        $ci->load->library('solr');
+    /**
+     * Obtain related software from SOLR
+     * @return array
+     */
+    private function getRelatedSoftware() {
 
-        if ($idQuery === null) {
-            $idQuery = $this->ro->id;
-        }
-        $ci->solr
-            ->init()
-            ->setCore('relations')
-            ->setOpt('rows', 5)
-            ->setOpt('fq', "+from_id:({$idQuery})");
-        switch ($type) {
-            case "data":
-                $ci->solr->setOpt('fq', '+to_class:collection');
-                $ci->solr->setOpt('fq', '-to_type:software');
-                break;
-            case "software":
-                $ci->solr->setOpt('fq', '+to_class:collection');
-                $ci->solr->setOpt('fq', '+to_type:software');
-                break;
-            case "programs":
-                $ci->solr->setOpt('fq', '+to_class:activity');
-                $ci->solr->setOpt('fq', '+to_type:program');
-                break;
-            case "grants_projects":
-                $ci->solr->setOpt('fq', '+to_class:activity');
-                $ci->solr->setOpt('fq', '-to_type:program');
-                break;
-            case "services":
-                $ci->solr->setOpt('fq', '+to_class:service');
-                break;
-            case "researchers":
-                $ci->solr->setOpt('fq',
-                    '+to_class:party OR relation_origin:IDENTIFIER');
-                $ci->solr->setOpt('fq', '-to_type:group');
-                //boost PrincipalInvestigator type relationships
-                $ci->solr->setOpt('defType', 'edismax');
-                $ci->solr->setOpt('bq', 'relation:*PrincipalInvestigator*');
-                $ci->solr->setOpt('boost', '5');
-                $ci->solr->setOpt('sort', 'score desc, to_title asc');
-                break;
-            case "organisations":
-                $ci->solr->setOpt('fq', '+to_class:party');
-                $ci->solr->setOpt('fq', '+to_type:group');
-                //exclude relation with identifier (because they fall into researchers category)
-                $ci->solr->setOpt('fq', '-relation_identifier_identifier:*');
-                break;
-            case "publications":
-                $ci->solr->setOpt('fq', '+to_class:publication');
-                $ci->solr->setOpt('rows', 999);
-                break;
-            case "websites":
-                $ci->solr->setOpt('fq', '+to_class:website');
-                $ci->solr->setOpt('rows', 999);
-                break;
-            default:
-                // returns 0 for any other case
-                $ci->solr->setOpt('fq', '+to_class:UNKNOWN');
-                break;
-        }
+        $result = RelationshipSearchService::search([
+            'from_id' => $this->from_id,
+            'to_class' => 'collection',
+            'to_type' => 'software',
+            'to_title' => '*'
+        ], ['boost_to_group' => $this->ro->group , 'rows' => 5]);
+        $this->related_count += $result->total;
+        return $result->toArray();
+    }
 
-        $solrResult = $ci->solr->executeSearch(true);
+    /**
+     * Obtain related programs from SOLR
+     * @return array
+     */
+    private function getRelatedPrograms() {
 
-        // default result
-        $result = array(
-            'count' => 0,
-            'docs' => []
-        );
+        $result = RelationshipSearchService::search([
+            'from_id' => $this->from_id,
+            'to_class' => 'activity',
+            'to_type' => 'program',
+            'to_title' => '*'
+        ], ['boost_to_group' => $this->ro->group , 'rows' => 5]);
+        $this->related_count += $result->total;
+        $programs = $result->toArray();
 
-        if ($solrResult &&
-            array_key_exists('response',
-                $solrResult) && $solrResult['response']['numFound'] > 0
-        ) {
-            $result['count'] = $solrResult['response']['numFound'];
-            foreach ($solrResult['response']['docs'] as $doc) {
-                $data = $doc;
-                $result['docs'][] = $data;
+        //obtaining to_funder for each of the program
+        foreach($programs['contents'] as $key=>$grant){
+            // if the grant is not a related Object
+            if ($grant['to_identifier_type'] === "ro:id") {
+                $result2 = RelationshipSearchService::search([
+                    'from_id' => $grant["to_identifier"],
+                    'to_class' => 'party',
+                    'relation_type' =>  ['isFunderOf', 'isFundedBy']
+                ], ['rows' => 1]);
+                $funded_by = $result2->toArray();
+                // the funder's title is the to_title
+                if (array_key_exists('contents', $funded_by) && count($funded_by['contents']) > 0) {
+                    $programs['contents'][$key]["to_funder"] = $funded_by['contents'][0]["to_title"];
+                }
+            }else{ // RDA-758 it should still have a funder but we need to search from their end
+                $result2 = RelationshipSearchService::search([
+                    'to_identifier' => $grant["to_identifier"],
+                    'from_class' => 'party',
+                    'relation_type' =>  ['isFunderOf', 'isFundedBy']
+                ], ['rows' => 1]);
+                $funded_by = $result2->toArray();
+                // the funder's title is the from_title
+                if (array_key_exists('contents', $funded_by) && count($funded_by['contents']) > 0) {
+                    $programs['contents'][$key]["to_funder"] = $funded_by['contents'][0]["from_title"];
+                }
             }
         }
+        return $programs ;
+    }
 
-        /**
-         * Find all relations for this object
-         * Find any extra relations that goes to different objects from my duplicates
-         */
+    /**
+     * Obtain related activity that are grants or projects from SOLR
+     * @return array
+     */
+    private function getRelatedGrantsProjects() {
 
-        return $result;
+        $result = RelationshipSearchService::search([
+            'from_id' => $this->from_id,
+            'to_class' => 'activity',
+            'to_title' => '*',
+            'not_to_type' => 'program'
+        ], ['boost_to_group' => $this->ro->group, 'rows' => 5]);
+        $this->related_count += $result->total;
+        $grants_projects = $result->toArray();
+
+        foreach($grants_projects['contents'] as $key=>$grant){
+            if($grant["to_identifier_type"] === "ro:id"){
+                $result2 = RelationshipSearchService::search([
+                    'from_id' => $grant["to_identifier"],
+                    'to_class' => 'party',
+                    'relation_type' =>  ['isFunderOf', 'isFundedBy']
+                ], ['rows' => 1]);
+                $funded_by = $result2->toArray();
+                // the funder's title is the to_title
+                if(isset($funded_by['contents']) && count($funded_by['contents'])>0){
+                    $grants_projects['contents'][$key]["to_funder"] = $funded_by['contents'][0]["to_title"];
+                }
+            }else{// RDA-758 it should still have a funder but we need to search from their end
+                $result2 = RelationshipSearchService::search([
+                    'to_identifier' => $grant["to_identifier"],
+                    'from_class' => 'party',
+                    'relation_type' =>  ['isFunderOf', 'isFundedBy']
+                ], ['rows' => 1]);
+                $funded_by = $result2->toArray();
+                // the funder's title is the from_title
+                if(isset($funded_by['contents']) && count($funded_by['contents'])>0){
+                    $grants_projects['contents'][$key]["to_funder"] = $funded_by['contents'][0]["from_title"];
+                }
+            }
+        }
+        return $grants_projects ;
+    }
+
+    /**
+     * Obtain related publications from SOLR
+     * @return array
+     */
+    private function getRelatedPublication() {
+
+        $result = RelationshipSearchService::search([
+            'from_id' => $this->from_id,
+            'to_class' => 'publication'
+        ], ['boost_to_group' => $this->ro->group, 'rows' =>100]);
+        $this->related_count += $result->total;
+        return $result->toArray();
+    }
+
+    /**
+     * Obtain related services from SOLR
+     * @return array
+     */
+    private function getRelatedService() {
+
+        $result = RelationshipSearchService::search([
+            'from_id' => $this->from_id,
+            'to_class' => 'service',
+            'to_title' => '*'
+        ], ['boost_to_group' => $this->ro->group, 'rows' => 5]);
+        $this->related_count += $result->total;
+        return $result->toArray();
+    }
+
+    /**
+     * Obtain related websites from SOLR
+     * @return array
+     */
+    private function getRelatedWebsites() {
+
+        $result = RelationshipSearchService::search([
+            'from_id' => $this->from_id,
+            'to_class' => 'website'
+        ], ['boost_to_group' => $this->ro->group ,'rows' =>100]);
+        $this->related_count += $result->total;
+        return $result->toArray();
+    }
+
+    /**
+     * Obtain related researchers from SOLR
+     * relationships where there's a hasPrincipalInvestigator edge is ranked higher via boosted query
+     * @return array
+     */
+    // RDA-627 make boost relation_type an array and boost decrease by the order in the array
+    private function getRelatedResearchers() {
+
+        $result = RelationshipSearchService::search([
+            'from_id' => $this->from_id,
+            'to_class' => 'party',
+            'not_to_type' => 'group',
+            'to_title' => '*',
+        ], ['boost_to_group' => $this->ro->group ,'boost_relation_type' =>
+            ['Principal Investigator','hasPrincipalInvestigator','Chief Investigator'] ,
+            'rows' => 5, 'sort' => 'score desc, to_title asc']);
+        $this->related_count += $result->total;
+        return $result->toArray();
+
+    }
+
+    /**
+     * Obtain related organisations from SOLR
+     * @return array
+     */
+    private function getRelatedOrganisations() {
+
+        $result = RelationshipSearchService::search([
+            'from_id' => $this->from_id,
+            'to_class' => 'party',
+            'to_type' => 'group',
+            'to_title' => '*'
+        ], ['rows' => 5]);
+        $this->related_count += $result->total;
+        return $result->toArray();
     }
 
 }

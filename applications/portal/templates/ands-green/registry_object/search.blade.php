@@ -122,23 +122,25 @@
     </div> -->
     <div class="panel-body swatch-white">
         <div ng-repeat="(name, value) in filters" ng-if="showFilter(name)">
-            <h4 ng-if="name!='q' && name !='nottype' && name!='related_collection_id'&& name!='related_party_one_id'&& name!='related_party_multi_id' && name!='related_activity_id'&& name!='related_service_id'|| (name=='q' && !filters.cq)">[[name | filter_name]]</h4>
-            <h4 ng-if="name!='nottype' && name=='related_collection_id'||name=='related_party_one_id'||name=='related_party_multi_id' ||name=='related_service_id' ||name=='related_activity_id'" >Related to</h4>
+            <h4 ng-if="name!='q' && name !='nottype' && name!='related_collection_id'
+            && name!='related_party_one_id'&& name!='related_party_multi_id'
+            && name!='related_activity_id'&& name!='related_service_id' && name!='related_object_id' || (name=='q' && !filters.cq)">[[name | filter_name]]</h4>
+            <h4 ng-if="name!='nottype' && name=='related_object_id'" >Related to</h4>
 
             <h4 ng-if="name=='q' && prefilters.cq">Search Terms</h4>
             <ul class="listy no-bottom" ng-show="isArray(value) && (name!='anzsrc-for' && name!='anzsrc-seo' && name!='anzsrc-for-2020' && name!='anzsrc-seo-2020')">
                 <li ng-repeat="v in value track by $index"  class="listTruncate">
-                    <a href="" ng-click="toggleFilter(name, v, true)" ng-if="name=='related_collection_id'|| name=='related_party_one_id'||name=='related_party_multi_id' || name=='related_service_id' || name=='related_activity_id'"><span resolve-ro roid="v"></span><small><i class="fa fa-remove" tip="Remove Item"></i></small>  </a>
+                    <a href="" ng-click="toggleFilter(name, v, true)" ng-if="name=='related_object_id'"><span resolve-ro roid="v"></span><small><i class="fa fa-remove" tip="Remove Item"></i></small>  </a>
                     <a href="" ng-click="toggleFilter(name, v, true)" ng-if="name=='nottype'"><span resolve-ro roid="v"></span><small><i class="fa fa-remove" tip="Remove Item"></i></small>  </a>
-                    <a href="" ng-click="toggleFilter(name, v, true)" ng-if="name!='related_collection_id'&& name!='related_party_one_id'&& name!='related_party_multi_id' && name!='related_service_id' && name!='related_activity_id' && name!='nottype'">[[ v | formatFacet | truncate:30 ]]<small><i class="fa fa-remove" tip="Remove Item"></i></small> </a>
+                    <a href="" ng-click="toggleFilter(name, v, true)" ng-if="name!='related_object_id'&& name!='nottype'">[[ v | formatFacet | truncate:30 ]]<small><i class="fa fa-remove" tip="Remove Item"></i></small> </a>
                 </li>
             </ul>
             <ul class="listy no-bottom" ng-show="isArray(value)===false && (name!='anzsrc-for' && name!='anzsrc-seo' && name!='anzsrc-for-2020' && name!='anzsrc-seo-2020') && name!='nottype'">
                 <li>
                     <a href="" ng-click="toggleFilter(name, value, true)">
-                        <span ng-if="name!='related_party_one_id'&&name!='q'&&name!='related_collection_id'&& name!='related_party_one_id'&& name!='related_party_multi_id' && name!='related_service_id' && name!='related_activity_id'">[[ value | formatFacet | truncate:30  ]]</span>
+                        <span ng-if="name!='related_object_id'&&name!='q'">[[ value | formatFacet | truncate:30  ]]</span>
                         <span ng-if="name!='related_party_one_id'&&name=='q'" tip="<b>Query</b>:[[value]]">[[ value | truncate:30  ]]</span>
-                        <span ng-if="name=='related_collection_id' || name=='related_party_one_id' || name=='related_party_multi_id' || name=='related_service_id' || name=='related_activity_id' " resolve-ro roid="value">[[value | truncate:30 ]]</span>
+                        <span ng-if="name=='related_object_id'" resolve-ro roid="value">[[value | truncate:30 ]]</span>
                         <small><i class="fa fa-remove" tip="Remove Item"></i></small>
                     </a>
                 </li>
@@ -207,7 +209,7 @@
 
     <div facet-search facets="facets" type="group" ng-if="showFacet('group')"></div>
     <div facet-search facets="facets" type="access_rights" ng-if="showFacet('access_rights')"></div>
-    <div facet-search facets="facets" type="access_methods_ss" ng-if="showFacet('access_methods_ss')"></div>
+    <div facet-search facets="facets" type="access_methods" ng-if="showFacet('access_methods')"></div>
     <div facet-search facets="facets" type="license_class" ng-if="showFacet('license_class')"></div>
     <div facet-search facets="facets" type="administering_institution" ng-if="showFacet('administering_institution')"></div>
     <div facet-search facets="facets" type="funders" ng-if="showFacet('funders')"></div>

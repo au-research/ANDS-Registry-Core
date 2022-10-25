@@ -2,13 +2,12 @@
 
 namespace ANDS\Registry\Providers\RIFCS;
 
-
-use ANDS\Registry\Providers\MetadataProvider;
 use ANDS\Registry\Providers\RIFCSProvider;
 use ANDS\Registry\Relation;
 use ANDS\RegistryObject;
 use ANDS\RegistryObject\Access;
 use ANDS\Util\XMLUtil;
+use ANDS\Mycelium\RelationshipSearchService;
 
 class AccessProvider implements RIFCSProvider
 {
@@ -32,7 +31,7 @@ class AccessProvider implements RIFCSProvider
     public static function get(RegistryObject $record)
     {
         $result = [];
-        $data = MetadataProvider::get($record);
+        $data = $record->getCurrentData()->data;
         foreach (static::$methods as $method) {
             if ($accessMethod = static::getMethod($method, $record, $data)) {
                 $result[$method] = $accessMethod;
@@ -63,7 +62,7 @@ class AccessProvider implements RIFCSProvider
      */
     private static function getMethod($method, RegistryObject $record, $data)
     {
-        $data = $data ?: MetadataProvider::get($record);
+        $data = $data ?: $record->getCurrentData()->data;
 
         switch ($method) {
             case "directDownload":
@@ -105,7 +104,7 @@ class AccessProvider implements RIFCSProvider
     public static function getDirectDownload(RegistryObject $record, $data)
     {
         $result = [];
-        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+        foreach (XMLUtil::getElementsByXPath($data,
             'ro:registryObject/ro:' . $record->class . '/ro:location/ro:address/ro:electronic') AS $loc) {
             $type = (string)$loc['type'];
             $target = (string)$loc['target'];
@@ -131,34 +130,29 @@ class AccessProvider implements RIFCSProvider
             }
         }
 
-        // relationship
-        /* @var $relation Relation */
-        foreach ($data["relationships"] as $relation) {
+        /* relatedObject/relatedInfo of class service with relation_types of
+        * 'supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'
+        * and relation_url contains 'thredds' and 'fileServer'
+        */
+        $service_result = RelationshipSearchService::search([
+                'from_id' => $record->id,
+                'to_class' => 'service',
+                'relation_type' =>  ['supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'],
+                'to_title' => '*',
+                'relation_url_search' => ['thredds','fileServer']
+            ], ['rows' => 50]);
+        $relationships =   $service_result->toArray();
 
-            // relatedObject | relatedInfo = service AND relation @type="supports" | "isPresentedBy" AND the relation/url contains ‘thredds’ AND the relation/url contains ‘fileServer’
-            if (
-                ($relation->prop('to_class') == "service" || $relation->prop("to_related_info_type") == "service")
-                && (in_array($relation->prop('relation_type'), ["supports", "isPresentedBy"]))
-                && str_contains(strtolower($relation->prop('relation_url')), "thredds")
-                && str_contains(strtolower($relation->prop('relation_url')), "fileserver")
-            ) {
-                $result[] = new Access($relation->prop("relation_url"));
-                continue;
-            }
 
-            // When the collection is related to via a service registry object AND relation @type="isSupportedBy" | "presents" | “makesAvailable” AND the relation/url contains ‘thredds’ AND the relation/url contains ‘fileServer’
-            if (
-                ($relation->prop('to_class') == "service")
-                && (in_array($relation->prop('relation_type'), ["isSupportedBy", "presents", "makesAvailable"]))
-                && str_contains(strtolower($relation->prop('relation_url')), "thredds")
-                && str_contains(strtolower($relation->prop('relation_url')), "fileserver")
-            ) {
-                $result[] = new Access($relation->prop("relation_url"));
-                continue;
-            }
-
+        if(isset($relationships['contents']) && count($relationships['contents'])>0 ) {
+             foreach($relationships['contents'] as $relatedService){
+                 foreach($relatedService['relations'] as $relation) {
+                     if(isset($relation['relation_url']))
+                     $result[] = new Access($relation['relation_url']);
+                     continue;
+                 }
+             }
         }
-
         return $result;
     }
 
@@ -172,13 +166,19 @@ class AccessProvider implements RIFCSProvider
     public static function getLandingPage(RegistryObject $record, $data)
     {
         $result = [];
-        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+       // $data = $record->getCurrentData()->data;
+        foreach (XMLUtil::getElementsByXPath($data,
             'ro:registryObject/ro:' . $record->class . '/ro:location/ro:address/ro:electronic') AS $loc) {
             $type = (string)$loc['type'];
             $target = (string)$loc['target'];
             $value = (string)$loc->value;
             if ($type == "url" && $target == "landingPage") {
-                $result[] = new Access($value);
+                $access = new Access($value);
+                $access->setTitle((string)$loc->title);                
+                $access->setMediaType((string)$loc->mediaType);
+                $access->setByteSize((string)$loc->byteSize);
+                $access->setNotes((string)$loc->notes);
+                $result[] = $access;
             }
         }
         return $result;
@@ -198,7 +198,7 @@ class AccessProvider implements RIFCSProvider
         $result = [];
 
         // location/address/electronic @type="url" AND the URL contains ‘wms’
-        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+        foreach (XMLUtil::getElementsByXPath($data,
             'ro:registryObject/ro:' . $record->class . '/ro:location/ro:address/ro:electronic') AS $loc) {
             $type = (string)$loc['type'];
             $value = (string)$loc->value;
@@ -207,26 +207,29 @@ class AccessProvider implements RIFCSProvider
             }
         }
 
-        // relationships
-        /* @var $relation Relation */
-        foreach ($data["relationships"] as $relation) {
-            if (
-                ($relation->prop("to_class") == "service" || $relation->prop("to_related_info_type") == "service")
-                && str_contains(strtolower($relation->prop("relation_url")), "wms")
-                && in_array($relation->prop("relation_type"), ["supports", "isPresentedBy"])
-            ) {
-                $result[] = new Access($relation->prop('relation_url'));
-            }
+        /* relatedObject/relatedInfo of class service with relation_types of
+        * 'supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'
+        * and relation_url contains 'wms'
+        */
+        $service_result = RelationshipSearchService::search([
+            'from_id' => $record->id,
+            'to_class' => 'service',
+            'relation_type' =>  ['supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'],
+            'to_title' => '*',
+            'relation_url_search' => ['wms']
+        ], ['rows' => 50]);
+        $relationships =   $service_result->toArray();
 
-            if (
-                $relation->prop("to_class") == "service"
-                && str_contains(strtolower($relation->prop("relation_url")), "wms")
-                && in_array($relation->prop("relation_type"), ["isSupportedBy", "presents", "makesAvailable"])
-            ) {
-                $result[] = new Access($relation->prop('relation_url'));
+        if(isset($relationships['contents']) && count($relationships['contents'])>0 ) {
+            foreach($relationships['contents'] as $relatedService){
+                foreach($relatedService['relations'] as $relation) {
+                    if(isset($relation['relation_url']))
+                        $result[] = new Access($relation['relation_url']);
+                    continue;
+
+                }
             }
         }
-
         return $result;
     }
 
@@ -235,7 +238,7 @@ class AccessProvider implements RIFCSProvider
         $result = [];
 
         // location/address/electronic @type="url" AND the URL contains ‘wms’
-        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+        foreach (XMLUtil::getElementsByXPath($data,
             'ro:registryObject/ro:' . $record->class . '/ro:location/ro:address/ro:electronic') AS $loc) {
             $type = (string)$loc['type'];
             $value = (string)$loc->value;
@@ -244,26 +247,28 @@ class AccessProvider implements RIFCSProvider
             }
         }
 
-        // relationships
-        /* @var $relation Relation */
-        foreach ($data["relationships"] as $relation) {
-            if (
-                ($relation->prop("to_class") == "service" || $relation->prop("to_related_info_type") == "service")
-                && str_contains(strtolower($relation->prop("relation_url")), "wps")
-                && in_array($relation->prop("relation_type"), ["supports", "isPresentedBy"])
-            ) {
-                $result[] = new Access($relation->prop('relation_url'));
-            }
+        /* relatedObject/relatedInfo of class service with relation_types of
+        * 'supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'
+        * and relation_url contains 'wps'
+        */
+        $service_result = RelationshipSearchService::search([
+            'from_id' => $record->id,
+            'to_class' => 'service',
+            'relation_type' =>  ['supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'],
+            'to_title' => '*',
+            'relation_url_search' => ['wps']
+        ], ['rows' => 50]);
+        $relationships =   $service_result->toArray();
 
-            if (
-                $relation->prop("to_class") == "service"
-                && str_contains(strtolower($relation->prop("relation_url")), "wps")
-                && in_array($relation->prop("relation_type"), ["isSupportedBy", "presents", "makesAvailable"])
-            ) {
-                $result[] = new Access($relation->prop('relation_url'));
+        if(isset($relationships['contents']) && count($relationships['contents'])>0 ) {
+            foreach($relationships['contents'] as $relatedService){
+                foreach($relatedService['relations'] as $relation) {
+                    if(isset($relation['relation_url']))
+                        $result[] = new Access($relation['relation_url']);
+                    continue;
+                }
             }
         }
-
         return $result;
     }
 
@@ -279,7 +284,7 @@ class AccessProvider implements RIFCSProvider
     {
         $result = [];
         // location/address/electronic @type="url" AND the URL contains ‘wcs’
-        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+        foreach (XMLUtil::getElementsByXPath($data,
             'ro:registryObject/ro:' . $record->class . '/ro:location/ro:address/ro:electronic') AS $loc) {
             $type = (string)$loc['type'];
             $value = (string)$loc->value;
@@ -287,27 +292,28 @@ class AccessProvider implements RIFCSProvider
                 $result[] = new Access($value);
             }
         }
+        /* relatedObject/relatedInfo of class service with relation_types of
+         * 'supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'
+         * and relation_url contains 'wcs'
+         */
+        $service_result = RelationshipSearchService::search([
+            'from_id' => $record->id,
+            'to_class' => 'service',
+            'relation_type' =>  ['supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'],
+            'to_title' => '*',
+            'relation_url_search' => ['wcs']
+        ], ['rows' => 50]);
+        $relationships =   $service_result->toArray();
 
-        // relationships
-        /* @var $relation Relation */
-        foreach ($data["relationships"] as $relation) {
-            if (
-                ($relation->prop("to_class") == "service" || $relation->prop("to_related_info_type") == "service")
-                && str_contains(strtolower($relation->prop("relation_url")), "wcs")
-                && in_array($relation->prop("relation_type"), ["supports", "isPresentedBy"])
-            ) {
-                $result[] = new Access($relation->prop('relation_url'));
-            }
-
-            if (
-                $relation->prop("to_class") == "service"
-                && str_contains(strtolower($relation->prop("relation_url")), "wcs")
-                && in_array($relation->prop("relation_type"), ["isSupportedBy", "presents", "makesAvailable"])
-            ) {
-                $result[] = new Access($relation->prop('relation_url'));
+        if(isset($relationships['contents']) && count($relationships['contents'])>0 ) {
+            foreach($relationships['contents'] as $relatedService){
+                foreach($relatedService['relations'] as $relation) {
+                    if(isset($relation['relation_url']))
+                        $result[] = new Access($relation['relation_url']);
+                    continue;
+                }
             }
         }
-
         return $result;
     }
 
@@ -324,7 +330,7 @@ class AccessProvider implements RIFCSProvider
     {
         $result = [];
         // location/address/electronic @type="url" AND the URL contains ‘wfs’
-        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+        foreach (XMLUtil::getElementsByXPath($data,
             'ro:registryObject/ro:' . $record->class . '/ro:location/ro:address/ro:electronic') AS $loc) {
             $type = (string)$loc['type'];
             $value = (string)$loc->value;
@@ -332,32 +338,28 @@ class AccessProvider implements RIFCSProvider
                 $result[] = new Access($value);
             }
         }
+        /* relatedObject/relatedInfo of class service with relation_types of
+        * 'supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'
+        * and relation_url contains 'wfs'
+        */
+        $service_result = RelationshipSearchService::search([
+            'from_id' => $record->id,
+            'to_class' => 'service',
+            'relation_type' =>  ['supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'],
+            'to_title' => '*',
+            'relation_url_search' => ['wfs']
+        ], ['rows' => 50]);
+        $relationships =   $service_result->toArray();
 
-        // relationship
-        /* @var $relation Relation */
-        foreach ($data["relationships"] as $relation) {
-
-            // relatedObject | relatedInfo = service AND relation @type="supports" | "isPresentedBy" AND the relation/url contains ‘geoserver’
-            if (
-                ($relation->prop('to_class') == "service" || $relation->prop("to_related_info_type") == "service")
-                && (in_array($relation->prop('relation_type'), ["supports", "isPresentedBy"]))
-                && str_contains(strtolower($relation->prop('relation_url')), "wfs")
-            ) {
-                $result[] = new Access($relation->prop("relation_url"));
-                continue;
-            }
-
-            // When the collection is related to via a service registry object AND relation @type="isSupportedBy" | "presents" | “makesAvailable” AND the relation/url contains ‘geoserver’
-            if (
-                $relation->prop('to_class') == "service"
-                && (in_array($relation->prop('relation_type'), ["isSupportedBy", "presents", "makesAvailable"]))
-                && str_contains(strtolower($relation->prop('relation_url')), "wfs")
-            ) {
-                $result[] = new Access($relation->prop("relation_url"));
-                continue;
+        if(isset($relationships['contents']) && count($relationships['contents'])>0 ) {
+            foreach($relationships['contents'] as $relatedService){
+                foreach($relatedService['relations'] as $relation) {
+                    if(isset($relation['relation_url']))
+                        $result[] = new Access($relation['relation_url']);
+                    continue;
+                }
             }
         }
-
         return $result;
     }
 
@@ -375,7 +377,7 @@ class AccessProvider implements RIFCSProvider
         $result = [];
 
         // location/address/electronic @type="url" AND the URL contains ‘geoserver’
-        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+        foreach (XMLUtil::getElementsByXPath($data,
             'ro:registryObject/ro:' . $record->class . '/ro:location/ro:address/ro:electronic') AS $loc) {
             $type = (string)$loc['type'];
             $value = (string)$loc->value;
@@ -383,32 +385,28 @@ class AccessProvider implements RIFCSProvider
                 $result[] = new Access($value);
             }
         }
+        /* relatedObject/relatedInfo of class service with relation_types of
+   * 'supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'
+   * and relation_url contains 'geoserver'
+   */
+        $service_result = RelationshipSearchService::search([
+            'from_id' => $record->id,
+            'to_class' => 'service',
+            'relation_type' =>  ['supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'],
+            'to_title' => '*',
+            'relation_url_search' => ['geoserver']
+        ], ['rows' => 50]);
+        $relationships =   $service_result->toArray();
 
-        // relationships
-        /* @var $relation Relation */
-        foreach ($data["relationships"] as $relation) {
-
-            // relatedObject | relatedInfo = service AND relation @type="supports" | "isPresentedBy" AND the relation/url contains ‘geoserver’
-            if (
-                ($relation->prop('to_class') == "service" || $relation->prop("to_related_info_type") == "service")
-                && (in_array($relation->prop('relation_type'), ["supports", "isPresentedBy"]))
-                && str_contains($relation->prop('relation_url'), "geoserver")
-            ) {
-                $result[] = new Access($relation->prop("relation_url"));
-                continue;
-            }
-
-            // When the collection is related to via a service registry object AND relation @type="isSupportedBy" | "presents" | “makesAvailable” AND the relation/url contains ‘geoserver’
-            if (
-                $relation->prop('to_class') == "service"
-                && (in_array($relation->prop('relation_type'), ["isSupportedBy", "presents", "makesAvailable"]))
-                && str_contains($relation->prop('relation_url'), "geoserver")
-            ) {
-                $result[] = new Access($relation->prop("relation_url"));
-                continue;
+        if(isset($relationships['contents']) && count($relationships['contents'])>0 ) {
+            foreach($relationships['contents'] as $relatedService){
+                foreach($relatedService['relations'] as $relation) {
+                    if(isset($relation['relation_url']))
+                        $result[] = new Access($relation['relation_url']);
+                    continue;
+                }
             }
         }
-
         return $result;
     }
 
@@ -426,7 +424,7 @@ class AccessProvider implements RIFCSProvider
         $result = [];
 
         // location/address/electronic @type="url" AND the URL contains ‘thredds’ AND the URL contains ‘catalog.html’ | ‘catalog.xml’
-        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+        foreach (XMLUtil::getElementsByXPath($data,
             'ro:registryObject/ro:' . $record->class . '/ro:location/ro:address/ro:electronic') AS $loc) {
             $type = (string)$loc['type'];
             $value = (string)$loc->value;
@@ -434,38 +432,48 @@ class AccessProvider implements RIFCSProvider
                 $result[] = new Access($value);
             }
         }
+        /* relatedObject/relatedInfo of class service with relation_types of
+   * 'supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'
+   * and relation_url contains 'wps'
+   */
+        $service_result = RelationshipSearchService::search([
+            'from_id' => $record->id,
+            'to_class' => 'service',
+            'relation_type' =>  ['supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'],
+            'to_title' => '*',
+            'relation_url_search' => ['thredds', 'catalog.html']
+        ], ['rows' => 50]);
 
-        // relationship
-        /* @var $relation Relation */
-        foreach ($data["relationships"] as $relation) {
-            $relationURL = $relation->prop("relation_url");
-            if (!$relationURL) continue;
+        $service_result2 = RelationshipSearchService::search([
+            'from_id' => $record->id,
+            'to_class' => 'service',
+            'relation_type' =>  ['supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'],
+            'to_title' => '*',
+            'relation_url_search' => ['thredds', 'catalog.xml']
+        ], ['rows' => 50]);
 
-            // relatedObject | relatedInfo = service AND relation @type="supports" | "isPresentedBy" AND relation/url != null AND the relation/url contains ‘thredds’ AND the relation/url contains ‘catalog.html’ | ‘catalog.xml’
-            if (
-                ($relation->prop("to_class") == "service" || $relation->prop("to_related_info_type") == "service")
-                && ($relation->prop("relation_type") == "supports" || $relation->prop("relation_type") == "isPresentedBy")
-                && str_contains($relationURL, "thredds")
-                && (str_contains($relationURL, "catalog.html") || str_contains($relationURL, "catalog.xml"))
-            ) {
-                $result[] = new Access($relationURL);
-                continue;
-            }
-
-            // related to via a service registry object AND relation @type="isSupportedBy" | "presents" | “makesAvailable” AND relation/url != null AND the relation/url contains ‘thredds’ AND the relation/url contains ‘catalog.html’ | ‘catalog.xml’
-            if (
-                $relation->prop("to_class") == "service"
-                && in_array($relation->prop('relation_type'), ["isSupportedBy", "presents", "makesAvailable"])
-                && str_contains($relationURL, "thredds")
-                && (str_contains($relationURL, "catalog.html") || str_contains($relationURL, "catalog.xml"))
-            ) {
-                $result[] = new Access($relationURL);
-                continue;
+        $relationships =   $service_result->toArray();
+        $relationships2 =  $service_result2->toArray();
+        if(isset($relationships['contents']) && count($relationships['contents'])>0 ) {
+            foreach($relationships['contents'] as $relatedService){
+                foreach($relatedService['relations'] as $relation) {
+                    if(isset($relation['relation_url']))
+                        $result[] = new Access($relation['relation_url']);
+                        continue;
+                }
             }
         }
-
+        if(isset($relationships2['contents']) && count($relationships2['contents'])>0 ) {
+            foreach($relationships2['contents'] as $relatedService){
+                foreach($relatedService['relations'] as $relation) {
+                    if(isset($relation['relation_url']))
+                        $result[] = new Access($relation['relation_url']);
+                    continue;
+                }
+            }
+        }
         return $result;
-    }
+     }
 
     /**
      * @param RegistryObject $record
@@ -476,7 +484,7 @@ class AccessProvider implements RIFCSProvider
     {
         $result = [];
 
-        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+        foreach (XMLUtil::getElementsByXPath($data,
             'ro:registryObject/ro:' . $record->class . '/ro:location/ro:address/ro:electronic') AS $loc) {
             $type = (string)$loc['type'];
             $value = (string)$loc->value;
@@ -487,33 +495,28 @@ class AccessProvider implements RIFCSProvider
             }
         }
 
-        // relationship
-        /* @var $relation Relation */
-        foreach ($data["relationships"] as $relation) {
-            $relationURL = $relation->prop("relation_url");
-            if (!$relationURL) continue;
+        /* relatedObject/relatedInfo of class service with relation_types of
+       * 'supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'
+       * and relation_url contains 'wcs' and 'thredds'
+       */
+        $service_result = RelationshipSearchService::search([
+            'from_id' => $record->id,
+            'to_class' => 'service',
+            'relation_type' =>  ['supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'],
+            'to_title' => '*',
+            'relation_url_search' => ['thredds','wcs']
+        ], ['rows' => 50]);
+        $relationships =   $service_result->toArray();
 
-            if (
-                ($relation->prop("to_class") == "service" || $relation->prop("to_related_info_type") == "service")
-                && ($relation->prop("relation_type") == "supports" || $relation->prop("relation_type") == "isPresentedBy")
-                && str_contains($relationURL, "thredds")
-                && str_contains(strtolower($relationURL), "wcs")
-            ) {
-                $result[] = new Access($relationURL);
-                continue;
-            }
-
-            if (
-                $relation->prop("to_class") == "service"
-                && in_array($relation->prop('relation_type'), ["isSupportedBy", "presents", "makesAvailable"])
-                && str_contains($relationURL, "thredds")
-                && str_contains(strtolower($relationURL), "wcs")
-            ) {
-                $result[] = new Access($relationURL);
-                continue;
+        if(isset($relationships['contents']) && count($relationships['contents'])>0 ) {
+            foreach($relationships['contents'] as $relatedService){
+                foreach($relatedService['relations'] as $relation) {
+                    if(isset($relation['relation_url']))
+                        $result[] = new Access($relation['relation_url']);
+                    continue;
+                }
             }
         }
-
         return $result;
     }
 
@@ -532,7 +535,7 @@ class AccessProvider implements RIFCSProvider
     {
         $result = [];
 
-        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+        foreach (XMLUtil::getElementsByXPath($data,
             'ro:registryObject/ro:' . $record->class . '/ro:location/ro:address/ro:electronic') AS $loc) {
             $type = (string)$loc['type'];
             $value = (string)$loc->value;
@@ -541,40 +544,32 @@ class AccessProvider implements RIFCSProvider
             if ($type == "url" && str_contains($value, "thredds") && str_contains(strtolower($value), "wms")) {
                 $result[] = new Access($value);
             }
-            // location/address/electronic @type="url" AND the URL contains ‘thredds’ AND the URL contains ‘catalog.html’ AND we can determine that some of the data in the catalog is available via WMS (use catalog.xml)
+            // location/address/electronic @type="url" AND the URL contains ‘thredds’ AND the URL contains ‘catalog.html’
+            // AND we can determine that some of the data in the catalog is available via WMS (use catalog.xml)
         }
 
-        // relationship
-        /* @var $relation Relation */
-        foreach ($data["relationships"] as $relation) {
-            $relationURL = $relation->prop("relation_url");
-            if (!$relationURL) continue;
+       /* relatedObject/relatedInfo of class service with relation_types of
+       * 'supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'
+       * and relation_url contains 'wms' and 'thredds'
+       */
+        $service_result = RelationshipSearchService::search([
+            'from_id' => $record->id,
+            'to_class' => 'service',
+            'relation_type' =>  ['supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'],
+            'to_title' => '*',
+            'relation_url_search' => ['thredds','wms']
+        ], ['rows' => 50]);
+        $relationships =   $service_result->toArray();
 
-            // relatedObject | relatedInfo = service AND relation @type="supports" | "isPresentedBy" AND relation/url != null AND the relation/url contains ‘thredds’ AND the Urelation/urlRL contains ‘wms’
-            if (
-                ($relation->prop("to_class") == "service" || $relation->prop("to_related_info_type") == "service")
-                && ($relation->prop("relation_type") == "supports" || $relation->prop("relation_type") == "isPresentedBy")
-                && str_contains($relationURL, "thredds")
-                && str_contains(strtolower($relationURL), "wms")
-            ) {
-                $result[] = new Access($relationURL);
-                continue;
-            }
-
-            // relatedObject|relatedInfo = service AND relation @type="supports" | "isPresentedBy" AND relation/url != null AND the relation/url contains ‘thredds’ AND the relation/url contains ‘catalog.html’ AND we can determine that some of the data in the catalog is available via WMS (use catalog.xml)
-
-            // When the collection is related to via a service registry object AND relation @type="isSupportedBy" | "presents" | “makesAvailable” AND relation/url != null AND the relation/url contains ‘thredds’ AND the relation/url contains ‘wms’
-            if (
-                $relation->prop("to_class") == "service"
-                && in_array($relation->prop('relation_type'), ["isSupportedBy", "presents", "makesAvailable"])
-                && str_contains($relationURL, "thredds")
-                && str_contains(strtolower($relationURL), "wms")
-            ) {
-                $result[] = new Access($relationURL);
-                continue;
+        if(isset($relationships['contents']) && count($relationships['contents'])>0 ) {
+            foreach($relationships['contents'] as $relatedService){
+                foreach($relatedService['relations'] as $relation) {
+                    if( isset($relation['relation_url']))
+                        $result[] = new Access($relation['relation_url']);
+                        continue;
+                }
             }
         }
-
         return $result;
     }
 
@@ -594,7 +589,7 @@ class AccessProvider implements RIFCSProvider
     {
         $result = [];
 
-        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+        foreach (XMLUtil::getElementsByXPath($data,
             'ro:registryObject/ro:' . $record->class . '/ro:location/ro:address/ro:electronic') AS $loc) {
             $type = (string)$loc['type'];
             $value = (string)$loc->value;
@@ -606,37 +601,30 @@ class AccessProvider implements RIFCSProvider
             // location/address/electronic @type="url" AND the URL contains ‘thredds’ AND the URL contains ‘catalog.html’ AND we can determine that some of the data in the catalog is available via OPeNDAP (use catalog.xml)
         }
 
-        // relationship
-        /* @var $relation Relation */
-        foreach ($data["relationships"] as $relation) {
-            $relationURL = $relation->prop("relation_url");
-            if (!$relationURL) continue;
 
-            // relatedObject | relatedInfo = service AND relation @type="supports" | "isPresentedBy" AND relation/url != null AND the relation/url contains ‘thredds’ AND the relation/url contains ‘dodsC’
-            if (
-                ($relation->prop("to_class") == "service" || $relation->prop("to_related_info_type") == "service")
-                && ($relation->prop("relation_type") == "supports" || $relation->prop("relation_type") == "isPresentedBy")
-                && str_contains($relationURL, "thredds")
-                && str_contains($relationURL, "dodsC")
-            ) {
-                $result[] = new Access($relationURL);
-                continue;
-            }
+        /* relatedObject/relatedInfo of class service with relation_types of
+       * 'supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'
+       * and relation_url contains 'wms' and 'thredds'
+       */
+        $service_result = RelationshipSearchService::search([
+            'from_id' => $record->id,
+            'to_class' => 'service',
+            'relation_type' =>  ['supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'],
+            'to_title' => '*',
+            'realation_url_search' => ['thredds','dodsC']
+        ], ['rows' => 50]);
+        $relationships =   $service_result->toArray();
 
-            // relatedObject|relatedInfo = service AND relation @type="supports" | "isPresentedBy" AND relation/url != null AND the relation/url contains ‘thredds’ AND the relation/url contains ‘catalog.html’ AND we can determine that some of the data in the catalog is available via OPeNDAP (use catalog.xml)
 
-            // the collection is related to via a service registry object AND relation @type="isSupportedBy" | "presents" | “makesAvailable” AND relation/url != null AND the relation/url contains ‘thredds’ AND the relation/url contains ‘dodsC’
-            if (
-                $relation->prop("to_class") == "service"
-                && in_array($relation->prop('relation_type'), ["isSupportedBy", "presents", "makesAvailable"])
-                && str_contains($relationURL, "thredds")
-                && (str_contains($relationURL, "catalog.html") || str_contains($relationURL, "dodsC"))
-            ) {
-                $result[] = new Access($relationURL);
-                continue;
+        if(isset($relationships['contents']) && count($relationships['contents'])>0 ) {
+            foreach($relationships['contents'] as $relatedService){
+                foreach($relatedService['relations'] as $relation) {
+                    if( isset($relation['relation_url']))
+                           $result[] = new Access($relation['relation_url']);
+                        continue;
+                }
             }
         }
-
         return $result;
     }
 
@@ -657,7 +645,7 @@ class AccessProvider implements RIFCSProvider
 
         // check for no access url
         $urls = [];
-        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+        foreach (XMLUtil::getElementsByXPath($data,
             'ro:registryObject/ro:' . $record->class . '/ro:location/ro:address/ro:electronic') AS $loc) {
             $type = (string)$loc['type'];
             $value = (string)$loc->value;
@@ -672,18 +660,18 @@ class AccessProvider implements RIFCSProvider
 
         // check for no service
         /* @var $relation Relation */
-        $services = [];
-        foreach ($data['relationships'] as $relation) {
-            if ($relation->prop("to_class") == "service" || $relation->prop("to_related_info_type") == "service") {
-                $services[] = $relation;
-            }
-        }
-        if (count($services) > 0) {
+        $service_result = RelationshipSearchService::search([
+            'from_id' => $record->id,
+            'to_class' => 'service',
+            'to_title' => '*'
+        ], ['rows' => 1]);
+        $relationships =   $service_result->toArray();
+        if(isset($relationships['contents']) && count($relationships['contents'])>0 ) {
             return [];
         }
 
         // Collection/location/address/electronic/@email
-        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+        foreach (XMLUtil::getElementsByXPath($data,
             'ro:registryObject/ro:' . $record->class . '/ro:location/ro:address/ro:electronic') AS $loc) {
             $type = (string)$loc['type'];
             $value = (string)$loc->value;
@@ -693,7 +681,7 @@ class AccessProvider implements RIFCSProvider
         }
 
         // Collection/location/address/physical/@streetAddress OR Collection/location/address/physical/@PostalAddress
-        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+        foreach (XMLUtil::getElementsByXPath($data,
             'ro:registryObject/ro:' . $record->class . '/ro:location/ro:address/ro:physical') AS $loc) {
             $value = (string)$loc->value;
             $result[] = (new Access($value))->setNotes("Contact Custodian");
@@ -713,7 +701,7 @@ class AccessProvider implements RIFCSProvider
     {
         $result = [];
         // location/address/electronic @type="url"
-        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+        foreach (XMLUtil::getElementsByXPath($data,
             'ro:registryObject/ro:' . $record->class . '/ro:location/ro:address/ro:electronic') AS $loc) {
             $type = (string)$loc['type'];
             $value = (string)$loc->value;
@@ -722,29 +710,24 @@ class AccessProvider implements RIFCSProvider
             }
         }
 
-        /* @var $relation Relation */
-        foreach ($data["relationships"] as $relation) {
-            $relationURL = $relation->prop("relation_url");
-            if (!$relationURL) continue;
+        // relatedObject | relatedInfo = service AND relation @type="supports" | "isPresentedBy" |"isSupportedBy" |
+        // "presents" | “makesAvailable” AND relation/url != null
+        $service_result = RelationshipSearchService::search([
+            'from_id' => $record->id,
+            'to_class' => 'service',
+            'relation_type' =>  ['supports', 'isPresentedBy','isSupportedBy', 'presents', 'makesAvailable'],
+            'to_title' => '*'
+        ], ['rows' => 50]);
+        $relationships =   $service_result->toArray();
 
-            // relatedObject | relatedInfo = service AND relation @type="supports" | "isPresentedBy" AND relation/url != null
-            if (
-                ($relation->prop("to_class") == "service" || $relation->prop("to_related_info_type") == "service")
-                && ($relation->prop("relation_type") == "supports" || $relation->prop("relation_type") == "isPresentedBy")
-                && $relationURL
-            ) {
-                $result[] = new Access($relationURL);
-                continue;
-            }
-
-            // When the collection is related to via a service registry object AND relation @type="isSupportedBy" | "presents" | “makesAvailable” AND relation/url != null
-            if (
-                $relation->prop("to_class") == "service"
-                && in_array($relation->prop('relation_type'), ["isSupportedBy", "presents", "makesAvailable"])
-                && $relationURL
-            ) {
-                $result[] = new Access($relationURL);
-                continue;
+        if(isset($relationships['contents']) && count($relationships['contents'])>0 ) {
+            foreach($relationships['contents'] as $relatedService){
+                foreach($relatedService['relations'] as $relation) {
+                    if( isset($relation['relation_url']) && trim($relation['relation_url'])!=""){
+                        $result[] = new Access($relation['relation_url']);
+                        continue;
+                    }
+                }
             }
         }
         return $result;

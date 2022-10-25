@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+    <registryObject group="AUTestingRecords">
+        <key>AUT_QUALITY_SERVICE</key>
+        <originatingSource>arc.gov.au/general/searchable_data.htm</originatingSource>
+        <service type="OGC:WMF">
+            <name type="primary">
+                <namePart>Related Service</namePart>
+            </name>
+            <description type="full">This is the Full description</description>
+        </service>
+    </registryObject>
+</registryObjects>

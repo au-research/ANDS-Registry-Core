@@ -5,10 +5,16 @@ namespace ANDS\Registry;
 
 
 use ANDS\DataSource;
+use ANDS\Log\Log;
 use ANDS\Payload;
 use ANDS\API\Task\ImportTask;
+use ANDS\RecordData;
+use ANDS\Registry\Providers\DCI\DCI;
+use ANDS\Registry\Providers\Scholix\Scholix;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
+use ANDS\Task\TaskRepository;
+use ANDS\Util\SolrIndex;
 
 /**
  * Class Importer
@@ -43,9 +49,6 @@ class Importer
         $importTask->setPayload("customPayload", $payload);
         $importTask->initialiseTask();
         $importTask->enableRunAllSubTask();
-
-        $importTask->setCI($ci =& get_instance());
-        $importTask->setDb($ci->db);
         $importTask->sendToBackground();
 
         $importTask->run();
@@ -110,23 +113,19 @@ class Importer
     {
         $params = [
             'ds_id' => $dataSource->data_source_id,
-            'batch_id' => $batchID
+            'batch_id' => $batchID,
+            'pipeline' => 'ImportPipeline',
+            'class' => 'import'
         ];
 
-        $params = array_merge($params, $customParameters);
-        $importTask = new ImportTask();
-        $importTask->init([
+        /** @var \ANDS\API\Task\ImportTask $importTask */
+        $importTask = TaskRepository::create([
             'name' => "Import Task for $dataSource->title ($batchID)",
-            'params' => http_build_query($params)
-        ]);
+            'params' => http_build_query(array_merge($params, $customParameters))
+        ], true);
 
         $importTask->initialiseTask();
         $importTask->enableRunAllSubTask();
-
-        $importTask->setCI($ci =& get_instance());
-        $importTask->setDb($ci->db);
-        $importTask->sendToBackground();
-
         $importTask->run();
 
         return $importTask;
@@ -149,18 +148,19 @@ class Importer
             $ids = collect($records)->pluck('registry_object_id')->toArray();
         }
 
-        $importTask = new ImportTask();
-        $importTask->init([
+        /** @var \ANDS\API\Task\ImportTask $importTask */
+        $importTask = TaskRepository::create([
+            'name' => 'Delete Data Source Content',
             'params' => http_build_query([
+                'class' => 'import',
                 'ds_id' => $dataSource->data_source_id,
                 'pipeline' => 'PublishingWorkflow'
             ])
-        ])->skipLoadingPayload()->enableRunAllSubTask()->initialiseTask();
-        $importTask->setTaskData("deletedRecords", $ids);
+        ], true);
 
-        $importTask->setCI($ci =& get_instance());
-        $importTask->setDb($ci->db);
-        $importTask->sendToBackground();
+        $importTask->skipLoadingPayload()->enableRunAllSubTask()->initialiseTask();
+
+        $importTask->setTaskData("deletedRecords", $ids);
 
         $importTask->run();
 
@@ -169,6 +169,9 @@ class Importer
 
     public static function instantSyncRecord(RegistryObject $record, $workflow = 'SyncWorkflow')
     {
+        Log::debug(__FUNCTION__ . " Syncing RegistryObject upon request", [
+            'id' => $record->id, 'workflow' => $workflow,
+        ]);
         return static::syncRecord($record, false, $workflow);
     }
 
@@ -184,9 +187,6 @@ class Importer
             ])
         ])->skipLoadingPayload()->enableRunAllSubTask()->initialiseTask();
         $importTask->setTaskData("importedRecords", [$record->id]);
-
-        $importTask->setCI($ci =& get_instance());
-        $importTask->setDb($ci->db);
 
         if ($background) {
             $importTask->sendToBackground();
@@ -216,8 +216,6 @@ class Importer
 
         $importTask->setTaskData("importedRecords", $ids);
 
-        $importTask->setCI($ci =& get_instance());
-        $importTask->setDb($ci->db);
         $importTask->sendToBackground();
 
         if ($background === false) {
@@ -225,5 +223,128 @@ class Importer
         }
 
         return $importTask;
+    }
+
+    public static function importDataSourceFromFile($path, $overwrite = true) {
+
+        if (! is_readable($path)) {
+            throw new \Exception("$path must be accessible");
+        }
+
+        if (is_file($path)) {
+            $dataSourceFile = $path;
+        } elseif (is_dir($path)) {
+            $dataSourceFile = $path .'/dataSource.json';
+        }
+
+        $dataSourceExport = json_decode(file_get_contents($dataSourceFile), true);
+
+        $dataSourceMeta = $dataSourceExport['metadata'];
+        if ($overwrite) {
+            DataSource::unguard(true);
+        }
+        $dataSource = DataSource::firstOrCreate($dataSourceMeta);
+
+        $dataSourceAttributes = $dataSourceExport['attributes'];
+        foreach ($dataSourceAttributes as $attribute) {
+            $dataSource->setDataSourceAttribute($attribute['attribute'], $attribute['value']);
+        }
+
+        return $dataSource;
+    }
+
+    public static function importRecordsFromDirectory($path) {
+        if (! is_dir($path) || is_readable($path)) {
+            throw new \Exception("$path must be accessible");
+        }
+
+        $recordsDirectory = $path .'/records';
+        $files = scandir($recordsDirectory);
+
+        foreach ($files as $file) {
+            if ($file == '.' || $file == '..') continue;
+            self::importRecordFromFile($file);
+        }
+    }
+
+    public static function importRecordFromFile($filePath, $overwrite = true) {
+        $recordExport = json_decode(file_get_contents($filePath), true);
+
+        $id = $recordExport['metadata']['registry_object_id'];
+
+        // quit if the record already exists if not overwriting
+        if (RegistryObject::where('registry_object_id', $id)->exists() && !$overwrite) {
+            return;
+        }
+
+        if ($overwrite) {
+            RegistryObject::unguard(true);
+        }
+
+        if (array_key_exists('registry_object_attributes', $recordExport['metadata'])) {
+            unset($recordExport['metadata']['registry_object_attributes']);
+        }
+
+        // create the records
+        $record = RegistryObject::firstOrCreate($recordExport['metadata']);
+
+        // create the attributes
+        foreach ($recordExport['attributes'] as $attribute) {
+            $record->setRegistryObjectAttribute($attribute['attribute'], $attribute['value']);
+        }
+
+        // create the record data
+        RecordData::firstOrCreate([
+            'registry_object_id' => $record->id,
+            'current' => TRUE,
+            'data' => base64_decode($recordExport['xml'])
+        ]);
+    }
+
+    public static function wipeDataSourceRecords(DataSource $dataSource, $softDelete = true) {
+        Log::info(__METHOD__ . " Wiping DataSource Records", ['data_source_id' => $dataSource->id, 'softDelete' => $softDelete]);
+
+        // delete portal index
+        Log::debug(__METHOD__ . " Deleting Portal Index", ['data_source_id' => $dataSource->id]);
+        SolrIndex::getClient('portal')->removeByQuery("data_source_id:$dataSource->id");
+
+        // delete mycelium vertices & relationship index
+        Log::debug(__METHOD__ . " Deleting Mycelium data", ['data_source_id' => $dataSource->id]);
+        $myceliumServiceClient = new \ANDS\Mycelium\MyceliumServiceClient(\ANDS\Util\Config::get('mycelium.url'));
+        try {
+            $myceliumServiceClient->deleteDataSourceRecords($dataSource);
+        }catch(\Exception $e){
+            Log::error(__METHOD__ . " Failed Deleting Mycelium data", ['error:' => $e->getMessage()]);
+        }
+        // set the status of registryObjects to DELETED to prevent them from being accessed
+        Log::debug(__METHOD__ . " Soft deleting all RegistryObject", ['data_source_id' => $dataSource->id]);
+        RegistryObject::where('data_source_id', $dataSource->id)->update(['status' => 'DELETED']);
+
+        // sub-query for performance
+        $idQuery = function($query) use ($dataSource) {
+            $query->select('registry_object_id')->from('registry_objects')->where('data_source_id', '=', $dataSource->id);
+        };
+        $keyQuery = function($query) use ($dataSource) {
+            $query->select('key')->from('registry_objects')->where('data_source_id', '=', $dataSource->id);
+        };
+//        Log::debug("queries", ['idQuery' => $idQuery->toSql(), 'keyQuery' => $keyQuery->toSql()]);
+
+        Log::debug(__METHOD__ . " Deleting Record Data", ['data_source_id' => $dataSource->id]);
+        RecordData::whereIn('registry_object_id', $idQuery)->delete();
+
+        Log::debug(__METHOD__ . " Deleting Scholix Data", ['data_source_id' => $dataSource->id]);
+        Scholix::whereIn('registry_object_id', $idQuery)->delete();
+
+        Log::debug(__METHOD__ . " Deleting DCI", ['data_source_id' => $dataSource->id]);
+        DCI::whereIn('registry_object_id', $idQuery)->delete();
+
+        Log::debug(__METHOD__ . " Deleting Tags", ['data_source_id' => $dataSource->id]);
+        RegistryObject\Tag::whereIn('key', $keyQuery)->delete();
+
+        // delete the records afterwards
+        if ($softDelete === false) {
+            Log::debug(__METHOD__ . " Deleting All RegistryObjects", ['data_source_id' => $dataSource->id]);
+            RegistryObject::where('data_source_id', $dataSource->id)->delete();
+        }
     }
 }

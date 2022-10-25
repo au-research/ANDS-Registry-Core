@@ -434,18 +434,19 @@
                 html += '<span style="margin-right:5px;color:#EB6E1F">'+capitalizeFirstLetter(node.properties.type)+'</span>';
             }
             if (node.properties.url) {
-                html += '<a target="_blank" href="'+node.properties.url+'">' + node.properties.title;
-                if (node.labels.has('RelatedInfo')) {
-                    html += ' <img class="identifier_logo" src="'+base_url+'/assets/core/images/icons/external_link.png" alt="External Link">';
+                var title = node.properties.title;
+                if (node.properties.count) {
+                    // cluster
+                    title = node.properties.count + " related " + getReadableTypeForNode(node);
                 }
-                html += '</a>';
-            } else if (node.properties.identifier) {
-                html += node.properties.title ;
+                html += '<a target="_blank" href="'+node.properties.url+'">' + title + '</a>';
             } else if (node.properties.count && !node.labels.has('RelatedInfo')) {
                 html += '<a target="_blank" href="'+node.properties.url+'">' + node.properties.count + " related " + getReadableTypeForNode(node) + '</a>';
             } else if (node.properties.count && node.labels.has('RelatedInfo')) {
                 // no link for relatedInfo yet
                 html += node.properties.count + " related " + getReadableTypeForNode(node);
+            } else if (node.properties.title) {
+                html += node.properties.title ;
             }
             html += '</h4>';
             //html += '<p>LABELS: '+JSON.stringify(node.labels)+'</p>';

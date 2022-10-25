@@ -9,7 +9,6 @@ use \DOMDocument as DOMDocument;
 use \Exception as Exception;
 
 if (!defined("RIFCS_NAMESPACE")) {
-    define('EXTRIF_NAMESPACE', "http://ands.org.au/standards/rif-cs/extendedRegistryObjects");
     define('RIFCS_NAMESPACE', "http://ands.org.au/standards/rif-cs/registryObjects");
 }
 
@@ -223,14 +222,6 @@ class XMLUtil
         }
     }
 
-    /**
-     * TODO: Refactor
-     * @return null|\XSLTProcessor
-     */
-    public static function getORCIDTransformer()
-    {
-        return Transforms::get_extrif_to_orcid_transformer();
-    }
 
     /**
      * validates datacite xml against required schema version
@@ -384,5 +375,24 @@ class XMLUtil
             throw new \InvalidArgumentException("Unable to discern class from xml");
         }
     }
+
+    /**
+     * @param $xml
+     * @param $elementName
+     * @return array of each element's text content
+     * @throws Exception
+     */
+    public static function getTextContent($xml, $elementName){
+        $elements = self::getElementsByName($xml, $elementName);
+        $text_content = [];
+        foreach($elements as $element){
+            $str = preg_replace('/(\v|\s)+/', ' ', strip_tags($element->asXML()));
+            if(trim($str) != "")
+            $text_content[] = utf8_encode(trim($str));
+        }
+        return $text_content;
+    }
+
+
 
 }

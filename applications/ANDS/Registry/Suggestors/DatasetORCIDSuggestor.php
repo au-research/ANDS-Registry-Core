@@ -1,14 +1,8 @@
 <?php
 namespace ANDS\Registry\Suggestors;
 
-
-use ANDS\Registry\Connections;
-use ANDS\Registry\IdentifierRelationshipView;
 use ANDS\Registry\Providers\ORCID\ORCIDRecord;
-use ANDS\RegistryObject;
-use ANDS\RegistryObject\Identifier;
 use ANDS\Util\Config;
-use Illuminate\Support\Collection;
 use MinhD\SolrClient\SolrClient;
 
 class DatasetORCIDSuggestor
@@ -62,18 +56,18 @@ class DatasetORCIDSuggestor
         // all collection that relates to these partyIDs
         if (count($partyIDs) > 0) {
             $query = "+to_class:collection +from_id:(".implode(" OR ", $partyIDs).")";
-            $result = $this->solr->setCore('relations')->search([
+            $result = $this->solr->setCore('relationships')->search([
                 'q' => $query
             ]);
-
-            foreach ($result->getDocs() as $doc) {
-                $doc = $doc->toArray();
-                $suggested[] = [
-                    'registry_object_id' => $doc['to_id'],
-                    'title' => $doc['to_title'],
-                    'key' => $doc['to_key'],
-                    'slug' => $doc['to_slug']
-                ];
+            if($result->getNumFound() > 0) {
+                foreach ($result->getDocs() as $doc) {
+                    $doc = $doc->toArray();
+                    $suggested[] = [
+                        'registry_object_id' => $doc['to_identifier'],
+                        'title' => $doc['to_title'],
+                        'url' => $doc['to_url']
+                    ];
+                }
             }
         }
 
@@ -82,16 +76,17 @@ class DatasetORCIDSuggestor
         $result = $this->solr->setCore('relations')->search([
             'q' => $query
         ]);
-
-        foreach ($result->getDocs() as $doc) {
-            $doc = $doc->toArray();
-            $suggested[] = [
-                'registry_object_id' => $doc['from_id'],
-                'title' => $doc['from_title'],
-                'key' => $doc['from_key'],
-                'slug' => $doc['from_slug']
-            ];
+        if($result->getNumFound() > 0){
+            foreach ($result->getDocs() as $doc) {
+                $doc = $doc->toArray();
+                $suggested[] = [
+                    'registry_object_id' => $doc['from_id'],
+                    'title' => $doc['from_title'],
+                    'url' => $doc['from_url']
+                ];
+            }
         }
+
 
         // unique the values
         $suggested = collect($suggested)
@@ -99,4 +94,6 @@ class DatasetORCIDSuggestor
 
         return $suggested;
     }
+
+
 }

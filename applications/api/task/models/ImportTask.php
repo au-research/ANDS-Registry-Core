@@ -11,6 +11,7 @@ use ANDS\API\Task\ImportSubTask\ImportSubTask;
 use ANDS\API\Task\ImportSubTask\NonFatalException;
 use ANDS\DataSource;
 use ANDS\DataSource\Harvest as Harvest;
+use ANDS\Log\Log;
 use ANDS\Util\NotifyUtil;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use \Exception as Exception;
@@ -45,6 +46,11 @@ class ImportTask extends Task
         $this->log('Import Task started');
 
         $this->initialiseTask();
+
+        Log::debug("Running Task", [
+            'id' => $this->getId(),
+            'runAll' => $this->runAll
+        ]);
 
         if ($this->runAll) {
             foreach ($this->getSubtasks() as $task){
@@ -249,18 +255,13 @@ class ImportTask extends Task
                     "ProcessPayload",
                     "Ingest",
                     "ProcessCoreMetadata",
-                    "ProcessIdentifiers",
-                    "ProcessLinks",
-                    "ProcessRelationships",
-                    "ProcessGrantsRelationship",
-                    "PopulateAffectedList",
-                    "ProcessScholix",
+                    "ProcessGraphRelationships",
+                    "IndexGraphRelationships",
                     "ProcessAffectedRelationships",
+                    "ProcessLinks",
+                    "ProcessScholix",
                     "ProcessQualityMetadata",
                     "IndexPortal",
-                    "IndexRelationship",
-                    "ProcessGraphRelationships",
-                    "GenerateISOServiceRecord",
                     "FinishImport",
                     "WriteImportSummary"
                 ];
@@ -274,58 +275,39 @@ class ImportTask extends Task
                     "ProcessCoreMetadata",
                     "PreserveCoreMetadata",
                     "ProcessDelete",
-                    "ProcessIdentifiers",
-                    "ProcessLinks",
-                    "ProcessRelationships",
-                    "ProcessGrantsRelationship",
-                    "PopulateAffectedList",
-                    "ProcessScholix",
+                    "ProcessGraphRelationships",
+                    "IndexGraphRelationships",
                     "ProcessAffectedRelationships",
+                    "ProcessLinks", // needed by Link checker
+                    "ProcessScholix",
                     "ProcessQualityMetadata",
                     "IndexPortal",
-                    "IndexRelationship",
-                    "ProcessGraphRelationships",
                     "GenerateISOServiceRecord",
                     "FinishImport",
                 ];
                 break;
             case "MetadataGenerationWorkflow":
                 $tasks = [
-                    "ProcessScholix"
+                    "ProcessScholix",
                 ];
                 break;
             case "UpdateRelationshipWorkflow":
                 $tasks = [
-                    "ProcessIdentifiers",
-                    "ProcessRelationships",
-                    "ProcessGrantsRelationship",
-                    "PopulateAffectedList",
-                    "ProcessScholix",
-                    "ProcessAffectedRelationships",
-                    "IndexRelationship",
                     "ProcessGraphRelationships",
+                    "IndexGraphRelationships",
+                    "ProcessAffectedRelationships",
                 ];
                 break;
             case "SyncWorkflow":
                 $tasks = [
                     "ProcessCoreMetadata",
-                    "ProcessIdentifiers",
                     "ProcessLinks",
-                    "ProcessRelationships",
-                    "ProcessGrantsRelationship",
-//                    "PopulateAffectedList",
-//                    "ProcessAffectedRelationships",
+                    "ProcessGraphRelationships",
+                    "IndexGraphRelationships",
+                    "ProcessAffectedRelationships",
                     "ProcessScholix",
                     "ProcessQualityMetadata",
                     "IndexPortal",
-                    "IndexRelationship",
-                    "ProcessGraphRelationships",
-                ];
-                break;
-            case "IndexWorkflow":
-                $tasks = [
-                    "IndexPortal",
-                    "IndexRelationship",
                 ];
                 break;
             case "IndexPortalWorkflow":
@@ -336,14 +318,11 @@ class ImportTask extends Task
             case "SyncNoGraphWorkflow":
                 $tasks = [
                     "ProcessCoreMetadata",
-                    "ProcessIdentifiers",
                     "ProcessLinks",
-                    "ProcessRelationships",
-                    "ProcessGrantsRelationship",
+                    "MyceliumImport",
                     "ProcessScholix",
                     "ProcessQualityMetadata",
                     "IndexPortal",
-                    "IndexRelationship",
                 ];
                 break;
             case "ErrorWorkflow":
@@ -367,19 +346,24 @@ class ImportTask extends Task
                     "ProcessPayload",
                     "Ingest",
                     "ProcessCoreMetadata",
-                    "ProcessIdentifiers",
-                    "ProcessLinks",
-                    "ProcessRelationships",
                     "ProcessGraphRelationships",
-                    "ProcessGrantsRelationship",
+                    "IndexGraphRelationships",
+                    "ProcessAffectedRelationships",
+                    "ProcessLinks",
                     "ProcessQualityMetadata",
                     "IndexPortal",
-                    "PopulateAffectedList",
                     "ProcessScholix",
-                    "ProcessAffectedRelationships",
-                    "IndexRelationship",
                     "FinishImport",
                     "ScheduleHarvest"
+                ];
+                break;
+            case "manualDelete":
+                $tasks = [
+                    "PopulateImportOptions",
+                    "ProcessDelete",
+                    "FinishImport",
+                    "WriteImportSummary"
+
                 ];
                 break;
             case "default":
@@ -392,18 +376,14 @@ class ImportTask extends Task
                     "ProcessCoreMetadata",
                     "HandleRefreshHarvest",
                     "ProcessDelete",
-                    "ProcessIdentifiers",
                     "IngestNativeSchema",
-                    "ProcessLinks",
-                    "ProcessRelationships",
                     "ProcessGraphRelationships",
-                    "ProcessGrantsRelationship",
+                    "IndexGraphRelationships",
+                    "ProcessAffectedRelationships",
+                    "ProcessLinks",
                     "ProcessQualityMetadata",
                     "IndexPortal",
-                    "PopulateAffectedList",
                     "ProcessScholix",
-                    "ProcessAffectedRelationships",
-                    "IndexRelationship",
                     "FinishImport",
                     "WriteImportSummary",
                     "ScheduleHarvest"
@@ -624,13 +604,12 @@ class ImportTask extends Task
     {
         $this->initialiseTask();
 
-        $message = $this->getMessage();
-        $error_msg = "";
-        if (array_key_exists('error', $message) && $message['error']['errored'] === true){
-            $error_msg =  $message['error']['log'];
+        $errorMessage = "";
+        if ($this->hasError()) {
+            $errorMessage = $this->getError();
         }
 
-        $this->stoppedWithError($error_msg, false);
+        $this->stoppedWithError($errorMessage, false);
     }
 
     public function checkHarvesterMessages()
@@ -685,14 +664,17 @@ class ImportTask extends Task
         }
 
         $this->writeLog("ImportStopped");
-        if($notify)
+
+        if($notify) {
             parent::stoppedWithError($message);
+        }
     }
 
     public function getDataSourceMessage()
     {
         $targetStatus = $this->getTaskData("targetStatus");
         $selectedKeys = [
+            "myceliumRequestId" => "ID of the Mycelium Request",
             "dataSourceDefaultStatus" => "Default Import Status for Data Source",
             "targetStatus" => "Target Status for Import",
             "recordsInFeedCount" => "Valid Records Received in Harvest",

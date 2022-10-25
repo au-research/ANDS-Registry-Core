@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+    <registryObject group="AUTestingRecords">
+        <key>ACTIVITY_GRANT_NETWORK</key>
+        <originatingSource>http://demo.ands.org.au/registry/orca/register_my_data</originatingSource>
+        <activity type="grant" dateModified="2013-04-10T23:51:41Z">
+            <name type="primary">
+                <namePart>Grants network activity</namePart>
+            </name>
+            <identifier type="purl">http://purl.org/au-research/grants/nhmrc/640318AUT</identifier>
+            <identifier type="arc">grant-id</identifier>
+            <location>
+                <address>
+                    <physical type="postalAddress">
+                        <addressPart type="telephoneNumber">123456789</addressPart>
+                    </physical>
+                </address>
+            </location>
+            <description type="brief">A biogeochemical study of a coastal lagoon - tests of a mechanistic model. The water quality and seagrass biomass of intermittently closed-open lagoons (ICOLs), which dominate the NSW coast, are declining in response to development and their low flushing rates. A combination of field sampling, biogeochemical analysis and ecological modelling will be used to improve our quantitative understanding and prediction of ecological processes in small estuaries. A novel, mechanistic model of nutrients-phytoplankton-seagrass-zooplankton will be improved with detailed sampling of Smiths Lake on the central NSW coast. Simulations indicative of future development, fish re-stocking or management options will indicate the cost-benefit on estuarine ecosystems.</description>
+            <description type="fundingAmount">&lt;p&gt;$315,000&lt;/p&gt;</description>
+            <description type="fundingScheme">Linkage Projects</description>
+            <description type="researchers">Prof Ian Jeffrey Constable</description>
+            <relatedObject>
+                <key>Party1</key>
+                <relation type="hasAssociationWith"/>
+            </relatedObject>
+            <relatedObject>
+                <key>AODnN/Aalbersberg,BillAUT3aa</key>
+                <relation type="isManagedBy"/>
+            </relatedObject>
+            <relatedObject>
+                <key>AODN</key>
+                <relation type="hasPrincipalInvestigator"/>
+            </relatedObject>
+            <relatedObject>
+                <key>COLLECTION_GRANT_NETWORK</key>
+                <relation type="hasOutput"/>
+            </relatedObject>
+            <subject type="anzsrc-for">02</subject>
+            <description type="brief">brief desc</description>
+            <existenceDates>
+                <startDate dateFormat="W3CDTF">2013-02-14T00:00:00Z</startDate>
+                <endDate dateFormat="W3CDTF">2013-02-21T00:00:00Z</endDate>
+            </existenceDates>
+            <relatedInfo type="party">
+                <title>AUTParty6</title>
+                <identifier type="orcid">orcid.AUTParty6</identifier>
+                <relation type="isFundedBy"/>
+            </relatedInfo>
+            <relatedInfo type="party">
+                <title>AUTParty7 a new investigator</title>
+                <identifier type="orcid">orcid.AUTParty7</identifier>
+                <relation type="hasPrincipalInvestigator"/>
+            </relatedInfo>
+            <relatedInfo type="party">
+                <title>AUTParty8 another new investigator</title>
+                <identifier type="orcid">orcid.AUTParty8</identifier>
+                <relation type="hasPrincipalInvestigator"/>
+            </relatedInfo>
+            <relatedInfo type="website">
+                <title>Stuff</title>
+                <identifier type="uri">http://www.smithy.com</identifier>
+                <relation type="hasAssociationWith">
+                    <description>A website relationship</description>
+                </relation>
+            </relatedInfo>
+            <relatedInfo type="collection">
+                <title>Related Info Collection</title>
+                <identifier type="uri">http://www.smithy.com</identifier>
+                <relation type="hasAssociationWith">
+                    <description>A related info collection</description>
+                </relation>
+            </relatedInfo>
+            <relatedInfo type="service">
+                <title>Related Info Service</title>
+                <identifier type="uri">http://www.smithy.com</identifier>
+                <relation type="hasAssociationWith">
+                    <description>A related info service</description>
+                </relation>
+            </relatedInfo>
+            <relatedInfo type="party">
+                <title>Prof James Cull</title>
+                <identifier type="local">prof_james_cull</identifier>
+                <relation type="Chief Investigator"/>
+            </relatedInfo>
+            <existenceDates>
+                <startDate dateFormat="W3CDTF">2004-05-01</startDate>
+                <endDate dateFormat="W3CDTF">2009-09-01</endDate>
+            </existenceDates>
+        </activity>
+    </registryObject>
+</registryObjects>

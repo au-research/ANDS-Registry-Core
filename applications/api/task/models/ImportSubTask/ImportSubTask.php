@@ -135,24 +135,20 @@ class ImportSubTask extends Task
 
     public function log($log)
     {
-        $this->message['log'][] = $log;
+//        $this->message['log'][] = $log;
         $this->parent()->log(get_class($this) . ": " . $log);
         return $this;
     }
 
     public function addError($log)
     {
-        // create error log if not exist
-        if (!array_key_exists('error', $this->message)) {
-            $this->message['error'] = [];
-        }
+        // add error to self as per
+        parent::addError($log);
 
-        // log to local error log as well as parent's error log
-        $this->message['error'][] = $log;
-        $this->parent()->message['error'][] = get_class($this) . "(ERROR) " . $log;
+        // parent task should also have this error
+        $this->parent()->addError($log);
 
-        // log to message log as well
-        $this->log(get_class($this) . "(ERROR) " . $log);
+        // add importer error to the harvests
         $this->parent()->updateHarvest(["importer_message" => get_class($this) . "(ERROR) " . $log]);
         return $this;
     }

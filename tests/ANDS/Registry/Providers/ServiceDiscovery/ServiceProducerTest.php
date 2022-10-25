@@ -15,16 +15,6 @@ use ANDS\Registry\Providers\ServiceDiscovery\ServiceDiscovery;
 class ServiceProducerTest extends \RegistryTestClass
 {
 
-    // removing this test until the mock server resolves properly
-//    /** @test **/
-//    public function test_get_rif_from_url_and_type() {
-//
-//        $serviceProducer = new ServiceProducer(\ANDS\Util\Config::get('app.services_registry_url'));
-//        $rifcs = $serviceProducer->getRifcsForServiceUrl("https://test.ands.org.au/mock/get/AUTestingRecords_WCS_Response_5_v1.0.0" , "OGC:WCS");
-//        $this->assertContains("<registryObject", $rifcs);
-//
-//    }
-
 
     /** @test */
     public function test_process_toolkit_response()

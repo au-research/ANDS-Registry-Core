@@ -138,4 +138,24 @@ class CitationProvider implements RIFCSProvider
     {
         return null;
     }
+
+    /**
+     * get the text content for all children of the citationInfo element(s) as an array
+     * used for SOLR index
+     * @param RegistryObject $record
+     * @return array
+     */
+    public static function getIndexableArray(RegistryObject $record)
+    {
+
+        $xml = $record->getCurrentData()->data;
+        $citation_info_search = XMLUtil::getTextContent($xml, "citationInfo");
+
+        if(sizeof($citation_info_search) > 0){
+            return ['citation_info_search' => $citation_info_search];
+        }
+        else{
+            return [];
+        }
+    }
 }

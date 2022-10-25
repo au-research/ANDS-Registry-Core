@@ -38,7 +38,7 @@
                                                     @endif
                                                     @if(is_array($ro->identifiermatch) && sizeof($ro->identifiermatch) > 0)
                                                         @if($show_dup_identifier_qtip)
-                                                        <a href="" qtip="#identifiermatch" tip_popup="{{sizeof($ro->identifiermatch)}} linked Records"><i class="fa fa-caret-down"></i></a>
+                                                        <a href="" qtip="#identifiermatch" qtip_popup="{{sizeof($ro->identifiermatch)}} linked Records"><i class="fa fa-caret-down"></i></a>
                                                         @else
                                                         <a href="" qtip="#identifiermatch"><i class="fa fa-caret-down"></i></a>
                                                         @endif
@@ -46,7 +46,7 @@
                                                             <b>{{sizeof($ro->identifiermatch)}} linked Records:</b>
                                                             <ul class="swatch-white">
                                                                 @foreach($ro->identifiermatch as $mm)
-                                                                <li><a href="{{base_url($mm['slug'].'/'.$mm['registry_object_id'])}}{{$fl}}">{{$mm['title']}} <br/><small>Contributed by {{$mm['group']}}</small></a></li>
+                                                                <li><a href="{{$mm['url']}}{{$fl}}">{{$mm['title']}} <br/><small>Contributed by {{$mm['group']}}</small></a></li>
                                                                 @endforeach
                                                             </ul>
                                                         </div>

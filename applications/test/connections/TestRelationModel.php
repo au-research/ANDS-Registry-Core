@@ -3,7 +3,6 @@
 
 namespace ANDS\Test;
 
-use ANDS\Registry\Connections;
 use ANDS\Registry\Relation;
 
 /**
