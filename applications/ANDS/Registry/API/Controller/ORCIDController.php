@@ -2,7 +2,6 @@
 namespace ANDS\Registry\API\Controller;
 
 
-use ANDS\API\Task\ImportSubTask\ProcessRelationships;
 use ANDS\Authenticator\ORCIDAuthenticator;
 use ANDS\Registry\API\Middleware\ValidORCIDSessionMiddleware;
 use ANDS\Registry\API\Request;

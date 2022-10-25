@@ -73,8 +73,6 @@ class DatesProvider implements RIFCSProvider
         }
 
         return $from . $to;
-        dd($from);
-
     }
 
     /**
@@ -315,6 +313,13 @@ class DatesProvider implements RIFCSProvider
      */
     public static function formatDate($value, $format = 'Y-m-d')
     {
+
+        if($format == 'Y' && self::validateDate($value, 'Y')){
+            return (new Carbon($value))->format($format);
+        }
+        if($format == 'm' && self::validateDate($value, 'm')){
+            return (new Carbon($value))->format($format);
+        }
         // if it comes in as the year or year-month, just leave it
         if (self::validateDate($value, 'Y') || self::validateDate($value, 'Y-m')) {
             return $value;

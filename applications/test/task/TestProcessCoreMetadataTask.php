@@ -63,7 +63,7 @@ class TestProcessCoreMetadataTask extends UnitTest
         $importTask->init([
             'name' => 'ImportTask',
             'params' => 'ds_id=209&batch_id=AUTestingRecords3'
-        ])->setCI($this->ci)->initialiseTask();
+        ])->initialiseTask();
         $this->ci->load->model('registry/registry_object/registry_objects', 'ro');
         $task = $importTask->getTaskByName("ProcessCoreMetadata");
         return $task;

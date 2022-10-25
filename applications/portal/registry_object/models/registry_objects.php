@@ -8,8 +8,7 @@ class Registry_objects extends CI_Model {
 
     //array of properties required from the Registry point for RDA purpose
     public $rdaProperties = array('core', 'descriptions', 'relationships', 'subjects', 'spatial', 'temporal','citations','dates','relatedInfo',
-        'identifiers','rights', 'contact','directaccess', 'suggest', 'logo', 'tags','existenceDates', 'identifiermatch', 'accessPolicy',
-        'grantsNetwork', 'connectiontrees','jsonld', 'altmetrics');
+        'identifiers','rights', 'contact','directaccess', 'suggest', 'logo', 'tags','existenceDates', 'identifiermatch', 'accessPolicy', 'connectiontrees','jsonld', 'altmetrics');
 	/**
 	 * get an _ro by ID
 	 * @param  int $id registry object id
@@ -21,6 +20,21 @@ class Registry_objects extends CI_Model {
 		}
 		return new _ro($id, $props, $useCache);
 	}
+
+    public function canUserPreview($ds_id){
+        $_ci =& get_instance();
+        $_ci->load->model('registry/data_source/data_sources', 'ds');
+        $ds = $_ci->ds->getByID($ds_id);
+        if($ds){
+            if (!$_ci->user->hasAffiliation($ds->record_owner)){
+                return false;
+            }
+        }else{
+            return false;
+        }
+        return true;
+    }
+
 
 	/**
 	 * get an _ro by SLUG
@@ -99,41 +113,47 @@ class Registry_objects extends CI_Model {
 	 */
 	public function resolveIdentifier($type = 'orcid', $identifier) {
 		if (!$identifier) throw new Exception('No Identifier Provided');
+
+        $myceliumServiceClient = new \ANDS\Mycelium\MyceliumServiceClient(\ANDS\Util\Config::get('mycelium.url'));
+        $result = $myceliumServiceClient->resolveIdentifier($identifier, $type);
+        $result = json_decode((String) $result->getBody(), true);
+
 		if ($type=='orcid') {
-			$ch = curl_init();
-			$headers = array('Accept: application/orcid+json');
-			curl_setopt($ch, CURLOPT_URL, "http://pub.orcid.org/".$identifier); # URL to post to
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1 ); # return into a variable
-			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers ); # custom headers, see above
-			$result = curl_exec( $ch ); # run!
-			curl_close($ch);
-
-			$result = json_decode($result, true);
-
-			if(!isset($result['orcid-profile'])) return false;
-
-			$first_name = $result['orcid-profile']['orcid-bio']['personal-details']['given-names']['value'];
-			$last_name = $result['orcid-profile']['orcid-bio']['personal-details']['family-name']['value'];
-			$name = $first_name.' '.$last_name;
-			$bio = "";
-
-			if(isset($result['orcid-profile']['orcid-bio']['biography'])){
-				$bio = $result['orcid-profile']['orcid-bio']['biography']['value'];
-			}
-
 			return array(
-				'name' => $name,
-				'bio' => $bio,
-				'orcid' => $identifier
+				'name' => isset($result['title']) ? $result['title'] : $result['meta']['rawTitle'],
+				'bio' => isset($result['meta']['biography']) ? $result['meta']['biography'] : '',
+				'orcid' => $identifier,
+                'url' => $result['url'],
+                'relatedInfo_type' => $type
 			);
 		} elseif ($type=='doi') {
 
-            //prepare identifier, strip out http
-            $identifier = str_replace("http://dx.doi.org/", "", $identifier);
-            $identifier = str_replace("https://doi.org/", "", $identifier);
-
-            return \ANDS\Util\DOIAPI::resolve($identifier);
-		}
+ 			if($result) {
+				return array(
+					'title' => isset($result['title']) ? $result['title'] : $result['meta']['rawTitle'],
+					'publisher' => isset($result["meta"]['publisher']) ? $result["meta"]['publisher'] : '',
+					'source' => isset($result["meta"]['source']) ? $result["meta"]['source'] : '',
+					'DOI' => isset($result["meta"]['DOI']) ? $result["meta"]['DOI'] : '',
+					'type' => isset($result["meta"]['type']) ? $result["meta"]['type'] : '',
+					'url' => isset($result['url']) ? $result['url'] : '',
+					'description' => isset($result["meta"]['abstract']) ? $result["meta"]['abstract'] : '',
+                    'relatedInfo_type' => $type
+				);
+			}
+        } elseif ($type=='ror') {
+            if($result) {
+                return array(
+                    'name' => isset($result['title']) ? $result['title'] : $result['meta']['rawTitle'],
+                    'url' => isset($result['url']) ? $result['url'] : '',
+                    'types' => isset($result["meta"]['types']) ? $result["meta"]['types'] : 'Other',
+                    'links' => isset($result["meta"]['links']) ? $result["meta"]['links'] : '',
+                    'country' => isset($result["meta"]['country']) ? $result["meta"]['country'] : '',
+                    'moreinfo' => isset($result['moreinfo']) ? $result['moreinfo'] : '',
+                    'relatedInfo_type' => $type
+                );
+            }
+        }
+        return [];
 	}
 
 	public function findRecord($filters = array(), $id_only = false){

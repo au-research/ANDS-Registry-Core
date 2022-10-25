@@ -11,9 +11,6 @@ use ANDS\RegistryObjectAttribute;
 use ANDS\RegistryObject\Links;
 use ANDS\RegistryObject\Metadata;
 use ANDS\RegistryObject\Identifier;
-use ANDS\RegistryObject\Relationship;
-use ANDS\RegistryObject\IdentifierRelationship;
-use ANDS\RegistryObject\ImplicitRelationship;
 use ANDS\RecordData;
 use Carbon\Carbon;
 
@@ -61,14 +58,8 @@ class RegistryObjectsRepository
             // delete record_data
             RecordData::where('registry_object_id', $record->registry_object_id)->delete();
 
-            // delete identifiers
-            Identifier::where('registry_object_id', $record->registry_object_id)->delete();
-
             // delete metadata
             Metadata::where('registry_object_id', $record->registry_object_id)->delete();
-
-            //delete relationship
-            Relationship::where('registry_object_id', $record->registry_object_id)->delete();
 
             //delete links
             Links::where('registry_object_id', $record->registry_object_id)->delete();
@@ -93,18 +84,11 @@ class RegistryObjectsRepository
      */
     public static function completelyEraseMetadataByID($id)
     {
-        static::deleteRelationships($id);
-
-        // delete identifiers
-        Identifier::where('registry_object_id', $id)->delete();
-
         // delete metadata
         Metadata::where('registry_object_id', $id)->delete();
 
         //delete links
         Links::where('registry_object_id', $id)->delete();
-
-        static::deleteIdentifierRelationships($id);
     }
 
 
@@ -205,6 +189,8 @@ class RegistryObjectsRepository
     public static function getRecordsByIdentifier($identifiers, $dataSourceId, $status = "PUBLISHED")
     {
         
+        // TODO use mycelium search service !!
+/**
         $matchingIdenfifiers = Identifier::wherein('identifier', $identifiers)
             ->get()->pluck('registry_object_id')->toArray();
 
@@ -213,8 +199,8 @@ class RegistryObjectsRepository
             ->where('status', $status)
             ->wherein('registry_object_id', $matchingIdenfifiers)
             ->get();
-
-        return $registryObjects;
+**/
+        return null; //$registryObjects;
     }
 
     public static function getRecordsByHarvestID($harvestId, $dataSourceId, $status = "PUBLISHED")
@@ -320,18 +306,6 @@ class RegistryObjectsRepository
         return $newVersion;
     }
 
-    /**
-     * @param $registry_object_id
-     */
-    public static function deleteRelationships($registry_object_id){
-        Relationship::where('registry_object_id', $registry_object_id)->delete();
-        ImplicitRelationship::where('from_id', $registry_object_id)->delete();
-    }
-
-
-    public static function deleteIdentifierRelationships($registry_object_id){
-        IdentifierRelationship::where('registry_object_id', $registry_object_id)->delete();
-    }
 
     public static function getRecordsByDataSource(DataSource $dataSource, $limit, $offset, $filters = [])
     {
@@ -405,6 +379,8 @@ class RegistryObjectsRepository
         }
 
         // identifier
+        // TODO: refactor using Mycelium search
+        /**
         if (array_key_exists('identifier', $filters) && $filters['identifier'] != "*") {
             $identifierQuery = Identifier::where('identifier', 'like', '%'.$filters['identifier'].'%');
             if (array_key_exists('identifier_type', $filters)) {
@@ -415,7 +391,7 @@ class RegistryObjectsRepository
             $query = $query->whereIn('registry_object_id', $ids);
             unset($filters['identifier']);
         }
-
+        **/
         // link
         if (array_key_exists('link', $filters) && $filters['link'] != "*") {
             $linkQuery = Links::where('link', 'like', '%'.$filters['link'].'%');

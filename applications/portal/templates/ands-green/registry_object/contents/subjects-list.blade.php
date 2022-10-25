@@ -35,14 +35,14 @@ foreach($ro->subjects as $col){
                     @endif
                 @endforeach
             </div>
-            @if($ro->core['class']!='activity')
+            @if($ro->core['class']!='activity' && $ro->core['status']!='DRAFT')
                 @include('registry_object/contents/tags')
             @endif
         </div>
     </div>
     @endif
 @else
-    @if($ro->core['class']!='activity')
+    @if($ro->core['class']!='activity' && $ro->core['status']!='DRAFT')
     <div class="swatch-white">
         <div class="panel panel-primary element-no-top element-short-bottom panel-content">
             <!-- <div class="panel-heading"> <a href="">Tags</a> </div> -->

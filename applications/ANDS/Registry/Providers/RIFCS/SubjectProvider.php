@@ -5,6 +5,7 @@ namespace ANDS\Registry\Providers\RIFCS;
 
 
 use ANDS\Cache\Cache;
+use ANDS\Log\Log;
 use ANDS\RecordData;
 use ANDS\RegistryObject;
 use ANDS\Registry\Providers\MetadataProvider;
@@ -136,6 +137,17 @@ class SubjectProvider implements RIFCSProvider
                 if ($solrResult->getNumFound() > 0) {
                     $result = $solrResult->getDocs();
                     $top_response = $result[0];
+
+                    // RDA-740. Mitigate the unintended side effects of incomplete or faulty concepts
+                    if (!isset($top_response->label[0]) || !isset($top_response->iri[0]) || !isset($top_response->type[0])) {
+                        Log::warning(__METHOD__. " Failed resolving concept. Incomplete concept", [
+                            'search_value' => $search_value,
+                            'subject_type' => $type,
+                            'subject_value' => $value
+                        ]);
+                        continue;
+                    }
+
                     $resolved_value = $top_response->label[0];
                     $resolved_uri = $top_response->iri[0];
                     $resolved_type = $top_response->type[0];
@@ -213,7 +225,7 @@ class SubjectProvider implements RIFCSProvider
             return 'type:' . $type . ' AND (search_label_s:("' . strtolower($label_string) . '") ^5 + notation_s:"' . $search_string . '" ^5 + "' . $search_string . '")';
 
         // quote the search string so solr reserved characters don't break the solr query
-        return 'search_label_s:("' . mb_strtolower($label_string) . '") ^5 + notation_s:"' . $search_string . '" ^5 + "'.$search_string.'"' ;
+        return 'search_label_s:("' . mb_strtolower($label_string) . '")^5 + notation_s:"' . $search_string . '"^5 + "'.$search_string.'"' ;
     }
 
     /**
@@ -301,5 +313,52 @@ class SubjectProvider implements RIFCSProvider
 
         return $string;
     }
+
+    /**
+     * Obtain an associative array for the indexable fields
+     *
+     * @param RegistryObject $record
+     * @return array
+     */
+    public static function getIndexableArray(RegistryObject $record)
+    {
+        $subjects = static::processSubjects($record);
+
+        $unresolved = [];
+        $resolved = [];
+        $types = [];
+        $uris = [];
+
+        foreach ($subjects as $key => $subject) {
+            $unresolved[] = (string) $key;
+            $resolved[] =  html_entity_decode((string) $subject['resolved'], ENT_QUOTES);
+            $types[] = (string) $subject['type'];
+            $uris[] = (string) $subject['uri'];
+        }
+
+        // adding tsubject_$type for portal/registry_object/vocab usage
+        $typeValuePairs = [];
+        foreach ($subjects as $key => $subject) {
+            $type = (string) $subject['type'];
+            $value = (string) $subject['resolved'];
+            $typeValuePairs["tsubject_$type"][] = $key;
+
+            if ($type === "anzsrc-for") {
+                $typeValuePairs["subject_anzsrcfor"][] = $value;
+            }else if ($type === "anzsrc-seo") {
+                $typeValuePairs["subject_anzsrcseo"][] = $value;
+            } else if ($type === "gcmd") {
+                $typeValuePairs["subject_gcmd"][] = $value;
+            } else if ($type === "iso639-3") {
+                $typeValuePairs["subject_iso639-3"][] = $value;
+            }
+        }
+
+        return array_merge([
+            'subject_value_unresolved' => $unresolved,
+            'subject_value_resolved' => $resolved,
+            'subject_type' => $types,
+            'subject_vocab_uri' => $uris,
+        ], $typeValuePairs);
+    }
 }
-?>

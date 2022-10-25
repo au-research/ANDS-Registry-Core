@@ -11,7 +11,8 @@ class NotifyUtil
     public static function notify($channel, $content)
     {
         try {
-            $redis = new PredisClient();
+            $redisUrl = Config::get("app.redis_url");
+            $redis = new PredisClient($redisUrl);
             $redis->ping();
             return $redis->publish($channel, $content);
         } catch (\Exception $e) {

@@ -39,7 +39,7 @@ class TestFinishImportTask extends UnitTest
         $importTask->init([
             'name' => 'ImportTask',
             'params' => 'ds_id='. $this->ds_id .'&batch_id='.$this->batch_id
-        ])->setCI($this->ci)->initialiseTask();
+        ])->initialiseTask();
         $task = $importTask->getTaskByName("FinishImport");
         return $task;
     }

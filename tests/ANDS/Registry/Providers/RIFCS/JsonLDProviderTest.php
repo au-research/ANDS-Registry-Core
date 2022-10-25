@@ -2,27 +2,29 @@
 
 namespace ANDS\Registry\Providers\RIFCS;
 
+use ANDS\File\Storage;
+use ANDS\RecordData;
 use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\Registry\Providers\RIFCS\JsonLDProvider;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Registry\Providers\GrantsConnectionsProvider;
 
-class JsonLDProviderTest extends \RegistryTestClass
+class JsonLDProviderTest extends \MyceliumTestClass
 {
     /** @test **/
     public function it_should_output_json_encode_object_collection()
     {
 
-        $key = "AUTSchemaOrgCollection1";
+        $key = "P8dftL_.YY_moreData";
         $this->ensureKeyExist($key);
         $record = RegistryObjectsRepository::getPublishedByKey($key);
         $output = JsonLDProvider::process($record);
-//        echo $output;
+        echo $output;
         // TODO add assertions
     }
 
-    /** @test **/
+    /** @test
     public function it_should_output_json_encode_object_software()
     {
 
@@ -33,8 +35,8 @@ class JsonLDProviderTest extends \RegistryTestClass
 //        echo $output;
         // TODO add assertions
     }
-
-    /** @test **/
+*/
+    /** @test
     public function it_should_output_json_encode_object_service()
     {
 
@@ -45,7 +47,7 @@ class JsonLDProviderTest extends \RegistryTestClass
 //        echo $output;
         // TODO add assertions
     }
-
+*/
 
     /** @test **/
     public function it_should_convert_dcmi_box()
@@ -111,33 +113,6 @@ class JsonLDProviderTest extends \RegistryTestClass
         $output = JsonLDProvider::formatTempCoverages($coverages);
         self::assertEquals("2019-05-31/2019-06-07", $output);
     }
-//
-//    /** @test **/
-//    public function it_should_find_a_creator()
-//    {
-//        $record = $this->ensureKeyExist("AUTSchemaOrgCollection3");
-//        $data['recordData'] = $record->getCurrentData()->data;
-//        $output = JsonLDProvider::getCreator($record, $data);
-//        self::assertEquals("AUTParty6Has_Collector", $output[0]['name']);
-//    }
-//
-//    /** @test **/
-//    public function it_should_find_a_funder()
-//    {
-//        $record = $this->ensureKeyExist("SchemaDotOrgJLDRecords1");
-//        $data['recordData'] = $record->getCurrentData()->data;
-//        $output = JsonLDProvider::getFunder($record, $data);
-//        self::assertEquals("The Great Funder", $output[0]['name']);
-//    }
-
-//    /** @test **/
-//    public function it_should_find_a_publication()
-//    {
-//        $record = $this->ensureKeyExist("AUTSchemaOrgCollection1");
-//        $data['recordData'] = $record->getCurrentData()->data;
-//        $output = JsonLDProvider::getRelatedPublications($record);
-//        self::assertEquals("https://dx.doi.org/10.1371/journal.pone.0180842", $output[0]['identifier_value']);
-//    }
 
 
 }

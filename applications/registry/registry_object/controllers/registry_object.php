@@ -2,12 +2,16 @@
 define('SERVICES_MODULE_PATH', REGISTRY_APP_PATH.'services/');
 
 include_once("applications/registry/registry_object/models/_transforms.php");
+
+use ANDS\API\Task\Task;
 use ANDS\DataSource;
 use ANDS\Registry\Providers\Quality\Types;
 use ANDS\RegistryObject\AltSchemaVersion;
 use ANDS\Registry\Providers\ServiceDiscovery\ServiceProducer;
 use ANDS\Registry\Providers\ServiceDiscovery\ServiceDiscovery;
 use \ANDS\Registry\Schema;
+use ANDS\Task\TaskRepository;
+
 /**
  * Registry Object controller
  *
@@ -168,7 +172,6 @@ class Registry_object extends MX_Controller {
             // import Task creation
             $importTask = new \ANDS\API\Task\ImportTask();
             $importTask
-                ->setCI($this)->setDb($this->db)
                 ->init([
                     'name' => 'ARO',
                     'params' => http_build_query([
@@ -209,10 +212,10 @@ class Registry_object extends MX_Controller {
             return;
         }
 
-        $extRif = $draftRecord->getCurrentData()->data;
+        $rifcs = $draftRecord->getCurrentData()->data;
 
         $data = [
-            'content' => ANDS\Util\XMLUtil::getHTMLForm($extRif, [
+            'content' => ANDS\Util\XMLUtil::getHTMLForm($rifcs, [
                 "base_url" => base_url(),
                 "registry_object_id" => $registry_object_id,
                 "data_source_id" => $draftRecord->data_source_id,
@@ -220,7 +223,6 @@ class Registry_object extends MX_Controller {
                 "ro_title" => $draftRecord->title,
                 "ro_class" => $draftRecord->class
             ]),
-            'extrif' => $extRif,
             'ds' => $data_source,
             'title' => 'Edit: ' . $draftRecord->title,
             'scripts' => ['add_registry_object'],
@@ -406,7 +408,6 @@ class Registry_object extends MX_Controller {
         // import Task creation
         $importTask = new \ANDS\API\Task\ImportTask();
         $importTask
-            ->setCI($this)->setDb($this->db)
             ->init([
                 'name' => 'ARO',
                 'params' => http_build_query([
@@ -449,92 +450,11 @@ class Registry_object extends MX_Controller {
         echo json_encode($result);
     }
 
-    // TODO: Remove after pipeline implementation
-	public function save_deprecated($registry_object_id){
-		set_exception_handler('json_exception_handler');
-
-		$xml = $this->input->post('xml');
-		$this->load->library('importer');
-
-		$this->load->model('registry_objects', 'ro');
-		$this->load->model('data_source/data_sources', 'ds');
-		$ro = $this->ro->getByID($registry_object_id);
-
-		if (!$ro){
-			throw new Exception("No registry object exists with that ID!");
-		}
-
-		acl_enforce('REGISTRY_USER');
-		ds_acl_enforce($ro->data_source_id);
-
-		$ds = $this->ds->getByID($ro->data_source_id);
-
-
-
-		$this->importer->forceDraft();
-
-		$error_log = '';
-		$status = 'success';
-		//echo wrapRegistryObjects($xml);
-		//exit();
-		try{
-			$xml = $ro->cleanRIFCSofEmptyTags($xml, 'true', true);
-            $xml = wrapRegistryObjects($xml);
-            $this->importer->validateRIFCS($xml);
-            $this->importer->setXML($xml);
-			$this->importer->setDatasource($ds);
-			$this->importer->commit();
-		}
-		catch(Exception $e)
-		{
-			$status = 'error';
-			$error_log = $e->getMessage();
-		}
-		//if ($error_log){
-		//	throw new Exception("Errors during saving this registry object! " . BR . implode($error_log, BR));
-		//}
-		//else{
-		// Fetch updated registry object!
-		// $ro = $this->ro->getByID($registry_object_id);
-		$ro = $this->ro->getByID($registry_object_id);
-
-		//if the key has changed
-		if($ro->key != $this->input->post('key')){
-			$ro = $this->ro->getAllByKey($this->input->post('key'));
-			$ro = $ro[0];
-		}
-
-		$qa = $ds->qa_flag==DB_TRUE ? true : false;
-		$manual_publish = $ds->manual_publish==DB_TRUE ? true: false;
-
-		$result =
-			array(
-				"status"=>$status,
-				"ro_status"=>"DRAFT",
-				"title"=>$ro->title,
-				"qa_required"=>$qa,
-				"data_source_id" => $ro->data_source_id,
-				"approve_required"=>$manual_publish,
-				"error_count"=> (int) $ro->error_count,
-				"ro_id"=>$ro->id,
-				"ro_quality_level"=>$ro->quality_level,
-				"ro_quality_class"=>($ro->quality_level >= 2 ? "success" : "important"),
-				"qa_$ro->quality_level"=>true,
-				"message"=>$error_log,
-				"qa"=>$ro->get_quality_text()
-				);
-			//if($qa) $result['qa'] = true;
-			echo json_encode($result);
-		//}
-	}
-
-
 	public function add_new(){
 		header('Cache-Control: no-cache, must-revalidate');
 		header('Content-type: application/json');
 		set_exception_handler('json_exception_handler');
 
-		$this->load->library('importer');
 		$data = $this->input->post('data');
 
 		acl_enforce('REGISTRY_USER');
@@ -652,7 +572,6 @@ class Registry_object extends MX_Controller {
         // import Task creation
         $importTask = new \ANDS\API\Task\ImportTask();
         $importTask
-            ->setCI($this)->setDb($this->db)
             ->init([
                 'name' => 'ARO',
                 'params' => http_build_query([
@@ -891,11 +810,9 @@ class Registry_object extends MX_Controller {
 	public function get_record($id){
 		$this->load->model('registry_objects', 'ro');
 		$ro = $this->ro->getByID($id);
-		$ro->enrich();
 		$data['xml'] = html_entity_decode($ro->getRif());
-		$data['extrif'] = html_entity_decode($ro->getExtRif());
         initEloquent();
-		$data['solr'] = json_encode($ro->indexable_json());
+
 		$data['view'] = $ro->transformForHtml();
 		$data['id'] = $ro->id;
 		$data['title'] = $ro->getAttribute('list_title');
@@ -913,10 +830,16 @@ class Registry_object extends MX_Controller {
 		echo $jsonData;
 	}
 
-    public function get_record_data($id){
+    public function get_record_data($id, $revision=null)
+    {
         initEloquent();
+
         $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($id);
-        $data['xml'] = html_entity_decode($record->getCurrentData()->data);
+        if ($revision) {
+            $data['xml'] = html_entity_decode($record->getRecordData($revision)->data);
+        }else{
+            $data['xml'] = html_entity_decode($record->getCurrentData()->data);
+        }
         $jsonData = array();
         $jsonData['status'] = 'OK';
         $jsonData['ro'] = $data;
@@ -1065,29 +988,26 @@ class Registry_object extends MX_Controller {
             // for ARO screen
             $result['message_code'] = $targetStatus;
 
-            $importTask = new \ANDS\API\Task\ImportTask();
-            $importTask->init([
-                'name' => "HandleStatusChange Pipeline",
+            // intialise the ImportTask
+            // with the type to NONE so that the TaskManager won't act on it
+            /** @var \ANDS\API\Task\ImportTask $importTask */
+            $importTask = TaskRepository::create([
+                'name' => "Manual Status Change",
+                'type' => Task::$TYPE_NONE,
                 'params' => http_build_query([
-                    'pipeline' => 'PublishingWorkflow',
+                    'class' => 'import',
                     'ds_id' => $dataSourceID,
-                    'user_name' => $this->user->name(),
+                    'pipeline' => 'PublishingWorkflow',
+                    'source' => 'manual',
                     'targetStatus' => $targetStatus,
-                    'source' => 'manual'
+                    'user_name' => $this->user->name()
                 ])
-            ]);
-            $importTask
-                ->skipLoadingPayload()
-                ->enableRunAllSubTask()
-                ->setCI($this)
-                ->setDb($this->db);
+            ], true);
 
+            // assign affectedRecords for the operation
             $importTask
                 ->setTaskData('affectedRecords', $affected_ids)
                 ->initialiseTask();
-
-            // send the task to background to obtain a task ID
-            $importTask->sendToBackground();
 
             // append data source log
             $dataSource = ANDS\DataSource::find($dataSourceID);
@@ -1100,7 +1020,12 @@ class Registry_object extends MX_Controller {
                 implode(NL, $importStartMessage),
                 "info", "IMPORTER"
             );
-            $importTask->run();
+
+            // run the task
+            $importTask
+                ->skipLoadingPayload()
+                ->enableRunAllSubTask()
+                ->run();
 
             $result['error'] = array_merge($result['error'], $importTask->getError());
 
@@ -1139,183 +1064,6 @@ class Registry_object extends MX_Controller {
 
     }
 
-    // TODO: Remove After Pipeline
-	function update_deprecated($all = false){
-		set_exception_handler('json_exception_handler');
-		header('Cache-Control: no-cache, must-revalidate');
-		header('Content-type: application/json');
-		$jsonData = array();
-		$jsondata['status'] = 'success';
-		$jsondata['error_message'] = '<ul class="error_mesage">';
-		$jsondata['success_message'] = '<ul class="success_mesage">';
-		$jsondata['success_count'] = 0;
-		$jsondata['error_count'] = 0;
-		$this->load->model('registry_objects', 'ro');
-
-		$this->load->model('data_source/data_sources', 'ds');
-		$data_source_id = $this->input->post('data_source_id');
-		$ds = $this->ds->getByID($data_source_id);
-		if (!$ds)
-		{
-			throw new Exception("Invalid Data Source ID specified");
-		}
-		ds_acl_enforce($ds->id);
-
-		$attributes = $this->input->post('attributes');
-
-		if(!$all)
-		{
-
-			$affected_ids = $this->input->post('affected_ids');
-			$attributes = $this->input->post('attributes');
-
-		}
-		else
-		{
-
-			/* SELECT ALL-style update -- must use the filters to determine what's on-screen */
-			$select_all = $this->input->post('select_all');
-			$excluded_records = $this->input->post('excluded_records') ?: array();
-			$filters = $this->input->post('filters');
-
-			$args = array();
-			$args['sort'] = isset($filters['sort']) ? $filters['sort'] : array('updated'=>'desc');
-			$args['search'] = isset($filters['search']) ? $filters['search'] : false;
-			$args['or_filter'] = isset($filters['or_filter']) ? $filters['or_filter'] : false;
-			$args['filter'] = isset($filters['filter']) ? array_merge($filters['filter'], array('status'=>$this->input->post('select_all'))) : array('status'=>$this->input->post('select_all'));
-			$args['data_source_id'] = $data_source_id;
-
-			$registryObjects = $this->ro->filter_by($args, 0, 0, true);
-
-			$affected_ids = array();
-			foreach($registryObjects as $ro){
-				if (!in_array($ro->registry_object_id, $excluded_records))
-				{
-					array_push($affected_ids, $ro->registry_object_id);
-				}
-			}
-		}
-
-
-		$sentMail = false;
-
-		// this array contains the published IDs that need taking care of
-		$published = array();
-
-		foreach($affected_ids as $id){
-			$ro = $this->ro->getByID($id);
-
-			foreach($attributes as $a){
-				if($a['name']=='status' && $ro->status == 'DRAFT' && $ro->error_count > 0)
-				{
-					$jsondata['error_count']++;
-					$jsondata['error_message'] .= "<li>Registry Object contains error(s): ".$ro->title."</li>";
-				}
-				elseif($a['name']=='status' && ($a['value']=='APPROVED' || $a['value']=='PUBLISHED') && $ro->error_count > 0)
-				{
-					$jsondata['error_count']++;
-					$jsondata['error_message'] .= "<li>Registry Object contains error(s): ".$ro->title."</li>";
-				}
-				else
-				{
-					try{
-						$ro->setAttribute($a['name'], $a['value']);
-						if($a['name']=='status')
-						{
-							$ro->flag = 'f';
-						}
-						$old_ro_id = $ro->id;
-						if($ro->save())
-						{
-							// ID may have changed if a DRAFT record overwrites a PUBLISHED one
-							if ($ro->id != $old_ro_id)
-							{
-								// This will be used to redirect from the registry view page
-								$jsondata['new_ro_id'] = $ro->id;
-							}
-
-							if($a['name']=='status')
-							{
-								// Message Code for single-record status updates (from ARO screen)
-								$jsondata['message_code'] = $a['value'];
-								if($a['value']=='SUBMITTED_FOR_ASSESSMENT')
-								{
-									if(($ds->count_SUBMITTED_FOR_ASSESSMENT == 0) && !$sentMail){
-										// If there is a notification email set, send a mail...
-										if ($ds->assessment_notify_email_addr)
-										{
-											$this->ro->emailAssessor($ds);
-											$jsondata['message_code'] = 'SUBMITTED_FOR_ASSESSMENT_EMAIL_SENT';
-											$jsondata['success_message'] .= '<strong>Note:</strong> An ARDC Quality Assessor has been notified of your submitted record(s).</li>';
-											$sentMail = true;
-										}
-										else
-										{
-											// Otherwise prompt to contact the CLO
-											$jsondata['success_message'] .= '<strong>Note:</strong> You should contact your ARDC Client Liaison Officer to let them know your records are ready for assessment.</li>';
-											$sentMail = true;
-										}
-									}
-									elseif ($ds->count_SUBMITTED_FOR_ASSESSMENT > 0 && !$sentMail)
-									{
-										$jsondata['success_message'] .= '<strong>Note:</strong> You should contact your ARDC Client Liaison Officer to let them know your records are ready for assessment.</li>';
-										$sentMail = true;
-									}
-								}
-							}
-
-							// add to the published list if not exists already
-							if (!in_array($ro->id, $published) && $a['name']=='status' && isPublishedStatus($a['value'])) {
-								array_push($published, $ro->id);
-							}
-
-							$jsondata['success_count']++;
-							//$jsondata['success_message'] .= '<li>Updated '.$ro->title.' set '.$a['name'].' to value:'.$a['value']."</li>";
-
-						}
-						else
-						{
-							$jsondata['error_count']++;
-							$jsondata['error_message'] .= '<li>Failed to update '.$ro->title.' set '.$a['name'].' to value:'.$a['value']."</li>";
-							$jsondata['status'] = 'error';
-						}
-					}
-					catch(Exception $e){
-						$jsondata['status'] = 'error';
-						$jsondata['error_count']++;
-						$jsondata['error_message'] .= "<li>".$e->getMessage()."</li>";
-					}
-				}
-			}
-		}
-
-		// set a background task to fix the relationship of the published records and sync them
-		if (sizeof($published) > 0) {
-			require_once BASE . 'vendor/autoload.php';
-			$params = [
-				'class' => 'fixRelationship',
-				'type' => 'ro',
-				'id' => join(',', $published)
-			];
-			$task = [
-				'name' => "fixRelationship of " . sizeof($published). " records",
-				'type' => 'POKE',
-				'frequency' => 'ONCE',
-				'priority' => 5,
-				'params' => http_build_query($params)
-			];
-			$taskManager = new \ANDS\API\Task\TaskManager($this->db, $this);
-			$taskManager->addTask($task);
-		}
-
-		$ds->updateStats();
-
-		$jsondata['error_message'] .= '</ul>';
-		$jsondata['success_message'] .= '</ul>';
-		echo json_encode($jsondata);
-	}
-
-
     function reinstate(){
         set_exception_handler('json_exception_handler');
         header('Cache-Control: no-cache, must-revalidate');
@@ -1333,7 +1081,6 @@ class Registry_object extends MX_Controller {
         // import Task creation
         $importTask = new \ANDS\API\Task\ImportTask();
         $importTask
-            ->setCI($this)->setDb($this->db)
             ->init([
                 'name' => 'Reinstate',
                 'params' => http_build_query([
@@ -1362,22 +1109,30 @@ class Registry_object extends MX_Controller {
         elseif($importTask->getTaskData("recordsExistOtherDataSourceCount") > 0)
         {
             $result['log'] = "Record key:(".$record->key.NL.") exists in a different data source".NL;
-            $result['log'] .= str_replace("," , NL, implode("," , $message['log']));
+            $result['log'] .= str_replace("," , NL, implode("," , $message));
         }
         else
         {
             $result['response'] = 'success';
             $result['message'] = "Record Reinstated as ". $importTask->getTaskData("targetStatus");
             $result['target_status'] = $importTask->getTaskData("targetStatus");
-            $result['log'] = str_replace("," , NL, implode("," , $message['log']));
+            $result['log'] = str_replace("," , NL, implode("," , $message));
         }
         echo json_encode($result);
 
     }
-    
-    
-    
+
+
+    /**
+     * /registry/registry_objects/delete
+     *
+     * @return void
+     */
     function delete(){
+        // increase available memory for this thread due to importTask can run immediately
+        // and to store (potentially) huge amount of ids to be deleted
+        ini_set('memory_limit', '256M');
+
         set_exception_handler('json_exception_handler');
         header('Cache-Control: no-cache, must-revalidate');
         header('Content-type: application/json');
@@ -1385,7 +1140,7 @@ class Registry_object extends MX_Controller {
         $this->load->model('registry_objects', 'ro');
         $this->load->model('data_source/data_sources', 'ds');
 
-        $affectedIDs = $this->input->post('affected_ids');
+        $affectedIDs = $this->input->post('affected_ids') ?: [];
 
         // select_all is the status
         $select_all = $this->input->post('select_all');
@@ -1396,51 +1151,44 @@ class Registry_object extends MX_Controller {
         // capture affected_ros mainly for select_all when affected_ids does not capture all;
         if($select_all && $select_all != "false"){
             $filters = $this->input->post('filters');
-            $args = [
-                'sort' => isset($filters['sort']) ? $filters['sort'] : ['updated'=>'desc'],
-                'search' => isset($filters['search']) ? $filters['search'] : false,
-                'or_filter' => isset($filters['or_filter']) ? $filters['or_filter'] : false,
-                'filter' => isset($filters['filter']) ? array_merge($filters['filter'], ['status'=>$this->input->post('select_all')]) : ['status'=>$this->input->post('select_all')],
-                'data_source_id' => $dataSourceID
-            ];
-            $affected_ros = $this->ro->filter_by($args, 0, 0, true);
-            $affectedIDs = [];
-            if (is_array($affected_ros)) {
-                foreach ($affected_ros as $r) {
-                    if (!in_array($r->registry_object_id, $excludedRecords)) {
-                        $affectedIDs[] = $r->registry_object_id;
-                    }
-                }
+
+            // filters only accept data_source_id and status for now
+            $query = \ANDS\RegistryObject::where('data_source_id', $dataSourceID);
+
+            // the status to filter on would be nested under filters[filter] or as the value of the select_all POST field
+            $status = array_key_exists('filter', $filters) && array_key_exists('status', $filters['filter'])
+                ? $filters['filter']['status']
+                : $select_all;
+            if (isset($status)) {
+                $query = $query->where('status', $status);
+            }
+
+            $affectedIDs =  $query->pluck('registry_object_id')->toArray();
+
+            // exclusion
+            if (count($excludedRecords) > 0) {
+                $affectedIDs = array_diff($affectedIDs, $excludedRecords);
             }
         }
 
         // The affected_ids list should be good now
-        // Running delete pipeline
-        $importTask = new \ANDS\API\Task\ImportTask();
-
-        $importTask->init([
+        // task type set to NONE so that TaskManager won't act on it
+        /** @var \ANDS\API\Task\ImportTask $importTask */
+        $importTask = TaskRepository::create([
             'name' => "Manual Delete",
-			'type' => "PHPSHELL",
+            'type' => Task::$TYPE_NONE,
             'params' => http_build_query([
+                'class' => 'import',
                 'ds_id' => $dataSourceID,
-                'pipeline' => 'PublishingWorkflow',
+                'pipeline' => 'manualDelete',
                 'source' => 'manual'
             ])
-        ]);
+        ], true);
 
-        $importTask
-            ->setCI($this)
-            ->skipLoadingPayload()
-            ->enableRunAllSubTask();
-
-        $importTask
-            ->setTaskData('deletedRecords', $affectedIDs)
-            ->setCI($this)
-            ->setDb($this->db)
+        // skip loading payload because there's none and load deletedRecords
+        $importTask->skipLoadingPayload();
+        $importTask->setTaskData('deletedRecords', $affectedIDs)
             ->initialiseTask();
-
-        // send the task to background to obtain a task ID
-        $importTask->sendToBackground();
 
         // append data source log
         $dataSource = ANDS\DataSource::find($dataSourceID);
@@ -1454,151 +1202,29 @@ class Registry_object extends MX_Controller {
             "info", "IMPORTER"
         );
 
-        $importTask->run();
+        // if we're deleting a small amount of records, do it immediately
+        $threshold = 5;
+        if ($count < $threshold) {
+            $ds = $this->ds->getByID($dataSourceID);
+            $ds->updateStats();
 
-        // update the stats of the records
-        $ds = $this->ds->getByID($dataSourceID);
-        $ds->updateStats();
+            // enable running of all subtasks and immediately run the task and return
+            $importTask->enableRunAllSubTask()->run();
+            $message = "Deleted $count Registry Objects";
+        } else {
+
+            // by setting the task type to SHELL and save it, TaskManager will pick it up later
+            $importTask->setType(\ANDS\API\Task\Task::$TYPE_SHELL)->save();
+            $message = "Deleting $count Registry Objects in the background. Please refer to the Data Source Dashboard for updates.";
+        }
 
         echo json_encode([
-            "status" => "success"
+            'status' => 'success',
+            'message' => $message
         ]);
     }
 
-    // TODO: Remove after Pipeline Integration
-	function delete_deprecated(){
-		set_exception_handler('json_exception_handler');
-		header('Cache-Control: no-cache, must-revalidate');
-		header('Content-type: application/json');
-
-		$affected_ids = $this->input->post('affected_ids');
-		// $select_all is the status, not a boolean?
-		//$select_all = $this->input->post('select_all')=='true' ? true : false;
-
-		$select_all = $this->input->post('select_all');
-		$data_source_id = $this->input->post('data_source_id');
-		$excluded_records = $this->input->post('excluded_records') ?: array();
-		$this->load->model('registry_objects', 'ro');
-		$this->load->model('data_source/data_sources', 'ds');
-
-
-		if($select_all && $select_all != "false"){
-			$filters = $this->input->post('filters');
-
-
-			$args = array();
-
-			$args['sort'] = isset($filters['sort']) ? $filters['sort'] : array('updated'=>'desc');
-			$args['search'] = isset($filters['search']) ? $filters['search'] : false;
-			$args['or_filter'] = isset($filters['or_filter']) ? $filters['or_filter'] : false;
-			$args['filter'] = isset($filters['filter']) ? array_merge($filters['filter'], array('status'=>$this->input->post('select_all'))) : array('status'=>$this->input->post('select_all'));
-			$args['data_source_id'] = $data_source_id;
-			$affected_ros = $this->ro->filter_by($args, 0, 0, true);
-
-			$affected_ids = array();
-			if(is_array($affected_ros))
-			{
-				foreach($affected_ros as $r){
-					if(!in_array($r->registry_object_id, $excluded_records)) {
-						array_push($affected_ids, $r->registry_object_id);
-					}
-				}
-			}
-		}
-		$ds = $this->ds->getByID($data_source_id);
-
-		if (is_array($affected_ids) && sizeof($affected_ids)>0){
-			$this->load->library('importer');
-			$deleted_and_affected_record_keys = $this->ro->deleteRegistryObjects($affected_ids, false);
-			$this->importer->addToDeletedList($deleted_and_affected_record_keys['deleted_record_keys']);
-			$this->importer->addToAffectedList($deleted_and_affected_record_keys['affected_record_keys']);
-			$taskLog = $this->importer->finishImportTasks();
-			if($this->importer->runBenchMark){
-				$ds->append_log('delete Log '.NL.$taskLog, "IMPORTER_INFO", "harvester", "IMPORTER_INFO");
-			}
-		}
-
-
-		// set a background task to fix the relationship of the deleted records by removing them
-		if (sizeof($affected_ids) > 0) {
-			require_once BASE . 'vendor/autoload.php';
-			$params = [
-				'class' => 'fixRelationship',
-				'type' => 'ro',
-				'id' => join(',', $affected_ids)
-			];
-			$task = [
-				'name' => "fixRelationship of " . sizeof($affected_ids). " records",
-				'type' => 'POKE',
-				'frequency' => 'ONCE',
-				'priority' => 5,
-				'params' => http_build_query($params)
-			];
-			$taskManager = new \ANDS\API\Task\TaskManager($this->db, $this);
-			$taskManager->addTask($task);
-		}
-
-		$ds->updateStats();
-
-		echo json_encode(array("status"=>"success"));
-	}
-
-
-
-	function get_solr_doc($id, $limit=null){
-        set_exception_handler('json_exception_handler');
-        header('Cache-Control: no-cache, must-revalidate');
-        header('Content-type: application/json');
-		$this->load->model('registry_objects', 'ro');
-		$ro = $this->ro->getByID($id);
-		$solrDoc = $ro->indexable_json();
-        echo json_encode($solrDoc);
-	}
-
 	//-----------DEPRECATED AFTER THIS LINE -----------------------//
-
-	/**
-	 * Get the edit form of a Record
-	 *
-	 *
-	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
-	 * @package ands/registryobject
-	 * @param registry object ID
-	 * @return [HTML] transformed form from extrif
-	 *
-	 */
-
-//	public function get_edit_form($id){
-//		// ro is the alias for the registry object model
-//		$this->load->model('registry_objects', 'ro');
-//		$ro = $this->ro->getByID($id);
-//		//$data['extrif'] = $ro->getExtRif();
-//
-//		$data['preview_link'] = 'http://demo.ands.org.au/'.$ro->slug;
-//		$data['transform'] = $ro->transformForFORM();
-//		echo $data['transform'];
-//		//$this->load->view('registry_object_edit', $data);
-//	}
-
-
-	/**
-	 * Get the edit form of a Record
-	 *
-	 *
-	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
-	 * @package ands/registryobject
-	 * @param registry object ID, [POST] custom RIFCS
-	 * @return [HTML] transformed form from extrif
-	 *
-	 */
-//	public function get_edit_form_custom($id){
-//		$this->load->model('registry_objects', 'ro');
-//		$ro = $this->ro->getByID($id);
-//		$rifcs = $this->input->post('rifcs');
-//
-//		$data['transform'] = $ro->transformCustomForFORM($rifcs);
-//		echo $data['transform'];
-//	}
 
 	/**
 	 * Get a list of records based on the filters
@@ -1720,36 +1346,6 @@ class Registry_object extends MX_Controller {
 		$jsonData = json_encode($jsonData);
 		echo $jsonData;
 
-	}
-
-	public function getConnections($ro_id, $limit=null)
-	{
-		$connections = array();
-		$status = array();
-        if($limit && (int)$limit > 0)
-            $party_conn_limit = $limit;
-        else
-            $party_conn_limit = 20;
-		$this->load->model('registry_object/registry_objects', 'ro');
-		$ro = $this->ro->getByID($ro_id);
-		if($ro){
-            //$connections = $ro->getConnections();
-            if($ro->class == 'party')
-			    $connections = $ro->getAllRelatedObjects(true, false, false, $party_conn_limit); // allow drafts
-            else
-                $connections = $ro->getAllRelatedObjects(true);
-			foreach($connections AS &$link)
-			{
-				// Reverse the relationship description (note: this reverses to the "readable" version (i.e. not camelcase))
-				if ($link['registry_object_id'] && in_array($link['origin'], array('REVERSE_EXT','REVERSE_INT')))
-				{
-					$link['relation_type'] = format_relationship($link['class'], $link['relation_type'], $link['origin'], $ro->class);
-				}
-				if($link['status']) $link['readable_status'] = readable($link['status']);
-			}
-		}
-		$status['count'] = sizeof($connections);
-		echo json_encode(array("status"=>$status,"connections"=>$connections));
 	}
 
 

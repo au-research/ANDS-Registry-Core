@@ -4,11 +4,10 @@
 namespace ANDS\API\Task\ImportSubTask;
 
 
-use ANDS\Cache\Cache;
-use ANDS\Registry\Providers\GraphRelationshipProvider;
+use ANDS\Mycelium\MyceliumServiceClient;
 use ANDS\Repository\RegistryObjectsRepository;
-use GraphAware\Common\Result\CombinedStatistics;
-use GraphAware\Common\Result\ResultCollection;
+use ANDS\Util\Config;
+use ANDS\Repository\RegistryObjectsRepository as Repo;
 
 class ProcessGraphRelationships extends ImportSubTask
 {
@@ -20,46 +19,62 @@ class ProcessGraphRelationships extends ImportSubTask
 
     public function run_task()
     {
-        //$startTime = microtime(true);
+
+
         $targetStatus = $this->parent()->getTaskData('targetStatus');
-        if (!RegistryObjectsRepository::isPublishedStatus($targetStatus)) {
-            $this->log("Target status is ". $targetStatus.' does not process graph network');
+        // TODO: until DRAFT records are 100% isolated in Mycelium we should only allow PUBLISHED records
+        if (!Repo::isPublishedStatus($targetStatus)) {
+            $this->log("Target status is ". $targetStatus.' No indexing required');
             return;
         }
 
-        // importedRecords should already be ordered by ProcessRelationship
-        $importedRecords = $this->parent()->getTaskData("importedRecords");
-        $total = count($importedRecords);
+        $myceliumUrl = Config::get('mycelium.url');
+        $myceliumClient = new MyceliumServiceClient($myceliumUrl);
 
-        $this->log("Process Graph Relationships started for $total records");
-        $stats = new CombinedStatistics();
-        foreach ($importedRecords as $index => $id) {
-
-//            $elapsed = microtime(true) - $startTime;
-//            if ($elapsed > $this->timeLimit) {
-//                $this->addError("Elapsed: {$elapsed}s. Task has run for more than {$this->timeLimit} seconds. Terminating... Processed ($index/$total)");
-//                break;
-//            }
-
-            $record = RegistryObjectsRepository::getRecordByID($id);
-            try {
-                /** @var CombinedStatistics $statistics */
-                $stat = GraphRelationshipProvider::process($record);
-
-                $stats->mergeStats($stat);
-
-            } catch (\Exception $e) {
-                $this->addError("Error processing graph relationships for {$id}: ". get_exception_msg($e));
-            }
-            $this->updateProgress($index, $total, "Processed ($index/$total) $record->title($record->registry_object_id)");
+        if (!$myceliumClient->ping()) {
+            $this->addError("Failed to contact Mycelium at $myceliumUrl. ProcessGraphRelationship is skipped");
+            return;
         }
 
-        $this->log("Nodes Created: {$stats->nodesCreated()}");
-        $this->log("Nodes Deleted: {$stats->nodesDeleted()}");
-        $this->log("Relationships Created: {$stats->relationshipsCreated()}");
-        $this->log("Relationships Deleted: {$stats->relationshipsDeleted()}");
-        $this->log("Properties Set: {$stats->propertiesSet()}");
+        $import_count = 0;
+        $error_count = 0;
+        $startTime = microtime(true);
 
-        $this->log("Process Graph Relationships completed for $total records");
+
+        $importedRecords = $this->parent()->getTaskData("importedRecords");
+        $total = count($importedRecords);
+        
+        // create a new Mycelium Request
+        $myceliumRequestId = $this->parent()->getTaskData("myceliumRequestId");
+        if ($myceliumRequestId == null) {
+            $result = $myceliumClient->createNewImportRecordRequest($this->parent()->getBatchID());
+            $request = json_decode($result->getBody()->getContents(), true);
+            $myceliumRequestId = $request['id'];
+            $this->log("Mycelium Request created ID: $myceliumRequestId");
+            $this->parent()->setTaskData("myceliumRequestId", $myceliumRequestId);
+        }
+
+        foreach ($importedRecords as $index => $id) {
+            $record = RegistryObjectsRepository::getRecordByID($id);
+            $result = $myceliumClient->importRecord($record, $myceliumRequestId);
+
+            if ($result->getStatusCode() === 200) {
+                $import_count++;
+                //$this->log("Imported record {$record->id} to mycelium");
+                debug("Imported record {$record->id} to mycelium");
+            } else {
+                $error_count++;
+                $reason = $result->getBody()->getContents();
+                $this->addError("Failed to import record {$record->id} to mycelium. Reason: $reason");
+                debug("Failed to import record {$record->id} to mycelium. Reason: $reason");
+            }
+            $this->updateProgress($index, $total, "Processed ($index/$total) $record->title($record->id)");
+            debug("Processed ($index/$total) $record->title($record->id)");
+        }
+        debug("Process Graph Relationships completed for $import_count records");
+        $this->log("Process Graph Relationships completed for $import_count records");
+        if($error_count > 0){
+            $this->log("Failed to process Graph Relationships for $error_count records");
+        }
     }
 }

@@ -6,12 +6,14 @@ use ANDS\DataSource;
 use ANDS\DataSource\DataSourceLog;
 use ANDS\DataSource\Harvest;
 use ANDS\DataSourceAttribute;
+use ANDS\Mycelium\MyceliumServiceClient;
 use ANDS\Registry\API\Middleware\IPRestrictionMiddleware;
 use ANDS\Registry\API\Request;
 use ANDS\Registry\Importer;
 use ANDS\RegistryObject;
 use ANDS\Repository\DataSourceRepository;
 use ANDS\Repository\RegistryObjectsRepository;
+use ANDS\Util\Config;
 
 class DataSourcesController extends HTTPController implements RestfulController
 {
@@ -121,6 +123,11 @@ class DataSourcesController extends HTTPController implements RestfulController
         $ds = $dataSource->delete();
 
         $dataSource->delete();
+
+        // wipe from mycelium
+        $client = new MyceliumServiceClient(Config::get('mycelium.url'));
+        $client->deleteDataSource($dataSource);
+
         return compact('attributes', 'logs', 'harvest', 'ds', 'records', 'index');
     }
 
@@ -134,6 +141,9 @@ class DataSourcesController extends HTTPController implements RestfulController
             Request::value('title'),
             Request::value('record_owner')
         );
+
+        $client = new MyceliumServiceClient(Config::get('mycelium.url'));
+        $client->createDataSource($dataSource);
 
         return $dataSource;
     }

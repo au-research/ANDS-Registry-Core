@@ -270,9 +270,13 @@
 
 				<?php if ($this->user->hasFunction('REGISTRY_SUPERUSER')): ?>
 				<div class="widget-box">
+                    <div class="widget-title"><h5>Data Source Admin Tools</h5></div>
 					<div class="widget-content">
-						<button class="btn btn-danger" ng-click="clear_logs()"><i class="icon-white icon-remove"></i> Clear Logs</button>
-						<button class="btn btn-danger" ng-click="remove()"> <i class="icon-white icon-warning-sign"></i> Delete Data Source <i class="icon-white icon-trash"></i> </button>
+                        <div class="btn-group btn-group-vertical">
+                            <button class="btn btn-danger" ng-click="clear_logs()"><i class="icon-white icon-remove"></i> Clear Logs</button>
+                            <button class="btn btn-danger" ng-click="wipe()"> <i class="icon-white icon-trash"></i> Wipe Data Source Content </button>
+                            <button class="btn btn-danger" ng-click="remove()"> <i class="icon-white icon-warning-sign"></i> Delete Data Source <i class="icon-white icon-trash"></i> </button>
+                        </div>
 					</div>
 				</div>
 				<?php endif; ?>

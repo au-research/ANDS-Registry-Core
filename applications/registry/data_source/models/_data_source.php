@@ -158,19 +158,6 @@ class _data_source {
         return $this;
     }
 
-    function eraseFromDB()
-    {
-        $log = $this->deleteAllRecords();
-        $this->db->delete('data_source_attributes', array('data_source_id'=>$this->id));
-        $this->db->delete('data_source_logs', array('data_source_id'=>$this->id));
-        $this->db->delete('deleted_registry_objects', array('data_source_id'=>$this->id));
-        $this->db->delete('harvest_requests', array('data_source_id'=>$this->id));
-        $this->db->delete('data_sources', array('data_source_id'=>$this->id));
-        $this->db->delete('harvests', array('data_source_id'=>$this->id));
-        return $log;
-    }
-
-
     function save()
     {
         // Mark this record as recently updated
@@ -329,42 +316,8 @@ class _data_source {
         return array_unique($groups);
 
     }
-    function get_group_contributor($group)
-    {
-
-        $contributor = '';
-
-        $this->db->select('registry_objects.registry_object_id,registry_objects.key,institutional_pages.authorative_data_source_id');
-        $this->db->from('registry_objects');
-        $this->db->join('institutional_pages', 'institutional_pages.registry_object_id = registry_objects.registry_object_id');
-        $this->db->where(array('institutional_pages.group'=>$group,));
-
-        $query = $this->db->get();
-
-
-        if ($query->num_rows() == 0)
-        {
-
-            return $contributor;
-        }
-        else
-        {
-            foreach($query->result_array() AS $contributors)
-            {
-
-                $contributor['key'] =  $contributors['key'];
-                $contributor['authorative_data_source_id'] = $contributors['authorative_data_source_id'];
-                $contributor['registry_object_id'] = $contributors['registry_object_id'];
-            }
-
-        }
-
-        return $contributor;
-
-    }
 
     function reindexAllRecords() {
-        $this->_CI->load->library('importer');
 
         $targetRecords = array();
 
@@ -383,194 +336,6 @@ class _data_source {
 
         // $this->_CI->importer->_enrichRecords($targetRecords);
         $this->_CI->importer->_reindexRecords($targetRecords);
-    }
-
-
-    function deleteAllRecords()
-    {
-        $this->_CI->load->library('importer');
-        $this->_CI->load->model("registry_object/registry_objects", "ro");
-        $targetRecords = array();
-
-        $this->db->select('registry_object_id');
-        $this->db->from('registry_objects');
-        $this->db->where(array('data_source_id'=>$this->id));
-
-        $query = $this->db->get();
-        if ($query->num_rows())
-        {
-            foreach($query->result_array() AS $i)
-            {
-                $targetRecords[] =  $i['registry_object_id'];
-            }
-        }
-        $deleted_and_affected_record_keys = $this->_CI->ro->deleteRegistryObjects($targetRecords, false);
-        $this->_CI->importer->addToDeletedList($deleted_and_affected_record_keys['deleted_record_keys']);
-        $this->_CI->importer->addToAffectedList($deleted_and_affected_record_keys['affected_record_keys']);
-        $taskLog =  $this->_CI->importer->finishImportTasks();
-        return $taskLog;
-    }
-
-    function setContributorPages($value,$inputvalues,$notifyChange=true)
-    {
-        $data_source_id = $this->id;
-        $data_source_title = $this->title;
-
-        $this->_CI->load->model("registry_object/registry_objects", "ro");
-        $this->_CI->load->model("registry_object/rifcs_generator", "rifcs");
-        $groups = $this->get_groups();
-
-        $fixgroups = array();
-        foreach($groups as $group){
-            $fixgroups[] = $group;
-        }
-        $groups = $fixgroups;
-
-        $pages = array();
-        switch($value)
-        {
-            case "0":
-                //remove any reference to a contibutor page for this datasource from the institutional_pages db table
-                $delete = $this->db->delete('institutional_pages', array('authorative_data_source_id'=>$data_source_id));
-                break;
-            case "1":
-                // for each group for this datasource that is not already managed by another datasource
-                foreach($groups as $group)
-                {
-                    $manageGroup = array();
-                    $query = '';
-                    $manageGroup[$group] = true;
-                    //check that another ds is not the authoritive ds
-                    $query = $this->db->get_where('institutional_pages', array('group'=>$group));
-                    $this->_CI->load->library('importer');
-
-                    if($query->num_rows > 0)
-                    {
-                        foreach($query->result_array() AS $foundPage)
-                        {
-                            if($foundPage['authorative_data_source_id']==$data_source_id)
-                            {
-                                //we want to delete this record and reinsert it
-                                $this->db->delete('institutional_pages', array('group'=>$group));
-                            }else{
-                                //we want to leave this group alone if the group belongs to another ds
-                                $manageGroup[$group] = false;
-                            }
-                        }
-                    }
-                    if($manageGroup[$group])
-                    {
-                        $registry_object_key = 'Contributor:'.$group;
-                        $data_source_key = $this->key;
-                        $title=$group;
-                        $contributorPage = $this->_CI->ro->getAllByKey('Contributor:'.$group);
-                        if(!$contributorPage)
-                        {
-                            //we need to automatically create the group party record if it dosn't exist
-                            $xml = wrapRegistryObjects($this->_CI->rifcs->xml($data_source_key ,$registry_object_key,$title,$group));
-                            $this->_CI->importer->forceDraft();
-                            $this->_CI->importer->setXML($xml);
-                            $this->_CI->importer->setDatasource($this);
-                            $the_key = $this->_CI->importer->commit();
-
-                            $contributorPage = $this->_CI->ro->getAllByKey($registry_object_key);
-                            $contributorPage[0]->sync();
-                            //we need to email services that we have created this page
-                            if ($notifyChange && $this->_CI->config->item('site_admin_email'))
-                            {
-                                $subject = $title." contributor page has been generated under datasource ".$this->title;
-                                $message = '<a href="'.base_url().'registry_object/view/'.$contributorPage[0]->id.'">'.$registry_object_key .'</a>';
-                                $to = $this->_CI->config->item('site_admin_email');
-                                $headers  = 'MIME-Version: 1.0' . "\r\n";
-                                $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-                                mail($to, $subject, $message, $headers);
-                            }
-                        }
-
-                        $registry_object_id = $contributorPage[0]->id;
-                        //we need to add the  group , registry_object_id and autoritive datasource to the institutional_pages table
-                        $data = array(
-                            "id"=>null,
-                            "group"=> (string)$group,
-                            "registry_object_id"=>$registry_object_id,
-                            "authorative_data_source_id" => $data_source_id
-                        );
-                        $insert = $this->db->insert('institutional_pages',$data);
-                    }
-                }
-                break;
-            case "2":
-                // for each group for this datasource that is not already managed by another datasource
-                foreach($groups as $group_index=>$group)
-                {
-                    $manageGroup = true;
-                    $query = '';
-                    //check that another ds is not the authoritive ds
-                    $query = $this->db->get_where('institutional_pages', array('group'=>$group));
-
-                    if($query->num_rows > 0)
-                    {
-                        foreach($query->result_array() AS $foundPage)
-                            if($foundPage['authorative_data_source_id']==$data_source_id)
-                            {
-                                //we want to delete this record and reinsert it
-                                $this->db->delete('institutional_pages', array('group'=>$group));
-                            }else{
-                                //we want to leave this group alone if the group belongs to another ds
-                                $manageGroup = false;
-                            }
-                    }
-                    if($manageGroup && isset($inputvalues['contributor_pages']))
-                    {
-                        // Turn the indexed input array back into associative values
-                        foreach($inputvalues['contributor_pages'] AS $page_idx => $contributor_value)
-                        {
-                            if (isset($groups[$page_idx]))
-                            {
-                                $inputvalues[$groups[$page_idx]] = $contributor_value;
-                            }
-                        }
-                        
-                        $registry_object_key = isset($inputvalues[$group]) ? $inputvalues[$group] : '';
-                        $registry_object_key = isset($inputvalues['contributor_pages'][$group_index]) ? $inputvalues['contributor_pages'][$group_index] : '';
-
-                        if($registry_object_key!='')
-                        {
-                            $contributorPage = $this->_CI->ro->getAllByKey($registry_object_key);
-
-                            if(isset($contributorPage[0]->id) && $contributorPage[0]->class == "party")
-                            {
-                                $registry_object_id = $contributorPage[0]->id;
-    
-                                //we need to add the  group , registry_object_id and autoritive datasource to the institutional_pages table
-                                $data = array(
-                                    "id"=>null,
-                                    "group"=> (string)$group,
-                                    "registry_object_id"=>$registry_object_id,
-                                    "authorative_data_source_id" => $data_source_id
-                                );
-    
-                                $insert = $this->db->insert('institutional_pages',$data);
-                                // $contributorPage[0]->sync();
-                                if ($notifyChange && $this->_CI->config->item('site_admin_email'))
-                                {
-                                    $subject = $contributorPage[0]->title." has been mapped as a contributor page for group ".$group." under datasource ".$data_source_title;
-                                    $message = '<a href="'.base_url().'registry_object/view/'.$contributorPage[0]->id.'">'.$contributorPage[0]->key .'</a>';
-                                    $to = $this->_CI->config->item('site_admin_email');
-                                    $headers  = 'MIME-Version: 1.0' . "\r\n";
-                                    $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-                                    mail($to, $subject, $message, $headers);
-                                }
-                            }else{
-                                //how do we deal with the fact that its not a valid key?
-                                throw new Exception("Could not save contributor for \"$group\".".NL."Record \"$registry_object_key\" does not seem to be a valid Party record?");
-                            }
-                        }
-                    }
-                }
-
-                break;
-        }
     }
 
     /*
@@ -803,28 +568,6 @@ class _data_source {
     }
 
 
-
-    function deleteOldRecords($harvest_id)
-    {
-        $this->_CI->load->model("registry_object/registry_objects", "ro");
-        $oldRegistryObjectIDs = $this->_CI->ro->getRecordsInDataSourceFromOldHarvest($this->id, $harvest_id);
-        $deleted_and_affected_record_keys = null;
-        if($oldRegistryObjectIDs)
-        {
-            try{
-                $deleted_and_affected_record_keys = $this->_CI->ro->deleteRegistryObjects($oldRegistryObjectIDs, false);
-            }
-            catch(Exception $e)
-            {
-                $this->append_log("ERROR REMOVING RECORD FROM PREVIOUS HARVEST: ".NL.$e, HARVEST_INFO, "harvester", "HARVESTER_INFO");
-            }
-        }
-        if(is_array($deleted_and_affected_record_keys) && array_key_exists('deleted_record_keys', $deleted_and_affected_record_keys))
-        {
-            $this->append_log("REMOVING RECORDS FROM PREVIOUS HARVEST: " .sizeof($deleted_and_affected_record_keys['deleted_record_keys'])." DELETED", HARVEST_INFO, "harvester","HARVESTER_INFO");
-        }
-        return $deleted_and_affected_record_keys; //array('deleted_record_keys'=>$deleted_record_keys, 'affected_record_keys'=>$affected_record_keys);
-    }
     /*
      * 	STATS
      */

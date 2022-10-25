@@ -66,7 +66,7 @@ class TestScheduleHarvestTask extends UnitTest
         $importTask->init([
             'name' => 'ImportTask',
             'params' => 'ds_id='. $this->ds_id .'&batch_id='.$this->batch_id.'&harvest_id='.$this->harvest_id.'&pipeline='.$pipeline
-        ])->setCI($this->ci)->initialiseTask();
+        ])->initialiseTask();
         $task = $importTask->getTaskByName("ScheduleHarvest");
 
         return $task;

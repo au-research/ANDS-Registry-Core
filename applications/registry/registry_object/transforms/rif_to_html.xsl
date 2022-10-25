@@ -102,8 +102,8 @@
 	<xsl:template match="ro:key">
 		<xsl:value-of select="."/>
 	</xsl:template>
-	
-	<!-- xsl:template match="relatedObject/key">
+
+	<xsl:template match="relatedObject/key">
 		<tr>
 			<td class="attribute">
 				<xsl:value-of select="local-name()"/><xsl:text>: </xsl:text>
@@ -112,21 +112,19 @@
 				<xsl:value-of select="."/>
 			</td>
 		</tr>
-	</xsl:template-->
+	</xsl:template>
 	
 	<xsl:template match="ro:relatedObject/ro:key">
 		<tr>
-			<td></td><td class="resolvedRelated" key_value="{.}"></td>
+			<td>Title:</td><td class="resolvedRelated" key_value="{.}"></td>
 		</tr>	
 		<tr>
 			<td class="attribute">
 				<xsl:value-of select="name()"/><xsl:text>: </xsl:text></td>
-			<td class="valueAttribute resolvable_key" key_value="{.}">
+			<td class="valueAttribute resolvable_key">
 				<xsl:value-of select="."/>
 			</td>
-		</tr> 
-
-
+		</tr>
 	</xsl:template>
 	
 	<xsl:template match="ro:originatingSource">
@@ -199,21 +197,29 @@
 				</td>
 			</tr>
 		</xsl:if>
-		
-		
 
-			<tr class="hide" id="rorow">
-				<td>Related Objects:</td>
-				<td>
-					<table class="subtable" id="related_objects_table">
-					 <xsl:if test="ro:relatedObject">
-						<xsl:apply-templates select="ro:relatedObject"/>
-					</xsl:if>
-					</table>
-				</td>
-			</tr>
+        <xsl:choose>
+			<xsl:when test="ro:relatedObject">
+				<tr id="rorow">
+					<td>Related Objects:</td>
+					<td>
+						<table class="subtable" id="related_objects_table">
+							<xsl:apply-templates select="ro:relatedObject"/>
+						</table>
+					</td>
+				</tr>
+			</xsl:when>
+			<xsl:otherwise>
+				<tr class="hide" id="rorow">
+					<td>Related Objects:</td>
+					<td>
+						<table class="subtable" id="related_objects_table">
+						</table>
+					</td>
+				</tr>
+			</xsl:otherwise>
+		</xsl:choose>
 
-		
 		
 		<xsl:if test="ro:subject">
 			<tr>
@@ -295,7 +301,7 @@
 				</td>
 			</tr>
 		</xsl:if>
-	 	
+
 	</xsl:template>
 	
 	<!-- xsl:template match="citationMetadata/identifier">

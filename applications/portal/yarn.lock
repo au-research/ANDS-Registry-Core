@@ -1126,6 +1126,11 @@ isstream@~0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/isstream/-/isstream-0.1.2.tgz#47e63f7af55afa6f92e1500e690eb8b8529c099a"
 
+jquery.fancytree@^2.38.1:
+  version "2.38.1"
+  resolved "https://registry.yarnpkg.com/jquery.fancytree/-/jquery.fancytree-2.38.1.tgz#161a75ab82c5c208b522787edbebc4d1ffac6e02"
+  integrity sha512-LGl2U+xKbMU4bGCSEwL1Mm20lm8RdJsDMeet4hx8+tT+XyzLb7YuBovD4QWcvzO15N3JgEVJNEzELQLoO4BZow==
+
 js-yaml@~3.5.2:
   version "3.5.5"
   resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.5.5.tgz#0377c38017cabc7322b0d1fbcd25a491641f2fbe"

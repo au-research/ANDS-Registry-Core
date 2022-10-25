@@ -17,6 +17,7 @@ return [
     'solr_url' => env('SOLR_URL', 'http://localhost:8983/solr/'),
     'elasticsearch_url' => env('ELASTICSEARCH_URL', 'http://localhost:9200/'),
     'socket_url' => env('SOCKET_URL', 'http://localhost:3001/'),
+    'redis_url' => env('REDIS_URL', 'redis://localhost:6379'),
     'deployment_state' => env('ENVIRONMENT', "development"),
     'cookie_domain' => env('COOKIE_DOMAIN', '.ands.org.au'),
     'api_whitelist_ip' => env('API_WHITELIST_IP', ''),
@@ -41,7 +42,7 @@ return [
             'path' => 'etc/schema'
         ],
         'logs' => [
-            'path' => env('LOGS_PATH', '/var/log/'),
+            'path' => env('LOGS_PATH', '/var/log/registry/'),
 
             // legacy_path for CodeIgniter, default empty for engine/logs location
             'legacy_path' => env('LOGS_PATH_LEGACY', '')

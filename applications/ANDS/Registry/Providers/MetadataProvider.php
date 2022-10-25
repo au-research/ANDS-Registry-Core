@@ -1,11 +1,7 @@
 <?php
 
-
 namespace ANDS\Registry\Providers;
 
-
-use ANDS\Registry\Connections;
-use ANDS\Registry\RelationshipView;
 use ANDS\RegistryObject;
 use ANDS\Util\XMLUtil;
 
@@ -34,24 +30,21 @@ class MetadataProvider implements RegistryContentProvider
         return self::getSelective($record);
     }
 
-    public static function getSelective(
-        RegistryObject $record,
-        $only = ['relationships', 'recordData']
-    ) {
-        $data = [];
-        if (in_array('relationships', $only)) {
-            $data['relationships'] = RelationshipProvider::getMergedRelationships($record, $includeDuplicate = false);
+    /**
+     * @param RegistryObject $record
+     * @param $only  String, no existing use for relationship here so just get the recordData
+     * @return array
+     */
+    public static function getSelective(RegistryObject $record, $only = ['recordData']) {
+        $aData = [];
+        foreach($only as $content){
+            if(strtolower($content) == 'recorddata'){
+                $aData[$content] = $record->getCurrentData()->data;
+            }else{
+                $aData[$content] = $content . " Information is no longer provided by this sevice!";
+            }
         }
-
-        if (in_array('duplicates_relationships', $only)) {
-            $data['relationships'] = RelationshipProvider::getMergedRelationships($record);
-        }
-
-        if (in_array('recordData', $only)) {
-            $data['recordData'] = $record->getCurrentData()->data;
-        }
-
-        return $data;
+        return $aData;
     }
 
     /**

@@ -5,15 +5,12 @@ namespace ANDS\Registry\Providers\DCI;
 
 
 use ANDS\File\Storage;
-use ANDS\Registry\Providers\GrantsConnectionsProvider;
 use ANDS\Registry\Providers\MetadataProvider;
 use ANDS\Registry\Providers\RegistryContentProvider;
 use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 use ANDS\Registry\Providers\RIFCS\SubjectProvider;
-use ANDS\Registry\Providers\Scholix\ScholixProvider;
-use ANDS\Registry\RelationshipView;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\StrUtil;
@@ -93,7 +90,7 @@ class DataCitationIndexProvider implements RegistryContentProvider
     public static function get(RegistryObject $record)
     {
         if (!static::isValid($record)) {
-            return null;
+            return "<DataRecord/>";
         }
 
         $provider = new static;
@@ -125,7 +122,8 @@ class DataCitationIndexProvider implements RegistryContentProvider
      */
     public static function isValid(RegistryObject $record)
     {
-        if ($record->class != "collection") {
+
+        if ($record->class != "collection" || $record->status == "DELETED") {
             return false;
         }
 
@@ -179,21 +177,21 @@ class DataCitationIndexProvider implements RegistryContentProvider
 
         // BibliographicData/AuthorList/Author
         $authors = $this->getAuthors($this->record, $this->sxml);
+        //var_dump($authors);
         $authorList = $bibliographicData->addChild('AuthorList');
         $seq = 1;
         foreach ($authors as $author) {
             $authorElement = $authorList->addChild("Author");
             $authorElement['seq'] = $seq++;
+
             $authorElement['AuthorRole'] = format_relationship($this->record->class, $author['relation'], "EXPLICIT", 'party');
             $authorElement->addChild('AuthorName', $author['name']);
-
             $party = RegistryObjectsRepository::getRecordByID($author['id']);
             if (!$party) {
                 continue;
             }
 
             $partyXML = $party->getCurrentData()->data;
-
             // BibliographicData/AuthorList/Author/AuthorEmail
             foreach ($addresses = MetadataProvider::getElectronicAddress($party, $partyXML) as $address) {
                 if ($address['type'] === 'email') {
@@ -288,9 +286,19 @@ class DataCitationIndexProvider implements RegistryContentProvider
             return $authors;
         }
 
-        $validRelationTypes = ['IsPrincipalInvestigatorOf', 'author', 'coInvestigator', 'isOwnedBy', 'hasCollector'];
+        $validRelationTypes = ['isPrincipalInvestigatorOf', 'author', 'hasAuthor', 'coInvestigator', 'hasCoInvestigator','isOwnedBy', 'hasCollector'];
         foreach ($validRelationTypes as $relationType) {
-            $authors = array_merge($authors, RelationshipProvider::getRelationByType($record, [$relationType]));
+            $authors_related = array_merge($authors, RelationshipProvider::getRelationByType($record, [$relationType]));
+            foreach($authors_related as $author){
+                if(array_key_exists('to_title', $author)) {
+                    $id = $author['to_identifier_type'] == 'ro:id' ? $author['to_identifier'] : null;
+                    $authors[] = [
+                        'relation' => $author['relations'][0]['relation_type'],
+                        'name' => $author['to_title'],
+                        'id' => $id
+                    ];
+                }
+            }
             if (count($authors)) {
                 return $authors;
             }
@@ -424,13 +432,14 @@ class DataCitationIndexProvider implements RegistryContentProvider
 
     private function getParentDataRef()
     {
-        $direct = RelationshipView::where('from_id', $this->record->id)
-            ->where('relation_type', 'isPartOf')
-            ->where('to_class', 'collection')
-            ->get();
-
+        $record = RegistryObject::find($this->record->id);
+        $direct = RelationshipProvider::getRelationByClassAndType($record, 'collection', ['isPartOf']);
         foreach ($direct as $relation) {
-            $this->DCIRoot->addChild('ParentDataRef', StrUtil::xmlSafe($relation->to_key));
+            if($relation['to_identifier_type'] == "ro:id"){
+                $related_object = RegistryObject::find($relation['to_identifier'] );
+                if(isset($related_object->key))
+                $this->DCIRoot->addChild('ParentDataRef', StrUtil::xmlSafe($related_object->key));
+            }
         }
     }
 
@@ -459,11 +468,9 @@ class DataCitationIndexProvider implements RegistryContentProvider
     private function getFundingInfo()
     {
         // FundingInfo/FundingInfoList/ParsedFunding
-        $direct = RelationshipView::where('from_id', $this->record->id)
-            ->where('to_class', 'activity')
-            ->where('relation_type', 'isOutputOf')
-            ->get();
-        // reverse?
+        $record = RegistryObject::find($this->record->id);
+
+        $direct = RelationshipProvider::getRelationByClassAndType($record, 'activity', ['isOutputOf']);
 
         if (count($direct) === 0) {
             return;
@@ -473,26 +480,28 @@ class DataCitationIndexProvider implements RegistryContentProvider
         // because some activity might not have a funder and/or grant number
         $fundingInfos = [];
         foreach ($direct as $relation) {
-            $activity = RegistryObjectsRepository::getRecordByID($relation->to_id);
-
-            // registryObject:activity:identifier[@type='arc' or 'nhmrc']
-            $identifiers = IdentifierProvider::get($activity);
-            $grantID = collect($identifiers)->filter(function($identifier){
-                return in_array($identifier['type'], ['arc', 'nhmrc']);
-            })->first();
-            if (!$grantID) {
-                continue;
+            $activity = ($relation['to_identifier_type'] == 'ro:id') ? RegistryObject::find($relation['to_identifier']) : '';
+                // registryObject:activity:identifier[@type='arc' or 'nhmrc']
+            if($activity){
+                $identifiers = IdentifierProvider::get($activity);
+                $grantID = collect($identifiers)->filter(function ($identifier) {
+                    return in_array($identifier['type'], ['arc', 'nhmrc']);
+                })->first();
+                if (!$grantID) {
+                    continue;
+                }
+                $fundingInfo = ['GrantNumber' => $grantID['value']];
+                $funders = RelationshipProvider::getRelationByClassAndType($activity, 'party', ['isFundedBy']);
+                foreach($funders as $funder){
+                    if(array_key_exists('to_title',$funder)) {
+                        foreach ($funder['relations'] as $relations) {
+                            if ($relations['relation_origin'] == "GrantsNetwork")
+                                $fundingInfo['FundingOrganization'] = $funder['to_title'];
+                        }
+                    }
+                }
+                $fundingInfos[] = $fundingInfo;
             }
-
-            $fundingInfo = [
-                'GrantNumber' => $grantID['value']
-            ];
-
-            if ($funder = RelationshipProvider::getFunder($activity)){
-                $fundingInfo['FundingOrganization'] = $funder->title;
-            }
-
-            $fundingInfos[] = $fundingInfo;
         }
 
         if (count($fundingInfos) === 0) {

@@ -1,22 +1,19 @@
 <?php
 
-
 namespace ANDS\Registry\Providers\Scholix;
 
-
-use ANDS\API\Task\ImportSubTask\ProcessDelete;
 use ANDS\Registry\Providers\MetadataProvider;
 use ANDS\Registry\Providers\RegistryContentProvider;
 use ANDS\Registry\Providers\RelationshipProvider;
 use ANDS\Registry\Providers\RIFCS\DatesProvider;
 use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 use ANDS\Registry\Providers\RIFCS\LocationProvider;
-use ANDS\Registry\Providers\Scholix\Scholix;
-use ANDS\Registry\Providers\Scholix\ScholixDocument;
+use ANDS\Registry\Providers\RIFCS\RelatedInfoProvider;
 use ANDS\Registry\Relation;
 use ANDS\RegistryObject;
 use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\XMLUtil;
+use ANDS\Log\Log;
 use function baseUrl;
 use function collect;
 use function getReverseRelationshipString;
@@ -30,7 +27,8 @@ class ScholixProvider implements RegistryContentProvider
         "handle" => 'hdl',
         "purl" => 'purl',
         "uri" => 'url',
-        "url" => 'url'
+        "url" => 'url',
+        "ror" => 'ror'
     ];
     public static $validTargetIdentifierTypes = [
         "ark" => 'ark',
@@ -50,13 +48,12 @@ class ScholixProvider implements RegistryContentProvider
      * and is related to a type of publication
      *
      * @param RegistryObject $record
-     * @param null $relationships
      * @return bool
      */
-    public static function isScholixable(RegistryObject $record, $relationships = null)
+    public static function isScholixable(RegistryObject $record)
     {
         // early return if it's not a collection
-        if ($record->class != "collection") {
+       if ($record->class != "collection") {
             return false;
         }
 
@@ -65,20 +62,8 @@ class ScholixProvider implements RegistryContentProvider
             return false;
         }
 
-        // search through combined relationships to see if there's a related publication
-        if (!$relationships) {
-            $relationships = RelationshipProvider::getMergedRelationships($record);
-        }
-
-        $types = collect($relationships)->map(function($item) {
-            return $item->prop('to_type') ?: $item->prop('to_related_info_type');
-        })->toArray();
-
-        if (!in_array('publication', $types)) {
-            return false;
-        }
-
-        return true;
+        // record needs to be related to a publication
+        return (RelationshipProvider::hasRelatedType($record,'publication'));
     }
 
     /**
@@ -172,28 +157,30 @@ class ScholixProvider implements RegistryContentProvider
         $doc = new ScholixDocument;
         $doc->record = $record;
 
+
+
+
         $commonLinkMetadata = [
             'publicationDate' => DatesProvider::getCreatedDate($record),
-            'publisher' => [
-                'name' => $record->group
-            ],
-            'linkProvider' => [
-                'name' => 'Australian National Data Service',
+            'linkProvider' => [[
+                    'name' => $record->group
+                ],[
+                'name' => 'Australian Research Data Commons',
                 'identifier' => [
                     [
-                        'identifier' =>  'http://nla.gov.au/nla.party-1508909',
-                        'schema' => 'url'
+                        'identifier' =>  'https://ror.org/038sjwq14',
+                        'schema' => 'ror'
                     ]
-                ],
-                'objectType' => $record->type,
-                'title' => $record->title
+                ]
+            ]],
+            "relationshipType" => [
+                "name"=>"isRelatedTo"
             ]
         ];
-
         // identifiers
-        $identifiers = self::getIdentifiers($record, $data['relationships']);
+        $identifiers = self::getIdentifiers($record);
         if (count($identifiers) > 0) {
-            $commonLinkMetadata['publisher']['identifier'] = $identifiers;
+            $commonLinkMetadata['linkProvider'][0]['identifier'] = $identifiers;
         }
 
         /**
@@ -202,12 +189,14 @@ class ScholixProvider implements RegistryContentProvider
          * Produces a link to each of the related publication
          */
 
-        $relatedPublications = self::getRelatedPublications($record, $data);
+        $relatedPublications = self::getRelatedPublications($record);
 
-        // construct targets
+       // construct targets
         $targets = [];
         foreach ($relatedPublications as $publication) {
-            if ($to = $publication->to()) {
+           // if ($to = $publication->to()) {
+            if($publication['to_identifier_type'] == 'ro:id'){
+                $to = RegistryObjectsRepository::getRecordByID($publication['to_identifier']);
 
                 // toIdentifiers
                 $toIdentifiers = array_merge(
@@ -242,7 +231,7 @@ class ScholixProvider implements RegistryContentProvider
             } else {
                 $targets[] = [
                     'relationship' => $publication,
-                    'target' =>  self::getTargetMetadataRelatedInfo($publication)
+                    'target' =>  self::getTargetMetadataRelatedInfo($publication, $record)
                 ];
             }
         }
@@ -250,8 +239,8 @@ class ScholixProvider implements RegistryContentProvider
         // collection/identifier
         // collection/citationInfo/citationMetadata/identifier
         $identifiers = array_merge(
-            IdentifierProvider::get($record, $data['recordData']),
-            IdentifierProvider::getCitationMetadataIdentifiers($record, $data['recordData'])
+            IdentifierProvider::get($record, $record->getCurrentData()->data),
+            IdentifierProvider::getCitationMetadataIdentifiers($record,  $record->getCurrentData()->data)
         );
 
 
@@ -303,7 +292,7 @@ class ScholixProvider implements RegistryContentProvider
 
         // last resort, use key as a source
         $keyLink = $commonLinkMetadata;
-        $keyLink['source'] = self::getKeySource($record, $data);
+        $keyLink['source'] = self::getKeySource($record);
         foreach ($targets as $target) {
             $keyLink['relationship'] = self::getRelationships($target['relationship']);
             $keyLink['target'] = $target['target'];
@@ -313,12 +302,8 @@ class ScholixProvider implements RegistryContentProvider
         return $doc;
     }
 
-    public static function getKeySource(RegistryObject $record, $data = null)
+    public static function getKeySource(RegistryObject $record)
     {
-        if (!$data) {
-            $data = MetadataProvider::get($record);
-        }
-
         $source = [
             'identifier' => [
                 [
@@ -334,7 +319,7 @@ class ScholixProvider implements RegistryContentProvider
             ]
         ];
 
-        $creators = self::getSourceCreators($record, $data);
+        $creators = self::getSourceCreators($record);
         if (count($creators) > 0) {
             $source['creator'] = $creators;
         }
@@ -371,78 +356,43 @@ class ScholixProvider implements RegistryContentProvider
      * Returns possible related publications
      *
      * @param RegistryObject $record
-     * @param null $data
      * @return Relation[]
      */
-    public static function getRelatedPublications(RegistryObject $record, $data = null)
+    public static function getRelatedPublications(RegistryObject $record)
     {
-        if (!$data) {
-            $data = MetadataProvider::get($record);
+        $publications = [];
+        $relatedPublications = RelationshipProvider::getRelationByClassTypeRelationType($record,null,'publication',null);
+        foreach( $relatedPublications as $publication){
+            //we have a relatedInfo publication with a valid identifier type
+            if ($publication['to_identifier_type'] &&
+                in_array($publication['to_identifier_type'], array_keys(self::$validTargetIdentifierTypes))) {
+                $publications[] = $publication;
+            }
+            //we have a relatedObject publication
+            if($publication['to_identifier_type'] == 'ro:id'){
+
+                    $publications[] = $publication;
+            }
         }
-
-        $relationships = collect($data['relationships'])->filter(function($item) {
-            $type = $item->prop('to_related_info_type');
-            if (!$type) {
-                $type = $item->prop('to_type');
-            }
-
-            if ($type == 'publication') {
-                return true;
-            }
-
-            // check if the actual object exists, and then check the type
-            if ($to = $item->to()) {
-                if ($to->type == "publication") {
-                    return true;
-                }
-            }
-
-            return false;
-        })->filter(function($item){
-            // remove item with non valid identifier types
-            $identiferType = $item->prop('to_identifier_type');
-            if ($identiferType && !in_array($identiferType, array_keys(self::$validTargetIdentifierTypes))) {
-                return false;
-            }
-            return true;
-        })->toArray();
-
-        return $relationships;
+        return $publications;
     }
 
     /**
      * Returns the relationships for the given link
      *
-     * @param Relation $publication
+     * @param array $publication (relationship)
      * @return array
      */
-    public static function getRelationships(Relation $publication)
+    public static function getRelationships(array $publication)
     {
-        $relationType = $publication->prop('relation_type');
-        $relationOrigin = $publication->prop('relation_origin');
-        if (is_array($relationOrigin)) {
-            $relationOrigin = implode(" ", $relationOrigin);
-        }
-
         $relationships = [];
 
-        if (is_string($relationType)) {
-            $relationType = explode(', ', $relationType);
-        }
-
-        if (is_array($relationType)) {
-            foreach ($relationType as $type) {
-
-                if (strpos($relationOrigin, "REVERSE") > -1) {
-                    $type = getReverseRelationshipString($type);
-                }
-
-                $relationships[] = [
-                    'name' => $type,
-                    'schema' => 'RIF-CS',
-                    'inverse' => getReverseRelationshipString($type)
-                ];
-            }
+        foreach($publication['relations'] as $relation){
+            $relationships[] = [
+                'name' => $relation['relation_type'],
+                'schema' => 'RIF-CS',
+                'inverse' => getReverseRelationshipString($relation['relation_type'])
+            ];
         }
 
         return $relationships;
@@ -452,40 +402,29 @@ class ScholixProvider implements RegistryContentProvider
      * Find the identifiers of a relatedObject/party
      * with the title = record[group]
      * @param RegistryObject $record
-     * @param null $relationships
      * @return array
      */
-    public static function getIdentifiers(RegistryObject $record, $relationships = null)
+    public static function getIdentifiers(RegistryObject $record)
     {
-        if (!$relationships) {
-            $data = MetadataProvider::getSelective($record, ['relationships']);
-            $relationships = $data['relationships'];
-        }
+        $partyRelationships = RelationshipProvider::getRelationByClassAndType($record,'party',[]);
 
-        $party = collect($relationships)->filter(
-            function($relation) use ($record){
-                return $relation->prop('to_class') == 'party'
-                    && $relation->prop('to_title') == $record->group;
+        foreach($partyRelationships as $party){
+            if(array_key_exists('to_title', $party)
+                && $party['to_identifier_type'] == 'ro:id'
+                && $party['to_title'] == $party['from_group']) {
+                $party = RegistryObjectsRepository::getRecordByID($party['to_identifier']);
+                $identifiers = collect(IdentifierProvider::get($party))
+                    ->map(function($item){
+                        return [
+                            'identifier' => $item['value'],
+                            'schema' => $item['type']
+                        ];
+                    }
+                    )->toArray();
+                return $identifiers;
             }
-        );
-
-        if ($party->count() == 0) {
-            return [];
         }
-
-        // get 1
-        $party = $party->pop();
-        $party = RegistryObjectsRepository::getRecordByID($party->prop('to_id'));
-        $identifiers = collect(IdentifierProvider::get($party))
-            ->map(function($item){
-                return [
-                    'identifier' => $item['value'],
-                    'schema' => $item['type']
-                ];
-            }
-        )->toArray();
-
-        return $identifiers;
+        return [];
     }
 
     /**
@@ -496,12 +435,8 @@ class ScholixProvider implements RegistryContentProvider
      * @param null $data
      * @return array
      */
-    private static function getIdentifierSource(RegistryObject $record, $identifier, $data = null)
+    private static function getIdentifierSource(RegistryObject $record, $identifier)
     {
-        if (!$data) {
-            $data = MetadataProvider::get($record);
-        }
-
         $source = [
             'identifier' => [
                 [
@@ -517,7 +452,7 @@ class ScholixProvider implements RegistryContentProvider
             ]
         ];
 
-        $creators = self::getSourceCreators($record, $data);
+        $creators = self::getSourceCreators($record);
         if (count($creators) > 0) {
             $source['creator'] = $creators;
         }
@@ -525,53 +460,48 @@ class ScholixProvider implements RegistryContentProvider
         return $source;
     }
 
-    public static function getSourceCreators(RegistryObject $record, $data = null)
+    public static function getSourceCreators(RegistryObject $record)
     {
-        if (!$data) {
-            $data = MetadataProvider::get($record);
-        }
-
         /**
          * source[creator]
          * relatedObject/party
          * relatedInfo/relation/party
          */
-        $creators = collect($data['relationships'])->filter(function($item) {
+        $creators = [];
+        $validRelations = ['hasPrincipalInvestigator', 'hasAuthor', 'hasCoInvestigator', 'coInvestigator', 'isOwnedBy', 'hasCollector', "author"];
+        $authors = RelationshipProvider::getRelationByClassAndType($record,'party',$validRelations);
 
-            $validRelations = ['hasPrincipalInvestigator', 'hasAuthor', 'coInvestigator', 'isOwnedBy', 'hasCollector', "author"];
-
-            if ($item->isReverse()) {
-                return in_array(getReverseRelationshipString($item->prop('relation_type')), $validRelations) && ($item->prop('to_class') == "party");
-            }
-
-            return in_array($item->prop('relation_type'), $validRelations) && ($item->prop('to_class') == "party");
-
-        });
 
         // map and get identfiers
-        $creators = $creators->map(function($item) {
-            $to = $item->to();
-            $creator = [
-                'name' => $to->title
-            ];
-            $identifiers = collect(IdentifierProvider::get($to))->map(function($item) {
-                return [
-                    'identifier' => $item['value'],
-                    'schema' => $item['type']
-                ];
-            })->toArray();
-            if (count($identifiers) > 0) {
-                $creator['identifier'] = $identifiers;
+        foreach($authors as $author){
+            $creator = [];
+            if($author['to_identifier_type']== 'ro:id'){
+                $to = RegistryObjectsRepository::getRecordByID($author['to_identifier']);
+                if(isset($to)) {
+                    $identifiers = collect(IdentifierProvider::get($to))->map(function ($item) {
+                        return [
+                            'identifier' => $item['value'],
+                            'schema' => $item['type']
+                        ];
+                    })->toArray();
+                }
+                if (count($identifiers) > 0) {
+                    $creator['identifier'] = $identifiers;
+                };
             }
-            return $creator;
-        })->values()->toArray();
+            if(array_key_exists('to_title',$author)) {
+                $creator['name'] = $author['to_title'];
+            }
+            $creators[] = $creator;
+        }
+
 
         /**
          * source[creator]
          * citationMetadata/contributor
          * TODO
          */
-        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+        foreach (XMLUtil::getElementsByXPath($record->getCurrentData()->data,
             'ro:registryObject/ro:' . $record->class . '/ro:citationInfo/ro:citationMetadata/ro:contributor') AS $contributor) {
             $nameParts = [];
             foreach ($contributor->namePart as $part) {
@@ -606,38 +536,35 @@ class ScholixProvider implements RegistryContentProvider
         return $creators;
     }
 
-    public static function getTargetMetadataRelatedInfo($publication)
+    public static function getTargetMetadataRelatedInfo($publication, $record)
     {
-        $identifierType = $publication->prop('to_identifier_type');
-        $identifierType = self::$validTargetIdentifierTypes[$identifierType];
-        $target = [
-            'identifier' => [
-                [
-                    'identifier' => $publication->prop('to_identifier'),
-                    'schema' => $identifierType
-                ]
-            ],
-            'objectType' => 'literature'
-        ];
 
-        // no publication date
+            $identifierType = $publication['to_identifier_type'];
+            $identifierType = self::$validTargetIdentifierTypes[$identifierType];
+            $target = [
+                'identifier' => [
+                    [
+                        'identifier' => RelatedInfoProvider::getNonNormalisedIdentifier($publication, $record, 'publication'),
+                        'schema' => $identifierType
+                    ]
+                ],
+                'objectType' => 'literature'
+            ];
 
-        if ($publication->prop('to_title')) {
-            $target['title'] = $publication->prop('to_title');
-        }
+            // no publication date
 
-        if ($publication->prop('relation_to_title')) {
-            $target['title'] = $publication->prop('relation_to_title');
-        }
+            if (array_key_exists('to_title',$publication)) {
+                $target['title'] = $publication['to_title'];
+            }
 
-        // No creator
+            // No creator
 
         return $target;
     }
 
     public static function getTargetMetadataObject($publication, $identifier = [])
     {
-        $record = $publication->to();
+        $record = RegistryObjectsRepository::getRecordByID($publication['to_identifier']);
 
         $identifiers = [];
 
@@ -669,32 +596,30 @@ class ScholixProvider implements RegistryContentProvider
                 'name' => $record->group
             ]
         ];
-
-        $data = MetadataProvider::getSelective($record, ['relationships', 'recordData']);
-
-        // relation[@type=author]
-        $creators = collect($data['relationships'])->filter(function($item) {
-            $validRelations = ['author'];
-            return in_array($item->prop('relation_type'), $validRelations) && ($item->prop('to_class') == "party");
-        })->map(function($item) {
-            $to = $item->to();
-            $creator = [
-                'name' => $to->title
-            ];
-            $identifiers = collect(IdentifierProvider::get($to))->map(function($item) {
-                return [
-                    'identifier' => $item['value'],
-                    'schema' => $item['type']
-                ];
-            })->toArray();
-            if (count($identifiers) > 0) {
-                $creator['identifier'] = $identifiers;
+        $creators = [];
+        $authors = RelationshipProvider::getRelationByClassAndType($record,'party',['author']);
+        foreach($authors as $author){
+            $creator = [];
+            if($author['to_identifier_type']=='ro:id'){
+                $to = RegistryObjectsRepository::getRecordByID($author['to_identifier']);
+                $identifiers = collect(IdentifierProvider::get($to))->map(function($item) {
+                    return [
+                        'identifier' => $item['value'],
+                        'schema' => $item['type']
+                    ];
+                })->toArray();
+                if (count($identifiers) > 0) {
+                    $creator['identifier'] = $identifiers;
+                }
             }
-            return $creator;
-        })->values()->toArray();
+            if(array_key_exists('to_title',$author)) {
+                $creator['name'] = $author['to_title'];
+                $creators[] = $creator;
+            }
+        }
 
         // citationMetadata/contributor
-        foreach (XMLUtil::getElementsByXPath($data['recordData'],
+        foreach (XMLUtil::getElementsByXPath($record->getCurrentData()->data,
             'ro:registryObject/ro:' . $record->class . '/ro:citationInfo/ro:citationMetadata/ro:contributor') AS $contributor) {
             $nameParts = [];
             foreach ($contributor->namePart as $part) {
@@ -729,7 +654,6 @@ class ScholixProvider implements RegistryContentProvider
         if (count($creators) > 0) {
             $target['creator'] = $creators;
         }
-
         return $target;
     }
 }

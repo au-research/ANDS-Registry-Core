@@ -25,7 +25,7 @@ class TestProcessPayload extends UnitTest
                 'ds_id' => 209,
                 'batch_id' => 'DuplicateTest'
             ])
-        ])->setCI($this->ci)->initialiseTask();
+        ])->initialiseTask();
         $task = $importTask->getTaskByName("ProcessPayload");
 
         // TODO: refactor runPrerequisite?
@@ -62,7 +62,7 @@ class TestProcessPayload extends UnitTest
         $importTask->init([
             'name' => 'ImportTask',
             'params' => 'ds_id=209&batch_id=AUTestingRecords'
-        ])->setCI($this->ci)->initialiseTask();
+        ])->initialiseTask();
         $task = $importTask->getTaskByName("ProcessPayload");
         return $task;
     }

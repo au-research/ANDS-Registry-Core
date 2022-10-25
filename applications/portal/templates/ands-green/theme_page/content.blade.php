@@ -45,6 +45,7 @@
 		<?php endif; ?>
 
 		<?php if($f['type']=='relation'): ?>
+
 			<div theme-relation type="<?php echo $f['relation']['type']; ?>" key="<?php echo (isset($f['relation']['key']) ? $f['relation']['key'] : ''); ?>">
 				<input type="hidden" class="type" value="<?php echo $f['relation']['type']; ?>">
 				<input type="hidden" class="key" value="<?php echo (isset($f['relation']['key']) ? $f['relation']['key'] : ''); ?>">

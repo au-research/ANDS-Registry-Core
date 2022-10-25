@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+    <registryObject group="Australian Ocean Data Network">
+        <key>AODN979e950f-5197-431b-86e1-07d8cd09e99f</key>
+        <originatingSource type="">http://catalogue.aodn.org.au</originatingSource>
+        <collection type="dataset" dateAccessioned="2008-12-01T15:12:14">
+            <name type="primary">
+                <namePart>FishBase</namePart>
+            </name>
+            <description type="full">&lt;p&gt;FishBase (31 000 Species, 270 600 Common names, 46 900 Pictures, 42 400 References, 1620 Collaborators, 33 million Hits/month). FishBase is an information system with key data on the biology of all fishes. Similar to an encyclopedia, FishBase contains different things for different people. For example, fisheries managers will dive into the largest existing compilation of population dynamics data; teachers and students will find numerous graphs illustrating basic concepts of fish biology; taxonomists will enjoy access to the November 2000 update of Eschmeyers (1998) Catalog of Fishes databases; conservationists will use the lists of threatened fishes for any given country (Hilton-Taylor 2000); policymakers may be interested in a chronological, annotated list of introductions to their country; research scientists, as well as funding agencies, will find it useful to gain a quick overview of what is known about a certain species; zoologists and physiologists will have the largest existing compilations of fish morphology, metabolism, gill area, brain size, eye pigment, or swimming speed at their fingertips; ecologists will likewise use data on diet composition, trophic levels, food consumption and predators as inputs for their models; geneticists will find the largest compilation of allele frequencies; the fishing industry will find proximate analyses, as well as processing recommendations for many marine species; anglers will enjoy a listing of all game fishes occurring in a particular country (IGFA 1994); and scholars interested in local knowledge will find more than 100,000 common names of fishes together with the language/culture in which they are used and comments on their etymology.  ewfefw&lt;/p&gt;</description>
+            <description type="notes">&lt;p&gt;FishBase&lt;/p&gt;</description>
+            <rights>
+                <licence type="CC-BY-NC" rightsUri="http://creativecommons.org/licenses/by-nc/3.0/ph/">Creative Commons Attribution-NonCommercial</licence>
+            </rights>
+            <rights>
+                <rightsStatement>You are welcome to include text, numbers and maps from FishBase in your own web sites for non-commercial use, given that such inserts are clearly identified as coming from FishBase, with a backward link to the respective source page. Photos and drawings belong to the indicated persons or organizations and have their own copyright statements. Photos and drawings with CC-BY or CC-BY-NC copyrights can be used without further permission, with full attribution to the person or organization and the indication 'from FishBase'.</rightsStatement>
+            </rights>
+            <rights>
+                <rightsStatement>Disclaimer: We cannot guarantee the accuracy or completeness of the information in FishBase. Neither ICLARM nor any of its collaborators will be liable for any direct or indirect damage arising out of the use of FishBase.</rightsStatement>
+            </rights>
+            <identifier type="global">979e950f-5197-431b-86e1-07d8cd09e99f</identifier>
+            <identifier type="uri">http://catalogue.aodn.org.au/geonetwork/srv/en/metadata.show?uuid=979e950f-5197-431b-86e1-07d8cd09e99f</identifier>
+            <dates type="created">
+                <date type="dateFrom" dateFormat="W3CDTF">20081202</date>
+            </dates>
+            <location>
+                <address>
+                    <electronic type="url">
+                        <value>http://catalogue.aodn.org.au/geonetwork/srv/en/metadata.show?uuid=979e950f-5197-431b-86e1-07d8cd09e99f</value>
+                    </electronic>
+                </address>
+            </location>
+            <coverage>
+                <spatial type="iso19139dcmiBox">northlimit=80.00; southlimit=-80.00; westlimit=-180.00; eastLimit=180.00</spatial>
+                <spatial type="text">northlimit=80.00; southlimit=-80.00; westlimit=-180.00; eastLimit=180.00</spatial>
+            </coverage>
+            <relatedObject>
+                <key>AODN/FishBase</key>
+                <relation type="resourceProvider"/>
+            </relatedObject>
+            <subject type="local">oceans</subject>
+            <subject type="local">biota</subject>
+            <subject type="local">Oceans | Marine Biology | Fish</subject>
+            <subject type="local">Fish Biology, Fish Ecology</subject>
+            <subject type="local">Population Dynamics</subject>
+            <subject type="local">Reproduction, Maturity, Spawning, Eggs, Larvae</subject>
+            <subject type="local">Morphology, Physiology, Metabolism, Morphometrics</subject>
+            <subject type="local">Genetics, Allele Frequencies, Heritability</subject>
+            <subject type="local">Distribution</subject>
+            <subject type="local">Size, Growth</subject>
+            <subject type="local">Diet, Predators</subject>
+            <subject type="local">Disease, Ecotoxicology</subject>
+            <subject type="local">WORLD OCEAN</subject>
+            <relatedInfo type="website">
+                <title>FishBase Search Page</title>
+                <identifier type="uri">http://www.fishbase.org/search.php</identifier>
+                <relation type="hasAssociationWith"/>
+            </relatedInfo>
+            <relatedInfo type="party">
+                <identifier type="orcid">0000-0002-9139-1558</identifier>
+            </relatedInfo>
+            <citationInfo>
+                <citationMetadata>
+                    <identifier type="uri">http://catalogue.aodn.org.au/metadataviewer/faces/view.xhtml?uuid=979e950f-5197-431b-86e1-07d8cd09e99f</identifier>
+                    <title>FishBase</title>
+                    <version>undefined</version>
+                    <placePublished/>
+                    <publisher>blah blah</publisher>
+                    <url/>
+                    <context/>
+                    <contributor>
+                        <namePart type="">FishBase</namePart>
+                    </contributor>
+                    <date type="available">2008</date>
+                </citationMetadata>
+            </citationInfo>
+        </collection>
+    </registryObject>
+</registryObjects>

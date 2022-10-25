@@ -4,16 +4,13 @@
 namespace ANDS\Commands;
 
 
-use ANDS\Registry\API\Controller\RecordsController;
 use ANDS\Registry\API\Controller\RecordsGraphController;
-use ANDS\Registry\Providers\GraphRelationshipProvider;
 use ANDS\RegistryObject;
 use ANDS\Util\Config;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Stopwatch\Stopwatch;
+
 
 class WarmCacheCommand extends ANDSCommand
 {

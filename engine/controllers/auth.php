@@ -39,7 +39,7 @@ class Auth extends CI_Controller {
         $rapid_connect = array(
             'slug'		=> 'aaf_rapid',
             'default'	=> true,
-            'display' 	=> 'AAF Rapid Connect',
+            'display' 	=> 'Australian Access Federation Login',
             'view' 		=>  $this->load->view('authenticators/aaf_rapid', false, true)
         );
         array_push($data['authenticators'], $rapid_connect);
@@ -351,6 +351,12 @@ class Auth extends CI_Controller {
         } catch (Exception $e) {
             $data['changelog'] = "No Change Log found";
         }
+
+        \ANDS\Log\Log::info(__METHOD__. ". User logged in to Dashboard", [
+            'user' => $this->user->name(),
+            'ip' => \ANDS\Registry\API\Request::ip(),
+            'user_agent' => \ANDS\Registry\API\Request::user_agent()
+        ]);
 
         $this->load->view('dashboard', $data);
 	}

@@ -32,13 +32,13 @@ function init(filters){
         $('#search_form .search-query').val(filters['search']);
         $('#search_form button').html('<i class="icon icon-remove"></i> Search');
     }
-    
+
     //$('.pool').hide();
     //$('#status_message').removeClass('alert-error').addClass('alert-info');
     //$('#status_message').html('<em>Loading...</em> <img src="'+base_url+'assets/img/ajax-loader.gif" alt="Loading..Please wait.."/>');
     //$('#status_message').show();
     $.ajax({
-        url:base_url+'data_source/get_mmr_data/'+data_source_id, 
+        url:base_url+'data_source/get_mmr_data/'+data_source_id,
         type: 'POST',
         dataType:'JSON',
         data: {'filters':filters},
@@ -76,10 +76,10 @@ function init(filters){
             bindSortables();
             bindShowMore();
             initLayout();
-        
+
             // Set the action (drop-down) icon to be select records by default
             bind_select_all();
-       
+
             // $('.stick').sticky();
             window.setTimeout(function(){
                 $('#status_message').removeClass('alert-error').addClass('alert-info');
@@ -108,7 +108,7 @@ function bindShowMore(){
        // var filter = JSON.stringify(filters, null, 2);
 
         $.ajax({
-            url:base_url+'data_source/get_more_mmr_data/', 
+            url:base_url+'data_source/get_more_mmr_data/',
             type: 'POST',
             data: {ds_id:ds_id,offset:offset,filters:filters,status:status},
             success: function(data){
@@ -168,8 +168,8 @@ function initLayout(){
     //$('.ro_box[status=SUBMITTED_FOR_ASSESSMENT], .ro_box[status=APPROVED], .ro_box[status=ASSESSMENT_IN_PROGRESS],.ro_box[status=PUBLISHED]').height(max_height);
     //var draft_height = $('.ro_box[status=DRAFT]').height() + max_height - $('.ro_box[status=DRAFT]').parent('.block').height();
     // $('.ro_box[status=DRAFT]').height(draft_height);
-    // 
-    // 
+    //
+    //
 
 
     $('#search_form').unbind('submit').submit(function(e){
@@ -350,7 +350,7 @@ function initLayout(){
         $('.select_display span', this).html(total);
     });
 
-   
+
 
     $('.tipQA').on('mouseover', function(){
         $(this).qtip({
@@ -361,7 +361,7 @@ function initLayout(){
                     button: 'Close'
                 },
                 ajax: {
-                    url: base_url+'registry_object/get_quality_view/', 
+                    url: base_url+'registry_object/get_quality_view/',
                     type: 'POST',
                     data: {ro_id: $(this).attr('ro_id')},
                     loading:false,
@@ -399,7 +399,7 @@ function initLayout(){
                     button: 'Close'
                 },
                 ajax: {
-                    url: base_url+'registry_object/get_validation_text/', 
+                    url: base_url+'registry_object/get_validation_text/',
                     type: 'POST',
                     data: {ro_id: $(this).attr('ro_id')},
                     loading:false,
@@ -434,7 +434,7 @@ function initLayout(){
 
 function formatTip(tt){
     var tooltip = $('#ui-tooltip-'+tt.id+'-content');
-    
+
     //wrap around the current tooltip with a div
     for(var i=1;i<=3;i++){
         $('*[level='+i+']', tooltip).wrapAll('<div class="qa_container" qld="'+i+'"></div>');
@@ -521,7 +521,7 @@ function update_selected_list(status){
     {
         num = parseInt($('#'+status+' .count').html());
         num -=  $('.sortable[status='+select_all+'] li:not(.ro_selected)').length;
-    }  
+    }
     num_selected_records = num;
 
     var list = $('.ro_box[status='+status+']');
@@ -637,7 +637,7 @@ function bindSortables(){
 
 function bind_get_options_menu()
 {
-    if (!selected_some) 
+    if (!selected_some)
     {
         $('.primarycontextmenu').qtip("destroy").click(function(e){
             e.preventDefault();
@@ -868,7 +868,7 @@ function update(ids, attributes){
     var text = total+' records updating...<img src="'+base_url+'assets/img/ajax-loader.gif" alt="Loading..Please wait.."/>';
     $('#status_message').html(text).show();
     $.ajax({
-        url:url, 
+        url:url,
         type: 'POST',
         data: data,
         dataType: 'JSON',
@@ -906,11 +906,24 @@ function delete_ro(ids, selectAll){
     });
 
     $.ajax({
-        url:base_url+'registry_object/delete/', 
+        url:base_url+'registry_object/delete/',
         type: 'POST',
         data: {affected_ids:ids, filters:filters, select_all:selectAll, excluded_records: excluded_records, data_source_id:data_source_id},
         success: function(data){
+            console.log(data);
+            if (data.message != null) {
+                setMessage(data);
+            }
             init(filters);
         }
     });
+}
+
+function setMessage(data) {
+    //$('#status_message').removeClass('alert-error').addClass('alert-info');
+    //$('#status_message').html('<em>Loading...</em> <img src="'+base_url+'assets/img/ajax-loader.gif" alt="Loading..Please wait.."/>');
+    $('#status_message').removeClass('alert-error').removeClass('alert-info');
+    $('#status_message').addClass(data.status === 'success' ? 'alert-info' : 'alert-error');
+    $('#status_message').html(data.message);
+    $('#status_message').show();
 }

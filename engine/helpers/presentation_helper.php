@@ -227,6 +227,7 @@ function readable($text, $altered=false,$class=false,$to_class=false){
         case 'leadinvestigator' : return  'Lead investigator'; break;
         case 'principalinvestigator' : return  'Principal investigator'; break;
         case 'coinvestigator' : return  'Co investigator'; break;
+        case 'hasCoInvestigator' : return  'Co investigator'; break;
         case 'publishedBy' : return  'Publisher'; break;
         case 'hasAuthor' : return  'Author'; break;
         case 'pointOfContact': return  'Point of contact'; break;
@@ -329,6 +330,10 @@ function printAlternativeLoginForms($authenticators, $default_authenticator, $re
  */
 function escapeSolrValue($string){
     //$string = urldecode($string);
+    // RDA-700 don't escape a single '*' character
+    if($string === "*"){
+        return $string;
+    }
     $match = array('\\','&', '|', '!', '(', ')', '{', '}', '[', ']', '^', '~', '*', '?', ':', ';', '/');
     $replace = array('\\\\','&', '\\|', '\\!', '\\(', '\\)', '\\{', '\\}', '\\[', '\\]', '\\^', '\\~', '\\*', '\\?', '\\:', '\\;', '\\/');
     $string = str_replace($match, $replace, $string);

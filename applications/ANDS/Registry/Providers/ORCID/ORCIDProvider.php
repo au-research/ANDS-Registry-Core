@@ -9,6 +9,7 @@ use ANDS\Registry\Providers\RIFCS\DescriptionProvider;
 use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 use ANDS\Registry\Relation;
 use ANDS\RegistryObject;
+use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\XMLUtil;
 use DOMDocument;
 
@@ -148,29 +149,32 @@ class ORCIDProvider implements RegistryContentProvider
             return $contributors;
         }
 
-        $validParty = collect($data['relationships'])->filter(function($item) {
-            return $item->hasRelationTypes(self::$validContributorRelationTypes, true);
-        });
+      //  $validParty = collect($data['relationships'])->filter(function($item) {
+      //      return $item->hasRelationTypes(self::$validContributorRelationTypes, true);
+      //  });
+
+        $validParty = RelationshipProvider::getRelationByClassAndType(
+            $record, 'party', self::$validContributorRelationTypes);
+
 
         foreach ($validParty as $party) {
-            $title = $party->prop('to_title');
-            if (!$title) {
-                $title = $party->prop('relation_to_title');
-            }
+            $title = array_key_exists('to_title', $party) ? $party['to_title'] :  "";
 
             // check for contributor-orcid in record identifier
             $orcids = [];
-            if ($party->to()) {
-                $identifiers = IdentifierProvider::get($party->to());
+            $party_object = $party['to_identifier_type'] == 'ro:id' ?
+                RegistryObjectsRepository::getRecordByID($party['to_identifier']) : false;
+            if ($party_object) {
+                $identifiers = IdentifierProvider::get($party_object);
                 $orcids = array_merge($orcids, collect($identifiers)->filter(function($item) {
                     return $item['type'] == 'orcid';
                 })->toArray());
             }
 
             // check for contributor-orcid in relatedInfo
-            if ($party->prop('to_identifier_type') == "orcid") {
+            if ($party['to_identifier_type'] == "orcid") {
                 $orcids[] = [
-                    'value' => $party->prop('to_identifier'),
+                    'value' => $party['to_identifier'],
                     'type' => 'orcid'
                 ];
             }
@@ -207,13 +211,16 @@ class ORCIDProvider implements RegistryContentProvider
         $mapping = [
             "hasPrincipalInvestigator" => "principal-investigator",
             "author" => "author",
-            "coinvestigator" => "co-investigator"
+            "coinvestigator" => "co-investigator",
+            "coInvestigator" => "co-investigator",
+            "hasCoInvestigator" => "co-investigator"
         ];
 
         foreach ($mapping as $key => $value) {
-            if ($party->hasRelationType($key)) {
-                return $value;
-            }
+            foreach($party['relations'] as $relation)
+                if ($relation['relation_type']== $key) {
+                    return $value;
+                }
         }
         return "author";
     }
@@ -281,12 +288,19 @@ class ORCIDProvider implements RegistryContentProvider
 
         // dates
         $publicationDate = DatesProvider::getPublicationDate($record, $data);
+
         if ($publicationDate) {
-            $doc->set('publication-date', [
-                'year' => DatesProvider::formatDate($publicationDate, 'Y'),
-                'month' => DatesProvider::formatDate($publicationDate, 'm'),
-                'day' => DatesProvider::formatDate($publicationDate, 'd')
-            ]);
+            $validYear =  DatesProvider::validateDate($publicationDate, 'Y');
+            if($validYear) {
+                $doc->set('publication-date',  ['year' => DatesProvider::formatDate($publicationDate, 'Y')]);
+            }
+            else{
+                $doc->set('publication-date', [
+                    'year' => DatesProvider::formatDate($publicationDate, 'Y'),
+                    'month' => DatesProvider::formatDate($publicationDate, 'm'),
+                    'day' => DatesProvider::formatDate($publicationDate, 'd')
+                ]);
+            }
         }
 
         // external-ids

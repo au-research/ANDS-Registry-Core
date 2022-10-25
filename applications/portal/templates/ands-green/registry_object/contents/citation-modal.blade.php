@@ -27,7 +27,7 @@
                             @foreach($ro->citations as $citation)
                             @if(!in_array($citation['type'], $order))
                         <dl>
-                            <dt >DataCite</dt>
+                            <dt >Citation:</dt>
                             <dd>
                                 {{$citation['contributors']}}
                                 ({{$citation['date']}}): {{$citation['title']}}.

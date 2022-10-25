@@ -36,7 +36,7 @@ class TestIngestTask extends UnitTest
         $importTask = new ImportTask();
         $importTask->init([
             'params'=>'ds_id=209&batch_id=AUTestingRecordsImport'
-        ])->setCI($this->ci)->initialiseTask();
+        ])->initialiseTask();
         $importTask->enableRunAllSubTask()->run();
 
         // now we have a PUBLISHED record
@@ -47,7 +47,7 @@ class TestIngestTask extends UnitTest
         $importTask = new ImportTask();
         $importTask->init([
             'params'=>'ds_id=209&batch_id=AUTestingRecordsImport&targetStatus=DRAFT'
-        ])->setCI($this->ci)->initialiseTask();
+        ])->initialiseTask();
         $importTask->enableRunAllSubTask()->run();
 
         $record = RegistryObjectsRepository::getByKeyAndStatus('minh-test-record-pipeline', 'DRAFT');
@@ -69,7 +69,7 @@ class TestIngestTask extends UnitTest
         $importTask = new ImportTask();
         $importTask->init([
             'params'=>'ds_id=209&batch_id=AUTestingRecords_ds209_10_different_records'
-        ])->setCI($this->ci)->initialiseTask();
+        ])->initialiseTask();
         $importTask->enableRunAllSubTask()->run();
 
         // now we have a PUBLISHED record
@@ -82,7 +82,7 @@ class TestIngestTask extends UnitTest
         $importTask->init([
             'name' => 'ImportTask',
             'params' => 'ds_id=209&batch_id=AUTestingRecords_ds209_10_different_records'
-        ])->setCI($this->ci)->initialiseTask();
+        ])->initialiseTask();
         $importTask->setTaskData('deletedRecords', [$publishedRecordId]);
         $deleteTask = $importTask->getTaskByName("ProcessDelete");
         $deleteTask->run();
@@ -101,7 +101,7 @@ class TestIngestTask extends UnitTest
         $importTask = new ImportTask();
         $importTask->init([
             'params'=>'ds_id=209&batch_id=AUTestingRecords_ds209_10_different_records&targetStatus=APPROVED'
-        ])->setCI($this->ci)->initialiseTask();
+        ])->initialiseTask();
         $importTask->enableRunAllSubTask()->run();
 
         $record = RegistryObjectsRepository::getByKeyAndStatus('AUTestingRecordsjcu.edu.au/collection/enmasse/263', 'APPROVED');
@@ -130,7 +130,7 @@ class TestIngestTask extends UnitTest
         $importTask = new ImportTask();
         $importTask->init([
             'params'=>'ds_id=209&batch_id=AUTestingRecordsImport&targetStatus=DRAFT'
-        ])->setCI($this->ci)->initialiseTask();
+        ])->initialiseTask();
         $importTask->enableRunAllSubTask()->run();
 
         // now we have a DRAFT record
@@ -141,7 +141,7 @@ class TestIngestTask extends UnitTest
         $importTask = new ImportTask();
         $importTask->init([
             'params'=>'ds_id=209&batch_id=AUTestingRecordsImport&targetStatus=PUBLISHED'
-        ])->setCI($this->ci)->initialiseTask();
+        ])->initialiseTask();
         $importTask->enableRunAllSubTask()->run();
 
 
@@ -165,7 +165,7 @@ class TestIngestTask extends UnitTest
         $importTask->init([
             'name' => 'ImportTask',
             'params' => 'ds_id=209&batch_id=AUTestingRecords3'
-        ])->setCI($this->ci)->initialiseTask();
+        ])->initialiseTask();
         $task = $importTask->getTaskByName("Ingest");
         return $task;
     }

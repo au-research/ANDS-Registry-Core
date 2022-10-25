@@ -293,7 +293,7 @@ class Solr
 
     function setBrowsingFilter()
     {
-        $this->setOpt('sort', 'list_title_sort asc');
+        $this->setOpt('sort', 'list_title asc');
     }
 
     // Takes an array of user-defined filters and crunches them into
@@ -323,7 +323,7 @@ class Solr
             $this->setOpt('sort', "score desc");
         } else {
             $filters['q'] = "";
-            $this->setOpt('sort', "list_title_sort asc");
+            $this->setOpt('sort', "list_title asc");
         }
 
 
@@ -365,7 +365,7 @@ class Solr
             unset($filters['year_to']);
         }
 
-        // map each of the user-supplied filters to it's corresponding SOLR parameter
+        // map each of the user-supplied filters to its corresponding SOLR parameter
         foreach ($filters as $key => $value) {
             if (!is_array($value) && $key != 'q') {
                 $value = $this->escapeInvalidXmlChars($value);
@@ -594,8 +594,12 @@ class Solr
                 case 'data_source_id':
                     $this->setOpt('fq', "data_source_id:$value");
                     break;
+                case 'related_party_multi_id':
+                case 'related_party_one_id':
+                case 'related_service_id':
+                case 'related_activity_id':
                 case 'related_object_id':
-                    $this->setOpt('fq', '+related_object_id:' . $value . '');
+                    $this->setOpt('fq', "{!join from=from_id to=id fromIndex=relationships}(to_identifier:$value)");
                     break;
                 case 'identifier_value':
                     if (is_array($value)) {
@@ -636,7 +640,7 @@ class Solr
                     $this->setOpt('fq', '-id:' . $value . '');
                     break;
                 case 'not_related_object_id':
-                    $this->setOpt('fq', '-related_object_id:' . $value . '');
+                    $this->setOpt('fq', "{!join from=from_id to=id fromIndex=relationships}(-to_identifier:$value)");
                     break;
                 case 'sort':
 					$this->setOpt('sort', $value);
@@ -660,82 +664,26 @@ class Solr
                 case 'access_rights':
                     $this->setFilterQuery($key, $value, 'access_rights');
                     break;
-                case 'related_party_one_id':
-                case 'related_party_multi_id':
-                    // find all identical records
-                    if (!is_array($value) && $target = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($value)) {
-                        $duplicates = collect($target->getDuplicateRecords())->pluck('registry_object_id')->toArray();
-                        $value = array_merge([$value], $duplicates);
-                    }
-                    $this->setFilterQuery($key, $value);
-                    break;
                 case 'related_collection_id':
-                    if (is_array($value)) {
-                        $fq_str = '';
-                        foreach ($value as $v)
-                            $fq_str .= ' related_collection_id:("' . $v . '")';
-                        $this->setOpt('fq', $fq_str);
-                    } else {
-                        $this->setOpt('fq', '+related_collection_id:"' . $value . '"');
+                    $this->setOpt('fq', "{!join from=from_id to=id fromIndex=relationships}(to_identifier:$value)");
 
-                        // CC-2206 give a boost to the group of the same record
-                        $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($value);
-                        $group = $record->group;
-                        $this->setOpt('bq', 'group:"'.$group.'"');
-                    }
-                    break;
-                case 'related_service_id':
-                    if (is_array($value)) {
-                        $fq_str = '(';
-                        foreach ($value as $v) $fq_str .= ' related_service_id:("' . $v . '")';
-                        $fq_str .= ')';
-                        $this->setOpt('fq', $fq_str);
-                    } else {
-                        $this->setOpt('fq', '+related_service_id:("' . $value . '")');
+                    // CC-2206 give a boost to the group of the same record
+                    $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($value);
+                    $group = $record->group;
+                    $this->setOpt('bq', 'group:"'.$group.'"');
 
-                        // CC-2206 give a boost to the group of the same record
-                        $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($value);
-                        $group = $record->group;
-                        $this->setOpt('bq', 'group:"'.$group.'"');
-                    }
-                    break;
-                case 'related_activity_id':
-                    if (is_array($value)) {
-                        $fq_str = '(';
-                        foreach ($value as $v) $fq_str .= ' related_activity_id:("' . $v . '")';
-                        $fq_str .= ')';
-                        $this->setOpt('fq', $fq_str);
-                    } else {
-                        $this->setOpt('fq', '+related_activity_id:("' . $value . '")');
-
-                        // CC-2206 give a boost to the group of the same record
-                        $record = \ANDS\Repository\RegistryObjectsRepository::getRecordByID($value);
-                        $group = $record->group;
-                        $this->setOpt('bq', 'group:"'.$group.'"');
-                    }
                     break;
                 case 'is_output_of':
-                    if (is_array($value)) {
-                        $fq_str = '(';
-                        foreach ($value as $v) $fq_str .= ' relation_grants_isOutputOf:("' . $v . '")';
-                        $fq_str .= ')';
-                        $this->setOpt('fq', $fq_str);
-                    } else {
-                        $this->setOpt('fq', '+relation_grants_isOutputOf:("' . $value . '")');
-                    }
+                    $this->setOpt('fq', "{!join from=from_id to=id fromIndex=relationships}(to_identifier:$value)");
+                    $this->setOpt('fq', "{!join from=from_id to=id fromIndex=relationships}(relation_type:isOutputOf)");
                     break;
                 case 'is_part_of':
-                    $this->setOpt('fq', '+relation_grants_isPartOf:'.$value);
+                    $this->setOpt('fq', "{!join from=from_id to=id fromIndex=relationships}(to_identifier:$value)");
+                    $this->setOpt('fq', "{!join from=from_id to=id fromIndex=relationships}(relation_type:isPartOf)");
                     break;
                 case 'is_funded_by':
-                    if (is_array($value)) {
-                        $fq_str = '(';
-                        foreach ($value as $v) $fq_str .= ' relation_grants_isFundedBy:("' . $v . '")';
-                        $fq_str .= ')';
-                        $this->setOpt('fq', $fq_str);
-                    } else {
-                        $this->setOpt('fq', '+relation_grants_isFundedBy:("' . $value . '")');
-                    }
+                    $this->setOpt('fq', "{!join from=from_id to=id fromIndex=relationships}(to_identifier:$value)");
+                    $this->setOpt('fq', "{!join from=from_id to=id fromIndex=relationships}(relation_type:isFundedBy)");
                     break;
                 case 'subject':
                     if (is_array($value)) {
@@ -897,13 +845,17 @@ class Solr
                     }
                     break;
                 case 'related_data':
-                    $this->setOpt('fq', '+related_party_multi_id:("' . $value . '") +class:collection');
+                    $this->setOpt('fq', "{!join from=from_id to=id fromIndex=relationships}(to_identifier:$value)");
+                    $this->setOpt('fq', '+class:collection');
                     break;
-                case 'access_methods_ss':
-                    $this->setOpt('fq', '+access_methods_ss:("'.$value.'")');
+                case 'access_methods':
+                    $this->setOpt('fq', '+access_methods:("'.$value.'")');
                     break;
                 case 'relation':
-                    $this->setOpt('fq', "{!join from=to_id to=id fromIndex=relations}+relation:{$value}");
+                    $this->setOpt('fq', "{!join from=to_identifier to=id fromIndex=relationships}({!parent which=type:relationship}+relation_type:$value)");
+                    break;
+                case 'qf':
+                    $this->setOpt('qf', $value);
                     break;
             }
         }

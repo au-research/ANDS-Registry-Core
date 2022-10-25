@@ -84,7 +84,6 @@ class TestPublishingWorkflow extends UnitTest
             ])
         ])->setTaskData('deletedRecords', $publishedIDs)
             ->skipLoadingPayload()
-            ->setCI($this->ci)
             ->initialiseTask();
 
         $deleteTask->run();
@@ -99,7 +98,7 @@ class TestPublishingWorkflow extends UnitTest
     public function test_it_should_be_able_to_find_all_affected_records()
     {
         $importTask = new ImportTask();
-        $importTask->setCI($this->ci)->initialiseTask();
+        $importTask->initialiseTask();
         $processDeleteTask = $importTask->getTaskByName("ProcessDelete");
 
         $this->ci->load->library('solr');

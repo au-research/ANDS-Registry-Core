@@ -346,4 +346,26 @@ class TitleProvider implements RIFCSProvider
 
         return implode(' ', $titleFragments->all());
     }
+
+    /**
+     * Obtain an associative array for the indexable fields
+     *
+     * @param RegistryObject $record
+     * @return array
+     */
+    public static function getIndexableArray(RegistryObject $record) {
+        $titles = self::get($record);
+
+        // simplified title if iconv is installed
+        $simplifiedTitle = function_exists('iconv')
+            ? strip_tags(html_entity_decode(iconv('UTF-8', 'ASCII//TRANSLIT', $titles['list_title']), ENT_QUOTES))
+            : null;
+
+        return [
+            'display_title' => $titles['display_title'],
+            'list_title' => $titles['list_title'],
+            'alt_display_title' => $titles['alt_titles'],
+            'simplified_title' => $simplifiedTitle
+        ];
+    }
 }

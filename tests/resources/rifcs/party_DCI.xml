@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+    <registryObject group="AUTestingRecords">
+    <key>AUT_DCI_PARTY</key>
+    <originatingSource type="">http://api.crossref.org/funders?filter=location:Australia</originatingSource>
+    <party type="group">
+      <name type="primary">
+        <namePart>(AUTestingRecords3) AUTestingRecords3:Funder</namePart>
+      </name>
+      <description type="brief">The Department of the AUTestingRecords3 designs and implements
+                the Australian Government’s policies and programmes to protect and conserve the environment, water and
+                heritage and promote climate action. The environmental framework is being delivered under four pillars:
+            </description>
+      <identifier type="doi">AUTestingRecords3:FunderDCI</identifier>
+      <identifier type="fundref">50110000AUT3.xDCI</identifier>
+      <identifier type="AU-ANL:PEAU">http://nla.gov.au/nla.party-AUT55.433DCI</identifier>
+      <location>
+        <address>
+          <electronic type="url">
+            <value>http://www.environment.gov.au/webform/website-feedback</value>
+          </electronic>
+        </address>
+        <spatial type="iso31661">AU</spatial>
+      </location>
+      <relatedInfo type="website">
+        <title>Web Site</title>
+        <identifier type="uri">http://www.environment.gov.au</identifier>
+      </relatedInfo>
+      <existenceDates>
+        <startDate dateFormat="W3CDTF">2013-09-18</startDate>
+      </existenceDates>
+    </party>
+  </registryObject>
+</registryObjects>

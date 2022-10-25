@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+    <registryObject group="National Health and Medical Research Council">
+        <key>ACTIVITY_GRANT_NETWORK</key>
+        <originatingSource>www.nhmrc.gov.au/grants/research-funding-statistics-and-data</originatingSource>
+        <activity type="grant">
+            <identifier type="purl">http://purl.org/au-research/grants/nhmrc/910167</identifier>
+            <identifier type="nhmrc">910167</identifier>
+            <name type="alternative">
+                <namePart>Application of biomaterials chemistry for the developme nt of functional toprostheses</namePart>
+            </name>
+            <name type="primary">
+                <namePart>A new type of artificial cornea</namePart>
+            </name>
+            <relatedObject>
+                <key>http://dx.doi.org/10.13039/501100000925</key>
+                <relation type="isFundedBy"/>
+            </relatedObject>
+            <relatedObject>
+                <key>http://nla.gov.au/nla.party-464686</key>
+                <relation type="isManagedBy"/>
+            </relatedObject>
+            <subject type="local">cellular growth</subject>
+            <subject type="local">polymer networks</subject>
+            <subject type="local">hydrogels</subject>
+            <subject type="local">keratoprosthesis</subject>
+            <subject type="local">cornea</subject>
+            <subject type="local">Basic Science</subject>
+            <subject type="anzsrc-for">Vision Ophthalmology</subject>
+            <description type="notes">Standard Project Grant</description>
+        </activity>
+    </registryObject>
+</registryObjects>

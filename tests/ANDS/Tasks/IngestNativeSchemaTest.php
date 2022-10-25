@@ -21,6 +21,9 @@ class IngestNativeSchemaTest extends \RegistryTestClass
         $native_content_path = __DIR__ ."../../../resources/harvested_contents/open_top.json";
 
         $data_source = DataSourceRepository::getByID($dataSourceID);
+        if (!$data_source) {
+            $this->markTestSkipped("DataSource{id:$dataSourceID} doesn't exist");
+        }
 
         $providerType = $data_source->getDataSourceAttribute('provider_type');
         $harvestMethod = $data_source->getDataSourceAttribute('harvest_method');
@@ -56,6 +59,9 @@ class IngestNativeSchemaTest extends \RegistryTestClass
         //$native_content_path = __DIR__ ."../../../resources/harvested_contents/open_top.json";
 
         $data_source = DataSourceRepository::getByID($dataSourceID);
+        if (!$data_source) {
+            $this->markTestSkipped("DataSource{id:$dataSourceID} doesn't exist");
+        }
 
         $providerType = $data_source->getDataSourceAttribute('provider_type');
         $harvestMethod = $data_source->getDataSourceAttribute('harvest_method');
@@ -89,6 +95,9 @@ class IngestNativeSchemaTest extends \RegistryTestClass
         $native_content_path = __DIR__ ."../../../resources/harvested_contents/pure.xml";
 
         $data_source = DataSourceRepository::getByID($dataSourceID);
+        if (!$data_source) {
+            $this->markTestSkipped("DataSource{id:$dataSourceID} doesn't exist");
+        }
 
         $providerType = $data_source->getDataSourceAttribute('provider_type');
         $harvestMethod = $data_source->getDataSourceAttribute('harvest_method');
@@ -119,6 +128,9 @@ class IngestNativeSchemaTest extends \RegistryTestClass
         $native_content_path = __DIR__ ."../../../resources/harvested_contents/csw.xml";
 
         $data_source = DataSourceRepository::getByID($dataSourceID);
+        if (!$data_source) {
+            $this->markTestSkipped("DataSource{id:$dataSourceID} doesn't exist");
+        }
 
         $providerType = $data_source->getDataSourceAttribute('provider_type');
         $harvestMethod = $data_source->getDataSourceAttribute('harvest_method');

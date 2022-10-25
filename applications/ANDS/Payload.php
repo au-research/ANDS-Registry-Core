@@ -126,7 +126,7 @@ class Payload
     {
         $harvestedContentDir = \ANDS\Util\config::get('app.harvested_contents_path');
         $harvestedContentDir = rtrim($harvestedContentDir, '/') . '/';
-        $directory = $harvestedContentDir.$dataSourceID;
+        $directory = $harvestedContentDir.$dataSourceID.'/'.$batchID;
         if (!is_dir($directory)) {
             try {
                 mkdir($directory, 0775, true); // mkdir 0775 doesn't work
@@ -136,7 +136,7 @@ class Payload
                 throw new \Exception("Failure creating $directory: $message");
             }
         }
-        $file = $harvestedContentDir.$dataSourceID.'/'.$batchID.'.xml';
+        $file = $directory.'/1.xml';
         try {
             file_put_contents($file, $content);
             chmod($file, 0775);

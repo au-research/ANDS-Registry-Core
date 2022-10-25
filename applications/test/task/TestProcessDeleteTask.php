@@ -47,7 +47,7 @@ class TestProcessDeleteTask extends UnitTest
         $importTask->init([
             'name' => 'ImportTask',
             'params' => 'ds_id=209&batch_id=AUTestingRecordsImport'
-        ])->setCI($this->ci)->initialiseTask();
+        ])->initialiseTask();
         $importTask->setTaskData('deletedRecords', [$record->registry_object_id]);
         $deleteTask = $importTask->getTaskByName("ProcessDelete");
         $deleteTask->run();
@@ -65,7 +65,7 @@ class TestProcessDeleteTask extends UnitTest
         $importTask->init([
             'name' => 'ImportTask',
             'params' => 'ds_id=209&batch_id=AUTestingRecordsImport&targetStatus=DRAFT'
-        ])->setCI($this->ci)->enableRunAllSubTask()->initialiseTask();
+        ])->enableRunAllSubTask()->initialiseTask();
         $importTask->run();
 
         // record should exist in PUBLISHED state at this stage
@@ -77,7 +77,7 @@ class TestProcessDeleteTask extends UnitTest
         $importTask->init([
             'name' => 'ImportTask',
             'params' => 'ds_id=209&batch_id=AUTestingRecordsImport'
-        ])->setCI($this->ci)->initialiseTask();
+        ])->initialiseTask();
         $importTask->setTaskData('deletedRecords', [$record->registry_object_id]);
         $deleteTask = $importTask->getTaskByName("ProcessDelete");
         $deleteTask->run();
@@ -116,7 +116,7 @@ class TestProcessDeleteTask extends UnitTest
 
         // Find affected records
         $importTask = new ImportTask();
-        $importTask->setCI($this->ci)->initialiseTask();
+        $importTask->initialiseTask();
         $processDeleteTask = $importTask->getTaskByName("ProcessDelete");
         $affected = $processDeleteTask->getRelatedObjectsIDs($recordsToDelete);
 
@@ -133,7 +133,7 @@ class TestProcessDeleteTask extends UnitTest
             ])
         ])->setTaskData('deletedRecords', $recordsToDelete)
             ->skipLoadingPayload()
-            ->setCI($this->ci)
+
             ->initialiseTask();
         $deleteTask->run();
 
@@ -156,7 +156,7 @@ class TestProcessDeleteTask extends UnitTest
             ])
         ])->setTaskData('deletedRecords', $publishedRecords)
             ->skipLoadingPayload()
-            ->setCI($this->ci)
+
             ->initialiseTask();
 
         $deleteTask->run();
@@ -173,7 +173,7 @@ class TestProcessDeleteTask extends UnitTest
         $importTask->init([
             'name' => 'ImportTask',
             'params' => 'ds_id=209&batch_id=AUTestingRecordsImport'
-        ])->setCI($this->ci)->enableRunAllSubTask()->initialiseTask();
+        ])->enableRunAllSubTask()->initialiseTask();
         $importTask->run();
     }
 

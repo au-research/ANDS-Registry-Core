@@ -1,8 +1,14 @@
 @if($pullback)
 <div class="panel panel-primary panel-content swatch-white">
-	<div class="panel-heading">DOI</div>
+
 	<div class="panel-body">
-		<h4>{{$pullback['title']}}</h4>
+		<h2 class="bordered bold">
+			@if($pullback['identifier_doi_type'] =='collection')
+				<i class="fa fa-folder-open icon-portal"></i>
+			@elseif($pullback['identifier_doi_type'] =='publication')
+				<i class="fa fa-book icon-portal"></i>
+			@endif
+		{{$pullback['title']}}</h2>
 		<dl class='dl'>
 			@if($pullback['type'])
 			<dt>Type</dt><dd>{{$pullback['type']}}</dd>

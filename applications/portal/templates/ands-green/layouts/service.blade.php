@@ -46,7 +46,7 @@
                                                 <b>{{sizeof($ro->identifiermatch)}} linked Records:</b>
                                                 <ul class="swatch-white">
                                                     @foreach($ro->identifiermatch as $mm)
-                                                    <li><a href="{{base_url($mm['slug'].'/'.$mm['registry_object_id'])}}{{$fl}}">{{$mm['title']}} <br/><small>Contributed by {{$mm['group']}}</small></a></li>
+                                                        <li><a href="{{$mm['url']}}{{$fl}}">{{$mm['title']}} <br/><small>Contributed by {{$mm['group']}}</small></a></li>
                                                     @endforeach
                                                 </ul>
                                             </div>

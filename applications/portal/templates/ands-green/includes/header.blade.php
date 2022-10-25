@@ -58,8 +58,13 @@
     <script src="https://unpkg.com/survey-jquery@1.8.29/survey.jquery.min.js"></script>
 </head>
 <!-- Environment Indicator -->
-@if(ENVIRONMENT!='production')
+
+@if(ENVIRONMENT!='production' || (isset($ro->core['status']) && $ro->core['status']!='PUBLISHED'))
 	<div class="environment" style="background:{{\ANDS\Util\config::get('app.environment_colour')}};color:white;padding:5px 10px;">
-		<h3>{{\ANDS\Util\config::get('app.environment_name')}} - {{ENVIRONMENT}} ...</h3>
+        @if(isset($ro->core['status']) && $ro->core['status']!='PUBLISHED')
+            <h3>The current record page is for preview only, certain actions are not available under current mode</h3>
+        @else
+		    <h3>{{\ANDS\Util\config::get('app.environment_name')}} - {{ENVIRONMENT}} ...</h3>
+        @endif
 	</div>
 @endif

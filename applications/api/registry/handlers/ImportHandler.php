@@ -1,10 +1,11 @@
 <?php
 namespace ANDS\API\Registry\Handler;
 use ANDS\API\Registry\Handler\errorPipeline;
-use ANDS\API\Task\TaskManager;
+use ANDS\API\Task\Task;
 use ANDS\DataSource;
 use ANDS\Payload;
 use ANDS\Repository\DataSourceRepository;
+use ANDS\Task\TaskRepository;
 use \Exception as Exception;
 
 /**
@@ -75,11 +76,9 @@ class ImportHandler extends Handler
 
         $name = array_key_exists('name', $params) ? $params['name'] : "Harvester initiated import - $dataSource->title($dataSource->data_source_id) - $batchID";
 
-        $task = [
+        $task = TaskRepository::create([
             'name' => $name,
-            'type' => 'PHPSHELL',
-            'frequency' => 'ONCE',
-            'priority' => 2,
+            'type' => Task::$TYPE_SHELL,
             'params' => http_build_query([
                 'class' => 'import',
                 'ds_id' => $dataSource->data_source_id,
@@ -87,13 +86,9 @@ class ImportHandler extends Handler
                 'harvest_id' => $harvest ? $harvest->harvest_id : null,
                 'source' => $from
             ])
-        ];
+        ], true);
 
-
-        $taskManager = new TaskManager($this->ci->db, $this);
-        $taskCreated = $taskManager->addTask($task);
-
-        return $taskCreated;
+        return $task->toArray();
     }
 
     /**
@@ -101,19 +96,21 @@ class ImportHandler extends Handler
      *
      * @param $dataSource
      * @param $url
-     * @return mixed
+     * @return array
+     * @throws \Exception
      */
     private function importFromUrl($dataSource, $url)
     {
-        $content = @file_get_contents($url);
+        // generate a batchID for this operation
         $batchID = "MANUAL-URL-".str_slug($url).'-'.time();
+
+        // download & write the payload to the batchID location
+        $content = @file_get_contents($url);
         Payload::write($dataSource->data_source_id, $batchID, $content);
 
-        $task = [
+        /** @var \ANDS\API\Task\ImportTask $task */
+        $task = TaskRepository::create([
             'name' => "Import via URL - $dataSource->title($dataSource->data_source_id) - $url",
-            'type' => 'POKE',
-            'frequency' => 'ONCE',
-            'priority' => 2,
             'params' => http_build_query([
                 'class' => 'import',
                 'pipeline' => 'ManualImport',
@@ -123,24 +120,14 @@ class ImportHandler extends Handler
                 'ds_id' => $dataSource->data_source_id,
                 'batch_id' => $batchID
             ])
-        ];
+        ], true);
 
-        $taskManager = new TaskManager($this->ci->db, $this);
-        $taskCreated = $taskManager->addTask($task);
-        $task = $taskManager->getTaskObject($taskCreated);
-
-        $task
-            ->setDb($this->ci->db)
-            ->setCI($this->ci);
-
-        $task->initialiseTask()->enableRunAllSubTask();
-
+        // initialise the ImportTask and prep for all subtasks to run immediately
         try {
-            $task->run();
+            $task->initialiseTask()->enableRunAllSubTask()->run();
         } catch (Exception $e) {
             throw new Exception($e->getMessage());
         }
-
 
         return $task->toArray();
     }
@@ -150,19 +137,20 @@ class ImportHandler extends Handler
      *
      * @param $dataSource
      * @param $xml
-     * @return mixed
+     * @return array
+     * @throws \Exception
      */
     public function importFromXML($dataSource, $xml)
     {
         $xml = trim($xml);
+
+        // generate a batchID for this operation & save the payload
         $batchID = "MANUAL-XML-".md5($xml).'-'.time();
         Payload::write($dataSource->data_source_id, $batchID, $xml);
 
-        $task = [
+        /** @var \ANDS\API\Task\ImportTask $task */
+        $task = TaskRepository::create([
             'name' => "Import via pasted XML - $dataSource->title($dataSource->data_source_id)",
-            'type' => 'POKE',
-            'frequency' => 'ONCE',
-            'priority' => 2,
             'params' => http_build_query([
                 'class' => 'import',
                 'user_name' => $this->ci->user->name(),
@@ -171,19 +159,14 @@ class ImportHandler extends Handler
                 'ds_id' => $dataSource->data_source_id,
                 'batch_id' => $batchID
             ])
-        ];
+        ], true);
 
-        $taskManager = new TaskManager($this->ci->db, $this);
-        $taskCreated = $taskManager->addTask($task);
-        $task = $taskManager->getTaskObject($taskCreated);
-
-        $task
-            ->setDb($this->ci->db)
-            ->setCI($this->ci);
-
-        $task->initialiseTask()->enableRunAllSubTask();
-
-        $task->run();
+        // initialise the ImportTask and prep for all subtasks to run immediately
+        try {
+            $task->initialiseTask()->enableRunAllSubTask()->run();
+        } catch (Exception $e) {
+            throw new Exception($e->getMessage());
+        }
 
         return $task->toArray();
     }
@@ -193,7 +176,8 @@ class ImportHandler extends Handler
      *
      * @param $dataSource
      * @param $batchID
-     * @return mixed
+     * @param bool $noRecords
+     * @return array
      */
     private function errorPipeline($dataSource, $batchID, $noRecords = false)
     {
@@ -213,25 +197,16 @@ class ImportHandler extends Handler
             $params['noRecords'] = true;
         }
 
-        $task = [
+        /** @var \ANDS\API\Task\ImportTask $task */
+        $task = TaskRepository::create([
             'name' =>  "$title - $dataSource->title($dataSource->data_source_id)",
             'type' => 'POKE',
             'frequency' => 'ONCE',
             'priority' => 2,
             'params' => http_build_query($params)
-        ];
+        ], true);
 
-        $taskManager = new TaskManager($this->ci->db, $this);
-        $taskCreated = $taskManager->addTask($task);
-        $task = $taskManager->getTaskObject($taskCreated);
-
-        $task
-            ->setDb($this->ci->db)
-            ->setCI($this->ci);
-
-        $task->initialiseTask()->enableRunAllSubTask();
-
-        $task->run();
+        $task->initialiseTask()->enableRunAllSubTask()->run();
 
         return $task->toArray();
     }

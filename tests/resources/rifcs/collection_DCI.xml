@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+    <registryObject group="AUTestingRecords">
+        <key>AUT_DCI_COLLECTION</key>
+        <originatingSource type="">http://researchdata.ands.org.au/registry/orca/register_my_data</originatingSource>
+        <collection type="dataset" dateModified="2013-01-31T05:26:13Z">
+            <name type="primary">
+                <namePart>(AUTestingRecords) Collection(dataset) with reverse relatedInfo grant(hasOutput) with funder.</namePart>
+            </name>
+            <description type="brief">&amp;lt;p&amp;gt;&amp;lt;a title=&amp;quot;Lateral Plains&amp;quot; href=&amp;quot;http://www.lateralplains.com/&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;Lateral Plains&amp;lt;/a&amp;gt; and the &amp;lt;a title=&amp;quot;Centre for eCommerce &amp; Communications&amp;quot; href=&amp;quot;http://www.cecc.com.au&amp;quot; target=&amp;quot;_blank&amp;quot;&amp;gt;Centre for eCommerce and Communication&amp;lt;/a&amp;gt; were engaged by Moorabool Shire and Multimedia Victoria to review ICT in the Moorabool region.  The study was completed in the period between April 2009 and April 2010.&amp;lt;/p&amp;gt;
+                &amp;lt;p&amp;gt;The responses to the survey formed an important part of the Moorabool Community Broadband and Telecommunications Strategy which will build and shape the Moorabool Shire's ICT policy for the coming years.&amp;lt;/p&amp;gt;
+                &amp;lt;p&amp;gt;This dataset spatially represents the results of this survey.&amp;lt;/p&amp;gt;
+                &amp;lt;p&amp;gt; &amp;lt;/p&amp;gt;</description>
+            <rights>
+                <rightsStatement>All rights reserved, except by negotiation with Centre for eCommerce and Communications University of BallaratCopyright 2010 Centre for e-Commerce and Communications Federation University Australia</rightsStatement>
+                <accessRights>Summary available online. Qualitative data may be available by contacting CeCC.</accessRights>
+            </rights>
+            <identifier type="uri">http://researchodfesolver/1959.17/53983AUTba1</identifier>
+            <location dateFrom="2009-04-13T00:00:00Z" dateTo="2009-04-13T00:00:00Z">
+                <address>
+                    <electronic type="email">
+                        <value>h.thompson@federation.edu.au</value>
+                    </electronic>
+                    <electronic type="url">
+                        <value>http://www.cecc.com.au/moorabool_map.php</value>
+                    </electronic>
+                    <physical type="streetAddress">
+                        <addressPart type="text">Suite 15, Greenhill Enterprise Centre Ballarat Technology Park University Drive, Mt Helen</addressPart>
+                        <addressPart type="telephoneNumber">+61 3 5327 9315</addressPart>
+                    </physical>
+                </address>
+            </location>
+            <coverage>
+                <temporal>
+                    <date type="dateFrom" dateFormat="W3CDTF">2009-04-13T00:00:00Z</date>
+                    <date type="dateTo" dateFormat="W3CDTF">2010-04-13T00:00:00Z</date>
+                </temporal>
+                <spatial type="kmlPolyCoords">144.201806,-37.642361</spatial>
+            </coverage>
+            <relatedObject>
+                <key>AUTESTING_ALL_ELEMENTS_TEST</key>
+                <relation type="isPartOf"/>
+            </relatedObject>
+            <relatedObject>
+                <key>AUTestingRecordsNestedwww.cecc.com</key>
+                <relation type="hasAssociationWith"/>
+            </relatedObject>
+            <relatedObject>
+                <key>AUTestingRecordsNestedlateralplains.com</key>
+                <relation type="isManagedBy"/>
+            </relatedObject>
+            <relatedObject>
+                <key>AUTestingRecords3:Funder/Program12/Hub1/GrantLP0211170AUTx.GrantDCI</key>
+                <relation type="isOutputOf"/>
+            </relatedObject>
+            <relatedObject>
+                <key>AUTestingRecordsNestedwww.ballarat.edu.au/staff/hethompson</key>
+                <relation type="hasAssociationWith"/>
+            </relatedObject>
+            <relatedObject>
+                <key>AUT_DCI_PARTY</key>
+                <relation type="isFundedBy"/>
+            </relatedObject>
+            <subject type="anzsrc-for">0805</subject>
+            <subject type="local">Mobile Phone Coverage</subject>
+            <subject type="anzsrc-for">0806</subject>
+            <subject type="local">Information Technology</subject>
+            <subject type="local">Telecommunications</subject>
+            <subject type="local">Internet access</subject>
+            <subject type="anzsrc-for">0805</subject>
+            <relatedInfo type="publication">
+                <title>The Moorabool Community Broadband and Telecommunications Strategy-Report</title>
+                <identifier type="uri">http://moorabool.cecc.com.au/cb_pages/files/Moorabool ICT Strategy Final 28 June 2010.pdfAUTba1</identifier>
+            </relatedInfo>
+        </collection>
+    </registryObject>
+</registryObjects>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">
+    <registryObject group="AUTestingRecords">
+        <key>AODN</key>
+        <originatingSource>http://catalogue.aodn.org.au</originatingSource>
+        <party type="group">
+            <name type="primary">
+                <namePart>Australian Ocean Data Network</namePart>
+            </name>
+            <identifier type="purl">http://purl.org/au-research/grants/nhmrc/640318AUT</identifier>
+            <relatedObject>
+                <key>AODdN/InstituteofAppliedScience(IAS),TheUniversityoftheSouthPacific(USP)</key>
+                <relation type="isMemberOf"/>
+            </relatedObject>
+            <relatedObject>
+                <key>COLLECTION_GRANT_NETWORK</key>
+                <relation type="isManagerOf"/>
+            </relatedObject>
+            <location>
+                <address>
+                    <electronic type="email">
+                        <value>Aalbersberg@usp.ac.fj</value>
+                    </electronic>
+                    <physical type="postalAddress">
+                        <addressPart type="addressLine">UNSW Built Environment</addressPart>
+                        <addressPart type="addressLine">Sydney NSW 2052</addressPart>
+                        <addressPart type="addressLine">Australia</addressPart>
+                    </physical>
+                    <physical type="streetAddress">
+                        <addressPart type="addressLine">Level 3, West Wing</addressPart>
+                        <addressPart type="addressLine">Red Centre Building</addressPart>
+                        <addressPart type="addressLine">Kensington Campus</addressPart>
+                        <addressPart type="addressLine">Sydney, Australia</addressPart>
+                    </physical>
+                    <physical type="">
+                        <addressPart type="telephoneNumber">123 456</addressPart>
+                        <addressPart type="faxNumber">789 101112</addressPart>
+                        <addressPart type="text">my address text element</addressPart>
+                        <addressPart type="addressLine">my address line</addressPart>
+                    </physical>
+                </address>
+            </location>
+            <relatedInfo type="activity">
+                <title>Related Activity</title>
+                <relation type="hasAssociationWith"/>
+            </relatedInfo>
+            <relatedInfo type="website">
+                <title>Related Website</title>
+                <relation type="hasAssociationWith"/>
+            </relatedInfo>
+            <relatedInfo type="collection">
+                <title>Related Collection</title>
+                <relation type="hasAssociationWith"/>
+            </relatedInfo>
+        </party>
+    </registryObject>
+</registryObjects>

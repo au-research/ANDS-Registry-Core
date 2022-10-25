@@ -1,3 +1,16 @@
 <ul>
-	<li ng-repeat="l in conn"><a href="{{base_url}}{{l.slug}}/{{l.id}}">{{l.title}}</a></li>
+	<li ng-repeat="l in conn" ng-if="$index < 5"><a href="{{l.to_url}}">{{l.to_title}}</a></li>
 </ul>
+
+<a ng-if="conn.length > 5 && type_filter == 'party_one'"
+   href="{{base_url}}search/#!/related_{{type_filter}}_id={{conn[0].from_id}}/class=party/nottype=group">
+	View all ({{conn.length}})
+</a>
+<a ng-if="conn.length > 5 && type_filter == 'party_multi'"
+   href="{{base_url}}search/#!/related_{{type_filter}}_id_id={{conn[0].from_id}}/class=party/type=group">
+	View all ({{conn.length}})
+</a>
+<a ng-if="conn.length > 5 && type_filter != 'party_multi' && type_filter != 'party_one'"
+   href="{{base_url}}search/#!/related_{{type_filter}}_id={{conn[0].from_id}}/class={{type}}">
+	View all ({{conn.length}})
+</a>

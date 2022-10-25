@@ -2,13 +2,10 @@
 <xsd:schema version="1.6" 
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             xmlns="http://ands.org.au/standards/rif-cs/registryObjects"
-            xmlns:extRif="http://ands.org.au/standards/rif-cs/extendedRegistryObjects"
             targetNamespace="http://ands.org.au/standards/rif-cs/registryObjects"
             elementFormDefault="qualified"
             attributeFormDefault="unqualified">
-    
-    <xsd:import namespace="http://ands.org.au/standards/rif-cs/extendedRegistryObjects" schemaLocation="extRif.xsd"/>    
-    
+
     <xsd:annotation>
         <xsd:documentation xml:lang="en">
             An early draft of an ISO2146 schema to promote discussion. This is intended as an alternative to that currently published on the draft ISO2146 web site. It is based on experience from the pilot collection and services registry developed under the APSR ORCA project (see http://www.apsr.edu.au/orca/index.htm).
@@ -30,6 +27,8 @@
     <xsd:annotation>
         <xsd:documentation xml:lang="en">
             Change history
+            v1.6- 23 March 2022
+                 * Removed the extRif:annotations element
             v1.6- 21 November 2014
                  * add optional attribute: target and elements: title, note, mediaType, byteSize to electronicAddressType
             v1.5- 15 October 2013
@@ -143,8 +142,6 @@
                                 <xsd:element ref="party" minOccurs="1" maxOccurs="1"/>
                                 <xsd:element ref="service" minOccurs="1" maxOccurs="1"/>
                             </xsd:choice>
-                            <xsd:element ref='extRif:annotations' minOccurs='0' maxOccurs='1'/>
-                             
                         </xsd:sequence>
                         
                         <xsd:attributeGroup ref="registryObjectAttributes"/>
