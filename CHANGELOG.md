@@ -1,5 +1,14 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+
+## Release 45
+RDA Registry
+* Enhanced Registry relationship component.
+* Retrofit of new relationships API with RDA and other services
+RDA Portal
+* Some minor changes to RDA views
+* Retrofit of new relationships API with RDA and other services
+
 ## Release 44
 RDA Registry
 * Add configuration options to the Broken Link Checker that will allow the exclusion of specific data sources and HTTP status codes.
