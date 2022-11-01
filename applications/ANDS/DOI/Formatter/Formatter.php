@@ -49,7 +49,7 @@ class Formatter
                 $payload['code'] = 200;
                 break;
             case "MT005":
-                $payload['message'] = "The ANDS Cite My Data service is currently unavailable. Please try again at a later time. If you continue to experience problems please contact services@ands.org.au.";
+                $payload['message'] = "The ANDS Cite My Data service is currently unavailable. Please try again at a later time. If you continue to experience problems please contact services@ardc.edu.au.";
                 $payload['type'] = "failure";
                 $payload['code'] = 500;
                 break;
@@ -72,17 +72,17 @@ class Formatter
                 $payload['code'] = 500;
                 break;
             case "MT008":
-                $payload['message'] = "You do not appear to be the owner of DOI ".$payload['doi'].". If you believe this to be incorrect please contact services@ands.org.au.";
+                $payload['message'] = "You do not appear to be the owner of DOI ".$payload['doi'].". If you believe this to be incorrect please contact services@ardc.edu.au.";
                 $payload['type'] = "failure";
                 $payload['code'] = 415;
                 break;
             case "MT009":
-                $payload['message'] = "You are not authorised to use this service. For more information or to request access to the service please contact services@ands.org.au.";
+                $payload['message'] = "You are not authorised to use this service. For more information or to request access to the service please contact services@ardc.edu.au.";
                 $payload['type'] = "failure";
                 $payload['code'] = 415;
                 break;
             case "MT010":
-                $payload['message'] = "There has been an unexpected error processing your doi request. For more information please contact services@ands.org.au.";
+                $payload['message'] = "There has been an unexpected error processing your doi request. For more information please contact services@ardc.edu.au.";
                 $payload['type'] = "failure";
                 $payload['code'] = 500;
                 break;
@@ -103,7 +103,7 @@ class Formatter
                 $payload['code'] = 200;
                 break;
             case "MT014":
-                $payload['message'] = "The provided URL does not belong to any of your registered top level domains. If you would like to add additional domains to your account please contact services@ands.org.au. ";
+                $payload['message'] = "The provided URL does not belong to any of your registered top level domains. If you would like to add additional domains to your account please contact services@ardc.edu.au. ";
                 $payload['type'] = "failure";
                 $payload['code'] = 200;
                 break;
@@ -118,7 +118,7 @@ class Formatter
                 $payload['code'] = 200;
                 break;
             case "MT017":
-                $payload['message'] = "The DOI ".$payload['doi']." provided to mint/reserve a DOI does not match the DOI prefix allocated to your account. For more information, please contact services@ands.org.au.";
+                $payload['message'] = "The DOI ".$payload['doi']." provided to mint/reserve a DOI does not match the DOI prefix allocated to your account. For more information, please contact services@ardc.edu.au.";
                 $payload['type'] = "failure";
                 $payload['code'] = 200;
                 break;
@@ -145,7 +145,7 @@ class Formatter
                 $payload['code'] = 500;
                 break;
             default:
-                $payload['message'] = "There has been an unidentified error processing your doi request. For more information please contact services@ands.org.au.";
+                $payload['message'] = "There has been an unidentified error processing your doi request. For more information please contact services@ardc.edu.au.";
                 $payload['type'] = "failure";
                 $payload['code'] = 500;
                 break;

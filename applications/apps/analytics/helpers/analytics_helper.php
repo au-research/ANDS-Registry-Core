@@ -2,7 +2,7 @@
 
 /**
  * Read a local file path and return the lines
- * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author  Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  * @param  string $file File Path Local
  * @return array()
  */
@@ -23,7 +23,7 @@ function readFileToLine($file)
 /**
  * Read a string in the form of [key:value]
  * and return an array of key=>value in PHP
- * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author  Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  * @param  string $string
  * @return array(key=>value)
  */

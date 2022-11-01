@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class BulkRequest
- * Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  * @package ANDS\API\DOI
  */
 class BulkRequest extends Model

@@ -2,7 +2,7 @@
  * Core Data Source Javascript
  * 
  * 
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  * @package ands/registry_object
  * 
  */
@@ -234,7 +234,7 @@ function browse(view, filter){
  * This opens the view for viewing ro, editing ro and possibly deleting ro
  * @TODO: view for deleting Registry Objects
  * 
- * @author: Minh Duc Nguyen (minh.nguyen@ands.org.au)
+ * @author: Minh Duc Nguyen (minh.nguyen@ardc.edu.au)
  * @param: [int] registry object id, [string] view mode, [string|optional] tab to be init on
  * @returns: [void]
  */
@@ -311,7 +311,7 @@ function load_ro(ro_id, view, active_tab){
  * @TODO: 
  * 
  * 
- * @author: Minh Duc Nguyen (minh.nguyen@ands.org.au)
+ * @author: Minh Duc Nguyen (minh.nguyen@ardc.edu.au)
  * @param: [void]
  * @returns: [void]
  */
@@ -556,7 +556,7 @@ function initEditForm(){
  * The content will be removed from the DOM and append to the body with the id of ui-tooltip-x
  * This target will be defined at the button level by the attribute aria-describedby
  * 
- * @author: Minh Duc Nguyen (minh.nguyen@ands.org.au)
+ * @author: Minh Duc Nguyen (minh.nguyen@ardc.edu.au)
  * @param: [void]
  * @returns: [void]
  */
@@ -591,7 +591,7 @@ function bindPartsTooltip(){
  * @TODO: write a service that takes in a list of name part & class => spits out the display_title
  * Currently this function gives the primary name, or the first name part
  * 
- * @author: Minh Duc Nguyen (minh.nguyen@ands.org.au)
+ * @author: Minh Duc Nguyen (minh.nguyen@ardc.edu.au)
  * @param: [void]
  * @returns: [void]
  */
@@ -632,7 +632,7 @@ function initNames(){
  * Initialize the descriptions tab (aro_box_display)
  * only init the editor for now (@see:editor)
  * 
- * @author: Minh Duc Nguyen (minh.nguyen@ands.org.au)
+ * @author: Minh Duc Nguyen (minh.nguyen@ardc.edu.au)
  * @param: [void]
  * @returns: [void]
  */
@@ -645,7 +645,7 @@ function initDescriptions(){
  * Initialize all related Info heading (aro_box_display)
  * the heading takes values from title > notes and then identifier
  * 
- * @author: Minh Duc Nguyen (minh.nguyen@ands.org.au)
+ * @author: Minh Duc Nguyen (minh.nguyen@ardc.edu.au)
  * @param: [void]
  * @returns: [void]
  */
@@ -674,7 +674,7 @@ function initRelatedInfos(){
  * @see: registry_object/views/registry_object_index
  * @see: engine/views/footer
  * 
- * @author: Minh Duc Nguyen (minh.nguyen@ands.org.au)
+ * @author: Minh Duc Nguyen (minh.nguyen@ardc.edu.au)
  * @param: [void]
  * @returns: [void] > affecting all textarea.editor on screen
  */
@@ -698,7 +698,7 @@ function initEditor(){
 /*
  * Minh's Black Magic
  * Getting the RIFCS fragment for the given tab
- * @author: Minh Duc Nguyen (minh.nguyen@ands.org.au)
+ * @author: Minh Duc Nguyen (minh.nguyen@ardc.edu.au)
  * @param: [object] tab
  * @returns: [string] RIFCS fragment ready for validation
  */

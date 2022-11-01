@@ -1,8 +1,8 @@
 <?php
 /**
  * Class:  API Key
- * @author: Minh Duc Nguyen <minh.nguyen@ands.org.au>
- * @author: Liz Woods <liz.woods@ands.org.au>
+ * @author: Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
+ * @author: Liz Woods <liz.woods@ardc.edu.au>
  */
 
 namespace ANDS\API;

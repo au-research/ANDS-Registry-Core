@@ -7,7 +7,7 @@
  * of Data Sources. All instances of the _data_source
  * PHP class should be invoked through this model.
  *
- * @author Ben Greenwood <ben.greenwood@ands.org.au>
+ * @author Ben Greenwood <ben.greenwood@ardc.edu.au>
  * @see ands/datasource/_data_source
  * @package ands/datasource
  *
@@ -216,7 +216,7 @@ class Data_sources extends CI_Model {
     /**
      * Returns the attribute value of the data source
      *
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @param            $ds_id
      * @param bool|false $type
      * @return array|bool

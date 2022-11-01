@@ -1,7 +1,7 @@
 /**
  * Single Purpose Content Styling
  * This file is for the single purpose styling
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 .element-shorter-top {
   margin-top: 10px !important;
@@ -584,7 +584,7 @@ ul.listy li a small {
 }
 /**
  * Overwrite the default styling class
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 .navbar-brand {
   font-size: 25px;

@@ -1,7 +1,7 @@
 <?php
 /**
  * Class:  Status API
- * @author: Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author: Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 
 namespace ANDS\API;

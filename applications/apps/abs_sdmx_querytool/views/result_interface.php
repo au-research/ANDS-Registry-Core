@@ -3,7 +3,7 @@
 /**
  * App ID input screen
  * 
- * @author Ben Greenwood <ben.greenwood@ands.org.au>
+ * @author Ben Greenwood <ben.greenwood@ardc.edu.au>
  * @see ands/mydois/controllers/mydois
  * @package ands/mydois
  * 

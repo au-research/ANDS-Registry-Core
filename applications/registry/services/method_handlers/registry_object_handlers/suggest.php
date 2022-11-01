@@ -5,7 +5,7 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
 /**
  * Suggested Datasets handler
  * returns a list of suggested datasets based on different type of pools
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  * @return array
  */
 class Suggest extends ROHandler {

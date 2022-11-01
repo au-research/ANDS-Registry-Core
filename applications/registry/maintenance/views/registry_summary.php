@@ -3,7 +3,7 @@
 /**
  * Core Maintenance Dashboard
  *  
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  * @see ands/vocab_services/_vocab
  * @package ands/vocab_services
  * 

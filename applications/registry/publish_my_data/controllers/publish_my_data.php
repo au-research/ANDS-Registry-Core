@@ -33,7 +33,7 @@ class Publish_my_data extends MX_Controller {
 				$this->role->registerAffiliation($this->user->localIdentifier(), 'REGISTRY_USER');
 				$this->role->registerAffiliation($this->user->localIdentifier(), $org_role);
 			}else{
-				throw Exception('an error has occured, please contact services@ands.org.au for support');
+				throw Exception('an error has occured, please contact services@ardc.edu.au for support');
 			}
 			$this->user->refreshAffiliations($this->user->localIdentifier());
 			$this->user->appendFunction(array('REGISTRY_USER'));
@@ -43,7 +43,7 @@ class Publish_my_data extends MX_Controller {
 			$ds->setAttribute('title', $this->input->post('ds_title'));
 			$ds->setAttribute('contact_name', $this->input->post('name'));
 			$ds->setAttribute('contact_email', $this->input->post('email'));
-			$ds->setAttribute('assessment_notify_email_addr', 'services@ands.org.au');
+			$ds->setAttribute('assessment_notify_email_addr', 'services@ardc.edu.au');
 			$ds->setAttribute('record_owner', $org_role);
 			$ds->setAttribute('qa_flag', DB_TRUE);
 			if($this->input->post('notes')) $ds->setAttribute('notes', $this->input->post('notes'));		
@@ -57,7 +57,7 @@ class Publish_my_data extends MX_Controller {
 			$content = "A new Publish My Data Datasource has been added to the registry. ". base_url()."data_source#!/view/".$ds->id;
 			$this->load->library('email');
 			$this->email->from($email, $name);
-			$this->email->to('services@ands.org.au');
+			$this->email->to('services@ardc.edu.au');
 			$this->email->subject('Registry Publish My Data');
 			$this->email->message($content);
 			$this->email->send();
@@ -66,7 +66,7 @@ class Publish_my_data extends MX_Controller {
 			// echo '. redirect to edit that rifcs
 			redirect('registry_object/add');
 		}else{
-			throw Exception('an error has occured, please contact services@ands.org.au for support.');
+			throw Exception('an error has occured, please contact services@ardc.edu.au for support.');
 		}
 	}
 }

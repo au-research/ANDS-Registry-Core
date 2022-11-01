@@ -3,8 +3,8 @@ require_once(REGISTRY_APP_PATH. 'registry_object/models/_GenericSuggestor.php');
 
 /**
  * Class Related object Suggestor
- * @author Leo Monus <Leo.Monus@ands.org.au>
- * @author Richard Walker <Richard.Walker@ands.org.au>
+ * @author Leo Monus <Leo.Monus@ardc.edu.au>
+ * @author Richard Walker <Richard.Walker@ardc.edu.au>
  */
 class Related_object_suggestor extends _GenericSuggestor
 {

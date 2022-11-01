@@ -4,7 +4,7 @@
  * Statistics Controller
  * Retrieves stores and gets various statistics of registry objects
  *
- * @author  Liz Woods <liz.woods@ands.org.au>
+ * @author  Liz Woods <liz.woods@ardc.edu.au>
  */
 class Statistics extends MX_Controller
 {
@@ -392,7 +392,7 @@ class Statistics extends MX_Controller
             $query = $roles_db->query("SELECT COUNT(*) as thecount
 			FROM `dbs_roles`.`role_relations` 
 			WHERE `role_relations`.`parent_role_id`='ORCA_SOURCE_ADMIN' 
-			AND `role_relations`.`child_role_id` NOT LIKE '%@ands.org.au' 
+			AND `role_relations`.`child_role_id` NOT LIKE '%@ardc.edu.au' 
 			AND `role_relations`.`child_role_id` <> 'COSI_ADMIN'
 			AND `role_relations`.`child_role_id` <> 'u4187959'
 			AND `role_relations`.`child_role_id` <> 'u4958094'

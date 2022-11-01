@@ -2,7 +2,7 @@
 /**
  * Profile Controller
  * Used for MyRDA functionality
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 class Profile extends MX_Controller
 {
@@ -10,7 +10,7 @@ class Profile extends MX_Controller
     /**
      * Index page for the profile
      * Same for the dashboard
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @return view
      */
     public function index()
@@ -36,7 +36,7 @@ class Profile extends MX_Controller
 
     /**
      * Return user data
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @return json
      */
     public function get_user_data()
@@ -59,7 +59,7 @@ class Profile extends MX_Controller
 
     /**
      * Sample test function
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @return json
      */
     public function test()
@@ -86,7 +86,7 @@ class Profile extends MX_Controller
 
     /**
      * Check if a particular record has been bookmarked by the current user
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @param  int  $id registry object ID
      * @return boolean
      */
@@ -113,7 +113,7 @@ class Profile extends MX_Controller
 
     /**
      * Adding user data
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @param string $type [saved_search|saved_record]
      */
     public function add_user_data($type)
@@ -171,7 +171,7 @@ class Profile extends MX_Controller
 
     /**
      * Modifying existing user data
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @param  string $type   [saved_search|saved_record]
      * @param  string $action
      * @return json
@@ -200,7 +200,7 @@ class Profile extends MX_Controller
 
     /**
      * Return the current user and their current data
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @return json
      */
     public function current_user()
@@ -247,7 +247,7 @@ class Profile extends MX_Controller
 
     /**
      * Save the cookie for redirect authentication
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @return void
      */
     private function save_auth_cookie()
@@ -267,7 +267,7 @@ class Profile extends MX_Controller
 
     /**
      * Return the login view for user
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @return view
      */
     public function login()
@@ -317,7 +317,7 @@ class Profile extends MX_Controller
 
     /**
      * Logs the user out of the system
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @return redirect
      */
     public function logout()

@@ -4,7 +4,7 @@
  * Data Source Charts controller
  * 
  * 
- * @author Ben Greenwood <ben.greenwood@ands.org.au>
+ * @author Ben Greenwood <ben.greenwood@ardc.edu.au>
  * @see ands/datasource/_data_source
  * @package ands/datasource
  * 
@@ -17,7 +17,7 @@ class Charts extends MX_Controller {
 	 * 
 	 * 
 	 * 
-	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
 	 * @param 
 	 * @return [JSON] output
 	 */
@@ -267,7 +267,7 @@ class Charts extends MX_Controller {
 	 * Get a list of data sources
 	 * 
 	 * 
-	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
 	 * @param [INT] page
 	 * @todo ACL on which data source you have access to, error handling
 	 * @return [JSON] results of the search

@@ -3,7 +3,7 @@
  * Class:  ANDS\API\Task_api
  * Returns response for localhost/api/task/ based requests
  *
- * @author: Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author: Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 namespace ANDS\API;
 

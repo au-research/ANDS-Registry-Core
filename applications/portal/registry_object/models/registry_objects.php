@@ -2,7 +2,7 @@
 /**
  * Registry Objects Encapsulate Model
  * Allow interaction between the application and the _ro object
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 class Registry_objects extends CI_Model {
 

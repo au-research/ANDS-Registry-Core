@@ -15,7 +15,7 @@
 
 /**
  * jQuery plugin for Grant Widget integration
- * @author Liz Woods <liz.woods@ands.org.au>
+ * @author Liz Woods <liz.woods@ardc.edu.au>
  */
 ;(function($) {
 

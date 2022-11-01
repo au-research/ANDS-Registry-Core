@@ -2,7 +2,7 @@
 use ANDS\Util\Config as ConfigUtil;
 /**
  * Role Dashboard Interface
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 ?>
 

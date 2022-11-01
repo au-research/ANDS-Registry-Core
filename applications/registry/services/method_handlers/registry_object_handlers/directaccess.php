@@ -3,7 +3,7 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
 
 /**
  * Download Direct Access handler
- * @author Liz Woods <liz.woods@ands.org.au>
+ * @author Liz Woods <liz.woods@ardc.edu.au>
  * @return array
  */
 use ANDS\RegistryObject;

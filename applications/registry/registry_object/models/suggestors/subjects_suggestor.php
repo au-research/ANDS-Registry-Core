@@ -6,9 +6,9 @@ require_once(REGISTRY_APP_PATH. 'registry_object/models/_GenericSuggestor.php');
 
 /**
  * Class Subjects Suggestor
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
- * @author Leo Monus <Leo.Monus@ands.org.au>
- * @author Richard Walker <Richard.Walker@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
+ * @author Leo Monus <Leo.Monus@ardc.edu.au>
+ * @author Richard Walker <Richard.Walker@ardc.edu.au>
  */
 class Subjects_suggestor extends _GenericSuggestor {
 

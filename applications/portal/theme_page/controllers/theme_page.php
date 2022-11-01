@@ -2,13 +2,13 @@
 /**
  * Page controller
  * This controller main purpose is to display static pages
- * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author  Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 class Theme_page extends MX_Controller {
 
 	/**
 	 * Index / Home page
-	 * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @author  Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
 	 * @return view 
 	 */
 	function index(){

@@ -2,7 +2,7 @@
 /**
  * Portal User model
  * for interacting mainly with user_data on the portal side
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 class Portal_user extends CI_Model {
 
@@ -14,7 +14,7 @@ class Portal_user extends CI_Model {
 
 	/**
 	 * Get the current logged in user, requires the user library to be available and the user is logged in
-	 * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @author  Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
 	 * @return [type] [description]
 	 */
 	public function getCurrentUser(){
@@ -49,7 +49,7 @@ class Portal_user extends CI_Model {
 	 * Get the user_data array for the given user, mostly the current user but can be used for any user
 	 * If the user_data array doesn't exist, a row will be generated for the given user containing a blank
 	 * user_data
-	 * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @author  Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
 	 * @param  string $role_id role_id pk table field for identification
 	 * @return array           
 	 */

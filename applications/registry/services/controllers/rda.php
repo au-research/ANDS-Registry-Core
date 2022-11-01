@@ -4,7 +4,7 @@ require_once(REGISTRY_APP_PATH . "services/interfaces/_GenericPortalEndpoint.php
  * RDA Endpoint (allows RDA to query the registry)
  *
  *
- * @author Ben Greenwood <ben.greenwood@ands.org.au>
+ * @author Ben Greenwood <ben.greenwood@ardc.edu.au>
  * @package ands/services/rda_endpoint
  *
  */

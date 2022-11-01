@@ -2,7 +2,7 @@
 require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_ro_handler.php');
 /**
 * Rights handler
-* @author Liz Woods <liz.woods@ands.org.au>
+* @author Liz Woods <liz.woods@ardc.edu.au>
 * @return array
 */
 class Rights extends ROHandler {

@@ -10,7 +10,7 @@ use \Exception as Exception;
  * for use with the ANDS API application
  *
  * Returns response for localhost/api/registry/ based requests
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 class Registry_api
 {

@@ -6,7 +6,7 @@ use \Exception as Exception;
  * Handles registry/search
  * Search the registry
  * Used mainly for registry widget
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 class SearchHandler extends Handler{
 

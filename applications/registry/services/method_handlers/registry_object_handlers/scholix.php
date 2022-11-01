@@ -3,7 +3,7 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
 
 /**
  * Scholix handler
- * Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  * @return array
  */
 class Scholix extends ROHandler {

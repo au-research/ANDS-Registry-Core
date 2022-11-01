@@ -5,7 +5,7 @@
 /**
  * Unit Test Controller for Analytics Module
  * @todo make official Test Class usecase
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 class Unittest extends MX_Controller
 {
@@ -66,7 +66,7 @@ class Unittest extends MX_Controller
      * Index entry
      * If CLI then just return pass or fail
      * If Browser then return the entire test results
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @return mixed results
      */
     public function index()
@@ -93,7 +93,7 @@ class Unittest extends MX_Controller
 
     /**
      * Actually run the tests
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @return void
      */
     public function run_tests()

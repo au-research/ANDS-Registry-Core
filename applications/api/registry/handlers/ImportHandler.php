@@ -11,7 +11,7 @@ use \Exception as Exception;
 /**
  * Handles registry/import
  * Endpoint for Harvester
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 class ImportHandler extends Handler
 {

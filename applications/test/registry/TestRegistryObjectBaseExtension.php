@@ -6,7 +6,7 @@ namespace ANDS\Test;
  * Class TestRegistryObjectExtension
  *
  * @package ANDS\Test
- * @author  : Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author  : Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 class TestRegistryObjectBaseExtension extends UnitTest
 {

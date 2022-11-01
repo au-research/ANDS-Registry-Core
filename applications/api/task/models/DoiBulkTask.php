@@ -23,7 +23,7 @@ use ANDS\Util\Config;
 
 /**
  * Class DoiBulkTask
- * Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  * @package ANDS\API\Task
  */
 class DoiBulkTask extends Task

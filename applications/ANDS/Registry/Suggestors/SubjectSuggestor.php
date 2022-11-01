@@ -9,7 +9,7 @@ use MinhD\SolrClient\SolrClient;
 
 /**
  * Class SubjectSuggestor
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  * @package ANDS\Registry\Suggestors
  */
 class SubjectSuggestor implements RegistryObjectSuggestor

@@ -6,7 +6,7 @@ use ANDS\Repository\RegistryObjectsRepository;
 
 /**
  * DCI Citation INDEX  handler
- * @author Liz Woods <liz.woods@ands.org.au>
+ * @author Liz Woods <liz.woods@ardc.edu.au>
  * @param  string type
  * @return array
  */

@@ -5,7 +5,7 @@
  *
  * XXX:
  *
- * @author Ben Greenwood <ben.greenwood@ands.org.au>
+ * @author Ben Greenwood <ben.greenwood@ardc.edu.au>
  * @package ands/registryobject
  *
  */
@@ -616,7 +616,7 @@ class Registry_objects extends CI_Model {
 	 *
 	 * @todo   if $type is an array, return an array of values
 	 * @todo   if $type is blank/false, return all values
-	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
 	 * @param  int        $ro_id existing ro id
 	 * @param bool|string $type  existing type
 	 * @return mixed

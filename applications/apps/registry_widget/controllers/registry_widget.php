@@ -4,7 +4,7 @@
  * Registry Widget Controller
  * Acts as proxy and documentation
  *
- * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author  Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 class Registry_widget extends MX_Controller{
 

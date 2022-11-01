@@ -7,7 +7,7 @@ use \Exception as Exception;
  * Handles registry/grants
  * getGrants API
  *
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 class ActivitiesHandlerV2 extends Handler
 {
