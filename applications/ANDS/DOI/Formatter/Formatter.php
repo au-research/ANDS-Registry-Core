@@ -57,7 +57,7 @@ class Formatter
                 $payload['message'] = "The metadata you have provided to mint a new DOI has failed the schema validation. 
 			Metadata is validated against the latest version of the DataCite Metadata Schema. 
 			For information about the schema and the latest version supported, 
-			please visit the ANDS website http://ands.org.au. 
+			please visit the ARDC website https://ardc.edu.au
 			Detailed information about the validation errors can be found below.";
                 $payload['type'] = "failure";
                 $payload['code'] = 500;
@@ -66,7 +66,7 @@ class Formatter
                 $payload['message'] = "The metadata you have provided to update DOI ".$payload['doi']." has failed the schema validation. 
 			Metadata is validated against the DataCite Metadata Schema.
 			For information about the schema and the latest version supported, 
-			please visit the ANDS website http://ands.org.au. 
+			please visit the ARDC website https://ardc.edu.au 
 			Detailed information about the validation errors can be found below.";
                 $payload['type'] = "failure";
                 $payload['code'] = 500;

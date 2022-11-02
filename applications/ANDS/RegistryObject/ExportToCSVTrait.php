@@ -46,7 +46,7 @@ trait ExportToCSVTrait
 
         return [
             'key:ID' => static::researchGraphID($this->id),
-            'source' => 'ands.org.au',
+            'source' => 'ardc.edu.au',
             'local_id' => $this->key,
             'title' => StrUtil::sanitize($this->title),
             'author_list' => '',

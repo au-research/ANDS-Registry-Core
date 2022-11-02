@@ -72,7 +72,7 @@ class Statistics extends MX_Controller
                     if (isset($array['registryObject'][$type]['relatedInfo'][0])) {
                         for ($i = 0; $i < count($array['registryObject'][$type]['relatedInfo']); $i++) {
                             $out[0] = $data[3];
-                            $out[1] = "http://researchdata.ands.org.au/" . $data[1] . "/" . $data[0];
+                            $out[1] = "https://researchdata.edu.au/" . $data[1] . "/" . $data[0];
 
                             if ($array['registryObject'][$type]['relatedInfo'][$i]['@attributes']['type'] == 'publication') {
 
@@ -100,7 +100,7 @@ class Statistics extends MX_Controller
                         }
                     } else {
                         $out[0] = $data[3];
-                        $out[1] = "http://researchdata.ands.org.au/" . $data[1] . "/" . $data[0];
+                        $out[1] = "https://researchdata.edu.au/" . $data[1] . "/" . $data[0];
 
                         if (is_string($array['registryObject'][$type]['relatedInfo']['notes'])) {
                             $out[2] = $array['registryObject'][$type]['relatedInfo']['notes'] . "\r\n";

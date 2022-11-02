@@ -100,8 +100,8 @@
 				   <dd><strong>example:</strong><br/> <code>$("#mapContainer").ands_location_widget('init', {jumpToPoint:false});</code></dd>
 				   <dt>endpoint</dt>
 				   <dd>The ANDS resolver service to use. Change this when you want to use your own resolver service.</dd>
-				   <dd><strong>default:</strong> services.ands.org.au/api/resolver/</dd>
-				   <dd><strong>example:</strong><br/> <code>$("#mapContainer").ands_location_widget('init', {endpoint:'http://localhost.localdomain/myresolver/'});</code></dd>
+				   <dd><strong>default:</strong> https://researchdata.edu.au/api/location.jsonp/</dd>
+				   <dd><strong>example:</strong><br/> <code>$("#mapContainer").ands_location_widget('init', {endpoint:'https://researchdata.edu.au/api/location.jsonp/'});</code></dd>
 				   <dt>gasset_protocol</dt>
 				   <dd>The HTTP protocol to use for google asset (image) requests : choose <code>http://</code> or <code>https://</code></dd>
 				   <dd><strong>default:</strong> (the current window's protocol)</dd>

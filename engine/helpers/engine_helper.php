@@ -367,7 +367,7 @@ function identifier_url($suffix=''){
 }
 
 function developer_url($suffix=''){
-	return 'http://developers.ands.org.au';
+	return 'https://documentation.ardc.edu.au';
 }
 
 function current_protocol()

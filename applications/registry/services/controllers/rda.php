@@ -505,7 +505,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 			$this->output->set_output(json_encode(array("items"=>$partners)));
 		}
 		else{
-			$spotlight = @file_get_contents('http://services.ands.org.au/documentation/placeholder/spotlight.json');
+			$spotlight = @file_get_contents('https://researchdata.edu.au/documentation/placeholder/spotlight.json');
 			if($spotlight)
 				$partners = $spotlight;
 			$this->output->set_output($partners);

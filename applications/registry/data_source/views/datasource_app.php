@@ -456,10 +456,10 @@
 					<b>References</b>
 					<ul class="normal">
 						<li><a href="http://www.w3.org/TR/REC-xml/" target="_blank">XML Specifications</a></li>
-						<li><a href="http://ands.org.au/guides/content-providers-guide.html" target="_blank">ANDS Content Providers Guide</a></li>
+						<li><a href="https://documentation.ardc.edu.au/display/DOC/Content+Providers+Guide" target="_blank">ARDC Content Providers Guide</a></li>
 						<li><a href="http://www.tizag.com/xmlTutorial/xmlparent.php" target="_blank">XML Parent information</a></li>
 						<li><a href="http://www.tizag.com/xmlTutorial/xmlchild.php" target="_blank">XML Child information</a></li>
-						<li><a href="http://services.ands.org.au/documentation/rifcs/schemadocs/registryObjects.html" target="_blank">RIF-CS Schema Documentation</a></li>
+						<li><a href="https://researchdata.edu.au/documentation/rifcs/schemadocs/registryObjects.html" target="_blank">RIF-CS Schema Documentation</a></li>
 					</ul>
 				</p>
 			</div>
@@ -479,8 +479,8 @@
 				<p>
 					<b>References</b>
 					<ul class="normal">
-						<li><a href="http://ands.org.au/guides/content-providers-guide.html" target="_blank">ANDS Content Providers Guide</a></li>
-						<li><a href="http://services.ands.org.au/documentation/rifcs/schemadocs/registryObjects.html" target="_blank">RIF-CS Schema Documentation</a></li>
+						<li><a href="https://documentation.ardc.edu.au/display/DOC/Content+Providers+Guide" target="_blank">ARDC Content Providers Guide</a></li>
+						<li><a href="https://researchdata.edu.au/documentation/rifcs/schemadocs/registryObjects.html" target="_blank">RIF-CS Schema Documentation</a></li>
 					</ul>
 				</p>
 			</div>
