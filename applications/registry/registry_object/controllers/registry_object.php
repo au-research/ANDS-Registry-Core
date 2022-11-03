@@ -16,7 +16,7 @@ use ANDS\Task\TaskRepository;
  * Registry Object controller
  *
  *
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  * @package ands/registryobject
  *
  */
@@ -801,7 +801,7 @@ class Registry_object extends MX_Controller {
 	 * Get A Record
 	 *
 	 *
-	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
 	 * @package ands/registryobject
 	 * @param registry object ID
 	 * @return [JSON] of a single registry object
@@ -1230,7 +1230,7 @@ class Registry_object extends MX_Controller {
 	 * Get a list of records based on the filters
 	 *
 	 *
-	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
 	 * @package ands/registryobject
 	 * @param [POST] Filters(Fields), [POST] sorts, [POST] page
 	 * @return [JSON] results of the search

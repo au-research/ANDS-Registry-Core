@@ -9,7 +9,7 @@ use \ReflectionMethod as ReflectionMethod;
  * Class UnitTest
  *
  * @package ANDS\Test
- * @author: Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author: Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 class UnitTest
 {

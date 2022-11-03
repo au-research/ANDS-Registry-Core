@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author  Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 class Dois extends CI_Model
 {
@@ -10,7 +10,7 @@ class Dois extends CI_Model
 
     /**
      * Get General Statistic based on a filter
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @param $filters
      * @return array
      */
@@ -39,7 +39,7 @@ class Dois extends CI_Model
     /**
      * Get the activity log statistics
      * Mainly for minted statistics
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @param $filters
      * @return array
      */
@@ -111,7 +111,7 @@ class Dois extends CI_Model
 
     /**
      * Get Client Statistic
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @param $filters
      * @return array
      */
@@ -142,7 +142,7 @@ class Dois extends CI_Model
     /**
      * Return activity log
      * Paginatable
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @param int $offset
      * @param int $limit
      * @return mixed
@@ -155,7 +155,7 @@ class Dois extends CI_Model
 
     /**
      * Return a list of clients
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @return array
      */
     public function getClients()
@@ -168,7 +168,7 @@ class Dois extends CI_Model
 
     /**
      * Get a group given a DOI ID
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @param $doi_id
      * @return string
      */
@@ -185,7 +185,7 @@ class Dois extends CI_Model
 
     /**
      * Get the total number of activity logs existed
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @return mixed
      */
     public function getTotalActivityLogs()

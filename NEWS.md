@@ -1,4 +1,12 @@
 
+## Release 45
+RDA Registry
+* Enhanced Registry relationship component.
+* Retrofit of new relationships API with RDA and other services
+RDA Portal
+* Some minor changes to RDA views
+* Retrofit of new relationships API with RDA and other services
+
 ## Release 44
 **Research Data Australia**
 * Add configuration options to the Broken Link Checker that will allow the exclusion of specific data sources and HTTP status codes.

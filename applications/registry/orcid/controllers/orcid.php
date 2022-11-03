@@ -8,7 +8,7 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
  * ORCID base controller for the orcid integration process
- * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au> 
+ * @author  Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 class Orcid extends MX_Controller {
 

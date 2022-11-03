@@ -2,7 +2,7 @@
 require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_ro_handler.php');
 /**
  * Spatial handler
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  * @return array list of spatial polygons, extents and center from SOLR index, provide an area sum
  */
 class Spatial extends ROHandler {

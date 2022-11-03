@@ -30,7 +30,7 @@ if (!defined('BASEPATH')) {
  * http://localhost/registry/object/1234
  * http://localhost/registry/object/1234/relationships
  *
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  * @link https://intranet.ands.org.au/display/~mnguyen/api.ands.org.au
  */
 class Dispatcher extends MX_Controller

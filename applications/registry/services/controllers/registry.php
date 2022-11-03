@@ -5,7 +5,7 @@
  * Registry Objects Services controller
  * 
  * 
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  * @package ands/services/registry
  * 
  */
@@ -20,7 +20,7 @@ class Registry extends MX_Controller {
 	/*
 	 * get_registry_object
 	 * 
-	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
 	 * @param 	registry_object_id identifier
 	 *			format: xml/json/raw/raw-xml
 	 * prints out the requested rifcs of the object
@@ -49,7 +49,7 @@ class Registry extends MX_Controller {
 	/*
 	 * get_vocab
 	 * 
-	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
 	 * @param 	vocab identifier
 	 * prints out the requested json fragment for the autocomplete
 	 */
@@ -367,7 +367,7 @@ class Registry extends MX_Controller {
 	/*
 	 * get_random_key
 	 * 
-	 * @author 	Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @author 	Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
 	 * @param 	length of the key
 	 * prints out a random key that is unique
 	 */
@@ -451,7 +451,7 @@ class Registry extends MX_Controller {
 	/*
 	 * get_datasources_list
 	 * 
-	 * @author 	Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @author 	Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
 	 * @param 	
 	 * prints out the list of datasources the user has access to @TODO: needs ACL
 	 */

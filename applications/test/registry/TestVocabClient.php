@@ -9,7 +9,7 @@ class TestVocabClient extends UnitTest
 
     public function testCaching()
     {
-        $url = "http://vocabs.ands.org.au/repository/api/lda/anzsrc-for/resource.json?uri=http%3A%2F%2Fpurl.org%2Fau-research%2Fvocabulary%2Fanzsrc-for%2F2008%2F2103";
+        $url = "https://vocabs.ardc.edu.au/repository/api/lda/anzsrc-for/resource.json?uri=http%3A%2F%2Fpurl.org%2Fau-research%2Fvocabulary%2Fanzsrc-for%2F2008%2F2103";
         // $result = $this->ci->vocab->post($url);
         $cacheId = $this->ci->vocab->getCacheID($url);
 

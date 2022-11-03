@@ -4,7 +4,7 @@
  * Core Data Source Template File
  * 
  * 
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  * @see ands/registry_object/_registry_object
  * @package ands/registry_object
  * 

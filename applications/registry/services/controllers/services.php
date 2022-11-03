@@ -8,7 +8,7 @@ define('SERVICES_MODULE_PATH', REGISTRY_APP_PATH.'services/');
  * services module and logging and access management of requests
  * via the API key system. 
  * 
- * @author Ben Greenwood <ben.greenwood@ands.org.au>
+ * @author Ben Greenwood <ben.greenwood@ardc.edu.au>
  * @package ands/services
  * 
  */

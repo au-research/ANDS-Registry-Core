@@ -3,7 +3,7 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
 /**
 * Descriptions handler
 * As an example on how to get data from multiple source, index and xml
-* @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+* @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
 * @return array list of description with types
 */
 class Descriptions extends ROHandler {

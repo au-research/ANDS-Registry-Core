@@ -5,7 +5,7 @@ namespace ANDS\DOI;
 /**
  * A Client that interfaces with datacite.org
  * Class DataCiteClient
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  * @package ANDS\API\DOI
  */
 Interface DataCiteClient

@@ -1,6 +1,6 @@
 <?php 
 /**
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 ?>
 
@@ -43,7 +43,7 @@
 					</ul>
 					</small>
 
-					<p><small><span class="label label-success"> &nbsp; ! &nbsp;</span> Find more information about the Publish My Data self-service on the <a target="_blank" href="http://www.ands.org.au/services/publish-my-data.html">ANDS website</a>.</small></p>
+					<p><small><span class="label label-success"> &nbsp; ! &nbsp;</span> Find more information about the Publish My Data self-service on the <a target="_blank" href="https://documentation.ardc.edu.au/display/DOC/Content+Providers+Guide">ARDC Content Providers Guide</a>.</small></p>
 
 					<hr/>
 

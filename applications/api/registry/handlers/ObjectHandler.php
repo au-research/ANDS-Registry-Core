@@ -16,7 +16,7 @@ set_time_limit(60);
 /**
  * Handles registry/object
  * Used for Registry Object API
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 class ObjectHandler extends Handler{
 
@@ -259,7 +259,7 @@ class ObjectHandler extends Handler{
 
     /**
      * populate the SOLR index for fast searching on normalized fields and the commonly used Simple XML
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @param  registry_object_id $id
      */
     private function populate_resource($id)

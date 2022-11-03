@@ -4,7 +4,7 @@ require_once(REGISTRY_APP_PATH . "services/interfaces/_GenericPortalEndpoint.php
  * RDA Endpoint (allows RDA to query the registry)
  *
  *
- * @author Ben Greenwood <ben.greenwood@ands.org.au>
+ * @author Ben Greenwood <ben.greenwood@ardc.edu.au>
  * @package ands/services/rda_endpoint
  *
  */
@@ -505,7 +505,7 @@ class Rda extends MX_Controller implements GenericPortalEndpoint
 			$this->output->set_output(json_encode(array("items"=>$partners)));
 		}
 		else{
-			$spotlight = @file_get_contents('http://services.ands.org.au/documentation/placeholder/spotlight.json');
+			$spotlight = @file_get_contents('https://researchdata.edu.au/documentation/placeholder/spotlight.json');
 			if($spotlight)
 				$partners = $spotlight;
 			$this->output->set_output($partners);

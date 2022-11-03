@@ -3,7 +3,7 @@
 /**
  * Registry Administration Panel
  *
- * @author Ben Greenwood <ben.greenwood@ands.org.au>
+ * @author Ben Greenwood <ben.greenwood@ardc.edu.au>
  * @see ands/administration
  * @package registry/administration
  *

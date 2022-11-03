@@ -7,8 +7,8 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
 
 /**
  * Related Info handler
- * @author Liz Woods <liz.woods@ands.org.au>
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Liz Woods <liz.woods@ardc.edu.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  * @param  string type
  * @return array
  */

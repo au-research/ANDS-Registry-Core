@@ -2,7 +2,7 @@
 /**
  * Page controller
  * This controller main purpose is to display static pages
- * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author  Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 
 use ANDS\Util\Config as ConfigUtil;
@@ -11,7 +11,7 @@ class Page extends MX_Controller
 
     /**
      * Index / Home page
-     * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author  Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @return view
      */
     public function index()
@@ -43,7 +43,7 @@ class Page extends MX_Controller
 
     /**
      * About page
-     * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author  Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @return view
      */
     public function about()
@@ -76,7 +76,7 @@ class Page extends MX_Controller
 
     /**
      * Survey page
-     * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author  Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @return view
      */
     public function survey()
@@ -110,7 +110,7 @@ class Page extends MX_Controller
 
     /**
      * Privacy Policy
-     * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author  Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @return view
      */
     public function privacy()
@@ -121,7 +121,7 @@ class Page extends MX_Controller
 
     /**
      * Disclaimer page
-     * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author  Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @return view
      */
     public function disclaimer()
@@ -132,7 +132,7 @@ class Page extends MX_Controller
 
     /**
      * Help page
-     * @author Liz Woods <liz.woods@ands.org.au>
+     * @author Liz Woods <liz.woods@ardc.edu.au>
      * @return view
      */
     public function help()
@@ -215,7 +215,7 @@ class Page extends MX_Controller
 
     /**
      * Display the sitemap
-     * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author  Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @return view
      */
     public function sitemap($page = '')

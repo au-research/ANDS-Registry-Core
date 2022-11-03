@@ -5,7 +5,7 @@
 /**
  * Registry Object model for a single registry object
  *
- * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author  Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 class _ro
 {

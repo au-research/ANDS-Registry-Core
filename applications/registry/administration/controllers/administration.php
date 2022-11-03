@@ -5,7 +5,7 @@
  *
  * Base stub for administrative control of the registry
  *
- * @author Ben Greenwood <ben.greenwood@ands.org.au>
+ * @author Ben Greenwood <ben.greenwood@ardc.edu.au>
  * @package ands/services
  *
  */

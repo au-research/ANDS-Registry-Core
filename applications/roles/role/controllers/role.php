@@ -5,7 +5,7 @@
  * 
  * Base controller for role management for the Registry
  * 
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  * 
  */
 class Role extends MX_Controller {

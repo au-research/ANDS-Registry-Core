@@ -269,11 +269,11 @@ class ConceptsCommand extends Command
         $this->solrUrl = $input->getOption('solr_url');
         $output->writeln("Indexing: $type to {$this->solrUrl} for {$type}");
         $conceptsSourceURLs = [
-            'anzsrc-for' => 'https://vocabs.ands.org.au/registry/api/resource/versions/28/versionArtefacts/conceptTree',
-            'anzsrc-seo' => 'https://vocabs.ands.org.au/registry/api/resource/versions/18/versionArtefacts/conceptTree',
+            'anzsrc-for' => 'https://vocabs.ardc.edu.au/registry/api/resource/versions/28/versionArtefacts/conceptTree',
+            'anzsrc-seo' => 'https://vocabs.ardc.edu.au/registry/api/resource/versions/18/versionArtefacts/conceptTree',
 
             // gcmd-sci on RVA
-            'gcmd' => 'https://vocabs.ands.org.au/registry/api/resource/versions/16/versionArtefacts/conceptTree',
+            'gcmd' => 'https://vocabs.ardc.edu.au/registry/api/resource/versions/16/versionArtefacts/conceptTree',
 
             //'iso639-3' -> should come from file
         ];

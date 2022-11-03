@@ -3,7 +3,7 @@ require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_r
 
 /**
  * Jsonld handler
- * Liz Woods <minh.nguyen@ands.org.au>
+ * Liz Woods <minh.nguyen@ardc.edu.au>
  * @return array
  */
 class Altmetrics extends ROHandler {

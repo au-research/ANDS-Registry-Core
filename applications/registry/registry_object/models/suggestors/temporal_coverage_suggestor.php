@@ -3,8 +3,8 @@ require_once(REGISTRY_APP_PATH. 'registry_object/models/_GenericSuggestor.php');
 
 /**
  * Class Temporal coverage Suggestor
- * @author Leo Monus <Leo.Monus@ands.org.au>
- * @author Richard Walker <Richard.Walker@ands.org.au>
+ * @author Leo Monus <Leo.Monus@ardc.edu.au>
+ * @author Richard Walker <Richard.Walker@ardc.edu.au>
  */
 class Temporal_coverage_suggestor extends _GenericSuggestor {
 

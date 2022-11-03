@@ -2,7 +2,7 @@
 require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_ro_handler.php');
 /**
  * Tags handler
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  * @return array list of tags
  */
 class Tags extends ROHandler {

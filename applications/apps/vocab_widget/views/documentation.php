@@ -55,7 +55,7 @@
 		<dt><strong>Narrow</strong>ing on a (hierarchical) vocabulary item</dt>
 		<dd>Populates a select list (or autocomplete textbox) with items comprising a base vocabulary classification URI.</dd>
 		<dt>Browsing a (hierarchical) vocabulary set as a <strong>tree</strong></dt>
-		<dd>Creates a tiered term tree (such as that used in the <a href="http://researchdata.ands.org.au/browse">RDA "Browse" screen</a>)</dd>
+		<dd>Creates a tiered term tree (such as that used in the <a href="https://researchdata.edu.au">RDA "Browse" screen</a>)</dd>
 	      </dl>
 	      <p>
 		It is also possible to use the widget in a more programmatic manner; refer to the 'core usage' section below for more details.

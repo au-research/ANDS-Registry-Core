@@ -476,7 +476,7 @@ class Registry_object extends MX_Controller
      * Preview popup HTML content
      * Used when the user click on a related object link
      *
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @return view
      */
     function preview()

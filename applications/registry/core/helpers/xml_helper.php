@@ -31,7 +31,7 @@ function wrapRegistryObjects($xml)
   $return = $xml;
   if(strpos($xml,'<registryObjects') === false)
   {
-    $return = '<?xml version="1.0" encoding="UTF-8"?>'.NL.'<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects http://services.ands.org.au/documentation/rifcs/schema/registryObjects.xsd">' . NL;
+    $return = '<?xml version="1.0" encoding="UTF-8"?>'.NL.'<registryObjects xmlns="http://ands.org.au/standards/rif-cs/registryObjects" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ands.org.au/standards/rif-cs/registryObjects https://researchdata.edu.au/documentation/rifcs/schema/registryObjects.xsd">' . NL;
     $return .= $xml;
     $return .= '</registryObjects>';
   }

@@ -10,7 +10,7 @@ if ( ! defined('BASEPATH')) exit('No direct script access allowed');
  * Core Data Source controller
  *
  *
- * @author Ben Greenwood <ben.greenwood@ands.org.au>
+ * @author Ben Greenwood <ben.greenwood@ardc.edu.au>
  * @see ands/datasource/_data_source
  * @package ands/datasource
  *
@@ -19,7 +19,7 @@ class Data_source extends MX_Controller {
 
 	/**
 	 * index page, display the angularJS data source app view
-	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
 	 * @return view
 	 */
 	public function index() {
@@ -33,7 +33,7 @@ class Data_source extends MX_Controller {
 	/**
 	 * get a JSON presentation of a data source
 	 * if there's no data source speficied, get all owned datasource
-	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
 	 * @param  data_source_id $id
 	 * @return json
 	 */
@@ -185,7 +185,7 @@ class Data_source extends MX_Controller {
 
 	/**
 	 * get data source log
-	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
 	 * @param  data_source_id $id
 	 * @param  integer $offset
 	 * @return json
@@ -208,7 +208,7 @@ class Data_source extends MX_Controller {
 
 	/**
 	 * get harvester status
-	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
 	 * @param  data_source_id $id
 	 * @return json
      * CC-460 changes
@@ -251,7 +251,7 @@ class Data_source extends MX_Controller {
 
 	/**
 	 * Save a data source
-	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
 	 * @return [json] response.status
 	 */
 	public function save() {
@@ -669,7 +669,7 @@ class Data_source extends MX_Controller {
 	 * Manage My Records (MMR Screen)
 	 *
 	 *
-	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
 	 * @package ands/registryobject
 	 * @param data_source_id | optional
 	 * @return [HTML] output
@@ -735,7 +735,7 @@ class Data_source extends MX_Controller {
 	/**
 	 * Get MMR AJAX data for MMR
 	 *
-	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
 	 * @param  [int] 	$data_source_id
 	 * @return [json]
 	 */
@@ -1153,7 +1153,7 @@ class Data_source extends MX_Controller {
 	 * Get a list of data sources
 	 *
 	 *
-	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
 	 * @param [INT] page
 	 * @todo ACL on which data source you have access to, error handling
 	 * @return [JSON] results of the search
@@ -1217,7 +1217,7 @@ class Data_source extends MX_Controller {
 	 * Get a single data source
 	 *
 	 *
-	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
 	 * @param [INT] Data Source ID
 	 * @todo ACL on which data source you have access to, error handling
 	 * @return [JSON] of a single data source
@@ -1430,7 +1430,7 @@ class Data_source extends MX_Controller {
 
 	/**
 	 * getDataSourceLogs
-	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
 	 * @param [POST] data_source_id [POST] offset [POST] count [POST] log_id
 	 *
 	 * @return [json] [logs for the data source]
@@ -1570,7 +1570,7 @@ class Data_source extends MX_Controller {
 	 * Save a data source
 	 *
 	 *
-	 * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+	 * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
 	 * @param [POST] Data Source ID [POST] attributes
 	 * @todo ACL on which data source you have access to, error handling, new attributes
 	 * @return [JSON] result of the saving [VOID]

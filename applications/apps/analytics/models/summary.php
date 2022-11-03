@@ -2,7 +2,7 @@
 /**
  * Summary class, use for Analytics of a single period of time
  * @todo Load analytics modules
- * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author  Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 class Summary extends CI_Model
 {
@@ -443,7 +443,7 @@ class Summary extends CI_Model
 
     /**
      * Return the statistic lines from the internal log collected via portal
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @param  string $date    Date for the event
      * @param  array $filters  filters passed down
      * @return array(lines)
@@ -458,7 +458,7 @@ class Summary extends CI_Model
     /**
      * Return the statistics lines from GoogleAnalytics
      * @todo
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @param  string $date    Date for the event
      * @param  string $filters filters passed down
      * @return array(lines)

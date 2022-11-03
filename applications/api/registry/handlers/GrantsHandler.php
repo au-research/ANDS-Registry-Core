@@ -4,7 +4,7 @@ namespace ANDS\API\Registry\Handler;
 /**
  * Handles registry/grants
  * getGrants API
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 class GrantsHandler extends Handler
 {

@@ -13,7 +13,7 @@
  * to the appropriate collections by related object. 
  *
  *
- * @author Ben Greenwood <ben.greenwood@ands.org.au>
+ * @author Ben Greenwood <ben.greenwood@ardc.edu.au>
  * @created 31/01/2013
  */
 
@@ -27,7 +27,7 @@ class NHMRC_Merged_File_to_RIFCS extends Crosswalk
     const NHMRC_PARTY_PREFIX = 'http://nhmrc.gov.au/person/';
     const NHMRC_PROGRAM_TYPE_GROUP = 'Infrastructure Support';
     const NHMRC_NLA_KEY = 'http://nla.gov.au/nla.party-616216';
-    const NHMRC_LOGO = 'http://services.ands.org.au/documentation/logos/nhmrc_stacked_small.jpg';
+    const NHMRC_LOGO = 'https://researchdata.edu.au/documentation/logos/nhmrc_stacked_small.jpg';
     const NHMRC_MIN_GRANT_YR = 2009;
 
     private $parsed_array = array();

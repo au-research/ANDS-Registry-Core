@@ -8,7 +8,7 @@ require_once APP_PATH . 'interfaces/_interface.php';
  * Formatter for XML interface
  * for use with the API application
  *
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 class XMLInterface extends FormatHandler
 {

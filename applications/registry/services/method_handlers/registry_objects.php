@@ -137,7 +137,7 @@ class Registry_objectsMethod extends MethodHandler {
 
     /**
      * populate the SOLR index for fast searching on normalized fields and the commonly used Simple XML
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @param  registry_object_id $id
      * @return [populated $this->index and $this->xml]
      */
@@ -171,7 +171,7 @@ class Registry_objectsMethod extends MethodHandler {
     /**
      * Get the pre constructed resource for this registry object
      * Mainly used for constructing new registry objects handlers
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @return array
      */
     function get_resource() {
@@ -188,7 +188,7 @@ class Registry_objectsMethod extends MethodHandler {
     /**
     * Search handler
     * Used for searching and interacting with the SOLR index at a RESTful level
-    * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+    * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
     * @return solr_result
     */
     private function searcher($params) {

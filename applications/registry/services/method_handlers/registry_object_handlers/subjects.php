@@ -2,7 +2,7 @@
 require_once(SERVICES_MODULE_PATH . 'method_handlers/registry_object_handlers/_ro_handler.php');
 /**
  * Subjects handler
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  * @return array list of subjects from SOLR index
  */
 class Subjects extends ROHandler {

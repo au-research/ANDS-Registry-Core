@@ -38,7 +38,7 @@ class OAIRecordRepository implements OAIRepository
     protected $formats = [
         "rif" => [
             'metadataPrefix' => 'rif',
-            'schema' => "http://services.ands.org.au/documentation/rifcs/1.3/schema/registryObjects.xsd",
+            'schema' => "https://researchdata.edu.au/documentation/rifcs/schema/registryObjects.xsd",
             'metadataNamespace' => 'http://ands.org.au/standards/rif-cs/registryObjects'
         ],
         "oai_dc" => [

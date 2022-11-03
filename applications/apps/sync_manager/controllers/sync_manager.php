@@ -3,7 +3,7 @@
 /*
  * Analytics Module
  * for Data Source Report functionality
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 
 class Sync_manager extends MX_Controller

@@ -3,7 +3,7 @@
 /**
  * Core Maintenance Dashboard
  *  
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  * @see ands/vocab_services/_vocab
  * @package ands/vocab_services
  * 
@@ -79,7 +79,7 @@
 				<div class="box">
 
  					<div class="pull-right">
-						<span class="label"><i class="icon-question-sign icon-white"></i> <a target="_blank" style="color:white;" href="http://ands.org.au/resource/metadata-content-requirements.html#qualitylevels">Quality Level Definitions</a></span>				  
+						<span class="label"><i class="icon-question-sign icon-white"></i> <a target="_blank" style="color:white;" href="https://documentation.ardc.edu.au/display/DOC/Content+Providers+Guide">Quality Level Definitions</a></span>
 					</div>
 					<div id="quality_status_legend" class="chart-legend">
 

@@ -55,7 +55,7 @@ class ScheduleHarvest extends ImportSubTask
     {
         $advancedHarvestMode = $dataSource->getDataSourceAttribute("advanced_harvest_mode")->value;
 
-
+        $this->parent()->updateHarvest(['last_run' => date('Y-m-d\TH:i:s.uP', strtotime($this->harvestStarted))]);
 
         if ($advancedHarvestMode == 'INCREMENTAL') {
             if($this->parent()->getTaskData('pipeline') == 'ErrorWorkflow'){
@@ -64,7 +64,6 @@ class ScheduleHarvest extends ImportSubTask
             }
             else {
                 $this->log("Next from_date " . $this->harvestStarted);
-                $this->parent()->updateHarvest(['last_run' => $this->harvestStarted]);
                 $dataSource->setDataSourceAttribute("last_harvest_run_date", $this->harvestStarted);
             }
         }
@@ -89,14 +88,6 @@ class ScheduleHarvest extends ImportSubTask
         $nextRun = $this->getNextHarvestDate($harvestDate, $harvestFrequency);
         $nextHarvestDate = date("Y-m-d\TH:i:s\Z", $nextRun);
         $this->log("Harvest rescheduled to run at ". $nextHarvestDate);
-        $previous_run_date = $this->harvestStarted;
-        
-        if($this->parent()->getTaskData('pipeline') == 'ErrorWorkflow'){
-            $previous_run_date = $dataSource->getDataSourceAttributeValue("last_harvest_run_date");
-        }
-        
-        $this->log("Next from_date ". $previous_run_date);
-        $dataSource->setDataSourceAttribute("last_harvest_run_date", $previous_run_date);
         $batchNumber = strtoupper(sha1($nextRun));
 
         $nextRunDate = date('Y-m-d H:i:s', $nextRun);
@@ -112,7 +103,6 @@ class ScheduleHarvest extends ImportSubTask
 
         $this->parent()->updateHarvest([
             'status' => 'SCHEDULED',
-            'last_run' => $previous_run_date,
             'next_run' => date('Y-m-d\TH:i:s.uP', $nextRun),
             'batch_number' => $batchNumber,
             'importer_message' => "Harvest rescheduled for: $nextRunDate"

@@ -33,7 +33,7 @@ $ds->record_owner = "Bob";
 print $ds->save();
  * </code>
  *
- * @author Ben Greenwood <ben.greenwood@ands.org.au>
+ * @author Ben Greenwood <ben.greenwood@ardc.edu.au>
  * @package ands/datasource
  * @subpackage helpers
  */
@@ -692,7 +692,7 @@ class _data_source {
  * the state of the attribute to be mainted, so that calls
  * to ->save() only write dirty data to the database.
  *
- * @author Ben Greenwood <ben.greenwood@ands.org.au>
+ * @author Ben Greenwood <ben.greenwood@ardc.edu.au>
  * @version 0.1
  * @package ands/datasource
  * @subpackage helpers

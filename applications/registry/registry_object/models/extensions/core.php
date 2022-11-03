@@ -403,7 +403,7 @@ class Core_extension extends ExtensionBase
  * the state of the attribute to be mainted, so that calls
  * to ->save() only write dirty data to the database.
  *
- * @author Ben Greenwood <ben.greenwood@ands.org.au>
+ * @author Ben Greenwood <ben.greenwood@ardc.edu.au>
  * @version 0.1
  * @package ands/registryobject
  * @subpackage helpers

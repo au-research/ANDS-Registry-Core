@@ -2,7 +2,7 @@
 /**
  * Group controller
  * This controller main purpose is to display contributor pages
- * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author  Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 class Group extends MX_Controller {
 

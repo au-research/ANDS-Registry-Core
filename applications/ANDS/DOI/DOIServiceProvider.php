@@ -12,7 +12,7 @@ use ANDS\DOI\Validator\XMLValidator;
  * ANDS DOI Service Provider
  *
  * Class DOIServiceProvider
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  * @package ANDS\DOI\Repository
  */
 class DOIServiceProvider

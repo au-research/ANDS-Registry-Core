@@ -3,7 +3,7 @@
 
 /**
  *  PIDs primary controller
- *  @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ *  @author  Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 class Pids extends MX_Controller {
 

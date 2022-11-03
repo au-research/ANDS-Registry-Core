@@ -1,7 +1,7 @@
 <?php
 /**
  * Logging functionality for API Service
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  * @param $message
  * @param string $type
  */
@@ -53,7 +53,7 @@ function api_log($message, $type = 'info')
 
 /**
  * API Service  log array helper function
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  * @param array $terms
  * @param string $type
  */
@@ -98,7 +98,7 @@ function api_exception_handler($e)
 
 /**
  * Read a local file path and return the lines
- * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author  Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  * @param  string $file File Path Local
  * @return array()
  */
@@ -119,7 +119,7 @@ function readFileToLine($file)
 /**
  * Read a string in the form of [key:value]
  * and return an array of key=>value in PHP
- * @author  Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author  Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  * @param  string $string
  * @return array(key=>value)
  */

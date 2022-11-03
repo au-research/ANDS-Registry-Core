@@ -3,7 +3,7 @@
 /*
  * Analytics Module
  * for Data Source Report functionality
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 
 use ANDS\Cache\Cache;
@@ -16,7 +16,7 @@ class Analytics extends MX_Controller
      * Analytics Index Function
      * Requires various exclusive library and acts as a front to the
      * Analytics AngularJS app
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @return view
      */
 
@@ -46,7 +46,7 @@ class Analytics extends MX_Controller
     /**
      * Summary
      * Returns the summary statistic for a given period
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @param POST $filters
      * @return JSON
      */
@@ -230,7 +230,7 @@ class Analytics extends MX_Controller
 
     /**
      * Returns a list of organisational roles with groups and doi app id
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @return json
      */
     public function getOrg($format = 'json') {
@@ -622,7 +622,7 @@ class Analytics extends MX_Controller
 
     /**
      * Useful function for automated testing
-     * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+     * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
      * @return JSON
      */
     public function test()

@@ -20,7 +20,7 @@ $Revision: 32 $
 
 /**
  * Base Model for Roles Management
- * @author Minh Duc Nguyen <minh.nguyen@ands.org.au>
+ * @author Minh Duc Nguyen <minh.nguyen@ardc.edu.au>
  */
 class Roles extends CI_Model {
 
