@@ -24,7 +24,6 @@ class ContentProviderTest extends TestCase
         $cp = new ContentProvider();
         $cp->get("BLUEY");
         $content = $cp->getContent();
-        var_dump($content);
         $this->assertFalse(str_contains($content , '<trial>'));
 
     }

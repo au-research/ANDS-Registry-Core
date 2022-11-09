@@ -17,7 +17,7 @@ class ContentProvider{
      */
     public function getIndexableArray(){
 
-        $elements = ['publictitle','riefsummary','healthcondition','conditioncode1','conditioncode2','inclusivecriteria'];
+        $elements = ['publictitle','briefsummary','healthcondition','conditioncode1','conditioncode2','inclusivecriteria'];
         $dom = new DOMDocument;
         $dom->loadXML($this->content);
         foreach ($elements as $el){
