@@ -4,6 +4,7 @@ namespace ANDS\Repository;
 
 use ANDS\API\Task\ImportTask;
 use ANDS\DataSource;
+use ANDS\Mycelium\MyceliumServiceClient;
 use ANDS\Registry\Providers\DCI\DCI;
 use ANDS\Registry\Providers\Scholix\Scholix;
 use ANDS\RegistryObject;
@@ -12,6 +13,7 @@ use ANDS\RegistryObject\Links;
 use ANDS\RegistryObject\Metadata;
 use ANDS\RegistryObject\Identifier;
 use ANDS\RecordData;
+use ANDS\Util\Config;
 use Carbon\Carbon;
 
 class RegistryObjectsRepository
@@ -188,19 +190,22 @@ class RegistryObjectsRepository
      */
     public static function getRecordsByIdentifier($identifiers, $dataSourceId, $status = "PUBLISHED")
     {
-        
-        // TODO use mycelium search service !!
-/**
-        $matchingIdenfifiers = Identifier::wherein('identifier', $identifiers)
-            ->get()->pluck('registry_object_id')->toArray();
 
+        $registryObjectIDs = [];
+        $client = new MyceliumServiceClient(Config::get('mycelium.url'));
 
-        $registryObjects = RegistryObject::where('data_source_id', $dataSourceId)
-            ->where('status', $status)
-            ->wherein('registry_object_id', $matchingIdenfifiers)
-            ->get();
-**/
-        return null; //$registryObjects;
+        foreach ($identifiers as $identifier){
+            $result = $client->findRecordByIdentifier($identifier["identifier"], $identifier['identifier_type']);
+            $vertices = json_decode($result->getBody());
+            foreach ($vertices as $v){
+                if($v->identifierType == 'ro:id' && $v->dataSourceId == $dataSourceId && $v->status == $status){
+                    $registryObjectIDs[] = $v->identifier;
+                }
+            }
+        }
+
+        $registryObjects = RegistryObject::wherein('registry_object_id',$registryObjectIDs)->get();
+        return $registryObjects;
     }
 
     public static function getRecordsByHarvestID($harvestId, $dataSourceId, $status = "PUBLISHED")

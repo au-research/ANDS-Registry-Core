@@ -3,6 +3,7 @@
 
 namespace ANDS\Registry\Providers\RIFCS;
 use ANDS\Log\Log;
+use ANDS\Registry\ContentProvider\ANZCTR\ContentProvider;
 use ANDS\Registry\Providers\RelatedTitlesProvider;
 use ANDS\RegistryObject;
 use ANDS\Util\SolrIndex;
@@ -50,6 +51,17 @@ class RIFCSIndexProvider
         /* activity records should have grants metadata indexed */
         if ($record->class === "activity") {
             $index = collect($index)->merge(GrantsMetadataProvider::getIndexableArray($record))->toArray();
+        }
+
+
+        if ($record->type === "health.dataset") {
+      /*
+      <relatedInfo type="activity">
+        <identifier type="uri">https://www.anzctr.org.au/Trial/Registration/TrialReview.aspx?ACTRN=12622000922774</identifier>
+        <relation type="isOutputOf"/>
+      </relatedInfo>
+      */
+            $index = collect($index)->merge(ContentProvider::getIndexableArray($record))->toArray();
         }
         // try indexing without the spatial data if record has an invalid WKT
         // $includeSpatial is true by default but

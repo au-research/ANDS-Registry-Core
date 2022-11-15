@@ -55,7 +55,7 @@ class ScheduleHarvest extends ImportSubTask
     {
         $advancedHarvestMode = $dataSource->getDataSourceAttribute("advanced_harvest_mode")->value;
 
-        $this->parent()->updateHarvest(['last_run' => date('Y-m-d\TH:i:s.uP', strtotime($this->harvestStarted))]);
+        $this->parent()->updateHarvest(['last_run' => date('Y-m-d H:i:s', strtotime($this->harvestStarted))]);
 
         if ($advancedHarvestMode == 'INCREMENTAL') {
             if($this->parent()->getTaskData('pipeline') == 'ErrorWorkflow'){
@@ -103,7 +103,7 @@ class ScheduleHarvest extends ImportSubTask
 
         $this->parent()->updateHarvest([
             'status' => 'SCHEDULED',
-            'next_run' => date('Y-m-d\TH:i:s.uP', $nextRun),
+            'next_run' => date('Y-m-d H:i:s', $nextRun),
             'batch_number' => $batchNumber,
             'importer_message' => "Harvest rescheduled for: $nextRunDate"
         ]);

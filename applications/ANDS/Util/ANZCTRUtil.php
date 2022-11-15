@@ -9,7 +9,7 @@ class ANZCTRUtil
 {
     public static function retrieveMetadata($identifier){
         $metadata = '';
-
+print($identifier);
         $soapUrl = "https://anzctr.org.au";
         $soapHeader = '<?xml version="1.0" encoding="utf-8"?>'
                     .'<soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">'
@@ -37,7 +37,7 @@ class ANZCTRUtil
             if ($response->getStatusCode() === 200) {
                 // Success!
                 $xmlString = (string) $response->getBody();
-                // by default we use ro: as a namesapce prefix for everything
+                // by default, we use ro: as a namesapce prefix for everything
                 $result = XMLUtil::getElementsByXPath($xmlString, "//ro:AnzctrTrialDetailsResult", 'http://anzctr.org.au/WebServices/AnzctrWebServices');
                 $metadata = (string) $result[0];
             } else {
