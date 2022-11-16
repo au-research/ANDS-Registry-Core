@@ -183,10 +183,4 @@ class RIFCSIndexProviderTest extends \MyceliumTestClass
         $this->assertContains("AutomatedTestTagNew", $doc['tag']);
     }
 
-    /* @test */
-    public function test_indexing(){
-        $record = RegistryObjectsRepository::getRecordByID(503003);
-        $index = RIFCSIndexProvider::get($record);
-        var_dump($index);
-    }
 }
