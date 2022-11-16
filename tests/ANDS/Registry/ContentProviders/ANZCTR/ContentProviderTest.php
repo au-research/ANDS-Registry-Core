@@ -11,6 +11,10 @@ class ContentProviderTest extends TestCase
      * test the provider
      * @return void
      */
+
+    public function test_until_we_get_a_mockservice_for_anzctr(){
+        $this->assertTrue(true);
+    }
 /*    public function test_provider(){
         $cp = new ContentProvider();
         $cp->get("ACTRN12612000544875");
