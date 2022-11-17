@@ -151,7 +151,6 @@
                 readonly="readonly"
                 optiontype="'resourceTypeGeneral'"></datacite-twin-item-form>
     </div>
-
 </div>
 
 <div class="widget-box" ng-mouseleave="update()">
@@ -195,8 +194,6 @@
                     <div class="input-prepend input-append">
                         <a ng-if="!readonly" href="" class="btn btn-warning" ng-click="remove(objectModel.resource[0].subjects[0].subject, $index)"><i class="icon-remove icon-white"></i> Remove Subject</a>
                         </div>
-
-
                 </div>
             </div>
             <a ng-if="!readonly" href="" class="btn btn-info" ng-click="add(objectModel.resource[0].subjects[0], 'subject')"><i class="icon-plus icon-white"></i> Add Subject</a>
@@ -237,10 +234,6 @@
                             </div>
                             <span class="add-on">Contributor Name</span>
                             <input type="text" placeholder="Contributor Name"  ng-model="contributor.contributorName[0]._text" ng-readonly="readonly" style="width: 420px"/>
-                          <!--  <div class="input-prepend input-append" style="display:inline-block" >
-                                <span class="add-on">Language</span>
-                                <input ng-readonly="readonly" type="text" placeholder="Language" ng-model="contributor.contributorName[0]._attr.lang._value" class="ng-valid ng-dirty"/>
-                            </div> -->
                         </div>
 
                     </div>

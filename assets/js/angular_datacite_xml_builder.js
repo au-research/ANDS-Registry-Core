@@ -457,9 +457,11 @@
                 scope.availableOptions['titleType'] = ['AlternativeTitle', 'Subtitle', 'TranslatedTitle', 'Other'];
                 scope.availableOptions['dateType'] = ['Accepted', 'Available', 'Copyrighted', 'Collected', 'Created',
                     'Issued', 'Submitted', 'Updated', 'Valid', 'Withdrawn', 'Other'];
-                scope.availableOptions['resourceTypeGeneral'] = ['Audiovisual', 'Collection', 'Dataset', 'DataPaper',
-                    'Event', 'Image', 'InteractiveResource', 'Model', 'PhysicalObject', 'Service', 'Software',
-                    'Sound', 'Text', 'Workflow', 'Other'];
+                scope.availableOptions['resourceTypeGeneral'] =  ['Audiovisual', 'Book', 'BookChapter', 'Collection',
+                    'ComputationalNotebook','ConferencePaper', 'ConferenceProceeding', 'Dataset', 'DataPaper',
+                    'Dissertation', 'Event', 'Image', 'InteractiveResource', 'Journal', 'JournalArticle', 'Model',
+                    'OutputManagementPlan', 'PeerReview', 'PhysicalObject', 'Preprint', 'Report', 'Service', 'Software',
+                    'Sound', 'Standard', 'Text', 'Workflow', 'Other'];
                 scope.availableOptions['descriptionType'] = ['Abstract', 'Methods', 'SeriesInformation',
                     'TableOfContents', 'Other'];
 
