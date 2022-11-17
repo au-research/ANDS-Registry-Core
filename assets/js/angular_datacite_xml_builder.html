@@ -86,7 +86,20 @@
                         <span class="add-on">Creator Affiliations</span>
                         <input type="text" placeholder="Creator Affiliations" ng-model="affiliation._text" ng-readonly="readonly"/>
                     </div>
+                    <div class="input-prepend input-append"  style="display:inline-block">
+                        <span class="add-on">Affiliation Identifier</span>
+                        <input type="text" placeholder="Affiliation Identifier" ng-model="affiliation._attr.affiliationIdentifier._value" ng-readonly="readonly"/>
+                    </div>
+                    <div class="input-prepend input-append" style="display:inline-block">
+                        <span class="add-on">Affiliation Identifier Scheme</span>
+                        <input type="text" placeholder="Affiliation Identifier Scheme" ng-model="affiliation._attr.affiliationIdentifierScheme._value" ng-readonly="readonly"/>
 
+                    </div>
+                    <div class="input-prepend input-append" style="display:inline-block">
+                        <span class="add-on">Scheme URI</span>
+                        <input type="text" placeholder="Scheme URI" ng-model="affiliation._attr.schemeURI._value" ng-readonly="readonly"/>
+
+                    </div>
                     <div class="input-prepend input-append" style="display:inline-block">
                         <a ng-if="!readonly && (!$first || !$last)" class="btn btn-warning" href="" ng-click="remove(creator.affiliation, $index)"><i class="icon-remove icon-white"></i></a>
                     </div>
@@ -174,6 +187,11 @@
                         <input ng-readonly="readonly" type="text" placeholder="Subject Value URI" ng-model="subject._attr.valueURI._value"/>
 
                     </div>
+                    <div class="input-prepend input-append" style="display:inline-block">
+                        <span class="add-on">Subject Classification Code</span>
+                        <input ng-readonly="readonly" type="text" placeholder="Subject  Classification Code" ng-model="subject._attr.classificationCode._value"/>
+
+                    </div>
                     <div class="input-prepend input-append">
                         <a ng-if="!readonly" href="" class="btn btn-warning" ng-click="remove(objectModel.resource[0].subjects[0].subject, $index)"><i class="icon-remove icon-white"></i> Remove Subject</a>
                         </div>
@@ -238,9 +256,23 @@
 
 
                     <div ng-repeat="affiliation in contributor.affiliation">
-                        <div class="input-prepend input-append" style="display:inline-block" >
-                        <span class="add-on">Affiliation</span>
-                        <input type="text" placeholder="Affiliation" ng-model="affiliation._text" ng-readonly="readonly"/>
+                        <div class="input-prepend input-append"  style="display:inline-block">
+                            <span class="add-on">Contributor Affiliation</span>
+                            <input type="text" placeholder="Contributor Affiliations" ng-model="affiliation._text" ng-readonly="readonly"/>
+                        </div>
+                        <div class="input-prepend input-append"  style="display:inline-block">
+                            <span class="add-on">Affiliation Identifier</span>
+                            <input type="text" placeholder="Affiliation Identifier" ng-model="affiliation._attr.affiliationIdentifier._value" ng-readonly="readonly"/>
+                        </div>
+                        <div class="input-prepend input-append" style="display:inline-block">
+                            <span class="add-on">Affiliation Identifier Scheme</span>
+                            <input type="text" placeholder="Affiliation Identifier Scheme" ng-model="affiliation._attr.affiliationIdentifierScheme._value" ng-readonly="readonly"/>
+
+                        </div>
+                        <div class="input-prepend input-append" style="display:inline-block">
+                            <span class="add-on">Scheme URI</span>
+                            <input type="text" placeholder="Scheme URI" ng-model="affiliation._attr.schemeURI._value" ng-readonly="readonly"/>
+
                         </div>
                         <div class="input-prepend input-append" style="display:inline-block" >
                             <a ng-if="!readonly && (!$first || !$last)" href="" class="btn btn-warning" ng-click="remove(contributor.affiliation, $index)"><i class="icon-remove icon-white"></i></a>
@@ -314,6 +346,8 @@
                             </ul>
                         </div>
                         <input ng-readonly="readonly" type="text" ng-model="funderIdentifier._text" placeholder="Funder Identifier">
+                        <span class="add-on">Scheme URI</span>
+                        <input type="text" placeholder="Scheme URI" ng-model="funderIdentifier._attr.schemeURI._value" ng-readonly="readonly"/>
                     </div>
 <br/>
                     <div class="input-prepend input-append" ng-repeat="awardNumber in fundingReference.awardNumber"  style="display:inline-block">

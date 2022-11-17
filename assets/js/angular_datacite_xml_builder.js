@@ -59,16 +59,19 @@
 
                 scope.availableOptions['relationType'] = ['IsCitedBy', 'Cites', 'IsSupplementTo', 'IsSupplementedBy',
                     'IsContinuedBy', 'Continues', 'HasMetadata', 'IsMetadataFor', 'IsNewVersionOf', 'IsPreviousVersionOf',
-                    'IsPartOf', 'HasPart', 'IsReferencedBy', 'References', 'IsDocumentedBy', 'Documents', 'IsCompiledBy',
+                    'IsPartOf', 'HasPart', 'IsReferencedBy', 'isPublishedIn', 'References', 'IsDocumentedBy', 'Documents', 'IsCompiledBy',
                     'Compiles', 'IsVariantFormOf', 'IsOriginalFormOf', 'IsIdenticalTo', 'IsReviewedBy', 'Reviews', 'IsDerivedFrom',
                     'IsSourceOf', 'IsDescribedBy', 'Describes', 'HasVersion', 'IsVersionOf', 'IsRequiredBy', 'Requires', 'Obsoletes', 'IsObsoletedBy'];
 
                 scope.availableOptions['descriptionType'] = ['Abstract', 'Methods', 'SeriesInformation', 'TableOfContents', 'TechnicalInfo', 'Other'];
 
-                scope.availableOptions['funderIdentifierType'] = ['ISNI', 'GRID', 'Crossref Funder ID', 'Other'];
+                scope.availableOptions['funderIdentifierType'] = ['ROR', 'ISNI', 'GRID', 'Crossref Funder ID', 'Other'];
 
-                scope.availableOptions['resourceTypeGeneral'] = ['Audiovisual', 'Collection', 'Dataset', 'DataPaper', 'Event', 'Image',
-                    'InteractiveResource', 'Model', 'PhysicalObject', 'Service', 'Software', 'Sound', 'Text', 'Workflow', 'Other'];
+                scope.availableOptions['resourceTypeGeneral'] = ['Audiovisual', 'Book', 'BookChapter', 'Collection',
+                    'ComputationalNotebook','ConferencePaper', 'ConferenceProceeding', 'Dataset', 'DataPaper',
+                    'Dissertation', 'Event', 'Image', 'InteractiveResource', 'Journal', 'JournalArticle', 'Model',
+                    'OutputManagementPlan', 'PeerReview', 'PhysicalObject', 'Preprint', 'Report', 'Service', 'Software',
+                    'Sound', 'Standard', 'Text', 'Workflow', 'Other'];
 
 
                 scope.setOption = function (item, attr, value) {
