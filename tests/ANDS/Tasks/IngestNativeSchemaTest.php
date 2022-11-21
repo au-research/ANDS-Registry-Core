@@ -158,8 +158,11 @@ class IngestNativeSchemaTest extends \RegistryTestClass
         }
 
     }
+
     */
         /** @test
+
+
     public function test_doi_provider_type()
     {
         $dataSourceID = 502998;

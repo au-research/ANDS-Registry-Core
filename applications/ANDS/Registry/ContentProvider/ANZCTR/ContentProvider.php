@@ -22,12 +22,11 @@ class ContentProvider{
         foreach ($relatedIdentifiers as $relatedIdentifier){
             if(str_contains($relatedIdentifier['value'], 'ACTRN=')) {
                 $arr = explode('ACTRN=', $relatedIdentifier['value']);
-                print($arr[1]);
                 $content = ANZCTRUtil::retrieveMetadata('ACTRN'.$arr[1]);
                 ContentProvider::storeACTRNMetadata($record,$content);
                 $dom = new DOMDocument;
                 $dom->loadXML($content);
-                return ContentProvider::getIndex($dom);
+                return ContentProvider::getIndex($dom, $relatedIdentifier['value'], $arr[1]);
             }
         }
         return [];
@@ -61,8 +60,10 @@ class ContentProvider{
      */
 
 
-    public static function getIndex(DOMDocument $dom){
+    public static function getIndex(DOMDocument $dom, $url, $identifier){
         return [
+            'anzctr_identifier' => $identifier,
+            'anzctr_url' => $url,
             'anzctr_publictitle' => ContentProvider::getContent($dom, array('publictitle')),
             'anzctr_briefsummary' => ContentProvider::getContent($dom, array('briefsummary')),
             'anzctr_conditions' => ContentProvider::getContent($dom, array('healthcondition')),
@@ -75,7 +76,7 @@ class ContentProvider{
         ];
     }
 
-    private static function getContent($dom, $elements){
+    public static function getContent($dom, $elements){
         $indexableArray = [];
          foreach ($elements as $el) {
              $element = $dom->getElementsByTagName($el);

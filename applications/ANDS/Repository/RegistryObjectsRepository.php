@@ -195,17 +195,24 @@ class RegistryObjectsRepository
         $client = new MyceliumServiceClient(Config::get('mycelium.url'));
 
         foreach ($identifiers as $identifier){
-            $result = $client->findRecordByIdentifier($identifier["identifier"], $identifier['identifier_type']);
-            $vertices = json_decode($result->getBody());
-            foreach ($vertices as $v){
-                if($v->identifierType == 'ro:id' && $v->dataSourceId == $dataSourceId && $v->status == $status){
-                    $registryObjectIDs[] = $v->identifier;
+            try {
+                $result = $client->findRecordByIdentifier($identifier["identifier"], $identifier['identifier_type']);
+                $vertices = json_decode($result->getBody());
+                foreach ($vertices as $v) {
+                    if ($v->identifierType == 'ro:id' && $v->dataSourceId == $dataSourceId && $v->status == $status) {
+                        $registryObjectIDs[] = $v->identifier;
+                    }
                 }
+            }catch(\Exception $e){
+                debug("No registry object found with identifier value:". $identifier["identifier"] ." type:" .$identifier["identifier_type"]);
             }
         }
 
-        $registryObjects = RegistryObject::wherein('registry_object_id',$registryObjectIDs)->get();
-        return $registryObjects;
+        if(sizeof($registryObjectIDs) > 0)
+        {
+            return RegistryObject::wherein('registry_object_id',$registryObjectIDs)->get();
+        }
+        return null;
     }
 
     public static function getRecordsByHarvestID($harvestId, $dataSourceId, $status = "PUBLISHED")

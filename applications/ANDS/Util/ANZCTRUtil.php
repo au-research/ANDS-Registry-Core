@@ -9,7 +9,6 @@ class ANZCTRUtil
 {
     public static function retrieveMetadata($identifier){
         $metadata = '';
-print($identifier);
         $soapUrl = "https://anzctr.org.au";
         $soapHeader = '<?xml version="1.0" encoding="utf-8"?>'
                     .'<soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">'

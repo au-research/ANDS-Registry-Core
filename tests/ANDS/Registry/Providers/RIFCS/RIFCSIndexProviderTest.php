@@ -182,5 +182,4 @@ class RIFCSIndexProviderTest extends \MyceliumTestClass
         $this->assertContains("AutomatedTestTag", $doc['tag']);
         $this->assertContains("AutomatedTestTagNew", $doc['tag']);
     }
-
 }

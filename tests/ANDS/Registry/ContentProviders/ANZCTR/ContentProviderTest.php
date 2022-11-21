@@ -3,6 +3,8 @@
 namespace Registry\ContentProvider\ANZCTR;
 
 use ANDS\Registry\ContentProvider\ANZCTR\ContentProvider;
+use ANDS\Util\ANZCTRUtil;
+use DOMDocument;
 use PHPUnit\Framework\TestCase;
 
 class ContentProviderTest extends TestCase
@@ -15,20 +17,15 @@ class ContentProviderTest extends TestCase
     public function test_until_we_get_a_mockservice_for_anzctr(){
         $this->assertTrue(true);
     }
+
 /*    public function test_provider(){
         $cp = new ContentProvider();
-        $cp->get("ACTRN12612000544875");
-        $content = $cp->getContent();
-        $this->assertTrue(str_contains($content , 'ACTRN12612000544875'));
-        $index = $cp->getIndexableArray();
-        $this->assertTrue(sizeof($index) > 9);
-    }
-
-    public function test_provider_no_result(){
-        $cp = new ContentProvider();
-        $cp->get("BLUEY");
-        $content = $cp->getContent();
-        $this->assertFalse(str_contains($content , '<trial>'));
-
+        $xml = ANZCTRUtil::retrieveMetadata("ACTRN12612000544875");
+        $dom = new DOMDocument;
+        $dom->loadXML($xml);
+        $index = $cp::getIndex($dom, "url_of:ACTRN12612000544875", "ACTRN12612000544875");
+        var_dump($index);
+        $this->assertTrue(sizeof($index) > 5);
     }*/
+
 }
