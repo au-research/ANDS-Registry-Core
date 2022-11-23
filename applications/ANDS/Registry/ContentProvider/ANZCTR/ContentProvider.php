@@ -64,8 +64,8 @@ class ContentProvider{
         return [
             'anzctr_identifier' => $identifier,
             'anzctr_url' => $url,
-            'anzctr_publictitle' => ContentProvider::getContent($dom, array('publictitle')),
-            'anzctr_briefsummary' => ContentProvider::getContent($dom, array('briefsummary')),
+            'anzctr_publictitle' => ContentProvider::getFirst($dom, array('publictitle')),
+            'anzctr_briefsummary' => ContentProvider::getFirst($dom, array('briefsummary')),
             'anzctr_conditions' => ContentProvider::getContent($dom, array('healthcondition')),
             'anzctr_conditioncodes' => ContentProvider::getContent($dom, array('conditioncode1','conditioncode2')),
             'anzctr_studytype' => ContentProvider::getContent($dom, array('studytype')),
@@ -85,6 +85,18 @@ class ContentProvider{
              }
          }
          return $indexableArray;
+    }
+
+
+    public static function getFirst($dom, $elements){
+
+        foreach ($elements as $el) {
+            $element = $dom->getElementsByTagName($el);
+            foreach ($element as $e) {
+                return $e->nodeValue;
+            }
+        }
+        return "";
     }
 
 
