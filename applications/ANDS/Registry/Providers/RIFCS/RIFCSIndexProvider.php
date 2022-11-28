@@ -62,6 +62,7 @@ class RIFCSIndexProvider
       </relatedInfo>
       */
             $index = collect($index)->merge(ContentProvider::getIndexableArray($record))->toArray();
+            $index = collect($index)->merge(RelatedInfoProvider::getHealthRecordPublisherIndex($record))->toArray();
         }
         // try indexing without the spatial data if record has an invalid WKT
         // $includeSpatial is true by default but
