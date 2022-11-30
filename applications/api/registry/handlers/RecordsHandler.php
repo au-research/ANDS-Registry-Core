@@ -31,7 +31,7 @@ class RecordsHandler extends Handler {
         $router->get('records/(\w+)/json_ld', 'RecordsMiscController@json_ld');
         $router->get('records/(\w+)/mycelium', 'RecordsMiscController@mycelium');
         $router->get('records/(\w+)/quality', 'RecordsMiscController@quality');
-
+        $router->get('records/(\w+)/health.data', 'RecordsMiscController@healthData');
         $router->get('records/(\w+)/versions', 'RecordsVersionsController@index');
         $router->get('records/(\w+)/versions/(\w+)', 'RecordsVersionsController@show');
         // get graph by by_identifier and type might have to move to its own Identifier controller

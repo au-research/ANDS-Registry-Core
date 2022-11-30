@@ -6,6 +6,7 @@ use ANDS\Mycelium\MyceliumImportPayloadProvider;
 use ANDS\Registry\API\Request;
 use ANDS\Registry\Providers\DCI\DataCitationIndexProvider;
 use ANDS\Registry\Providers\DublinCore\DublinCoreProvider;
+use ANDS\Registry\Providers\HealthData\HealthDataProvider;
 use ANDS\Registry\Providers\ORCID\ORCIDProvider;
 use ANDS\Registry\Providers\ORCID\ORCIDRecord;
 use ANDS\Registry\Providers\Quality\QualityMetadataProvider;
@@ -132,4 +133,10 @@ class RecordsMiscController
         echo $xml;
         die();
     }
+
+    public function healthData($id){
+        $record = RegistryObjectsRepository::getRecordByID($id);
+        return HealthDataProvider::get($record);
+    }
+
 }
