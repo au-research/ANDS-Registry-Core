@@ -1,6 +1,7 @@
 <?php
 
 namespace ANDS\API\Registry\Handler;
+use \Exception as Exception;
 
 class SolrQueryHandler extends Handler
 {
