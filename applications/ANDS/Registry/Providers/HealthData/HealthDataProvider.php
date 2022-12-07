@@ -4,10 +4,12 @@ namespace ANDS\Registry\Providers\HealthData;
 
 use ANDS\Registry\Providers\RIFCS\DescriptionProvider;
 use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
+use ANDS\Registry\Providers\RIFCS\JsonLDProvider;
 use ANDS\Registry\Schema;
 use ANDS\Registry\Versions;
 use ANDS\RegistryObject;
 use ANDS\RegistryObject\RegistryObjectVersion;
+use ANDS\Util\XMLUtil;
 use DOMDocument;
 
 class HealthDataProvider
@@ -28,7 +30,7 @@ class HealthDataProvider
         $healthDataset["logo"] = "https://marketing-pages.anu.edu.au/_anu/4/images/logos/2x_anu_logo_small.svg";
         $descriptions = DescriptionProvider::get($record);
         $healthDataset["description"] = $descriptions["primary_description"];
-        $healthDataset["orgTitle"] = "THE TITLE OF THE ORGANISATION";
+        $healthDataset["orgTitle"] = self::getPublisher($record);
         $healthDataset["contact"] = "services@ardc.edu.au";
 
 
@@ -74,6 +76,17 @@ class HealthDataProvider
 
         $healthDataset["relatedStudy"] = $relatedStudies;
         return $healthDataset;
+    }
+
+    public static function getPublisher(RegistryObject $record){
+        $xml = $record->getCurrentData()->data;
+        foreach (XMLUtil::getElementsByXPath($xml,
+            'ro:registryObject/ro:' . $record->class . '/ro:citationInfo/ro:citationMetadata/ro:publisher') AS $publisher) {
+            $publishers = (string)$publisher;
+            return $publishers;
+        };
+        $publishers = $record->group;
+        return $publishers;
     }
 
 }
