@@ -98,39 +98,39 @@ class IngestNativeSchema extends ImportSubTask
         $schema = Schema::get($nativeObject['nameSpaceURI']);
 
         $registryObjects = RegistryObjectsRepository::getRecordsByIdentifier($identifiers, $dataSourceID);
-
-        $recordIDs = collect($registryObjects)->pluck('registry_object_id')->toArray();
-
-        if(sizeof($recordIDs) == 0) // couldn't find matching record not good but not a fail either
-            return true;
-
-        $success = false;
-        foreach ($recordIDs as $id) {
-            $altVersionsIDs = RegistryObjectVersion::where('registry_object_id', $id)->get()->pluck('version_id')->toArray();
-            $existing = null;
-            if (count($altVersionsIDs) > 0) {
-                $existing = Versions::wherein('id', $altVersionsIDs)->where("schema_id", $schema->id)->first();
+        if($registryObjects )
+        {
+            $recordIDs = collect($registryObjects)->pluck('registry_object_id')->toArray();
+            $success = false;
+            foreach ($recordIDs as $id) {
+                $altVersionsIDs = RegistryObjectVersion::where('registry_object_id', $id)->get()->pluck('version_id')->toArray();
+                $existing = null;
+                if (count($altVersionsIDs) > 0) {
+                    $existing = Versions::wherein('id', $altVersionsIDs)->where("schema_id", $schema->id)->first();
+                }
+                $success = true;
+                if (!$existing) {
+                    $version = Versions::create([
+                        'data' => $data,
+                        'hash' => $hash,
+                        'origin' => 'HARVESTER',
+                        'schema_id' => $schema->id,
+                    ]);
+                    RegistryObjectVersion::firstOrCreate([
+                        'version_id' => $version->id,
+                        'registry_object_id' => $id
+                    ]);
+                } elseif ($hash != $existing->hash) {
+                    $existing->update([
+                        'data' => $data,
+                        'hash' => $hash
+                    ]);
+                }
             }
-            $success = true;
-            if (!$existing) {
-                $version = Versions::create([
-                    'data' => $data,
-                    'hash' => $hash,
-                    'origin' => 'HARVESTER',
-                    'schema_id' => $schema->id,
-                ]);
-                RegistryObjectVersion::firstOrCreate([
-                    'version_id' => $version->id,
-                    'registry_object_id' => $id
-                ]);
-            } elseif ($hash != $existing->hash) {
-                $existing->update([
-                    'data' => $data,
-                    'hash' => $hash
-                ]);
-            }
+            return $success;
         }
-        return $success;
+        return false;
+
     }
 
 }

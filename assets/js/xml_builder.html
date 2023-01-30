@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="widget-content" >
+    <form class="form">
+     <!--    <div class="input-prepend input-append" style="display:inline-block">
+            <span class="add-on">DOI</span>
+            <input type="text" ng-model="vm.newdoi_id" readonly="readonly" style="width:250px">
+        </div>
+        <div class="input-prepend input-append" style="display:inline-block">
+            <span class="add-on">URL</span>
+            <input type="text" ng-model="vm.newdoi_url" >
+        </div> -->
+        <a href="https://schema.datacite.org/meta/kernel-4.2/" target="_blank" class="pull-right">DataCite Schema Help</a>
+        <div class="container-fluid" style="padding-left:0;">
+            <div class="row-fluid">
+                <div class="span12">
+                    <datacite-xml-builder xml="vm.newdoixml"></datacite-xml-builder>
+                </div>
+
+            </div>
+        </div>
+    </form>
+
+    <div class="collapse" id="viewdetails">
+
+        <script>
+            function copyDivToClipboard() {
+                var range = document.createRange();
+                range.selectNode(document.getElementById("copy-xml"));
+                window.getSelection().removeAllRanges(); // clear current selection
+                window.getSelection().addRange(range); // to select text
+                document.execCommand("copy");
+               // window.getSelection().removeAllRanges();// to deselect
+            }
+        </script>
+      <div id="copy-xml"><pre class="xml" >{{ vm.formatXml(vm.stripBlankElements(vm.newdoixml)) }}</pre></div>
+        <textarea ng-model="vm.newdoixml" style="width:100%" rows="10" ng-if="vm.editxml"></textarea>
+       <a href="" class="btn btn-info" ng-click="vm.editxml=!vm.editxml"><i class="icon-pencil icon-white"></i> Edit XML</a>
+        <a href="" class="btn  btn-info"  onclick="copyDivToClipboard()" ><i class="icon-camera icon-white"></i> Copy XML </a>
+    </div>
+    <a class="btn  btn-info" data-toggle="collapse" data-target="#viewdetails">View XML &raquo;</a>
+
+</div>
+</body>
+</html>

@@ -56,7 +56,7 @@ class RecordsGraphController
      */
     public function index($id)
     {
-
+        header("Access-Control-Allow-Origin: *");
         return $this->getGraphVisualisationForRecord($id);
 
         //        $disableCache = !! Request::get('cache');

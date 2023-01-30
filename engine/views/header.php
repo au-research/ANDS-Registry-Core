@@ -162,14 +162,16 @@ else
               <?php if(( mod_enabled('toolbox') || mod_enabled('cms') || mod_enabled('spotlight'))): ?>
                 <li class="btn btn-inverse dropdown">
                   <a class="dropdown-toggle" data-toggle="dropdown" href="#">Tools <b class="caret"></b></a>
-                  <ul class="dropdown-menu pull-right">       
-
+                  <ul class="dropdown-menu pull-right">
 		    <?php if( mod_enabled('toolbox') ): ?>
                         <li class=""><?php echo anchor(developer_url(''), '<i class="icon-briefcase icon"></i> Developer Toolbox <sup style="color:red;">new!</sup>');?></li>
-                        <li class=""><?php echo anchor(developer_url('/display/DOC/Widgets'), '&nbsp; &raquo; Web Widgets');?></li>
-                        <li class=""><?php echo anchor(developer_url('/display/DOC/Web+Services'), '&nbsp; &raquo; Web Services');?></li>
-                        <li class=""><?php echo anchor(developer_url('/display/DOC/Research+Data+Australia+Home'), '&nbsp; &raquo; Registry Software');?></li>
-                        <li class="divider"></li>
+                        <li class=""><?php echo anchor(developer_url('documentation/widgets'), '&nbsp; &raquo; Web Widgets');?></li>
+                        <li class=""><?php echo anchor(developer_url('documentation/services'), '&nbsp; &raquo; Web Services');?></li>
+                        <li class=""><?php echo anchor(developer_url('documentation/registry'), '&nbsp; &raquo; Registry Software');?></li>
+                <li class="divider"></li>
+                        <li class=""><?php echo anchor(registry_url('xml_builder'),'&nbsp; &raquo;  Build Datacite XML');?></li>
+                <li class="divider"></li>
+
 		    <?php endif; ?>
           
                     <?php if ($this->user->hasFunction('PORTAL_STAFF') && mod_enabled('cms')): ?>

@@ -6,6 +6,7 @@ use ANDS\File\Storage;
 use ANDS\Log\Log;
 use ANDS\RecordData;
 use ANDS\RegistryObject;
+use ANDS\Repository\RegistryObjectsRepository;
 use ANDS\Util\SolrIndex;
 use MinhD\SolrClient\SolrClient;
 
@@ -181,6 +182,4 @@ class RIFCSIndexProviderTest extends \MyceliumTestClass
         $this->assertContains("AutomatedTestTag", $doc['tag']);
         $this->assertContains("AutomatedTestTagNew", $doc['tag']);
     }
-
-
 }

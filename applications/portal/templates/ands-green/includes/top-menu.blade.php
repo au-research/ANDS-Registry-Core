@@ -59,9 +59,9 @@
 
 @if(!isBot())
     <script src="{{asset_url('js/rda_survey.js', 'core')}}"></script>
-    @if(!get_cookie("rda_short_survey") && !get_cookie("rda_long_survey"))
+  <!--  @if(!get_cookie("rda_short_survey") && !get_cookie("rda_long_survey"))
         @include('includes/short_survey')
-    @endif
+    @endif -->
     @if(!(get_cookie("rda_long_survey")))
     <a href="/page/survey"><button class="yellow_button survey_base_button">RDA Survey </button></a>
     @endif

@@ -104,6 +104,25 @@ class MyceliumServiceClient
         ]);
     }
 
+
+    /**
+     * Perform a relationship indexing for a record via Mycelium
+     *
+     * @param \ANDS\RegistryObject $record
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function findRecordByIdentifier($identifier_value, $identifier_type)
+    {
+        Log::debug(__METHOD__ . " looking for a record with identifier and type Record in Mycelium", ["id" => $identifier_value, "type"=>$identifier_type]);
+        return $this->client->get("api/resources/mycelium-registry-objects/find_by_identifier", [
+            "headers" => [],
+            "query" => [
+                "identifier" => $identifier_value,
+                'identifier_type' => $identifier_type
+            ]
+        ]);
+    }
+
     public function createNewAffectedRelationshipRequest()
     {
         return $this->client->post("api/resources/mycelium-requests/", [

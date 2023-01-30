@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resource xmlns="http://datacite.org/schema/kernel-4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4.2/metadata.xsd">
+    <identifier identifierType="DOI">10.80298/TEST_DOI_63489FC003DC5</identifier>
+    <publisher xml:lang="en">Deakin University</publisher>
+    <publicationYear>2022</publicationYear>
+    <language>en</language>
+    <version>1.0</version>
+    <resourceType resourceTypeGeneral="Dataset">Dataset</resourceType>
+    <titles>
+        <title xml:lang="en">Test dataset Aerosol containment device for patient transport and ward based care of COVID-19</title>
+    </titles>
+    <subjects>
+        <subject xml:lang="en">Infection</subject>
+        <subject xml:lang="en">Respiratory</subject>
+        <subject xml:lang="en">COVID-19</subject>
+        <subject xml:lang="en">Other infectious diseases</subject>
+    </subjects>
+    <relatedIdentifiers>
+        <relatedIdentifier relatedIdentifierType="URL" relationType="References" resourceTypeGeneral="Text">https://www.anzctr.org.au/Trial/Registration/TrialReview.aspx?ACTRN=12622000922774</relatedIdentifier>
+    </relatedIdentifiers>
+    <formats>
+        <format>application/pdf</format>
+    </formats>
+    <descriptions>
+        <description xml:lang="en" descriptionType="Abstract">The intervention is an aerosol containment device placed over the head of a patient's hospital bed either during transport between wards in a hospital environment or during care on the ward. It is approximately 1.5m high and 1.5m in length. Made of transparent plastic and does not seal completely around the patient but is open at the front. The intervention will be assembled and applied by hospital staff. Importantly, the device is not designed to directly change the course of the patient's illness but rather to prevent or reduce the risk that the patient spreads their illness to other patients, staff or visitors to the hospital. The device will either be applied for transfer between hospital locations (eg. emergency department and ward) or on the ward for a 24hr period. Adherence and fidelity will be recorded as part of a custom designed survey that will be administered at the time of device usage.</description>
+        <description xml:lang="en" descriptionType="Other">HeSANDA 1.0.0</description>
+    </descriptions>
+    <creators>
+        <creator>
+            <creatorName nameType="Organizational">Deakin University</creatorName>
+            <nameIdentifier nameIdentifierScheme="ROR" schemeURI="https://ror.org/">02czsnj07</nameIdentifier>
+        </creator>
+        <creator>
+            <creatorName nameType="Personal">Rizk-Jackson, Angela</creatorName>
+            <givenName>Angela</givenName>
+            <familyName>Rizk-Jackson</familyName>
+            <nameIdentifier nameIdentifierScheme="ORCID" schemeURI="http://orcid.org/">0000-0002-1732-8550</nameIdentifier>
+        </creator>
+    </creators>
+    <contributors>
+        <contributor contributorType="Distributor">
+            <contributorName nameType="Organizational">Deakin University</contributorName>
+            <nameIdentifier schemeURI="http://orcid.org/" nameIdentifierScheme="ORCID">0000-0002-7285-027X</nameIdentifier>
+            <affiliation affiliationIdentifier="https://ror.org/03yrm5c26" affiliationIdentifierScheme="ROR">California Digital Library</affiliation>
+        </contributor>
+        <contributor contributorType="Sponsor">
+            <contributorName xml:lang="en">International Joint Commission</contributorName>
+        </contributor>
+        <contributor contributorType="Producer">
+            <contributorName xml:lang="en">United States Geological Survey</contributorName>
+        </contributor>
+    </contributors>
+</resource>

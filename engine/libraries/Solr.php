@@ -401,6 +401,9 @@ class Solr
                     }
                     $this->setOpt('start', $start);
                     break;
+                case 'start':
+                    $this->setOpt('start', $value);
+                    break;
                 case 'class':
                     if (is_array($value)) {
                         $fq_str = '';
@@ -924,6 +927,7 @@ class Solr
                 $fields_string .= $key . '=' . rawurlencode($value) . '&';
             }
         }//build the string
+
         return $fields_string;
     }
 
