@@ -81,7 +81,11 @@ class ContentProvider{
          foreach ($elements as $el) {
              $element = $dom->getElementsByTagName($el);
              foreach ($element as $e) {
-                 $indexableArray[] = $e->nodeValue;
+                 $content = [];
+                 foreach ($e->childNodes as $node) {
+                         $content[] = $node->nodeValue;
+                 }
+                 $indexableArray[] = implode(', ', $content);
              }
          }
          return $indexableArray;

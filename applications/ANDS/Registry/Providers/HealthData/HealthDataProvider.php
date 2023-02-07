@@ -75,7 +75,7 @@ class HealthDataProvider
                 $healthDataset["anzctrPublictitle"] = ContentProvider::getFirst($dom, array('publictitle'));
                 $healthDataset["anzctrBriefsummary"] = ContentProvider::getFirst($dom, array('briefsummary'));
                 $healthDataset["anzctrConditions"] = ContentProvider::getContent($dom, array('healthcondition'));
-                $healthDataset["anzctrConditioncodes"] = ContentProvider::getContent($dom, array('conditioncode1','conditioncode2'));
+                $healthDataset["anzctrConditioncodes"] = ContentProvider::getContent($dom, array('conditioncode'));
                 $healthDataset["anzctrStudytype"] = ContentProvider::getContent($dom, array('studytype'));
                 $healthDataset["anzctrEthicsapproval"] = ContentProvider::getContent($dom, array('ethicsapproval'));
                 $healthDataset["anzctrInclusivecriteria"] = ContentProvider::getContent($dom, array('inclusivecriteria'));
