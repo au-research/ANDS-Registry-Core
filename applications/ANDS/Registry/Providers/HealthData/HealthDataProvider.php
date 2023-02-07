@@ -2,6 +2,7 @@
 
 namespace ANDS\Registry\Providers\HealthData;
 
+use ANDS\Registry\ContentProvider\ANZCTR\ContentProvider;
 use ANDS\Registry\Providers\RIFCS\DescriptionProvider;
 use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 use ANDS\Registry\Providers\RIFCS\JsonLDProvider;
@@ -71,6 +72,14 @@ class HealthDataProvider
                 $relatedStudy["title"] = $dom->getElementsByTagName("publictitle")->item(0)->nodeValue;
                 $relatedStudy['identifiers'][] = $identifier;
                 $relatedStudies[] = $relatedStudy;
+                $healthDataset["anzctrPublictitle"] = ContentProvider::getFirst($dom, array('publictitle'));
+                $healthDataset["anzctrBriefsummary"] = ContentProvider::getFirst($dom, array('briefsummary'));
+                $healthDataset["anzctrConditions"] = ContentProvider::getContent($dom, array('healthcondition'));
+                $healthDataset["anzctrConditioncodes"] = ContentProvider::getContent($dom, array('conditioncode1','conditioncode2'));
+                $healthDataset["anzctrStudytype"] = ContentProvider::getContent($dom, array('studytype'));
+                $healthDataset["anzctrEthicsapproval"] = ContentProvider::getContent($dom, array('ethicsapproval'));
+                $healthDataset["anzctrInclusivecriteria"] = ContentProvider::getContent($dom, array('inclusivecriteria'));
+                $healthDataset["anzctrInterventioncode"] = ContentProvider::getContent($dom, array('interventioncode'));
             }
         }
 
