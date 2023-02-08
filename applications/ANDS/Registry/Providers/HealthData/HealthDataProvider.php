@@ -6,6 +6,7 @@ use ANDS\Registry\ContentProvider\ANZCTR\ContentProvider;
 use ANDS\Registry\Providers\RIFCS\DescriptionProvider;
 use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 use ANDS\Registry\Providers\RIFCS\JsonLDProvider;
+use ANDS\Registry\Providers\RIFCS\SubjectProvider;
 use ANDS\Registry\Schema;
 use ANDS\Registry\Versions;
 use ANDS\RegistryObject;
@@ -33,7 +34,8 @@ class HealthDataProvider
         $healthDataset["description"] = $descriptions["primary_description"];
         $healthDataset["orgTitle"] = self::getPublisher($record);
         $healthDataset["contact"] = "services@ardc.edu.au";
-
+        $subjectIndex = SubjectProvider::getIndexableArray($record);
+        $healthDataset['subjects'] = $subjectIndex['subject_value_resolved'];
 
         $doi_schema = Schema::get(static::$doi_schema_uri);
 
