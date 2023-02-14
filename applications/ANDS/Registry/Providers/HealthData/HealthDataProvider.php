@@ -35,6 +35,7 @@ class HealthDataProvider
         $descriptions = DescriptionProvider::get($record);
         $healthDataset["description"] = $descriptions["primary_description"];
         $healthDataset["orgTitle"] = self::getPublisher($record);
+        $healthDataset["distributor"] = self::getDistributor($record);
         $healthDataset["contact"] = "services@ardc.edu.au";
         $subjectIndex = SubjectProvider::getIndexableArray($record);
         $healthDataset['subjects'] = $subjectIndex['subject_value_resolved'];
@@ -64,7 +65,6 @@ class HealthDataProvider
 
         $anzctr_schema = Schema::get(static::$anzctr_schema_uri);
 
-        $relatedStudies = [];
         if (count($altVersionsIDs) > 0) {
             $trial_metadata = Versions::wherein('id', $altVersionsIDs)->where("schema_id", $anzctr_schema->id)->first();
             if($trial_metadata != null){
@@ -75,7 +75,6 @@ class HealthDataProvider
                 $identifier["value"] =  $dom->getElementsByTagName("actrn")->item(0)->nodeValue;
                 $relatedStudy["title"] = $dom->getElementsByTagName("publictitle")->item(0)->nodeValue;
                 $relatedStudy['identifiers'][] = $identifier;
-                $relatedStudy["publictitle"] = ContentProvider::getFirst($dom, array('publictitle'));
                 $relatedStudy["briefSummary"] = ContentProvider::getFirst($dom, array('briefsummary'));
                 $relatedStudy["conditions"] = ContentProvider::getContent($dom, array('healthcondition'));
                 $relatedStudy["conditionCodes"] = ContentProvider::getContent($dom, array('conditioncode'));
@@ -83,11 +82,11 @@ class HealthDataProvider
                 $relatedStudy["ethicsApproval"] = ContentProvider::getContent($dom, array('ethicsapproval'));
                 $relatedStudy["inclusiveCriteria"] = ContentProvider::getContent($dom, array('inclusivecriteria'));
                 $relatedStudy["interventionCode"] = ContentProvider::getContent($dom, array('interventioncode'));
-                $relatedStudies[] = $relatedStudy;
+                $healthDataset["relatedStudy"] =  $relatedStudy;
             }
         }
 
-        $healthDataset["relatedStudy"] = $relatedStudies;
+
         return $healthDataset;
     }
 
@@ -308,5 +307,13 @@ class HealthDataProvider
         return $result->toArray();
     }
 
+    /**
+     * @param $record
+     * @return void
+     *
+     */
+    private static function getDistributor($record){
+
+    }
 
 }

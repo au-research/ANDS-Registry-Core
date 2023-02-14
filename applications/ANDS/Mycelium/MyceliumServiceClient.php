@@ -322,4 +322,15 @@ class MyceliumServiceClient
         Log::debug(__METHOD__ . "Resolving ".$type. " identifer ".$value, []);
         return $this->client->get("api/services/mycelium/resolve-identifiers?value=".$value."&type=".$type);
     }
+
+    public function updateIdentifierTitle($identifier_value, $identifier_type, $title)
+    {
+        Log::debug(__METHOD__ . " Updating Identifier's title", ["identifier" => $identifier_value, "title" => $title]);
+        try{
+            // if identifier vertex doesn't exist an exception is thrown
+            return $this->client->post("api/resources/mycelium-identifier-objects/update-title?identifier_value={$identifier_value}&identifier_type={$identifier_type}&title={$title}");
+        }catch(\Exception $e){
+            return null;
+        }
+    }
 }
