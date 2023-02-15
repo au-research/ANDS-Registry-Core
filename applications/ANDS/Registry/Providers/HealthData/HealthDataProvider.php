@@ -108,7 +108,7 @@ class HealthDataProvider
             'software' => self::getRelatedSoftware($recordId, $group),
             'publications' => self::getRelatedPublication($recordId, $group),
             'programs' => self::getRelatedPrograms($recordId, $group),
-            'grants_projects' => self::getRelatedGrantsProjects($recordId, $group),
+            'grantsProjects' => self::getRelatedGrantsProjects($recordId, $group),
             'services' => self::getRelatedService($recordId, $group),
             'websites' => self::getRelatedWebsites($recordId, $group),
             'researchers' => self::getRelatedResearchers($recordId, $group),
@@ -128,7 +128,7 @@ class HealthDataProvider
             'not_to_type' => 'software',
             'to_title' => '*'
         ], ['boost_to_group' => $group ,'rows' => 5]);
-        return $result->toArray();
+        return self::solrResultToRelationshipDTO($result->toArray());
     }
 
     /**
@@ -143,7 +143,7 @@ class HealthDataProvider
             'to_type' => 'software',
             'to_title' => '*'
         ], ['boost_to_group' => $group , 'rows' => 5]);
-        return $result->toArray();
+        return self::solrResultToRelationshipDTO($result->toArray());
     }
 
     /**
@@ -187,7 +187,7 @@ class HealthDataProvider
                 }
             }
         }
-        return $programs ;
+        return self::solrResultToRelationshipDTO($programs);
     }
 
     /**
@@ -229,7 +229,7 @@ class HealthDataProvider
                 }
             }
         }
-        return $grants_projects ;
+        return self::solrResultToRelationshipDTO($grants_projects);
     }
 
     /**
@@ -242,7 +242,7 @@ class HealthDataProvider
             'from_id' => $recordId,
             'to_class' => 'publication'
         ], ['boost_to_group' => $group, 'rows' =>100]);
-        return $result->toArray();
+        return self::solrResultToRelationshipDTO($result->toArray());
     }
 
     /**
@@ -256,7 +256,7 @@ class HealthDataProvider
             'to_class' => 'service',
             'to_title' => '*'
         ], ['boost_to_group' => $group, 'rows' => 5]);
-        return $result->toArray();
+        return self::solrResultToRelationshipDTO($result->toArray());
     }
 
     /**
@@ -269,7 +269,7 @@ class HealthDataProvider
             'from_id' => $recordId,
             'to_class' => 'website'
         ], ['boost_to_group' => $group ,'rows' =>100]);
-        return $result->toArray();
+        return self::solrResultToRelationshipDTO($result->toArray());
     }
 
     /**
@@ -288,7 +288,7 @@ class HealthDataProvider
         ], ['boost_to_group' => $group ,'boost_relation_type' =>
             ['Principal Investigator','hasPrincipalInvestigator','Chief Investigator'] ,
             'rows' => 5, 'sort' => 'score desc, to_title asc']);
-        return $result->toArray();
+        return self::solrResultToRelationshipDTO($result->toArray());
 
     }
 
@@ -304,8 +304,37 @@ class HealthDataProvider
             'to_type' => 'group',
             'to_title' => '*'
         ], ['rows' => 5]);
-        return $result->toArray();
+        return self::solrResultToRelationshipDTO($result->toArray());
     }
+
+    private static function solrResultToRelationshipDTO($result){
+
+        $relationships = [];
+        $relationships['total'] = $result['total'];
+        $relationships['relatedInfo'] = [];
+        if(is_array($result['contents']) && sizeof($result['contents']) > 0){
+            $relationship['contents'] = [];
+
+            foreach ($result['contents'] as $content){
+                $relationship = [];
+                $relationship['objectClass'] = $content['to_class'];
+                $relationship['type'] = $content['to_type'];
+                $relationship['identifier'] = $content['to_identifier'];
+                $relationship['identifierType'] = $content['to_identifier_type'];
+                $relationship['url'] = $content['to_url'];
+                $relationship['title'] = $content['to_title'];
+                $relationship_text = [];
+                foreach ($content['relations'] as $relation){
+                    $relationship_text[] = $relation['relation_type_text'];
+                }
+                $relationship['relationshipText'] = implode(" ,", $relationship_text);
+                $relationships['relatedInfos'][] = $relationship;
+            }
+        }
+
+        return $relationships;
+    }
+
 
     /**
      * @param $record
