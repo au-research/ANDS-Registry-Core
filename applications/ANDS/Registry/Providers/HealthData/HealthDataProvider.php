@@ -35,7 +35,7 @@ class HealthDataProvider
         $descriptions = DescriptionProvider::get($record);
         $healthDataset["description"] = $descriptions["primary_description"];
         $healthDataset["orgTitle"] = self::getPublisher($record);
-        $healthDataset["distributor"] = self::getDistributor($record);
+        $healthDataset["distributor"] = self::getDistributor($record->id);
         $healthDataset["contact"] = "services@ardc.edu.au";
         $subjectIndex = SubjectProvider::getIndexableArray($record);
         $healthDataset['subjects'] = $subjectIndex['subject_value_resolved'];
@@ -321,7 +321,14 @@ class HealthDataProvider
                 $relationship['type'] = $content['to_type'];
                 $relationship['identifier'] = $content['to_identifier'];
                 $relationship['identifierType'] = $content['to_identifier_type'];
-                $relationship['url'] = $content['to_url'];
+                if(isset($content['to_url']))
+                {
+                    $relationship['url'] = $content['to_url'];
+                }
+                else{
+                    $relationship['url'] = "";
+                }
+
                 $relationship['title'] = $content['to_title'];
                 $relationship_text = [];
                 foreach ($content['relations'] as $relation){
@@ -338,11 +345,26 @@ class HealthDataProvider
 
     /**
      * @param $record
-     * @return void
+     * @return String
      *
      */
-    private static function getDistributor($record){
+    private static function getDistributor($recordId) {
 
+            $result = RelationshipSearchService::search([
+                'from_id' => $recordId,
+                'to_class' => 'party',
+                'to_title' => '*',
+                'relation_type' => 'isAvailableThrough'
+            ], ['rows' => 5]);
+        $result = $result->toArray();
+        if(is_array($result['contents']) && sizeof($result['contents']) > 0){
+            foreach ($result['contents'] as $content){
+                if(isset($content['to_title'])) {
+                    return $content['to_title'];
+                }
+            }
+        }
+        return "";
     }
 
 }
