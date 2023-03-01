@@ -61,7 +61,8 @@
         "google/apiclient": "^2.2",
         "ext-json": "*",
         "ext-mbstring": "*",
-        "ext-dom": "*"
+        "ext-dom": "*",
+        "ptcinc/solr-php-client": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "4.8.*",

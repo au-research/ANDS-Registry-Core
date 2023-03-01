@@ -30,7 +30,8 @@ class HealthDataProvider
         $healthDataset["id"] = $record->id;
         $healthDataset["type"] = $record->type;
         $healthDataset["title"] = $record->title;
-        $healthDataset["identifiers"][] = ["value" => $record->key];
+
+        $healthDataset["identifiers"] = IdentifierProvider::get($record);
         $healthDataset["logo"] = "https://marketing-pages.anu.edu.au/_anu/4/images/logos/2x_anu_logo_small.svg";
         $descriptions = DescriptionProvider::get($record);
         $healthDataset["description"] = $descriptions["primary_description"];
