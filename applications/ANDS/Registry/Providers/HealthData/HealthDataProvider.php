@@ -31,7 +31,7 @@ class HealthDataProvider
         $healthDataset["type"] = $record->type;
         $healthDataset["title"] = $record->title;
 
-        $healthDataset["identifiers"] = IdentifierProvider::get($record);
+        $healthDataset["identifiers"] = IdentifierProvider::getFormattedIdentifiers($record);
         $healthDataset["logo"] = "https://marketing-pages.anu.edu.au/_anu/4/images/logos/2x_anu_logo_small.svg";
         $descriptions = DescriptionProvider::get($record);
         $healthDataset["description"] = $descriptions["primary_description"];
@@ -53,17 +53,17 @@ class HealthDataProvider
                 $dom = new DOMDocument;
                 $dom->loadXML($datacite_metadata->data);
                 $identifier = [];
-                $identifier["type"] = "DOI";
-                $identifier["value"] =  $dom->getElementsByTagName("identifier")->item(0)->nodeValue;
+                $identifier_type = "DOI";
+                $identifier_value =  $dom->getElementsByTagName("identifier")->item(0)->nodeValue;
                 $relatedDataset["title"] = $dom->getElementsByTagName("title")->item(0)->nodeValue;
-                $relatedDataset['identifiers'][] = $identifier;
+                $relatedDataset['identifiers'][] = IdentifierProvider::format($identifier_value, $identifier_type);
                 $relatedDatasets[] = $relatedDataset;
             }
 
         }
         $healthDataset["relatedDatasets"] = $relatedDatasets;
         $healthDataset["relationships"] = self::getRelationships($record->id, $record->group);
-
+        //$healthDataset["relatedIdentifiers"] = relatedI  RelationshipProvider::  ::getRelationships($record->id, $record->group);
         $anzctr_schema = Schema::get(static::$anzctr_schema_uri);
 
         if (count($altVersionsIDs) > 0) {

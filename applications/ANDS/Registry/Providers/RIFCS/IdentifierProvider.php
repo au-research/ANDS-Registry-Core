@@ -57,6 +57,26 @@ class IdentifierProvider implements RIFCSProvider
         return $identifiers;
     }
 
+    public static function getFormattedIdentifiers(RegistryObject $record, $xml = null)
+    {
+        if (!$xml) {
+            $xml = $record->getCurrentData()->data;
+        }
+
+        $identifiers = [];
+
+        foreach (XMLUtil::getElementsByXPath($xml,
+            'ro:registryObject/ro:' . $record->class . '/ro:identifier') AS $identifier) {
+            $identifierValue = trim((string)$identifier);
+            if ($identifierValue == "") {
+                continue;
+            }
+            $identifiers[] = self::format($identifierValue, trim((string)$identifier['type']));
+        }
+        return $identifiers;
+    }
+
+
     /**
      * @param RegistryObject $record
      * @param null $xml
@@ -131,6 +151,7 @@ class IdentifierProvider implements RIFCSProvider
      */
     public static function format($identifier, $type)
     {
+        $identifiers = self::getNormalisedIdentifier($identifier, $type);
         switch(strtolower($type))
         {
             case 'doi':

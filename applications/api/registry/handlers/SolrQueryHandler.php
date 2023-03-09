@@ -46,7 +46,6 @@ class SolrQueryHandler extends Handler
                     $params[$key] = $value;
                 }
             }
-            $parentApi = $this->getParentAPI();
             $solrUrl = Config::get('app.solr_url');
             $parsed_url = parse_url($solrUrl);
             $solr = new Apache_Solr_Service($parsed_url['host'], $parsed_url["port"], $parsed_url['path']. $core);
