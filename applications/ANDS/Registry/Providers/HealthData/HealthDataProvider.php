@@ -90,7 +90,7 @@ class HealthDataProvider
                 $relatedStudy['identifiers'][] = $identifier;
                 $relatedStudy["briefSummary"] = ContentProvider::getFirst($dom, array('briefsummary'));
                 $relatedStudy["conditions"] = ContentProvider::getContent($dom, array('healthcondition'));
-                $relatedStudy["conditionCodes"] = ContentProvider::getContent($dom, array('conditioncode'));
+                $relatedStudy["conditionCodes"] = ContentProvider::getContent($dom, array('conditioncode1','conditioncode2'));
                 $relatedStudy["studyType"] = ContentProvider::getContent($dom, array('studytype'));
                 $relatedStudy["ethicsApproval"] = ContentProvider::getContent($dom, array('ethicsapproval'));
                 $relatedStudy["inclusiveCriteria"] = ContentProvider::getContent($dom, array('inclusivecriteria'));

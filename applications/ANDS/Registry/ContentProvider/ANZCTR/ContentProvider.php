@@ -93,7 +93,7 @@ class ContentProvider{
         ];
     }
 
-    public static function getContent($dom, $elements){
+    public static function getContent($dom, $elements, $unique = true){
         $indexableArray = [];
          foreach ($elements as $el) {
              $element = $dom->getElementsByTagName($el);
@@ -102,12 +102,15 @@ class ContentProvider{
                  foreach ($e->childNodes as $node) {
                          $content[] = $node->nodeValue;
                  }
-                 $indexableArray[] = implode(', ', $content);
+                 if($unique){
+                     $indexableArray[] = implode(', ', array_unique($content));
+                 }else {
+                     $indexableArray[] = implode(', ', $content);
+                 }
              }
          }
          return $indexableArray;
     }
-
 
     public static function getFirst($dom, $elements){
 
