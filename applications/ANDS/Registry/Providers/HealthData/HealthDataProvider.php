@@ -2,6 +2,7 @@
 
 namespace ANDS\Registry\Providers\HealthData;
 
+use ANDS\Mycelium\MyceliumServiceClient;
 use ANDS\Mycelium\RelationshipSearchService;
 use ANDS\Registry\ContentProvider\ANZCTR\ContentProvider;
 use ANDS\Registry\Providers\RelationshipProvider;
@@ -13,6 +14,8 @@ use ANDS\Registry\Schema;
 use ANDS\Registry\Versions;
 use ANDS\RegistryObject;
 use ANDS\RegistryObject\RegistryObjectVersion;
+use ANDS\Util\ANZCTRUtil;
+use ANDS\Util\Config;
 use ANDS\Util\XMLUtil;
 use DOMDocument;
 
@@ -58,8 +61,17 @@ class HealthDataProvider
                 $relatedDataset["title"] = $dom->getElementsByTagName("title")->item(0)->nodeValue;
                 $relatedDataset['identifiers'][] = IdentifierProvider::format($identifier_value, $identifier_type);
                 $relatedDatasets[] = $relatedDataset;
+                // get the distributor from doi metadata if we didn't find one yet
+                if($healthDataset["distributor"] == ""){
+                    $contributorName = XMLUtil::getElementsByXPath($datacite_metadata->data,
+                        "/md:resource/md:contributors/md:contributor[@contributorType='Distributor']/md:contributorName",
+                        static::$doi_schema_uri,
+                        'md');
+                    if(is_array($contributorName) && $contributorName[0] != null){
+                        $healthDataset["distributor"] = $contributorName[0]->__toString();
+                    }
+                }
             }
-
         }
         $healthDataset["relatedDatasets"] = $relatedDatasets;
         $healthDataset["relationships"] = self::getRelationships($record->id, $record->group);
