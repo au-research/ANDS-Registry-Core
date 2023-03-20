@@ -119,7 +119,6 @@ class HealthDataProvider
         return [
             'data' => self::getRelatedData($recordId, $group),
             'software' => self::getRelatedSoftware($recordId, $group),
-            'publications' => self::getRelatedPublication($recordId, $group),
             'programs' => self::getRelatedPrograms($recordId, $group),
             'grantsProjects' => self::getRelatedGrantsProjects($recordId, $group),
             'services' => self::getRelatedService($recordId, $group),
@@ -341,8 +340,12 @@ class HealthDataProvider
                 else{
                     $relationship['url'] = "";
                 }
+                if(isset($content['to_title'])){
+                    $relationship['title'] = $content['to_title'];
+                }else{
+                    $relationship['title'] = $relationship['identifier'];
+                }
 
-                $relationship['title'] = $content['to_title'];
                 $relationship_text = [];
                 foreach ($content['relations'] as $relation){
                     $relationship_text[] = $relation['relation_type_text'];
