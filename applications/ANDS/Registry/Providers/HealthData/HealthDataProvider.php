@@ -42,6 +42,7 @@ class HealthDataProvider
         $healthDataset["distributor"] = self::getDistributor($record->id);
         $healthDataset["contact"] = "services@ardc.edu.au";
         $subjectIndex = SubjectProvider::getIndexableArray($record);
+        sort($subjectIndex['subject_value_resolved']);
         $healthDataset['subjects'] = $subjectIndex['subject_value_resolved'];
 
         $doi_schema = Schema::get(static::$doi_schema_uri);
