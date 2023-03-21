@@ -351,7 +351,7 @@ class HealthDataProvider
                 foreach ($content['relations'] as $relation){
                     $relationship_text[] = $relation['relation_type_text'];
                 }
-                $relationship['relationshipText'] = implode(" ,", array_unique($relationship_text));
+                $relationship['relationshipText'] = implode(", ", array_unique($relationship_text));
                 $relationships['relatedInfos'][] = $relationship;
             }
         }
