@@ -93,23 +93,19 @@ class ContentProvider{
         ];
     }
 
-    public static function getContent($dom, $elements, $unique = true){
-        $indexableArray = [];
+    public static function getContent($dom, $elements){
+        $content = [];
          foreach ($elements as $el) {
              $element = $dom->getElementsByTagName($el);
              foreach ($element as $e) {
-                 $content = [];
                  foreach ($e->childNodes as $node) {
+                     if(!in_array($node->nodeValue, $content))
                          $content[] = $node->nodeValue;
-                 }
-                 if($unique){
-                     $indexableArray[] = implode(', ', array_unique($content));
-                 }else {
-                     $indexableArray[] = implode(', ', $content);
                  }
              }
          }
-         return $indexableArray;
+        sort($content);
+        return $content;
     }
 
     public static function getFirst($dom, $elements){
