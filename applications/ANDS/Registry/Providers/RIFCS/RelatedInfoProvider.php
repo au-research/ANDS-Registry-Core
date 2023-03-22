@@ -42,31 +42,6 @@ class RelatedInfoProvider implements RIFCSProvider
 
 
     /**
-     * Get the Publisher of a health record
-     * @param RegistryObject $record
-     * @return array
-     */
-    public static function getHealthRecordPublisherIndex(RegistryObject $record)
-    {
-
-        $xml = $record->getCurrentData()->data;
-
-        $xpath = "ro:registryObject/ro:{$record->class}/ro:relatedInfo";
-
-        foreach (XMLUtil::getElementsByXPath($xml, $xpath) AS $relatedInfo) {
-            $identifierType = trim((string)$relatedInfo->identifier["type"]);
-            $relationType = trim((string)$relatedInfo->relation["type"]);
-            $relatedTitle = trim((string)$relatedInfo->title);
-            if (strtolower($identifierType) == "ror" && strtolower($relationType) == "hascollector" && $relatedTitle != "") {
-                return ['anzctr_publisher' => $relatedTitle];
-            }
-        }
-
-        return [];
-    }
-
-
-    /**
      * Get the raw identifier value  of given relatedInfo type with a given normalised identifier
      * @param Relationship $publication
      * @param RegistryObject $record
