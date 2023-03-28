@@ -3,9 +3,12 @@
 
 namespace ANDS\Registry\Providers\RIFCS;
 
+use ANDS\Mycelium\MyceliumServiceClient;
 use ANDS\Registry\Providers\RIFCSProvider;
 use ANDS\RegistryObject;
 use ANDS\RegistryObject\Identifier;
+use ANDS\Repository\RegistryObjectsRepository;
+use ANDS\Util\Config;
 use ANDS\Util\XMLUtil;
 
 
@@ -151,7 +154,10 @@ class IdentifierProvider implements RIFCSProvider
      */
     public static function format($identifier, $type)
     {
-        $identifiers = self::getNormalisedIdentifier($identifier, $type);
+        //dd($identifier. ":" . $type);
+        $identifiers = [];
+        $identifiers['identifier_type'] = $type;
+        $identifiers['identifier_value'] = $identifier;
         switch(strtolower($type))
         {
             case 'doi':
@@ -284,7 +290,12 @@ class IdentifierProvider implements RIFCSProvider
                 $identifiers['display_text'] = 'ARC';
                 return $identifiers;
             case 'ror':
+                if(!strpos($identifier,"ror.org/")) $identifier_href ="https://ror.org/".$identifier;
+                else $identifier_href = "https://ror.org/".substr($identifier,strpos($identifier,"ror.org/")+8);
+                $identifiers['href'] = $identifier_href;
                 $identifiers['display_text'] = 'ROR';
+                $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/ror-icon-rgb-16.png alt="ROR Link"/>';
+                $identifiers['hover_text'] = 'Resolve this ROR';
                 return $identifiers;
             default:
                 return false;
@@ -305,7 +316,6 @@ class IdentifierProvider implements RIFCSProvider
      * @param $type
      */
     public static function getNormalisedIdentifier($identifierValue, $type){
-
         // first overwrite type if it is not specific enough
         $identifier["type"] = IdentifierProvider::getNormalisedIdentifierType($identifierValue, $type);
         $identifier["value"] = $identifierValue;
@@ -434,16 +444,17 @@ class IdentifierProvider implements RIFCSProvider
      */
     public static function getIndexableArray(RegistryObject $record)
     {
-        $identifiers = static::get($record);
 
+        $client = new MyceliumServiceClient(Config::get('mycelium.url'));
+        $result = $client->getIdentifiers($record);
+        $identifiers = json_decode($result->getBody()->getContents(), true);
         $types = [];
         $values = [];
 
-        foreach ($identifiers as $identifier) {
-            $types[] = $identifier['type'];;
-            $values[] = $identifier['value'];
+        for ($i = 0; $i < sizeof($identifiers) ; $i++) {
+            $types[] = $identifiers[$i]['identifierType'];;
+            $values[] = $identifiers[$i]['identifier'];
         }
-
         return [
             'identifier_type' => $types,
             'identifier_value' => $values

@@ -323,6 +323,12 @@ class MyceliumServiceClient
         return $this->client->get("api/services/mycelium/resolve-identifiers?value=".$value."&type=".$type);
     }
 
+
+    public function normaliseIdentifier($value, $type){
+        Log::debug(__METHOD__ . "Normalising ".$type. " identifer ".$value, []);
+        return $this->client->get("api/services/mycelium/normalise-identifiers?value=".$value."&type=".$type);
+    }
+
     public function updateIdentifierTitle($identifier_value, $identifier_type, $title)
     {
         Log::debug(__METHOD__ . " Updating Identifier's title", ["identifier" => $identifier_value, "title" => $title]);

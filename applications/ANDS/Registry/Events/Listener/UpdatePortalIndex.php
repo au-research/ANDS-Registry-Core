@@ -95,7 +95,7 @@ class UpdatePortalIndex
         $jsonPackets = array();
         $record = RegistryObjectsRepository::getRecordByID($event->registry_object_id);
 
-        if($record->class == "activity" && $event->relationship_types != null){
+        if($record && $record->class == "activity" && $event->relationship_types != null){
             $aRelationshipTypes = explode (",", $event->relationship_types );
 
             foreach($aRelationshipTypes as $relationshiType)

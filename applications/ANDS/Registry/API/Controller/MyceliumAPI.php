@@ -62,4 +62,29 @@ class MyceliumAPI extends HTTPController
             throw new Exception("Error displaying queue for RequestID: $uuid");
         }
     }
+
+    public function processIdentifier($method, $query)
+    {
+        // currently only support 'normalise'
+        // it retrieves the normalised version of any given identifier using the rules defined in Mycelium
+        header("Access-Control-Allow-Origin: *");
+        if ($method == 'normalise') {
+            header("Access-Control-Allow-Origin: *");
+            parse_str($query, $params);
+            $identifier_type = 'uri';
+            if(isset($params['identifier_type'])){
+                $identifier_type = $params['identifier_type'];
+            }
+            $result = $this->myceliumClient->normaliseIdentifier($params['identifier_value'], $identifier_type);
+            if ($result->getStatusCode() == 200) {
+                $content =  json_decode($result->getBody()->getContents(), true);
+                return $content['value'];
+            } else {
+                throw new Exception("Error retrieving normalised Identifier for value:{} type:{}",
+                    $params['identifier_value'], $params['identifier_type']);
+            }
+        }
+    }
+
+
 }
