@@ -156,8 +156,8 @@ class IdentifierProvider implements RIFCSProvider
     {
         //dd($identifier. ":" . $type);
         $identifiers = [];
-        $identifiers['identifier_type'] = $type;
-        $identifiers['identifier_value'] = $identifier;
+        $identifiers['type'] = $type;
+        $identifiers['value'] = $identifier;
         switch(strtolower($type))
         {
             case 'doi':
