@@ -5,7 +5,7 @@ namespace ANDS\API\Registry\Handler;
 use ANDS\Registry\API\Router;
 use Exception;
 
-class MyceliumServicesHandler extends Handler
+class MyceliumservicesHandler extends Handler
 {
     /**
      * handles /api/registry/mycelium
