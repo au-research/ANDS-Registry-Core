@@ -23,7 +23,6 @@ class MyceliumHandler extends Handler
         $router->get('mycelium/requests/(.*)/queue', 'MyceliumAPI@showRequestQueueById');
         $router->get('mycelium/requests/(.*)/logs', 'MyceliumAPI@showRequestLogById');
         $router->get('mycelium/requests/(.*)', 'MyceliumAPI@showRequestById');
-        $router->get('mycelium/service/identifiers/(.*)', 'MyceliumAPI@processIdentifier');
         return $router->execute();
     }
 }

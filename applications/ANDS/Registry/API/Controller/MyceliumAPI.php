@@ -5,6 +5,7 @@ namespace ANDS\Registry\API\Controller;
 use ANDS\Mycelium\MyceliumServiceClient;
 use ANDS\Util\Config;
 use Exception;
+use SimpleXMLElement;
 
 class MyceliumAPI extends HTTPController
 {
@@ -67,9 +68,7 @@ class MyceliumAPI extends HTTPController
     {
         // currently only support 'normalise'
         // it retrieves the normalised version of any given identifier using the rules defined in Mycelium
-        header("Access-Control-Allow-Origin: *");
         if ($method == 'normalise') {
-            header("Access-Control-Allow-Origin: *");
             parse_str($query, $params);
             $identifier_type = 'uri';
             if(isset($params['identifier_type'])){
@@ -78,10 +77,32 @@ class MyceliumAPI extends HTTPController
             $result = $this->myceliumClient->normaliseIdentifier($params['identifier_value'], $identifier_type);
             if ($result->getStatusCode() == 200) {
                 $content =  json_decode($result->getBody()->getContents(), true);
-                return $content['value'];
+                $xml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><identifier></identifier>');
+                static::arraytoXML($content, $xml);
+                return $xml->asXML();
             } else {
                 throw new Exception("Error retrieving normalised Identifier for value:{} type:{}",
                     $params['identifier_value'], $params['identifier_type']);
+            }
+        }
+    }
+
+    private static function arraytoXML($json_arr, &$xml)
+    {
+        foreach($json_arr as $key => $value)
+        {
+            if(is_int($key))
+            {
+                $key = 'Element'.$key;  //To avoid numeric tags like <0></0>
+            }
+            if(is_array($value))
+            {
+                $label = $xml->addChild($key);
+                static::arrayToXml($value, $label);  //Adds nested elements.
+            }
+            else
+            {
+                $xml->addChild($key, $value);
             }
         }
     }
