@@ -158,100 +158,98 @@ class IdentifierProvider implements RIFCSProvider
         $identifiers = [];
         $identifiers['type'] = $type;
         $identifiers['value'] = $identifier;
-        switch(strtolower($type))
-        {
+        switch(strtolower($type)) {
             case 'doi':
                 //if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier."mystuff";
-                if(!strpos($identifier,"doi.org/")) $identifier_href ="https://doi.org/".$identifier;
-                else $identifier_href = "https://doi.org/".substr($identifier,strpos($identifier,"doi.org/")+8);
+                if (!strpos($identifier, "doi.org/")) $identifier_href = "https://doi.org/" . $identifier;
+                else $identifier_href = "https://doi.org/" . substr($identifier, strpos($identifier, "doi.org/") + 8);
                 $identifiers['href'] = $identifier_href;
                 $identifiers['display_text'] = strtoupper($type);
                 $identifiers['hover_text'] = 'Resolve this DOI';
-                $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/doi_icon.png alt="DOI Link"/>';
-                return  $identifiers;
+                $identifiers['display_icon'] = '<img class="identifier_logo" src= ' . baseUrl() . 'assets/core/images/icons/doi_icon.png alt="DOI Link"/>';
+                return $identifiers;
             case 'ark':
                 $identifiers['href'] = '';
                 $identifiers['display_icon'] = '';
-                if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier && str_replace('/ark:/','',$identifier)!=$identifier){
+                if (str_replace('http://', '', str_replace('https://', '', $identifier)) != $identifier && str_replace('/ark:/', '', $identifier) != $identifier) {
                     $identifiers['href'] = $identifier;
-                    $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/external_link.png alt="External Link"/>';
-                }
-                elseif(strpos($identifier,'/ark:/')>1){
-                    $identifiers['href'] = 'http://'.$identifier;
-                    $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/external_link.png alt="External Link"/>';
+                    $identifiers['display_icon'] = '<img class="identifier_logo" src= ' . baseUrl() . 'assets/core/images/icons/external_link.png alt="External Link"/>';
+                } elseif (strpos($identifier, '/ark:/') > 1) {
+                    $identifiers['href'] = 'http://' . $identifier;
+                    $identifiers['display_icon'] = '<img class="identifier_logo" src= ' . baseUrl() . 'assets/core/images/icons/external_link.png alt="External Link"/>';
                 }
                 $identifiers['display_text'] = 'ARK';
                 $identifiers['hover_text'] = 'Resolve this ARK identifier';
                 return $identifiers;
             case 'orcid':
-                if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
-                elseif(!strpos($identifier,"orcid.org/")) $identifier_href ="http://orcid.org/".$identifier;
-                else $identifier_href = "http://orcid.org/".substr($identifier,strpos($identifier,"orcid.org/")+10);
+                if (str_replace('http://', '', str_replace('https://', '', $identifier)) != $identifier) $identifier_href = $identifier;
+                elseif (!strpos($identifier, "orcid.org/")) $identifier_href = "http://orcid.org/" . $identifier;
+                else $identifier_href = "http://orcid.org/" . substr($identifier, strpos($identifier, "orcid.org/") + 10);
                 $identifiers['href'] = $identifier_href;
                 $identifiers['display_text'] = 'ORCID';
-                $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/orcid_icon.png alt="ORCID Link"/>';
+                $identifiers['display_icon'] = '<img class="identifier_logo" src= ' . baseUrl() . 'assets/core/images/icons/orcid_icon.png alt="ORCID Link"/>';
                 $identifiers['hover_text'] = 'Resolve this ORCID';
-                return  $identifiers;
+                return $identifiers;
             case 'nla':
             case 'au-anl:peau':
-                if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
-                elseif(!strpos($identifier,"nla.gov.au/")) $identifier_href ="http://nla.gov.au/".$identifier;
-                else $identifier_href = "http://nla.gov.au/".substr($identifier,strpos($identifier,"nla.gov.au/")+11);
+                if (str_replace('http://', '', str_replace('https://', '', $identifier)) != $identifier) $identifier_href = $identifier;
+                elseif (!strpos($identifier, "nla.gov.au/")) $identifier_href = "http://nla.gov.au/" . $identifier;
+                else $identifier_href = "http://nla.gov.au/" . substr($identifier, strpos($identifier, "nla.gov.au/") + 11);
                 $identifiers['href'] = $identifier_href;
                 $identifiers['display_text'] = 'NLA';
-                $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/nla_icon.png alt="NLA Link"/>';
+                $identifiers['display_icon'] = '<img class="identifier_logo" src= ' . baseUrl() . 'assets/core/images/icons/nla_icon.png alt="NLA Link"/>';
                 $identifiers['hover_text'] = 'View the record for this party in Trove';
-                return  $identifiers;
+                return $identifiers;
             case 'handle':
-                if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
-                elseif(strpos($identifier,"dl:")>0) $identifier_href ="http://hdl.handle.net/".substr($identifier,strpos($identifier,"hdl:")+4);
-                elseif(strpos($identifier,"dl.handle.net/")>0) $identifier_href ="http://hdl.handle.net/".substr($identifier,strpos($identifier,"hdl.handle.net/")+15);
-                else $identifier_href = "http://hdl.handle.net/".$identifier;
+                if (str_replace('http://', '', str_replace('https://', '', $identifier)) != $identifier) $identifier_href = $identifier;
+                elseif (strpos($identifier, "dl:") > 0) $identifier_href = "http://hdl.handle.net/" . substr($identifier, strpos($identifier, "hdl:") + 4);
+                elseif (strpos($identifier, "dl.handle.net/") > 0) $identifier_href = "http://hdl.handle.net/" . substr($identifier, strpos($identifier, "hdl.handle.net/") + 15);
+                else $identifier_href = "http://hdl.handle.net/" . $identifier;
                 $identifiers['href'] = $identifier_href;
                 $identifiers['display_text'] = 'Handle';
-                $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/handle_icon.png alt="Handle Link"/>';
+                $identifiers['display_icon'] = '<img class="identifier_logo" src= ' . baseUrl() . 'assets/core/images/icons/handle_icon.png alt="Handle Link"/>';
                 $identifiers['hover_text'] = 'Resolve this handle';
-                return  $identifiers;
+                return $identifiers;
             case 'raid':
-                if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
-                elseif(strpos($identifier,"dl:")>0) $identifier_href ="http://hdl.handle.net/".substr($identifier,strpos($identifier,"hdl:")+4);
-                elseif(strpos($identifier,"dl.handle.net/")>0) $identifier_href ="http://hdl.handle.net/".substr($identifier,strpos($identifier,"hdl.handle.net/")+15);
-                else $identifier_href = "http://hdl.handle.net/".$identifier;
+                if (str_replace('http://', '', str_replace('https://', '', $identifier)) != $identifier) $identifier_href = $identifier;
+                elseif (strpos($identifier, "dl:") > 0) $identifier_href = "http://hdl.handle.net/" . substr($identifier, strpos($identifier, "hdl:") + 4);
+                elseif (strpos($identifier, "dl.handle.net/") > 0) $identifier_href = "http://hdl.handle.net/" . substr($identifier, strpos($identifier, "hdl.handle.net/") + 15);
+                else $identifier_href = "http://hdl.handle.net/" . $identifier;
                 $identifiers['href'] = $identifier_href;
                 $identifiers['display_text'] = 'RAID';
-                $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/handle_icon.png alt="Handle Link"/>';
+                $identifiers['display_icon'] = '<img class="identifier_logo" src= ' . baseUrl() . 'assets/core/images/icons/handle_icon.png alt="Handle Link"/>';
                 $identifiers['hover_text'] = 'Resolve this handle';
-                return  $identifiers;
+                return $identifiers;
             case 'purl':
-                if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
-                elseif(strpos($identifier,"url.org/")<1) $identifier_href ="http://purl.org/".$identifier;
-                else $identifier_href = "http://purl.org/".substr($identifier,strpos($identifier,"purl.org/")+9);
+                if (str_replace('http://', '', str_replace('https://', '', $identifier)) != $identifier) $identifier_href = $identifier;
+                elseif (strpos($identifier, "url.org/") < 1) $identifier_href = "http://purl.org/" . $identifier;
+                else $identifier_href = "http://purl.org/" . substr($identifier, strpos($identifier, "purl.org/") + 9);
                 $identifiers['href'] = $identifier_href;
                 $identifiers['display_text'] = 'PURL';
-                $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/external_link.png alt="External Link"/>';
+                $identifiers['display_icon'] = '<img class="identifier_logo" src= ' . baseUrl() . 'assets/core/images/icons/external_link.png alt="External Link"/>';
                 $identifiers['hover_text'] = 'Resolve this PURL';
-                return  $identifiers;
+                return $identifiers;
             case 'isni':
-                if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
-                elseif(strpos($identifier,"isni.org/")<1) $identifier_href ="http://isni.org/".$identifier;
-                else $identifier_href = "http://isni.org/".substr($identifier,strpos($identifier,"isni.org/")+9);
+                if (str_replace('http://', '', str_replace('https://', '', $identifier)) != $identifier) $identifier_href = $identifier;
+                elseif (strpos($identifier, "isni.org/") < 1) $identifier_href = "http://isni.org/" . $identifier;
+                else $identifier_href = "http://isni.org/" . substr($identifier, strpos($identifier, "isni.org/") + 9);
                 $identifiers['href'] = $identifier_href;
                 $identifiers['display_text'] = 'ISNI';
-                $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/external_link.png alt="External Link"/>';
+                $identifiers['display_icon'] = '<img class="identifier_logo" src= ' . baseUrl() . 'assets/core/images/icons/external_link.png alt="External Link"/>';
                 $identifiers['hover_text'] = 'Resolve this ISNI';
-                return  $identifiers;
+                return $identifiers;
             case 'igsn':
-                if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
-                elseif(strpos($identifier,"igsn.org/")<1) $identifier_href ="http://igsn.org/".$identifier;
-                else $identifier_href = "http://igsn.org/".substr($identifier,strpos($identifier,"igsn.org/")+9);
+                if (str_replace('http://', '', str_replace('https://', '', $identifier)) != $identifier) $identifier_href = $identifier;
+                elseif (strpos($identifier, "igsn.org/") < 1) $identifier_href = "http://igsn.org/" . $identifier;
+                else $identifier_href = "http://igsn.org/" . substr($identifier, strpos($identifier, "igsn.org/") + 9);
                 $identifiers['href'] = $identifier_href;
                 $identifiers['display_text'] = 'IGSN';
-                $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/external_link.png alt="External Link"/>';
+                $identifiers['display_icon'] = '<img class="identifier_logo" src= ' . baseUrl() . 'assets/core/images/icons/external_link.png alt="External Link"/>';
                 $identifiers['hover_text'] = 'Resolve this IGSN';
-                return  $identifiers;
+                return $identifiers;
             case 'grid':
-                if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
-                if(isset($identifier_href)) {
+                if (str_replace('http://', '', str_replace('https://', '', $identifier)) != $identifier) $identifier_href = $identifier;
+                if (isset($identifier_href)) {
                     $identifiers['href'] = $identifier_href;
                     $identifiers['display_icon'] = '<img class="identifier_logo" src= ' . baseUrl() . 'assets/core/images/icons/external_link.png alt="External Link"/>';
 
@@ -260,8 +258,8 @@ class IdentifierProvider implements RIFCSProvider
                 return $identifiers;
             case 'scopus':
             case 'scopusid':
-                if(str_replace('http://','',str_replace('https://','',$identifier))!=$identifier) $identifier_href =$identifier;
-                if(isset($identifier_href)) {
+                if (str_replace('http://', '', str_replace('https://', '', $identifier)) != $identifier) $identifier_href = $identifier;
+                if (isset($identifier_href)) {
                     $identifiers['href'] = $identifier_href;
                     $identifiers['display_icon'] = '<img class="identifier_logo" src= ' . baseUrl() . 'assets/core/images/icons/external_link.png alt="External Link"/>';
 
@@ -272,10 +270,10 @@ class IdentifierProvider implements RIFCSProvider
             case 'url':
             case 'uri':
                 // url and uri should have been stripped off ther http protocol, but some legacy Identifier may still have them
-                $identifiers['href'] = "https://" . preg_replace("(^https?://)", "", $identifier );
+                $identifiers['href'] = "https://" . preg_replace("(^https?://)", "", $identifier);
                 $identifiers['display_text'] = strtoupper($type);
                 $identifiers['hover_text'] = 'Resolve this URI';
-                $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/external_link.png alt="External Link"/>';
+                $identifiers['display_icon'] = '<img class="identifier_logo" src= ' . baseUrl() . 'assets/core/images/icons/external_link.png alt="External Link"/>';
                 return $identifiers;
             case 'local':
                 $identifiers['display_text'] = 'Local';
@@ -290,8 +288,18 @@ class IdentifierProvider implements RIFCSProvider
                 $identifiers['display_text'] = 'ARC';
                 return $identifiers;
             case 'ror':
-                if(!strpos($identifier,"ror.org/")) $identifier_href ="https://ror.org/".$identifier;
-                else $identifier_href = "https://ror.org/".substr($identifier,strpos($identifier,"ror.org/")+8);
+                // starts with ror.org
+                if (strpos($identifier, "ror.org/") === 0 ) {
+                    $identifier_href = "https://" . $identifier;
+                }
+                // doesn't have ror.org
+                elseif (!strpos($identifier, "ror.org/")) {
+                     $identifier_href = "https://ror.org/" . $identifier;
+                }
+                // has ror.org
+                else {
+                    $identifier_href = "https://ror.org/" . substr($identifier, strpos($identifier, "ror.org/") + 8);
+                }
                 $identifiers['href'] = $identifier_href;
                 $identifiers['display_text'] = 'ROR';
                 $identifiers['display_icon'] = '<img class="identifier_logo" src= '.baseUrl().'assets/core/images/icons/ror-icon-rgb-16.png alt="ROR Link"/>';

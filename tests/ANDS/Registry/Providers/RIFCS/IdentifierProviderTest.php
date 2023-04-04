@@ -195,6 +195,21 @@ class IdentifierProviderTest extends \RegistryTestClass
         }
     }
 
+    /** @test **/
+    public function it_should_provide_a_resolvable_url_for_rors()
+    {
+        $tests = [
+            ['value' => '02kna3n95', 'type' => 'ROR'],
+            ['value' => 'ror.org/02kna3n95', 'type' => 'ror'],
+            ['value' => 'http://ror.org/02kna3n95', 'type' => 'uri'],
+        ];
+        foreach($tests as $test){
+            $normalised = IdentifierProvider::getNormalisedIdentifier($test["value"], $test["type"]);
+            $identifier = IdentifierProvider::format($normalised["value"], $normalised["type"]);
+            $this->assertEquals("https://ror.org/02kna3n95", $identifier["href"]);
+        }
+    }
+
     /** @test * */
     public function it_should_handle_special_cases()
     {
