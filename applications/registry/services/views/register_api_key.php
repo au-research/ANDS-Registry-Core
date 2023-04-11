@@ -65,7 +65,7 @@
 				</p>
                 <p><em>
                     Note that if you have previously registered for an API key you do not need to register again.
-                    Your ARC API key is reusable with any of our widgets and services.
+                    Your ARDC API key is reusable with any of our widgets and services.
                     </em>
                 </p>
 			</div>
