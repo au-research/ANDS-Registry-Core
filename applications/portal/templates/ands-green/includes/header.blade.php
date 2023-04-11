@@ -60,11 +60,27 @@
 <!-- Environment Indicator -->
 
 @if(ENVIRONMENT!='production' || (isset($ro->core['status']) && $ro->core['status']!='PUBLISHED'))
-	<div class="environment" style="background:{{\ANDS\Util\config::get('app.environment_colour')}};color:white;padding:5px 10px;">
-        @if(isset($ro->core['status']) && $ro->core['status']!='PUBLISHED')
-            <h3>The current record page is for preview only, certain actions are not available under current mode</h3>
-        @else
-		    <h3>{{\ANDS\Util\config::get('app.environment_name')}} - {{ENVIRONMENT}} ...</h3>
-        @endif
-	</div>
+    @if(env('HEADER_BANNER','')!="")
+        <!-- General-purpose header banner, e.g., for maintenance window. -->
+        <div class="environment" style="background:{{\ANDS\Util\config::get('app.environment_colour')}};color:white;padding:5px 10px;">
+            <h3>[ {{\ANDS\Util\config::get('app.environment_name')}} ]  {{env('HEADER_BANNER','')}}</h3>
+        </div>
+    @endif
+    @if(env('HEADER_BANNER','')=="")
+        <div class="environment" style="background:{{\ANDS\Util\config::get('app.environment_colour')}};color:white;padding:5px 10px;">
+            @if(isset($ro->core['status']) && $ro->core['status']!='PUBLISHED')
+                <h3>The current record page is for preview only, certain actions are not available under current mode</h3>
+            @else
+                <h3>{{\ANDS\Util\config::get('app.environment_name')}} - {{ENVIRONMENT}} ...</h3>
+            @endif
+        </div>
+    @endif
+@endif
+
+@if(ENVIRONMENT=='production' && env('HEADER_BANNER','')!="")
+    <!-- General-purpose header banner, e.g., for maintenance window. -->
+    <div class="environment" style="background:{{\ANDS\Util\config::get('app.environment_colour')}};color:white;padding:5px 10px;">
+        <h3>{{env('HEADER_BANNER','')}}</h3>
+
+    </div>
 @endif
