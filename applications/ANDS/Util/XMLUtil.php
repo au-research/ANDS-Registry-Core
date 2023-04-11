@@ -35,10 +35,11 @@ class XMLUtil
     public static function getElementsByXPath(
         $xml,
         $xpath,
-        $namespace = RIFCS_NAMESPACE
+        $namespace = RIFCS_NAMESPACE,
+        $prefix = 'ro'
     ) {
         $sxml = self::getSimpleXMLFromString($xml);
-        $sxml->registerXPathNamespace("ro", $namespace);
+        $sxml->registerXPathNamespace($prefix, $namespace);
         return $sxml->xpath($xpath);
     }
 

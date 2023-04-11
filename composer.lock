@@ -2575,6 +2575,48 @@
             "time": "2017-10-23T01:57:42+00:00"
         },
         {
+            "name": "ptcinc/solr-php-client",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PTCInc/solr-php-client.git",
+                "reference": "59feef58fcac79b0e8d4ac59944fa66bc484af52"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/PTCInc/solr-php-client/zipball/59feef58fcac79b0e8d4ac59944fa66bc484af52",
+                "reference": "59feef58fcac79b0e8d4ac59944fa66bc484af52",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Apache_Solr_": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Donovan Jimenez",
+                    "homepage": "https://github.com/djimenez"
+                }
+            ],
+            "description": "A purely PHP library for indexing and searching documents against an Apache Solr installation",
+            "keywords": [
+                "client",
+                "php",
+                "solr"
+            ],
+            "support": {
+                "issues": "https://github.com/PTCInc/solr-php-client/issues",
+                "source": "https://github.com/PTCInc/solr-php-client/tree/master"
+            },
+            "time": "2016-11-16T00:26:09+00:00"
+        },
+        {
             "name": "ralouphie/getallheaders",
             "version": "2.0.5",
             "source": {

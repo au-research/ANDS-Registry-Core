@@ -1,11 +1,13 @@
 <?php
 namespace ANDS\Registry\ContentProvider\ANZCTR;
+use ANDS\Mycelium\MyceliumServiceClient;
 use ANDS\Registry\Providers\RIFCS\IdentifierProvider;
 use ANDS\Registry\Schema;
 use ANDS\Registry\Versions as Versions;
 use ANDS\RegistryObject;
 use ANDS\RegistryObject\RegistryObjectVersion;
 use ANDS\Util\ANZCTRUtil;
+use ANDS\Util\Config;
 use DOMDocument;
 
 class ContentProvider{
@@ -26,6 +28,21 @@ class ContentProvider{
                 ContentProvider::storeACTRNMetadata($record,$content);
                 $dom = new DOMDocument;
                 $dom->loadXML($content);
+                debug("trying to update title");
+                try {
+                    $publictitle = ContentProvider::getFirst($dom, array('publictitle'));
+                    debug($publictitle);
+                    /* update the ANZCTR Identifier's title in Mycelium */
+                    if($publictitle != null && $publictitle != ''){
+                        $myceliumServiceClient = new MyceliumServiceClient(Config::get('mycelium.url'));
+                        debug("updating title ".$relatedIdentifier['value']. " " .$relatedIdentifier['type']." " .$publictitle);
+                        $myceliumServiceClient->updateIdentifierTitle($relatedIdentifier['value'], $relatedIdentifier['type'], $publictitle);
+                    }
+                }catch(\Exception $e){
+                    debug("failed updating public title of ANZCTR record");
+                }
+
+
                 return ContentProvider::getIndex($dom, $relatedIdentifier['value'], $arr[1]);
             }
         }
@@ -77,16 +94,19 @@ class ContentProvider{
     }
 
     public static function getContent($dom, $elements){
-        $indexableArray = [];
+        $content = [];
          foreach ($elements as $el) {
              $element = $dom->getElementsByTagName($el);
              foreach ($element as $e) {
-                 $indexableArray[] = $e->nodeValue;
+                 foreach ($e->childNodes as $node) {
+                     if(!in_array($node->nodeValue, $content))
+                         $content[] = $node->nodeValue;
+                 }
              }
          }
-         return $indexableArray;
+        sort($content);
+        return $content;
     }
-
 
     public static function getFirst($dom, $elements){
 

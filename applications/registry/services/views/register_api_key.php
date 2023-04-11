@@ -60,12 +60,12 @@
 					to identify your system when a request is sent.
 				</p>
 				<p>
-					ANDS uses your API key as a method for keeping you informed of changes to
+					ARDC uses your API key as a method for keeping you informed of changes to
 					our services as well monitor the system for quality purposes. 
 				</p>
                 <p><em>
                     Note that if you have previously registered for an API key you do not need to register again.
-                    Your ANDS API key is reusable with any of our widgets and services.
+                    Your ARDC API key is reusable with any of our widgets and services.
                     </em>
                 </p>
 			</div>

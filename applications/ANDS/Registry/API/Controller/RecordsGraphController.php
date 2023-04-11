@@ -81,7 +81,7 @@ class RecordsGraphController
      */
     public function index_identifier($method, $type, $query)
     {
-
+        header("Access-Control-Allow-Origin: *");
         parse_str($query, $params);
 
         // obtain the graph data from MyceliumService

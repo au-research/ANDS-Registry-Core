@@ -9,7 +9,7 @@ class ANZCTRUtil
 {
     public static function retrieveMetadata($identifier){
         $metadata = '';
-        $soapUrl = "https://anzctr.org.au";
+        $soapUrl = "https://www.anzctr.org.au";
         $soapHeader = '<?xml version="1.0" encoding="utf-8"?>'
                     .'<soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">'
                     .'<soap12:Body>'
@@ -20,7 +20,7 @@ class ANZCTRUtil
         $client = new Client(['base_url'=>$soapUrl]);
         try {
             $response = $client->post(
-                'https://anzctr.org.au/WebServices/AnzctrWebservices.asmx',
+                'https://www.anzctr.org.au/WebServices/AnzctrWebservices.asmx',
                 [
                     'body'    => $soapHeader.$identifier.$soapFooter,
                     'headers' => ['User-Agent' => 'ARDC Harvester',
