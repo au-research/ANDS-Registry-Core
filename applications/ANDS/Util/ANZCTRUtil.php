@@ -38,6 +38,7 @@ class ANZCTRUtil
                 $xmlString = (string) $response->getBody();
                 // by default, we use ro: as a namesapce prefix for everything
                 $result = XMLUtil::getElementsByXPath($xmlString, "//ro:AnzctrTrialDetailsResult", 'http://anzctr.org.au/WebServices/AnzctrWebServices');
+                ANZCTRUtil::validateContent((string) $result[0], $identifier);
                 $metadata = (string) $result[0];
             } else {
                 throw new Exception("Unable to retrieve anzctr metadata status code:" . $response->getStatusCode());
@@ -49,7 +50,21 @@ class ANZCTRUtil
         return $metadata;
     }
 
+    /**
+     * @param $xml
+     * @param $identifier
+     * Make sure that we have received a trail, and it is the correct one
+     * @return void
+     * @throws Exception
+     */
+    private static function validateContent($xml, $identifier){
+        $simpleXML = XMLUtil::getSimpleXMLFromString($xml);
+        $actrn = $simpleXML->trial->actrn;
+        $identifier = substr($identifier, -14);
+        $actrn = substr($actrn, -14);
+        if($identifier !== $actrn){
+            throw new Exception("Requested Trial ID:$identifier not equal to result's ID:$actrn");
+        }
 
-
-
+    }
 }

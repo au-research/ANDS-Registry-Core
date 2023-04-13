@@ -18,6 +18,7 @@ use ANDS\Util\ANZCTRUtil;
 use ANDS\Util\Config;
 use ANDS\Util\XMLUtil;
 use DOMDocument;
+use Exception;
 
 class HealthDataProvider
 {
@@ -25,8 +26,21 @@ class HealthDataProvider
     private static $doi_schema_uri = 'http://datacite.org/schema/kernel-4';
     private static $anzctr_schema_uri = 'https://anzctr_org.au';
 
+    /**
+     * @throws Exception
+     */
     public static function get(RegistryObject $record)
     {
+
+        // only provide PUBLISHED records
+        //dd($record);
+
+        if($record->isDraftStatus()){
+            throw new Exception("Record is not available");
+        }
+        if(!$record->isPublishedStatus()){
+            throw new Exception("Record is Deleted");
+        }
 
         $healthDataset = [];
 
