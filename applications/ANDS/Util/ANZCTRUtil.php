@@ -9,6 +9,17 @@ class ANZCTRUtil
 {
     public static function retrieveMetadata($identifier){
         $metadata = '';
+        // all ACTRN identifiers must be 14 digit (without the ACTRN prefix)
+        $identifier = substr($identifier, -14);
+        if(strlen($identifier) !== 14){
+            throw new Exception("ACTRN number must be 14 digit: " . $identifier);
+        }
+        if(!is_numeric($identifier)){
+            throw new Exception("the 14 digit ACTRN ID must contain only numbers: " . $identifier);
+        }
+        // all ACTRN identifiers must be prefixed with 'ACTRN' when using the SOAP API
+        $identifier = "ACTRN" . $identifier;
+
         $soapUrl = "https://www.anzctr.org.au";
         $soapHeader = '<?xml version="1.0" encoding="utf-8"?>'
                     .'<soap12:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://www.w3.org/2003/05/soap-envelope">'
