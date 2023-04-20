@@ -9,6 +9,7 @@ return [
     'release_version' => env('VERSION', '31'),
     'environment_name' => env("ENVIRONMENT_NAME", "RDA"),
     'environment_colour' => env("ENVIRONMENT_COLOUR" , "#6EBF21"),
+    'ardc_campaign' => env("ARDC_CAMPAIGN" , "FALSE"),
     'header_banner'=> env("HEADER_BANNER" , ""),
     'environment_logo' => 'img/ardc_logo.svg',
     'environment_rda_logo' => 'img/ARDC_Research_Data_RGB_FA_Reverse_sml.png',
