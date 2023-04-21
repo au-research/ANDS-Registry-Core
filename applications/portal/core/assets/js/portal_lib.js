@@ -15660,7 +15660,60 @@ app.directive('focusMe', function($timeout, $parse) {
 
         $scope.vocab = 'anzsrc-for';
         $scope.vocab_choices = $scope.sf.vocab_choices;
+        $scope.HASS_array = {
+            "image":  $scope.base_url+'assets/core/images/HASS-435pxAdSpace.gif',
+            "link": 'https://ardc.edu.au/campaign/accelerate-your-hass-and-indigenous-research/?utm_source=RDA&utm_medium=referral-HASS&utm_id=TRDC&utm_term=HASS&utm_content=rda-view',
+            "anz_for": ["13", "16", "17", "19", "20", "21", "22"],
+            "anz_for_2020": ["36", "43", "47", "45"]
+        };
+        $scope.People_array = {
+            "image":  $scope.base_url+'assets/core/images/People-435pxAdSpace.gif',
+            "link": 'https://ardc.edu.au/campaign/accelerate-your-health-and-medical-research/?utm_source=RDA&utm_medium=referral-HM&utm_id=TRDC&utm_term=people&utm_content=rda-view',
+            "anz_for": ["11"],
+            "anz_for_2020": ["42", "32"]
+        };
+        $scope.Planet_array = {
+            "image":  $scope.base_url+'assets/core/images/Planet-435pxAdSpace.gif',
+            "link": 'https://ardc.edu.au/campaign/accelerate-your-health-and-medical-research/?utm_source=RDA&utm_medium=referral-HM&utm_id=TRDC&utm_term=people&utm_content=rda-view',
+            "anz_for": ['05', '04'],
+            "anz_for_2020": ["37", "41"]
+        };
+        $scope.GEN_array = {
+            "image": $scope.base_url+'assets/core/images/GEN-435pxAdSpace.gif',
+            "link": 'https://ardc.edu.au/researcher/?utm_source=RDA&utm_medium=referral-G&utm_id=TRDC&utm_term=generic&utm_content=rda-view',
+            "anz_for": [0],
+            "anz_for_2020": [0]
+        };
+        $scope.setMyVariable = function(filters) {
+            let returnArray = $scope.GEN_array
+            for (let key in filters) {
+                if(key=="anzsrc-for" || key=="anzsrc-for-2020"){
+                    let valueArray = [];
+                    if ($scope.isArray(filters[key])) {
+                        valueArray = filters[key]
+                    } else {
+                        valueArray = [filters[key]]
+                    }
 
+                    valueArray.forEach(function (value) {
+                        let theValue = value.substring(0, 2);
+                        if ((key == "anzsrc-for" && $scope.HASS_array.anz_for.includes(theValue)) ||
+                            (key == "anzsrc-for-2020" && $scope.HASS_array.anz_for_2020.includes(theValue))) {
+                            returnArray = $scope.HASS_array
+                        }
+                        if ((key == "anzsrc-for" && $scope.People_array.anz_for.includes(theValue)) ||
+                            (key == "anzsrc-for-2020" && $scope.People_array.anz_for_2020.includes(theValue))) {
+                            returnArray = $scope.People_array
+                        }
+                        if ((key == "anzsrc-for" && $scope.Planet_array.anz_for.includes(theValue)) ||
+                            (key == "anzsrc-for-2020" && $scope.Planet_array.anz_for_2020.includes(theValue))) {
+                            returnArray = $scope.Planet_array
+                        }
+                    });
+                }
+            }
+            return returnArray
+        }
         $scope.$watch(function(){
             return location.hash;
         },function(){
@@ -15989,6 +16042,7 @@ app.directive('focusMe', function($timeout, $parse) {
                 });
             }
 
+
             $scope.hidedoc = function(id) {
                 if ($scope.result) {
                     angular.forEach($scope.result.response.docs, function(doc){
@@ -16018,7 +16072,6 @@ app.directive('focusMe', function($timeout, $parse) {
                 return $scope.result.highlighting[id];
             } else return false;
         };
-
         $scope.showFilter = function(filter_name, mode){
             if (!mode || mode=='undefined') mode = 'normal';
             var show = true;
@@ -16233,8 +16286,7 @@ app.directive('focusMe', function($timeout, $parse) {
             $("html, body").animate({ scrollTop: 0 }, 500);
         };
 
-
-        /**
+         /**
          * Record Selection Section
          */
         $scope.selected = [];
@@ -16861,7 +16913,6 @@ app.directive('focusMe', function($timeout, $parse) {
                             }
                         }
                     }
-
                 }
             });
             if ($scope.mapInstance) {

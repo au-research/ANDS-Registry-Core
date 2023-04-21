@@ -19468,7 +19468,6 @@ Dn._=Vn):Gn._=Vn}).call(this);;// https://d3js.org Version 4.13.0. Copyright 201
                 'collection': 'folder-open-solid.svg',
                 'service' : 'wrench-solid.svg',
                 'publication' : 'book-solid.svg',
-                'heath.dataset' : 'book-solid.svg',
                 'website' : 'globe-solid.svg',
                 'activity' : 'flask-solid.svg'
             };
