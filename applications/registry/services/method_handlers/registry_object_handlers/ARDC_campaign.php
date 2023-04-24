@@ -19,7 +19,7 @@ class ARDC_campaign extends ROHandler {
             "anz_for_2020" => [42,32]
         ];
         $Planet = ["image" => portal_url('assets/core/images/Planet-435pxAdSpace.gif'),
-            "link"=> 'https://ardc.edu.au/campaign/accelerate-your-health-and-medical-research/?utm_source=RDA&utm_medium=referral-HM&utm_id=TRDC&utm_term=people&utm_content=rda-view',
+            "link"=> 'https://ardc.edu.au/campaign/accelerate-your-earth-and-environmental-sciences-research/?utm_source=RDA&utm_medium=referral-EE&utm_id=TRDC&utm_term=planet&utm_content=rda-view',
             "anz_for" =>['05','04'],
             "anz_for_2020" => [37,41]
         ];
