@@ -155,13 +155,13 @@
         </ul>
 
     </div>
-    @if(\ANDS\Util\config::get('app.ardc_campaign')=="TRUE")
-        <div class="padding-top">
-            <a href="[[setMyVariable(filters).link]]" style="margin-right:5px;">
-                <img src=" [[setMyVariable(filters).image]]" />
-            </a>
-        </div>
-    @endif
-</div>
 
+</div>
+@if(\ANDS\Util\config::get('app.ardc_campaign')=="TRUE")
+    <div class="padding-top">
+        <a href="[[setMyVariable(filters).link]]" style="margin-right:5px;">
+            <img src=" [[setMyVariable(filters).image]]" />
+        </a>
+    </div>
+@endif
 @stop
