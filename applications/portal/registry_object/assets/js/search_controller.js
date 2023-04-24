@@ -26,19 +26,19 @@
         $scope.vocab_choices = $scope.sf.vocab_choices;
         $scope.HASS_array = {
             "image":  $scope.base_url+'assets/core/images/HASS-435pxAdSpace.gif',
-            "link": 'https://ardc.edu.au/campaign/accelerate-your-hass-and-indigenous-research/?utm_source=RDA&utm_medium=referral-HASS&utm_id=TRDC&utm_term=HASS&utm_content=rda-view',
+            "link": 'https://ardc.edu.au/campaign/accelerate-your-hass-and-indigenous-research/?utm_source=RDA&utm_medium=referral-HASS&utm_id=TRDC&utm_term=HASS&utm_content=rda-search',
             "anz_for": ["13", "16", "17", "19", "20", "21", "22"],
             "anz_for_2020": ["36", "43", "47", "45"]
         };
         $scope.People_array = {
             "image":  $scope.base_url+'assets/core/images/People-435pxAdSpace.gif',
-            "link": 'https://ardc.edu.au/campaign/accelerate-your-health-and-medical-research/?utm_source=RDA&utm_medium=referral-HM&utm_id=TRDC&utm_term=people&utm_content=rda-view',
+            "link": 'https://ardc.edu.au/campaign/accelerate-your-health-and-medical-research/?utm_source=RDA&utm_medium=referral-HM&utm_id=TRDC&utm_term=people&utm_content=rda-search',
             "anz_for": ["11"],
             "anz_for_2020": ["42", "32"]
         };
         $scope.Planet_array = {
             "image":  $scope.base_url+'assets/core/images/Planet-435pxAdSpace.gif',
-            "link": 'https://ardc.edu.au/campaign/accelerate-your-health-and-medical-research/?utm_source=RDA&utm_medium=referral-HM&utm_id=TRDC&utm_term=people&utm_content=rda-view',
+            "link": 'https://ardc.edu.au/campaign/accelerate-your-earth-and-environmental-sciences-research/?utm_source=RDA&utm_medium=referral-EE&utm_id=TRDC&utm_term=planet&utm_content=rda-search',
             "anz_for": ['05', '04'],
             "anz_for_2020": ["37", "41"]
         };
