@@ -46,6 +46,10 @@
                         <div id="categories-4" class="sidebar-widget  widget_categories">
                             <h4 class="sidebar-header">External Resources</h4>
                             <ul>
+                                @if(\ANDS\Util\config::get('app.ardc_campaign')=="TRUE")
+                                    <li class="cat-item"><a href="{{\ANDS\Util\config::get('app.campaign_default')}}" target="_blank">
+                                            Researcher Guides</a></li>
+                                @endif
                                 <li class="cat-item"><a href="https://ardc.edu.au" title="" target="_blank">ARDC
                                         Website</a></li>
                                 <li class="cat-item"><a href="https://documentation.ardc.edu.au/display/DOC" title="" target="_blank">Developers</a>

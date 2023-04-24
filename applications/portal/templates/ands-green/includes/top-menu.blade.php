@@ -28,6 +28,12 @@
                         <li><a href="{{portal_url('theme/open-data')}}"><i class="fa fa-unlock icon-portal"></i> Open data</a></li>
                         <li><a href="{{portal_url('theme/software')}}"><i class="fa fa-file-code-o icon-portal"></i> Software</a></li>
                         <li><a href="{{portal_url('theme/highlighting-ands-projects')}}"><i class="fa fa-sun-o icon-portal"></i> Program Highlights</a></li>
+                        @if(\ANDS\Util\config::get('app.ardc_campaign')=="TRUE")
+                            <li><a href="{{\ANDS\Util\config::get('app.campaign_default')}}" target="_blank">
+                                    <i class="fa fa-folder-open icon-portal"></i> Researcher Guides
+                                </a>
+                            </li>
+                        @endif
 
                     </ul>
                 </li>

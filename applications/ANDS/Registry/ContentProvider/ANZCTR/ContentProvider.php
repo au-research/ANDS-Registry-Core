@@ -24,12 +24,12 @@ class ContentProvider{
         foreach ($relatedIdentifiers as $relatedIdentifier){
             if(str_contains($relatedIdentifier['value'], 'ACTRN=')) {
                 $arr = explode('ACTRN=', $relatedIdentifier['value']);
-                $content = ANZCTRUtil::retrieveMetadata('ACTRN'.$arr[1]);
-                ContentProvider::storeACTRNMetadata($record,$content);
-                $dom = new DOMDocument;
-                $dom->loadXML($content);
-                debug("trying to update title");
                 try {
+                    $content = ANZCTRUtil::retrieveMetadata($arr[1]);
+                    ContentProvider::storeACTRNMetadata($record,$content);
+                    $dom = new DOMDocument;
+                    $dom->loadXML($content);
+                    debug("trying to update title");
                     $publictitle = ContentProvider::getFirst($dom, array('publictitle'));
                     debug($publictitle);
                     /* update the ANZCTR Identifier's title in Mycelium */
@@ -38,12 +38,10 @@ class ContentProvider{
                         debug("updating title ".$relatedIdentifier['value']. " " .$relatedIdentifier['type']." " .$publictitle);
                         $myceliumServiceClient->updateIdentifierTitle($relatedIdentifier['value'], $relatedIdentifier['type'], $publictitle);
                     }
+                    return ContentProvider::getIndex($dom, $relatedIdentifier['value'], $arr[1]);
                 }catch(\Exception $e){
                     debug("failed updating public title of ANZCTR record");
                 }
-
-
-                return ContentProvider::getIndex($dom, $relatedIdentifier['value'], $arr[1]);
             }
         }
         return [];

@@ -17,4 +17,5 @@
 	@include('registry_object/contents/suggested-datasets')
     @include('registry_object/contents/theme')
 	@include('registry_object/contents/debug')
+	@include('registry_object/contents/ARDC_campaign')
 @stop
