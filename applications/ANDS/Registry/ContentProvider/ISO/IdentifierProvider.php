@@ -24,7 +24,7 @@ class IdentifierProvider
         $fileIdentifiers =  $mdNode->getElementsByTagName('fileIdentifier');
         if(sizeof($fileIdentifiers) > 0){
             foreach ($fileIdentifiers as $fileIdentifier){
-                $identifiers[] = ['identifier' => trim($fileIdentifier->nodeValue), 'identifier_type' => 'local'];
+                $identifiers[] = ['identifier' => trim($fileIdentifier->nodeValue), 'identifier_type' => 'global'];
             }
         }
 
@@ -51,7 +51,7 @@ class IdentifierProvider
         $identifierArray = [];
 
         foreach($identifiers as $identifier) {
-            $identifierArray[] =  $identifier['identifier'];
+            $identifierArray[] =  ['identifier' => $identifier['identifier'], 'identifier_type' => $identifier['identifier_type']];
         }
 
         return $identifierArray;

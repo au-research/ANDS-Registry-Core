@@ -12,8 +12,8 @@ class IngestNativeSchemaTest extends \RegistryTestClass
 
     // native schema ingest requires the Mycelium service to run
     // need to change these tests to mock the desired Mycelium response
-    /** @test
-    
+    /** @test */
+
     public function test_jsonld_provider_type()
     {
 
@@ -47,9 +47,9 @@ class IngestNativeSchemaTest extends \RegistryTestClass
         }
 
     }
-*/
 
-    /** @test
+
+    /** @test */
 
     public function only_dev_test_single_son()
     {
@@ -85,8 +85,8 @@ class IngestNativeSchemaTest extends \RegistryTestClass
         }
 
     }
-*/
-    /** @test
+
+    /** @test */
 
     public function test_pure_provider_type()
     {
@@ -121,9 +121,8 @@ class IngestNativeSchemaTest extends \RegistryTestClass
         }
 
     }
-*/
 
-    /** @test
+    /** @test */
     public function test_iso_provider_type()
     {
         $dataSourceID = 10550;
@@ -158,9 +157,7 @@ class IngestNativeSchemaTest extends \RegistryTestClass
         }
 
     }
-
-    */
-        /** @test
+        /** @test */
 
 
     public function test_doi_provider_type()
@@ -200,7 +197,7 @@ class IngestNativeSchemaTest extends \RegistryTestClass
         }
 
     }
-*/
+
     /**  @test */
     public function testPrefixGen(){
 
