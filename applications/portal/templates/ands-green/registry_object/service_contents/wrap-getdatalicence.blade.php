@@ -21,10 +21,12 @@
             foreach ($ro->rights as $right) {
                 $content .= '<h4>'.readable($right['type']).'</h4>';
                 $content .= '<p>'.$right['value'].'</p>';
+                if($right['rightsUrl']!=""){
+                    $content .= '<p><a href="'.$right['rightsUrl'].'" target="_blank">'.$right['rightsUrl'].'</a></p>'
+                }
             }
         }
     }
-
 ?>
 <div class="panel swatch-white gray-bg">
     <div class="panel-body">
