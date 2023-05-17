@@ -29,10 +29,7 @@ class IdentifierProvider
         }
 
         if(sizeof($identifiers) == 0){
-
-
             $mdIdentifiers = $mdNode->getElementsByTagName('MD_Identifier');
-
             if(sizeof($mdIdentifiers) > 0){
 
                 /** @var $mdIdentifiers DOMElement[] */
@@ -48,13 +45,7 @@ class IdentifierProvider
             }
         }
 
-        $identifierArray = [];
-
-        foreach($identifiers as $identifier) {
-            $identifierArray[] =  ['identifier' => $identifier['identifier'], 'identifier_type' => $identifier['identifier_type']];
-        }
-
-        return $identifierArray;
+        return $identifiers;
     }
 
 }
