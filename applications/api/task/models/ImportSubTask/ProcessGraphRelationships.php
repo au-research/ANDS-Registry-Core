@@ -60,22 +60,28 @@ class ProcessGraphRelationships extends ImportSubTask
             if($last_record_index != null && $last_record_index >= $index){
                 $this->updateProgress($index, $total, "skipping ($index/$total))");
             }else {
-                $record = RegistryObjectsRepository::getRecordByID($id);
-                $result = $myceliumClient->importRecord($record, $myceliumRequestId);
-                if ($result->getStatusCode() === 200) {
-                    $import_count++;
-                    // set last_record_index when process ran successfully
-                    $this->parent()->setTaskData("last_record_index", $index);
-                    $this->parent()->save();
-                    debug("Imported record {$record->id} to mycelium");
-                } else {
-                    $error_count++;
-                    $reason = $result->getBody()->getContents();
-                    $this->addError("Failed to import record {$record->id} to mycelium. Reason: $reason");
-                    debug("Failed to import record {$record->id} to mycelium. Reason: $reason");
+                try {
+                    $record = RegistryObjectsRepository::getRecordByID($id);
+                    $result = $myceliumClient->importRecord($record, $myceliumRequestId);
+                    if ($result->getStatusCode() === 200) {
+                        $import_count++;
+                        // set last_record_index when process ran successfully
+                        $this->parent()->setTaskData("last_record_index", $index);
+                        $this->parent()->save();
+                        debug("Imported record {$record->id} to mycelium");
+                    } else {
+                        $error_count++;
+                        $reason = $result->getBody()->getContents();
+                        $this->addError("Failed to import record {$id} to mycelium. Reason: $reason");
+                        debug("Failed to import record {$id} to mycelium. Reason: $reason");
+                    }
+                    $this->updateProgress($index, $total, "Processed ($index/$total) $record->title($id)");
+                    debug("Processed ($index/$total) $record->title($id)");
+                }catch(\Exception $e){
+                    $msg = $e->getMessage();
+                    $this->addError("Failed to import record {$id} to mycelium. Reason: $msg");
+                    debug("Failed to import record {$id} to mycelium. Reason: $msg");
                 }
-                $this->updateProgress($index, $total, "Processed ($index/$total) $record->title($record->id)");
-                debug("Processed ($index/$total) $record->title($record->id)");
             }
         }
         // unset last_record_index when finished
