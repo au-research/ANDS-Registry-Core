@@ -42,22 +42,28 @@ class IndexGraphRelationships extends ImportSubTask
             if($last_record_index != null && $last_record_index >= $index){
                 $this->updateProgress($index, $total, "skipping ($index/$total))");
             }else {
-                $record = RegistryObjectsRepository::getRecordByID($id);
-                $result = $myceliumClient->indexRecord($record);
-                // it just says done with 200,
-                if ($result->getStatusCode() === 200) {
-                    $indexed_count++;
-                    // set last_record_index when process ran successfully
-                    $this->parent()->setTaskData("last_record_index", $index);
-                    $this->parent()->save();
-                    debug("Indexed Relationship for record id: $id  #:$indexed_count");
-                } else {
-                    $reason = $result->getBody()->getContents();
-                    $error_count++;
-                    $this->addError("Failed to index record {$id} to mycelium. Reason: $reason");
-                    debug("Failed to index record {$id} to mycelium. Reason: $reason");
+                try {
+                    $record = RegistryObjectsRepository::getRecordByID($id);
+                    $result = $myceliumClient->indexRecord($record);
+                    // it just says done with 200,
+                    if ($result->getStatusCode() === 200) {
+                        $indexed_count++;
+                        // set last_record_index when process ran successfully
+                        $this->parent()->setTaskData("last_record_index", $index);
+                        $this->parent()->save();
+                        debug("Indexed Relationship for record id: $id  #:$indexed_count");
+                    } else {
+                        $reason = $result->getBody()->getContents();
+                        $error_count++;
+                        $this->addError("Failed to index record {$id} to mycelium. Reason: $reason");
+                        debug("Failed to index record {$id} to mycelium. Reason: $reason");
+                    }
+                    $this->updateProgress($index, $total, "Processed ($index/$total) $record->title($record->id)");
+                }catch (\Exception $e){
+                    $msg = $e->getMessage();
+                    $this->addError("Failed to index record {$id} to mycelium. Reason: $msg");
+                    debug("Failed to index record {$id} to mycelium. Reason: $msg");
                 }
-                $this->updateProgress($index, $total, "Processed ($index/$total) $record->title($record->id)");
             }
         }
         // unset last_record_index when finished
