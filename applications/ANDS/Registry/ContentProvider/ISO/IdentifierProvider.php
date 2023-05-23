@@ -24,15 +24,12 @@ class IdentifierProvider
         $fileIdentifiers =  $mdNode->getElementsByTagName('fileIdentifier');
         if(sizeof($fileIdentifiers) > 0){
             foreach ($fileIdentifiers as $fileIdentifier){
-                $identifiers[] = ['identifier' => trim($fileIdentifier->nodeValue), 'identifier_type' => 'local'];
+                $identifiers[] = ['identifier' => trim($fileIdentifier->nodeValue), 'identifier_type' => 'global'];
             }
         }
 
         if(sizeof($identifiers) == 0){
-
-
             $mdIdentifiers = $mdNode->getElementsByTagName('MD_Identifier');
-
             if(sizeof($mdIdentifiers) > 0){
 
                 /** @var $mdIdentifiers DOMElement[] */
@@ -48,13 +45,7 @@ class IdentifierProvider
             }
         }
 
-        $identifierArray = [];
-
-        foreach($identifiers as $identifier) {
-            $identifierArray[] =  $identifier['identifier'];
-        }
-
-        return $identifierArray;
+        return $identifiers;
     }
 
 }

@@ -46,8 +46,8 @@ class JsonLDProvider implements RIFCSProvider
         // Do the truth test first and early return to fix super node issue
         if ($record->class <> "collection" && $record->class <> "service")
             return "";
-
-        $allowedTypeList = ['collection','dataset','software'];
+        //As we add more thematic types to our registry eg health.dataset we will need to add them here as well
+        $allowedTypeList = ['collection','dataset','health.dataset','software'];
         if ($record->class == "collection" && !in_array(strtolower($record->type), $allowedTypeList))
             return "";
 
@@ -255,13 +255,12 @@ class JsonLDProvider implements RIFCSProvider
     }
 
     public static function getKeywords(RegistryObject $record){
-        $keywords = "";
-
+        $keywords = [];
         $subjects = SubjectProvider::processSubjects($record);
         foreach($subjects as $subject){
-            $keywords .= ", ".$subject['resolved'];
+            $keywords[] = $subject['resolved'];
         }
-        return trim($keywords,",");
+        return $keywords;
     }
 
 

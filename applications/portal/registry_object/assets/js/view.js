@@ -10,11 +10,11 @@ $(document).ready(function() {
 	$('#dataformats').hide();
 	$(document).on('click', '#toggleRightsContent', function(e){
 		e.preventDefault();
-        if($('#toggleRightsContent').html()=='view details')
+        if($('#toggleRightsContent').html()=='View details')
         {
-            $('#toggleRightsContent').html('hide details')
+            $('#toggleRightsContent').html('Hide details')
         }else{
-            $('#toggleRightsContent').html('view details')
+            $('#toggleRightsContent').html('View details')
         };
 		$('#rightsContent').slideToggle();
 	}).on('click', '#gotodata', function(e){
@@ -22,11 +22,11 @@ $(document).ready(function() {
 		$('#dataformats').slideToggle();
 	}).on('click', '#toggleLicenceContent', function(e){
         e.preventDefault();
-        if($('#toggleLicenceContent').html()=='view details')
+        if($('#toggleLicenceContent').html()=='View details')
         {
-            $('#toggleLicenceContent').html('hide details')
+            $('#toggleLicenceContent').html('Hide details')
         }else{
-            $('#toggleLicenceContent').html('view details')
+            $('#toggleLicenceContent').html('View details')
         };
         $('#licenceContent').slideToggle();
 

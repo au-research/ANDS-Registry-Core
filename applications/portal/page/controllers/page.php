@@ -223,8 +223,14 @@ class Page extends MX_Controller
         parse_str($_SERVER['QUERY_STRING'], $_GET);
         $solr_url = ConfigUtil::get('app.solr_url');
         $ds = '';
+        $dss =[];
+        $format ='';
         if (isset($_GET['ds'])) {
             $ds = $_GET['ds'];
+            $dss = explode(",",$ds);
+        }
+        if (isset($_GET['format'])) {
+            $format = $_GET['format'];
         }
 
         $event = array(
@@ -332,30 +338,47 @@ class Page extends MX_Controller
 
                 echo '</sitemapindex>';
             } elseif ($ds != '') {
-
                 $this->load->library('solr');
-                $filters = array('data_source_id' => $ds, 'rows' => 50000, 'fl' => 'key, id, record_modified_timestamp, slug');
-                $this->solr->setFilters($filters);
-                $this->solr->executeSearch();
-                $res = $this->solr->getResult();
-                $keys = $res->{'docs'};
-                $freq = 'weekly';
-                if ($this->is_active($ds)) {
-                    $freq = 'daily';
-                }
-
                 header("Content-Type: text/xml");
                 echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
-                foreach ($keys as $k) {
-                    echo '<url>';
-                    if (isset($k->{'slug'})) {
-                        echo '<loc>' . base_url() . $k->{'slug'} . '/' . $k->{'id'} . '</loc>';
-                    } else {
-                        echo '<loc>' . base_url() . 'view/?key=' . urlencode($k->{'key'}) . '</loc>';
+                foreach($dss as $dsi) {
+                    $this->solr->clearOpt('q');
+                    $this->solr->clearOpt('fq');
+                    $filters = array('data_source_id' => $dsi, 'rows' => 50000, 'fl' => 'key, id, record_modified_timestamp, slug,data_source_id,class');
+                    $this->solr->setFilters($filters);
+                    $this->solr->executeSearch();
+                    $res = $this->solr->getResult();
+                    $keys = $res->{'docs'};
+                    $freq='weekly';
+                    if ($this->is_active((int)$dsi)) {
+                        $freq = 'daily';
                     }
-                    echo '<changefreq>' . $freq . '</changefreq>';
-                    echo '<lastmod>' . date('Y-m-d', strtotime($k->{'record_modified_timestamp'})) . '</lastmod>';
-                    echo '</url>';
+                    foreach ($keys as $k) {
+                        //if the format is set to jsonld, then output the jsonld file link rather than the view page
+                        if($format=='json'){
+                            //we currently provide jsonld for collections and services only
+                            if($k->{'class'}=="collection"||$k->{'class'}=="service"){
+                                echo '<url>';
+                                if (isset($k->{'slug'})) {
+                                    echo '<loc>' . base_url() . "api/registry/records" . '/' . $k->{'id'} . '/json_ld</loc>';
+                                }
+                                echo '<changefreq>' . $freq . '</changefreq>';
+                                echo '<lastmod>' . date('Y-m-d', strtotime($k->{'record_modified_timestamp'})) . '</lastmod>';
+                                echo '</url>';
+                            }
+                        }
+                        else{
+                            echo '<url>';
+                            if (isset($k->{'slug'})) {
+                                echo '<loc>' . base_url() . $k->{'slug'} . '/' . $k->{'id'} . '</loc>';
+                            } else {
+                                echo '<loc>' . base_url() . 'view/?key=' . urlencode($k->{'key'}) . '</loc>';
+                            }
+                            echo '<changefreq>' . $freq . '</changefreq>';
+                            echo '<lastmod>' . date('Y-m-d', strtotime($k->{'record_modified_timestamp'})) . '</lastmod>';
+                            echo '</url>';
+                        }
+                    }
                 }
                 echo '</urlset>';
             }
@@ -366,6 +389,8 @@ class Page extends MX_Controller
     {
         $this->load->library('solr');
         $filters = array('data_source_id' => $ds_id);
+        $this->solr->clearOpt('q');
+        $this->solr->clearOpt('fq');
         $this->solr->setFilters($filters);
         $this->solr->setFacetOpt('query', 'record_created_timestamp:[NOW-1MONTH/MONTH TO NOW]');
         $this->solr->executeSearch();
@@ -377,7 +402,6 @@ class Page extends MX_Controller
             } else {
                 return false;
             }
-
         } else {
             return false;
         }

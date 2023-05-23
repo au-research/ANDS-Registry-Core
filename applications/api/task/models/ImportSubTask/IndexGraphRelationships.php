@@ -35,21 +35,34 @@ class IndexGraphRelationships extends ImportSubTask
         $importedRecords = $this->parent()->getTaskData("importedRecords");
         $total = count($importedRecords);
 
+        $last_record_index = $this->parent()->getTaskData("last_record_index");
+
         foreach ($importedRecords as $index => $id) {
-            $record = RegistryObjectsRepository::getRecordByID($id);
-            $result = $myceliumClient->indexRecord($record);
-            // it just says done with 200,
-            if ($result->getStatusCode() === 200) {
-                $indexed_count++;
-                debug("Indexed Relationship for record id: $id  #:$indexed_count");
-            } else {
-                $reason = $result->getBody()->getContents();
-                $error_count++;
-                $this->addError("Failed to index record {$id} to mycelium. Reason: $reason");
-                debug("Failed to index record {$id} to mycelium. Reason: $reason");
+            // fast-forward to last record if it was set
+            if($last_record_index != null && $last_record_index >= $index){
+                $this->updateProgress($index, $total, "skipping ($index/$total))");
+            }else {
+                $record = RegistryObjectsRepository::getRecordByID($id);
+                $result = $myceliumClient->indexRecord($record);
+                // it just says done with 200,
+                if ($result->getStatusCode() === 200) {
+                    $indexed_count++;
+                    // set last_record_index when process ran successfully
+                    $this->parent()->setTaskData("last_record_index", $index);
+                    $this->parent()->save();
+                    debug("Indexed Relationship for record id: $id  #:$indexed_count");
+                } else {
+                    $reason = $result->getBody()->getContents();
+                    $error_count++;
+                    $this->addError("Failed to index record {$id} to mycelium. Reason: $reason");
+                    debug("Failed to index record {$id} to mycelium. Reason: $reason");
+                }
+                $this->updateProgress($index, $total, "Processed ($index/$total) $record->title($record->id)");
             }
-            $this->updateProgress($index, $total, "Processed ($index/$total) $record->title($record->id)");
         }
+        // unset last_record_index when finished
+        $this->parent()->setTaskData("last_record_index", null);
+        $this->parent()->save();
         if($indexed_count > 0){
             $this->log("Indexed {$indexed_count} record(s) by mycelium");
         }

@@ -193,21 +193,24 @@ class RegistryObjectsRepository
 
         $registryObjectIDs = [];
         $client = new MyceliumServiceClient(Config::get('mycelium.url'));
-
+        // make sure to test for empty identifier values and types before calling mycelium
         foreach ($identifiers as $identifier){
-            try {
-                $result = $client->findRecordByIdentifier($identifier["identifier"], $identifier['identifier_type']);
-                $vertices = json_decode($result->getBody());
-                foreach ($vertices as $v) {
-                    if ($v->identifierType == 'ro:id' && $v->dataSourceId == $dataSourceId && $v->status == $status) {
-                        $registryObjectIDs[] = $v->identifier;
+            if(isset($identifier["identifier"]) && trim($identifier["identifier"]) != "" && isset($identifier['identifier_type']) && trim($identifier['identifier_type']) != "") {
+                try {
+                    $result = $client->findRecordByIdentifier(trim($identifier["identifier"]), trim($identifier['identifier_type']));
+                    if ($result != null) {
+                        $vertices = json_decode($result->getBody());
+                        foreach ($vertices as $v) {
+                            if ($v->identifierType == 'ro:id' && $v->dataSourceId == $dataSourceId && $v->status == $status) {
+                                $registryObjectIDs[] = $v->identifier;
+                            }
+                        }
                     }
+                } catch (\Exception $e) {
+                    debug("No registry object found with identifier value:" . $identifier["identifier"] . " type:" . $identifier["identifier_type"]);
                 }
-            }catch(\Exception $e){
-                debug("No registry object found with identifier value:". $identifier["identifier"] ." type:" .$identifier["identifier_type"]);
             }
         }
-
         if(sizeof($registryObjectIDs) > 0)
         {
             return RegistryObject::wherein('registry_object_id',$registryObjectIDs)->get();
