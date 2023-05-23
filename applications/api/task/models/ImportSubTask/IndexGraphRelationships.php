@@ -61,7 +61,7 @@ class IndexGraphRelationships extends ImportSubTask
             }
         }
         // unset last_record_index when finished
-        $this->parent()->setTaskData("last_record_id", null);
+        $this->parent()->setTaskData("last_record_index", null);
         $this->parent()->save();
         if($indexed_count > 0){
             $this->log("Indexed {$indexed_count} record(s) by mycelium");
