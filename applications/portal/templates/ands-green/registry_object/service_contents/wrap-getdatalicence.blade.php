@@ -21,7 +21,7 @@
             foreach ($ro->rights as $right) {
                 $content .= '<h4>'.readable($right['type']).'</h4>';
                 $content .= '<p>'.$right['value'].'</p>';
-                if($right['rightsUri']!=""){
+                if(isset($right['rightsUri']) && $right['rightsUri']!=""){
                    $content .= '<p><a href="'.$right['rightsUri'].'" target="_blank">'.$right['rightsUri'].'</a></p>';
                 }
             }
