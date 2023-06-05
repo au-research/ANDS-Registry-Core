@@ -11,6 +11,7 @@ use ANDS\Registry\Providers\ORCID\ORCIDProvider;
 use ANDS\Registry\Providers\ORCID\ORCIDRecord;
 use ANDS\Registry\Providers\Quality\QualityMetadataProvider;
 use ANDS\Registry\Providers\RIFCS\JsonLDProvider;
+use ANDS\Registry\Providers\RIFCS\PreviewProvider;
 use ANDS\Registry\Providers\RIFCS\RIFCSIndexProvider;
 use ANDS\Repository\RegistryObjectsRepository;
 
@@ -138,5 +139,10 @@ class RecordsMiscController
         $record = RegistryObjectsRepository::getRecordByID($id);
         return HealthDataProvider::get($record);
     }
+    public function preview($id){
+        $record = RegistryObjectsRepository::getRecordByID($id);
+        return PreviewProvider::get($record);
+    }
+
 
 }
