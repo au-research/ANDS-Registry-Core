@@ -23,7 +23,7 @@ class RecordsHandler extends Handler {
 
         $router->get('records/(\w+)/scholix', 'RecordsMiscController@scholix');
         $router->get('records/(\w+)/solr_index', 'RecordsMiscController@solr_index');
-
+        $router->get('records/(\w+)/preview', 'RecordsMiscController@preview');
         $router->get('records/(\w+)/rifcs', 'RecordsMiscController@rifcs');
         $router->get('records/(\w+)/dci', 'RecordsMiscController@dci');
         $router->get('records/(\w+)/dci/validate', 'RecordsMiscController@dciValidate');

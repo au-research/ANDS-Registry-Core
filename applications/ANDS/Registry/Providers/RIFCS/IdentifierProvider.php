@@ -74,7 +74,11 @@ class IdentifierProvider implements RIFCSProvider
             if ($identifierValue == "") {
                 continue;
             }
-            $identifiers[] = self::format($identifierValue, trim((string)$identifier['type']));
+           // dd($identifier['type']);
+            $formatted = self::format($identifierValue, trim((string)$identifier['type']));
+            if($formatted){
+                $identifiers[] = $formatted;
+            }
         }
         return $identifiers;
     }

@@ -753,7 +753,7 @@ function isbot($useragent = false)
 function initEloquent() {
     $dotenv = new \Dotenv\Dotenv(__DIR__ . '/../../');
     $dotenv->load();
-    $two_mb = 2 * 1024 * 1024;
+    $three_mb = 3 * 1024 * 1024;
     $capsule = new \Illuminate\Database\Capsule\Manager;
 
     $databases = require (dirname(__DIR__) . '/../config/database.php');
@@ -765,7 +765,7 @@ function initEloquent() {
     // build fails so need to test
     $is_mysqlnd = function_exists('mysqli_fetch_all');
     if (!$is_mysqlnd) {
-        $options[\PDO::MYSQL_ATTR_MAX_BUFFER_SIZE] = $two_mb;
+        $options[\PDO::MYSQL_ATTR_MAX_BUFFER_SIZE] = $three_mb;
     }
     foreach ($databases as $key => $db) {
         $capsule->addConnection(
