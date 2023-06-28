@@ -25,7 +25,16 @@ class ContentProvider{
             if(str_contains($relatedIdentifier['value'], 'ACTRN=')) {
                 $arr = explode('ACTRN=', $relatedIdentifier['value']);
                 try {
-                    $content = ANZCTRUtil::retrieveMetadata($arr[1]);
+                    $identifier = substr($arr[1], -14);
+                    if(strlen($identifier) !== 14){
+                        throw new Exception("ACTRN number must be 14 digit: " . $identifier);
+                    }
+                    if(!is_numeric($identifier)){
+                        throw new Exception("the 14 digit ACTRN ID must contain only numbers: " . $identifier);
+                    }
+                    // all ACTRN identifiers must be prefixed with 'ACTRN' to help with search
+                    $identifier = "ACTRN" . $identifier;
+                    $content = ANZCTRUtil::retrieveMetadata($identifier);
                     ContentProvider::storeACTRNMetadata($record,$content);
                     $dom = new DOMDocument;
                     $dom->loadXML($content);
@@ -38,7 +47,7 @@ class ContentProvider{
                         debug("updating title ".$relatedIdentifier['value']. " " .$relatedIdentifier['type']." " .$publictitle);
                         $myceliumServiceClient->updateIdentifierTitle($relatedIdentifier['value'], $relatedIdentifier['type'], $publictitle);
                     }
-                    return ContentProvider::getIndex($dom, $relatedIdentifier['value'], $arr[1]);
+                    return ContentProvider::getIndex($dom, $relatedIdentifier['value'], $identifier);
                 }catch(\Exception $e){
                     debug("failed updating public title of ANZCTR record");
                 }
