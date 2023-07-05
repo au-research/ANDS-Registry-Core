@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SearchResult responseDate="5/07/2023 3:57 PM">
+    <NumOfActrn>1</NumOfActrn>
+    <NumOfNct>0</NumOfNct>
+    <trial>
+        <actrn>ACTRN12608000588392</actrn>
+        <utn/>
+        <publictitle>A Phase III, randomised trial of adding nitroglycerin to first line
+            chemotherapy for advanced non-small cell lung cancer</publictitle>
+        <scientifictitle>A Phase III, randomised trial of adding nitroglycerin to first line
+            chemotherapy to improve progression free survival in advanced non-small cell lung
+            cancer</scientifictitle>
+        <trialacronym>NITRO</trialacronym>
+        <Details>
+            <conditions>
+                <healthcondition>Advanced non-small cell lung cancer</healthcondition>
+                <conditioncode>
+                    <conditioncode1>Cancer</conditioncode1>
+                    <conditioncode2>Lung - Non small cell</conditioncode2>
+                </conditioncode>
+            </conditions>
+            <studytype>Interventional</studytype>
+            <InterventionExposure>The addition of topical Nitroglycerin (patch) to standard
+                chemotherapy (standard chemotherapy involves a combination of cisplatin or
+                carboplatin with one of the following drugs - vinorelbine, paclitaxel, pemetrexed or
+                gemcitabine). Each patient's specific treatment regime will be determined by the
+                participant's doctor. Nitroglycerin is administered as a 25mg patch for 12 hours
+                each day for 2 days before, the day of, and for two days after each chemotherapy
+                injection. Treatment with the chemotherapy and Nitroglycerin will last for 6
+                treatment cycles (each cycle lasts for 3 weeks)</InterventionExposure>
+            <interventioncode>Treatment: Drugs</interventioncode>
+            <Comparison>Standard Chemotherapy standard chemotherapy involves a combination of
+                cisplatin or carboplatin with one of the following drugs - vinorelbine, paclitaxel,
+                pemetrexed or gemcitabine. Each patient's specific treatment regime will be
+                determined by the participant's doctor.Treatment with the chemotherapy will last for
+                6 treatment cycles (each cycle lasts for 3 weeks)</Comparison>
+            <ControlGroup>Active</ControlGroup>
+            <OutcomeMeasures>
+                <OutcomeMeasure>
+                    <Outcome>Progression-free survival which is measured by regular CT (computerised
+                        tomography) scans prior to treatment, every six weeks during chemotherapy,
+                        and every two months after chemotherapy until the lung cancer has
+                        progressed</Outcome>
+                    <Timepoint>After 460 progression events have occurred over all of the
+                        participants in the study (after 460 patients have shown progression of
+                        their lung cancer)</Timepoint>
+                </OutcomeMeasure>
+                <Purpose>Treatment</Purpose>
+                <Phase>Phase 3</Phase>
+                <EthicsApproval>Approved</EthicsApproval>
+                <briefsummary>This study will evaluate the efficacy of adding the drug,
+                    nitroglycerin, to first line chemotherapy for advanced non-small cell lung
+                    cancer. Who is it for? You may be eligible to join this study if you are 18
+                    years or above and have a confirmed diagnosis of stage III or IV non-small cell
+                    lung cancer. Radiotherapy should have been completed at least one week before
+                    commencing treatment in this study. Trial details Participants in this trial
+                    will be randomly (by chance) allocated to one of two groups. Both groups undergo
+                    6 x 3 week treatment cycles of standard chemotherapy determined by their doctor.
+                    In addition, participants in group one will receive nitroglycerin administered
+                    as a 25mg patch for 12 hours each day for 2 days before, the day of, and for two
+                    days after each chemotherapy injection. Participants will undergo regular visits
+                    to the hospital and undergo CT scans prior to treatment, every six weeks during
+                    chemotherapy, and every two months after chemotherapy until the lung cancer has
+                    progressed. This will help determine which treatment is more effective in terms
+                    of progression-free survival and overall survival.</briefsummary>
+                <trialwebsite/>
+                <recruitment>
+                    <recruitmentstatus>Completed</recruitmentstatus>
+                    <anticipatedstartdate>15/05/2009</anticipatedstartdate>
+                    <anticipatedenddate/>
+                    <samplesize>372</samplesize>
+                    <recruitmentstate>NSW,VIC,QLD,SA,WA,TAS</recruitmentstate>
+                    <hospital/>
+                    <postcode>2042</postcode>
+                    <postcode>2031</postcode>
+                    <postcode>2139</postcode>
+                    <postcode>2170</postcode>
+                    <postcode>2340</postcode>
+                    <postcode>2200</postcode>
+                    <postcode>2450</postcode>
+                    <postcode>2250</postcode>
+                    <postcode>2480</postcode>
+                    <postcode>2485</postcode>
+                    <postcode>2747</postcode>
+                    <postcode>2350</postcode>
+                    <postcode>2444</postcode>
+                    <postcode>2305</postcode>
+                    <postcode>3065</postcode>
+                    <postcode>3181</postcode>
+                    <postcode>3550</postcode>
+                    <postcode>3220</postcode>
+                    <postcode>3280</postcode>
+                    <postcode>4814</postcode>
+                    <postcode>4870</postcode>
+                    <postcode>4560</postcode>
+                    <postcode>4032</postcode>
+                    <postcode>4033</postcode>
+                    <postcode>5011</postcode>
+                    <postcode>6009</postcode>
+                    <postcode>6000</postcode>
+                    <postcode>7000</postcode>
+                    <countrysoutsideaustralia>
+                        <countryoutsideaustralia>
+                            <country>New Zealand</country>
+                            <state>Christchurch</state>
+                        </countryoutsideaustralia>
+                    </countrysoutsideaustralia>
+                </recruitment>
+                <eligibility>
+                    <inclusivecriteria>Confirmed diagnosis of stage III or IV non-small cell lung
+                        cancer Eastern Cooperative Oncology Group (ECOG) performance status of 0, 1
+                        or 2 Adequate bone marrow, kidney and liver function Radiotherapy completed
+                        at least 1 week before randomisation Patient is willing and able to comply
+                        with protocol requirements Patient has completed quality of life
+                        questionnaires or is unable to complete due to illiteracy, language or
+                        limited vision Female patients of childbearing potential must be willing to
+                        use adequate contraception Plan to start chemotherapy within 8 days of
+                        randomisation</inclusivecriteria>
+                    <inclusiveminage>18</inclusiveminage>
+                    <inclusiveminagetype>Years</inclusiveminagetype>
+                    <inclusivemaxage>0</inclusivemaxage>
+                    <inclusivemaxagetype>No limit</inclusivemaxagetype>
+                    <inclusivegender>Both males and females</inclusivegender>
+                    <healthyvolunteer>No</healthyvolunteer>
+                    <exclusivecriteria>Untreated brain or meningeal metastases Life expectancy less
+                        than 3 months Any prior systemic therapy for advanced non-small cell lung
+                        cancer History of previous or concomitant malignancies at other sites within
+                        the last 5 years On nitrates, dihydroergotamine or phosphodiesterase
+                        inhibitors History of allergic disease or reactions likely to be exacerbated
+                        by nitroglycerin Uncontrolled cardiovascular disease Other concomitant
+                        medical problems which would limit compliance with the study procedures or
+                        expose the patient to unacceptable risk Active and uncontrolled
+                        infections</exclusivecriteria>
+                </eligibility>
+                <FundingSponsors>
+                    <primarysponsortype>University</primarysponsortype>
+                    <primarysponsorname>University of Sydney</primarysponsorname>
+                    <primarysponsoraddress>Locked Bag 77 Camperdown NSW 1450</primarysponsoraddress>
+                    <primarysponsorcountry>Australia</primarysponsorcountry>
+                    <secondarysponsors>
+                        <secondarysponsor>
+                            <type>None</type>
+                            <name/>
+                            <address/>
+                            <country/>
+                        </secondarysponsor>
+                    </secondarysponsors>
+                    <fundingsources>
+                        <fundingsource>
+                            <fundingtype>Charities/Societies/Foundations</fundingtype>
+                            <fundingname>WA Cancer Council</fundingname>
+                            <fundingaddress>46 Ventnor Avenue West Perth 6005 WA</fundingaddress>
+                            <fundingcountry>Australia</fundingcountry>
+                        </fundingsource>
+                        <fundingsource>
+                            <fundingtype>Charities/Societies/Foundations</fundingtype>
+                            <fundingname>QLD Cancer Council</fundingname>
+                            <fundingaddress>553 Gregory Terrace Fortitude Valley Qld
+                                4006</fundingaddress>
+                            <fundingcountry>Australia</fundingcountry>
+                        </fundingsource>
+                        <fundingsource>
+                            <fundingtype>Charities/Societies/Foundations</fundingtype>
+                            <fundingname>NSW Cancer Council</fundingname>
+                            <fundingaddress>153 Dowling Street Woolloomooloo, NSW
+                                2011</fundingaddress>
+                            <fundingcountry>Australia</fundingcountry>
+                        </fundingsource>
+                        <fundingsource>
+                            <fundingtype>Government body</fundingtype>
+                            <fundingname>Cancer Australia</fundingname>
+                            <fundingaddress>Level 14, 300 Elizabeth Street, SURRY HILLS NSW
+                                2010</fundingaddress>
+                            <fundingcountry>Australia</fundingcountry>
+                        </fundingsource>
+                        <fundingsource>
+                            <fundingtype>Government body</fundingtype>
+                            <fundingname>NHMRC</fundingname>
+                            <fundingaddress>National Health and Medical Research Council GPO Box
+                                1421 Canberra ACT 2601</fundingaddress>
+                            <fundingcountry>Australia</fundingcountry>
+                        </fundingsource>
+                    </fundingsources>
+                </FundingSponsors>
+                <Contacts>
+                    <Enquiry>
+                        <title>A/Prof</title>
+                        <name>Andrew Davidson</name>
+                        <address>Medical Oncology Royal Perth Hospital Wellington Street Perth WA
+                            6000</address>
+                        <phone>+61 8 9224 2334</phone>
+                        <fax>+61 8 9224 3126</fax>
+                        <email>andrew.davidson@health.wa.gov.au</email>
+                        <country>Australia</country>
+                        <type>Scientific Queries</type>
+                    </Enquiry>
+                    <Enquiry>
+                        <title>Mr</title>
+                        <name>Nitro trial coordinator / data manager</name>
+                        <address>National Health and Medical Research Centre (NHMRC) Clinical Trials
+                            Centre University of Sydney Locked Bag 77 Camperdown NSW 1450</address>
+                        <phone>+61 2 9562 5000</phone>
+                        <fax>+61 2 9562 5094</fax>
+                        <email>nitro@ctc.usyd.edu.au</email>
+                        <country>Australia</country>
+                        <type>Public Queries</type>
+                    </Enquiry>
+                    <Enquiry>
+                        <title>A/Prof</title>
+                        <name>Andrew Davidson</name>
+                        <address>Royal Perth Hospital Medical Oncology Wellington St, Perth, WA
+                            6000</address>
+                        <phone>+61 8 9224 2334</phone>
+                        <fax/>
+                        <email>andrew.davidson@health.wa.gov.au</email>
+                        <country>Australia</country>
+                        <type>Principal Investigator</type>
+                    </Enquiry>
+                </Contacts>
+                <DataSharingStatement>
+                    <ResultReport>
+                        <IpdDocuments>Study protocol,Data dictionary</IpdDocuments>
+                        <IpdDocumentsOther/>
+                        <IpdAnalysis>Any type of analysis</IpdAnalysis>
+                        <IpdId>1</IpdId>
+                        <IpdIdDesc>yes</IpdIdDesc>
+                        <IpdData>All participant data collected </IpdData>
+                        <IpdTimeframe>Data are available for an indefinite time. • Start date: June
+                            2023 • End date: Unknown </IpdTimeframe>
+                        <IpdAccess>Any research organisation or researcher with a valid ethics
+                            approval to conduct desired research.</IpdAccess>
+                        <IpdMechanism>As of 1st July 2023, access can be requested via the Health
+                            Data Australia catalogue (https://www.researchdata.edu.au/health).
+                            Search for the ACTRN number in the catalogue to find datasets associated
+                            with this trial.</IpdMechanism>
+                        <IpdReason/>
+                    </ResultReport>
+                    <citations>
+                        <citation>
+                            <type>Study protocol</type>
+                            <details/>
+                            <attachment/>
+                            <citationtype>IPD</citationtype>
+                            <citationdescription/>
+                            <link/>
+                            <email>info@thoraciconcology.org.au</email>
+                        </citation>
+                        <citation>
+                            <type>Data dictionary</type>
+                            <details/>
+                            <attachment/>
+                            <citationtype>IPD</citationtype>
+                            <citationdescription/>
+                            <link/>
+                            <email>info@thoraciconcology.org.au</email>
+                        </citation>
+                    </citations>
+                </DataSharingStatement>
+                <lastupdatedon>20/06/2023</lastupdatedon>
+            </OutcomeMeasures>
+        </Details>
+    </trial>
+</SearchResult>
