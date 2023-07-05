@@ -33,6 +33,7 @@ class Status_api
             'taskmanager' => $this->getTaskManagerStatus(),
             'solr' => $this->getSOLRStatus(),
             'mycelium' => $this->getMyceliumStatus(),
+            'health_portal' => $this->getHeSandaStatus(),
             'elasticsearch' => $this->getElasticSearchStatus()
         ];
     }

@@ -96,27 +96,42 @@ class HealthDataProvider
         if (count($altVersionsIDs) > 0) {
             $trial_metadata = Versions::wherein('id', $altVersionsIDs)->where("schema_id", $anzctr_schema->id)->first();
             if($trial_metadata != null){
-                $dom = new DOMDocument;
-                $dom->loadXML($trial_metadata->data);
-                $identifier = [];
-                $identifier["type"] = "ANZCTR";
-                $identifier["value"] =  $dom->getElementsByTagName("actrn")->item(0)->nodeValue;
-                $relatedStudy["title"] = $dom->getElementsByTagName("publictitle")->item(0)->nodeValue;
-                $relatedStudy['identifiers'][] = $identifier;
-                $relatedStudy["briefSummary"] = ContentProvider::getFirst($dom, array('briefsummary'));
-                $relatedStudy["conditions"] = ContentProvider::getContent($dom, array('healthcondition'));
-                $relatedStudy["conditionCodes"] = ContentProvider::getContent($dom, array('conditioncode1','conditioncode2'));
-                $relatedStudy["studyType"] = ContentProvider::getContent($dom, array('studytype'));
-                $relatedStudy["ethicsApproval"] = ContentProvider::getContent($dom, array('ethicsapproval'));
-                $relatedStudy["inclusiveCriteria"] = ContentProvider::getContent($dom, array('inclusivecriteria'));
-                $relatedStudy["interventionCode"] = ContentProvider::getContent($dom, array('interventioncode'));
-                $healthDataset["relatedStudy"] =  $relatedStudy;
+                $healthDataset["relatedStudy"] =  static::getRelatedStudy($trial_metadata->data);
             }
         }
-
-
         return $healthDataset;
     }
+
+    public static function getRelatedStudy($xml){
+        $dom = new DOMDocument;
+        $dom->loadXML($xml);
+        $identifier = [];
+        $relatedStudy = [];
+        $identifier["type"] = "ANZCTR";
+        $identifier["value"] =  $dom->getElementsByTagName("actrn")->item(0)->nodeValue;
+        $relatedStudy["title"] = preg_replace('/\s+/S', ' ', trim($dom->getElementsByTagName("publictitle")->item(0)->nodeValue));
+        $relatedStudy['identifiers'][] = $identifier;
+        $relatedStudy["briefSummary"] = ContentProvider::getFirst($dom, array('briefsummary'));
+        $relatedStudy["conditions"] = ContentProvider::getContent($dom, array('healthcondition'));
+        $relatedStudy["conditionCodes"] = ContentProvider::getContent($dom, array('conditioncode1','conditioncode2'));
+        $relatedStudy["studyType"] = ContentProvider::getContent($dom, array('studytype'));
+        $relatedStudy["ethicsApproval"] = ContentProvider::getContent($dom, array('ethicsapproval'));
+        $relatedStudy["inclusiveCriteria"] = ContentProvider::getContent($dom, array('inclusivecriteria'));
+        $relatedStudy["interventionCode"] = ContentProvider::getContent($dom, array('interventioncode'));
+        // V2 content
+        $relatedStudy["ipd_documents"] = ContentProvider::getFirst($dom, array('IpdDocuments'));
+        $relatedStudy["ipd_documents_other"] = ContentProvider::getFirst($dom, array('IpdDocumentsOther'));
+        $relatedStudy["ipd_analysis"] = ContentProvider::getFirst($dom, array('IpdAnalysis'));
+        $relatedStudy["ipd_id"] = ContentProvider::getFirst($dom, array('IpdId'));
+        $relatedStudy["ipd_id_desc"] = ContentProvider::getFirst($dom, array('IpdIdDesc'));
+        $relatedStudy["ipd_data"] = ContentProvider::getFirst($dom, array('IpdData'));
+        $relatedStudy["ipd_timeframe"] = ContentProvider::getFirst($dom, array('IpdTimeframe'));
+        $relatedStudy["ipd_access"] = ContentProvider::getFirst($dom, array('IpdAccess'));
+        $relatedStudy["ipd_mechanism"] = ContentProvider::getFirst($dom, array('IpdMechanism'));
+        $relatedStudy["ipd_reason"] = ContentProvider::getFirst($dom, array('IpdReason'));
+        return $relatedStudy;
+    }
+
 
     public static function getPublisher(RegistryObject $record){
         $xml = $record->getCurrentData()->data;

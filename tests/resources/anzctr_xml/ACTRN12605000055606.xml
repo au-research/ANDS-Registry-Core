@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SearchResult responseDate="5/07/2023 2:51 PM">
+    <NumOfActrn>1</NumOfActrn>
+    <NumOfNct>0</NumOfNct>
+    <trial>
+        <actrn>ACTRN12605000055606</actrn>
+        <utn/>
+        <publictitle>BOOST II: Benefits Of Oxygen Saturation Targeting Study</publictitle>
+        <scientifictitle>Which oxygen saturation level should we use for very premature infants? A
+            randomised controlled trial to investigate the effect of two slightly different oxygen
+            levels on the health of very premature infants</scientifictitle>
+        <trialacronym>BOOST II</trialacronym>
+        <Details>
+            <conditions>
+                <healthcondition>Preterm infants</healthcondition>
+                <conditioncode>
+                    <conditioncode1>Reproductive Health and Childbirth</conditioncode1>
+                    <conditioncode2>Normal pregnancy</conditioncode2>
+                </conditioncode>
+                <conditioncode>
+                    <conditioncode1>Reproductive Health and Childbirth</conditioncode1>
+                    <conditioncode2>Childbirth and postnatal care</conditioncode2>
+                </conditioncode>
+            </conditions>
+            <studytype>Interventional</studytype>
+            <InterventionExposure>Lower Oxygen Saturation (85%-89%) versus Higher Oxygen Saturation
+                (91%-95%)</InterventionExposure>
+            <interventioncode>None</interventioncode>
+            <Comparison>This is a comparison study and aims to compare the two ranges within the
+                normal clinical practice of 85-95% oxygen saturations. At the moment neither the
+                Lower (85-89%) nor the Higher Oxygen Saturations (91-95%) is seen as the standard,
+                and the purpose of the study is to compare both against each other in order to
+                determine the ideal target within that range.</Comparison>
+            <ControlGroup>Dose comparison</ControlGroup>
+            <OutcomeMeasures>
+                <OutcomeMeasure>
+                    <Outcome>Prior to unblinding the data for analysis, a Statistical Analysis Plan
+                        was produced and signed off by Prof Tarnow-Mordi, Dr Adrienne Kirby and Prof
+                        Val Gebski on 10th February, 2014. A specific process for determining the
+                        primary outcome of death or disability was included, as follows (Section
+                        5.5.) Infants will be classified as having had the primary endpoint if (a)
+                        they have died prior to 2 years corrected gestational age; or (b) assessment
+                        at 2 years corrected gestational age shows major disability. If an infant’s
+                        survival status at 2 years is unknown, or they are known to be alive but
+                        information on major disability is not available, their primary outcome will
+                        be missing. The classification of infants as having a major disability is
+                        determined from: * Bayley III Developmental Assessment completed by a
+                        blinded psychologist; or in some cases Bayley II Developmental Assessment *
+                        Health Status assessment completed by a blinded paediatrician; or in some
+                        cases a Short Health Status Questionnaire collected mainly via phone call to
+                        parents or a GP visit if this is not available An infant will be classified
+                        as having major disability if they are alive at 2 years corrected
+                        gestational age and meet at least one of the following criteria: * Cerebral
+                        palsy with GMFCS level &amp;gt;= 2, as indicated on the health status (Q29)
+                        or short health status (Q1) assessments * Legal blindness, as indicated on
+                        the on the health status (Q7) or short health status (Q2) assessments *
+                        Hearing loss requiring hearing aids, as indicated on the health status (Q11)
+                        or short health status (Q3) assessments * Composite cognitive score &amp;lt;
+                        85 or composite language score &amp;lt; 85 on the Bayley III assessment; or
+                        cognition Mental Development Index (MDI) &amp;lt; 70 on the Bayley II
+                        assessment If cognitive disability cannot be determined because the relevant
+                        Bayley III or Bayley II items are missing, the final criterion above can be
+                        replaced by any one of the following from the health status assessment: *
+                        Uses less than 10 words (Q13); or language problems indicated on the short
+                        health assessment (Q4) * Delayed development by more than 12 months (Q32) *
+                        Other severe impairment (Q34) If the infant does not meet any of the first
+                        three criteria, and all information on the Bayley assessment and these
+                        substitute criteria is also missing, the infant’s primary endpoint status
+                        will be missing.</Outcome>
+                    <Timepoint>At 2 years old corrected for gestation at birth.</Timepoint>
+                </OutcomeMeasure>
+                <Purpose>Treatment</Purpose>
+                <Phase>Phase 3</Phase>
+                <EthicsApproval>Approved</EthicsApproval>
+                <briefsummary>Oxygen is the commonest neonatal therapy. Unfortunately, both too much
+                    and too little oxygen may be harmful for very premature infants. We now measure
+                    the oxygen in a baby's blood by oxygen saturation but the optimum range in the
+                    first few weeks is unknown and no randomised controlled trial (RCT) has
+                    addressed this question. This proposal is for Australian arm of a major
+                    international study involving 5000 babies, born at less than 28 weeks, to
+                    address this question. Babies will be randomised to a higher or lower target
+                    range of oxygen saturation from birth (85-89% or 91-95%). For all oximeters
+                    staff will target a masked range of 88-92%. We will assess which of the two
+                    target ranges is associated with the best overall outcome, which is a composite
+                    measure of survival, disability on a standard test of neurodevelopment (Bayley
+                    scales), and visual function at 2 years of age.</briefsummary>
+                <trialwebsite>http://www.ctc.usyd.edu.au/BoostII/main_body/Home.htm</trialwebsite>
+                <recruitment>
+                    <recruitmentstatus>Stopped early</recruitmentstatus>
+                    <anticipatedstartdate>1/08/2005</anticipatedstartdate>
+                    <anticipatedenddate/>
+                    <samplesize>1135</samplesize>
+                    <recruitmentstate>ACT,NSW,QLD,SA,TAS,WA,VIC</recruitmentstate>
+                    <hospital/>
+                    <postcode/>
+                    <countrysoutsideaustralia>
+                        <countryoutsideaustralia>
+                            <country>Taiwan, Province Of China</country>
+                            <state/>
+                        </countryoutsideaustralia>
+                    </countrysoutsideaustralia>
+                </recruitment>
+                <eligibility>
+                    <inclusivecriteria>a) born &amp;lt;28 weeks gestation b) less than 24 hours of
+                        agec) there is informed consent by parent(s) or legal
+                        guardian</inclusivecriteria>
+                    <inclusiveminage>0</inclusiveminage>
+                    <inclusiveminagetype>Days</inclusiveminagetype>
+                    <inclusivemaxage>1</inclusivemaxage>
+                    <inclusivemaxagetype>Days</inclusivemaxagetype>
+                    <inclusivegender>Both males and females</inclusivegender>
+                    <healthyvolunteer>No</healthyvolunteer>
+                    <exclusivecriteria>a) There is a known congenital anomaly that could affect
+                        oxygenation or developmentb) attendance for follow-up for 2 years is judged
+                        unlikely.</exclusivecriteria>
+                </eligibility>
+                <FundingSponsors>
+                    <primarysponsortype>Government body</primarysponsortype>
+                    <primarysponsorname>NHMRC Clinical Trials Centre</primarysponsorname>
+                    <primarysponsoraddress>Locked Bag 77, Camperdown, NSW
+                        1450</primarysponsoraddress>
+                    <primarysponsorcountry>Australia</primarysponsorcountry>
+                    <secondarysponsors>
+                        <secondarysponsor>
+                            <type>None</type>
+                            <name>N/A</name>
+                            <address/>
+                            <country/>
+                        </secondarysponsor>
+                    </secondarysponsors>
+                    <fundingsources>
+                        <fundingsource>
+                            <fundingtype>Government body</fundingtype>
+                            <fundingname>NHMRC Grant</fundingname>
+                            <fundingaddress>GPO Box 9848, Canberra City, ACT 2601</fundingaddress>
+                            <fundingcountry>Australia</fundingcountry>
+                        </fundingsource>
+                    </fundingsources>
+                </FundingSponsors>
+                <Contacts>
+                    <Enquiry>
+                        <title>Prof</title>
+                        <name>Prof William Tarnow-Mordi</name>
+                        <address>Professor of Neonatal Medicine NHMRC Clinical Trials Centre
+                            University of Sydney Camperdown NSW 2050 </address>
+                        <phone>+61 2 98458900</phone>
+                        <fax>+61 2 98457490</fax>
+                        <email>williamtm@med.usyd.edu.au</email>
+                        <country>Australia</country>
+                        <type>Scientific Queries</type>
+                    </Enquiry>
+                    <Enquiry>
+                        <title>Dr</title>
+                        <name>Alpana Ghadge</name>
+                        <address>NHMRC Clinical Trials Centre Locked Bag 77 Building F 88 Mallett
+                            Street Camperdown Sydney NSW 2050</address>
+                        <phone>+61 2 95625000</phone>
+                        <fax>+61 2 95651863</fax>
+                        <email>boost2@ctc.usyd.edu.au</email>
+                        <country>Australia</country>
+                        <type>Public Queries</type>
+                    </Enquiry>
+                    <Enquiry>
+                        <title>Prof</title>
+                        <name>William Tarnow-Mordi</name>
+                        <address>NHMRC Clinical Trials Centre Locked Bag 77 Camperdown NSW1450
+                            Australia</address>
+                        <phone>+61 2 9562 5000</phone>
+                        <fax/>
+                        <email>williamtm@med.usyd.edu.au</email>
+                        <country>Australia</country>
+                        <type>Principal Investigator</type>
+                    </Enquiry>
+                </Contacts>
+                <DataSharingStatement>
+                    <ResultReport>
+                        <IpdDocuments/>
+                        <IpdDocumentsOther/>
+                        <IpdAnalysis/>
+                        <IpdId/>
+                        <IpdIdDesc>Undecided</IpdIdDesc>
+                        <IpdData/>
+                        <IpdTimeframe/>
+                        <IpdAccess/>
+                        <IpdMechanism/>
+                        <IpdReason/>
+                    </ResultReport>
+                    <citations/>
+                </DataSharingStatement>
+                <lastupdatedon>8/06/2018</lastupdatedon>
+            </OutcomeMeasures>
+        </Details>
+    </trial>
+</SearchResult>

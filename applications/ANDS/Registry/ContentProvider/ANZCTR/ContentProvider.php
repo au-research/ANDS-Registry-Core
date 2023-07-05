@@ -34,7 +34,7 @@ class ContentProvider{
                     }
                     // all ACTRN identifiers must be prefixed with 'ACTRN' to help with search
                     $identifier = "ACTRN" . $identifier;
-                    $content = ANZCTRUtil::retrieveMetadata($identifier);
+                    $content = ANZCTRUtil::retrieveMetadataV2($identifier);
                     ContentProvider::storeACTRNMetadata($record,$content);
                     $dom = new DOMDocument;
                     $dom->loadXML($content);
@@ -107,7 +107,7 @@ class ContentProvider{
              foreach ($element as $e) {
                  foreach ($e->childNodes as $node) {
                      if(!in_array($node->nodeValue, $content))
-                         $content[] = $node->nodeValue;
+                         $content[] = preg_replace('/\s+/S', ' ', trim($node->nodeValue));
                  }
              }
          }
@@ -120,7 +120,7 @@ class ContentProvider{
         foreach ($elements as $el) {
             $element = $dom->getElementsByTagName($el);
             foreach ($element as $e) {
-                return $e->nodeValue;
+                return preg_replace('/\s+/S', ' ', trim($e->nodeValue));
             }
         }
         return "";

@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SearchResult responseDate="5/07/2023 1:38 PM">
+    <NumOfActrn>1</NumOfActrn>
+    <NumOfNct>0</NumOfNct>
+    <trial>
+        <actrn>ACTRN12612000544875</actrn>
+        <utn/>
+        <publictitle>A Randomised Controlled Trial of the Men in Mind Training for Mental Health
+            Practitioners</publictitle>
+        <scientifictitle>A Randomised Controlled Trial of the Efficacy of the Men in Mind Training
+            on Mental Health Practitioners' Clinical Competencies for Working with Male
+            Clients</scientifictitle>
+        <trialacronym/>
+        <Details>
+            <conditions>
+                <healthcondition>Mental health practitioners' clinical competencies for working with
+                    male clients</healthcondition>
+                <conditioncode>
+                    <conditioncode1>Mental Health</conditioncode1>
+                    <conditioncode2>Studies of normal psychology, cognitive function and
+                        behaviour</conditioncode2>
+                </conditioncode>
+                <conditioncode>
+                    <conditioncode1>Public Health</conditioncode1>
+                    <conditioncode2>Health service research</conditioncode2>
+                </conditioncode>
+            </conditions>
+            <studytype>Interventional</studytype>
+            <InterventionExposure>The intervention is an online training program designed
+                specifically for this study. The training, entitled ‘Men in Mind’, is designed for
+                mental health practitioners working with men. Since men engage in psychological
+                treatment at lower rates than women, the goal of the training is to increase
+                clinicians’ competence and confidence in providing psychological treatment to male
+                clients. Participants assigned to the intervention group will be provided access to
+                the training for a period of six (6) weeks. The training is conducted entirely
+                online, in a self-paced format, and is estimated to take 8 hours to complete. The
+                training program consists of five modules comprising content such as: male client
+                and clinician gender socialisation and the interaction between these in practice;
+                engagement and motivation strategies for male clients; and identifying and
+                responding effectively to male distress and suicidality in counselling. Each of the
+                five modules contains a mix of text- and video-based content delivery (41 videos
+                across the course), presented alongside engaging imagery throughout. A number of
+                learning design tools have been included in the training program to facilitate
+                engagement and participants’ learning. Furthermore, the trial design includes
+                regular communication with participants in order to encourage engagement and improve
+                adherence.</InterventionExposure>
+            <interventioncode>Behaviour</interventioncode>
+            <Comparison>The comparator will be a waitlist control condition of six (6) weeks'
+                duration. Participants in the waitlist control group will not receive any training
+                during the six-week control period.</Comparison>
+            <ControlGroup>Active</ControlGroup>
+            <OutcomeMeasures>
+                <OutcomeMeasure>
+                    <Outcome>The difference between intervention and control groups in mean pre–post
+                        (T1–T2) changes in self-reported clinical competencies for working with male
+                        clients, as measured by scores on the Engaging Men in Therapy Scale
+                        (EMITS)</Outcome>
+                    <Timepoint>Immediately post-intervention completion (T2)</Timepoint>
+                </OutcomeMeasure>
+                <Purpose>Educational / counselling / training</Purpose>
+                <Phase>Not Applicable</Phase>
+                <EthicsApproval>Approved</EthicsApproval>
+                <briefsummary>The aim of this project is to evaluate the efficacy of an online
+                    training program for mental health clinicians. The training is called Men in
+                    Mind, and focuses on engaging male clients in therapy and responding effectively
+                    to men’s distress and suicidality. The project will also evaluate the cost of
+                    the intervention per user. The online ~8 hour, 5 module training program has
+                    been developed in consultation with international experts in men’s mental
+                    health, and is designed to be a leading evidence-based resource for clinicians
+                    to develop skills and knowledge in male-specific adaptations to treatment. The
+                    project represents a partnership between Movember (leading the delivery of the
+                    intervention), and Orygen/Centre for Youth Mental Health, The University of
+                    Melbourne (leading the evaluation of the intervention). The online data
+                    management system will be managed by our sub-contractor, Strategic Data Ltd. The
+                    effectiveness of Men in Mind will be evaluated in a waitlist-controlled
+                    randomised superiority trial. Intervention group participants will complete
+                    self-report and vignette-based assessments before the training, and 6 weeks
+                    after they complete the training, in addition to 3-months / 12-weeks follow-up.
+                    Control group participants will receive access to the training following a
+                    6-week waiting period, and after completion of pre-training and post-waitlist
+                    assessments. The primary outcome will be whether Men in Mind training
+                    participants, relative to waitlist control participants, display more greatly
+                    improved self-reported capacity to engage male clients at 6 weeks post-training
+                    according to the Engaging Men in Therapy Scale (EMITS).</briefsummary>
+                <trialwebsite>https://meninmind.movember.com/</trialwebsite>
+                <recruitment>
+                    <recruitmentstatus>Completed</recruitmentstatus>
+                    <anticipatedstartdate>1/02/2022</anticipatedstartdate>
+                    <anticipatedenddate/>
+                    <samplesize>587</samplesize>
+                    <recruitmentstate>ACT,NSW,NT,QLD,SA,TAS,WA,VIC</recruitmentstate>
+                    <hospital/>
+                    <postcode/>
+                    <countrysoutsideaustralia>
+                        <countryoutsideaustralia>
+                            <country/>
+                            <state/>
+                        </countryoutsideaustralia>
+                    </countrysoutsideaustralia>
+                </recruitment>
+                <eligibility>
+                    <inclusivecriteria>Mental health practitioner working in Australia; Currently
+                        administering psychotherapy to male clients, either in person or via
+                        telehealth; Fluent in English; AND Provides informed consent to participate. </inclusivecriteria>
+                    <inclusiveminage>18</inclusiveminage>
+                    <inclusiveminagetype>Years</inclusiveminagetype>
+                    <inclusivemaxage/>
+                    <inclusivemaxagetype>No limit</inclusivemaxagetype>
+                    <inclusivegender>Both males and females</inclusivegender>
+                    <healthyvolunteer>Yes</healthyvolunteer>
+                    <exclusivecriteria>Undergraduate student; Not currently administering
+                        psychotherapy to male clients; Not fluent in English; OR Does not consent to
+                        participate. </exclusivecriteria>
+                </eligibility>
+                <FundingSponsors>
+                    <primarysponsortype>Charities/Societies/Foundations</primarysponsortype>
+                    <primarysponsorname>Orygen</primarysponsorname>
+                    <primarysponsoraddress>Orygen 35 Poplar Road Parkville VIC 3052
+                        Australia</primarysponsoraddress>
+                    <primarysponsorcountry>Australia</primarysponsorcountry>
+                    <secondarysponsors>
+                        <secondarysponsor>
+                            <type>None</type>
+                            <name/>
+                            <address/>
+                            <country/>
+                        </secondarysponsor>
+                    </secondarysponsors>
+                    <fundingsources>
+                        <fundingsource>
+                            <fundingtype>Government body</fundingtype>
+                            <fundingname>Australian Government Department of Health</fundingname>
+                            <fundingaddress>Department of Health GPO Box 9848 Canberra ACT 2601
+                                Australia</fundingaddress>
+                            <fundingcountry>Australia</fundingcountry>
+                        </fundingsource>
+                        <fundingsource>
+                            <fundingtype>Charities/Societies/Foundations</fundingtype>
+                            <fundingname>Movember</fundingname>
+                            <fundingaddress>Movember PO Box 60 East Melbourne VIC 8002
+                                Australia</fundingaddress>
+                            <fundingcountry>Australia</fundingcountry>
+                        </fundingsource>
+                    </fundingsources>
+                </FundingSponsors>
+                <Contacts>
+                    <Enquiry>
+                        <title>Dr</title>
+                        <name>Zac Seidler</name>
+                        <address>Orygen 35 Poplar Road Parkville VIC 3052</address>
+                        <phone>+61435120926</phone>
+                        <fax/>
+                        <email>zac.seidler@orygen.org.au</email>
+                        <country>Australia</country>
+                        <type>Principal Investigator</type>
+                    </Enquiry>
+                    <Enquiry>
+                        <title>Dr</title>
+                        <name>Zac Seidler</name>
+                        <address>Orygen 35 Poplar Road Parkville VIC 3052</address>
+                        <phone>+61435120926</phone>
+                        <fax/>
+                        <email>zac.seidler@orygen.org.au</email>
+                        <country>Australia</country>
+                        <type>Public Queries</type>
+                    </Enquiry>
+                    <Enquiry>
+                        <title>Dr</title>
+                        <name>Zac Seidler</name>
+                        <address>Orygen 35 Poplar Road Parkville VIC 3052</address>
+                        <phone>+61435120926</phone>
+                        <fax/>
+                        <email>zac.seidler@orygen.org.au</email>
+                        <country>Australia</country>
+                        <type>Scientific Queries</type>
+                    </Enquiry>
+                </Contacts>
+                <DataSharingStatement>
+                    <ResultReport>
+                        <IpdDocuments>Informed consent form,Ethical approval</IpdDocuments>
+                        <IpdDocumentsOther/>
+                        <IpdAnalysis>All.</IpdAnalysis>
+                        <IpdId>1</IpdId>
+                        <IpdIdDesc>yes</IpdIdDesc>
+                        <IpdData>De-identified individual quantitative participant data collected
+                            during the trial underlying published results.</IpdData>
+                        <IpdTimeframe>Following publication of primary results; no end date
+                            determined.</IpdTimeframe>
+                        <IpdAccess>Researchers who provide a methodologically sound proposal and who
+                            have ethics approval from a research institution. This will be
+                            determined on a case-by-case basis at the discretion of the Primary
+                            Sponsor and Principal Investigator</IpdAccess>
+                        <IpdMechanism>The data will be stored on the servers of Orygen. Access will
+                            be subject to approvals by the Principal Investigator, Dr. Zac Seidler
+                            (zac.seidler@orygen.org.au).</IpdMechanism>
+                        <IpdReason/>
+                    </ResultReport>
+                    <citations>
+                        <citation>
+                            <type>Ethical approval</type>
+                            <details/>
+                            <attachment>/Steps11and12/382561-(Uploaded-01-11-2021-10-17-50)-Study-related
+                                document.pdf</attachment>
+                            <citationtype>IPD</citationtype>
+                            <citationdescription/>
+                            <link/>
+                            <email/>
+                        </citation>
+                        <citation>
+                            <type>Informed consent form</type>
+                            <details/>
+                            <attachment>/Steps11and12/382561-(Uploaded-01-11-2021-11-50-55)-Study-related
+                                document.docx</attachment>
+                            <citationtype>IPD</citationtype>
+                            <citationdescription/>
+                            <link/>
+                            <email/>
+                        </citation>
+                    </citations>
+                </DataSharingStatement>
+                <lastupdatedon>7/10/2022</lastupdatedon>
+            </OutcomeMeasures>
+        </Details>
+    </trial>
+</SearchResult>
