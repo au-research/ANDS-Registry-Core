@@ -92,11 +92,11 @@ class ANZCTRUtil
             .'<AnzctrTrialDetailsV2 xmlns="http://anzctr.org.au/WebServices/AnzctrWebServices">'
             .'<ids>';
 
-        $soapFooter = '</ids></AnzctrTrialDetailsV2><version>2</version></soap12:Body></soap12:Envelope>';
+        $soapFooter = '</ids><version>2</version></AnzctrTrialDetailsV2></soap12:Body></soap12:Envelope>';
         $client = new Client(['base_url'=>$soapUrl]);
         try {
             $response = $client->post(
-                'https://www.anzctr.org.au/WebServices/AnzctrWebservices.asmx?op=AnzctrTrialDetailsV2',
+                'https://www.anzctr.org.au/WebServices/AnzctrWebservices.asmx',
                 [
                     'body'    => $soapHeader.$identifier.$soapFooter,
                     'headers' => ['User-Agent' => 'ARDC Harvester',
