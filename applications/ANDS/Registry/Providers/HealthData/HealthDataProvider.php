@@ -125,6 +125,7 @@ class HealthDataProvider
         $dataSharingStatement = [];
         $dataSharingStatement["hasStudyProtocol"] = ContentProvider::getStudyProtocol($dom);
         $dataSharingStatement["hasDataDictionary"] = ContentProvider::getDataDictionary($dom);
+        $dataSharingStatement["ipdIdDesc"] = ContentProvider::getFirst($dom, array('IpdIdDesc'));
         $dataSharingStatement["ipdData"] = ContentProvider::getFirst($dom, array('IpdData'));
         $dataSharingStatement["ipdTimeframe"] = ContentProvider::getFirst($dom, array('IpdTimeframe'));
         $dataSharingStatement["ipdAccess"] = ContentProvider::getFirst($dom, array('IpdAccess'));
@@ -132,7 +133,8 @@ class HealthDataProvider
 
         if($dataSharingStatement["hasStudyProtocol"] || $dataSharingStatement["hasDataDictionary"] ||
             $dataSharingStatement["ipdData"] !== "" || $dataSharingStatement["ipdTimeframe"] !== "" ||
-            $dataSharingStatement["ipdAccess"] !== "" || $dataSharingStatement["ipdAnalysis"] !== ""){
+            $dataSharingStatement["ipdAccess"] !== "" || $dataSharingStatement["ipdAnalysis"] !== "" ||
+            $dataSharingStatement["ipdIdDesc"] !== ""){
             $relatedStudy['dataSharingStatement'] = $dataSharingStatement;
         }else{
             $relatedStudy['dataSharingStatement'] = null;
