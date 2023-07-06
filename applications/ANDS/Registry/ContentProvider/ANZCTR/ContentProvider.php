@@ -8,7 +8,9 @@ use ANDS\RegistryObject;
 use ANDS\RegistryObject\RegistryObjectVersion;
 use ANDS\Util\ANZCTRUtil;
 use ANDS\Util\Config;
+use ANDS\Util\XMLUtil;
 use DOMDocument;
+use DOMXPath;
 
 class ContentProvider{
 
@@ -100,14 +102,36 @@ class ContentProvider{
         ];
     }
 
-    public static function getContent($dom, $elements){
+
+    public static function getContentByXPath(DOMDocument $dom, $XPath)
+    {
+        $xpath = new DOMXpath($dom);
+        $elements = $xpath->query($XPath);
+        $content = [];
+        foreach ($elements AS $element) {
+            $nodeValue = preg_replace('/\s+/S', ' ', trim($element->nodeValue));
+            if(!in_array($nodeValue, $content))
+                $content[] = $nodeValue;
+        }
+        sort($content);
+        return $content;
+    }
+
+    /**
+     * @param DOMDocument $dom
+     * @param $elements
+     * @return array
+     */
+    public static function getContent(DOMDocument $dom, $elements)
+    {
         $content = [];
          foreach ($elements as $el) {
              $element = $dom->getElementsByTagName($el);
              foreach ($element as $e) {
                  foreach ($e->childNodes as $node) {
-                     if(!in_array($node->nodeValue, $content))
-                         $content[] = preg_replace('/\s+/S', ' ', trim($node->nodeValue));
+                     $nodeValue = preg_replace('/\s+/S', ' ', trim($node->nodeValue));
+                     if(!in_array($nodeValue, $content))
+                         $content[] = $nodeValue;
                  }
              }
          }
@@ -115,7 +139,7 @@ class ContentProvider{
         return $content;
     }
 
-    public static function getFirst($dom, $elements){
+    public static function getFirst(DOMDocument $dom, $elements){
 
         foreach ($elements as $el) {
             $element = $dom->getElementsByTagName($el);

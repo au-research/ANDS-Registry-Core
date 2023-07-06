@@ -119,19 +119,21 @@ class HealthDataProvider
         $relatedStudy["inclusiveCriteria"] = ContentProvider::getContent($dom, array('inclusivecriteria'));
         $relatedStudy["interventionCode"] = ContentProvider::getContent($dom, array('interventioncode'));
         // V2 content
-        $relatedStudy["ipd_documents"] = ContentProvider::getFirst($dom, array('IpdDocuments'));
-        $relatedStudy["ipd_documents_other"] = ContentProvider::getFirst($dom, array('IpdDocumentsOther'));
-        $relatedStudy["ipd_analysis"] = ContentProvider::getFirst($dom, array('IpdAnalysis'));
-        $relatedStudy["ipd_id"] = ContentProvider::getFirst($dom, array('IpdId'));
-        $relatedStudy["ipd_id_desc"] = ContentProvider::getFirst($dom, array('IpdIdDesc'));
-        $relatedStudy["ipd_data"] = ContentProvider::getFirst($dom, array('IpdData'));
-        $relatedStudy["ipd_timeframe"] = ContentProvider::getFirst($dom, array('IpdTimeframe'));
-        $relatedStudy["ipd_access"] = ContentProvider::getFirst($dom, array('IpdAccess'));
-        $relatedStudy["ipd_mechanism"] = ContentProvider::getFirst($dom, array('IpdMechanism'));
-        $relatedStudy["ipd_reason"] = ContentProvider::getFirst($dom, array('IpdReason'));
+        $dataSharingStatement = [];
+        $dataSharingStatement["citationTypes"] = ContentProvider::getContentByXPath($dom, '//citation/type');
+        $dataSharingStatement["ipdDocuments"] = ContentProvider::getFirst($dom, array('IpdDocuments'));
+        $dataSharingStatement["ipdDocumentsOther"] = ContentProvider::getFirst($dom, array('IpdDocumentsOther'));
+        $dataSharingStatement["ipdAnalysis"] = ContentProvider::getFirst($dom, array('IpdAnalysis'));
+        $dataSharingStatement["ipdId"] = ContentProvider::getFirst($dom, array('IpdId'));
+        $dataSharingStatement["ipdIdDesc"] = ContentProvider::getFirst($dom, array('IpdIdDesc'));
+        $dataSharingStatement["ipdData"] = ContentProvider::getFirst($dom, array('IpdData'));
+        $dataSharingStatement["ipdTimeframe"] = ContentProvider::getFirst($dom, array('IpdTimeframe'));
+        $dataSharingStatement["ipdAccess"] = ContentProvider::getFirst($dom, array('IpdAccess'));
+        $dataSharingStatement["ipdMechanism"] = ContentProvider::getFirst($dom, array('IpdMechanism'));
+        $dataSharingStatement["ipdReason"] = ContentProvider::getFirst($dom, array('IpdReason'));
+        $relatedStudy['dataSharingStatement'] = $dataSharingStatement;
         return $relatedStudy;
     }
-
 
     public static function getPublisher(RegistryObject $record){
         $xml = $record->getCurrentData()->data;
