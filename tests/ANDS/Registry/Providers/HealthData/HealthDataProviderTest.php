@@ -15,7 +15,7 @@ class HealthDataProviderTest extends \RegistryTestClass
     public function test_health_data_v2(){
         $xml = Storage::disk('test')->get('anzctr_xml/ACTRN12605000055606.xml');
         $actual = HealthDataProvider::getRelatedStudy($xml);
-        $this->assertContains('Undecided', $actual['dataSharingStatement']['ipdIdDesc']);
+        $this->assertNull($actual['dataSharingStatement']);
     }
 
     public function test_health_data__empty_data_sharing_v2(){

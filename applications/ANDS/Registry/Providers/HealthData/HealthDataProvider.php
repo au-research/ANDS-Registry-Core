@@ -133,11 +133,14 @@ class HealthDataProvider
 
         if($dataSharingStatement["hasStudyProtocol"] || $dataSharingStatement["hasDataDictionary"] ||
             $dataSharingStatement["ipdData"] !== "" || $dataSharingStatement["ipdTimeframe"] !== "" ||
-            $dataSharingStatement["ipdAccess"] !== "" || $dataSharingStatement["ipdAnalysis"] !== "" ||
-            $dataSharingStatement["ipdIdDesc"] !== ""){
+            $dataSharingStatement["ipdAccess"] !== "" || $dataSharingStatement["ipdAnalysis"] !== ""){
             $relatedStudy['dataSharingStatement'] = $dataSharingStatement;
         }else{
-            $relatedStudy['dataSharingStatement'] = null;
+            if(str_contains(strtolower($dataSharingStatement["ipdIdDesc"]),'yes')){
+                $relatedStudy['dataSharingStatement'] = $dataSharingStatement;
+            }else{
+                $relatedStudy['dataSharingStatement'] = null;
+            }
         }
 
         return $relatedStudy;
