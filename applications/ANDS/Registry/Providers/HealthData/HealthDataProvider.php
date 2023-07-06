@@ -26,6 +26,8 @@ class HealthDataProvider
     private static $doi_schema_uri = 'http://datacite.org/schema/kernel-4';
     private static $anzctr_schema_uri = 'https://anzctr_org.au';
 
+    private static $anzctr_trial_url = 'https://www.anzctr.org.au/Trial/Registration/TrialReview.aspx?ACTRN=';
+
     /**
      * @throws Exception
      */
@@ -109,6 +111,7 @@ class HealthDataProvider
         $relatedStudy = [];
         $identifier["type"] = "ANZCTR";
         $identifier["value"] =  $dom->getElementsByTagName("actrn")->item(0)->nodeValue;
+        $relatedStudy["url"] = static::$anzctr_trial_url . substr($identifier["value"], -14);
         $relatedStudy["title"] = preg_replace('/\s+/S', ' ', trim($dom->getElementsByTagName("publictitle")->item(0)->nodeValue));
         $relatedStudy['identifiers'][] = $identifier;
         $relatedStudy["briefSummary"] = ContentProvider::getFirst($dom, array('briefsummary'));
@@ -120,18 +123,21 @@ class HealthDataProvider
         $relatedStudy["interventionCode"] = ContentProvider::getContent($dom, array('interventioncode'));
         // V2 content
         $dataSharingStatement = [];
-        $dataSharingStatement["citationTypes"] = ContentProvider::getContentByXPath($dom, '//citation/type');
-        $dataSharingStatement["ipdDocuments"] = ContentProvider::getFirst($dom, array('IpdDocuments'));
-        $dataSharingStatement["ipdDocumentsOther"] = ContentProvider::getFirst($dom, array('IpdDocumentsOther'));
-        $dataSharingStatement["ipdAnalysis"] = ContentProvider::getFirst($dom, array('IpdAnalysis'));
-        $dataSharingStatement["ipdId"] = ContentProvider::getFirst($dom, array('IpdId'));
-        $dataSharingStatement["ipdIdDesc"] = ContentProvider::getFirst($dom, array('IpdIdDesc'));
+        $dataSharingStatement["hasStudyProtocol"] = ContentProvider::getStudyProtocol($dom);
+        $dataSharingStatement["hasDataDictionary"] = ContentProvider::getDataDictionary($dom);
         $dataSharingStatement["ipdData"] = ContentProvider::getFirst($dom, array('IpdData'));
         $dataSharingStatement["ipdTimeframe"] = ContentProvider::getFirst($dom, array('IpdTimeframe'));
         $dataSharingStatement["ipdAccess"] = ContentProvider::getFirst($dom, array('IpdAccess'));
-        $dataSharingStatement["ipdMechanism"] = ContentProvider::getFirst($dom, array('IpdMechanism'));
-        $dataSharingStatement["ipdReason"] = ContentProvider::getFirst($dom, array('IpdReason'));
-        $relatedStudy['dataSharingStatement'] = $dataSharingStatement;
+        $dataSharingStatement["ipdAnalysis"] = ContentProvider::getFirst($dom, array('IpdAnalysis'));
+
+        if($dataSharingStatement["hasStudyProtocol"] || $dataSharingStatement["hasDataDictionary"] ||
+            $dataSharingStatement["ipdData"] !== "" || $dataSharingStatement["ipdTimeframe"] !== "" ||
+            $dataSharingStatement["ipdAccess"] !== "" || $dataSharingStatement["ipdAnalysis"] !== ""){
+            $relatedStudy['dataSharingStatement'] = $dataSharingStatement;
+        }else{
+            $relatedStudy['dataSharingStatement'] = null;
+        }
+
         return $relatedStudy;
     }
 

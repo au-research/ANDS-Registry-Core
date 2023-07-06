@@ -15,25 +15,27 @@ class HealthDataProviderTest extends \RegistryTestClass
     public function test_health_data_v2(){
         $xml = Storage::disk('test')->get('anzctr_xml/ACTRN12605000055606.xml');
         $actual = HealthDataProvider::getRelatedStudy($xml);
-        $this->assertContains("Undecided", $actual['dataSharingStatement']);
+        $this->assertNull($actual['dataSharingStatement']);
     }
 
     public function test_health_data__empty_data_sharing_v2(){
         $xml = Storage::disk('test')->get('anzctr_xml/ACTRN12612000544875.xml');
         $actual = HealthDataProvider::getRelatedStudy($xml);
-
-        $this->assertContains("Informed consent form,Ethical approval", $actual['dataSharingStatement']);
+        $this->assertFalse($actual['dataSharingStatement']['hasStudyProtocol']);
     }
 
     public function test_health_data_2_v2(){
         $xml = Storage::disk('test')->get('anzctr_xml/ACTRN12616000736448.xml');
         $actual = HealthDataProvider::getRelatedStudy($xml);
+        $this->assertTrue($actual['dataSharingStatement']['hasStudyProtocol']);
         $this->assertContains("Coronary artery disease", $actual['conditions']);
     }
 
     public function test_health_data_3_v2(){
         $xml = Storage::disk('test')->get('anzctr_xml/ACTRN12608000588392.xml');
         $actual = HealthDataProvider::getRelatedStudy($xml);
+        $this->assertTrue($actual['dataSharingStatement']['hasStudyProtocol']);
+        $this->assertTrue($actual['dataSharingStatement']['hasDataDictionary']);
         $this->assertContains("A Phase III, randomised trial of adding nitroglycerin to first line chemotherapy for advanced non-small cell lung cancer", $actual);
     }
 

@@ -102,8 +102,29 @@ class ContentProvider{
         ];
     }
 
+    public static function getStudyProtocol($dom){
+        $types = static::getContentByXPath($dom, '//citation/type');
+        foreach ($types as $type){
+            if(trim(strtolower($type)) === 'study protocol'){
+                return true;
+            }
+        }
+        return false;
+    }
 
-    public static function getContentByXPath(DOMDocument $dom, $XPath)
+
+    public static function getDataDictionary($dom){
+        $types = static::getContentByXPath($dom, '//citation/type');
+        foreach ($types as $type){
+            if(trim(strtolower($type)) === 'data dictionary'){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    private static function getContentByXPath(DOMDocument $dom, $XPath)
     {
         $xpath = new DOMXpath($dom);
         $elements = $xpath->query($XPath);
