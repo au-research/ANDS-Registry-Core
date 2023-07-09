@@ -162,7 +162,7 @@ class DataAnalyser extends GenericScript implements GenericScriptRunnable
         foreach ($this->id_array as $index => $id) {
             $record = RegistryObjectsRepository::getRecordByID($id);
             try{
-                $result = $myceliumClient->indexRecord($record, false);
+                $result = $myceliumClient->indexRecord($record);
                 // it just says done with 200,
                 if ($result->getStatusCode() === 200) {
                     $cSuccess++;

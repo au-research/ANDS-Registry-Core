@@ -43,8 +43,9 @@ class ProcessAffectedRelationships extends ImportSubTask
             $this->addError("Failed to contact Mycelium at $myceliumUrl. ProcessAffectedRelationships is skipped");
             return;
         }
-
-        $myceliumClient->startProcessingSideEffectQueue($myceliumRequestId);
+        $importedRecords = $this->parent()->getTaskData("importedRecords");
+        // Pass on Imported Records, so they won't be included in the affected processing
+        $myceliumClient->startProcessingSideEffectQueue($myceliumRequestId, $importedRecords);
 
         $requestStatus = null;
         $startTime = microtime(true);
