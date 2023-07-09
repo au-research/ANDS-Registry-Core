@@ -41,41 +41,49 @@ class IndexPortal extends ImportSubTask
         $this->parent()->updateHarvest(
             ["importer_message" => "Indexing $total importedRecords"]
         );
-
+        $last_record_index = $this->parent()->getTaskData("last_record_index");
         foreach ($importedRecords as $index=>$roID) {
-            $record = RegistryObjectsRepository::getRecordByID($roID);
-            if($record == null){
-                continue;
-            }
-            try {
-                $portalIndex = RIFCSIndexProvider::get($record);
-                $this->insertSolrDoc($portalIndex);
-            } catch (\Exception $e) {
-                $msg = $e->getMessage();
-                if(str_contains($msg, 'org.locationtech.jts.geom.TopologyException')){
-                    // try indexing without the spatial data if it's invalid WKT
+            if($last_record_index != null && $last_record_index >= $index){
+                $this->updateProgress($index, $total, "skipping ($index/$total))");
+            }else {
+                $record = RegistryObjectsRepository::getRecordByID($roID);
+                if ($record != null) {
                     try {
-                        $portalIndex = RIFCSIndexProvider::get($record, false);
+                        $portalIndex = RIFCSIndexProvider::get($record);
                         $this->insertSolrDoc($portalIndex);
-                    } catch (\Exception $ee) {
-                        $msg = $ee->getMessage();
-                        if (!$msg) {
-                            $msg = implode(" ", array_first($ee->getTrace())['args']);
+                        // set last_record_index when process ran successfully
+                        $this->parent()->setTaskData("last_record_index", $index);
+                        $this->parent()->save();
+                    } catch (\Exception $e) {
+                        $msg = $e->getMessage();
+                        if (str_contains($msg, 'org.locationtech.jts.geom.TopologyException')) {
+                            // try indexing without the spatial data if it's invalid WKT
+                            try {
+                                $portalIndex = RIFCSIndexProvider::get($record, false);
+                                $this->insertSolrDoc($portalIndex);
+                            } catch (\Exception $ee) {
+                                $msg = $ee->getMessage();
+                                if (!$msg) {
+                                    $msg = implode(" ", array_first($ee->getTrace())['args']);
+                                }
+                                $this->addError("Error getting portalIndex for $roID : $msg");
+                            }
+                        } else {
+                            if (!$msg) {
+                                $msg = implode(" ", array_first($e->getTrace())['args']);
+                            }
+                            $this->addError("Error getting portalIndex for $roID : $msg");
                         }
-                        $this->addError("Error getting portalIndex for $roID : $msg");
                     }
-                }
-                else{
-                    if (!$msg) {
-                        $msg = implode(" ", array_first($e->getTrace())['args']);
-                    }
-                    $this->addError("Error getting portalIndex for $roID : $msg");
+                    // save last_sync_portal
+                    DatesProvider::touchSync($record);
+                    $this->updateProgress($index, $total, "Processed ($index/$total) $record->title");
                 }
             }
-            // save last_sync_portal
-            DatesProvider::touchSync($record);
-            $this->updateProgress($index, $total, "Processed ($index/$total) $record->title");
         }
+        // unset last_record_index when finished
+        $this->parent()->setTaskData("last_record_index", null);
+        $this->parent()->save();
         $this->log("Finished Indexing $total records");
     }
 
