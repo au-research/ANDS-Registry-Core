@@ -10,7 +10,7 @@ class RecordsRelationshipController
     public function index($id)
     {
         $record = RegistryObjectsRepository::getRecordByID($id);
-        $relationships = RelationshipProvider::getMergedRelationships($record);
+        $relationships = RelationshipProvider::get($record);
 
         // filters
         $validFilters = ['to_class', 'to_type', 'relation_type', 'relation_origin', 'to_group', 'to_data_source_id', 'to_id', 'to_key', 'to_title'];
@@ -23,8 +23,6 @@ class RecordsRelationshipController
         }
 
         // format the response
-        return collect($relationships)->map(function($item) {
-            return $item->format();
-        });
+        return $relationships;
     }
 }
