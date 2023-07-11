@@ -26,6 +26,8 @@ class HealthDataProvider
     private static $doi_schema_uri = 'http://datacite.org/schema/kernel-4';
     private static $anzctr_schema_uri = 'https://anzctr_org.au';
 
+    private static $anzctr_trial_url = 'https://www.anzctr.org.au/Trial/Registration/TrialReview.aspx?ACTRN=';
+
     /**
      * @throws Exception
      */
@@ -96,26 +98,52 @@ class HealthDataProvider
         if (count($altVersionsIDs) > 0) {
             $trial_metadata = Versions::wherein('id', $altVersionsIDs)->where("schema_id", $anzctr_schema->id)->first();
             if($trial_metadata != null){
-                $dom = new DOMDocument;
-                $dom->loadXML($trial_metadata->data);
-                $identifier = [];
-                $identifier["type"] = "ANZCTR";
-                $identifier["value"] =  $dom->getElementsByTagName("actrn")->item(0)->nodeValue;
-                $relatedStudy["title"] = $dom->getElementsByTagName("publictitle")->item(0)->nodeValue;
-                $relatedStudy['identifiers'][] = $identifier;
-                $relatedStudy["briefSummary"] = ContentProvider::getFirst($dom, array('briefsummary'));
-                $relatedStudy["conditions"] = ContentProvider::getContent($dom, array('healthcondition'));
-                $relatedStudy["conditionCodes"] = ContentProvider::getContent($dom, array('conditioncode1','conditioncode2'));
-                $relatedStudy["studyType"] = ContentProvider::getContent($dom, array('studytype'));
-                $relatedStudy["ethicsApproval"] = ContentProvider::getContent($dom, array('ethicsapproval'));
-                $relatedStudy["inclusiveCriteria"] = ContentProvider::getContent($dom, array('inclusivecriteria'));
-                $relatedStudy["interventionCode"] = ContentProvider::getContent($dom, array('interventioncode'));
-                $healthDataset["relatedStudy"] =  $relatedStudy;
+                $healthDataset["relatedStudy"] =  static::getRelatedStudy($trial_metadata->data);
+            }
+        }
+        return $healthDataset;
+    }
+
+    public static function getRelatedStudy($xml){
+        $dom = new DOMDocument;
+        $dom->loadXML($xml);
+        $identifier = [];
+        $relatedStudy = [];
+        $identifier["type"] = "ANZCTR";
+        $identifier["value"] =  $dom->getElementsByTagName("actrn")->item(0)->nodeValue;
+        $relatedStudy["url"] = static::$anzctr_trial_url . substr($identifier["value"], -14);
+        $relatedStudy["title"] = preg_replace('/\s+/S', ' ', trim($dom->getElementsByTagName("publictitle")->item(0)->nodeValue));
+        $relatedStudy['identifiers'][] = $identifier;
+        $relatedStudy["briefSummary"] = ContentProvider::getFirst($dom, array('briefsummary'));
+        $relatedStudy["conditions"] = ContentProvider::getContent($dom, array('healthcondition'));
+        $relatedStudy["conditionCodes"] = ContentProvider::getContent($dom, array('conditioncode1','conditioncode2'));
+        $relatedStudy["studyType"] = ContentProvider::getContent($dom, array('studytype'));
+        $relatedStudy["ethicsApproval"] = ContentProvider::getContent($dom, array('ethicsapproval'));
+        $relatedStudy["inclusiveCriteria"] = ContentProvider::getContent($dom, array('inclusivecriteria'));
+        $relatedStudy["interventionCode"] = ContentProvider::getContent($dom, array('interventioncode'));
+        // V2 content
+        $dataSharingStatement = [];
+        $dataSharingStatement["hasStudyProtocol"] = ContentProvider::getStudyProtocol($dom);
+        $dataSharingStatement["hasDataDictionary"] = ContentProvider::getDataDictionary($dom);
+        $dataSharingStatement["ipdIdDesc"] = ContentProvider::getFirst($dom, array('IpdIdDesc'));
+        $dataSharingStatement["ipdData"] = ContentProvider::getFirst($dom, array('IpdData'));
+        $dataSharingStatement["ipdTimeframe"] = ContentProvider::getFirst($dom, array('IpdTimeframe'));
+        $dataSharingStatement["ipdAccess"] = ContentProvider::getFirst($dom, array('IpdAccess'));
+        $dataSharingStatement["ipdAnalysis"] = ContentProvider::getFirst($dom, array('IpdAnalysis'));
+
+        if($dataSharingStatement["hasStudyProtocol"] || $dataSharingStatement["hasDataDictionary"] ||
+            $dataSharingStatement["ipdData"] !== "" || $dataSharingStatement["ipdTimeframe"] !== "" ||
+            $dataSharingStatement["ipdAccess"] !== "" || $dataSharingStatement["ipdAnalysis"] !== ""){
+            $relatedStudy['dataSharingStatement'] = $dataSharingStatement;
+        }else{
+            if(str_contains(strtolower($dataSharingStatement["ipdIdDesc"]),'yes')){
+                $relatedStudy['dataSharingStatement'] = $dataSharingStatement;
+            }else{
+                $relatedStudy['dataSharingStatement'] = null;
             }
         }
 
-
-        return $healthDataset;
+        return $relatedStudy;
     }
 
     public static function getPublisher(RegistryObject $record){

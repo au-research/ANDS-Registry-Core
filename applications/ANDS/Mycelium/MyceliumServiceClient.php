@@ -92,14 +92,13 @@ class MyceliumServiceClient
      * @param \ANDS\RegistryObject $record
      * @return \Psr\Http\Message\ResponseInterface
      */
-    public function indexRecord(RegistryObject $record, $allowSuperNodes = false)
+    public function indexRecord(RegistryObject $record)
     {
         Log::debug(__METHOD__ . " Indexing Record in Mycelium", ["id" => $record->id]);
         return $this->client->post("api/services/mycelium/index-record", [
             "headers" => [],
             "query" => [
-                "registryObjectId" => $record->id,
-                'allowSuperNodes' => $allowSuperNodes
+                "registryObjectId" => $record->id
             ]
         ]);
     }
@@ -165,9 +164,11 @@ class MyceliumServiceClient
         return $this->client->get("api/resources/mycelium-requests/$uuid/queue");
     }
 
-    public function startProcessingSideEffectQueue($requestId) {
+    public function startProcessingSideEffectQueue($requestId, $importedRecordIds) {
         return $this->client->post("api/services/mycelium/start-queue-processing", [
-            "query" => ["requestId" => $requestId]
+            "headers" => ['Content-Type' => 'application/json'],
+            "query" => ["requestId" => $requestId],
+            "body" => json_encode($importedRecordIds)
         ]);
     }
 

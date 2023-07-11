@@ -8,7 +8,9 @@ use ANDS\RegistryObject;
 use ANDS\RegistryObject\RegistryObjectVersion;
 use ANDS\Util\ANZCTRUtil;
 use ANDS\Util\Config;
+use ANDS\Util\XMLUtil;
 use DOMDocument;
+use DOMXPath;
 
 class ContentProvider{
 
@@ -25,7 +27,16 @@ class ContentProvider{
             if(str_contains($relatedIdentifier['value'], 'ACTRN=')) {
                 $arr = explode('ACTRN=', $relatedIdentifier['value']);
                 try {
-                    $content = ANZCTRUtil::retrieveMetadata($arr[1]);
+                    $identifier = substr($arr[1], -14);
+                    if(strlen($identifier) !== 14){
+                        throw new Exception("ACTRN number must be 14 digit: " . $identifier);
+                    }
+                    if(!is_numeric($identifier)){
+                        throw new Exception("the 14 digit ACTRN ID must contain only numbers: " . $identifier);
+                    }
+                    // all ACTRN identifiers must be prefixed with 'ACTRN' to help with search
+                    $identifier = "ACTRN" . $identifier;
+                    $content = ANZCTRUtil::retrieveMetadataV2($identifier);
                     ContentProvider::storeACTRNMetadata($record,$content);
                     $dom = new DOMDocument;
                     $dom->loadXML($content);
@@ -38,7 +49,7 @@ class ContentProvider{
                         debug("updating title ".$relatedIdentifier['value']. " " .$relatedIdentifier['type']." " .$publictitle);
                         $myceliumServiceClient->updateIdentifierTitle($relatedIdentifier['value'], $relatedIdentifier['type'], $publictitle);
                     }
-                    return ContentProvider::getIndex($dom, $relatedIdentifier['value'], $arr[1]);
+                    return ContentProvider::getIndex($dom, $relatedIdentifier['value'], $identifier);
                 }catch(\Exception $e){
                     debug("failed updating public title of ANZCTR record");
                 }
@@ -91,14 +102,57 @@ class ContentProvider{
         ];
     }
 
-    public static function getContent($dom, $elements){
+    public static function getStudyProtocol($dom){
+        $types = static::getContentByXPath($dom, '//citation/type');
+        foreach ($types as $type){
+            if(trim(strtolower($type)) === 'study protocol'){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public static function getDataDictionary($dom){
+        $types = static::getContentByXPath($dom, '//citation/type');
+        foreach ($types as $type){
+            if(trim(strtolower($type)) === 'data dictionary'){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    private static function getContentByXPath(DOMDocument $dom, $XPath)
+    {
+        $xpath = new DOMXpath($dom);
+        $elements = $xpath->query($XPath);
+        $content = [];
+        foreach ($elements AS $element) {
+            $nodeValue = preg_replace('/\s+/S', ' ', trim($element->nodeValue));
+            if(!in_array($nodeValue, $content))
+                $content[] = $nodeValue;
+        }
+        sort($content);
+        return $content;
+    }
+
+    /**
+     * @param DOMDocument $dom
+     * @param $elements
+     * @return array
+     */
+    public static function getContent(DOMDocument $dom, $elements)
+    {
         $content = [];
          foreach ($elements as $el) {
              $element = $dom->getElementsByTagName($el);
              foreach ($element as $e) {
                  foreach ($e->childNodes as $node) {
-                     if(!in_array($node->nodeValue, $content))
-                         $content[] = $node->nodeValue;
+                     $nodeValue = preg_replace('/\s+/S', ' ', trim($node->nodeValue));
+                     if(!in_array($nodeValue, $content))
+                         $content[] = $nodeValue;
                  }
              }
          }
@@ -106,12 +160,12 @@ class ContentProvider{
         return $content;
     }
 
-    public static function getFirst($dom, $elements){
+    public static function getFirst(DOMDocument $dom, $elements){
 
         foreach ($elements as $el) {
             $element = $dom->getElementsByTagName($el);
             foreach ($element as $e) {
-                return $e->nodeValue;
+                return preg_replace('/\s+/S', ' ', trim($e->nodeValue));
             }
         }
         return "";

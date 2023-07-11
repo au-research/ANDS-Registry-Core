@@ -34,4 +34,32 @@ class ANZCTRUtilTest extends TestCase
         $this->setExpectedException(\Exception::class);
         ANZCTRUtil::retrieveMetadata(null);
     }
+
+
+    /* @test */
+    public function test_anzctr_pullbackV2(){
+        $md = ANZCTRUtil::retrieveMetadataV2("ACTRN12612000544875");
+        $this->assertTrue(str_contains($md, "<trial>"));
+    }
+
+    public function test_anzctr_pullback_id_onlyV2(){
+        $md = ANZCTRUtil::retrieveMetadataV2("12612000544875");
+        $this->assertTrue(str_contains($md, "<trial>"));
+    }
+
+    public function test_anzctr_pullback_id_only_shorter_than_14_digit_idV2(){
+        $this->setExpectedException(\Exception::class);
+        ANZCTRUtil::retrieveMetadataV2("1261200054487");
+    }
+
+
+    public function test_anzctr_pullback_shorter_than_14_digit_idV2(){
+        $this->setExpectedException(\Exception::class);
+        ANZCTRUtil::retrieveMetadataV2("ACTRN126120005");
+    }
+
+    public function test_nullV2(){
+        $this->setExpectedException(\Exception::class);
+        ANZCTRUtil::retrieveMetadataV2(null);
+    }
 }

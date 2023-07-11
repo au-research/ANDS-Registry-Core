@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SearchResult responseDate="5/07/2023 2:50 PM">
+    <NumOfActrn>1</NumOfActrn>
+    <NumOfNct>0</NumOfNct>
+    <trial>
+        <actrn>ACTRN12616000736448</actrn>
+        <utn/>
+        <publictitle>Canadian-Australian Randomised Trial of Screening Kidney Transplant Candidates
+            for Coronary Artery Disease</publictitle>
+        <scientifictitle>Canadian-Australian Randomised Trial of Screening Kidney Transplant
+            Candidates for Coronary Artery Disease</scientifictitle>
+        <trialacronym>CARSK study</trialacronym>
+        <Details>
+            <conditions>
+                <healthcondition>Kidney failure</healthcondition>
+                <healthcondition>Kidney transplant</healthcondition>
+                <healthcondition>Coronary artery disease</healthcondition>
+                <conditioncode>
+                    <conditioncode1>Renal and Urogenital</conditioncode1>
+                    <conditioncode2>Kidney disease</conditioncode2>
+                </conditioncode>
+                <conditioncode>
+                    <conditioncode1>Cardiovascular</conditioncode1>
+                    <conditioncode2>Coronary heart disease</conditioncode2>
+                </conditioncode>
+            </conditions>
+            <studytype>Interventional</studytype>
+            <InterventionExposure>Patients randomised to no screening will not undergo regular
+                non-invasive testing for CAD while on the kidney transplant waitlist. The current
+                practice for waitlisted patients is to be screened every 1-2 years based on
+                perceived risk of CAD. At any time, if patients develop symptoms of CAD, they will
+                be treated according to local standard of care. Patients in this group will be
+                contacted every 6 months on the wait-list, and at 3 and 12 months post-transplant.
+                The duration of the study will be 5 years.</InterventionExposure>
+            <interventioncode>Early detection / Screening</interventioncode>
+            <Comparison>Patients randomised to routine screening will undergo noninvasive testing
+                for coronary artery disease every year or second yearly as determined by local
+                transplant centre practice. The duration of screening in the control is same as the
+                intervention group (5 years). Patients transplanted during the study will be
+                followed for 12 months post-date of transplant and will exit study. This applies for
+                both SCREENING and NO SCREENING groups.</Comparison>
+            <ControlGroup>Active</ControlGroup>
+            <OutcomeMeasures>
+                <OutcomeMeasure>
+                    <Outcome>Primary efficacy: major adverse cardiac event (MACE), defined as any of
+                        the following: cardiovascular death, myocardial infarction, emergency
+                        revascularisation, hospitalisation with unstable angina. The outcome will be
+                        assessed by: 1) Notification to the transplant coordinators when patients
+                        are admitted in hospital (this is the usual standard of care in wait-listed
+                        patients). 2) The trial coordinator will gather electronic medical records,
+                        letters. procedure notes and will fill in the relevant case record form on
+                        the REDCap database (managed by Sydney local health district). All data are
+                        encrypted and stored on servers at SLHD, where it is backed up. 3) Patients
+                        will be followed up 6 monthly (alternating by phone and clinic visits) where
+                        trial coordinators will discuss any hospitalisations with the
+                        patients.</Outcome>
+                    <Timepoint>We will analyse time to first MACE event for the duration of the
+                        trial (5-years)</Timepoint>
+                </OutcomeMeasure>
+                <Purpose>Diagnosis</Purpose>
+                <Phase>Not Applicable</Phase>
+                <EthicsApproval>Approved</EthicsApproval>
+                <briefsummary>Cardiovascular disease is the commonest cause of death while on the
+                    kidney transplant waiting list and after transplantation. Current standard care
+                    involves screening for coronary artery disease prior to waitlist entry, then
+                    every 1-2 years, according to perceived risk, until transplanted. The aim of
+                    screening is two-fold. Firstly to identify patients with asymptomatic coronary
+                    disease to enable either correction, by bypass surgery or angioplasty, or
+                    removal of the patient from the list, with the ultimate aim of preventing
+                    premature cardiovascular mortality at the time of, or soon after kidney
+                    transplantation. Secondly, from a societal perspective, to prevent mis-direction
+                    of scarce donor organs into recipients who experience early mortality. This
+                    current screening strategy is not evidence based, has substantial known and
+                    potential harms, and is very costly. Two major issues of uncertainty require
+                    addressing in sequence: (1) whether to periodically screen asymptomatic
+                    wait-listed patients for occult coronary artery disease; and (2) whether to
+                    revascularise coronary stenoses in asymptomatic patients prior to
+                    transplantation. The CARSK study seeks to address the first of these 2 issues.
+                    CARSK aims to 1. Test the hypothesis that after screening for wait list entry,
+                    no further screening for coronary artery disease (CAD) is non-inferior to the
+                    current standard care which is screening all asymptomatic wait-listed patients
+                    for CAD at regular intervals. 2. Compare the benefits and costs of not screening
+                    versus regular CAD screening from a health system perspective. </briefsummary>
+                <trialwebsite/>
+                <recruitment>
+                    <recruitmentstatus>Recruiting</recruitmentstatus>
+                    <anticipatedstartdate>14/06/2016</anticipatedstartdate>
+                    <anticipatedenddate/>
+                    <samplesize>3306</samplesize>
+                    <recruitmentstate>ACT,NSW,QLD,TAS,WA,VIC</recruitmentstate>
+                    <hospital>Royal Prince Alfred Hospital - Camperdown</hospital>
+                    <hospital>Westmead Hospital - Westmead</hospital>
+                    <hospital>Monash Medical Centre - Clayton campus - Clayton</hospital>
+                    <hospital>Austin Health - Austin Hospital - Heidelberg</hospital>
+                    <hospital>Prince of Wales Hospital - Randwick</hospital>
+                    <hospital>St George Hospital - Kogarah</hospital>
+                    <hospital>Liverpool Hospital - Liverpool</hospital>
+                    <hospital>Box Hill Hospital - Box Hill</hospital>
+                    <hospital>The Royal Adelaide Hospital - Adelaide</hospital>
+                    <postcode>3128 - Box Hill</postcode>
+                    <postcode>5000 - Adelaide</postcode>
+                    <countrysoutsideaustralia>
+                        <countryoutsideaustralia>
+                            <country>New Zealand</country>
+                            <state>Auckland</state>
+                        </countryoutsideaustralia>
+                        <countryoutsideaustralia>
+                            <country>Canada</country>
+                            <state>British Columbia</state>
+                        </countryoutsideaustralia>
+                        <countryoutsideaustralia>
+                            <country>Spain</country>
+                            <state/>
+                        </countryoutsideaustralia>
+                        <countryoutsideaustralia>
+                            <country>United States of America</country>
+                            <state>district of columbia</state>
+                        </countryoutsideaustralia>
+                    </countrysoutsideaustralia>
+                </recruitment>
+                <eligibility>
+                    <inclusivecriteria>1. adults aged 18 years of age or older 2. Dialysis-dependent
+                        kidney failure and currently being assessed for OR active on the kidney
+                        transplant waiting list 3. expected to require further screening for CAD
+                        prior to transplantation (by current standard of care); 4. able to give
+                        consent; 5. anticipated to undergo transplantation more than 12 months from
+                        date of enrolment </inclusivecriteria>
+                    <inclusiveminage>18</inclusiveminage>
+                    <inclusiveminagetype>Years</inclusiveminagetype>
+                    <inclusivemaxage/>
+                    <inclusivemaxagetype>No limit</inclusivemaxagetype>
+                    <inclusivegender>Both males and females</inclusivegender>
+                    <healthyvolunteer>No</healthyvolunteer>
+                    <exclusivecriteria>1. patients with signs or symptoms suggestive of uncontrolled
+                        cardiac disease such as unstable coronary syndromes, decompensated heart
+                        failure, uncontrolled arrhythmia, and severe valvular heart disease; 2.
+                        patients who “on-hold” for transplantation due to a medical problem; 3.
+                        patients with other solid organ transplants; 4. multi-organ transplant
+                        candidates (e.g. kidney-pancreas transplant candidates); 5) patients with
+                        planned living donor transplant; 6) patients unable to give consent.
+                    </exclusivecriteria>
+                </eligibility>
+                <FundingSponsors>
+                    <primarysponsortype>University</primarysponsortype>
+                    <primarysponsorname>University of Sydney</primarysponsorname>
+                    <primarysponsoraddress>Camperdown, Sydney, New South Wales
+                        2006</primarysponsoraddress>
+                    <primarysponsorcountry>Australia</primarysponsorcountry>
+                    <secondarysponsors>
+                        <secondarysponsor>
+                            <type>Individual</type>
+                            <name>John Gill</name>
+                            <address>St Paul's Hospital Burrard St, Vancouver, BC Canada, V6Z
+                                1Y6</address>
+                            <country>Canada</country>
+                        </secondarysponsor>
+                        <secondarysponsor>
+                            <type>Individual</type>
+                            <name>Helen Pilmore</name>
+                            <address>Auckland City Hospital Park Rd, Grafton, Auckland, New Zealand
+                                1023</address>
+                            <country>New Zealand</country>
+                        </secondarysponsor>
+                    </secondarysponsors>
+                    <fundingsources>
+                        <fundingsource>
+                            <fundingtype>Government body</fundingtype>
+                            <fundingname>National Health and Medical Research Council</fundingname>
+                            <fundingaddress>National Health and Medical Research Council GPO Box
+                                1421 Canberra ACT 2601</fundingaddress>
+                            <fundingcountry>Australia</fundingcountry>
+                        </fundingsource>
+                        <fundingsource>
+                            <fundingtype>Charities/Societies/Foundations</fundingtype>
+                            <fundingname>Heart Foundation </fundingname>
+                            <fundingaddress>PO Box 17-160 Greenlane, Auckland 1546</fundingaddress>
+                            <fundingcountry>New Zealand</fundingcountry>
+                        </fundingsource>
+                        <fundingsource>
+                            <fundingtype>Government body</fundingtype>
+                            <fundingname>Canandian Institues of Health Research</fundingname>
+                            <fundingaddress>160 Elgin Street, 9th Floor Address Locator 4809A Ottawa
+                                ON K1A 0W9 Canada</fundingaddress>
+                            <fundingcountry>Canada</fundingcountry>
+                        </fundingsource>
+                    </fundingsources>
+                </FundingSponsors>
+                <Contacts>
+                    <Enquiry>
+                        <title>Prof</title>
+                        <name>Steven Chadban</name>
+                        <address>Charles Perkins Centre (2W73), level 2, Kidney node, Building D17
+                            Johns Hopkins Drive (off Missenden Road) The University of Sydney NSW
+                            2006</address>
+                        <phone>+61295156600</phone>
+                        <fax/>
+                        <email>Steve.Chadban@health.nsw.gov.au</email>
+                        <country>Australia</country>
+                        <type>Principal Investigator</type>
+                    </Enquiry>
+                    <Enquiry>
+                        <title>Dr</title>
+                        <name>Tracey Ying</name>
+                        <address>Charles Perkins Centre (2W57), level 2, Kidney node, Building D17
+                            Johns Hopkins Drive (off Missenden Road) The University of Sydney NSW
+                            2006</address>
+                        <phone>+61295156600</phone>
+                        <fax/>
+                        <email>tracey.ying@sydney.edu.au</email>
+                        <country>Australia</country>
+                        <type>Public Queries</type>
+                    </Enquiry>
+                    <Enquiry>
+                        <title>Dr</title>
+                        <name>Tracey Ying</name>
+                        <address>Charles Perkins Centre (2W57), level 2, Kidney node, Building D17
+                            Johns Hopkins Drive (off Missenden Road) The University of Sydney NSW
+                            2006</address>
+                        <phone>+61295156600</phone>
+                        <fax/>
+                        <email>tracey.ying@sydney.edu.au</email>
+                        <country>Australia</country>
+                        <type>Scientific Queries</type>
+                    </Enquiry>
+                </Contacts>
+                <DataSharingStatement>
+                    <ResultReport>
+                        <IpdDocuments>Study protocol</IpdDocuments>
+                        <IpdDocumentsOther/>
+                        <IpdAnalysis>data analyses will be considered on a case by case
+                            basis</IpdAnalysis>
+                        <IpdId>1</IpdId>
+                        <IpdIdDesc>yes</IpdIdDesc>
+                        <IpdData>Researchers requesting individual patient data will be considered
+                            on a case by case basis by the trial steering committee</IpdData>
+                        <IpdTimeframe>Data will only be available after trial conclusion
+                            (approximately 2024-2025) for a period of 15 years.</IpdTimeframe>
+                        <IpdAccess>available to all researchers on a case by case basis</IpdAccess>
+                        <IpdMechanism>secure data transfer</IpdMechanism>
+                        <IpdReason/>
+                    </ResultReport>
+                    <citations>
+                        <citation>
+                            <type>Study protocol</type>
+                            <details/>
+                            <attachment/>
+                            <citationtype>IPD</citationtype>
+                            <citationdescription>Ying T, Gill J, Webster A, et al.
+                                Canadian-Australasian Randomised trial of screening kidney
+                                transplant candidates for coronary artery disease-A trial protocol
+                                for the CARSK study. Am Heart J. 2019;214:175-183.
+                                doi:10.1016/j.ahj.2019.05.008</citationdescription>
+                            <link>https://doi.org/10.1016/j.ahj.2019.05.008</link>
+                            <email/>
+                        </citation>
+                    </citations>
+                </DataSharingStatement>
+                <lastupdatedon>10/02/2021</lastupdatedon>
+            </OutcomeMeasures>
+        </Details>
+    </trial>
+</SearchResult>
