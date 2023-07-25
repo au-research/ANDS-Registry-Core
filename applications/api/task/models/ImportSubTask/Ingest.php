@@ -11,7 +11,7 @@ use ANDS\Repository\RegistryObjectsRepository as Repo;
 class Ingest extends ImportSubTask
 {
     protected $requirePayload = true;
-    protected $title = "INGESTING RECORDS";
+    public $title = "INGESTING RECORDS";
     protected $data_source = null;
     
     public function run_task()

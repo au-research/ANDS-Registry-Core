@@ -16,6 +16,7 @@ class TasksHandler extends Handler
         $router->get('tasks/(\w+)/subtasks', 'TasksAPI@showSubtasks');
         $router->get('tasks/(\w+)/subtasks/(\w+)', 'TasksAPI@showSubtask');
         $router->get('tasks/(\w+)/log', 'TasksAPI@showLog');
+        $router->get('tasks/(\w+)/resume', 'TasksAPI@resume');
 
         return $this->format($router->execute());
     }

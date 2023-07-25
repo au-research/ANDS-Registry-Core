@@ -12,7 +12,7 @@ use ANDS\Repository\RegistryObjectsRepository as Repo;
 class ProcessGraphRelationships extends ImportSubTask
 {
     protected $requireImportedRecords = true;
-    protected $title = "PROCESSING GRAPH RELATIONSHIPS";
+    public $title = "PROCESSING GRAPH RELATIONSHIPS";
 
     /** @var int time limit in seconds */
     //protected $timeLimit = 3600;

@@ -19,7 +19,7 @@ class FinishImport extends ImportSubTask
     private $addToDatasourceLog = true;
 
     protected $requireDataSource = true;
-    protected $title = "FINISHING IMPORT";
+    public $title = "FINISHING IMPORT";
 
     public function run_task()
     {

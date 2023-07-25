@@ -12,7 +12,7 @@ use ANDS\Util\Config;
 class IndexGraphRelationships extends ImportSubTask
 {
     protected $requireImportedRecords = true;
-    protected $title = "INDEXING GRAPH RELATIONSHIPS";
+    public $title = "INDEXING GRAPH RELATIONSHIPS";
 
     public function run_task()
     {

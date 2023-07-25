@@ -17,7 +17,7 @@ class ImportSubTask extends Task
     protected $requireHarvestedOrImportedRecords = false;
     protected $requireDataSource = false;
     protected $requireImportedCollections = false;
-    protected $title = "Import SubTask";
+    public $title = "Import SubTask";
 
     private $dataSource = null;
 

@@ -19,7 +19,7 @@ class ValidatePayload extends ImportSubTask
     protected $payloadSource = "unvalidated";
     protected $payloadOutput = "validated";
     protected $registryObjectReceived = 0;
-    protected $title = "VALIDATING PAYLOADS";
+    public $title = "VALIDATING PAYLOADS";
 
     public function run_task()
     {

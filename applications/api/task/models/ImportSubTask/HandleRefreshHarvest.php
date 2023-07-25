@@ -17,7 +17,7 @@ class HandleRefreshHarvest extends ImportSubTask
 {
     private $toBeDeletedRecordCutOffRatio = 0.2;
     protected $requireDataSource = true;
-    protected $title = "REFRESHING DATASOURCE";
+    public $title = "REFRESHING DATASOURCE";
 
     public function run_task()
     {

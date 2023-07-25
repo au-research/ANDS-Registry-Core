@@ -13,7 +13,7 @@ class ServiceDiscovery extends ImportSubTask
     protected $requireImportedCollections = true;
     protected $requireDataSource = true;
     protected $requirePayload = false;
-    protected $title = "SERVICE DISCOVERY";
+    public $title = "SERVICE DISCOVERY";
 
     public function run_task()
     {

@@ -11,7 +11,7 @@ use Carbon\Carbon;
 class WriteImportSummary extends ImportSubTask
 {
     protected $requireDataSource = true;
-    protected $title = "WRITING IMPORT SUMMARY";
+    public $title = "WRITING IMPORT SUMMARY";
 
     public function run_task()
     {

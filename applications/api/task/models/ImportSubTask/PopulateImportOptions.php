@@ -8,7 +8,7 @@ use ANDS\Repository\RegistryObjectsRepository as Repo;
 
 class PopulateImportOptions extends ImportSubTask
 {
-    protected $title = "POPULATING IMPORT OPTIONS";
+    public $title = "POPULATING IMPORT OPTIONS";
     protected $requireDataSource = true;
 
     public function run_task()

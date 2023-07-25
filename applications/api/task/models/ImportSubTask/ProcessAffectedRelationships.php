@@ -13,7 +13,7 @@ use ANDS\Repository\RegistryObjectsRepository as Repo;
  */
 class ProcessAffectedRelationships extends ImportSubTask
 {
-    protected $title = "PROCESSING AFFECTED RELATIONSHIPS";
+    public $title = "PROCESSING AFFECTED RELATIONSHIPS";
 
     public function run_task()
     {

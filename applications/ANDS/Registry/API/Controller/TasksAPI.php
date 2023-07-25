@@ -46,6 +46,16 @@ class TasksAPI extends HTTPController implements RestfulController
         return $task->getSubtasks();
     }
 
+    public function resume($id)
+    {
+        $task = TaskRepository::getById($id);
+        if (!$task) {
+            throw new \Exception("Task id:$id doesn't exist");
+        }
+        $task->setStatus("PENDING");
+        $task->save();
+        return $task->getSubtasks();
+    }
     public function showSubtask($id, $name)
     {
         $task = TaskRepository::getById($id);

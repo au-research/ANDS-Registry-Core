@@ -10,7 +10,7 @@ use ANDS\Repository\RegistryObjectsRepository;
 
 class ProcessScholix extends ImportSubTask
 {
-    protected $title = "PROCESSING SCHOLIX METADATA";
+    public $title = "PROCESSING SCHOLIX METADATA";
 
     public function run_task()
     {

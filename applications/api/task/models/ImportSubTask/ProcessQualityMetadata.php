@@ -12,7 +12,7 @@ use ANDS\Repository\RegistryObjectsRepository;
 class ProcessQualityMetadata extends ImportSubTask
 {
     protected $requireImportedRecords = true;
-    protected $title = "GATHERING METADATA QUALITY";
+    public $title = "GATHERING METADATA QUALITY";
 
     public function run_task()
     {

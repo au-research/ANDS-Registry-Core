@@ -10,7 +10,7 @@ use ANDS\Util\XMLUtil;
 class PreserveCoreMetadata extends ImportSubTask
 {
     protected $requireHarvestedOrImportedRecords = true;
-    protected $title = "PRESERVING CORE METADATA";
+    public $title = "PRESERVING CORE METADATA";
     protected $preservingAttributeNames = ['record_owner','flag','harvest_id','manually_assessed','modified','updated'];
     public function run_task()
     {

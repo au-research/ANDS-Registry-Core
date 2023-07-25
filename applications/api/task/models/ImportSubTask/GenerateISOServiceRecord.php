@@ -15,7 +15,7 @@ use \ANDS\Registry\Providers\ISO19115\ISO19115_3Provider;
 class GenerateISOServiceRecord extends ImportSubTask
 {
     protected $requirePayload = true;
-    protected $title = "GENERATING ISO SERVICE RECORDS";
+    public $title = "GENERATING ISO SERVICE RECORDS";
     protected $data_source = null;
 
     public function run_task()

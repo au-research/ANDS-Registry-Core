@@ -14,7 +14,7 @@ use ANDS\Repository\RegistryObjectsRepository;
 class PopulateAffectedList extends ImportSubTask
 {
     protected $requireImportedRecords = true;
-    protected $title = "GENERATING AFFECTED LIST";
+    public $title = "GENERATING AFFECTED LIST";
     private $chunkLimit = 400;
 
     public function run_task()
