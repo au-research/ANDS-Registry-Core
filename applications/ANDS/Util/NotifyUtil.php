@@ -24,18 +24,21 @@ class NotifyUtil
 
     public static function sendSlackMessage($text, $data_source_id, $message_type='INFO')
     {
+
+        $web_hook_url = Config::get("slack.web_hook_url");
+        if(trim($web_hook_url) === '')
+            return 0;
         $log_levels = ["ERROR"=>100, "INFO"=>50, "DEBUG"=>10];
         $log_level = Config::get("slack.log_level");
         // send messages only greater than the default log_level
         if($log_levels[$message_type] < $log_levels[$log_level])
-            return;
+            return 0;
         $colour = "#00AA00";
         if ($message_type === 'ERROR')
             $colour = "#AA0000";
         if ($message_type === 'DEBUG')
             $colour = "#0000AA";
 
-        $web_hook_url = Config::get("slack.web_hook_url");
         $channel_id = Config::get("slack.channel_id");
 
         $environment_name = Config::get("app.environment_name");
