@@ -25,6 +25,9 @@ if (!file_exists('./vendor/autoload.php')) {
 }
 require_once './vendor/autoload.php';
 
+// Our customized Twitter auth
+require_once './applications/abraham/twitteroauth/autoload.php';
+
 // pull in .env file, now getenv() and env() is available globally
 if (!file_exists('.env')) {
     die("Installation incompleted. .env file missing");
