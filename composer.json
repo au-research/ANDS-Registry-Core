@@ -66,10 +66,5 @@
     "require-dev": {
         "phpunit/phpunit": "4.8.*",
         "ext-mysqli": "*"
-    },
-    "config": {
-        "allow-plugins": {
-            "kylekatarnls/update-helper": true
-        }
     }
 }
