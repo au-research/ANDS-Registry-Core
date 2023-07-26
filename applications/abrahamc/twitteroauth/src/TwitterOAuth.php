@@ -4,9 +4,9 @@
  *
  * @license MIT
  */
-namespace Abraham\TwitterOAuth;
+namespace Abrahamc\TwitterOAuth;
 
-use Abraham\TwitterOAuth\Util\JsonDecoder;
+use Abrahamc\TwitterOAuth\Util\JsonDecoder;
 //use Composer\CaBundle\CaBundle;
 
 /**

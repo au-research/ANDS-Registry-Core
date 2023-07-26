@@ -7,13 +7,13 @@ namespace ANDS\Authenticator;
 // Needs a modified TwitterOAuth to keep working with PHP 5;
 // see applications/abraham/README-ARDC.md.
 
-use Abraham\TwitterOAuth\TwitterOAuth;
+use Abrahamc\TwitterOAuth\TwitterOAuth;
 
 class TwitterAuthenticator
 {
     /**
      * @return string
-     * @throws \Abraham\TwitterOAuth\TwitterOAuthException
+     * @throws \Abrahamc\TwitterOAuth\TwitterOAuthException
      * @throws \Exception
      */
     public static function getOauthLink()

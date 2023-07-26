@@ -3,7 +3,7 @@
  * The MIT License
  * Copyright (c) 2007 Andy Smith
  */
-namespace Abraham\TwitterOAuth;
+namespace Abrahamc\TwitterOAuth;
 
 /**
  * A class for implementing a Signature Method
