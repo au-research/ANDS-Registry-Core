@@ -92,7 +92,7 @@ class TwitterAuthenticator
         $secret = $config['keys']['secret'];
         $connection = new TwitterOAuth($key, $secret);
         // We now use API v2, which must be explicitly requested.
-        $connection->setApiVersion('2');
+        //$connection->setApiVersion('2');
         return $connection;
     }
 

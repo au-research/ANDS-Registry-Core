@@ -56,7 +56,6 @@
         "illuminate/cache": "~5.2.0",
         "symfony/cache": "^3.4",
         "guzzle/http": "^3.9",
-        "abraham/twitteroauth": "^0.9.2",
         "facebook/graph-sdk": "^5.6",
         "google/apiclient": "^2.2",
         "ext-json": "*",
