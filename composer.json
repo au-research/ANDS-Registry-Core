@@ -41,6 +41,7 @@
     },
     "require": {
         "illuminate/database": "5.2.*",
+        "illuminate/support": "5.2.45",
         "predis/predis": "^1.1",
         "symfony/stopwatch": "^3.1",
         "monolog/monolog": "^1.19",
@@ -56,13 +57,14 @@
         "illuminate/cache": "~5.2.0",
         "symfony/cache": "^3.4",
         "guzzle/http": "^3.9",
-        "abraham/twitteroauth": "^0.9.2",
         "facebook/graph-sdk": "^5.6",
         "google/apiclient": "^2.2",
         "ext-json": "*",
         "ext-mbstring": "*",
         "ext-dom": "*",
-        "ptcinc/solr-php-client": "*"
+        "ptcinc/solr-php-client": "*",
+        "paragonie/random_compat":"1.4.3"
+
     },
     "require-dev": {
         "phpunit/phpunit": "4.8.*",
