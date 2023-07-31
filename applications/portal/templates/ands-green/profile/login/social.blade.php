@@ -7,7 +7,7 @@
       //      <a href="{{registry_url('auth/authenticate/facebook')}}" class="btn btn-primary btn-block btn-icon-left">Login with Facebook <span><i class="fa fa-facebook"></i></span></a>
       //  @endif -->
         @if($oauth_conf['providers']['Twitter']['enabled'])
-            <a href="{{registry_url('auth/authenticate/twitter')}}" class="btn btn-primary btn-block btn-icon-left">Login with X (formerly Twitter) <span><i class="fa-solid fa-x"></i></span></a>
+            <a href="{{registry_url('auth/authenticate/twitter')}}" class="btn btn-primary btn-block btn-icon-left">Login with X (formerly Twitter) <span><i class="fa fa-times fa-fw"></i></span></a>
         @endif
         @if($oauth_conf['providers']['Google']['enabled'])
             <a href="{{registry_url('auth/authenticate/google')}}" class="btn btn-primary btn-block btn-icon-left">Login with Google <span><i class="fa fa-google"></i></span></a>
