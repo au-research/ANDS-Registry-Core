@@ -63,10 +63,7 @@
         "ext-mbstring": "*",
         "ext-dom": "*",
         "ptcinc/solr-php-client": "*",
-        "google/recaptcha": "~1.1",
-        "google/apiclient": "2.4.0",
-        "google/apiclient-services": "v0.121",
-        "google/auth": "v1.6.1",
+        "google/apiclient": "^2.2",
         "paragonie/random_compat":"1.4.3"
 
     },
