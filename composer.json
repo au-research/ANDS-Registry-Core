@@ -64,6 +64,7 @@
         "ext-dom": "*",
         "ptcinc/solr-php-client": "*",
         "google/apiclient": "^2.2",
+        "google/apiclient-services": "0.13",
         "paragonie/random_compat":"1.4.3"
 
     },
