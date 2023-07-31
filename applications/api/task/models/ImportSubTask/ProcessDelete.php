@@ -21,7 +21,7 @@ use ANDS\Util\SolrIndex;
 class ProcessDelete extends ImportSubTask
 {
     protected $requireDeletedRecords = true;
-    protected $title = "DELETING RECORDS";
+    public $title = "DELETING RECORDS";
     protected $chunkSize = 500;
 
     public function run_task()

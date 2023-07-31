@@ -3,14 +3,17 @@
 
 namespace ANDS\Authenticator;
 
+// Updated for Twitter API v2.
+// Needs a modified TwitterOAuth to keep working with PHP 5;
+// see applications/abraham/README-ARDC.md.
 
-use Abraham\TwitterOAuth\TwitterOAuth;
+use Abrahamc\TwitterOAuth\TwitterOAuth;
 
 class TwitterAuthenticator
 {
     /**
      * @return string
-     * @throws \Abraham\TwitterOAuth\TwitterOAuthException
+     * @throws \Abrahamc\TwitterOAuth\TwitterOAuthException
      * @throws \Exception
      */
     public static function getOauthLink()
@@ -34,11 +37,28 @@ class TwitterAuthenticator
         $connection = self::getConnection();
         $access = $connection->oauth("oauth/access_token", ["oauth_verifier" => $oauthVerifier, 'oauth_token' => $oauthToken]);
 
-        $profile = $connection->get('users/show', [
-            'user_id' => $access['user_id']
-        ]);
+        /*
+        On success, $access now has a value such as:
+          array ( 'oauth_token' => '1655...',
+            'oauth_token_secret' => '4xAL...',
+            'user_id' => '1655...',
+            'screen_name' => 'myloginname...')
+        */
+        $connection->setOauthToken($access['oauth_token'], $access['oauth_token_secret']);
+
+        /*
+          To get profile_image_url, you must ask for it.  See
+          description of user.fields at
+          https://developer.twitter.com/en/docs/twitter-api/users/lookup/api-reference/get-users-me
+          for the list of supported fields, and
+          https://developer.twitter.com/en/docs/twitter-api/data-dictionary/object-model/user
+          for more details about those fields.
+        */
+        $profile = $connection->get('users/me', ['user.fields' => ['profile_image_url']]);
 
         /**
+         * "Historic" note, since this is only supported for API v1; there's
+         * no access via API v2:
          * The app will need to explicitly ask for the user email
          * in order to receive user email information
          * GET account/verify_credentials
@@ -47,16 +67,18 @@ class TwitterAuthenticator
 
         $profile = [
             'identifier' => $access['user_id'],
-            'photoURL' => $profile->profile_image_url_https,
-            'displayName' => $access['screen_name'],
-            'firstName' => 'Minh Duc Nguyen',
+            'photoURL' => $profile->data->profile_image_url,
+            // Construct a display name of the form "My Real Name (@myHandle)".
+            'displayName' => $profile->data->name . ' (@' . $access['screen_name'] . ')',
+            'firstName' => $profile->data->name,
+            'handle' => $access['screen_name'],
             'lastName' => '',
             'email' => '',
             'accessToken' => $access['oauth_token'],
             'authentication_service_id' => 'AUTHENTICATION_SOCIAL_TWITTER'
         ];
-
         return $profile;
+
     }
 
     /**
@@ -69,6 +91,8 @@ class TwitterAuthenticator
         $key = $config['keys']['key'];
         $secret = $config['keys']['secret'];
         $connection = new TwitterOAuth($key, $secret);
+        // We now use API v2, which must be explicitly requested.
+        //$connection->setApiVersion('2');
         return $connection;
     }
 

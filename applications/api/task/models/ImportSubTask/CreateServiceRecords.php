@@ -19,7 +19,7 @@ class CreateServiceRecords extends ImportSubTask
     protected $requireImportedCollections = true;
     protected $requireDataSource = true;
     protected $requirePayload = false;
-    protected $title = "SERVICE CREATION";
+    public $title = "SERVICE CREATION";
 
     public function run_task()
     {

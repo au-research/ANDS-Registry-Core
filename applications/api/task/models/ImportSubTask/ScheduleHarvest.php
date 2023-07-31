@@ -9,7 +9,7 @@ use ANDS\Repository\RegistryObjectsRepository as Repo;
 class ScheduleHarvest extends ImportSubTask
 {
     protected $requireDataSource = true;
-    protected $title = "SCHEDULING NEXT HARVEST";
+    public $title = "SCHEDULING NEXT HARVEST";
 
     public function run_task()
     {

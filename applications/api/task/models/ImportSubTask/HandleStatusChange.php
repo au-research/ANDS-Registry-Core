@@ -13,7 +13,7 @@ use ANDS\Util\XMLUtil;
 
 class HandleStatusChange extends ImportSubTask
 {
-    protected $title = "HANDLING STATUS CHANGES";
+    public $title = "HANDLING STATUS CHANGES";
     protected $requireDataSource = true;
 
     public function run_task()

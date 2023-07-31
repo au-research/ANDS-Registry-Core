@@ -1144,30 +1144,27 @@ class Registry_object extends MX_Controller {
 
         // select_all is the status
         $select_all = $this->input->post('select_all');
-
         $dataSourceID = $this->input->post('data_source_id');
-        $excludedRecords = $this->input->post('excluded_records') ?: [];
 
         // capture affected_ros mainly for select_all when affected_ids does not capture all;
-        if($select_all && $select_all != "false"){
+        if($select_all && $affectedIDs == "false"){
+            $affectedIDs = [];
             $filters = $this->input->post('filters');
-
-            // filters only accept data_source_id and status for now
-            $query = \ANDS\RegistryObject::where('data_source_id', $dataSourceID);
-
-            // the status to filter on would be nested under filters[filter] or as the value of the select_all POST field
-            $status = array_key_exists('filter', $filters) && array_key_exists('status', $filters['filter'])
-                ? $filters['filter']['status']
-                : $select_all;
-            if (isset($status)) {
-                $query = $query->where('status', $status);
-            }
-
-            $affectedIDs =  $query->pluck('registry_object_id')->toArray();
-
-            // exclusion
-            if (count($excludedRecords) > 0) {
-                $affectedIDs = array_diff($affectedIDs, $excludedRecords);
+            $excluded_records = $this->input->post('excluded_records') ?: [];
+            $args = [
+                'sort' => isset($filters['sort']) ? $filters['sort'] : ['updated'=>'desc'],
+                'search' => isset($filters['search']) ? $filters['search'] : false,
+                'or_filter' => isset($filters['or_filter']) ? $filters['or_filter'] : false,
+                'filter' => isset($filters['filter']) ? array_merge($filters['filter'], ['status'=>$this->input->post('select_all')]) : ['status'=>$this->input->post('select_all')],
+                'data_source_id' => $dataSourceID
+            ];
+            $affected_ros = $this->ro->filter_by($args, 0, 0, true);
+            if (is_array($affected_ros)) {
+                foreach ($affected_ros as $r) {
+                    if (!in_array($r->registry_object_id, $excluded_records)) {
+                        $affectedIDs[] = $r->registry_object_id;
+                    }
+                }
             }
         }
 

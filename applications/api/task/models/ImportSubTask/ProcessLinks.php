@@ -12,7 +12,7 @@ use ANDS\Repository\RegistryObjectsRepository;
 class ProcessLinks extends ImportSubTask
 {
     protected $requireImportedRecords = true;
-    protected $title = "PROCESSING LINKS";
+    public $title = "PROCESSING LINKS";
 
     public function run_task()
     {

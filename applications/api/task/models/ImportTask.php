@@ -88,16 +88,22 @@ class ImportTask extends Task
 
     public function hook_end()
     {
+        $pipeline = $this->getTaskData('pipeline');
+
         if ($this->getStatus() === "STOPPED") {
+            $this->getTaskData('source');
+            NotifyUtil::sendSlackMessage( "Import Pipeline ". $pipeline." STOPPED", $this->dataSourceID, "ERROR");
             return;
         }
 
         if ($nextTask = $this->getNextTask()) {
             $this->setStatus("PENDING")->save();
+            NotifyUtil::sendSlackMessage( "Import Pipeline ". $pipeline." Next: ".$nextTask->title, $this->dataSourceID, "DEBUG");
         }
 
         if ($this->getStatus() == "COMPLETED") {
             $this->writeLog("ImportCompleted");
+            NotifyUtil::sendSlackMessage( "Import Pipeline ". $pipeline." Completed", $this->dataSourceID);
         }
     }
 

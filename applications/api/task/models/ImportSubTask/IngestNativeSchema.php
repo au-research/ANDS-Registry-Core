@@ -13,7 +13,7 @@ use \ANDS\Repository\DataSourceRepository;
 class IngestNativeSchema extends ImportSubTask
 {
     protected $requirePayload = true;
-    protected $title = "INGESTING NATIVE CONTENT RECORDS";
+    public $title = "INGESTING NATIVE CONTENT RECORDS";
     protected $data_source = null;
     protected $payloadSource = "original";
     private $contentProvider = null;

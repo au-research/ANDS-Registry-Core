@@ -75,7 +75,7 @@
     <script src="{{ dist_url('portal_lib.js') }}"></script>
 @endif
 
-<script type="text/javascript" src="https://jira.ardc.edu.au/s/d41d8cd98f00b204e9800998ecf8427e/en_AUc8oc9c-1988229788/6265/77/1.4.7/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=d9610dcf"></script>
+<script type="text/javascript" src="https://jira.ardc.edu.au/plugins/servlet/issueCollectorBootstrap.js?collectorId=4d89e3f4&locale=en_UK"></script>
 
 <script>
     _.contains = _.includes;

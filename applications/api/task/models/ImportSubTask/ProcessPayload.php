@@ -16,7 +16,7 @@ class ProcessPayload extends ImportSubTask
     protected $requirePayload = true;
     protected $payloadSource = "validated";
     protected $payloadOutput = "processed";
-    protected $title = "PROCESSING PAYLOADS";
+    public $title = "PROCESSING PAYLOADS";
 
     public function run_task()
     {

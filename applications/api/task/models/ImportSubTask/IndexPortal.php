@@ -16,7 +16,7 @@ use MinhD\SolrClient\SolrClient;
  */
 class IndexPortal extends ImportSubTask
 {
-    protected $title = "INDEXING PORTAL";
+    public $title = "INDEXING PORTAL";
 
     public function run_task()
     {

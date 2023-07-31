@@ -19,7 +19,7 @@ use ANDS\Util\XMLUtil;
 class ProcessCoreMetadata extends ImportSubTask
 {
     protected $requireHarvestedOrImportedRecords = true;
-    protected $title = "PROCESSING CORE METADATA";
+    public $title = "PROCESSING CORE METADATA";
 
     public function run_task()
     {

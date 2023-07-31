@@ -11,6 +11,7 @@ use ANDS\Util\Config;
 use ANDS\Util\XMLUtil;
 use DOMDocument;
 use DOMXPath;
+use Exception;
 
 class ContentProvider{
 
